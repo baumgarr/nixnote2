@@ -10,3 +10,9 @@
 *.lai
 *.la
 *.a
+
+# Java classes
+*.class
+
+# dump logs
+*.log
