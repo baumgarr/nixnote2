@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ntagview.h'
 **
-** Created: Wed Jun 20 14:36:39 2012
+** Created: Thu Jul 12 10:21:28 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_NTagView[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       7,   14, // methods
+      12,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -36,10 +36,15 @@ static const uint qt_meta_data_NTagView[] = {
  // slots: signature, parameters, type, tag, flags
       46,   41,   37,    9, 0x08,
       83,    9,    9,    9, 0x08,
-     110,  101,    9,    9, 0x0a,
-     134,    9,    9,    9, 0x0a,
-     148,    9,    9,    9, 0x0a,
-     169,  165,    9,    9, 0x0a,
+     101,    9,    9,    9, 0x08,
+     125,  116,    9,    9, 0x0a,
+     149,    9,    9,    9, 0x0a,
+     163,    9,    9,    9, 0x0a,
+     184,  180,    9,    9, 0x0a,
+     199,    9,    9,    9, 0x0a,
+     214,    9,    9,    9, 0x0a,
+     236,    9,    9,    9, 0x0a,
+     254,    9,    9,    9, 0x0a,
 
        0        // eod
 };
@@ -47,9 +52,12 @@ static const uint qt_meta_data_NTagView[] = {
 static const char qt_meta_stringdata_NTagView[] = {
     "NTagView\0\0updateSelectionRequested()\0"
     "int\0item\0calculateHeightRec(QTreeWidgetItem*)\0"
-    "calculateHeight()\0lid,name\0"
-    "tagUpdated(int,QString)\0rebuildTree()\0"
-    "buildSelection()\0lid\0addNewTag(int)\0"
+    "calculateHeight()\0editComplete()\0"
+    "lid,name\0tagUpdated(int,QString)\0"
+    "rebuildTree()\0buildSelection()\0lid\0"
+    "addNewTag(int)\0addRequested()\0"
+    "propertiesRequested()\0deleteRequested()\0"
+    "renameRequested()\0"
 };
 
 const QMetaObject NTagView::staticMetaObject = {
@@ -85,13 +93,18 @@ int NTagView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 1: { int _r = calculateHeightRec((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
         case 2: calculateHeight(); break;
-        case 3: tagUpdated((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 4: rebuildTree(); break;
-        case 5: buildSelection(); break;
-        case 6: addNewTag((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: editComplete(); break;
+        case 4: tagUpdated((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 5: rebuildTree(); break;
+        case 6: buildSelection(); break;
+        case 7: addNewTag((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 8: addRequested(); break;
+        case 9: propertiesRequested(); break;
+        case 10: deleteRequested(); break;
+        case 11: renameRequested(); break;
         default: ;
         }
-        _id -= 7;
+        _id -= 12;
     }
     return _id;
 }

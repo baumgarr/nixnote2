@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'nixnote.h'
 **
-** Created: Wed Jun 20 14:36:29 2012
+** Created: Thu Jul 12 10:21:17 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

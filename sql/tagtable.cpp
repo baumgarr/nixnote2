@@ -62,11 +62,20 @@ int TagTable::getAll(QList<int> &tags) {
 void TagTable::updateGuid(int lid, Guid &guid) {
     QLOG_TRACE() << "Entering TagTable::updateTagGuid()";
 
+    QString oldGuid;
+    getGuid(oldGuid, lid);
+
     QSqlQuery query;
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", QString::fromStdString(guid));
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_GUID);
+    query.exec();
+
+    query.prepare("Update DataStore set data=:data where key=:key and data=:oldGuid");
+    query.bindValue(":data", QString::fromStdString(guid));
+    query.bindValue(":key", TAG_PARENT);
+    query.bindValue(":oldGuid", oldGuid);
     query.exec();
 
     QLOG_TRACE() << "Leaving TagTable::updateTagGuid()";
@@ -86,7 +95,22 @@ void TagTable::sync(Tag &tag) {
 
 
 
-// Synchronize a new tag with what is in the database.  We basically
+
+// Update a tag record
+void TagTable::update(Tag &tag, bool dirty=true) {
+    int lid = getLid(tag.guid);
+    if (lid > 0) {
+        QSqlQuery query;
+        // Delete the old record
+        query.prepare("Delete from DataStore where lid=:lid");
+        query.bindValue(":lid", lid);
+        query.exec();
+
+        add(lid, tag, dirty);
+    }
+}
+
+// Synchronize a newtag with what is in the database.  We basically
 // just delete the old one & give it a new entry
 void TagTable::sync(int l, Tag &tag) {
     QLOG_TRACE() << "Entering TagTable::syncTag()";
@@ -327,5 +351,80 @@ bool TagTable::getGuid(QString &guid, int lid) {
     }
 
     return true;
+}
+
+
+
+// Delete this tag
+void TagTable::deleteTag(int lid) {
+    if (!exists(lid))
+        return;
+
+    // First find all the children & delete them
+    QList<int> list;
+    QString parentGuid;
+    getGuid(parentGuid, lid);
+    findChildren(list, parentGuid);
+    getGuid(parentGuid, lid);
+
+    // Now add this lid to the list to be deleted
+    list.append(lid);
+
+    for (int i=0; i<list.size(); i++) {
+        Tag tag;
+        int currentLid = list[i];
+        get(tag, currentLid);
+        if (tag.__isset.updateSequenceNum && tag.updateSequenceNum > 0) {
+            QSqlQuery query;
+            query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+            query.bindValue(":lid", currentLid);
+            query.bindValue(":key", TAG_ISDELETED);
+            query.bindValue(":data", true);
+            query.exec();
+        } else {
+            expunge(currentLid);
+        }
+    }
+}
+
+
+void TagTable::expunge(int lid) {
+    QSqlQuery query;
+    query.prepare("delete from DataStore where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+}
+
+// Is this search deleted?
+bool TagTable::isDeleted(int lid) {
+    QSqlQuery query;
+    query.prepare("Select lid from DataStore where lid=:lid and key=:key and data=:data");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", TAG_ISDELETED);
+    query.bindValue(":data", true);
+    query.exec();
+    if (query.next())
+        return true;
+    else
+        return false;
+}
+
+
+int TagTable::findChildren(QList<int> &list, QString parentGuid) {
+    QSqlQuery query;
+    query.prepare("Select lid from DataStore where key=:key and data=:parent");
+    query.bindValue(":key", TAG_PARENT);
+    query.bindValue(":parent", parentGuid);
+    query.exec();
+
+    // Now find all the children for each found tag
+    while (query.next()) {
+        int nextChild = query.value(0).toInt();
+        QString nextGuid;
+        getGuid(nextGuid, nextChild);
+        findChildren(list, nextGuid);
+        list.append(nextChild);
+    }
+    return list.size();
 }
 

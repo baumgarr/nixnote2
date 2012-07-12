@@ -1,13 +1,17 @@
 #include "ntagview.h"
 #include "global.h"
 #include "ntagviewitem.h"
+#include "sql/tagtable.h"
+#include "dialog/tagproperties.h"
+#include "filters/filtercriteria.h"
 
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QByteArray>
 #include <QtSql>
-#include "sql/tagtable.h"
-#include "filters/filtercriteria.h"
+#include <QMessageBox>
+
+
 
 #define NAME_POSITION 0
 
@@ -49,6 +53,45 @@ NTagView::NTagView(QWidget *parent) :
     connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(buildSelection()));
+
+    setAcceptDrops(true);
+    setDragEnabled(true);
+
+
+    addAction = context.addAction(tr("Create New Tag"));
+    addAction->setShortcut(QKeySequence(Qt::Key_Insert));
+    addAction->setShortcutContext(Qt::WidgetShortcut);
+
+    addShortcut = new QShortcut(this);
+    addShortcut->setKey(QKeySequence(Qt::Key_Insert));
+    addShortcut->setContext(Qt::WidgetShortcut);
+
+    context.addSeparator();
+    deleteAction = context.addAction(tr("Delete"));
+    deleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
+
+    deleteShortcut = new QShortcut(this);
+    deleteShortcut->setKey(QKeySequence(Qt::Key_Delete));
+    deleteShortcut->setContext(Qt::WidgetShortcut);
+
+    renameAction = context.addAction(tr("Rename"));
+    renameAction->setShortcutContext(Qt::WidgetShortcut);
+
+    renameShortcut = new QShortcut(this);
+    renameShortcut->setKey(QKeySequence(Qt::Key_F2));
+    renameShortcut->setContext(Qt::WidgetShortcut);
+
+    context.addSeparator();
+    propertiesAction = context.addAction(tr("Properties"));
+
+    connect(addAction, SIGNAL(triggered()), this, SLOT(addRequested()));
+    connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteRequested()));
+    connect(renameAction, SIGNAL(triggered()), this, SLOT(renameRequested()));
+    connect(propertiesAction, SIGNAL(triggered()), this, SLOT(propertiesRequested()));
+
+    connect(addShortcut, SIGNAL(activated()), this, SLOT(addRequested()));
+    connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
+    connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
 }
 
 
@@ -127,13 +170,19 @@ void NTagView::loadData() {
     TagTable tagTable;
     query.exec("Select lid, name, parent_gid from TagModel order by name");
     while (query.next()) {
-        NTagViewItem *newWidget = new NTagViewItem();
-        newWidget->setData(NAME_POSITION, Qt::DisplayRole, query.value(1).toString());
-        newWidget->setData(NAME_POSITION, Qt::UserRole, query.value(0).toInt());
-        this->dataStore.insert(query.value(0).toInt(), newWidget);
-        newWidget->parentGuid = query.value(2).toString();
-        newWidget->parentLid = tagTable.getLid(query.value(2).toString());
-        root->addChild(newWidget);
+        int lid = query.value(0).toInt();
+        QString name = query.value(1).toString();
+        QString parentGid = query.value(2).toString();
+
+        if (!tagTable.isDeleted(lid)) {
+            NTagViewItem *newWidget = new NTagViewItem();
+            newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
+            newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
+            this->dataStore.insert(lid, newWidget);
+            newWidget->parentGuid = parentGid;
+            newWidget->parentLid = tagTable.getLid(parentGid);
+            root->addChild(newWidget);
+        }
     }
     this->rebuildTree();
 }
@@ -256,7 +305,7 @@ void NTagView::updateSelection() {
     blockSignals(false);
 }
 
-
+// Add a new tag to the table
 void NTagView::addNewTag(int lid) {
     TagTable tagTable;
     Tag newTag;
@@ -266,7 +315,7 @@ void NTagView::addNewTag(int lid) {
     }
 }
 
-
+// Accept the drag move event if possible
 void NTagView::dragMoveEvent(QDragMoveEvent *event) {
     if (event->mimeData()->hasFormat("application/x-nixnote-note")) {
         if (event->answerRect().intersects(childrenRect()))
@@ -276,7 +325,7 @@ void NTagView::dragMoveEvent(QDragMoveEvent *event) {
 }
 
 
-
+// Drag tag event.  Determine if dragging is even possible
 void NTagView::dragEnterEvent(QDragEnterEvent *event) {
     if (event->mimeData()->hasFormat("application/x-nixnote-note")) {
         event->accept();
@@ -287,11 +336,202 @@ void NTagView::dragEnterEvent(QDragEnterEvent *event) {
             event->ignore();
             return;
         }
-        QMimeData mdata(currentItem()->data(NAME_POSITION, Qt::UserRole).toInt());
-        mdata.setText("application/x-nixnote-tag");
-        //event->mimeData()->set(mdata);
         event->accept();
         return;
     }
     event->ignore();
 }
+
+
+// Handle what happens when something is dropped onto a tag item
+bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action) {
+    QLOG_DEBUG() << "Dropping mime: " << data->formats();
+
+
+    if (data->hasFormat("application/x-nixnote-tag")) {
+
+        QTreeWidgetItem *newChild;
+
+        // If there is no parent, then they are trying to drop to the top level, which isn't permitted
+        if (parent == NULL)
+            return false;
+
+        QByteArray d = data->data("application/x-nixnote-tag");
+        int lid = d.toInt();
+        if (lid == 0)
+            return false;
+
+        newChild = new QTreeWidgetItem(parent);
+        int parentLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
+        Tag tag;
+        TagTable tagTable;
+        tagTable.get(tag, lid);
+        QString guid;
+        tagTable.getGuid(guid, parentLid);
+        tag.parentGuid = guid.toStdString();
+        tagTable.update(tag, true);
+
+        copyTreeItem(currentItem(), newChild);
+        currentItem()->setHidden(true);
+        this->sortByColumn(NAME_POSITION, Qt::AscendingOrder);
+        sortItems(NAME_POSITION, Qt::AscendingOrder);
+        return true;
+    }
+}
+
+// Implement of dropEvent so dropMimeData gets called
+void NTagView::dropEvent(QDropEvent *event) {
+    QTreeView::dropEvent(event);
+}
+
+
+// Copy an individual item within the tree.  I need to do this because
+// Qt doesn't call the dropMimeData on a move, just a copy.
+void NTagView::copyTreeItem(QTreeWidgetItem *source, QTreeWidgetItem *target) {
+    QLOG_DEBUG() << "In copytreeitem";
+    target->setData(NAME_POSITION, Qt::DisplayRole, source->data(NAME_POSITION, Qt::DisplayRole));
+    target->setData(NAME_POSITION, Qt::UserRole, source->data(NAME_POSITION, Qt::UserRole));
+
+    for (int i=0; i<source->childCount(); i++) {
+        QTreeWidgetItem *newChild = new QTreeWidgetItem(target);
+        copyTreeItem(source->child(i), newChild);
+        source->child(i)->setHidden(true);
+    }
+    return;
+}
+
+
+void NTagView::mouseMoveEvent(QMouseEvent *event)
+{
+    if (currentItem() == NULL)
+        return;
+
+    QLOG_DEBUG() << "Mouse Move 1";
+    if (!(event->buttons() & Qt::LeftButton))
+        return;
+
+    QLOG_DEBUG() << "Mouse Move 2";
+
+    QDrag *drag = new QDrag(this);
+    QMimeData *mimeData = new QMimeData;
+
+    mimeData->setData("application/x-nixnote-tag", currentItem()->data(NAME_POSITION, Qt::UserRole).toByteArray());
+    drag->setMimeData(mimeData);
+
+    Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction);
+}
+
+
+
+void NTagView::contextMenuEvent(QContextMenuEvent *event) {
+    QList<QTreeWidgetItem*> items = selectedItems();
+    if (items.size() == 0) {
+        propertiesAction->setEnabled(false);
+        deleteAction->setEnabled(false);
+        renameAction->setEnabled(false);
+    } else {
+        propertiesAction->setEnabled(true);
+        deleteAction->setEnabled(true);
+        renameAction->setEnabled(true);
+    }
+    context.exec(event->globalPos());
+}
+
+
+
+void NTagView::addRequested() {
+    TagProperties dialog;
+    QList<QTreeWidgetItem*> items = selectedItems();
+
+    dialog.setLid(0);
+
+    dialog.exec();
+    if (!dialog.okPressed)
+        return;
+
+    TagTable table;
+    NTagViewItem *newWidget = new NTagViewItem();
+    QString name = dialog.name.text().trimmed();
+    int lid = table.findByName(name);
+    newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
+    newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
+    this->dataStore.insert(lid, newWidget);
+    root->addChild(newWidget);
+    this->sortItems(NAME_POSITION, Qt::AscendingOrder);
+    resetSize();
+    this->sortByColumn(NAME_POSITION);
+}
+
+void NTagView::propertiesRequested() {
+    TagProperties dialog;
+    QList<QTreeWidgetItem*> items = selectedItems();
+
+    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    dialog.setLid(lid);
+
+    dialog.exec();
+    if (!dialog.okPressed)
+        return;
+    items[0]->setData(NAME_POSITION, Qt::DisplayRole, dialog.name.text().trimmed());
+}
+
+void NTagView::deleteRequested() {
+    QList<QTreeWidgetItem*> items = selectedItems();
+
+    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    if (global.confirmDeletes()) {
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Question);
+        msgBox.setText(tr("Are you sure you want to delete this tag?"));
+        msgBox.setWindowTitle(tr("Verify Delete"));
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
+        int ret = msgBox.exec();
+        if (ret == QMessageBox::No)
+            return;
+    }
+    TagTable table;
+    table.deleteTag(lid);
+    items[0]->setHidden(true);
+}
+
+void NTagView::renameRequested() {
+    editor = new TreeWidgetEditor(this);
+    connect(editor, SIGNAL(editComplete()), this, SLOT(editComplete()));
+
+    QList<QTreeWidgetItem*> items = selectedItems();
+    editor->setText(items[0]->text(NAME_POSITION));
+    editor->lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    editor->setTreeWidgetItem(items[0], NAME_POSITION);
+    QFontMetrics m(font());
+    editor->setMinimumHeight(m.height()+4);
+    editor->setMaximumHeight(m.height()+4);
+    setItemWidget(items[0], NAME_POSITION, editor);
+    editor->setFocus();
+}
+
+
+void NTagView::editComplete() {
+    QString text = editor->text().trimmed();
+    int lid = editor->lid;
+    TagTable table;
+    Tag tag;
+    table.get(tag, lid);
+
+    // Check that this tag doesn't already exist
+    // if it exists, we go back to the original name
+    int check = table.findByName(text);
+    if (check != 0) {
+        NTagViewItem *item = dataStore[lid];
+        item->setData(NAME_POSITION, Qt::DisplayRole, QString::fromStdString(tag.name));
+    } else {
+        tag.name = text.toStdString();
+        table.update(tag, true);
+    }
+    delete editor;
+    this->sortItems(NAME_POSITION, Qt::AscendingOrder);
+    resetSize();
+    this->sortByColumn(NAME_POSITION);
+}
+
+
