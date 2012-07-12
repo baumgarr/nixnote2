@@ -374,8 +374,17 @@ void NSearchView::editComplete() {
     SearchTable table;
     SavedSearch s;
     table.get(s, lid);
-    s.name = text.toStdString();
-    table.update(lid, s, true);
+
+    // Check that this search doesn't already exist
+    // if it exists, we go back to the original name
+    int check = table.findByName(text);
+    if (check != 0) {
+        NSearchViewItem *item = dataStore[lid];
+        item->setData(NAME_POSITION, Qt::DisplayRole, QString::fromStdString(s.name));
+    } else {
+        s.name = text.toStdString();
+        table.update(lid, s, true);
+    }
     delete editor;
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);
     resetSize();
