@@ -751,8 +751,10 @@ void NoteTable::updateNoteListNotebooks(QString guid, QString name) {
 
 int NoteTable::getNotesWithTag(QList<int> &retval, QString tag) {
     QSqlQuery query;
+    TagTable tagTable;
+    int tagLid = tagTable.getLid(tag);
     query.prepare("Select lid data from DataStore where data=:tag and key=:key");
-    query.bindValue(":tag", tag);
+    query.bindValue(":tag", tagLid);
     query.bindValue(":key", NOTE_TAG);
     query.exec();
     while(query.next()) {
