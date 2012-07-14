@@ -16,3 +16,13 @@
 
 # dump logs
 *.log
+core
+
+# autosave files
+*.autosave
+
+# the main program itself
+nixnote
+
+#user files
+*.pro.*

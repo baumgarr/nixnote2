@@ -20,6 +20,7 @@ public:
     void clear();
     void loadTags();
     void setCurrentLid(int l);
+    void tagRenamed(int lid, QString oldName, QString newName);
 
 private:
     int currentLid;

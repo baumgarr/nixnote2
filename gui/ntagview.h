@@ -49,6 +49,7 @@ public:
 
 signals:
     void updateSelectionRequested();
+    void tagRenamed(int lid, QString oldName, QString newName);
 
 public slots:
     void tagUpdated(int lid, QString name);

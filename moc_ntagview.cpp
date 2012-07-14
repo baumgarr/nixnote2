@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ntagview.h'
 **
-** Created: Thu Jul 12 10:21:28 2012
+** Created: Sat Jul 14 13:12:07 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,34 +23,36 @@ static const uint qt_meta_data_NTagView[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      12,   14, // methods
+      13,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       1,       // signalCount
+       2,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
       10,    9,    9,    9, 0x05,
+      57,   37,    9,    9, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      46,   41,   37,    9, 0x08,
-      83,    9,    9,    9, 0x08,
-     101,    9,    9,    9, 0x08,
-     125,  116,    9,    9, 0x0a,
-     149,    9,    9,    9, 0x0a,
-     163,    9,    9,    9, 0x0a,
-     184,  180,    9,    9, 0x0a,
-     199,    9,    9,    9, 0x0a,
-     214,    9,    9,    9, 0x0a,
-     236,    9,    9,    9, 0x0a,
-     254,    9,    9,    9, 0x0a,
+      98,   93,   89,    9, 0x08,
+     135,    9,    9,    9, 0x08,
+     153,    9,    9,    9, 0x08,
+     177,  168,    9,    9, 0x0a,
+     201,    9,    9,    9, 0x0a,
+     215,    9,    9,    9, 0x0a,
+     236,  232,    9,    9, 0x0a,
+     251,    9,    9,    9, 0x0a,
+     266,    9,    9,    9, 0x0a,
+     288,    9,    9,    9, 0x0a,
+     306,    9,    9,    9, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_NTagView[] = {
     "NTagView\0\0updateSelectionRequested()\0"
+    "lid,oldName,newName\0tagRenamed(int,QString,QString)\0"
     "int\0item\0calculateHeightRec(QTreeWidgetItem*)\0"
     "calculateHeight()\0editComplete()\0"
     "lid,name\0tagUpdated(int,QString)\0"
@@ -90,21 +92,22 @@ int NTagView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: updateSelectionRequested(); break;
-        case 1: { int _r = calculateHeightRec((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])));
+        case 1: tagRenamed((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 2: { int _r = calculateHeightRec((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 2: calculateHeight(); break;
-        case 3: editComplete(); break;
-        case 4: tagUpdated((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 5: rebuildTree(); break;
-        case 6: buildSelection(); break;
-        case 7: addNewTag((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 8: addRequested(); break;
-        case 9: propertiesRequested(); break;
-        case 10: deleteRequested(); break;
-        case 11: renameRequested(); break;
+        case 3: calculateHeight(); break;
+        case 4: editComplete(); break;
+        case 5: tagUpdated((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 6: rebuildTree(); break;
+        case 7: buildSelection(); break;
+        case 8: addNewTag((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 9: addRequested(); break;
+        case 10: propertiesRequested(); break;
+        case 11: deleteRequested(); break;
+        case 12: renameRequested(); break;
         default: ;
         }
-        _id -= 12;
+        _id -= 13;
     }
     return _id;
 }
@@ -113,5 +116,12 @@ int NTagView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 void NTagView::updateSelectionRequested()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, 0);
+}
+
+// SIGNAL 1
+void NTagView::tagRenamed(int _t1, QString _t2, QString _t3)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
+    QMetaObject::activate(this, &staticMetaObject, 1, _a);
 }
 QT_END_MOC_NAMESPACE

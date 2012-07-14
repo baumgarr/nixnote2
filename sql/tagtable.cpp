@@ -1,7 +1,9 @@
 #include "tagtable.h"
 #include "configstore.h"
+#include "notetable.h"
 
 #include <QSqlTableModel>
+#include <QList>
 
 
 
@@ -107,6 +109,15 @@ void TagTable::update(Tag &tag, bool dirty=true) {
         query.exec();
 
         add(lid, tag, dirty);
+
+        // Now update the Note display list
+        NoteTable noteTable;
+        QList<int> noteList;
+        noteTable.findNotesByTag(noteList, lid);
+        for (int i=0; i<noteList.size(); i++) {
+            noteTable.rebuildNoteListTags(noteList[i]);
+        }
+
     }
 }
 

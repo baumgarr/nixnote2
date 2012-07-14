@@ -517,6 +517,7 @@ void NTagView::editComplete() {
     TagTable table;
     Tag tag;
     table.get(tag, lid);
+    QString oldName = QString::fromStdString(tag.name);
 
     // Check that this tag doesn't already exist
     // if it exists, we go back to the original name
@@ -532,6 +533,7 @@ void NTagView::editComplete() {
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);
     resetSize();
     this->sortByColumn(NAME_POSITION);
+    emit(tagRenamed(lid, oldName, text));
 }
 
 

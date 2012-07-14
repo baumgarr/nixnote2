@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'nbrowserwindow.h'
 **
-** Created: Mon Jun 18 13:01:31 2012
+** Created: Sat Jul 14 13:12:12 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,7 +23,7 @@ static const uint qt_meta_data_NBrowserWindow[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       5,   14, // methods
+       6,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -36,8 +36,9 @@ static const uint qt_meta_data_NBrowserWindow[] = {
 
  // slots: signature, parameters, type, tag, flags
       57,   51,   15,   15, 0x0a,
-      80,   15,   15,   15, 0x08,
-      99,   15,   15,   15, 0x08,
+     100,   80,   15,   15, 0x0a,
+     132,   15,   15,   15, 0x08,
+     151,   15,   15,   15, 0x08,
 
        0        // eod
 };
@@ -45,6 +46,7 @@ static const uint qt_meta_data_NBrowserWindow[] = {
 static const char qt_meta_stringdata_NBrowserWindow[] = {
     "NBrowserWindow\0\0noteUpdated(int)\0int\0"
     "tagAdded(int)\0value\0changeExpandState(int)\0"
+    "lid,oldName,newName\0tagRenamed(int,QString,QString)\0"
     "sendUpdateSignal()\0newTagAdded(int)\0"
 };
 
@@ -81,11 +83,12 @@ int NBrowserWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         case 1: { int _r = tagAdded((*reinterpret_cast< int(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
         case 2: changeExpandState((*reinterpret_cast< int(*)>(_a[1]))); break;
-        case 3: sendUpdateSignal(); break;
-        case 4: newTagAdded((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 3: tagRenamed((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 4: sendUpdateSignal(); break;
+        case 5: newTagAdded((*reinterpret_cast< int(*)>(_a[1]))); break;
         default: ;
         }
-        _id -= 5;
+        _id -= 6;
     }
     return _id;
 }

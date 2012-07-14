@@ -102,7 +102,6 @@ void NixNote::setupGui() {
     leftPanel = new WidgetPanel();
 
     this->setupNoteList();
-    this->setupTabWindow();
     searchText = new LineEdit();
     leftPanel->addWidget(searchText);
     this->setupSynchronizedNotebookTree();
@@ -110,6 +109,7 @@ void NixNote::setupGui() {
     this->setupSearchTree();
     this->setupAttributeTree();
     this->setupTrashTree();
+    this->setupTabWindow();
     leftPanel->vboxLayout->addStretch();
 
 
@@ -257,7 +257,9 @@ void NixNote::setupSynchronizedNotebookTree() {
 void NixNote::setupTabWindow() {
     tabWindow = new NTabWidget();
     rightPanelSplitter->addWidget(tabWindow);
-    tabWindow->addBrowser(new NBrowserWindow(), "");
+    NBrowserWindow *newBrowser = new NBrowserWindow();
+    connect(tagTreeView, SIGNAL(tagRenamed(int,QString,QString)), newBrowser, SLOT(tagRenamed(int,QString,QString)));
+    tabWindow->addBrowser(newBrowser, "");
     rightPanelSplitter->setStretchFactor(1,10);
 
     connect(noteTableView, SIGNAL(openNote(bool)), this, SLOT(openNote(bool)));

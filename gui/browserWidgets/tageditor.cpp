@@ -127,6 +127,16 @@ void TagEditor::loadTags() {
 
 
 //*******************************************************
+//* Signal received that a tag name has been changed
+//*******************************************************
+void TagEditor::tagRenamed(int lid, QString oldName, QString newName) {
+    tagNames.removeOne(oldName);
+    tagNames << newName;
+    loadTags();
+}
+
+
+//*******************************************************
 //* Set the tags for the current note
 //*******************************************************
 void TagEditor::setTags(QStringList s) {

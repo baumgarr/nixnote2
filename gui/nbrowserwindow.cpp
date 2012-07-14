@@ -101,3 +101,7 @@ void NBrowserWindow::sendUpdateSignal() {
 void NBrowserWindow::newTagAdded(int lid) {
     emit(tagAdded(lid));
 }
+
+void NBrowserWindow::tagRenamed(int lid, QString oldName, QString newName) {
+    tagEditor.tagRenamed(lid, oldName, newName);
+}

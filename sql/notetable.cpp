@@ -687,12 +687,28 @@ bool NoteTable::exists(string guid) {
 }
 
 
+
+// Find the note LIDs for a tag
+int NoteTable::findNotesByTag(QList<int> &values, int tagLid) {
+    QSqlQuery query;
+    query.prepare("Select lid from DataStore where key=:key and data=:tagLid");
+    query.bindValue(":key", NOTE_TAG);
+    query.bindValue(":tagLid", tagLid);
+    query.exec();
+    while (query.next()) {
+        values.append(query.value(0).toInt());
+    }
+    return values.size();
+}
+
 // Find the note LIDs for a tag
 int NoteTable::findNotesByTag(QList<int> &values, QString data) {
+    TagTable tagTable;
+    int tagLid = tagTable.findByName(data);
     QSqlQuery query;
-    query.prepare("Select lid from DataStore where key=:key and data=:tag");
-    query.bindValue(":tag", data);
+    query.prepare("Select lid from DataStore where key=:key and data=:tagLid");
     query.bindValue(":key", NOTE_TAG);
+    query.bindValue(":tagLid", tagLid);
     query.exec();
     while (query.next()) {
         values.append(query.value(0).toInt());

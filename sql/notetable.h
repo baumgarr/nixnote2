@@ -61,7 +61,6 @@ class NoteTable
 {
 
 private:
-    void rebuildNoteListTags(int lid);
 
 public:
     NoteTable();                             // Constructor
@@ -80,8 +79,9 @@ public:
     bool exists(int lid);                   // Does this note exist?
     bool exists(QString guid);              // Does this note exist?
     bool exists(string guid);               // Does this note exist?
-    int findNotesByTag(QList<int> &values, QString data);
-    int findNotesByTag(QList<int> &values, string data);
+    int findNotesByTag(QList<int> &values, QString tags);
+    int findNotesByTag(QList<int> &values, string tags);
+    int findNotesByTag(QList<int> &values, int tagLid);
     void updateNoteListTags(int noteLid, QString tags);
     void updateNoteListNotebooks(QString guid, QString name);
     int getNotesWithTag(QList<int> &retval, QString tag);  // Find all notes for a specific tag;
@@ -99,6 +99,7 @@ public:
     void updateAuthor(int lid, QString value, bool isDirty);
     void removeTag(int noteLid, int tag, bool isDirty);
     void addTag(int lid, int tag, bool isDirty);
+    void rebuildNoteListTags(int lid);   // Update the note's tags in the display table
 };
 
 

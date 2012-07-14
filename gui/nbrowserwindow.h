@@ -53,6 +53,7 @@ signals:
 
 public slots:
     void changeExpandState(int value);
+    void tagRenamed(int lid, QString oldName, QString newName);
 
 private slots:
     void sendUpdateSignal();
