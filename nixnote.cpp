@@ -154,6 +154,8 @@ void NixNote::setupGui() {
     // Finish by filtering & displaying the data
     updateSelectionCriteria();
 
+    // connect signal on a tag rename
+    connect(tagTreeView, SIGNAL(tagRenamed(int,QString,QString)), this, SLOT(updateSelectionCriteria()));
 }
 
 
