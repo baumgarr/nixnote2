@@ -5,6 +5,8 @@
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QtSql>
+#include <QMessageBox>
+
 #include "sql/notebooktable.h"
 #include "evernote/UserStore.h"
 #include "evernote/NoteStore.h"
@@ -50,6 +52,64 @@ NNotebookView::NNotebookView(QWidget *parent) :
     connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(buildSelection()));
+
+
+    addAction = context.addAction(tr("Create New Notebook"));
+    addAction->setShortcut(QKeySequence(Qt::Key_Insert));
+    addAction->setShortcutContext(Qt::WidgetShortcut);
+
+    addShortcut = new QShortcut(this);
+    addShortcut->setKey(QKeySequence(Qt::Key_Insert));
+    addShortcut->setContext(Qt::WidgetShortcut);
+
+    context.addSeparator();
+    deleteAction = context.addAction(tr("Delete"));
+    deleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
+
+    deleteShortcut = new QShortcut(this);
+    deleteShortcut->setKey(QKeySequence(Qt::Key_Delete));
+    deleteShortcut->setContext(Qt::WidgetShortcut);
+
+    // Start building the stack menu
+    stackMenu = context.addMenu(tr("Add to stack"));
+    QAction *newAction;
+    NotebookTable table;
+    QStringList stacks;
+    table.getStacks(stacks);
+    for (int i=0; i<stacks.size(); i++) {
+        newAction = stackMenu->addAction(stacks[i]);
+        connect(newAction, SIGNAL(triggered()), this, SLOT(moveToStackRequested()));
+    }
+    sortStackMenu();
+    if (stacks.size() > 0) {
+        stackMenu->addSeparator();
+    }
+    newStackAction = stackMenu->addAction(tr("New stack"));
+    connect(newStackAction, SIGNAL(triggered()), this, SLOT(moveToNewStackRequested()));
+
+    removeFromStackAction = context.addAction(tr("Remove from stack"));
+    removeFromStackAction->setShortcutContext(Qt::WidgetShortcut);
+    removeFromStackAction->setVisible(false);
+
+    renameAction = context.addAction(tr("Rename"));
+    renameAction->setShortcutContext(Qt::WidgetShortcut);
+
+    renameShortcut = new QShortcut(this);
+    renameShortcut->setKey(QKeySequence(Qt::Key_F2));
+    renameShortcut->setContext(Qt::WidgetShortcut);
+
+    context.addSeparator();
+    propertiesAction = context.addAction(tr("Properties"));
+
+    connect(addAction, SIGNAL(triggered()), this, SLOT(addRequested()));
+    connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteRequested()));
+    connect(renameAction, SIGNAL(triggered()), this, SLOT(renameRequested()));
+    connect(propertiesAction, SIGNAL(triggered()), this, SLOT(propertiesRequested()));
+
+    connect(addShortcut, SIGNAL(activated()), this, SLOT(addRequested()));
+    connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
+    connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
+    connect(removeFromStackAction, SIGNAL(triggered()), this, SLOT(removeFromStackRequested()));
 }
 
 
@@ -126,21 +186,24 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
 // Load up the data from the database
 void NNotebookView::loadData() {
     QSqlQuery query;
+    NotebookTable notebookTable;
     dataStore.clear();
     query.exec("Select lid, name, stack from NotebookModel order by name");
     while (query.next()) {
-        NNotebookViewItem *newWidget = new NNotebookViewItem();
-        newWidget->setData(NAME_POSITION, Qt::DisplayRole, query.value(1).toString());
-        newWidget->setData(NAME_POSITION, Qt::UserRole, query.value(0).toInt());
-        newWidget->stack = query.value(2).toString();
-        this->dataStore.insert(query.value(0).toInt(), newWidget);
-        root->addChild(newWidget);
-        if (newWidget->stack != "" && !stackStore.contains(newWidget->stack)) {
-            NNotebookViewItem *stackWidget = new NNotebookViewItem();
-            stackWidget->setData(NAME_POSITION, Qt::DisplayRole, newWidget->stack);
-            stackWidget->setData(NAME_POSITION, Qt::UserRole, "STACK");
-            stackStore.insert(newWidget->stack, stackWidget);
-            root->addChild(stackWidget);
+        if (!notebookTable.isDeleted(query.value(0).toInt())) {
+            NNotebookViewItem *newWidget = new NNotebookViewItem();
+            newWidget->setData(NAME_POSITION, Qt::DisplayRole, query.value(1).toString());
+            newWidget->setData(NAME_POSITION, Qt::UserRole, query.value(0).toInt());
+            newWidget->stack = query.value(2).toString();
+            this->dataStore.insert(query.value(0).toInt(), newWidget);
+            root->addChild(newWidget);
+            if (newWidget->stack != "" && !stackStore.contains(newWidget->stack)) {
+                NNotebookViewItem *stackWidget = new NNotebookViewItem();
+                stackWidget->setData(NAME_POSITION, Qt::DisplayRole, newWidget->stack);
+                stackWidget->setData(NAME_POSITION, Qt::UserRole, "STACK");
+                stackStore.insert(newWidget->stack, stackWidget);
+                root->addChild(stackWidget);
+            }
         }
     }
     this->rebuildTree();
@@ -286,4 +349,335 @@ void NNotebookView::updateSelection() {
         root->setSelected(false);
 
     blockSignals(false);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+void NNotebookView::contextMenuEvent(QContextMenuEvent *event) {
+    QList<QTreeWidgetItem*> items = selectedItems();
+    QAction *stackAction = stackMenu->menuAction();
+    context.removeAction(stackAction);
+    if (items.size() == 0) {
+        propertiesAction->setEnabled(false);
+        deleteAction->setEnabled(false);
+        renameAction->setEnabled(false);
+        removeFromStackAction->setVisible(false);
+    } else {
+        propertiesAction->setEnabled(true);
+        deleteAction->setEnabled(true);
+        renameAction->setEnabled(true);
+        removeFromStackAction->setVisible(false);
+        NotebookTable table;
+
+        for (int i=0; i<items.size(); i++) {
+            if (items[i]->data(NAME_POSITION, Qt::UserRole).toString() == "STACK") {
+                deleteAction->setEnabled(false);
+                removeFromStackAction->setVisible(false);
+            } else {
+                int lid = items[i]->data(NAME_POSITION, Qt::UserRole).toInt();
+                if (table.isStacked(lid)) {
+                    removeFromStackAction->setVisible(true);
+                } else {
+                    removeFromStackAction->setVisible(false);
+                    context.insertAction(renameAction, stackAction);
+                }
+            }
+        }
+    }
+    context.exec(event->globalPos());
+}
+
+
+
+void NNotebookView::addRequested() {
+//    TagProperties dialog;
+//    QList<QTreeWidgetItem*> items = selectedItems();
+
+//    dialog.setLid(0);
+
+//    dialog.exec();
+//    if (!dialog.okPressed)
+//        return;
+
+//    TagTable table;
+//    NTagViewItem *newWidget = new NTagViewItem();
+//    QString name = dialog.name.text().trimmed();
+//    int lid = table.findByName(name);
+//    newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
+//    newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
+//    this->dataStore.insert(lid, newWidget);
+//    root->addChild(newWidget);
+//    this->sortItems(NAME_POSITION, Qt::AscendingOrder);
+//    resetSize();
+//    this->sortByColumn(NAME_POSITION);
+}
+
+void NNotebookView::propertiesRequested() {
+//    TagProperties dialog;
+//    QList<QTreeWidgetItem*> items = selectedItems();
+
+//    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+//    dialog.setLid(lid);
+
+//    dialog.exec();
+//    if (!dialog.okPressed)
+//        return;
+//    items[0]->setData(NAME_POSITION, Qt::DisplayRole, dialog.name.text().trimmed());
+}
+
+void NNotebookView::deleteRequested() {
+    QList<QTreeWidgetItem*> items = selectedItems();
+
+    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    if (global.confirmDeletes()) {
+        QMessageBox msgBox;
+        msgBox.setIcon(QMessageBox::Question);
+        msgBox.setText(tr("Are you sure you want to delete this notebook?"));
+        msgBox.setWindowTitle(tr("Verify Delete"));
+        msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+        msgBox.setDefaultButton(QMessageBox::No);
+        int ret = msgBox.exec();
+        if (ret == QMessageBox::No)
+            return;
+    }
+    NotebookTable table;
+    table.deleteNotebook(lid);
+    items[0]->setHidden(true);
+}
+
+void NNotebookView::renameRequested() {
+    editor = new TreeWidgetEditor(this);
+    connect(editor, SIGNAL(editComplete()), this, SLOT(editComplete()));
+
+    QList<QTreeWidgetItem*> items = selectedItems();
+    editor->setText(items[0]->text(NAME_POSITION));
+    if (items[0]->data(NAME_POSITION, Qt::UserRole).toString() != "STACK") {
+        editor->lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    } else {
+        editor->lid = -1;
+        editor->stackName = items[0]->data(NAME_POSITION, Qt::DisplayRole).toString();
+    }
+    editor->setTreeWidgetItem(items[0], NAME_POSITION);
+    QFontMetrics m(font());
+    editor->setMinimumHeight(m.height()+4);
+    editor->setMaximumHeight(m.height()+4);
+    setItemWidget(items[0], NAME_POSITION, editor);
+    editor->setFocus();
+}
+
+
+void NNotebookView::editComplete() {
+    QString text = editor->text().trimmed();
+
+    // Check if this is a notebook or a stack
+    if (editor->lid > 0) {
+        int lid = editor->lid;
+        NotebookTable table;
+        Notebook notebook;
+        table.get(notebook, lid);
+        QString oldName = QString::fromStdString(notebook.name);
+
+        // Check that this notebook doesn't already exist
+        // if it exists, we go back to the original name
+        int check = table.findByName(text);
+        if (check != 0) {
+            NNotebookViewItem *item = dataStore[lid];
+            item->setData(NAME_POSITION, Qt::DisplayRole, QString::fromStdString(notebook.name));
+        } else {
+            notebook.name = text.toStdString();
+            table.update(notebook, true);
+        }
+
+        delete editor;
+        this->sortItems(NAME_POSITION, Qt::AscendingOrder);
+        resetSize();
+        this->sortByColumn(NAME_POSITION);
+        emit(notebookRenamed(lid, oldName, text));
+    } else {
+        // This is if we are renaming a stack
+        QString oldName = editor->stackName;
+        NotebookTable table;
+        table.renameStack(oldName, text);
+
+        // Rename it in the stackStore
+        NNotebookViewItem *item = stackStore[oldName];
+        stackStore.remove(oldName);
+        stackStore.insert(text, item);
+
+        // Remove the old menu item
+        for (int i=0; i<stackMenu->actions().size(); i++) {
+            QLOG_DEBUG() << stackMenu->actions().at(i)->text() << " " << oldName << " " << text;
+            if(stackMenu->actions().at(i)->text() == oldName) {
+                stackMenu->removeAction(stackMenu->actions().at(i));
+                i = stackMenu->actions().size();
+            }
+        }
+        // Create a new menu item
+        bool found = false;
+        for (int i=0; i<stackMenu->actions().size()-1; i++) {
+            if (stackMenu->actions().at(i)->text().toUpper() > text.toUpper()) {
+                QAction *newAction = stackMenu->addAction(text);
+                stackMenu->removeAction(newAction);
+                stackMenu->insertAction(stackMenu->actions().at(i), newAction);
+                connect(newAction, SIGNAL(triggered()), this, SLOT(moveToStackRequested()));
+                i=stackMenu->actions().size();
+                found = true;
+            }
+        }
+        if (!found) {
+            QAction *newAction = stackMenu->addAction(text);
+            stackMenu->removeAction(newAction);
+            int endPos = stackMenu->actions().size()-1;
+            stackMenu->insertAction(stackMenu->actions().at(endPos), newAction);
+            connect(newAction, SIGNAL(triggered()), this, SLOT(moveToStackRequested()));
+        }
+
+        delete editor;
+        this->sortItems(NAME_POSITION, Qt::AscendingOrder);
+        resetSize();
+        this->sortByColumn(NAME_POSITION);
+    }
+}
+
+
+void NNotebookView::moveToStackRequested() {
+    QList<QTreeWidgetItem*> items = selectedItems();
+    if (items.size() == 0)
+        return;
+
+    QAction *action = (QAction*)sender();
+    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    Notebook notebook;
+    NotebookTable table;
+    table.get(notebook, lid);
+    notebook.stack = action->text().toStdString();
+    notebook.__isset.stack = true;
+    table.update(notebook, true);
+
+    // Now move it in the actual tree
+    NNotebookViewItem  *stackWidget, *notebookWidget;
+    stackWidget = stackStore[action->text()];
+    notebookWidget = dataStore[lid];
+
+    notebookWidget->parent()->removeChild(notebookWidget);
+    stackWidget->addChild(notebookWidget);
+
+    this->sortItems(NAME_POSITION, Qt::AscendingOrder);
+    resetSize();
+    this->sortByColumn(NAME_POSITION);
+}
+
+
+void NNotebookView::moveToNewStackRequested() {
+    QList<QTreeWidgetItem*> items = selectedItems();
+    if (items.size() == 0)
+        return;
+
+    QString newStackName = "New Stack";
+    int i=1;
+    QString iStr;
+    QList<int> books;
+    NotebookTable table;
+
+    while (i>=0) {
+        books.clear();
+        table.findByStack(books, newStackName);
+        if (books.size() == 0) {
+            i=-1;
+        } else {
+            iStr = QVariant(i).toString();
+            newStackName = tr("New Stack (") +iStr +tr(")");
+            i++;
+        }
+    }
+
+    // Create the new stack & move the child to it
+    NNotebookViewItem *newStack = new NNotebookViewItem();
+    newStack->setText(NAME_POSITION, newStackName);
+    newStack->setData(NAME_POSITION, Qt::UserRole, "STACK");
+    stackStore.insert(newStackName, newStack);
+    topLevelItem(0)->addChild(newStack);
+    items[0]->parent()->removeChild(items[0]);
+    newStack->addChild(items[0]);
+
+    // Create a new action item for the menu
+    QAction *newAction = stackMenu->addAction(newStackName);
+    connect(newAction, SIGNAL(triggered()), this, SLOT(moveToStackRequested()));
+    menuData.insert(newStackName, newAction);
+    sortStackMenu();
+
+    // Update the note in the database
+    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    Notebook book;
+    table.get(book, lid);
+    book.stack = newStackName.toStdString();
+    book.__isset.stack = true;
+    table.update(book, true);
+
+    this->sortItems(NAME_POSITION, Qt::AscendingOrder);
+    resetSize();
+    this->sortByColumn(NAME_POSITION);
+    newStack->setExpanded(true);
+}
+
+
+void NNotebookView::removeFromStackRequested() {
+    QList<QTreeWidgetItem*> items = selectedItems();
+    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    NotebookTable table;
+    table.removeFromStack(lid);
+
+    // Now move it in the actual tree
+    NNotebookViewItem  *stackWidget, *notebookWidget;
+    notebookWidget = dataStore[lid];
+    stackWidget = (NNotebookViewItem*)notebookWidget->parent();
+
+    stackWidget->removeChild(notebookWidget);
+    stackWidget->parent()->addChild(notebookWidget);
+
+    if (stackWidget->childCount() == 0) {
+        stackWidget->parent()->removeChild(stackWidget);
+        QString text = stackWidget->text(NAME_POSITION);
+        for (int i=0; i<stackMenu->actions().size(); i++) {
+            if (stackMenu->actions().at(i)->text() == text) {
+                stackMenu->actions().at(i)->setVisible(false);
+                i = stackMenu->actions().size();
+            }
+        }
+    }
+
+    this->sortItems(NAME_POSITION, Qt::AscendingOrder);
+    resetSize();
+    this->sortByColumn(NAME_POSITION);
+}
+
+
+void NNotebookView::sortStackMenu() {
+    QList<QString> keyList  = menuData.keys();
+    for (int i=0; i<keyList.size(); i++) {
+        stackMenu->removeAction(menuData[keyList[i]]);
+    }
+
+    // Sort the key
+    qSort(keyList);
+
+    for (int i=0; i<keyList.size(); i++) {
+        stackMenu->insertAction(stackMenu->actions().at(0), menuData[keyList[i]]);
+    }
 }

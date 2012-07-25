@@ -17,6 +17,7 @@ public:
     explicit TreeWidgetEditor(QTreeWidget *parent = 0);
     void setTreeWidgetItem(QTreeWidgetItem *w, int col);
     int lid;
+    QString stackName;
     
 signals:
     void editComplete();

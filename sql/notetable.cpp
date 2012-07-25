@@ -986,3 +986,70 @@ void NoteTable::setDirty(int lid, bool dirty) {
     query.bindValue(":key", NOTE_ISDIRTY);
     query.exec();
 }
+
+
+void NoteTable::deleteNote(int lid, bool isDirty=true) {
+    QSqlQuery query;
+    query.prepare("delete from DataStore where key=:key and lid=:lid");
+    query.bindValue(":key", NOTE_ACTIVE);
+    query.bindValue(":lid", lid);
+    query.exec();
+
+    query.prepare("delete from DataStore where key=:key and lid=:lid");
+    query.bindValue(":key", NOTE_DELETED_DATE);
+    query.bindValue(":lid", lid);
+    query.exec();
+
+    if (isDirty) {
+        query.prepare("delete from DataStore where key=:key and lid=:lid");
+        query.bindValue(":key", NOTE_ISDIRTY);
+        query.bindValue(":lid", lid);
+        query.exec();
+    }
+
+    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ACTIVE);
+    query.bindValue(":data", false);
+    query.exec();
+
+    query.prepare("update notetable set dateDeleted=strftime('%s','now') where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+
+    if (isDirty) {
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_ISDIRTY);
+        query.bindValue(":data", true);
+        query.exec();
+
+    }
+}
+
+
+void NoteTable::expunge(int lid) {
+    QSqlQuery query;
+    query.prepare("delete from DataStore where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+}
+
+
+
+int NoteTable::findNotesByNotebook(QList<int> &notes, QString guid) {
+    QSqlQuery query;
+    query.prepare("Select lid from DataStore where key=:key and data=:notebookGuid");
+    query.bindValue(":key", NOTE_NOTEBOOK);
+    query.bindValue(":notebookGuid", guid);
+    query.exec();
+    while (query.next()) {
+        notes.append(query.value(0).toInt());
+    }
+    return notes.size();
+}
+
+
+int NoteTable::findNotesByNotebook(QList<int> &notes, string guid) {
+    findNotesByNotebook(notes, QString::fromStdString(guid));
+}

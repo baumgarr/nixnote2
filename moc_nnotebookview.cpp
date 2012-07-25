@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'nnotebookview.h'
 **
-** Created: Fri Jun 8 14:53:19 2012
+** Created: Wed Jul 25 18:00:57 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,32 +23,47 @@ static const uint qt_meta_data_NNotebookView[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-       6,   14, // methods
+      15,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       1,       // signalCount
+       2,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
       15,   14,   14,   14, 0x05,
+      62,   42,   14,   14, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-      51,   46,   42,   14, 0x08,
-      88,   14,   14,   14, 0x08,
-     115,  106,   14,   14, 0x0a,
-     144,   14,   14,   14, 0x0a,
-     158,   14,   14,   14, 0x0a,
+     108,  103,   99,   14, 0x08,
+     145,   14,   14,   14, 0x08,
+     163,   14,   14,   14, 0x08,
+     187,  178,   14,   14, 0x0a,
+     216,   14,   14,   14, 0x0a,
+     230,   14,   14,   14, 0x0a,
+     247,   14,   14,   14, 0x0a,
+     262,   14,   14,   14, 0x0a,
+     284,   14,   14,   14, 0x0a,
+     302,   14,   14,   14, 0x0a,
+     320,   14,   14,   14, 0x0a,
+     343,   14,   14,   14, 0x0a,
+     369,   14,   14,   14, 0x0a,
 
        0        // eod
 };
 
 static const char qt_meta_stringdata_NNotebookView[] = {
     "NNotebookView\0\0updateSelectionRequested()\0"
+    "lid,oldName,newName\0"
+    "notebookRenamed(int,QString,QString)\0"
     "int\0item\0calculateHeightRec(QTreeWidgetItem*)\0"
-    "calculateHeight()\0lid,name\0"
-    "notebookUpdated(int,QString)\0rebuildTree()\0"
-    "buildSelection()\0"
+    "calculateHeight()\0editComplete()\0"
+    "lid,name\0notebookUpdated(int,QString)\0"
+    "rebuildTree()\0buildSelection()\0"
+    "addRequested()\0propertiesRequested()\0"
+    "deleteRequested()\0renameRequested()\0"
+    "moveToStackRequested()\0moveToNewStackRequested()\0"
+    "removeFromStackRequested()\0"
 };
 
 const QMetaObject NNotebookView::staticMetaObject = {
@@ -81,15 +96,24 @@ int NNotebookView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_c == QMetaObject::InvokeMetaMethod) {
         switch (_id) {
         case 0: updateSelectionRequested(); break;
-        case 1: { int _r = calculateHeightRec((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])));
+        case 1: notebookRenamed((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
+        case 2: { int _r = calculateHeightRec((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 2: calculateHeight(); break;
-        case 3: notebookUpdated((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 4: rebuildTree(); break;
-        case 5: buildSelection(); break;
+        case 3: calculateHeight(); break;
+        case 4: editComplete(); break;
+        case 5: notebookUpdated((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 6: rebuildTree(); break;
+        case 7: buildSelection(); break;
+        case 8: addRequested(); break;
+        case 9: propertiesRequested(); break;
+        case 10: deleteRequested(); break;
+        case 11: renameRequested(); break;
+        case 12: moveToStackRequested(); break;
+        case 13: moveToNewStackRequested(); break;
+        case 14: removeFromStackRequested(); break;
         default: ;
         }
-        _id -= 6;
+        _id -= 15;
     }
     return _id;
 }
@@ -98,5 +122,12 @@ int NNotebookView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 void NNotebookView::updateSelectionRequested()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, 0);
+}
+
+// SIGNAL 1
+void NNotebookView::notebookRenamed(int _t1, QString _t2, QString _t3)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
+    QMetaObject::activate(this, &staticMetaObject, 1, _a);
 }
 QT_END_MOC_NAMESPACE

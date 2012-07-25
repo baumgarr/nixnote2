@@ -28,6 +28,7 @@
 #define NOTEBOOK_PUBLISHING_ORDER           3102
 #define NOTEBOOK_PUBLISHING_ASCENDING       3103
 #define NOTEBOOK_PUBLISHING_DESCRIPTION     3104
+#define NOTEBOOK_IS_DELETED                 3105
 
 
 using namespace evernote::edam  ;
@@ -64,6 +65,17 @@ public:
     int getStack(QList<int> &retval, QString &stack);  // Get all notebooks for a particular stack
     bool getGuid(QString& retval, int lid); // Get a guid for a particular lid
     bool findGuidByName(QString &retval, QString &guid);  // Search for a notebook's guid based upon its name
+    void deleteNotebook(int lid);           // mark a notebook for deletion
+    void expunge(int lid);          // purge a notebook
+    bool isDeleted(int lid);            // is this notebook deleted?
+    bool update(Notebook &notebook, bool isDirty);
+    bool isLocal();
+    void renameStack(QString oldName, QString newName);
+    void findByStack(QList<int> &lids, QString stackName);
+    void getStacks(QStringList &stacks);
+    bool isStacked(int lid);
+    void removeFromStack(int lid);
+
 };
 
 #endif // NOTEBOOKTABLE_H

@@ -51,6 +51,7 @@
 #define NOTE_ATTRIBUTE_PLACE_NAME              5030
 #define NOTE_ATTRIBUTE_CONTENT_CLASS           5031
 
+#define NOTE_EXPUNGED_FROM_TRASH               5998
 #define NOTE_INDEX_NEEDED                      5999
 
 
@@ -100,6 +101,10 @@ public:
     void removeTag(int noteLid, int tag, bool isDirty);
     void addTag(int lid, int tag, bool isDirty);
     void rebuildNoteListTags(int lid);   // Update the note's tags in the display table
+    void deleteNote(int lid, bool isDirty);           // mark a note for deletion
+    void expunge(int lid);              // expunge a note permanently
+    int findNotesByNotebook(QList<int> &notes, QString guid);
+    int findNotesByNotebook(QList<int> &notes, string guid);
 };
 
 

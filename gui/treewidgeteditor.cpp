@@ -9,6 +9,7 @@ TreeWidgetEditor::TreeWidgetEditor(QTreeWidget *parent) :
     f.setPointSize(8);
     setFont(f);
     lid = 0;
+    stackName = "";
 }
 
 

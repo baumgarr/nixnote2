@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'nmainmenubar.h'
 **
-** Created: Sat Jul 14 13:12:02 2012
+** Created: Wed Jul 25 18:00:48 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

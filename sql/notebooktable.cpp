@@ -2,6 +2,7 @@
 #include "evernote/UserStore.h"
 #include "evernote/NoteStore.h"
 #include "sql/configstore.h"
+#include "sql/notetable.h"
 #include "global.h"
 
 #include <iostream>
@@ -357,10 +358,15 @@ bool NotebookTable::setDirty(QString guid, bool dirty=true) {
 
 bool NotebookTable::setDirty(int lid, bool dirty) {
     QSqlQuery query;
-    query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
-    query.bindValue(":data", dirty);
+    query.prepare("Delete from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", NOTEBOOK_ISDIRTY);
     query.bindValue(":lid", lid);
+    query.exec();
+
+    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTEBOOK_ISDIRTY);
+    query.bindValue(":data", dirty);
     return query.exec();
 }
 
@@ -464,4 +470,132 @@ bool NotebookTable::findGuidByName(QString &retval, QString &guid) {
     }
 
     return false;
+}
+
+
+
+// Delete this tag
+void NotebookTable::deleteNotebook(int lid) {
+    if (!exists(lid))
+        return;
+
+    // First delete all the notes for this notebook
+    QList<int> notes;
+    NoteTable noteTable;
+    QString guid;
+    getGuid(guid, lid);
+    noteTable.findNotesByNotebook(notes, guid);
+    for (int i=0; i<notes.size(); i++) {
+        noteTable.deleteNote(notes[i], true);
+    }
+
+    // Now delete the actual notebook
+    Notebook notebook;
+    get(notebook, lid);
+    if (notebook.__isset.updateSequenceNum && notebook.updateSequenceNum > 0) {
+        QSqlQuery query;
+        query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTEBOOK_IS_DELETED);
+        query.bindValue(":data", true);
+        query.exec();
+    } else {
+        expunge(lid);
+    }
+}
+
+
+bool NotebookTable::isLocal() {
+    return false;
+}
+
+
+bool NotebookTable::update(Notebook &notebook, bool isDirty) {
+    int lid = getLid(notebook.guid);
+    if (lid <= 0)
+        return false;
+    expunge(lid);
+    add(lid, notebook, isDirty, isLocal());
+    return true;
+}
+
+void NotebookTable::expunge(int lid) {
+    QSqlQuery query;
+    query.prepare("delete from DataStore where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+}
+
+
+void NotebookTable::renameStack(QString oldName, QString newName) {
+    QList<int> lids;
+    findByStack(lids, oldName);
+    QSqlQuery query;
+    query.prepare("Update Datastore set data=:newname where key=:key and data=:oldname");
+    query.bindValue(":newname", newName);
+    query.bindValue(":key", NOTEBOOK_STACK);
+    query.bindValue(":oldName", oldName);
+    query.exec();
+
+    for (int i=0; i<lids.size(); i++)
+        setDirty(lids[i], true);
+}
+
+
+void NotebookTable::findByStack(QList<int> &lids, QString stackName) {
+    QSqlQuery query;
+    query.prepare("Select lid from DataStore where key=:key and data=:name");
+    query.bindValue(":key", NOTEBOOK_STACK);
+    query.bindValue(":name", stackName);
+    query.exec();
+    while(query.next()) {
+        lids.append(query.value(0).toInt());
+    }
+}
+
+
+bool NotebookTable::isDeleted(int lid) {
+    QSqlQuery query;
+    query.prepare("select lid from DataStore where lid=:lid and key=:key and data=:value");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTEBOOK_IS_DELETED);
+    query.bindValue(":value", true);
+    query.exec();
+    if (query.next()) {
+        return true;
+    }
+    return false;
+}
+
+
+void NotebookTable::getStacks(QStringList &stacks) {
+    QSqlQuery query;
+    query.prepare("Select distinct data from DataStore where key=:key");
+    query.bindValue(":key", NOTEBOOK_STACK);
+    query.exec();
+    while (query.next()) {
+        stacks.append(query.value(0).toString());
+    }
+}
+
+
+bool NotebookTable::isStacked(int lid) {
+    QSqlQuery query;
+    query.prepare("Select data from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTEBOOK_STACK);
+    query.exec();
+    if (query.next())
+        return true;
+    else
+        return false;
+}
+
+
+void NotebookTable::removeFromStack(int lid) {
+    QSqlQuery query;
+    query.prepare("delete from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTEBOOK_STACK);
+    query.exec();
 }
