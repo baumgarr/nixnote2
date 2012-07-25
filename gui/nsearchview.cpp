@@ -317,6 +317,8 @@ void NSearchView::addRequested() {
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);
     resetSize();
     this->sortByColumn(NAME_POSITION);
+
+    dataStore.insert(lid, newWidget);
 }
 
 void NSearchView::propertiesRequested() {
@@ -350,6 +352,7 @@ void NSearchView::deleteRequested() {
     SearchTable s;
     s.deleteSearch(lid);
     items[0]->setHidden(true);
+    dataStore.remove(lid);
 }
 
 void NSearchView::renameRequested() {

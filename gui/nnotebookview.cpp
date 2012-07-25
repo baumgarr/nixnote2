@@ -459,6 +459,7 @@ void NNotebookView::deleteRequested() {
     NotebookTable table;
     table.deleteNotebook(lid);
     items[0]->setHidden(true);
+    dataStore.remove(lid);
 }
 
 void NNotebookView::renameRequested() {

@@ -460,6 +460,9 @@ void NTagView::addRequested() {
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);
     resetSize();
     this->sortByColumn(NAME_POSITION);
+
+    // Now add it to the datastore
+    dataStore.insert(lid, newWidget);
 }
 
 void NTagView::propertiesRequested() {
@@ -493,6 +496,9 @@ void NTagView::deleteRequested() {
     TagTable table;
     table.deleteTag(lid);
     items[0]->setHidden(true);
+
+    // Now remove it in the datastore
+    dataStore.remove(items[0]->data(NAME_POSITION, Qt::UserRole).toInt());
 }
 
 void NTagView::renameRequested() {
