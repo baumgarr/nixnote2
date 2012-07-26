@@ -2,6 +2,7 @@
 #include "sql/notetable.h"
 #include "sql/notebooktable.h"
 #include "gui/browserWidgets/urleditor.h"
+#include "sql/tagtable.h"
 
 #include <QVBoxLayout>
 #include <QAction>
@@ -102,6 +103,45 @@ void NBrowserWindow::newTagAdded(int lid) {
     emit(tagAdded(lid));
 }
 
+void NBrowserWindow::addTagName(int lid) {
+    TagTable table;
+    Tag t;
+    table.get(t, lid);
+    tagEditor.addTag(QString::fromStdString(t.name));
+}
+
 void NBrowserWindow::tagRenamed(int lid, QString oldName, QString newName) {
     tagEditor.tagRenamed(lid, oldName, newName);
 }
+
+
+void NBrowserWindow::tagDeleted(int lid, QString name) {
+    tagEditor.removeTag(name);
+}
+
+void NBrowserWindow::notebookRenamed(int lid, QString oldName, QString newName) {
+    notebookMenu.reloadData();
+}
+
+void NBrowserWindow::notebookDeleted(int lid, QString name) {
+    notebookMenu.reloadData();
+}
+
+void NBrowserWindow::stackRenamed(QString oldName, QString newName) {
+    notebookMenu.reloadData();
+}
+
+void NBrowserWindow::stackDeleted(QString name) {
+    notebookMenu.reloadData();
+}
+
+void NBrowserWindow::stackAdded(QString name) {
+    notebookMenu.reloadData();
+}
+
+
+void NBrowserWindow::notebookAdded(int lid) {
+    notebookMenu.reloadData();
+}
+
+

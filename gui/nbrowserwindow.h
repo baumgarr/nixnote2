@@ -54,6 +54,14 @@ signals:
 public slots:
     void changeExpandState(int value);
     void tagRenamed(int lid, QString oldName, QString newName);
+    void notebookRenamed(int lid, QString oldName, QString newName);
+    void tagDeleted(int lid, QString name);
+    void notebookDeleted(int lid, QString name);
+    void notebookAdded(int lid);
+    void addTagName(int lid);
+    void stackRenamed(QString oldName, QString newName);
+    void stackDeleted(QString name);
+    void stackAdded(QString name);
 
 private slots:
     void sendUpdateSignal();

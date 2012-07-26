@@ -48,6 +48,11 @@ public:
 signals:
     void updateSelectionRequested();
     void notebookRenamed(int lid, QString oldName, QString newName);
+    void notebookDeleted(int lid, QString name);
+    void notebookAdded(int lid);
+    void stackAdded(QString name);
+    void stackDeleted(QString name);
+    void stackRenamed(QString oldName, QString newName);
 
 public slots:
     void notebookUpdated(int lid, QString name);

@@ -50,6 +50,8 @@ public:
 signals:
     void updateSelectionRequested();
     void tagRenamed(int lid, QString oldName, QString newName);
+    void tagDeleted(int lid, QString name);
+    void tagAdded(int lid);
 
 public slots:
     void tagUpdated(int lid, QString name);

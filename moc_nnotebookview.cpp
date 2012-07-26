@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'nnotebookview.h'
 **
-** Created: Wed Jul 25 18:00:57 2012
+** Created: Thu Jul 26 10:58:32 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
@@ -23,31 +23,36 @@ static const uint qt_meta_data_NNotebookView[] = {
        5,       // revision
        0,       // classname
        0,    0, // classinfo
-      15,   14, // methods
+      20,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
        0,       // flags
-       2,       // signalCount
+       7,       // signalCount
 
  // signals: signature, parameters, type, tag, flags
       15,   14,   14,   14, 0x05,
       62,   42,   14,   14, 0x05,
+     108,   99,   14,   14, 0x05,
+     141,  137,   14,   14, 0x05,
+     165,  160,   14,   14, 0x05,
+     185,  160,   14,   14, 0x05,
+     223,  207,   14,   14, 0x05,
 
  // slots: signature, parameters, type, tag, flags
-     108,  103,   99,   14, 0x08,
-     145,   14,   14,   14, 0x08,
-     163,   14,   14,   14, 0x08,
-     187,  178,   14,   14, 0x0a,
-     216,   14,   14,   14, 0x0a,
-     230,   14,   14,   14, 0x0a,
-     247,   14,   14,   14, 0x0a,
-     262,   14,   14,   14, 0x0a,
-     284,   14,   14,   14, 0x0a,
-     302,   14,   14,   14, 0x0a,
-     320,   14,   14,   14, 0x0a,
-     343,   14,   14,   14, 0x0a,
-     369,   14,   14,   14, 0x0a,
+     262,  257,  253,   14, 0x08,
+     299,   14,   14,   14, 0x08,
+     317,   14,   14,   14, 0x08,
+     332,   99,   14,   14, 0x0a,
+     361,   14,   14,   14, 0x0a,
+     375,   14,   14,   14, 0x0a,
+     392,   14,   14,   14, 0x0a,
+     407,   14,   14,   14, 0x0a,
+     429,   14,   14,   14, 0x0a,
+     447,   14,   14,   14, 0x0a,
+     465,   14,   14,   14, 0x0a,
+     488,   14,   14,   14, 0x0a,
+     514,   14,   14,   14, 0x0a,
 
        0        // eod
 };
@@ -56,13 +61,17 @@ static const char qt_meta_stringdata_NNotebookView[] = {
     "NNotebookView\0\0updateSelectionRequested()\0"
     "lid,oldName,newName\0"
     "notebookRenamed(int,QString,QString)\0"
+    "lid,name\0notebookDeleted(int,QString)\0"
+    "lid\0notebookAdded(int)\0name\0"
+    "stackAdded(QString)\0stackDeleted(QString)\0"
+    "oldName,newName\0stackRenamed(QString,QString)\0"
     "int\0item\0calculateHeightRec(QTreeWidgetItem*)\0"
     "calculateHeight()\0editComplete()\0"
-    "lid,name\0notebookUpdated(int,QString)\0"
-    "rebuildTree()\0buildSelection()\0"
-    "addRequested()\0propertiesRequested()\0"
-    "deleteRequested()\0renameRequested()\0"
-    "moveToStackRequested()\0moveToNewStackRequested()\0"
+    "notebookUpdated(int,QString)\0rebuildTree()\0"
+    "buildSelection()\0addRequested()\0"
+    "propertiesRequested()\0deleteRequested()\0"
+    "renameRequested()\0moveToStackRequested()\0"
+    "moveToNewStackRequested()\0"
     "removeFromStackRequested()\0"
 };
 
@@ -97,23 +106,28 @@ int NNotebookView::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         switch (_id) {
         case 0: updateSelectionRequested(); break;
         case 1: notebookRenamed((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2])),(*reinterpret_cast< QString(*)>(_a[3]))); break;
-        case 2: { int _r = calculateHeightRec((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])));
+        case 2: notebookDeleted((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 3: notebookAdded((*reinterpret_cast< int(*)>(_a[1]))); break;
+        case 4: stackAdded((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 5: stackDeleted((*reinterpret_cast< QString(*)>(_a[1]))); break;
+        case 6: stackRenamed((*reinterpret_cast< QString(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 7: { int _r = calculateHeightRec((*reinterpret_cast< QTreeWidgetItem*(*)>(_a[1])));
             if (_a[0]) *reinterpret_cast< int*>(_a[0]) = _r; }  break;
-        case 3: calculateHeight(); break;
-        case 4: editComplete(); break;
-        case 5: notebookUpdated((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
-        case 6: rebuildTree(); break;
-        case 7: buildSelection(); break;
-        case 8: addRequested(); break;
-        case 9: propertiesRequested(); break;
-        case 10: deleteRequested(); break;
-        case 11: renameRequested(); break;
-        case 12: moveToStackRequested(); break;
-        case 13: moveToNewStackRequested(); break;
-        case 14: removeFromStackRequested(); break;
+        case 8: calculateHeight(); break;
+        case 9: editComplete(); break;
+        case 10: notebookUpdated((*reinterpret_cast< int(*)>(_a[1])),(*reinterpret_cast< QString(*)>(_a[2]))); break;
+        case 11: rebuildTree(); break;
+        case 12: buildSelection(); break;
+        case 13: addRequested(); break;
+        case 14: propertiesRequested(); break;
+        case 15: deleteRequested(); break;
+        case 16: renameRequested(); break;
+        case 17: moveToStackRequested(); break;
+        case 18: moveToNewStackRequested(); break;
+        case 19: removeFromStackRequested(); break;
         default: ;
         }
-        _id -= 15;
+        _id -= 20;
     }
     return _id;
 }
@@ -129,5 +143,40 @@ void NNotebookView::notebookRenamed(int _t1, QString _t2, QString _t3)
 {
     void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)), const_cast<void*>(reinterpret_cast<const void*>(&_t3)) };
     QMetaObject::activate(this, &staticMetaObject, 1, _a);
+}
+
+// SIGNAL 2
+void NNotebookView::notebookDeleted(int _t1, QString _t2)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 2, _a);
+}
+
+// SIGNAL 3
+void NNotebookView::notebookAdded(int _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 3, _a);
+}
+
+// SIGNAL 4
+void NNotebookView::stackAdded(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 4, _a);
+}
+
+// SIGNAL 5
+void NNotebookView::stackDeleted(QString _t1)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)) };
+    QMetaObject::activate(this, &staticMetaObject, 5, _a);
+}
+
+// SIGNAL 6
+void NNotebookView::stackRenamed(QString _t1, QString _t2)
+{
+    void *_a[] = { 0, const_cast<void*>(reinterpret_cast<const void*>(&_t1)), const_cast<void*>(reinterpret_cast<const void*>(&_t2)) };
+    QMetaObject::activate(this, &staticMetaObject, 6, _a);
 }
 QT_END_MOC_NAMESPACE

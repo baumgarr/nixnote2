@@ -10,6 +10,7 @@
 #include "sql/notebooktable.h"
 #include "evernote/UserStore.h"
 #include "evernote/NoteStore.h"
+#include "dialog/notebookproperties.h"
 
 #define NAME_POSITION 0
 
@@ -22,7 +23,6 @@ NNotebookView::NNotebookView(QWidget *parent) :
     QFont f = this->font();
     f.setPointSize(8);
     this->setFont(f);
-
 
     filterPosition = -1;
     // setup options
@@ -406,39 +406,50 @@ void NNotebookView::contextMenuEvent(QContextMenuEvent *event) {
 
 
 void NNotebookView::addRequested() {
-//    TagProperties dialog;
-//    QList<QTreeWidgetItem*> items = selectedItems();
+    NotebookProperties dialog;
+    QList<QTreeWidgetItem*> items = selectedItems();
 
-//    dialog.setLid(0);
+    dialog.setLid(0);
 
-//    dialog.exec();
-//    if (!dialog.okPressed)
-//        return;
+    dialog.exec();
+    if (!dialog.okPressed)
+        return;
 
-//    TagTable table;
-//    NTagViewItem *newWidget = new NTagViewItem();
-//    QString name = dialog.name.text().trimmed();
-//    int lid = table.findByName(name);
-//    newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
-//    newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
-//    this->dataStore.insert(lid, newWidget);
-//    root->addChild(newWidget);
-//    this->sortItems(NAME_POSITION, Qt::AscendingOrder);
-//    resetSize();
-//    this->sortByColumn(NAME_POSITION);
+    NotebookTable table;
+    NNotebookViewItem *newWidget = new NNotebookViewItem();
+    QString name = dialog.name.text().trimmed();
+    int lid = table.findByName(name);
+    newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
+    newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
+    this->dataStore.insert(lid, newWidget);
+    root->addChild(newWidget);
+    this->sortItems(NAME_POSITION, Qt::AscendingOrder);
+    resetSize();
+    this->sortByColumn(NAME_POSITION);
+    emit(notebookAdded(lid));
 }
 
 void NNotebookView::propertiesRequested() {
-//    TagProperties dialog;
-//    QList<QTreeWidgetItem*> items = selectedItems();
+    NotebookProperties dialog;
+    QList<QTreeWidgetItem*> items = selectedItems();
 
-//    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
-//    dialog.setLid(lid);
+    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    QString oldName = items[0]->data(NAME_POSITION, Qt::DisplayRole).toString();
+    dialog.setLid(lid);
 
-//    dialog.exec();
-//    if (!dialog.okPressed)
-//        return;
-//    items[0]->setData(NAME_POSITION, Qt::DisplayRole, dialog.name.text().trimmed());
+    dialog.exec();
+    if (!dialog.okPressed)
+        return;
+
+    QString newName = dialog.name.text().trimmed();
+    if (newName != oldName) {
+        items[0]->setData(NAME_POSITION, Qt::DisplayRole, newName);
+
+        this->sortByColumn(NAME_POSITION, Qt::AscendingOrder);
+        this->rebuildNotebookTreeNeeded = false;
+        this->resetSize();
+        emit(notebookRenamed(lid, oldName, newName));
+    }
 }
 
 void NNotebookView::deleteRequested() {
@@ -460,6 +471,7 @@ void NNotebookView::deleteRequested() {
     table.deleteNotebook(lid);
     items[0]->setHidden(true);
     dataStore.remove(lid);
+    emit(notebookDeleted(lid, items[0]->data(NAME_POSITION, Qt::UserRole).toString()));
 }
 
 void NNotebookView::renameRequested() {
@@ -523,7 +535,6 @@ void NNotebookView::editComplete() {
 
         // Remove the old menu item
         for (int i=0; i<stackMenu->actions().size(); i++) {
-            QLOG_DEBUG() << stackMenu->actions().at(i)->text() << " " << oldName << " " << text;
             if(stackMenu->actions().at(i)->text() == oldName) {
                 stackMenu->removeAction(stackMenu->actions().at(i));
                 i = stackMenu->actions().size();
@@ -553,6 +564,7 @@ void NNotebookView::editComplete() {
         this->sortItems(NAME_POSITION, Qt::AscendingOrder);
         resetSize();
         this->sortByColumn(NAME_POSITION);
+        emit(stackRenamed(oldName, text));
     }
 }
 
@@ -635,6 +647,7 @@ void NNotebookView::moveToNewStackRequested() {
     resetSize();
     this->sortByColumn(NAME_POSITION);
     newStack->setExpanded(true);
+    emit(stackAdded(newStackName));
 }
 
 
@@ -658,6 +671,7 @@ void NNotebookView::removeFromStackRequested() {
         for (int i=0; i<stackMenu->actions().size(); i++) {
             if (stackMenu->actions().at(i)->text() == text) {
                 stackMenu->actions().at(i)->setVisible(false);
+                emit(stackDeleted(text));
                 i = stackMenu->actions().size();
             }
         }

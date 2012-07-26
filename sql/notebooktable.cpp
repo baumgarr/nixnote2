@@ -511,11 +511,21 @@ bool NotebookTable::isLocal() {
 
 
 bool NotebookTable::update(Notebook &notebook, bool isDirty) {
+    Notebook oldBook;
     int lid = getLid(notebook.guid);
+    get(oldBook, lid);
     if (lid <= 0)
         return false;
     expunge(lid);
     add(lid, notebook, isDirty, isLocal());
+    // Rename anything in the note list
+    if (notebook.name != oldBook.name) {
+        QSqlQuery query;
+        query.prepare("Update notetable set notebook=:name where notebooklid=:lid");
+        query.bindValue(":name", QString::fromStdString(notebook.name));
+        query.bindValue(":lid", lid);
+        query.exec();
+    }
     return true;
 }
 

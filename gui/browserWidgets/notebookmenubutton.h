@@ -34,6 +34,8 @@ public:
     explicit NotebookMenuButton(QWidget *parent = 0);
     void loadData();
     void setCurrentNotebook(int lid, Note n);
+    void addNotebook(int lid);
+    void reloadData();
 
     
 signals:

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ntabwidget.h'
 **
-** Created: Sat Jul 14 13:12:09 2012
+** Created: Thu Jul 26 10:49:58 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

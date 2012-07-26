@@ -463,6 +463,7 @@ void NTagView::addRequested() {
 
     // Now add it to the datastore
     dataStore.insert(lid, newWidget);
+    emit(tagAdded(lid));
 }
 
 void NTagView::propertiesRequested() {
@@ -470,12 +471,22 @@ void NTagView::propertiesRequested() {
     QList<QTreeWidgetItem*> items = selectedItems();
 
     int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    QString oldName = items[0]->data(NAME_POSITION, Qt::DisplayRole).toString();
     dialog.setLid(lid);
 
     dialog.exec();
     if (!dialog.okPressed)
         return;
-    items[0]->setData(NAME_POSITION, Qt::DisplayRole, dialog.name.text().trimmed());
+
+    QString newName = dialog.name.text().trimmed();
+    if (newName != oldName) {
+        items[0]->setData(NAME_POSITION, Qt::DisplayRole, dialog.name.text().trimmed());
+
+        this->sortItems(NAME_POSITION, Qt::AscendingOrder);
+        resetSize();
+        this->sortByColumn(NAME_POSITION);
+        emit(tagRenamed(lid, oldName, newName));
+    }
 }
 
 void NTagView::deleteRequested() {
@@ -499,6 +510,7 @@ void NTagView::deleteRequested() {
 
     // Now remove it in the datastore
     dataStore.remove(items[0]->data(NAME_POSITION, Qt::UserRole).toInt());
+    emit(tagDeleted(lid, items[0]->data(NAME_POSITION, Qt::DisplayRole).toString()));
 }
 
 void NTagView::renameRequested() {

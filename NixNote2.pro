@@ -89,7 +89,8 @@ SOURCES += main.cpp\
     gui/browserWidgets/datetimeeditor.cpp \
     dialog/savedsearchproperties.cpp \
     gui/treewidgeteditor.cpp \
-    dialog/tagproperties.cpp
+    dialog/tagproperties.cpp \
+    dialog/notebookproperties.cpp
 
 HEADERS  += nixnote.h \
     global.h \
@@ -171,7 +172,8 @@ HEADERS  += nixnote.h \
     gui/browserWidgets/datetimeeditor.h \
     dialog/savedsearchproperties.h \
     gui/treewidgeteditor.h \
-    dialog/tagproperties.h
+    dialog/tagproperties.h \
+    dialog/notebookproperties.h
 
 #LIBS += -L/usr/lib/jvm/java-6-sun/jre/lib/i386/client/ -lthrift -ljvm
 

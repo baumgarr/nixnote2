@@ -156,6 +156,7 @@ void NixNote::setupGui() {
 
     // connect signal on a tag rename
     connect(tagTreeView, SIGNAL(tagRenamed(int,QString,QString)), this, SLOT(updateSelectionCriteria()));
+    connect(notebookTreeView, SIGNAL(notebookRenamed(int,QString,QString)), this, SLOT(updateSelectionCriteria()));
 }
 
 
@@ -261,6 +262,16 @@ void NixNote::setupTabWindow() {
     rightPanelSplitter->addWidget(tabWindow);
     NBrowserWindow *newBrowser = new NBrowserWindow();
     connect(tagTreeView, SIGNAL(tagRenamed(int,QString,QString)), newBrowser, SLOT(tagRenamed(int,QString,QString)));
+    connect(tagTreeView, SIGNAL(tagDeleted(int, QString)), newBrowser, SLOT(tagDeleted(int, QString)));
+    connect(tagTreeView, SIGNAL(tagAdded(int)), newBrowser, SLOT(addTagName(int)));
+
+    connect(notebookTreeView, SIGNAL(notebookRenamed(int,QString,QString)), newBrowser, SLOT(notebookRenamed(int,QString,QString)));
+    connect(notebookTreeView, SIGNAL(notebookDeleted(int, QString)), newBrowser, SLOT(notebookDeleted(int, QString)));
+    connect(notebookTreeView, SIGNAL(notebookAdded(int)), newBrowser, SLOT(notebookAdded(int)));
+
+    connect(notebookTreeView, SIGNAL(stackRenamed(QString,QString)), newBrowser, SLOT(stackRenamed(QString,QString)));
+    connect(notebookTreeView, SIGNAL(stackDeleted(QString)), newBrowser, SLOT(stackDeleted(QString)));
+    connect(notebookTreeView, SIGNAL(stackAdded(QString)), newBrowser, SLOT(stackAdded(QString)));
     tabWindow->addBrowser(newBrowser, "");
     rightPanelSplitter->setStretchFactor(1,10);
 

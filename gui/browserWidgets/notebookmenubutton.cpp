@@ -173,3 +173,40 @@ void NotebookMenuButton::notebookSelected() {
         emit(notebookChanged());
     }
 }
+
+
+
+void NotebookMenuButton::reloadData() {
+    for (int i=actions.size()-1; i>=0; i--) {
+        delete actions[i];
+    }
+    for (int i=stackMenus.size()-1; i>=0; i--) {
+        delete stackMenus[i];
+    }
+    stackMenus.clear();
+    actions.clear();
+    loadData();
+
+    // Restore the proper notebook selection
+
+    Note n;
+    NoteTable noteTable;
+    NotebookTable notebookTable;
+    noteTable.get(n, currentNoteLid, false,false);
+    QString notebookGuid = QString::fromStdString(n.notebookGuid);
+    QList<int> bookList;
+    notebookTable.getAll(bookList);
+    QString bookName;
+
+    for (int i=0; i<bookList.size(); i++) {
+        Notebook book;
+        notebookTable.get(book, bookList[i]);
+        if (notebookGuid == QString::fromStdString(book.guid)) {
+            bookName = QString::fromStdString(book.name);
+            i=bookList.size();
+        }
+    }
+    setCurrentNotebook(currentNoteLid, n);
+    return;
+}
+
