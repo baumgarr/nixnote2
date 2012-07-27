@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'nwebpage.h'
 **
-** Created: Fri Jun 8 14:52:48 2012
+** Created: Fri Jul 27 11:19:18 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

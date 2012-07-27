@@ -6,6 +6,7 @@
 #include <QGridLayout>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QCheckBox>
 
 
 class NotebookProperties : public QDialog
@@ -18,9 +19,10 @@ private:
     QGridLayout grid;
     QGridLayout buttonGrid;
     QGridLayout queryGrid;
-    QStringList existingTags;
+    QStringList existingNotebooks;
     QString originalName;
     int lid;
+    QCheckBox syncBox;
 
 public:
     explicit NotebookProperties(QWidget *parent = 0);

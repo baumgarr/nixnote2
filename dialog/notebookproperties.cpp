@@ -14,15 +14,20 @@ NotebookProperties::NotebookProperties(QWidget *parent) :
     QDialog(parent)
 {
     okPressed = false;
-    setWindowTitle(tr("Notebook"));
-    setWindowIcon(QIcon(":notebook.png"));
+    setWindowTitle(tr("Tag"));
+    setWindowIcon(QIcon(":tag.png"));
     setLayout(&grid);
+
+    syncBox.setText(tr("Synchronized"));
+    syncBox.setChecked(true);
+    syncBox.setEnabled(false);
 
     connect(&name, SIGNAL(textChanged(const QString&)), this, SLOT(validateInput()));
 
     nameLabel.setText(tr("Name"));
     queryGrid.addWidget(&nameLabel, 1,1);
     queryGrid.addWidget(&name, 1, 2);
+    queryGrid.addWidget(&syncBox, 2,2);
 //    queryGrid.setContentsMargins(10, 10,  -10, -10);
     grid.addLayout(&queryGrid,1,1);
 
@@ -44,14 +49,14 @@ void NotebookProperties::okButtonPressed() {
         Notebook book;
         NotebookTable table;
         table.get(book, lid);
-        book.name = this->name.text().trimmed().toStdString();
+        book.name = name.text().trimmed().toStdString();
         book.__isset.name = true;
         table.update(book, true);
         close();
         return;
     }
 
-    // We have a new notebook to add
+    // We have a new tag to add
     Notebook book;
     book.name = name.text().trimmed().toStdString();
     QUuid uuid;
@@ -77,6 +82,7 @@ void NotebookProperties::setLid(int lid) {
         table.get(book, lid);
         originalName = QString::fromStdString(book.name).trimmed();
         name.setText(originalName);
+        syncBox.setEnabled(false);
         return;
     }
     this->lid = 0;
@@ -91,8 +97,8 @@ void NotebookProperties::validateInput() {
         return;
     }
     NotebookTable t;
-    QString book = name.text().trimmed();
-    if (t.findByName(book)>0 && name.text().trimmed() != originalName) {
+    QString tag = name.text().trimmed();
+    if (t.findByName(tag)>0 && name.text().trimmed() != originalName) {
         ok.setEnabled(false);
         return;
     }

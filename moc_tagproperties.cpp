@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'tagproperties.h'
 **
-** Created: Thu Jul 12 09:47:24 2012
+** Created: Fri Jul 27 11:20:34 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
