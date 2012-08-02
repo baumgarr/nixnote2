@@ -1,20 +1,38 @@
 #include "notesortfilterproxymodel.h"
+#include "global.h"
 
 NoteSortFilterProxyModel::NoteSortFilterProxyModel() :
     QSortFilterProxyModel()
 {
+    QLOG_TRACE() << "Entering NoteSortFilterProxyModel constructor";
+    lidMap = new QMap<int,int>();
+    QLOG_TRACE() << "Exiting NoteSortFilterProxyModel constructor";
+}
+
+
+NoteSortFilterProxyModel::~NoteSortFilterProxyModel()
+{
+    QLOG_TRACE() << "Entering NoteSortFilterProxyModel destructor";
+    delete lidMap;
+    QLOG_TRACE() << "Exiting NoteSortFilterProxyModel constructor";
 }
 
 
 bool NoteSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const {
-    return true;
+    QModelIndex idx = sourceModel()->index(source_row,NOTE_TABLE_LID_POSITION, source_parent);
+    int rowLid = sourceModel()->data(idx).toInt();
+    if (lidMap->contains(rowLid)) {
+        lidMap->remove(rowLid);
+        lidMap->insert(rowLid, source_row);
+        return true;
+    }
+    return false;
 }
 
 
-
-void NoteSortFilterProxyModel::sort(int column, Qt::SortOrder order) {
-    this->QAbstractProxyModel::sort(column, order);
-}
+//void NoteSortFilterProxyModel::sort(int column, Qt::SortOrder order) {
+//    this->QAbstractProxyModel::sort(column, order);
+//}
 
 bool NoteSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const {
     QVariant leftData = this->sourceModel()->data(left);
@@ -34,7 +52,15 @@ bool NoteSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
         QString right = rightData.toString();
         return left.toLower() < right.toLower();
     }
+
+    if (leftData.type() == QVariant::Int && rightData.type() == QVariant::Int)
+        return leftData.toInt() < rightData.toInt();
+
+    if (leftData.type() == QVariant::LongLong && rightData.type() == QVariant::LongLong)
+        return leftData.toLongLong() < rightData.toLongLong();
+
+    if (leftData.type() == QVariant::Double && rightData.type() == QVariant::Double)
+        return leftData.toDouble() < rightData.toDouble();
+
     return true;
-
-
 }

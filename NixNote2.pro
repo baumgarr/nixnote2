@@ -90,7 +90,8 @@ SOURCES += main.cpp\
     dialog/savedsearchproperties.cpp \
     gui/treewidgeteditor.cpp \
     dialog/tagproperties.cpp \
-    dialog/notebookproperties.cpp
+    dialog/notebookproperties.cpp \
+    html/enmlformatter.cpp
 
 HEADERS  += nixnote.h \
     global.h \
@@ -173,7 +174,8 @@ HEADERS  += nixnote.h \
     dialog/savedsearchproperties.h \
     gui/treewidgeteditor.h \
     dialog/tagproperties.h \
-    dialog/notebookproperties.h
+    dialog/notebookproperties.h \
+    html/enmlformatter.h
 
 #LIBS += -L/usr/lib/jvm/java-6-sun/jre/lib/i386/client/ -lthrift -ljvm
 

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'ntableviewheader.h'
 **
-** Created: Fri Jul 27 11:19:21 2012
+** Created: Fri Jul 27 13:59:49 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

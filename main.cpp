@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
     // Setup the QLOG functions for debugging & messages
     QsLogging::Logger& logger = QsLogging::Logger::instance();
-    logger.setLoggingLevel(QsLogging::DebugLevel);
+    logger.setLoggingLevel(QsLogging::TraceLevel);
     const QString sLogPath(a.applicationDirPath());
 
     QsLogging::DestinationPtr fileDestination(

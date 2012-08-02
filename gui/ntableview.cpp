@@ -20,31 +20,29 @@ using namespace boost;
 NTableView::NTableView(QWidget *parent) :
     QTableView(parent)
 {
+    QLOG_TRACE() << "Entering NTableView constructor";
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     header = new NTableViewHeader(Qt::Horizontal, this);
     this->verticalHeader()->setVisible(false);
-    noteModel = new NoteModel();
-    this->setModel( noteModel );
+    noteModel = new NoteModel(this);
 
-    this->setColumnHidden(NOTE_TABLE_LID_POSITION,true);
-    this->setColumnHidden(NOTE_TABLE_NOTEBOOK_LID_POSITION, true);
-    this->setColumnHidden(NOTE_TABLE_DATE_DELETED_POSITION, true);
-    this->setColumnHidden(NOTE_TABLE_ALTITUDE_POSITION, true);
-    this->setColumnHidden(NOTE_TABLE_LATITUDE_POSITION, true);
-    this->setColumnHidden(NOTE_TABLE_LONGITUDE_POSITION, true);
-    this->setColumnHidden(NOTE_TABLE_SOURCE_APPLICATION_POSITION, true);
-    this->setColumnHidden(NOTE_TABLE_HAS_TODO_POSITION, true);
-    this->setColumnHidden(NOTE_TABLE_HAS_ENCRYPTION_POSITION, true);
-    this->setColumnHidden(NOTE_TABLE_SOURCE_APPLICATION_POSITION, true);
-
+    QLOG_TRACE() << "Setting up edit triggers";
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    this->proxy = new NoteSortFilterProxyModel();
-    this->setSortingEnabled(true);
 
     // Set the default column height
+    QLOG_TRACE() << "Setting up fort metrics";
     this->verticalHeader()->setDefaultSectionSize(QApplication::fontMetrics().height());
 
+    QLOG_TRACE() << "Initializing proxy";
+    this->proxy = new NoteSortFilterProxyModel();
+    proxy->setSourceModel(model());
+    proxy->setFilterKeyColumn(NOTE_TABLE_LID_POSITION);
+    refreshData();
+    setModel(proxy);
+    this->setSortingEnabled(true);
+
     // Set the date deligates
+    QLOG_TRACE() << "Setting up table deligates";
     DateDelegate *dateDelegate = new DateDelegate();
     NumberDelegate *blankNumber = new NumberDelegate(NumberDelegate::BlankNumber);
     NumberDelegate *kbNumber = new NumberDelegate(NumberDelegate::KBNumber);
@@ -56,6 +54,41 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_LONGITUDE_POSITION, blankNumber);
     this->setItemDelegateForColumn(NOTE_TABLE_LATITUDE_POSITION, blankNumber);
     this->setItemDelegateForColumn(NOTE_TABLE_SIZE_POSITION, kbNumber);
+
+    QLOG_TRACE() << "Setting up column headers";
+    this->setColumnHidden(NOTE_TABLE_LID_POSITION,true);
+    this->setColumnHidden(NOTE_TABLE_NOTEBOOK_LID_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_DATE_DELETED_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_ALTITUDE_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_LATITUDE_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_LONGITUDE_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_SOURCE_APPLICATION_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_HAS_TODO_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_HAS_ENCRYPTION_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_SOURCE_APPLICATION_POSITION, true);
+
+    this->model()->setHeaderData(NOTE_TABLE_TITLE_POSITION, Qt::Horizontal, QObject::tr("Title"));
+    this->model()->setHeaderData(NOTE_TABLE_AUTHOR_POSITION, Qt::Horizontal, QObject::tr("Author"));
+    this->model()->setHeaderData(NOTE_TABLE_NOTEBOOK_POSITION, Qt::Horizontal, QObject::tr("Notebook"));
+    this->model()->setHeaderData(NOTE_TABLE_TAGS_POSITION, Qt::Horizontal, QObject::tr("Tags"));
+    this->model()->setHeaderData(NOTE_TABLE_DATE_CREATED_POSITION, Qt::Horizontal, QObject::tr("Date Created"));
+    this->model()->setHeaderData(NOTE_TABLE_DATE_UPDATED_POSITION, Qt::Horizontal, QObject::tr("Date Updated"));
+    this->model()->setHeaderData(NOTE_TABLE_DATE_SUBJECT_POSITION, Qt::Horizontal, QObject::tr("Subject Date"));
+    this->model()->setHeaderData(NOTE_TABLE_DATE_DELETED_POSITION, Qt::Horizontal, QObject::tr("Deletion Date"));
+    this->model()->setHeaderData(NOTE_TABLE_SOURCE_POSITION, Qt::Horizontal, QObject::tr("Source"));
+    this->model()->setHeaderData(NOTE_TABLE_SOURCE_URL_POSITION, Qt::Horizontal, QObject::tr("Source Url"));
+    this->model()->setHeaderData(NOTE_TABLE_SOURCE_APPLICATION_POSITION, Qt::Horizontal, QObject::tr("Source Application"));
+    this->model()->setHeaderData(NOTE_TABLE_LONGITUDE_POSITION, Qt::Horizontal, QObject::tr("Longitude"));
+    this->model()->setHeaderData(NOTE_TABLE_LATITUDE_POSITION, Qt::Horizontal, QObject::tr("Latitude"));
+    this->model()->setHeaderData(NOTE_TABLE_ALTITUDE_POSITION, Qt::Horizontal, QObject::tr("Altitude"));
+    this->model()->setHeaderData(NOTE_TABLE_HAS_ENCRYPTION_POSITION, Qt::Horizontal, QObject::tr("Has Encryption"));
+    this->model()->setHeaderData(NOTE_TABLE_HAS_TODO_POSITION, Qt::Horizontal, QObject::tr("Has Todo"));
+    this->model()->setHeaderData(NOTE_TABLE_IS_DIRTY_POSITION, Qt::Horizontal, QObject::tr("Synchronized"));
+    this->model()->setHeaderData(NOTE_TABLE_SIZE_POSITION, Qt::Horizontal, QObject::tr("Size"));
+
+
+
+    QLOG_TRACE() << "Exiting NTableView constructor";
 }
 
 
@@ -73,15 +106,19 @@ NoteModel* NTableView::model() {
 
 
 void NTableView::refreshData() {
-    model()->select();
-
+    QLOG_TRACE() << "Getting valid lids in filter";
     QSqlQuery sql;
     sql.exec("select lid from filter");
-    validLids.empty();
+    proxy->lidMap->clear();
     while(sql.next()) {
-        validLids.append(sql.value(0).toInt());
+        proxy->lidMap->insert(sql.value(0).toInt(), 0);
     }
+    QLOG_DEBUG() << "Valid LIDs retrieved.  Refreshing selection";
+    model()->select();
+    while(model()->canFetchMore())
+        model()->fetchMore();
     refreshSelection();
+
 }
 
 
@@ -89,46 +126,36 @@ void NTableView::refreshData() {
 void NTableView::refreshSelection() {
 
     this->blockSignals(true);
-    this->clearSelection();
 
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     QList<int> historyList;
     criteria->getSelectedNotes(historyList);
 
+    QLOG_TRACE() << "Highlighting selected rows after refresh";
     // Check the highlighted LIDs from the history selection.
-    for (int i=0; i<historyList.size() && criteria->isSelectedNotesSet(); i++) {
-
-        // If the list of vaild lids (lids we can see in the list)
-        // contains a note in the history list, we need to highlight it.
-        if (validLids.contains(historyList.at(i))) {
-
-            // Go through each row in the list.  If it is in the history, then
-            // we highlight it.
-            for (int j=0; j<model()->rowCount(QModelIndex()); j++) {
-                QModelIndex idx = model()->index(j,NOTE_TABLE_LID_POSITION);
-                int rowLid = idx.data().toInt();
-                if (historyList.contains(rowLid)) {
-                    this->selectRow(j);
-                }
+    for (int i=0; i<historyList.size(); i++) {
+        if (proxy->lidMap->contains(historyList[i])) {
+            int rowLocation = proxy->lidMap->value(historyList[i]);
+            if (rowLocation > 0) {
+                QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
+                QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
+                rowLocation = proxyIndex.row();
+                selectRow(rowLocation);
             }
         }
     }
-
-    // ugly hack to hide stupid blank row that somehow always seems to appear
-    for (int i=0; i < model()->rowCount(QModelIndex()); i++) {
-        QModelIndex idx = model()->index(i,NOTE_TABLE_LID_POSITION);
-        QString rowLid = idx.data().toString();
-        if (rowLid.trimmed() == "")
-            hideRow(i);
-    }
+    QLOG_TRACE() << "Highlighting complete";
 
     // Make sure at least one thing is selected
+    QLOG_TRACE() << "Selecting one item if nothing else is selected";
     QModelIndexList l = selectedIndexes();
     if (l.size() == 0) {
-        for (int j=model()->rowCount(QModelIndex())-1; j>=0; j--) {
-            QModelIndex idx = model()->index(j,NOTE_TABLE_LID_POSITION);
+        int rowCount = proxy->rowCount(QModelIndex());
+        for (int j=rowCount-1; j>=0; j--) {
+            QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
             int rowLid = idx.data().toInt();
             if (rowLid > 0) {
+                QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
                 criteria->setContent(rowLid);
                 selectRow(j);
                 this->blockSignals(false);
@@ -137,9 +164,9 @@ void NTableView::refreshSelection() {
                 j=-1;
             }
         }
-
     }
 
+    QLOG_TRACE() << "refleshSelection() complete";
     this->blockSignals(false);
 }
 
@@ -148,12 +175,9 @@ void NTableView::refreshSelection() {
 
 void NTableView::mouseReleaseEvent(QMouseEvent *e) {
     if ( e->button() == Qt::RightButton ) {
-            QLOG_DEBUG() << "Right Button";
     } else if ( e->button() == Qt::LeftButton ) {
-            QLOG_DEBUG() << "Left Button";
             this->getSelectedLids(false);
     } else if ( e->button() == Qt::MidButton ) {
-            QLOG_DEBUG() << "Middle Button";
             this->getSelectedLids(true);
     }
     QTableView::mouseReleaseEvent(e);

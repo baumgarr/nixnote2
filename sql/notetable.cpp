@@ -1053,3 +1053,19 @@ int NoteTable::findNotesByNotebook(QList<int> &notes, QString guid) {
 int NoteTable::findNotesByNotebook(QList<int> &notes, string guid) {
     findNotesByNotebook(notes, QString::fromStdString(guid));
 }
+
+
+void NoteTable::updateNoteContent(int lid, QString content) {
+    QSqlQuery query;
+    query.prepare("update datastore set data=:content where lid=:lid and key=:key");
+    query.bindValue(":content", content);
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_CONTENT);
+    query.exec();
+
+    query.prepare("update datastore set data=:content where lid=:lid and key=:key");
+    query.bindValue(":content", content.length());
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_CONTENT_LENGTH);
+    query.exec();
+}

@@ -19,14 +19,22 @@ FilterEngine::FilterEngine(QObject *parent) :
 void FilterEngine::filter() {
 
     QSqlQuery sql;
+    QLOG_DEBUG() << "Purging filters";
     sql.exec("delete from filter");
+    QLOG_DEBUG() << "Resetting filter table";
     sql.exec("Insert into filter (lid) select lid from NoteTable");
+    QLOG_DEBUG() << "Reset complete";
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
 
+    QLOG_DEBUG() << "Filtering notebooks";
     filterNotebook(criteria);
+    QLOG_DEBUG() << "Filtering tags";
     filterTags(criteria);
+    QLOG_DEBUG() << "Filtering trash";
     filterTrash(criteria);
+    QLOG_DEBUG() << "Filtering search string";
     filterSearchString(criteria);
+    QLOG_DEBUG() << "Filtering complete";
 
 }
 

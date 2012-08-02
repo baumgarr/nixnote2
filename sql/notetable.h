@@ -105,6 +105,7 @@ public:
     void expunge(int lid);              // expunge a note permanently
     int findNotesByNotebook(QList<int> &notes, QString guid);
     int findNotesByNotebook(QList<int> &notes, string guid);
+    void updateNoteContent(int lid, QString content);
 };
 
 

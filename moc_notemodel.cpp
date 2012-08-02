@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'notemodel.h'
 **
-** Created: Fri Jul 27 11:19:32 2012
+** Created: Thu Aug 2 14:10:21 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'treewidgeteditor.h'
 **
-** Created: Fri Jul 27 11:20:33 2012
+** Created: Fri Jul 27 14:01:00 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

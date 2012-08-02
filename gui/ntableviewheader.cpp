@@ -11,3 +11,5 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
 {
 
 }
+
+

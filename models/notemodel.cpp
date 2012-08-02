@@ -23,29 +23,10 @@ NoteModel::NoteModel(QObject *parent)
     sql.exec("Select *  from sqlite_master where type='table' and name='NoteTable';");
     if (!sql.next())
         this->createTable();
+    this->setEditStrategy(QSqlTableModel::OnFieldChange);
+
     this->setTable("NoteTable");
     this->setFilter("lid in (select lid from filter)");
-    this->select();
-    //this->setEditStrategy(QSqlTableModel::OnFieldChange);
-
-    this->setHeaderData(NOTE_TABLE_TITLE_POSITION, Qt::Horizontal, QObject::tr("Title"));
-    this->setHeaderData(NOTE_TABLE_AUTHOR_POSITION, Qt::Horizontal, QObject::tr("Author"));
-    this->setHeaderData(NOTE_TABLE_NOTEBOOK_POSITION, Qt::Horizontal, QObject::tr("Notebook"));
-    this->setHeaderData(NOTE_TABLE_TAGS_POSITION, Qt::Horizontal, QObject::tr("Tags"));
-    this->setHeaderData(NOTE_TABLE_DATE_CREATED_POSITION, Qt::Horizontal, QObject::tr("Date Created"));
-    this->setHeaderData(NOTE_TABLE_DATE_UPDATED_POSITION, Qt::Horizontal, QObject::tr("Date Updated"));
-    this->setHeaderData(NOTE_TABLE_DATE_SUBJECT_POSITION, Qt::Horizontal, QObject::tr("Subject Date"));
-    this->setHeaderData(NOTE_TABLE_DATE_DELETED_POSITION, Qt::Horizontal, QObject::tr("Deletion Date"));
-    this->setHeaderData(NOTE_TABLE_SOURCE_POSITION, Qt::Horizontal, QObject::tr("Source"));
-    this->setHeaderData(NOTE_TABLE_SOURCE_URL_POSITION, Qt::Horizontal, QObject::tr("Source Url"));
-    this->setHeaderData(NOTE_TABLE_SOURCE_APPLICATION_POSITION, Qt::Horizontal, QObject::tr("Source Application"));
-    this->setHeaderData(NOTE_TABLE_LONGITUDE_POSITION, Qt::Horizontal, QObject::tr("Longitude"));
-    this->setHeaderData(NOTE_TABLE_LATITUDE_POSITION, Qt::Horizontal, QObject::tr("Latitude"));
-    this->setHeaderData(NOTE_TABLE_ALTITUDE_POSITION, Qt::Horizontal, QObject::tr("Altitude"));
-    this->setHeaderData(NOTE_TABLE_HAS_ENCRYPTION_POSITION, Qt::Horizontal, QObject::tr("Has Encryption"));
-    this->setHeaderData(NOTE_TABLE_HAS_TODO_POSITION, Qt::Horizontal, QObject::tr("Has Todo"));
-    this->setHeaderData(NOTE_TABLE_IS_DIRTY_POSITION, Qt::Horizontal, QObject::tr("Synchronized"));
-    this->setHeaderData(NOTE_TABLE_SIZE_POSITION, Qt::Horizontal, QObject::tr("Size"));
 }
 
 // Destructor
@@ -108,23 +89,23 @@ void NoteModel::createTable() {
 }
 
 
-int NoteModel::rowCount(const QModelIndex & /*parent*/) const
- {
-    QLOG_TRACE() << "Entering NoteModel::rowCount()";
+//int NoteModel::rowCount(const QModelIndex & /*parent*/) const
+// {
+//    QLOG_TRACE() << "Entering NoteModel::rowCount()";
 
-    QSqlQuery sql;
-    sql.exec("Select count(lid) from NoteTable;");
-    if (!sql.next()) {
-        QLOG_ERROR() << "Error retrieving NoteModel::rowCount: " << sql.lastError();
-        return 0;
-    }
-    int rowCount = QVariant(sql.value(0)).toInt();
-    return rowCount;
+//    QSqlQuery sql;
+//    sql.exec("Select count(lid) from NoteTable where lid in (select lid from filter)");
+//    if (!sql.next()) {
+//        QLOG_ERROR() << "Error retrieving NoteModel::rowCount: " << sql.lastError();
+//        return 0;
+//    }
+//    int rowCount = QVariant(sql.value(0)).toInt();
+//    return rowCount;
 
- }
+// }
 
 int NoteModel::columnCount(const QModelIndex &parent) const {
-    parent.column();
+//    parent.column();
     return NOTE_TABLE_COLUMN_COUNT;
 }
 

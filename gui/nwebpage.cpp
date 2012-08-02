@@ -11,6 +11,7 @@
 NWebPage::NWebPage(QWidget *parent) :
     QWebPage(parent)
 {
+    connect(this,SIGNAL(contentsChanged()), this, SLOT(editAlert()));
 }
 
 
@@ -19,4 +20,9 @@ NWebPage::NWebPage(QWidget *parent) :
 void NWebPage::javaScriptConsoleMessage(QString message, int lineNumber, QString sourceID) {
    QLOG_DEBUG() << "Javascript message: " << "Line: " << lineNumber << " Source: " << sourceID <<
            " message: " << message;
+}
+
+
+void NWebPage::editAlert() {
+    isDirty = true;
 }

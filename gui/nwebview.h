@@ -2,6 +2,7 @@
 #define NWEBVIEW_H
 
 #include <QWebView>
+#include <gui/nwebpage.h>
 
 
 //****************************************************
@@ -14,10 +15,13 @@ class NWebView : public QWebView
     Q_OBJECT
 public:
     explicit NWebView(QWidget *parent = 0);
+    bool isDirty;
+    NWebPage *editorPage;
 
 signals:
 
 public slots:
+    void editAlert();
 
 };
 

@@ -67,36 +67,37 @@ void NoteFormatter::setNoteHistory(bool value) {
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
     formatError = false;
-    //QLOG_DEBUG() << "Entering NoteFormatter::rebuildNoteHTML";
-    //QLOG_DEBUG() << "NoteGuid :: " << QString::fromStdString(note.guid);
-    //QLOG_DEBUG() << "Note Text\n" << QString::fromStdString(note.content);
 
+    // First try to read the document.  If it fails we need to clean it up
+    content.append(QString::fromStdString(note.content));
+    QDomDocument doc;
+    QString emsg;
+    bool goodReturn = doc.setContent(content, &emsg);
 
+    if (!goodReturn) {
+        QLOG_DEBUG() << "Error with initial document: " << emsg << " running through tidy";
+        // Run it through "tidy".  It is a program which will fix any invalid XML
+        // and give us the results back through stdout.  In a perfect world this
+        // wouldn't be needed, but I've seen times where the ENML is bad for some reason.
+        QProcess tidyProcess;
+        tidyProcess.start("tidy -xml -raw -q -e", QIODevice::ReadWrite|QIODevice::Unbuffered);
+        QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
+        QByteArray b;
+        b.append(QString::fromStdString(note.content));
+        tidyProcess.write(b);
+        tidyProcess.closeWriteChannel();
+        QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
+        QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
+        content = tidyProcess.readAllStandardOutput();
 
-
-    // Run it through "tidy".  It is a program which will fix any invalid XML
-    // and give us the results back through stdout.  In a perfect world this
-    // wouldn't be needed, but I've seen times where the ENML is bad for some reason.
-    //QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-    QProcess tidyProcess;
-    tidyProcess.start("tidy -xml -raw", QIODevice::ReadWrite|QIODevice::Unbuffered);
-    QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
-    QByteArray b;
-    b.append(QString::fromStdString(note.content));
-    tidyProcess.write(b);
-    tidyProcess.closeWriteChannel();
-    QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
-    QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
-    content = tidyProcess.readAllStandardOutput();
-
-    // If the content is null, then we had a problem.  Just risk going forward without tidy cleanup
-    if (content.size() == 0)
-        content = b;
+        // If the content is null, then we had a problem.  Just risk going forward without tidy cleanup
+        if (content.size() == 0)
+            content = b;
+        doc.setContent(content);
+    }
 
     // Remove all the temporary file names
     tempFiles.clear();
-    QDomDocument doc;
-    doc.setContent(content);
     modifyTags(doc);
 
     // If we have search criteria, then do the highlighting
@@ -314,30 +315,17 @@ void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &docElement, 
         resourceTable.get(r, resLid);
 
         if (r.__isset.data && r.data.__isset.body && r.data.body.length() > 0) {
-            /*tfile.open(QIODevice::WriteOnly);
-            QByteArray b;
-            b.append(QString::fromStdString(r.data.body));
-            tfile.write(b);
-            tfile.close();
-        */
-            // If we need to highlight some text
-            //this->addImageHighlight(resLid, tfile);
-
-            // Technically we should do a file::// to have a proper URL, but for some reason
-            // QWebPage hates them & won't generate a thumbnail properly when they exist
-            //enMedia.setAttribute("src", QUrl.fromLocalFile(tfile.fileName()).toString());
-           // enMedia.setAttribute("src", tfile.fileName());
             enMedia.setAttribute("src", "file:///"+global.fileManager.getDbDirPath(QString("dba/") +QString::number(resLid) +type));
             // Check if this is a LaTeX image
             if (r.__isset.attributes && r.attributes.__isset.sourceURL &&
                 !QString::fromStdString(r.attributes.sourceURL).toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
-                    //enMedia.setAttribute("onContextMenu", "window.jambi.imageContextMenu('" +tfile.fileName()  +"');");
+                    enMedia.setAttribute("onContextMenu", "window.jambi.imageContextMenu('" +QString(resLid)  +"');");
             } else {
                 QDomElement newText(doc.createElement("a"));
                 enMedia.setAttribute("en-tag", "en-latex");
                 newText.setAttribute("anMouseOver", "style.cursor='hand'");
                 newText.setAttribute("title", QString::fromStdString(r.attributes.sourceURL));
-            //    newText.setAttribute("href", "latex://"+tfile.fileName());
+                newText.setAttribute("href", "latex://"+resLid);
                 enMedia.parentNode().replaceChild(newText, enMedia);
                 newText.appendChild(enMedia);
             }

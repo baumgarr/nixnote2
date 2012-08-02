@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'notesortfilterproxymodel.h'
 **
-** Created: Fri Jul 27 11:19:46 2012
+** Created: Thu Aug 2 13:24:02 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

@@ -13,5 +13,14 @@
 NWebView::NWebView(QWidget *parent) :
     QWebView(parent)
 {
-    setPage(new NWebPage());
+    editorPage = new NWebPage();
+    setPage(editorPage);
+    isDirty = false;
+    connect(editorPage, SIGNAL(contentsChanged()), this, SLOT(editAlert()));
+    editorPage->setContentEditable(false);
+}
+
+
+void NWebView::editAlert() {
+    isDirty =true;
 }

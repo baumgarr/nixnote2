@@ -118,6 +118,7 @@ void NTabWidget::openNote(int lid, bool newWindow) {
     }
 
     view->lid = lid;
+
     if (!global.cache.contains(lid)) {
         NoteFormatter formatter;
         formatter.setNote(n, false);

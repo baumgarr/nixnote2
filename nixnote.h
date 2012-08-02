@@ -84,6 +84,7 @@ private:
     void initializeGlobalSettings();
     void waitCursor(bool value);
     void setMessage(QString msg);
+    void saveContents();
 
 
 public:

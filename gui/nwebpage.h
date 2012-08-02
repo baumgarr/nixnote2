@@ -14,12 +14,14 @@ class NWebPage : public QWebPage
     Q_OBJECT
 public:
     explicit NWebPage(QWidget *parent = 0);  // Constructor
+    bool isDirty;
 
 protected:
     void javaScriptConsoleMessage(QString message, int lineNumber, QString sourceID);
 signals:
 
 public slots:
+    void editAlert();
 
 };
 

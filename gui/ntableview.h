@@ -14,7 +14,7 @@ class NTableView : public QTableView
     Q_OBJECT
 private:
     unsigned int filterPosition;
-    QList<int> validLids;
+    //QList<int> validLids;
 
 public:
     explicit NTableView(QWidget *parent = 0);

@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QStringList>
 
+#include "sql/notetable.h"
 #include "gui/ntabwidget.h"
 #include "settings/startupconfig.h"
 #include "dialog/logindialog.h"
@@ -17,6 +18,7 @@
 #include "filters/filterengine.h"
 #include "java/javamachine.h"
 #include "global.h"
+#include "html/enmlformatter.h"
 
 #include "gui/nmainmenubar.h"
 #include "dialog/logindialog.h"
@@ -36,16 +38,20 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     this->setFont(f);
 
         db = new DatabaseConnection();  // Startup the database
+        QLOG_TRACE() << "Setting up global settings";
         this->initializeGlobalSettings();
 
         // Setup the sync thread
+        QLOG_TRACE() << "Setting up sync thread";
         connect(this,SIGNAL(syncRequested()),&syncRunner,SLOT(synchronize()));
        // syncRunner.start(QThread::NormalPriority);
 
        // indexRunner.start(QThread::LowestPriority);
 
+        QLOG_TRACE() << "Setting up GUI";
         this->setupGui();
 
+        QLOG_TRACE() << "Connecting signals";
         connect(tagTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
         connect(notebookTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
         connect(searchTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
@@ -77,9 +83,11 @@ void NixNote::setupGui() {
     setWindowTitle(tr("Nixnote 2"));
     setWindowIcon(QIcon(":notebook.png"));
 
+    QLOG_TRACE() << "Setting up menu bar";
     menuBar = new NMainMenuBar(this);
     setMenuBar(menuBar);
 
+    QLOG_TRACE() << "Setting up tool bar";
     toolBar = addToolBar(tr("ToolBar"));
     toolBar->setObjectName("toolBar");
     leftArrowButton = toolBar->addAction(QIcon(":left_arrow.png"), tr("Back"));
@@ -94,6 +102,7 @@ void NixNote::setupGui() {
     syncButton = toolBar->addAction(QIcon(":synchronize.png"), tr("Synchronize"));
     connect(syncButton,SIGNAL(triggered()), this, SLOT(synchronize()));
 
+    QLOG_TRACE() << "Adding main splitter";
     mainSplitter = new QSplitter(Qt::Horizontal);
     setCentralWidget(mainSplitter);
 
@@ -112,7 +121,7 @@ void NixNote::setupGui() {
     this->setupTabWindow();
     leftPanel->vboxLayout->addStretch();
 
-
+    QLOG_TRACE() << "Setting up fleft panel";
     leftPanel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     leftScroll = new QScrollArea();
     leftScroll->setWidgetResizable(true);
@@ -125,11 +134,13 @@ void NixNote::setupGui() {
     mainSplitter->setStretchFactor(0,1);
     mainSplitter->setStretchFactor(1,3);
 
+    QLOG_TRACE() << "Resetting left side widgets";
     tagTreeView->resetSize();
     searchTreeView->resetSize();
     attributeTree->resetSize();
     trashTree->resetSize();
 
+    QLOG_TRACE() << "Restoring window state";
     // Restore the window state
     ConfigStore config;
     QByteArray value;
@@ -139,9 +150,11 @@ void NixNote::setupGui() {
         restoreGeometry(value);
 
     // Setup timers
+    QLOG_TRACE() << "Setting up timers";
     connect(&syncButtonTimer, SIGNAL(timeout()), this, SLOT(updateSyncButton()));
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(syncButtonReset()));
 
+    QLOG_TRACE() << "Setting up more connections for tab windows & threads";
     // Setup so we refresh whenever the sync is done.
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria()));
 
@@ -172,9 +185,11 @@ void NixNote::initializeGlobalSettings() {
 //* view a specific note
 //******************************************************************************
 void NixNote::setupNoteList() {
+   QLOG_TRACE() << "Starting NixNote.setupNoteList()";
    noteTableView = new NTableView();
    rightPanelSplitter->addWidget(noteTableView);
    connect(&syncRunner, SIGNAL(syncComplete()), noteTableView, SLOT(refreshData()));
+   QLOG_TRACE() << "Leaving NixNote.setupNoteList()";
 }
 
 
@@ -184,6 +199,7 @@ void NixNote::setupNoteList() {
 //* This function sets up the user's search tree
 //*****************************************************************************
 void NixNote::setupSearchTree() {
+    QLOG_TRACE() << "Starting NixNote.setupSearchTree()";
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
     lbl->setText("<hr>");
@@ -191,6 +207,7 @@ void NixNote::setupSearchTree() {
     searchTreeView = new NSearchView(leftPanel);
     leftPanel->addWidget(searchTreeView);
     connect(&syncRunner, SIGNAL(searchUpdated(int, QString)), searchTreeView, SLOT(searchUpdated(int, QString)));
+    QLOG_TRACE() << "Exiting NixNote.setupSearchTree()";
 }
 
 
@@ -198,6 +215,7 @@ void NixNote::setupSearchTree() {
 //* This function sets up the user's tag tree
 //*****************************************************************************
 void NixNote::setupTagTree() {
+    QLOG_TRACE() << "Starting NixNote.setupTagTree()";
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
     lbl->setText("<hr>");
@@ -206,6 +224,7 @@ void NixNote::setupTagTree() {
     leftPanel->addWidget(tagTreeView);
     connect(&syncRunner, SIGNAL(tagUpdated(int, QString)),tagTreeView, SLOT(tagUpdated(int, QString)));
     connect(&syncRunner, SIGNAL(syncComplete()),tagTreeView, SLOT(rebuildTree()));
+    QLOG_TRACE() << "Exiting NixNote.setupTagTree()";
 }
 
 
@@ -214,12 +233,14 @@ void NixNote::setupTagTree() {
 //* This function sets up the attribute search tree
 //*****************************************************************************
 void NixNote::setupAttributeTree() {
+    QLOG_TRACE() << "Starting NixNote.setupAttributeTree()";
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
     lbl->setText("<hr>");
     leftPanel->addWidget(lbl);
     attributeTree = new NAttributeTree(leftPanel);
     leftPanel->addWidget(attributeTree);
+    QLOG_TRACE() << "Exiting NixNote.setupAttributeTree()";
 }
 
 
@@ -227,12 +248,14 @@ void NixNote::setupAttributeTree() {
 //* This function sets up the trash
 //*****************************************************************************
 void NixNote::setupTrashTree() {
+    QLOG_TRACE() << "Starting NixNote.setupTrashTree()";
     trashTree = new NTrashTree(leftPanel);
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
     lbl->setText("<hr>");
     leftPanel->addWidget(lbl);
     leftPanel->addWidget(trashTree);
+    QLOG_TRACE() << "Exiting NixNote.setupTrashTree()";
 }
 
 
@@ -241,6 +264,7 @@ void NixNote::setupTrashTree() {
 //* This function sets up the user's synchronized notebook tree
 //*****************************************************************************
 void NixNote::setupSynchronizedNotebookTree() {
+    QLOG_TRACE() << "Exiting NixNote.setupSynchronizedNotebookTree()";
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
     lbl->setText("<hr>");
@@ -250,6 +274,7 @@ void NixNote::setupSynchronizedNotebookTree() {
     leftPanel->addWidget(notebookTreeView);
     connect(&syncRunner, SIGNAL(notebookUpdated(int, QString)),notebookTreeView, SLOT(notebookUpdated(int, QString)));
     connect(&syncRunner, SIGNAL(syncComplete()),notebookTreeView, SLOT(rebuildTree()));
+    QLOG_TRACE() << "Exiting NixNote.setupSynchronizedNotebookTree()";
 }
 
 
@@ -258,6 +283,7 @@ void NixNote::setupSynchronizedNotebookTree() {
 //* This function sets up the tab window that is used by the browser
 //*****************************************************************************
 void NixNote::setupTabWindow() {
+    QLOG_TRACE() << "Exiting NixNote.setupTabWindow()";
     tabWindow = new NTabWidget();
     rightPanelSplitter->addWidget(tabWindow);
     NBrowserWindow *newBrowser = new NBrowserWindow();
@@ -276,6 +302,7 @@ void NixNote::setupTabWindow() {
     rightPanelSplitter->setStretchFactor(1,10);
 
     connect(noteTableView, SIGNAL(openNote(bool)), this, SLOT(openNote(bool)));
+    QLOG_TRACE() << "Exiting NixNote.setupTabWindow()";
 }
 
 
@@ -376,6 +403,7 @@ void NixNote::updateSyncButton() {
 
 
 void NixNote::openNote(bool newWindow) {
+    saveContents();
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     int lid;
     if (criteria->isContentSet()) {
@@ -397,6 +425,7 @@ void NixNote::openNote(bool newWindow) {
 //* (i.e. they select a notebook, tag, saved search...
 //*****************************************************
 void NixNote::updateSelectionCriteria() {
+    QLOG_TRACE() << "starting NixNote.updateSelectionCriteria()";
     tagTreeView->updateSelection();
     notebookTreeView->updateSelection();
     searchTreeView->updateSelection();
@@ -415,6 +444,7 @@ void NixNote::updateSelectionCriteria() {
 
     FilterEngine filterEngine;
     filterEngine.filter();
+    QLOG_TRACE() << "Refreshing data";
     noteTableView->refreshData();
 }
 
@@ -439,7 +469,7 @@ void NixNote::leftButtonTriggered() {
 //**************************************************
 
 void NixNote::databaseRestore() {
-    QLOG_DEBUG() << "Entering databaseRestore()";
+    QLOG_TRACE() << "Entering databaseRestore()";
 
     QMessageBox msgBox;
     msgBox.setText(tr("This is used to restore a database from backups.\nIt is HIGHLY recommened that this only be used to populate\nan empty database.  Restoring into a database that\n already has data can cause problems.\n\nAre you sure you want to continue?"));
@@ -518,4 +548,25 @@ void NixNote::waitCursor(bool value) {
 void NixNote::setMessage(QString text) {
     QLOG_INFO() << text;
 
+}
+
+
+//*******************************************************
+//* Check for dirty notes and save the contents
+//*******************************************************
+void NixNote::saveContents() {
+    for (int i=0; i<tabWindow->browserList->size(); i++) {
+
+        // Check if the note is dirty
+        if (tabWindow->browserList->at(i)->editor.isDirty) {
+            QString contents = tabWindow->browserList->at(i)->editor.editorPage->mainFrame()->toHtml();
+            EnmlFormatter formatter;
+            formatter.setHtml(contents);
+            formatter.rebuildNoteEnml();
+            int lid = tabWindow->browserList->at(i)->lid;
+            NoteTable table;
+            table.updateNoteContent(lid, formatter.getEnml());
+        }
+
+    }
 }

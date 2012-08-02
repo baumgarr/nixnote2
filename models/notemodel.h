@@ -9,7 +9,7 @@ class NoteModel : public QSqlTableModel
 public:
     explicit NoteModel(QObject *parent = 0);
     ~NoteModel();
-    int rowCount(const QModelIndex &parent) const;
+    //int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
     void createTable();
     Qt::ItemFlags flags(const QModelIndex &index) const;

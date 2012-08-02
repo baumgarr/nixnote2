@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'nsearchview.h'
 **
-** Created: Fri Jul 27 11:19:29 2012
+** Created: Fri Jul 27 13:59:57 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!

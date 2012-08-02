@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'nnotebookview.h'
 **
-** Created: Fri Jul 27 11:19:44 2012
+** Created: Fri Jul 27 14:00:11 2012
 **      by: The Qt Meta Object Compiler version 62 (Qt 4.7.4)
 **
 ** WARNING! All changes made in this file will be lost!
