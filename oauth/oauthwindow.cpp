@@ -118,17 +118,13 @@ void OAuthWindow::permanentCredentialsReceived(bool rc) {
     QWebFrame *mainFrame;
     mainFrame = tokenPage.page()->mainFrame();
     QString contents = mainFrame->toPlainText();
+    QLOG_DEBUG() << "Response: " << contents;
     if (contents.startsWith("oauth_token=S%3D")) {
         QString decoded;
-        response = "";
         QByteArray enc;
         enc.append(contents);
         decoded = QUrl::fromEncoded(enc).toString();
         response = decoded;
-        close();
-    } else {
-        errorMessage = tr("Bad authorization response");
-        error = true;
         close();
     }
 }
