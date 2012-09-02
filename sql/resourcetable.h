@@ -1,8 +1,8 @@
 #ifndef RESOURCETABLE_H
 #define RESOURCETABLE_H
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 #include "global.h"
 
 #include <iostream>
@@ -58,26 +58,26 @@ private:
 
 public:
     ResourceTable();                             // Constructor
-    int getLid(QString noteGuid, QString guid);            // given a guid, return the lid
-    int getLid(string noteGuid, string guid);             // Given a guid, return the lid
-    void updateGuid(int lid, Guid &guid);    // Update a resource's guid
+    qint32 getLid(QString noteGuid, QString guid);            // given a guid, return the lid
+    qint32 getLid(string noteGuid, string guid);             // Given a guid, return the lid
+    void updateGuid(qint32 lid, Guid &guid);    // Update a resource's guid
     void sync(Resource &resource);                    // Sync a resource with a new record
-    void sync(int lid, Resource &resource);           // Sync a resource with a new record
-    void add(int lid, Resource &t, bool isDirty); // Add a new resource
-    bool get(Resource &resource, int lid);           // Get a resource given a lid
+    void sync(qint32 lid, Resource &resource);           // Sync a resource with a new record
+    void add(qint32 lid, Resource &t, bool isDirty); // Add a new resource
+    bool get(Resource &resource, qint32 lid);           // Get a resource given a lid
     bool get(Resource &resource, QString noteGuid, QString guid);      // get a resource given a guid
     bool get(Resource &resource, string noteGuid, string guid);       // get a resource given a guid
-    bool isDirty(int lid);                  // Check if a resource is dirty
+    bool isDirty(qint32 lid);                  // Check if a resource is dirty
     bool isDirty(QString noteGuid, QString guid);             // Check if a resource is dirty
     bool isDirty(string noteGuid, string guid);              // Check if a resource is dirty
-    bool exists(int lid);                                   // Does this resource exist?
+    bool exists(qint32 lid);                                   // Does this resource exist?
     bool exists(QString noteGuid, QString guid);              // Does this resource exist?
     bool exists(string noteGuid, string guid);               // Does this resource exist?
-    bool getResourceRecognition(Resource &resource, int lid);
-    int getLidByHashHex(QString noteGuid, QString hash);
-    bool getInkNote(QByteArray &value, int lid);
-    void setIndexNeeded(int lid, bool indexNeeded);    // flag if a resource needs reindexing
-    int getIndexNeeded(QList<int> &lids);           // Get a list of all resources needing indexing
+    bool getResourceRecognition(Resource &resource, qint32 lid);
+    qint32 getLidByHashHex(QString noteGuid, QString hash);
+    bool getInkNote(QByteArray &value, qint32 lid);
+    void setIndexNeeded(qint32 lid, bool indexNeeded);    // flag if a resource needs reindexing
+    qint32 getIndexNeeded(QList<qint32> &lids);           // Get a list of all resources needing indexing
 };
 
 

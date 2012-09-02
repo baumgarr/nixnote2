@@ -6,8 +6,8 @@
 #include "gui/browserWidgets/authoreditor.h"
 #include "gui/browserWidgets/datetimeeditor.h"
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 
 using namespace evernote::edam  ;
 using namespace std;
@@ -24,7 +24,7 @@ private:
 
 public:
     explicit DateEditor(QWidget *parent = 0);
-    void setNote(int lid, Note n);
+    void setNote(qint32 lid, Note n);
     
 signals:
     void valueChanged();

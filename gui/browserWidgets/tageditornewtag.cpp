@@ -53,7 +53,7 @@ void TagEditorNewTag::loadCompleter() {
     TagTable tagTable;
     QStringList tagNames;
     tagTable.getAll(tagList);
-    for (int i=0; i<tagList.size(); i++) {
+    for (qint32 i=0; i<tagList.size(); i++) {
         Tag t;
         QString guid;
         tagTable.getGuid(guid, tagList[i]);

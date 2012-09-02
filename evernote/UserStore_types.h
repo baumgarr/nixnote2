@@ -24,18 +24,19 @@ enum SponsoredGroupRole {
 };
 
 typedef struct _PublicUserInfo__isset {
-  _PublicUserInfo__isset() : privilege(false), username(false) {}
+  _PublicUserInfo__isset() : privilege(false), username(false), noteStoreUrl(false) {}
   bool privilege;
   bool username;
+  bool noteStoreUrl;
 } _PublicUserInfo__isset;
 
 class PublicUserInfo {
  public:
 
-  static const char* ascii_fingerprint; // = "724DFF4FFFB8A87B3EDA5AEF78D412EB";
-  static const uint8_t binary_fingerprint[16]; // = {0x72,0x4D,0xFF,0x4F,0xFF,0xB8,0xA8,0x7B,0x3E,0xDA,0x5A,0xEF,0x78,0xD4,0x12,0xEB};
+  static const char* ascii_fingerprint; // = "ACE0BEB227C4D0B5BB056041973A6030";
+  static const uint8_t binary_fingerprint[16]; // = {0xAC,0xE0,0xBE,0xB2,0x27,0xC4,0xD0,0xB5,0xBB,0x05,0x60,0x41,0x97,0x3A,0x60,0x30};
 
-  PublicUserInfo() : userId(0), shardId(""), username("") {
+  PublicUserInfo() : userId(0), shardId(""), username(""), noteStoreUrl("") {
   }
 
   virtual ~PublicUserInfo() throw() {}
@@ -44,6 +45,7 @@ class PublicUserInfo {
   std::string shardId;
   evernote::edam::PrivilegeLevel privilege;
   std::string username;
+  std::string noteStoreUrl;
 
   _PublicUserInfo__isset __isset;
 
@@ -61,6 +63,10 @@ class PublicUserInfo {
       return false;
     else if (__isset.username && !(username == rhs.username))
       return false;
+    if (__isset.noteStoreUrl != rhs.__isset.noteStoreUrl)
+      return false;
+    else if (__isset.noteStoreUrl && !(noteStoreUrl == rhs.noteStoreUrl))
+      return false;
     return true;
   }
   bool operator != (const PublicUserInfo &rhs) const {
@@ -75,19 +81,21 @@ class PublicUserInfo {
 };
 
 typedef struct _PremiumInfo__isset {
-  _PremiumInfo__isset() : premiumExpirationDate(false), sponsoredGroupName(false), sponsoredGroupRole(false) {}
+  _PremiumInfo__isset() : premiumExpirationDate(false), sponsoredGroupName(false), sponsoredGroupRole(false), businessName(false), businessAdmin(false) {}
   bool premiumExpirationDate;
   bool sponsoredGroupName;
   bool sponsoredGroupRole;
+  bool businessName;
+  bool businessAdmin;
 } _PremiumInfo__isset;
 
 class PremiumInfo {
  public:
 
-  static const char* ascii_fingerprint; // = "1C3FEBFCC34CFA6368AF9D1447D203CA";
-  static const uint8_t binary_fingerprint[16]; // = {0x1C,0x3F,0xEB,0xFC,0xC3,0x4C,0xFA,0x63,0x68,0xAF,0x9D,0x14,0x47,0xD2,0x03,0xCA};
+  static const char* ascii_fingerprint; // = "6C8AD5B945651CA70292CC21A279E3F5";
+  static const uint8_t binary_fingerprint[16]; // = {0x6C,0x8A,0xD5,0xB9,0x45,0x65,0x1C,0xA7,0x02,0x92,0xCC,0x21,0xA2,0x79,0xE3,0xF5};
 
-  PremiumInfo() : currentTime(0), premium(0), premiumRecurring(0), premiumExpirationDate(0), premiumExtendable(0), premiumPending(0), premiumCancellationPending(0), canPurchaseUploadAllowance(0), sponsoredGroupName("") {
+  PremiumInfo() : currentTime(0), premium(0), premiumRecurring(0), premiumExpirationDate(0), premiumExtendable(0), premiumPending(0), premiumCancellationPending(0), canPurchaseUploadAllowance(0), sponsoredGroupName(""), businessName(""), businessAdmin(0) {
   }
 
   virtual ~PremiumInfo() throw() {}
@@ -102,6 +110,8 @@ class PremiumInfo {
   bool canPurchaseUploadAllowance;
   std::string sponsoredGroupName;
   SponsoredGroupRole sponsoredGroupRole;
+  std::string businessName;
+  bool businessAdmin;
 
   _PremiumInfo__isset __isset;
 
@@ -133,6 +143,14 @@ class PremiumInfo {
       return false;
     else if (__isset.sponsoredGroupRole && !(sponsoredGroupRole == rhs.sponsoredGroupRole))
       return false;
+    if (__isset.businessName != rhs.__isset.businessName)
+      return false;
+    else if (__isset.businessName && !(businessName == rhs.businessName))
+      return false;
+    if (__isset.businessAdmin != rhs.__isset.businessAdmin)
+      return false;
+    else if (__isset.businessAdmin && !(businessAdmin == rhs.businessAdmin))
+      return false;
     return true;
   }
   bool operator != (const PremiumInfo &rhs) const {
@@ -147,18 +165,20 @@ class PremiumInfo {
 };
 
 typedef struct _AuthenticationResult__isset {
-  _AuthenticationResult__isset() : user(false), publicUserInfo(false) {}
+  _AuthenticationResult__isset() : user(false), publicUserInfo(false), noteStoreUrl(false), webApiUrlPrefix(false) {}
   bool user;
   bool publicUserInfo;
+  bool noteStoreUrl;
+  bool webApiUrlPrefix;
 } _AuthenticationResult__isset;
 
 class AuthenticationResult {
  public:
 
-  static const char* ascii_fingerprint; // = "C4DE8A69CAAF10F0C36064CED350235E";
-  static const uint8_t binary_fingerprint[16]; // = {0xC4,0xDE,0x8A,0x69,0xCA,0xAF,0x10,0xF0,0xC3,0x60,0x64,0xCE,0xD3,0x50,0x23,0x5E};
+  static const char* ascii_fingerprint; // = "FADFDE6430A32EB9D23A3D14199996E1";
+  static const uint8_t binary_fingerprint[16]; // = {0xFA,0xDF,0xDE,0x64,0x30,0xA3,0x2E,0xB9,0xD2,0x3A,0x3D,0x14,0x19,0x99,0x96,0xE1};
 
-  AuthenticationResult() : currentTime(0), authenticationToken(""), expiration(0) {
+  AuthenticationResult() : currentTime(0), authenticationToken(""), expiration(0), noteStoreUrl(""), webApiUrlPrefix("") {
   }
 
   virtual ~AuthenticationResult() throw() {}
@@ -168,6 +188,8 @@ class AuthenticationResult {
   evernote::edam::Timestamp expiration;
   evernote::edam::User user;
   PublicUserInfo publicUserInfo;
+  std::string noteStoreUrl;
+  std::string webApiUrlPrefix;
 
   _AuthenticationResult__isset __isset;
 
@@ -187,6 +209,14 @@ class AuthenticationResult {
       return false;
     else if (__isset.publicUserInfo && !(publicUserInfo == rhs.publicUserInfo))
       return false;
+    if (__isset.noteStoreUrl != rhs.__isset.noteStoreUrl)
+      return false;
+    else if (__isset.noteStoreUrl && !(noteStoreUrl == rhs.noteStoreUrl))
+      return false;
+    if (__isset.webApiUrlPrefix != rhs.__isset.webApiUrlPrefix)
+      return false;
+    else if (__isset.webApiUrlPrefix && !(webApiUrlPrefix == rhs.webApiUrlPrefix))
+      return false;
     return true;
   }
   bool operator != (const AuthenticationResult &rhs) const {
@@ -194,6 +224,158 @@ class AuthenticationResult {
   }
 
   bool operator < (const AuthenticationResult & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _BootstrapSettings__isset {
+  _BootstrapSettings__isset() : enableFacebookSharing(false), enableGiftSubscriptions(false), enableSupportTickets(false), enableSharedNotebooks(false), enableSingleNoteSharing(false), enableSponsoredAccounts(false), enableTwitterSharing(false) {}
+  bool enableFacebookSharing;
+  bool enableGiftSubscriptions;
+  bool enableSupportTickets;
+  bool enableSharedNotebooks;
+  bool enableSingleNoteSharing;
+  bool enableSponsoredAccounts;
+  bool enableTwitterSharing;
+} _BootstrapSettings__isset;
+
+class BootstrapSettings {
+ public:
+
+  static const char* ascii_fingerprint; // = "3419C0A13B768EA9DB70C9DB8AC18624";
+  static const uint8_t binary_fingerprint[16]; // = {0x34,0x19,0xC0,0xA1,0x3B,0x76,0x8E,0xA9,0xDB,0x70,0xC9,0xDB,0x8A,0xC1,0x86,0x24};
+
+  BootstrapSettings() : serviceHost(""), marketingUrl(""), supportUrl(""), accountEmailDomain(""), enableFacebookSharing(0), enableGiftSubscriptions(0), enableSupportTickets(0), enableSharedNotebooks(0), enableSingleNoteSharing(0), enableSponsoredAccounts(0), enableTwitterSharing(0) {
+  }
+
+  virtual ~BootstrapSettings() throw() {}
+
+  std::string serviceHost;
+  std::string marketingUrl;
+  std::string supportUrl;
+  std::string accountEmailDomain;
+  bool enableFacebookSharing;
+  bool enableGiftSubscriptions;
+  bool enableSupportTickets;
+  bool enableSharedNotebooks;
+  bool enableSingleNoteSharing;
+  bool enableSponsoredAccounts;
+  bool enableTwitterSharing;
+
+  _BootstrapSettings__isset __isset;
+
+  bool operator == (const BootstrapSettings & rhs) const
+  {
+    if (!(serviceHost == rhs.serviceHost))
+      return false;
+    if (!(marketingUrl == rhs.marketingUrl))
+      return false;
+    if (!(supportUrl == rhs.supportUrl))
+      return false;
+    if (!(accountEmailDomain == rhs.accountEmailDomain))
+      return false;
+    if (__isset.enableFacebookSharing != rhs.__isset.enableFacebookSharing)
+      return false;
+    else if (__isset.enableFacebookSharing && !(enableFacebookSharing == rhs.enableFacebookSharing))
+      return false;
+    if (__isset.enableGiftSubscriptions != rhs.__isset.enableGiftSubscriptions)
+      return false;
+    else if (__isset.enableGiftSubscriptions && !(enableGiftSubscriptions == rhs.enableGiftSubscriptions))
+      return false;
+    if (__isset.enableSupportTickets != rhs.__isset.enableSupportTickets)
+      return false;
+    else if (__isset.enableSupportTickets && !(enableSupportTickets == rhs.enableSupportTickets))
+      return false;
+    if (__isset.enableSharedNotebooks != rhs.__isset.enableSharedNotebooks)
+      return false;
+    else if (__isset.enableSharedNotebooks && !(enableSharedNotebooks == rhs.enableSharedNotebooks))
+      return false;
+    if (__isset.enableSingleNoteSharing != rhs.__isset.enableSingleNoteSharing)
+      return false;
+    else if (__isset.enableSingleNoteSharing && !(enableSingleNoteSharing == rhs.enableSingleNoteSharing))
+      return false;
+    if (__isset.enableSponsoredAccounts != rhs.__isset.enableSponsoredAccounts)
+      return false;
+    else if (__isset.enableSponsoredAccounts && !(enableSponsoredAccounts == rhs.enableSponsoredAccounts))
+      return false;
+    if (__isset.enableTwitterSharing != rhs.__isset.enableTwitterSharing)
+      return false;
+    else if (__isset.enableTwitterSharing && !(enableTwitterSharing == rhs.enableTwitterSharing))
+      return false;
+    return true;
+  }
+  bool operator != (const BootstrapSettings &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const BootstrapSettings & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class BootstrapProfile {
+ public:
+
+  static const char* ascii_fingerprint; // = "EB65540F13576566FA9A11C6E66235D1";
+  static const uint8_t binary_fingerprint[16]; // = {0xEB,0x65,0x54,0x0F,0x13,0x57,0x65,0x66,0xFA,0x9A,0x11,0xC6,0xE6,0x62,0x35,0xD1};
+
+  BootstrapProfile() : name("") {
+  }
+
+  virtual ~BootstrapProfile() throw() {}
+
+  std::string name;
+  BootstrapSettings settings;
+
+  bool operator == (const BootstrapProfile & rhs) const
+  {
+    if (!(name == rhs.name))
+      return false;
+    if (!(settings == rhs.settings))
+      return false;
+    return true;
+  }
+  bool operator != (const BootstrapProfile &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const BootstrapProfile & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class BootstrapInfo {
+ public:
+
+  static const char* ascii_fingerprint; // = "F58F1BBA49CBAFA58A368FB854546947";
+  static const uint8_t binary_fingerprint[16]; // = {0xF5,0x8F,0x1B,0xBA,0x49,0xCB,0xAF,0xA5,0x8A,0x36,0x8F,0xB8,0x54,0x54,0x69,0x47};
+
+  BootstrapInfo() {
+  }
+
+  virtual ~BootstrapInfo() throw() {}
+
+  std::vector<BootstrapProfile>  profiles;
+
+  bool operator == (const BootstrapInfo & rhs) const
+  {
+    if (!(profiles == rhs.profiles))
+      return false;
+    return true;
+  }
+  bool operator != (const BootstrapInfo &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const BootstrapInfo & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;

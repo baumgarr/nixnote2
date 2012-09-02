@@ -10,6 +10,20 @@ TARGET = nixnote
 TEMPLATE = app
 RESOURCES = NixNote2.qrc
 
+
+#DESTDIR = ./bin
+UI_DIR = .
+
+CONFIG(debug, debug|release) {
+        OBJECTS_DIR = build/debug
+        MOC_DIR = build/debug
+}
+
+CONFIG(release, debug|release) {
+        OBJECTS_DIR = build/release
+        MOC_DIR = build/release
+}
+
 SOURCES += main.cpp\
         nixnote.cpp \
     global.cpp \
@@ -71,8 +85,8 @@ SOURCES += main.cpp\
     gui/nbrowserwindow.cpp \
     threads/indexrunner.cpp \
     html/tagscanner.cpp \
-    java/javamachine.cpp \
-    java/messageblock.cpp \
+#    java/javamachine.cpp \
+#    java/messageblock.cpp \
     xml/importdata.cpp \
     sql/notemetadata.cpp \
     sql/sharednotebooktable.cpp \
@@ -91,7 +105,12 @@ SOURCES += main.cpp\
     gui/treewidgeteditor.cpp \
     dialog/tagproperties.cpp \
     dialog/notebookproperties.cpp \
-    html/enmlformatter.cpp
+    html/enmlformatter.cpp \
+    utilities/encrypt.cpp \
+    dialog/endecryptdialog.cpp \
+    oauth/oauthtokenizer.cpp \
+    oauth/oauthwindow.cpp \
+    communication/communicationmanager.cpp
 
 HEADERS  += nixnote.h \
     global.h \
@@ -131,7 +150,6 @@ HEADERS  += nixnote.h \
     gui/widgetpanel.h \
     gui/numberdelegate.h \
     gui/ntabwidget.h \
-    gui/notetabledatedelegate.h \
     gui/nnotebookviewitem.h \
     gui/nnotebookview.h \
     gui/datedelegate.h \
@@ -144,7 +162,6 @@ HEADERS  += nixnote.h \
     html/noteformatter.h \
     filters/ensearch.h \
     settings/startupconfig.h \
-    logindialog.h \
     dialog/logindialog.h \
     gui/lineedit.h \
     gui/nattributetree.h \
@@ -155,8 +172,8 @@ HEADERS  += nixnote.h \
     gui/nbrowserwindow.h \
     threads/indexrunner.h \
     html/tagscanner.h \
-    java/javamachine.h \
-    java/messageblock.h \
+#    java/javamachine.h \
+#    java/messageblock.h \
     xml/importdata.h \
     sql/notemetadata.h \
     sql/sharednotebooktable.h \
@@ -175,15 +192,27 @@ HEADERS  += nixnote.h \
     gui/treewidgeteditor.h \
     dialog/tagproperties.h \
     dialog/notebookproperties.h \
-    html/enmlformatter.h
+    html/enmlformatter.h \
+    utilities/encrypt.h \
+    dialog/endecryptdialog.h \
+    oauth/oauthtokenizer.h \
+    oauth/oauthwindow.h \
+    communication/communicationmanager.h
 
-#LIBS += -L/usr/lib/jvm/java-6-sun/jre/lib/i386/client/ -lthrift -ljvm
 
-    #LIBS +=  -L/usr/lib/jvm/java-6-sun/jre/lib/i386/client -L./lib/ -lthrift -ljvm -lpthread
-    LIBS +=  -L/usr/lib/jvm/java-6-openjdk/jre/lib/i386/server -ljvm -lpthread -lthrift
-    INCLUDEPATH += /usr/local/include/thrift \
-        /usr/lib/jvm/java-6-openjdk/include \
-        /usr/lib/jvm/java-6-openjdk/include/linux
-    QMAKE_LFLAGS += -Wl,--rpath=./lib/
-    QMAKE_LFLAGS_RPATH=
+LIBS += -L./lib -lthrift -lpthread
+INCLUDEPATH += /usr/local/include/thrift \
 
+#LIBS +=  -L/usr/lib/jvm/java-6-openjdk/jre/lib/i386/server -ljvm -lpthread -lthrift
+        # -L./libencrypt -lencrypt
+
+#INCLUDEPATH += /usr/local/include/thrift \
+#        /usr/lib/jvm/java-6-openjdk/include \
+#        /usr/lib/jvm/java-6-openjdk/include/linux
+
+#QMAKE_LFLAGS += -Wl,--rpath=./lib/
+#QMAKE_LFLAGS_RPATH=
+
+#QMAKE_CXXFLAGS += -isystem=./evernote/
+
+#QMAKE_LFLAGS += -static

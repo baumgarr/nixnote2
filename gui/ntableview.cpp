@@ -43,9 +43,9 @@ NTableView::NTableView(QWidget *parent) :
 
     // Set the date deligates
     QLOG_TRACE() << "Setting up table deligates";
-    DateDelegate *dateDelegate = new DateDelegate();
-    NumberDelegate *blankNumber = new NumberDelegate(NumberDelegate::BlankNumber);
-    NumberDelegate *kbNumber = new NumberDelegate(NumberDelegate::KBNumber);
+    dateDelegate = new DateDelegate();
+    blankNumber = new NumberDelegate(NumberDelegate::BlankNumber);
+    kbNumber = new NumberDelegate(NumberDelegate::KBNumber);
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_CREATED_POSITION, dateDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_SUBJECT_POSITION, dateDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_UPDATED_POSITION, dateDelegate);
@@ -86,16 +86,18 @@ NTableView::NTableView(QWidget *parent) :
     this->model()->setHeaderData(NOTE_TABLE_IS_DIRTY_POSITION, Qt::Horizontal, QObject::tr("Synchronized"));
     this->model()->setHeaderData(NOTE_TABLE_SIZE_POSITION, Qt::Horizontal, QObject::tr("Size"));
 
-
-
     QLOG_TRACE() << "Exiting NTableView constructor";
 }
 
 
 //* Destructor
 NTableView::~NTableView() {
+    delete dateDelegate;
+    delete blankNumber;
+    delete kbNumber;
     delete this->header;
     delete this->noteModel;
+    delete this->proxy;
 }
 
 
@@ -128,7 +130,8 @@ void NTableView::refreshSelection() {
     this->blockSignals(true);
 
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
-    QList<int> historyList;
+    QList<qint32> historyList;
+    historyList.clear();
     criteria->getSelectedNotes(historyList);
 
     QLOG_TRACE() << "Highlighting selected rows after refresh";
@@ -153,7 +156,7 @@ void NTableView::refreshSelection() {
         int rowCount = proxy->rowCount(QModelIndex());
         for (int j=rowCount-1; j>=0; j--) {
             QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
-            int rowLid = idx.data().toInt();
+            qint32 rowLid = idx.data().toInt();
             if (rowLid > 0) {
                 QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
                 criteria->setContent(rowLid);
@@ -185,7 +188,7 @@ void NTableView::mouseReleaseEvent(QMouseEvent *e) {
 
 void NTableView::getSelectedLids(bool newWindow) {
 
-    QList<int> lids;
+    QList<qint32> lids;
     // First, find out if we're already viewing history.  If we are we
     // chop off the end of the history & start a new one
     if (global.filterPosition+1 < global.filterCriteria.size()) {
@@ -207,10 +210,10 @@ void NTableView::getSelectedLids(bool newWindow) {
     // getting the same lid multiple times, but it is the best
     // way since I can't determine exactly how many rows are
     // selected.
-    int priorLid = -1;
+    qint32 priorLid = -1;
     QModelIndexList l = selectedIndexes();
     for (int i=0; i<l.size(); i++) {
-        int currentLid =  l.at(i).sibling(l.at(i).row(),NOTE_TABLE_LID_POSITION).data().toInt();
+        qint32 currentLid =  l.at(i).sibling(l.at(i).row(),NOTE_TABLE_LID_POSITION).data().toInt();
         if (priorLid != currentLid) {
             lids.append(currentLid);
             priorLid = currentLid;

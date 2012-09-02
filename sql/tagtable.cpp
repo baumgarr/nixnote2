@@ -16,8 +16,7 @@ TagTable::TagTable()
 
 
 // Given a tag's name as a std::string, we return the lid
-int TagTable::findByName(string &name) {
-    QLOG_TRACE() << "Entering TagTable::findTagByName()";
+qint32 TagTable::findByName(string &name) {
     QSqlQuery query;
     query.prepare("Select lid from DataStore where key=:key and data=:name");
     query.bindValue(":key", TAG_NAME);
@@ -33,7 +32,7 @@ int TagTable::findByName(string &name) {
 
 
 // Given a tag's name as a QString, we return the lid
-int TagTable::findByName(QString &name) {
+qint32 TagTable::findByName(QString &name) {
     string n = name.toStdString();
     return findByName(n);
 }
@@ -41,9 +40,7 @@ int TagTable::findByName(QString &name) {
 
 
 // Get a list of all tags
-int TagTable::getAll(QList<int> &tags) {
-    QLOG_TRACE() << "Entering TagTable::getAll()";
-
+qint32 TagTable::getAll(QList<qint32> &tags) {
     QSqlQuery query;
     query.prepare("select distinct lid from DataStore where key=:key");
     query.bindValue(":key", TAG_GUID);
@@ -61,9 +58,7 @@ int TagTable::getAll(QList<int> &tags) {
 
 // Given a tag's lid, we give it a new guid.  This can happen
 // the first time a record is synchronized
-void TagTable::updateGuid(int lid, Guid &guid) {
-    QLOG_TRACE() << "Entering TagTable::updateTagGuid()";
-
+void TagTable::updateGuid(qint32 lid, Guid &guid) {
     QString oldGuid;
     getGuid(oldGuid, lid);
 
@@ -79,8 +74,6 @@ void TagTable::updateGuid(int lid, Guid &guid) {
     query.bindValue(":key", TAG_PARENT);
     query.bindValue(":oldGuid", oldGuid);
     query.exec();
-
-    QLOG_TRACE() << "Leaving TagTable::updateTagGuid()";
 }
 
 
@@ -89,10 +82,8 @@ void TagTable::updateGuid(int lid, Guid &guid) {
 // Synchronize a new tag with what is in the database.  We basically
 // just delete the old one & give it a new entry
 void TagTable::sync(Tag &tag) {
-    QLOG_TRACE() << "Leaving TagTable::syncTag()";
-    int lid= findByName(tag.name);
+    qint32 lid= findByName(tag.name);
     sync(lid, tag);
-    QLOG_TRACE() << "Leaving TagTable::syncTag()";
 }
 
 
@@ -100,7 +91,7 @@ void TagTable::sync(Tag &tag) {
 
 // Update a tag record
 void TagTable::update(Tag &tag, bool dirty=true) {
-    int lid = getLid(tag.guid);
+    qint32 lid = getLid(tag.guid);
     if (lid > 0) {
         QSqlQuery query;
         // Delete the old record
@@ -112,9 +103,9 @@ void TagTable::update(Tag &tag, bool dirty=true) {
 
         // Now update the Note display list
         NoteTable noteTable;
-        QList<int> noteList;
+        QList<qint32> noteList;
         noteTable.findNotesByTag(noteList, lid);
-        for (int i=0; i<noteList.size(); i++) {
+        for (qint32 i=0; i<noteList.size(); i++) {
             noteTable.rebuildNoteListTags(noteList[i]);
         }
 
@@ -123,9 +114,8 @@ void TagTable::update(Tag &tag, bool dirty=true) {
 
 // Synchronize a newtag with what is in the database.  We basically
 // just delete the old one & give it a new entry
-void TagTable::sync(int l, Tag &tag) {
-    QLOG_TRACE() << "Entering TagTable::syncTag()";
-    int lid = l;
+void TagTable::sync(qint32 l, Tag &tag) {
+    qint32 lid = l;
     if (lid == 0)
         lid= findByName(tag.name);
 
@@ -141,15 +131,13 @@ void TagTable::sync(int l, Tag &tag) {
     }
 
     add(lid, tag, false);
-
-    QLOG_TRACE() << "Leaving TagTable::syncTag()";
 }
 
 
 
 
 // Given a tag's GUID, we return the LID
-int TagTable::getLid(QString guid) {
+qint32 TagTable::getLid(QString guid) {
 
     QSqlQuery query;
     query.prepare("Select lid from DataStore where key=:key and data=:data");
@@ -164,7 +152,7 @@ int TagTable::getLid(QString guid) {
 
 
 // Given a tag's GUID, we return the LID
-int TagTable::getLid(string guid) {
+qint32 TagTable::getLid(string guid) {
     QString s(QString::fromStdString(guid));
     return getLid(s);
 }
@@ -172,9 +160,9 @@ int TagTable::getLid(string guid) {
 
 
 // Add a new tag to the database
-void TagTable::add(int l, Tag &t, bool isDirty) {
+void TagTable::add(qint32 l, Tag &t, bool isDirty) {
     ConfigStore cs;
-    int lid = l;
+    qint32 lid = l;
     if (lid == 0)
         lid = cs.incrementLidCounter();
 
@@ -212,7 +200,7 @@ void TagTable::add(int l, Tag &t, bool isDirty) {
 
 
 // Return a tag structure given the LID
-bool TagTable::get(Tag &tag, int lid) {
+bool TagTable::get(Tag &tag, qint32 lid) {
 
     QSqlQuery query;
     query.prepare("Select key, data from DataStore where lid=:lid");
@@ -221,7 +209,7 @@ bool TagTable::get(Tag &tag, int lid) {
     if (query.size() == 0)
         return false;
     while (query.next()) {
-        int key = query.value(0).toInt();
+        qint32 key = query.value(0).toInt();
         switch (key) {
             case (TAG_GUID):
                 tag.guid = query.value(1).toString().toStdString();
@@ -249,7 +237,7 @@ bool TagTable::get(Tag &tag, int lid) {
 
 // Return a tag given the GUID
 bool TagTable::get(Tag &tag, QString guid) {
-    int lid = getLid(guid);
+    qint32 lid = getLid(guid);
     return get(tag, lid);
 }
 
@@ -257,14 +245,14 @@ bool TagTable::get(Tag &tag, QString guid) {
 
 // Return a tag given the GUID as a std::string
 bool TagTable::get(Tag &tag, string guid) {
-    int lid = getLid(guid);
+    qint32 lid = getLid(guid);
     return get(tag, lid);
 }
 
 
 
 // Return if a tag is dirty given its lid
-bool TagTable::isDirty(int lid) {
+bool TagTable::isDirty(qint32 lid) {
     QSqlQuery query;
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
@@ -279,7 +267,7 @@ bool TagTable::isDirty(int lid) {
 
 // Determine if a tag is dirty given a guid
 bool TagTable::isDirty(QString guid) {
-    int lid = getLid(guid);
+    qint32 lid = getLid(guid);
     return isDirty(lid);
 }
 
@@ -293,20 +281,20 @@ bool TagTable::isDirty(string guid) {
 
 // Set a flag dirty or clean
 bool TagTable::setDirty(string guid, bool dirty) {
-    int lid = getLid(guid);
+    qint32 lid = getLid(guid);
     return setDirty(lid, dirty);
 }
 
 
 // Set a flag dirty or clean
 bool TagTable::setDirty(QString guid, bool dirty) {
-    int lid = getLid(guid);
+    qint32 lid = getLid(guid);
     return setDirty(lid, dirty);
 }
 
 
 // Return if a tag is dirty given its lid
-bool TagTable::setDirty(int lid, bool dirty) {
+bool TagTable::setDirty(qint32 lid, bool dirty) {
     QSqlQuery query;
     query.prepare("Update DataStore set data=:dirty where key=:key and lid=:lid");
     query.bindValue(":dirty", dirty);
@@ -321,7 +309,7 @@ bool TagTable::setDirty(int lid, bool dirty) {
 
 
 // Does this tag exist?
-bool TagTable::exists(int lid) {
+bool TagTable::exists(qint32 lid) {
     QSqlQuery query;
     query.prepare("Select lid from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
@@ -336,20 +324,20 @@ bool TagTable::exists(int lid) {
 
 // Determine if a tag is dirty given a guid
 bool TagTable::exists(QString guid) {
-    int lid = getLid(guid);
+    qint32 lid = getLid(guid);
     return exists(lid);
 }
 
 
 // Determine if a tag is dirty given a guid
 bool TagTable::exists(string guid) {
-    int lid = getLid(guid);
+    qint32 lid = getLid(guid);
     return exists(lid);
 }
 
 
 // Return a tag guid given the LID
-bool TagTable::getGuid(QString &guid, int lid) {
+bool TagTable::getGuid(QString &guid, qint32 lid) {
 
     QSqlQuery query;
     query.prepare("Select data, data from DataStore where lid=:lid and key=:key");
@@ -367,12 +355,12 @@ bool TagTable::getGuid(QString &guid, int lid) {
 
 
 // Delete this tag
-void TagTable::deleteTag(int lid) {
+void TagTable::deleteTag(qint32 lid) {
     if (!exists(lid))
         return;
 
     // First find all the children & delete them
-    QList<int> list;
+    QList<qint32> list;
     QString parentGuid;
     getGuid(parentGuid, lid);
     findChildren(list, parentGuid);
@@ -381,9 +369,9 @@ void TagTable::deleteTag(int lid) {
     // Now add this lid to the list to be deleted
     list.append(lid);
 
-    for (int i=0; i<list.size(); i++) {
+    for (qint32 i=0; i<list.size(); i++) {
         Tag tag;
-        int currentLid = list[i];
+        qint32 currentLid = list[i];
         get(tag, currentLid);
         if (tag.__isset.updateSequenceNum && tag.updateSequenceNum > 0) {
             QSqlQuery query;
@@ -399,7 +387,7 @@ void TagTable::deleteTag(int lid) {
 }
 
 
-void TagTable::expunge(int lid) {
+void TagTable::expunge(qint32 lid) {
     QSqlQuery query;
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
@@ -407,7 +395,7 @@ void TagTable::expunge(int lid) {
 }
 
 // Is this search deleted?
-bool TagTable::isDeleted(int lid) {
+bool TagTable::isDeleted(qint32 lid) {
     QSqlQuery query;
     query.prepare("Select lid from DataStore where lid=:lid and key=:key and data=:data");
     query.bindValue(":lid", lid);
@@ -421,7 +409,7 @@ bool TagTable::isDeleted(int lid) {
 }
 
 
-int TagTable::findChildren(QList<int> &list, QString parentGuid) {
+qint32 TagTable::findChildren(QList<qint32> &list, QString parentGuid) {
     QSqlQuery query;
     query.prepare("Select lid from DataStore where key=:key and data=:parent");
     query.bindValue(":key", TAG_PARENT);
@@ -430,7 +418,7 @@ int TagTable::findChildren(QList<int> &list, QString parentGuid) {
 
     // Now find all the children for each found tag
     while (query.next()) {
-        int nextChild = query.value(0).toInt();
+        qint32 nextChild = query.value(0).toInt();
         QString nextGuid;
         getGuid(nextGuid, nextChild);
         findChildren(list, nextGuid);

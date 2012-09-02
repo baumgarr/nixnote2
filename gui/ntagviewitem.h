@@ -8,8 +8,8 @@ class NTagViewItem : public QTreeWidgetItem
 public:
     explicit NTagViewItem();
     explicit NTagViewItem(QTreeWidget* parent);
-    int parentLid;
-    QList<int> childrenGuids;
+    qint32 parentLid;
+    QList<qint32> childrenGuids;
     QString parentGuid;
 
     bool operator<(const QTreeWidgetItem &other)const;

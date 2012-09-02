@@ -8,8 +8,8 @@
 #include <QMessageBox>
 
 #include "sql/notebooktable.h"
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 #include "dialog/notebookproperties.h"
 
 #define NAME_POSITION 0
@@ -214,7 +214,7 @@ void NNotebookView::rebuildTree() {
     if (!this->rebuildNotebookTreeNeeded)
         return;
 
-    QHashIterator<int, NNotebookViewItem *> i(dataStore);
+    QHashIterator<qint32, NNotebookViewItem *> i(dataStore);
     while (i.hasNext()) {
         i.next();
         if (i.value()->stack != "") {
@@ -230,7 +230,7 @@ void NNotebookView::rebuildTree() {
     this->resetSize();
 }
 
-void NNotebookView::notebookUpdated(int lid, QString name) {
+void NNotebookView::notebookUpdated(qint32 lid, QString name) {
     this->rebuildNotebookTreeNeeded = true;
 
     // Check if it already exists
@@ -390,7 +390,7 @@ void NNotebookView::contextMenuEvent(QContextMenuEvent *event) {
                 deleteAction->setEnabled(false);
                 removeFromStackAction->setVisible(false);
             } else {
-                int lid = items[i]->data(NAME_POSITION, Qt::UserRole).toInt();
+                qint32 lid = items[i]->data(NAME_POSITION, Qt::UserRole).toInt();
                 if (table.isStacked(lid)) {
                     removeFromStackAction->setVisible(true);
                 } else {
@@ -418,7 +418,7 @@ void NNotebookView::addRequested() {
     NotebookTable table;
     NNotebookViewItem *newWidget = new NNotebookViewItem();
     QString name = dialog.name.text().trimmed();
-    int lid = table.findByName(name);
+    qint32 lid = table.findByName(name);
     newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
     newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
     this->dataStore.insert(lid, newWidget);
@@ -433,7 +433,7 @@ void NNotebookView::propertiesRequested() {
     NotebookProperties dialog;
     QList<QTreeWidgetItem*> items = selectedItems();
 
-    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     QString oldName = items[0]->data(NAME_POSITION, Qt::DisplayRole).toString();
     dialog.setLid(lid);
 
@@ -455,7 +455,7 @@ void NNotebookView::propertiesRequested() {
 void NNotebookView::deleteRequested() {
     QList<QTreeWidgetItem*> items = selectedItems();
 
-    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     if (global.confirmDeletes()) {
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Question);
@@ -500,7 +500,7 @@ void NNotebookView::editComplete() {
 
     // Check if this is a notebook or a stack
     if (editor->lid > 0) {
-        int lid = editor->lid;
+        qint32 lid = editor->lid;
         NotebookTable table;
         Notebook notebook;
         table.get(notebook, lid);
@@ -508,7 +508,7 @@ void NNotebookView::editComplete() {
 
         // Check that this notebook doesn't already exist
         // if it exists, we go back to the original name
-        int check = table.findByName(text);
+        qint32 check = table.findByName(text);
         if (check != 0) {
             NNotebookViewItem *item = dataStore[lid];
             item->setData(NAME_POSITION, Qt::DisplayRole, QString::fromStdString(notebook.name));
@@ -575,7 +575,7 @@ void NNotebookView::moveToStackRequested() {
         return;
 
     QAction *action = (QAction*)sender();
-    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     Notebook notebook;
     NotebookTable table;
     table.get(notebook, lid);
@@ -636,7 +636,7 @@ void NNotebookView::moveToNewStackRequested() {
     sortStackMenu();
 
     // Update the note in the database
-    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     Notebook book;
     table.get(book, lid);
     book.stack = newStackName.toStdString();
@@ -653,7 +653,7 @@ void NNotebookView::moveToNewStackRequested() {
 
 void NNotebookView::removeFromStackRequested() {
     QList<QTreeWidgetItem*> items = selectedItems();
-    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     NotebookTable table;
     table.removeFromStack(lid);
 

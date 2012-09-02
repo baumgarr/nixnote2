@@ -4,6 +4,8 @@
 #include <QTableView>
 #include "ntableviewheader.h"
 #include "models/notemodel.h"
+#include "datedelegate.h"
+#include "numberdelegate.h"
 #include "filters/notesortfilterproxymodel.h"
 #include <boost/shared_ptr.hpp>
 
@@ -14,7 +16,10 @@ class NTableView : public QTableView
     Q_OBJECT
 private:
     unsigned int filterPosition;
-    //QList<int> validLids;
+    DateDelegate *dateDelegate;
+    NumberDelegate *blankNumber;
+    NumberDelegate *kbNumber;
+
 
 public:
     explicit NTableView(QWidget *parent = 0);

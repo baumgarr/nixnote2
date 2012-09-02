@@ -1,8 +1,8 @@
 #ifndef USERTABLE_H
 #define USERTABLE_H
 #include <Q_LONG>
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 
 using namespace evernote::edam;
 
@@ -16,9 +16,9 @@ public:
     void updateUser(AuthenticationResult r);
     void updateSyncState(SyncState s);
     qlonglong getLastSyncDate();
-    int getLastSyncNumber();
+    qint32 getLastSyncNumber();
     void updateLastSyncDate(long date);
-    void updateLastSyncNumber(int date);
+    void updateLastSyncNumber(qint32 usn);
 };
 
 #endif // USER_H

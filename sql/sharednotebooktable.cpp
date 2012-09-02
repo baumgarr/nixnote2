@@ -8,7 +8,7 @@ SharedNotebookTable::SharedNotebookTable()
 }
 
 
-int SharedNotebookTable::getLid(qlonglong id){
+qint32 SharedNotebookTable::getLid(qlonglong id){
     QSqlQuery query;
     query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
@@ -22,14 +22,14 @@ int SharedNotebookTable::getLid(qlonglong id){
 
 
 void SharedNotebookTable::sync(SharedNotebook &sharedNotebook){
-    int lid = findById(sharedNotebook.id);
+    qint32 lid = findById(sharedNotebook.id);
     sync(lid, sharedNotebook);
 }
 
 
 
-void SharedNotebookTable::sync(int l, SharedNotebook sharedNotebook){
-    int lid = l;
+void SharedNotebookTable::sync(qint32 l, SharedNotebook sharedNotebook){
+    qint32 lid = l;
     if (lid == 0)
         lid= findById(sharedNotebook.id);
 
@@ -49,9 +49,10 @@ void SharedNotebookTable::sync(int l, SharedNotebook sharedNotebook){
 
 
 
-void SharedNotebookTable::add(int l, SharedNotebook &t, bool isDirty){
+void SharedNotebookTable::add(qint32 l, SharedNotebook &t, bool isDirty){
+    isDirty=isDirty;  //suppress unused
     ConfigStore cs;
-    int lid = l;
+    qint32 lid = l;
     if (lid == 0)
         lid = cs.incrementLidCounter();
 
@@ -119,7 +120,7 @@ void SharedNotebookTable::add(int l, SharedNotebook &t, bool isDirty){
 
 
 
-bool SharedNotebookTable::get(SharedNotebook &notebook, int lid){
+bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
     QSqlQuery query;
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
@@ -127,7 +128,7 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, int lid){
     if (query.size() == 0)
         return false;
     while (query.next()) {
-        int key = query.value(0).toInt();
+        qint32 key = query.value(0).toInt();
         switch (key) {
         case (SHAREDNOTEBOOK_EMAIL):
             notebook.email = query.value(1).toString().toStdString();
@@ -177,7 +178,7 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, int lid){
 
 
 
-bool SharedNotebookTable::isDirty(int lid){
+bool SharedNotebookTable::isDirty(qint32 lid){
     QSqlQuery query;
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
@@ -192,7 +193,7 @@ bool SharedNotebookTable::isDirty(int lid){
 
 
 
-bool SharedNotebookTable::exists(int lid){
+bool SharedNotebookTable::exists(qint32 lid){
     QSqlQuery query;
     query.prepare("Select lid from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
@@ -220,7 +221,7 @@ bool SharedNotebookTable::exists(qlonglong id){
 
 
 
-int SharedNotebookTable::getAll(QList<int> &values){
+qint32 SharedNotebookTable::getAll(QList<qint32> &values){
     QLOG_TRACE() << "Entering SharedNotebookTable::getAll()";
 
     QSqlQuery query;
@@ -236,7 +237,7 @@ int SharedNotebookTable::getAll(QList<int> &values){
 
 
 
-qlonglong SharedNotebookTable::getId(int lid){
+qlonglong SharedNotebookTable::getId(qint32 lid){
     QSqlQuery query;
     query.prepare("Select data from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
@@ -250,7 +251,7 @@ qlonglong SharedNotebookTable::getId(int lid){
 }
 
 
-int SharedNotebookTable::findById(qlonglong id) {
+qint32 SharedNotebookTable::findById(qlonglong id) {
     QSqlQuery query;
     query.prepare("Select data from DataStore where key=:key and data=:id");
     query.bindValue(":key", SHAREDNOTEBOOK_ID);

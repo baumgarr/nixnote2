@@ -7,8 +7,8 @@
 
 namespace evernote { namespace edam {
 
-const char* PublicUserInfo::ascii_fingerprint = "724DFF4FFFB8A87B3EDA5AEF78D412EB";
-const uint8_t PublicUserInfo::binary_fingerprint[16] = {0x72,0x4D,0xFF,0x4F,0xFF,0xB8,0xA8,0x7B,0x3E,0xDA,0x5A,0xEF,0x78,0xD4,0x12,0xEB};
+const char* PublicUserInfo::ascii_fingerprint = "ACE0BEB227C4D0B5BB056041973A6030";
+const uint8_t PublicUserInfo::binary_fingerprint[16] = {0xAC,0xE0,0xBE,0xB2,0x27,0xC4,0xD0,0xB5,0xBB,0x05,0x60,0x41,0x97,0x3A,0x60,0x30};
 
 uint32_t PublicUserInfo::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -66,6 +66,14 @@ uint32_t PublicUserInfo::read(::apache::thrift::protocol::TProtocol* iprot) {
           xfer += iprot->skip(ftype);
         }
         break;
+      case 5:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->noteStoreUrl);
+          this->__isset.noteStoreUrl = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -101,13 +109,18 @@ uint32_t PublicUserInfo::write(::apache::thrift::protocol::TProtocol* oprot) con
     xfer += oprot->writeString(this->username);
     xfer += oprot->writeFieldEnd();
   }
+  if (this->__isset.noteStoreUrl) {
+    xfer += oprot->writeFieldBegin("noteStoreUrl", ::apache::thrift::protocol::T_STRING, 5);
+    xfer += oprot->writeString(this->noteStoreUrl);
+    xfer += oprot->writeFieldEnd();
+  }
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
 }
 
-const char* PremiumInfo::ascii_fingerprint = "1C3FEBFCC34CFA6368AF9D1447D203CA";
-const uint8_t PremiumInfo::binary_fingerprint[16] = {0x1C,0x3F,0xEB,0xFC,0xC3,0x4C,0xFA,0x63,0x68,0xAF,0x9D,0x14,0x47,0xD2,0x03,0xCA};
+const char* PremiumInfo::ascii_fingerprint = "6C8AD5B945651CA70292CC21A279E3F5";
+const uint8_t PremiumInfo::binary_fingerprint[16] = {0x6C,0x8A,0xD5,0xB9,0x45,0x65,0x1C,0xA7,0x02,0x92,0xCC,0x21,0xA2,0x79,0xE3,0xF5};
 
 uint32_t PremiumInfo::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -218,6 +231,22 @@ uint32_t PremiumInfo::read(::apache::thrift::protocol::TProtocol* iprot) {
           xfer += iprot->skip(ftype);
         }
         break;
+      case 11:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->businessName);
+          this->__isset.businessName = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 12:
+        if (ftype == ::apache::thrift::protocol::T_BOOL) {
+          xfer += iprot->readBool(this->businessAdmin);
+          this->__isset.businessAdmin = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -283,13 +312,23 @@ uint32_t PremiumInfo::write(::apache::thrift::protocol::TProtocol* oprot) const 
     xfer += oprot->writeI32((int32_t)this->sponsoredGroupRole);
     xfer += oprot->writeFieldEnd();
   }
+  if (this->__isset.businessName) {
+    xfer += oprot->writeFieldBegin("businessName", ::apache::thrift::protocol::T_STRING, 11);
+    xfer += oprot->writeString(this->businessName);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.businessAdmin) {
+    xfer += oprot->writeFieldBegin("businessAdmin", ::apache::thrift::protocol::T_BOOL, 12);
+    xfer += oprot->writeBool(this->businessAdmin);
+    xfer += oprot->writeFieldEnd();
+  }
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
 }
 
-const char* AuthenticationResult::ascii_fingerprint = "C4DE8A69CAAF10F0C36064CED350235E";
-const uint8_t AuthenticationResult::binary_fingerprint[16] = {0xC4,0xDE,0x8A,0x69,0xCA,0xAF,0x10,0xF0,0xC3,0x60,0x64,0xCE,0xD3,0x50,0x23,0x5E};
+const char* AuthenticationResult::ascii_fingerprint = "FADFDE6430A32EB9D23A3D14199996E1";
+const uint8_t AuthenticationResult::binary_fingerprint[16] = {0xFA,0xDF,0xDE,0x64,0x30,0xA3,0x2E,0xB9,0xD2,0x3A,0x3D,0x14,0x19,0x99,0x96,0xE1};
 
 uint32_t AuthenticationResult::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -354,6 +393,22 @@ uint32_t AuthenticationResult::read(::apache::thrift::protocol::TProtocol* iprot
           xfer += iprot->skip(ftype);
         }
         break;
+      case 6:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->noteStoreUrl);
+          this->__isset.noteStoreUrl = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 7:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->webApiUrlPrefix);
+          this->__isset.webApiUrlPrefix = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -394,6 +449,354 @@ uint32_t AuthenticationResult::write(::apache::thrift::protocol::TProtocol* opro
     xfer += this->publicUserInfo.write(oprot);
     xfer += oprot->writeFieldEnd();
   }
+  if (this->__isset.noteStoreUrl) {
+    xfer += oprot->writeFieldBegin("noteStoreUrl", ::apache::thrift::protocol::T_STRING, 6);
+    xfer += oprot->writeString(this->noteStoreUrl);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.webApiUrlPrefix) {
+    xfer += oprot->writeFieldBegin("webApiUrlPrefix", ::apache::thrift::protocol::T_STRING, 7);
+    xfer += oprot->writeString(this->webApiUrlPrefix);
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+const char* BootstrapSettings::ascii_fingerprint = "3419C0A13B768EA9DB70C9DB8AC18624";
+const uint8_t BootstrapSettings::binary_fingerprint[16] = {0x34,0x19,0xC0,0xA1,0x3B,0x76,0x8E,0xA9,0xDB,0x70,0xC9,0xDB,0x8A,0xC1,0x86,0x24};
+
+uint32_t BootstrapSettings::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+  bool isset_serviceHost = false;
+  bool isset_marketingUrl = false;
+  bool isset_supportUrl = false;
+  bool isset_accountEmailDomain = false;
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->serviceHost);
+          isset_serviceHost = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->marketingUrl);
+          isset_marketingUrl = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->supportUrl);
+          isset_supportUrl = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 4:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->accountEmailDomain);
+          isset_accountEmailDomain = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 5:
+        if (ftype == ::apache::thrift::protocol::T_BOOL) {
+          xfer += iprot->readBool(this->enableFacebookSharing);
+          this->__isset.enableFacebookSharing = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 6:
+        if (ftype == ::apache::thrift::protocol::T_BOOL) {
+          xfer += iprot->readBool(this->enableGiftSubscriptions);
+          this->__isset.enableGiftSubscriptions = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 7:
+        if (ftype == ::apache::thrift::protocol::T_BOOL) {
+          xfer += iprot->readBool(this->enableSupportTickets);
+          this->__isset.enableSupportTickets = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 8:
+        if (ftype == ::apache::thrift::protocol::T_BOOL) {
+          xfer += iprot->readBool(this->enableSharedNotebooks);
+          this->__isset.enableSharedNotebooks = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 9:
+        if (ftype == ::apache::thrift::protocol::T_BOOL) {
+          xfer += iprot->readBool(this->enableSingleNoteSharing);
+          this->__isset.enableSingleNoteSharing = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 10:
+        if (ftype == ::apache::thrift::protocol::T_BOOL) {
+          xfer += iprot->readBool(this->enableSponsoredAccounts);
+          this->__isset.enableSponsoredAccounts = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 11:
+        if (ftype == ::apache::thrift::protocol::T_BOOL) {
+          xfer += iprot->readBool(this->enableTwitterSharing);
+          this->__isset.enableTwitterSharing = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  if (!isset_serviceHost)
+    throw TProtocolException(TProtocolException::INVALID_DATA);
+  if (!isset_marketingUrl)
+    throw TProtocolException(TProtocolException::INVALID_DATA);
+  if (!isset_supportUrl)
+    throw TProtocolException(TProtocolException::INVALID_DATA);
+  if (!isset_accountEmailDomain)
+    throw TProtocolException(TProtocolException::INVALID_DATA);
+  return xfer;
+}
+
+uint32_t BootstrapSettings::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("BootstrapSettings");
+  xfer += oprot->writeFieldBegin("serviceHost", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->serviceHost);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("marketingUrl", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString(this->marketingUrl);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("supportUrl", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString(this->supportUrl);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("accountEmailDomain", ::apache::thrift::protocol::T_STRING, 4);
+  xfer += oprot->writeString(this->accountEmailDomain);
+  xfer += oprot->writeFieldEnd();
+  if (this->__isset.enableFacebookSharing) {
+    xfer += oprot->writeFieldBegin("enableFacebookSharing", ::apache::thrift::protocol::T_BOOL, 5);
+    xfer += oprot->writeBool(this->enableFacebookSharing);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.enableGiftSubscriptions) {
+    xfer += oprot->writeFieldBegin("enableGiftSubscriptions", ::apache::thrift::protocol::T_BOOL, 6);
+    xfer += oprot->writeBool(this->enableGiftSubscriptions);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.enableSupportTickets) {
+    xfer += oprot->writeFieldBegin("enableSupportTickets", ::apache::thrift::protocol::T_BOOL, 7);
+    xfer += oprot->writeBool(this->enableSupportTickets);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.enableSharedNotebooks) {
+    xfer += oprot->writeFieldBegin("enableSharedNotebooks", ::apache::thrift::protocol::T_BOOL, 8);
+    xfer += oprot->writeBool(this->enableSharedNotebooks);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.enableSingleNoteSharing) {
+    xfer += oprot->writeFieldBegin("enableSingleNoteSharing", ::apache::thrift::protocol::T_BOOL, 9);
+    xfer += oprot->writeBool(this->enableSingleNoteSharing);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.enableSponsoredAccounts) {
+    xfer += oprot->writeFieldBegin("enableSponsoredAccounts", ::apache::thrift::protocol::T_BOOL, 10);
+    xfer += oprot->writeBool(this->enableSponsoredAccounts);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.enableTwitterSharing) {
+    xfer += oprot->writeFieldBegin("enableTwitterSharing", ::apache::thrift::protocol::T_BOOL, 11);
+    xfer += oprot->writeBool(this->enableTwitterSharing);
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+const char* BootstrapProfile::ascii_fingerprint = "EB65540F13576566FA9A11C6E66235D1";
+const uint8_t BootstrapProfile::binary_fingerprint[16] = {0xEB,0x65,0x54,0x0F,0x13,0x57,0x65,0x66,0xFA,0x9A,0x11,0xC6,0xE6,0x62,0x35,0xD1};
+
+uint32_t BootstrapProfile::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+  bool isset_name = false;
+  bool isset_settings = false;
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->name);
+          isset_name = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->settings.read(iprot);
+          isset_settings = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  if (!isset_name)
+    throw TProtocolException(TProtocolException::INVALID_DATA);
+  if (!isset_settings)
+    throw TProtocolException(TProtocolException::INVALID_DATA);
+  return xfer;
+}
+
+uint32_t BootstrapProfile::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("BootstrapProfile");
+  xfer += oprot->writeFieldBegin("name", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->name);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("settings", ::apache::thrift::protocol::T_STRUCT, 2);
+  xfer += this->settings.write(oprot);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+const char* BootstrapInfo::ascii_fingerprint = "F58F1BBA49CBAFA58A368FB854546947";
+const uint8_t BootstrapInfo::binary_fingerprint[16] = {0xF5,0x8F,0x1B,0xBA,0x49,0xCB,0xAF,0xA5,0x8A,0x36,0x8F,0xB8,0x54,0x54,0x69,0x47};
+
+uint32_t BootstrapInfo::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+  bool isset_profiles = false;
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_LIST) {
+          {
+            this->profiles.clear();
+            uint32_t _size2;
+            ::apache::thrift::protocol::TType _etype5;
+            iprot->readListBegin(_etype5, _size2);
+            this->profiles.resize(_size2);
+            uint32_t _i6;
+            for (_i6 = 0; _i6 < _size2; ++_i6)
+            {
+              xfer += this->profiles[_i6].read(iprot);
+            }
+            iprot->readListEnd();
+          }
+          isset_profiles = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  if (!isset_profiles)
+    throw TProtocolException(TProtocolException::INVALID_DATA);
+  return xfer;
+}
+
+uint32_t BootstrapInfo::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("BootstrapInfo");
+  xfer += oprot->writeFieldBegin("profiles", ::apache::thrift::protocol::T_LIST, 1);
+  {
+    xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, this->profiles.size());
+    std::vector<BootstrapProfile> ::const_iterator _iter7;
+    for (_iter7 = this->profiles.begin(); _iter7 != this->profiles.end(); ++_iter7)
+    {
+      xfer += (*_iter7).write(oprot);
+    }
+    xfer += oprot->writeListEnd();
+  }
+  xfer += oprot->writeFieldEnd();
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;

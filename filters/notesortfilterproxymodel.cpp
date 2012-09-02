@@ -5,7 +5,7 @@ NoteSortFilterProxyModel::NoteSortFilterProxyModel() :
     QSortFilterProxyModel()
 {
     QLOG_TRACE() << "Entering NoteSortFilterProxyModel constructor";
-    lidMap = new QMap<int,int>();
+    lidMap = new QMap<qint32,qint32>();
     QLOG_TRACE() << "Exiting NoteSortFilterProxyModel constructor";
 }
 
@@ -18,9 +18,9 @@ NoteSortFilterProxyModel::~NoteSortFilterProxyModel()
 }
 
 
-bool NoteSortFilterProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_parent) const {
+bool NoteSortFilterProxyModel::filterAcceptsRow(qint32 source_row, const QModelIndex &source_parent) const {
     QModelIndex idx = sourceModel()->index(source_row,NOTE_TABLE_LID_POSITION, source_parent);
-    int rowLid = sourceModel()->data(idx).toInt();
+    qint32 rowLid = sourceModel()->data(idx).toInt();
     if (lidMap->contains(rowLid)) {
         lidMap->remove(rowLid);
         lidMap->insert(rowLid, source_row);

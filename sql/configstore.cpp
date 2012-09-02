@@ -61,9 +61,7 @@ void ConfigStore::initTable() {
 // Every time we add a new object, we call this to get its unique
 // local ID.  This number never changes
 //*******************************************************************
-int ConfigStore::incrementLidCounter() {
-    QLOG_TRACE() << "Entering ConfigStore::initTable";
-
+qint32 ConfigStore::incrementLidCounter() {
     QSqlQuery sql;
     // Prepare the SQL statement & fetch the row
     sql.prepare("Select value from ConfigStore where key=:key");
@@ -75,7 +73,7 @@ int ConfigStore::incrementLidCounter() {
         QLOG_ERROR() << "LID NOT FOUND!!!";
     } else {
         // Now that we have the next lid, increment the number & save it
-        int sequence = QVariant(sql.value(0)).toInt();
+        qint32 sequence = QVariant(sql.value(0)).toInt();
         sequence++;
         sql.prepare("Update ConfigStore set value=:lid where key=:key;");
         sql.bindValue(":lid",sequence);

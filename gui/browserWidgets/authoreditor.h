@@ -12,7 +12,7 @@ private:
     QString defaultText;
     QString initialText;
     QString priorText;
-    int currentLid;
+    qint32 currentLid;
 
 public:
     explicit AuthorEditor(QWidget *parent = 0);
@@ -22,7 +22,7 @@ public slots:
     void setActiveColor();
     void textModified(QString text);
     void gainedFocus(bool focus);
-    void setAuthor(int lid, QString text);
+    void setAuthor(qint32 lid, QString text);
 
 signals:
   void focussed(bool hasFocus);

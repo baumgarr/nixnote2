@@ -6,8 +6,8 @@
 #include <QHash>
 #include <QtXml>
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 #include "sql/notemetadata.h"
 #include "global.h"
 
@@ -47,7 +47,7 @@ private:
     void processNotebookNode();
     void processTagNode();
     QString textValue();
-    int intValue();
+    qint32 intValue();
     long longValue();
     qlonglong longLongValue();
     double doubleValue();
@@ -55,10 +55,8 @@ private:
     short shortValue();
 
 public:
-    int                     lastError;
+    qint32                     lastError;
     QString                 errorMessage;
-//    int                     highUpdateSequenceNumber;
-//    long                    lastSequenceDate;
     bool                    importTags;
     bool                    importNotebooks;
     bool                    createTags;

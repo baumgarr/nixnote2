@@ -3,9 +3,8 @@
 
 
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
-#include "global.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 
 #include <iostream>
 #include <string>
@@ -65,47 +64,47 @@ private:
 
 public:
     NoteTable();                             // Constructor
-    int getLid(QString guid);            // given a guid, return the lid
-    int getLid(string guid);             // Given a guid, return the lid
-    void updateGuid(int lid, Guid &guid);    // Update a note's guid
+    qint32 getLid(QString guid);            // given a guid, return the lid
+    qint32 getLid(string guid);             // Given a guid, return the lid
+    void updateGuid(qint32 lid, Guid &guid);    // Update a note's guid
     void sync(Note &note);                    // Sync a note with a new record
-    void sync(int lid, Note &note);           // Sync a note with a new record
-    void add(int lid, Note &t, bool isDirty); // Add a new note
-    bool get(Note &note, int lid, bool loadResources, bool loadResourceRecognition);           // Get a note given a lid
+    void sync(qint32 lid, Note &note);           // Sync a note with a new record
+    void add(qint32 lid, Note &t, bool isDirty); // Add a new note
+    bool get(Note &note, qint32 lid, bool loadResources, bool loadResourceRecognition);           // Get a note given a lid
     bool get(Note &note, QString guid, bool loadResources, bool loadResourceRecognition);      // get a note given a guid
     bool get(Note &note, string guid,bool loadResources, bool loadResourceRecognition);       // get a note given a guid
-    bool isDirty(int lid);                  // Check if a note is dirty
+    bool isDirty(qint32 lid);                  // Check if a note is dirty
     bool isDirty(QString guid);             // Check if a note is dirty
     bool isDirty(string guid);              // Check if a note is dirty
-    bool exists(int lid);                   // Does this note exist?
+    bool exists(qint32 lid);                   // Does this note exist?
     bool exists(QString guid);              // Does this note exist?
     bool exists(string guid);               // Does this note exist?
-    int findNotesByTag(QList<int> &values, QString tags);
-    int findNotesByTag(QList<int> &values, string tags);
-    int findNotesByTag(QList<int> &values, int tagLid);
-    void updateNoteListTags(int noteLid, QString tags);
+    qint32 findNotesByTag(QList<qint32> &values, QString tags);
+    qint32 findNotesByTag(QList<qint32> &values, string tags);
+    qint32 findNotesByTag(QList<qint32> &values, qint32 tagLid);
+    void updateNoteListTags(qint32 noteLid, QString tags);
     void updateNoteListNotebooks(QString guid, QString name);
-    int getNotesWithTag(QList<int> &retval, QString tag);  // Find all notes for a specific tag;
-    void setIndexNeeded(int lid, bool indexNeeded);    // flag if a note needs reindexing
-    int getIndexNeeded(QList<int> &lids);           // Get a list of all notes needing indexing
+    qint32 getNotesWithTag(QList<qint32> &retval, QString tag);  // Find all notes for a specific tag;
+    void setIndexNeeded(qint32 lid, bool indexNeeded);    // flag if a note needs reindexing
+    qint32 getIndexNeeded(QList<qint32> &lids);           // Get a list of all notes needing indexing
     bool updateNotebookGuid(QString oldGuid, QString newGuid, QString name);  // Update a notebook's name/guid
-    bool updateNoteList(int lid, Note &t, bool isDirty);  // Update the user viewing list
-    bool updateNotebookName(int lid, QString name);  // Update a notebook's name in the user listing
-    void updateNotebook(int noteLid, int notebookLid, bool isDirty);   // Set the current note's notebook
-    void setDirty(int lid, bool dirty);
-    void updateNotebook(int noteLid, int notebookLid);
-    void updateUrl(int lid, QString text, bool dirty);
-    void updateTitle(int noteLid, QString title, bool setAsDirty);
-    void updateDate(int lid, Timestamp ts, int key, bool isDirty);
-    void updateAuthor(int lid, QString value, bool isDirty);
-    void removeTag(int noteLid, int tag, bool isDirty);
-    void addTag(int lid, int tag, bool isDirty);
-    void rebuildNoteListTags(int lid);   // Update the note's tags in the display table
-    void deleteNote(int lid, bool isDirty);           // mark a note for deletion
-    void expunge(int lid);              // expunge a note permanently
-    int findNotesByNotebook(QList<int> &notes, QString guid);
-    int findNotesByNotebook(QList<int> &notes, string guid);
-    void updateNoteContent(int lid, QString content);
+    bool updateNoteList(qint32 lid, Note &t, bool isDirty);  // Update the user viewing list
+    bool updateNotebookName(qint32 lid, QString name);  // Update a notebook's name in the user listing
+    void updateNotebook(qint32 noteLid, qint32 notebookLid, bool isDirty);   // Set the current note's notebook
+    void setDirty(qint32 lid, bool dirty);
+    void updateNotebook(qint32 noteLid, qint32 notebookLid);
+    void updateUrl(qint32 lid, QString text, bool dirty);
+    void updateTitle(qint32 noteLid, QString title, bool setAsDirty);
+    void updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty);
+    void updateAuthor(qint32 lid, QString value, bool isDirty);
+    void removeTag(qint32 noteLid, qint32 tag, bool isDirty);
+    void addTag(qint32 lid, qint32 tag, bool isDirty);
+    void rebuildNoteListTags(qint32 lid);   // Update the note's tags in the display table
+    void deleteNote(qint32 lid, bool isDirty);           // mark a note for deletion
+    void expunge(qint32 lid);              // expunge a note permanently
+    qint32 findNotesByNotebook(QList<qint32> &notes, QString guid);
+    qint32 findNotesByNotebook(QList<qint32> &notes, string guid);
+    void updateNoteContent(qint32 lid, QString content);
 };
 
 

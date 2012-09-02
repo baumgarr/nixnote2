@@ -51,13 +51,13 @@ void NotebookMenuButton::setCurrentNotebook(int lid, Note note) {
 void NotebookMenuButton::loadData() {
     NotebookTable notebookTable;
 
-    QList<int> lids;
+    QList<qint32> lids;
     notebookTable.getAll(lids);
 
     if (notebookTable.findByName(currentNotebookName) <= 0)
         currentNotebookName = "";
 
-    for (int i=0; i<lids.size(); i++) {
+    for (qint32 i=0; i<lids.size(); i++) {
         Notebook book;
         if (notebookTable.get(book, lids[i])) {
 
@@ -167,7 +167,7 @@ void NotebookMenuButton::notebookSelected() {
     NoteTable noteTable;
     NotebookTable notebookTable;
     QString name = text();
-    int notebookLid = notebookTable.findByName(name);
+    qint32 notebookLid = notebookTable.findByName(name);
     if (notebookLid > 0) {
         noteTable.updateNotebook(currentNoteLid, notebookLid, true);
         emit(notebookChanged());
@@ -194,7 +194,7 @@ void NotebookMenuButton::reloadData() {
     NotebookTable notebookTable;
     noteTable.get(n, currentNoteLid, false,false);
     QString notebookGuid = QString::fromStdString(n.notebookGuid);
-    QList<int> bookList;
+    QList<qint32> bookList;
     notebookTable.getAll(bookList);
     QString bookName;
 

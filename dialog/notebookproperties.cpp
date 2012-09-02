@@ -74,7 +74,7 @@ void NotebookProperties::cancelButtonPressed() {
     close();
 }
 
-void NotebookProperties::setLid(int lid) {
+void NotebookProperties::setLid(qint32 lid) {
     if (lid > 0) {
         this->lid = lid;
         Notebook book;

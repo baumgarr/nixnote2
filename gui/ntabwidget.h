@@ -11,28 +11,30 @@ class NTabWidget : public QWidget
     Q_OBJECT
 public:
     explicit NTabWidget();
+    ~NTabWidget();
     QTabBar tabBar;
+    QVBoxLayout vboxlayout;
     QList<NBrowserWindow *> *browserList;
     void addBrowser(NBrowserWindow *v, QString title);
     void setTitle(QString t);
-    void setTitle(int index, QString title);
+    void setTitle(qint32 index, QString title);
     QStackedWidget stack;
     NBrowserWindow *currentBrowser();
 
 
 signals:
     void updateSelectionRequested();
-    void noteUpdated(int);
-    void tagCreated(int);
+    void noteUpdated(qint32);
+    void tagCreated(qint32);
 
 public slots:
     void closeTab(int index);
     void moveTab(int to, int from);
     void openNote(int lid, bool newWindow);
-    void tagCreationSignaled(int lid);
+    void tagCreationSignaled(qint32 lid);
 
 private slots:
-    void noteUpdateSignaled(int);
+    void noteUpdateSignaled(qint32);
 
 };
 

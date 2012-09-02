@@ -43,18 +43,19 @@ void TagViewer::updateCloseButton(const QString& text)
 
 
 void TagViewer::hideEvent(QHideEvent* event) {
+    event=event;  // suppress unused
     hide();
     clearButton->hide();
 }
 
 void TagViewer::showEvent(QShowEvent* event) {
+    event=event;  // suppress unused
     show();
     clearButton->show();
 }
 
 
 void TagViewer::resize() {
-    QSize sz = clearButton->sizeHint();
     QFontMetrics fm(font());
     int width = fm.width(text());
     int height = fm.height();
@@ -75,6 +76,4 @@ void TagViewer::resize() {
 void TagViewer::buttonClicked() {
     emit(closeClicked(text()));
 }
-
-
 

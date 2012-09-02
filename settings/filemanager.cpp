@@ -84,7 +84,7 @@ QString FileManager::slashTerminatePath(QString path) {
 void FileManager::deleteTopLevelFiles(QDir dir, bool exitOnFail) {
     dir.setFilter(QDir::Files);
     QStringList list = dir.entryList();
-    for (int i=0; i<list.size(); i++) {
+    for (qint32 i=0; i<list.size(); i++) {
         QFile f(list.at(i));
         if (!f.remove() && exitOnFail) {
             cout << "Error deleting file '" +f.fileName().toStdString() <<

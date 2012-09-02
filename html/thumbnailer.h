@@ -4,8 +4,8 @@
 #include <QtWebKit>
 #include <QObject>
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 
 using namespace apache::thrift;
 using namespace evernote::edam;
@@ -23,7 +23,7 @@ public:
     QWebPage page;
 
     Thumbnailer();
-    void setNote(int lid, Note n);
+    void setNote(qint32 lid, Note n);
 
 signals:
     void finished();
@@ -32,7 +32,7 @@ private slots:
     void render();
 
 private:
-    int noteLid;
+    qint32 noteLid;
 
 };
 

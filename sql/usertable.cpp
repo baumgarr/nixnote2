@@ -77,78 +77,89 @@ void UserTable::updateUser(AuthenticationResult r) {
     query.bindValue(":key1", USER_SYNC_LAST_DATE);
     query.bindValue(":key2", USER_SYNC_LAST_NUMBER);
 
-    query.prepare("Insert into UserTable (key, data) values (:key, :data);");
-
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_EVERNOTE_ACCOUNT);
         query.bindValue(":data", QString(r.user.id));
         query.exec();
     }
 
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_EMAIL);
         query.bindValue(":data", QString::fromStdString(r.user.email));
         query.exec();
     }
 
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_NAME);
         query.bindValue(":data", QString::fromStdString(r.user.name));
         query.exec();
     }
 
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_TIMEZONE);
         query.bindValue(":data", QString::fromStdString(r.user.timezone));
         query.exec();
     }
 
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_PRIVILEGE);
         query.bindValue(":data", QString(r.user.privilege));
         query.exec();
     }
 
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_CREATED);
         query.bindValue(":data", QVariant::fromValue(r.user.created));
         query.exec();
     }
 
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_UPDATED);
         query.bindValue(":data", QVariant::fromValue(r.user.updated));
         query.exec();
     }
 
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_DELETED);
         query.bindValue(":data", QVariant::fromValue(r.user.deleted));
         query.exec();
     }
 
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ACTIVE);
         query.bindValue(":data", QVariant::fromValue(r.user.active));
         query.exec();
     }
 
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_PRIVILEGE);
         query.bindValue(":data", QString(r.user.privilege));
         query.exec();
     }
 
     if (r.user.__isset.id) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_SHARD);
         query.bindValue(":data", QString::fromStdString(r.user.shardId));
         query.exec();
     }
 
     if (r.user.__isset.accounting) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ACCOUNTING_UPLOAD_LIMIT);
         query.bindValue(":data", QVariant::fromValue(r.user.accounting.uploadLimit));
         query.exec();
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ACCOUNTING_UPLOAD_LIMIT_END);
         query.bindValue(":data", QVariant::fromValue(r.user.accounting.uploadLimitEnd));
         query.exec();
@@ -156,22 +167,27 @@ void UserTable::updateUser(AuthenticationResult r) {
 
 
     if (r.user.__isset.attributes) {
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_GROUPNAME);
         query.bindValue(":data", QString::fromStdString(r.user.attributes.groupName));
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_DAILY_EMAIL_LIMIT);
         query.bindValue(":data", r.user.attributes.dailyEmailLimit);
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_PREFERED_COUNTRY);
         query.bindValue(":data", QString::fromStdString(r.user.attributes.preferredCountry));
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_DEFAULT_LONGITUDE);
         query.bindValue(":data", r.user.attributes.defaultLongitude);
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_DEFAULT_LATITUDE);
         query.bindValue(":data", r.user.attributes.defaultLatitude);
         query.exec();
@@ -180,34 +196,42 @@ void UserTable::updateUser(AuthenticationResult r) {
         query.bindValue(":data", QString::fromStdString(r.user.attributes.businessAddress));
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_DEFAULT_LOCATION);
         query.bindValue(":data", QString::fromStdString(r.user.attributes.defaultLocationName));
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_BUSINESS_ADDRESS);
         query.bindValue(":data", QString::fromStdString(r.user.attributes.businessAddress));
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_TWITTER_USERNAME);
         query.bindValue(":data", QString::fromStdString(r.user.attributes.twitterUserName));
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_TWITTER_ID);
         query.bindValue(":data", QString::fromStdString(r.user.attributes.twitterId));
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_INCOMING_EMAIL);
         query.bindValue(":data", QString::fromStdString(r.user.attributes.incomingEmailAddress));
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_CLIP_FULL_PAGE);
         query.bindValue(":data", r.user.attributes.clipFullPage);
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_CUSTOMER_PROFILE_ID);
         query.bindValue(":data", QVariant::fromValue(r.user.attributes.customerProfileId));
         query.exec();
 
+        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_COMMENTS);
         query.bindValue(":data", QString::fromStdString(r.user.attributes.comments));
         query.exec();
@@ -236,14 +260,14 @@ void UserTable::updateSyncState(SyncState s) {
         }
      }
 
+     query.prepare("Insert into UserTable (key, data) values (:key, :data);");
      query.bindValue(":key", USER_SYNC_LAST_DATE);
      query.bindValue(":data", qlonglong(s.currentTime));
-//     query.bindValue(":data", QDateTime::currentDateTime());
      if (!query.exec()) {
          QLOG_ERROR() << "Error updating USER_SYNC_LAST_DATE : " << query.lastError();
      }
 
-
+     query.prepare("Insert into UserTable (key, data) values (:key, :data);");
      query.bindValue(":key", USER_SYNC_LAST_NUMBER);
      query.bindValue(":data", s.updateCount);
      if (!query.exec()) {
@@ -268,17 +292,18 @@ qlonglong UserTable::getLastSyncDate() {
 }
 
 // Get the last sequence number
-int UserTable::getLastSyncNumber() {
+qint32 UserTable::getLastSyncNumber() {
+    qint32 value = 0;
     QSqlQuery query;
     query.prepare("Select data from UserTable where key=:key");
     query.bindValue(":key", USER_SYNC_LAST_NUMBER);
     query.exec();
 
     if (query.next()) {
-        int value = query.value(0).toInt();
+        value = query.value(0).toInt();
         return value;
     }
-    return 0;
+    return value;
 }
 
 
@@ -287,18 +312,20 @@ void UserTable::updateLastSyncDate(long date) {
     QSqlQuery query;
     query.prepare("delete from UserTable where key=:key");
     query.bindValue(":key", USER_SYNC_LAST_DATE);
-    query.prepare("Insert into UserTable (key, data) values (:data :key)");
+    query.exec();
+    query.prepare("Insert into UserTable (key, data) values (:key, :data)");
     query.bindValue(":key", USER_SYNC_LAST_DATE);
     query.bindValue(":data", qlonglong(date));
     query.exec();
 }
 
 // update the last sequence number
-void UserTable::updateLastSyncNumber(int value) {
+void UserTable::updateLastSyncNumber(qint32 value) {
     QSqlQuery query;
     query.prepare("delete from UserTable where key=:key");
     query.bindValue(":key", USER_SYNC_LAST_NUMBER);
-    query.prepare("Insert into UserTable (key, data) values (:data :key)");
+    query.exec();
+    query.prepare("Insert into UserTable (key, data) values (:key, :data)");
     query.bindValue(":key", USER_SYNC_LAST_NUMBER);
     query.bindValue(":data", value);
     query.exec();

@@ -23,7 +23,7 @@ private:
 public:
     ConfigStore();              // Generic constructor
     void createTable();         // SQL to create the table
-    int incrementLidCounter();  // Get the next LID number
+    qint32 incrementLidCounter();  // Get the next LID number
     void saveSetting(int key, QByteArray);  // Save a setting
     bool getSetting(QByteArray &value, int key);  // retrieve a setting
 };

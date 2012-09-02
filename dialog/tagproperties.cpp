@@ -69,7 +69,7 @@ void TagProperties::cancelButtonPressed() {
     close();
 }
 
-void TagProperties::setLid(int lid) {
+void TagProperties::setLid(qint32 lid) {
     if (lid > 0) {
         this->lid = lid;
         Tag tag;

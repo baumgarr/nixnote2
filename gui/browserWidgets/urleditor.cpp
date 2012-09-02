@@ -34,7 +34,7 @@ void UrlEditor::setActiveColor() {
 }
 
 
-void UrlEditor::setUrl(int lid, QString text) {
+void UrlEditor::setUrl(qint32 lid, QString text) {
     currentLid = lid;
     blockSignals(true);
     if (text.trimmed() == "")

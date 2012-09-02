@@ -14,8 +14,8 @@
 #include <QtXml>
 
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 #include "filters/ensearch.h"
 
 using namespace apache::thrift;

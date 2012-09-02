@@ -1,8 +1,8 @@
 #ifndef NOTECACHE_H
 #define NOTECACHE_H
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 #include <QObject>
 
 

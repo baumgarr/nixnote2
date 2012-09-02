@@ -1,6 +1,11 @@
 #include "javamachine.h"
 #include "global.h"
 #include <QString>
+#include "oauth/oauthtokenizer.h"
+#include <sstream>
+#include <string>
+#include <cstdio>
+#include <iostream>
 
 extern Global global;
 
@@ -14,11 +19,10 @@ JavaMachine::JavaMachine()
 void JavaMachine::create_jvm() {
     args.version = JNI_VERSION_1_6;
     args.nOptions = 1;
-//    options[0].optionString = "-Djava.class.path=./java/nixnote.jar:./java/evernote-api-1.20.jar:./java/libthrift.jar:./java/log4j-1.2.14.jar";
     QString cp = global.fileManager.getProgramDirPath("java/");
     QString clp = "-Djava.class.path="+cp+"nixnote.jar:"+cp+
-            "evernote-api-1.20.jar:"+cp+"libthrift.jar:"+cp+
-            "log4j-1.2.14.jar";
+            "evernote-api-1.21.jar:"+cp+"libthrift.jar:"+cp+
+            "log4j-1.2.14.jar -XstartOnFirstThread -Xss32m -Xms32m -Xmx512m";
     char *cp2;
     cp2 = new char[clp.length()+1];
     strcpy(cp2,clp.toAscii());
@@ -28,17 +32,26 @@ void JavaMachine::create_jvm() {
 
     JNI_CreateJavaVM(&jvm, (void **)&env, &args);
 
+
+    int status =jvm->GetEnv((void **)&env, JNI_VERSION_1_6);
+    if(status < 0)
+    {
+        status = jvm->AttachCurrentThread((void**)&env, NULL);
+    }
+
     // Start loading classes
     messageBlockClass = env->FindClass("org/nixnote/bridge/MessageBlock");
     messageBlock_isError = env->GetMethodID(messageBlockClass, "isError", "()Z");
     messageBlock_getErrorMessage = env->GetMethodID(messageBlockClass, "getErrorMessage", "()Ljava/lang/String;");
+
     communicationClass = env->FindClass("org/nixnote/bridge/Communication");
     //env->ExceptionDescribe();
     communication_constructor = env->GetMethodID(communicationClass, "<init>", "()V");
-    communication_connect = env->GetMethodID(communicationClass, "connect", "(Ljava/lang/String;Ljava/lang/String;)Z");
+    communication_connect = env->GetMethodID(communicationClass, "connect", "(Ljava/lang/String;)Z");
     communication = env->NewObject(communicationClass, communication_constructor);
     communication_getMessageBlock = env->GetMethodID(communicationClass, "getMessageBlock", "()Lorg/nixnote/bridge/MessageBlock;");
     communication_getSyncState = env->GetMethodID(communicationClass, "getSyncState", "()Lcom/evernote/edam/notestore/SyncState;");
+    communication_loadSyncChunk = env->GetMethodID(communicationClass, "loadChunk", "(IIZ)Lcom/evernote/edam/notestore/SyncChunk;");
 
     syncStateClass = env->FindClass("com/evernote/edam/notestore/SyncState");
     syncState_getCurrentTime = env->GetMethodID(syncStateClass, "getCurrentTime", "()J");
@@ -49,6 +62,48 @@ void JavaMachine::create_jvm() {
     syncState_isSetUpdateCount = env->GetMethodID(syncStateClass, "isSetUpdateCount", "()Z");
     syncState_isSetUploaded = env->GetMethodID(syncStateClass, "isSetUploaded", "()Z");
     syncState_isSetFullSyncBefore = env->GetMethodID(syncStateClass, "isSetFullSyncBefore", "()Z");
+
+    syncChunkClass = env->FindClass("com/evernote/edam/notestore/SyncChunk");
+    syncChunk_getCurrentTime = env->GetMethodID(syncChunkClass, "getCurrentTime", "()J");
+    syncChunk_isCurrentTimeSet = env->GetMethodID(syncChunkClass, "isSetCurrentTime", "()Z");
+    syncChunk_getChunkHighUSN = env->GetMethodID(syncChunkClass, "getChunkHighUSN", "()I");
+    syncChunk_isSetChunkHighUSN = env->GetMethodID(syncChunkClass, "isSetChunkHighUSN", "()Z");
+    syncChunk_getUpdateCount = env->GetMethodID(syncChunkClass, "getUpdateCount", "()I");
+    syncChunk_isSetUpdateCount = env->GetMethodID(syncChunkClass, "isSetUpdateCount", "()Z");
+    syncChunk_getNotesSize = env->GetMethodID(syncChunkClass, "getNotesSize", "()I");
+    syncChunk_getNotes = env->GetMethodID(syncChunkClass, "getNotes", "()Ljava/util/List;");
+    syncChunk_isSetNotes = env->GetMethodID(syncChunkClass, "isSetNotes", "()Z");
+    syncChunk_getNotebooksSize = env->GetMethodID(syncChunkClass, "getNotebooksSize", "()I");
+    syncChunk_isSetNotebooks = env->GetMethodID(syncChunkClass, "isSetNotebooks", "()Z");
+    syncChunk_getNotebooks = env->GetMethodID(syncChunkClass, "getNotebooks", "()Ljava/util/List;");
+    syncChunk_getTagsSize = env->GetMethodID(syncChunkClass, "getTagsSize", "()I");
+    syncChunk_getTags = env->GetMethodID(syncChunkClass, "getTags", "()Ljava/util/List;");;
+    syncChunk_isSetTags = env->GetMethodID(syncChunkClass, "isSetTags", "()Z");
+    syncChunk_getSearchesSize = env->GetMethodID(syncChunkClass, "getSearchesSize", "()I");
+    syncChunk_getSearches = env->GetMethodID(syncChunkClass, "getSearches", "()Ljava/util/List;");;
+    syncChunk_isSetSearches = env->GetMethodID(syncChunkClass, "isSetSearches", "()Z");
+    syncChunk_getResourcesSize = env->GetMethodID(syncChunkClass, "getResourcesSize", "()I");
+    syncChunk_getResources = env->GetMethodID(syncChunkClass, "getResources", "()Ljava/util/List;");;
+    syncChunk_isSetResources = env->GetMethodID(syncChunkClass, "isSetResources", "()Z");
+    syncChunk_getLinkedNotebooksSize = env->GetMethodID(syncChunkClass, "getLinkedNotebooksSize", "()I");
+    syncChunk_getLinkedNotebooks = env->GetMethodID(syncChunkClass, "getLinkedNotebooks", "()Ljava/util/List;");;
+    syncChunk_isSetLinkedNotebooks = env->GetMethodID(syncChunkClass, "isSetLinkedNotebooks", "()Z");
+    syncChunk_getExpungedNotesSize = env->GetMethodID(syncChunkClass, "getExpungedNotesSize", "()I");
+    syncChunk_getExpungedNotes = env->GetMethodID(syncChunkClass, "getExpungedNotes", "()Ljava/util/List;");;
+    syncChunk_isSetExpungedNotes = env->GetMethodID(syncChunkClass, "isSetExpungedNotes", "()Z");
+    syncChunk_getExpungedNotebooksSize = env->GetMethodID(syncChunkClass, "getExpungedNotebooksSize", "()I");
+    syncChunk_getExpungedNotebooks = env->GetMethodID(syncChunkClass, "getExpungedNotebooks", "()Ljava/util/List;");
+    syncChunk_isSetExpungedNotebooks = env->GetMethodID(syncChunkClass, "isSetExpungedNotebooks", "()Z");
+    syncChunk_getExpungedTagsSize = env->GetMethodID(syncChunkClass, "getExpungedTagsSize", "()I");
+    syncChunk_getExpungedTags = env->GetMethodID(syncChunkClass, "getExpungedTags", "()Ljava/util/List;");
+    syncChunk_isSetExpungedTags = env->GetMethodID(syncChunkClass, "isSetExpungedTags", "()Z");
+    syncChunk_getExpungedSearchesSize = env->GetMethodID(syncChunkClass, "getExpungedSearchesSize", "()I");
+    syncChunk_getExpungedSearches = env->GetMethodID(syncChunkClass, "getExpungedSearches", "()Ljava/util/List;");
+    syncChunk_isSetExpungedSearches = env->GetMethodID(syncChunkClass, "isSetExpungedSearches", "()Z");
+    syncChunk_getExpungedLinkedNotebooksSize = env->GetMethodID(syncChunkClass, "getExpungedLinkedNotebooksSize", "()I");
+    syncChunk_getExpungedLinkedNotebooks = env->GetMethodID(syncChunkClass, "getExpungedLinkedNotebooks", "()Ljava/util/List;");
+    syncChunk_isSetExpungedLinkedNotebooks = env->GetMethodID(syncChunkClass, "isSetExpungedLinkedNotebooks", "()Z");
+
 
     userClass = env->FindClass("com/evernote/edam/type/User");
     user_getID = env->GetMethodID(userClass, "getId", "()I");
@@ -172,7 +227,7 @@ void JavaMachine::create_jvm() {
     data_getSize = env->GetMethodID(dataClass, "getSize", "()I");
     data_isSizeSet = env->GetMethodID(dataClass, "isSetSize", "()Z");
     data_getBody = env->GetMethodID(dataClass, "getBody", "()[B");
-    data_isGetBodySet = env->GetMethodID(dataClass, "isSetBody", "()Z");
+    data_isBodySet = env->GetMethodID(dataClass, "isSetBody", "()Z");
 
 
     tagClass = env->FindClass("com/evernote/edam/type/Tag");
@@ -262,11 +317,11 @@ void JavaMachine::create_jvm() {
     noteAttributes_isContentClassSet = env->GetMethodID(noteAttributesClass, "isSetContentClass", "()Z");
     noteAttributes_getApplicationData  = env->GetMethodID(noteAttributesClass, "getApplicationData", "()Lcom/evernote/edam/type/LazyMap;");
     noteAttributes_isApplicationDataSet = env->GetMethodID(noteAttributesClass, "isSetApplicationData", "()Z");
+    noteAttributes_getLastEditedBy  = env->GetMethodID(noteAttributesClass, "getLastEditedBy", "()Ljava/lang/String;");
+    noteAttributes_isLastEditedBySet = env->GetMethodID(noteAttributesClass, "isSetLastEditedBy", "()Z");
 
 
     lazyMapClass = env->FindClass("com/evernote/edam/type/LazyMap");
-    lazyMap_getKeysOnly;
-    lazyMap_getFullMap;
 
     noteClass = env->FindClass("com/evernote/edam/type/Note");
     noteClass_getGuid = env->GetMethodID(noteClass, "getGuid", "()Ljava/lang/String;");
@@ -293,12 +348,15 @@ void JavaMachine::create_jvm() {
     noteClass_isNotebookGuidSet = env->GetMethodID(noteClass, "isSetNotebookGuid", "()Z");
     noteClass_getTagGuids = env->GetMethodID(noteClass, "getTagGuids", "()Ljava/util/List;");
     noteClass_isTagGuidsSet = env->GetMethodID(noteClass, "isSetTagGuids", "()Z");
+    noteClass_getTagGuidsSize = env->GetMethodID(noteClass, "getTagGuidsSize", "()I");
     noteClass_getResources  = env->GetMethodID(noteClass, "getResources", "()Ljava/util/List;");
     noteClass_isResourcesSet = env->GetMethodID(noteClass, "isSetResources", "()Z");
     noteClass_getAttributes = env->GetMethodID(noteClass, "getAttributes", "()Lcom/evernote/edam/type/NoteAttributes;");
     noteClass_isAttributesSet  = env->GetMethodID(noteClass, "isSetAttributes", "()Z");
     noteClass_getTagNames = env->GetMethodID(noteClass, "getTagNames", "()Ljava/util/List;");
     noteClass_isTagNamesSet = env->GetMethodID(noteClass, "isSetTagNames", "()Z");
+    noteClass_getTagNamesSize = env->GetMethodID(noteClass, "getTagNamesSize", "()I");
+    noteClass_getResourcesSize = env->GetMethodID(noteClass, "getResourcesSize", "()I");
 
     publishingClass = env->FindClass("com/evernote/edam/type/Publishing");
     publishingClass_getUri = env->GetMethodID(publishingClass, "getUri", "()Ljava/lang/String;");
@@ -344,6 +402,9 @@ void JavaMachine::create_jvm() {
     savedSearch_getUpdateSequenceNumber  = env->GetMethodID(savedSearchClass, "getUpdateSequenceNum", "()I");
     savedSearch_isUpdateSequenceNumberSet = env->GetMethodID(savedSearchClass, "isSetUpdateSequenceNum", "()Z");
 
+    queryFormatClass = env->FindClass("com/evernote/edam/type/QueryFormat");
+    queryFormat_toString = env->GetMethodID(queryFormatClass, "toString", "()Ljava/lang/String;");
+
     sharedNotebookClass = env->FindClass("com/evernote/edam/type/SharedNotebook");
     sharedNotebook_getID = env->GetMethodID(sharedNotebookClass, "getId", "()J");
     sharedNotebook_isIDSet = env->GetMethodID(sharedNotebookClass, "isSetId", "()Z");
@@ -374,6 +435,9 @@ void JavaMachine::create_jvm() {
     linkedNotebook_getUpdateSequenceNumber = env->GetMethodID(linkedNotebookClass, "getUpdateSequenceNum", "()I");
     linkedNotebook_isUpdateSequenceNumberSet = env->GetMethodID(linkedNotebookClass, "isSetUpdateSequenceNum", "()Z");
 
+    listClass = env->FindClass("java/util/List");
+    list_get = env->GetMethodID(listClass, "get", "(I)Ljava/lang/Object;");
+
     delete cp2;
     return;
 }
@@ -381,31 +445,69 @@ void JavaMachine::create_jvm() {
 
 
 bool JavaMachine::connect() {
-        jstring userid = env->NewStringUTF(global.username.c_str());
-        jstring password = env->NewStringUTF(global.password.c_str());
+    // Attach to the current thread
+    int status =jvm->GetEnv((void **)&env, JNI_VERSION_1_6);
+    if(status < 0)
+    {
+        status = jvm->AttachCurrentThread((void**)&env, NULL);
+    }
 
-        // Call the actual java conenct method.  We get back a message block
-        jboolean connected = env->CallBooleanMethod(communication, communication_connect, userid, password);
+    // Get the oAuth token
+    QFile oauthFile(global.fileManager.getHomeDirPath("oauth.txt"));
+    oauthFile.open(QIODevice::ReadOnly);
+    OAuthTokenizer tokenizer;
+    QByteArray data = oauthFile.readAll();
+    oauthFile.close();
+    tokenizer.tokenize(data);
 
-        if (!connected) {
-            jobject messageBlock = env->CallObjectMethod(communication, communication_getMessageBlock);
+    //jstring userid = env->NewStringUTF(global.username.c_str());
+    //jstring password = env->NewStringUTF(global.password.c_str());
+    jstring authToken = env->NewStringUTF(tokenizer.oauth_token.toStdString().c_str());
 
-            // Convert the message block into something we can use
-            MessageBlock mb;
-            convertMessageBlock(mb, messageBlock);
-            QLOG_DEBUG() << "Error Connecting: " << mb.errorMessage;
-        }
-        jobject syncStateObj = env->CallObjectMethod(communication, communication_getMessageBlock);
-        int i=1;
-        i++;
+    // Call the actual java conenct method.  We get back a message block
+    jboolean connected = env->CallBooleanMethod(communication, communication_connect, authToken);
 
+    if (!connected) {
+        jobject messageBlock = env->CallObjectMethod(communication, communication_getMessageBlock);
+
+        // Convert the message block into something we can use
+        MessageBlock mb;
+        convertMessageBlock(mb, messageBlock);
+        QLOG_DEBUG() << "Error Connecting: " << mb.errorMessage;
+        global.connected = false;
+        return false;
+    }
+    //        jobject syncStateObj = env->CallObjectMethod(communication, communication_getMessageBlock);
+    global.connected = true;
+    return true;
 }
 
 void JavaMachine::jString2QString(QString &qstr, jstring &jstring, bool release) {
     jboolean blnIsCopy;
-    char* strCOut;
     const char* strCIn = env->GetStringUTFChars(jstring, &blnIsCopy);
     qstr = QString(strCIn);
+    if (release)
+        env->ReleaseStringUTFChars(jstring , strCIn); // release jstring
+}
+
+void JavaMachine::jByteArray2QByteArray(QByteArray &qstr, jbyteArray &jb, bool release) {
+    jbyte *b = env->GetByteArrayElements(jb, NULL);
+    int len = env->GetArrayLength(jb);
+    QByteArray ba((const char*)b,len);
+    qstr = ba;
+    if (release)
+        env->ReleaseByteArrayElements(jb,b,0);
+}
+
+
+
+void JavaMachine::jString2String(string &qstr, jstring &jstring, bool release) {
+    if (jstring == NULL) {
+        qstr = "";
+        return;
+    }
+    const char* strCIn = env->GetStringUTFChars(jstring, NULL);
+    qstr = strCIn;
     if (release)
         env->ReleaseStringUTFChars(jstring , strCIn); // release jstring
 }
@@ -418,7 +520,13 @@ bool JavaMachine::getSyncState(SyncState &syncState) {
 
 
     // Call the actual java conenct method.  We get back a message block
-    jobject syncStateObj = env->CallObjectMethod(communication, communication_getMessageBlock);
+    jvm->GetEnv((void **)&env, JNI_VERSION_1_6);
+    int status =jvm->GetEnv((void **)&env, JNI_VERSION_1_6);
+    if(status < 0)
+    {
+        status = jvm->AttachCurrentThread((void**)&env, NULL);
+    }
+    jobject syncStateObj = env->CallObjectMethod(communication, communication_getSyncState);
 
     if (syncStateObj == NULL) {
         jobject messageBlock = env->CallObjectMethod(communication, communication_getMessageBlock);
@@ -439,7 +547,17 @@ bool JavaMachine::getSyncState(SyncState &syncState) {
         syncState.uploaded = env->CallIntMethod(syncStateObj, syncState_getUploaded);
     }
 
-    QLOG_DEBUG() << "Done";
+    if (currentTimeSet) {
+        syncState.currentTime = env->CallLongMethod(syncStateObj, syncState_getCurrentTime);
+    }
+    if (updateCountSet) {
+        syncState.updateCount = env->CallIntMethod(syncStateObj, syncState_getUpdateCount);
+    }
+    if (fullSyncBeforeSet) {
+        syncState.fullSyncBefore = env->CallLongMethod(syncStateObj, syncState_getFullSyncBefore);
+    }
+
+    return true;
 }
 
 
@@ -451,4 +569,734 @@ void JavaMachine::convertMessageBlock(MessageBlock &mb, jobject messageBlock) {
 
     mb.error = error;
     jString2QString(mb.errorMessage, message);
+}
+
+
+bool JavaMachine::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, bool fullSync) {
+    // Call the actual java conenct method.  We get back a message block
+    jvm->GetEnv((void **)&env, JNI_VERSION_1_6);
+    int status =jvm->GetEnv((void **)&env, JNI_VERSION_1_6);
+    if(status < 0)
+        status = jvm->AttachCurrentThread((void**)&env, NULL);
+
+    syncChunk = env->CallObjectMethod(communication, communication_loadSyncChunk, start, chunkSize, fullSync);
+    if (syncChunk == NULL) {
+        QLOG_ERROR() << "Chunk is null!!!";
+        return false;
+    }
+    chunk.chunkHighUSN = env->CallIntMethod(syncChunk, syncChunk_getChunkHighUSN);
+    chunk.currentTime = env->CallLongMethod(syncChunk, syncChunk_getCurrentTime);
+
+    // Get notes
+    jboolean isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetNotes);
+    jint size = env->CallIntMethod(syncChunk, syncChunk_getNotesSize);
+    jobject list = env->CallObjectMethod(syncChunk, syncChunk_getNotes);
+    if (isSet && size>0)
+        processChunkNotes(chunk, list, size);
+
+    // Get notebooks
+    isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetNotebooks);
+    size = env->CallIntMethod(syncChunk, syncChunk_getNotebooksSize);
+    list = env->CallObjectMethod(syncChunk, syncChunk_getNotebooks);
+    if (isSet && size>0)
+        processChunkNotebooks(chunk, list, size);
+
+    // Get Tags
+    isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetTags);
+    size = env->CallIntMethod(syncChunk, syncChunk_getTagsSize);
+    list = env->CallObjectMethod(syncChunk, syncChunk_getTags);
+    if (isSet && size>0)
+        processChunkTags(chunk, list, size);
+
+    // Get Searches
+    isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetSearches);
+    size = env->CallIntMethod(syncChunk, syncChunk_getSearchesSize);
+    list = env->CallObjectMethod(syncChunk, syncChunk_getSearches);
+    if (isSet && size>0)
+        processChunkSearches(chunk, list, size);
+
+    // Get Resources
+    isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetResources);
+    size = env->CallIntMethod(syncChunk, syncChunk_getResourcesSize);
+    list = env->CallObjectMethod(syncChunk, syncChunk_getResources);
+    if (isSet && size>0)
+        processChunkResources(chunk, list, size);
+
+    // Get Linked Notebooks
+    isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetLinkedNotebooks);
+    size = env->CallIntMethod(syncChunk, syncChunk_getLinkedNotebooksSize);
+    list = env->CallObjectMethod(syncChunk, syncChunk_getLinkedNotebooks);
+    if (isSet && size>0)
+        processChunkLinkedNotebooks(chunk, list, size);
+
+
+    // Get expunged notes
+    isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetExpungedNotes);
+    size = env->CallIntMethod(syncChunk, syncChunk_getExpungedNotesSize);
+    list = env->CallObjectMethod(syncChunk, syncChunk_getExpungedNotes);
+    if (isSet && size>0)
+        processChunkExpungedNotes(chunk, list, size);
+
+    // Get expunged notebooks
+    isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetExpungedNotebooks);
+    size = env->CallIntMethod(syncChunk, syncChunk_getExpungedNotebooksSize);
+    list = env->CallObjectMethod(syncChunk, syncChunk_getExpungedNotebooks);
+    if (isSet && size>0)
+        processChunkExpungedNotebooks(chunk, list, size);
+
+    // Get expunged tags
+    isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetExpungedTags);
+    size = env->CallIntMethod(syncChunk, syncChunk_getExpungedTagsSize);
+    list = env->CallObjectMethod(syncChunk, syncChunk_getExpungedTags);
+    if (isSet && size>0)
+        processChunkExpungedTags(chunk, list, size);
+
+
+    // Get expunged searches
+    isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetExpungedSearches);
+    size = env->CallIntMethod(syncChunk, syncChunk_getExpungedSearchesSize);
+    list = env->CallObjectMethod(syncChunk, syncChunk_getExpungedSearches);
+    if (isSet && size>0)
+        processChunkExpungedSearches(chunk, list, size);
+
+    // Get expunged notes
+    isSet = env->CallBooleanMethod(syncChunk, syncChunk_isSetExpungedLinkedNotebooks);
+    size = env->CallIntMethod(syncChunk, syncChunk_getExpungedLinkedNotebooksSize);
+    list = env->CallObjectMethod(syncChunk, syncChunk_getExpungedLinkedNotebooks);
+    if (isSet && size>0)
+        processChunkExpungedLinkedNotebooks(chunk, list, size);
+
+    env->DeleteLocalRef(syncChunk);
+    env->DeleteLocalRef(list);
+
+    return true;
+}
+
+
+
+void JavaMachine::processChunkNotes(SyncChunk &syncChunk, jobject list, int size) {
+    for (int i=0;i<size;i++) {
+        jobject jobj = env->CallObjectMethod(list, list_get, i);
+        Note newNote;
+        mapToNote(newNote, jobj);
+        syncChunk.notes.push_back(newNote);
+    }
+}
+
+
+void JavaMachine::processChunkTags(SyncChunk &syncChunk, jobject list, int size) {
+    for (int i=0;i<size;i++) {
+        jobject jobj = env->CallObjectMethod(list, list_get, i);
+        Tag newTag;
+        mapToTag(newTag, jobj);
+        syncChunk.tags.push_back(newTag);
+    }
+}
+
+void JavaMachine::processChunkNotebooks(SyncChunk &syncChunk, jobject list, int size) {
+    for (int i=0;i<size;i++) {
+        jobject jobj = env->CallObjectMethod(list, list_get, i);
+        Notebook book;
+        mapToNotebook(book, jobj);
+        syncChunk.notebooks.push_back(book);
+    }
+}
+
+
+void JavaMachine::processChunkSearches(SyncChunk &syncChunk, jobject jlist, int size) {
+    for (int i=0;i<size;i++) {
+        jobject jobj = env->CallObjectMethod(jlist, list_get, i);
+        SavedSearch search;
+        mapToSearch(search, jobj);
+        syncChunk.searches.push_back(search);
+    }
+}
+
+void JavaMachine::processChunkExpungedNotes(SyncChunk &syncChunk, jobject jlist, int size) {
+    QStringList list = mapToStringList(jlist, size);
+    for (int i=0; i<list.size(); i++)
+        syncChunk.expungedNotes.push_back(list.at(i).toStdString());
+}
+
+void JavaMachine::processChunkExpungedNotebooks(SyncChunk &syncChunk, jobject jlist, int size) {
+        QStringList list = mapToStringList(jlist, size);
+        for (int i=0; i<list.size(); i++)
+            syncChunk.expungedNotebooks.push_back(list.at(i).toStdString());
+}
+
+void JavaMachine::processChunkExpungedTags(SyncChunk &syncChunk, jobject jlist, int size) {
+    QStringList list = mapToStringList(jlist, size);
+    for (int i=0; i<list.size(); i++)
+        syncChunk.expungedTags.push_back(list.at(i).toStdString());
+}
+
+void JavaMachine::processChunkExpungedSearches(SyncChunk &syncChunk, jobject jlist, int size) {
+    QStringList list = mapToStringList(jlist, size);
+    for (int i=0; i<list.size(); i++)
+        syncChunk.expungedSearches.push_back(list.at(i).toStdString());
+}
+
+void JavaMachine::processChunkExpungedLinkedNotebooks(SyncChunk &syncChunk, jobject jlist, int size) {
+    QStringList list = mapToStringList(jlist, size);
+    for (int i=0; i<list.size(); i++)
+        syncChunk.expungedLinkedNotebooks.push_back(list.at(i).toStdString());
+}
+
+void JavaMachine::processChunkResources(SyncChunk &syncChunk, jobject jlist, int size) {
+    vector<Resource> resourceList;
+    QLOG_DEBUG() << "Mapping resources";
+    mapToResources(resourceList, jlist, size);
+    QLOG_DEBUG() << "Mapping resources complete: " << resourceList.size() << " found.";
+    for (unsigned int i=0; i<resourceList.size(); i++) {
+        syncChunk.resources.push_back(resourceList[i]);
+    }
+    QLOG_DEBUG() << "Resource Chunk Processed";
+}
+
+void JavaMachine::processChunkLinkedNotebooks(SyncChunk &syncChunk, jobject list, int size) {
+    for (int i=0;i<size;i++) {
+        jobject jobj = env->CallObjectMethod(list, list_get, i);
+        LinkedNotebook notebook;
+        mapToLinkedNotebook(notebook, jobj);
+        syncChunk.linkedNotebooks.push_back(notebook);
+    }
+}
+
+
+
+
+void JavaMachine::mapToNote(Note &newNote, jobject jnote) {
+    jstring value;
+    bool isSet = env->CallBooleanMethod(jnote, noteClass_isGuidSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jnote, noteClass_getGuid);
+        jString2String(newNote.guid, value);
+        newNote.__isset.guid = true;
+    }
+    isSet = env->CallBooleanMethod(jnote, noteClass_isTitleSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jnote, noteClass_getTitle);
+        jString2String(newNote.title, value);
+        newNote.__isset.title = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnote, noteClass_isContentSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jnote, noteClass_getContent);
+        jString2String(newNote.content, value);
+        newNote.__isset.content = true;
+    }
+    isSet = env->CallBooleanMethod(jnote, noteClass_isContentLengthSet);
+    if (isSet) {
+        newNote.contentLength = env->CallIntMethod(jnote, noteClass_getContentLength);
+        newNote.__isset.content = true;
+    }
+    isSet = env->CallBooleanMethod(jnote, noteClass_isContentHashSet);
+    if (isSet) {
+//        jbyteArray jb = (jbyteArray)env->CallObjectMethod(jnote, noteClass_getContentHash);
+//        jbyte *b = env->GetByteArrayElements(jb, NULL);
+//        int len = env->GetArrayLength(jb);
+//        QByteArray ba;
+//        this->jString2QByteArray(ba,jb);
+//        QString s(ba.toHex());
+//        newNote.contentHash = s.toStdString();
+//        newNote.__isset.contentHash = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnote, noteClass_isCreatedSet);
+    if (isSet) {
+        newNote.created = env->CallLongMethod(jnote, noteClass_getCreated);
+        newNote.__isset.created = true;
+    }
+    isSet = env->CallBooleanMethod(jnote, noteClass_isUpdatedSet);
+    if (isSet) {
+        newNote.updated = env->CallLongMethod(jnote, noteClass_getUpdated);
+        newNote.__isset.updated = true;
+    }
+    isSet = env->CallBooleanMethod(jnote, noteClass_isDeletedSet);
+    if (isSet) {
+        newNote.deleted = env->CallLongMethod(jnote, noteClass_getDeleted);
+        newNote.__isset.deleted = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnote, noteClass_isActiveSet);
+    if (isSet) {
+        newNote.active = env->CallBooleanMethod(jnote, noteClass_getActive);
+        newNote.__isset.active = true;
+    }
+    isSet = env->CallBooleanMethod(jnote, noteClass_isUpdateSequenceNumberSet);
+    if (isSet) {
+        newNote.updateSequenceNum = env->CallIntMethod(jnote, noteClass_getUpdateSequenceNumber);
+        newNote.__isset.updateSequenceNum = true;
+    }
+    isSet = env->CallBooleanMethod(jnote, noteClass_isNotebookGuidSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jnote, noteClass_getNotebookGuid);
+        jString2String(newNote.notebookGuid, value);
+        newNote.__isset.notebookGuid = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnote, noteClass_isTagGuidsSet);
+    if (isSet) {
+        jobject list = env->CallObjectMethod(jnote, noteClass_getTagGuids);
+        int size = env->CallIntMethod(jnote, noteClass_getTagGuidsSize);
+        QStringList taglist = mapToStringList(list, size);
+        for (int i=0; i<taglist.size(); i++) {
+            newNote.tagGuids.push_back(taglist.at(i).toStdString());
+        }
+        newNote.__isset.tagGuids = true;
+    }
+    isSet = env->CallBooleanMethod(jnote, noteClass_isTagNamesSet);
+    if (isSet) {
+        jobject list = env->CallObjectMethod(jnote, noteClass_getTagNames);
+        int size = env->CallIntMethod(jnote, noteClass_getTagNamesSize);
+        QStringList nameList = mapToStringList(list, size);
+        for (int i=0; i<nameList.size(); i++) {
+            newNote.tagNames.push_back(nameList.at(i).toStdString());
+        }
+        newNote.__isset.tagNames = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnote, noteClass_isAttributesSet);
+    if (isSet) {
+        jobject attributes = env->CallObjectMethod(jnote, noteClass_getAttributes);
+        mapToAttributes(newNote.attributes, attributes);
+        newNote.__isset.attributes = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnote, noteClass_isResourcesSet);
+    if (isSet) {
+        jobject resources = env->CallObjectMethod(jnote, noteClass_getResources);
+        int size = env->CallIntMethod(jnote, noteClass_getResourcesSize);
+        mapToResources(newNote.resources, resources, size);
+        newNote.__isset.resources = true;
+    }
+}
+
+void JavaMachine::mapToAttributes(NoteAttributes &attributes, jobject jattrib) {
+    bool isSet = env->CallBooleanMethod(jattrib, noteAttributes_isSubjectDateSet);
+    if (isSet) {
+        attributes.subjectDate = env->CallLongMethod(jattrib, noteAttributes_getSubjectDate);
+        attributes.__isset.subjectDate = true;
+    }
+
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isLatitudeSet);
+    if (isSet) {
+        jdouble value = env->CallDoubleMethod(jattrib, noteAttributes_getLatitude);
+        attributes.latitude = value;
+        attributes.__isset.latitude = true;
+    }
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isAltitudeSet);
+    if (isSet) {
+        jdouble value = env->CallDoubleMethod(jattrib, noteAttributes_getAltitude);
+        attributes.altitude = value;
+        attributes.__isset.altitude = true;
+    }
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isLongitudeSet);
+    if (isSet) {
+        jdouble value = env->CallDoubleMethod(jattrib, noteAttributes_getLongitude);
+        attributes.longitude = value;
+        attributes.__isset.longitude = true;
+    }
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isAuthorSet);
+    if (isSet) {
+        jstring value = (jstring)env->CallObjectMethod(jattrib, noteAttributes_getAuthor);
+        jString2String(attributes.author,value);
+        attributes.__isset.author = true;
+    }
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isSourceSet);
+    if (isSet) {
+        jstring value = (jstring)env->CallObjectMethod(jattrib, noteAttributes_getSource);
+        jString2String(attributes.source,value);
+        attributes.__isset.source = true;
+    }
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isSourceURLSet);
+    if (isSet) {
+        jstring value = (jstring)env->CallObjectMethod(jattrib, noteAttributes_getSourceURL);
+        jString2String(attributes.sourceURL,value);
+        attributes.__isset.sourceURL = true;
+    }
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isSourceApplicationSet);
+    if (isSet) {
+        jstring value = (jstring)env->CallObjectMethod(jattrib, noteAttributes_getSourceApplication);
+        jString2String(attributes.sourceApplication,value);
+        attributes.__isset.sourceApplication = true;
+    }
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isPlaceNameSet);
+    if (isSet) {
+        jstring value = (jstring)env->CallObjectMethod(jattrib, noteAttributes_getPlaceName);
+        jString2String(attributes.placeName,value);
+        attributes.__isset.placeName = true;
+    }
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isContentClassSet);
+    if (isSet) {
+        jstring value = (jstring)env->CallObjectMethod(jattrib, noteAttributes_getContentClass);
+        jString2String(attributes.contentClass,value);
+        attributes.__isset.contentClass = true;
+    }
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isLastEditedBySet);
+    if (isSet) {
+        jstring value = (jstring)env->CallObjectMethod(jattrib, noteAttributes_getLastEditedBy);
+        jString2String(attributes.lastEditedBy,value);
+        attributes.__isset.lastEditedBy = true;
+    }
+
+    isSet = env->CallBooleanMethod(jattrib, noteAttributes_isShareDateSet);
+    if (isSet) {
+        attributes.shareDate = env->CallLongMethod(jattrib, noteAttributes_getShareDate);
+        attributes.__isset.shareDate = true;
+    }
+    attributes.__isset.applicationData = false;
+}
+
+void JavaMachine::mapToNotebook(Notebook &newNotebook, jobject jnotebook) {
+    jstring value;
+    bool isSet = env->CallBooleanMethod(jnotebook, notebook_isGuidSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jnotebook, notebook_getGuid);
+        jString2String(newNotebook.guid, value);
+        newNotebook.__isset.guid = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnotebook, notebook_isNameSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jnotebook, notebook_getName);
+        jString2String(newNotebook.name, value);
+        newNotebook.__isset.name = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnotebook, notebook_isUpdateSequenceNumberSet);
+    if (isSet) {
+        newNotebook.updateSequenceNum = env->CallIntMethod(jnotebook, notebook_getUpdateSequenceNumber);
+        newNotebook.__isset.updateSequenceNum = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnotebook, notebook_isDefaultNotebookSet);
+    if (isSet) {
+        newNotebook.defaultNotebook = env->CallBooleanMethod(jnotebook, notebook_getDefaultNotebook);
+        newNotebook.__isset.defaultNotebook = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnotebook, notebook_isPublishedSet);
+    if (isSet) {
+        newNotebook.defaultNotebook = env->CallBooleanMethod(jnotebook, notebook_getPublished);
+        newNotebook.__isset.published = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnotebook, notebook_isServiceCreatedSet);
+    if (isSet) {
+        newNotebook.serviceCreated = env->CallLongMethod(jnotebook, notebook_getServiceCreated);
+        newNotebook.__isset.serviceCreated = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnotebook, notebook_isServiceUpdatedSet);
+    if (isSet) {
+        newNotebook.serviceUpdated = env->CallLongMethod(jnotebook, notebook_getServiceUpdated);
+        newNotebook.__isset.serviceUpdated = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnotebook, notebook_isStackSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jnotebook, notebook_getStack);
+        jString2String(newNotebook.stack, value);
+        newNotebook.__isset.serviceCreated = true;
+    }
+
+    isSet = env->CallBooleanMethod(jnotebook, notebook_isPublishingSet);
+    if (isSet) {
+        jobject jpublishing = env->CallObjectMethod(jnotebook, notebook_getPublishing);
+        isSet = env->CallBooleanMethod(jpublishing, publishingClass_isUriSet);
+        if (isSet) {
+            value = (jstring)env->CallObjectMethod(jpublishing, publishingClass_getUri);
+            jString2String(newNotebook.publishing.uri, value);
+            newNotebook.publishing.__isset.uri = true;
+        }
+
+        isSet = env->CallBooleanMethod(jpublishing, publishingClass_isOrderSet);
+        if (isSet) {
+            value = (jstring)env->CallObjectMethod(jnotebook, publishingClass_getOrder);
+            //jString2String(newNotebook.publishing.order, value);
+            newNotebook.publishing.__isset.order = true;
+        }
+
+        isSet = env->CallBooleanMethod(jpublishing, publishingClass_isAscendingSet);
+        if (isSet) {
+            newNotebook.publishing.ascending = env->CallBooleanMethod(jpublishing, publishingClass_getAscending);
+            newNotebook.publishing.__isset.ascending = true;
+        }
+
+        isSet = env->CallBooleanMethod(jpublishing, publishingClass_isPublicDescriptionSet);
+        if (isSet) {
+            value = (jstring)env->CallObjectMethod(jnotebook, publishingClass_getPublicDescription);
+            jString2String(newNotebook.publishing.publicDescription, value);
+            newNotebook.publishing.__isset.publicDescription = true;
+        }
+    }
+
+}
+
+void JavaMachine::mapToTag(Tag &newTag, jobject jtag) {
+    jstring value;
+    bool isSet = env->CallBooleanMethod(jtag, tag_isGuidSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jtag, tag_getGuid);
+        jString2String(newTag.guid, value);
+        newTag.__isset.guid = true;
+    }
+
+    isSet = env->CallBooleanMethod(jtag, tag_isNameSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jtag, tag_getName);
+        jString2String(newTag.name, value);
+        newTag.__isset.name = true;
+    }
+
+    isSet = env->CallBooleanMethod(jtag, tag_isParentGuidSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jtag, tag_getParentGuid);
+        jString2String(newTag.parentGuid, value);
+        newTag.__isset.parentGuid = true;
+    }
+
+    isSet = env->CallBooleanMethod(jtag, tag_isSequenceNumberSet);
+    if (isSet) {
+        newTag.updateSequenceNum = env->CallIntMethod(jtag, tag_getSequenceNumber);
+        newTag.__isset.updateSequenceNum = true;
+    }
+}
+
+void JavaMachine::mapToSearch(SavedSearch &newSearch, jobject jsearch) {
+    jstring value;
+    bool isSet = env->CallBooleanMethod(jsearch, savedSearch_isGuidSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jsearch, savedSearch_getGuid);
+        jString2String(newSearch.guid, value);
+        newSearch.__isset.guid = true;
+    }
+
+    isSet = env->CallBooleanMethod(jsearch, savedSearch_isNameSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jsearch, savedSearch_getName);
+        jString2String(newSearch.name, value);
+        newSearch.__isset.name = true;
+    }
+
+    isSet = env->CallBooleanMethod(jsearch, savedSearch_isQuerySet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jsearch, savedSearch_getQuery);
+        jString2String(newSearch.query, value);
+        newSearch.__isset.query = true;
+    }
+
+    isSet = env->CallBooleanMethod(jsearch, savedSearch_isFormatSet);
+    if (isSet) {
+        jobject qformat;
+        qformat = (jobject)env->CallObjectMethod(jsearch, savedSearch_getFormat);
+        value = (jstring)env->CallObjectMethod(qformat, queryFormat_toString);
+        QString vs;
+        jString2QString(vs,value);
+        if (vs == "USER") {
+            newSearch.format = USER;
+        }
+        if (vs == "SEXP") {
+            newSearch.format = SEXP;
+        }
+        newSearch.__isset.query = true;
+    }
+
+    isSet = env->CallBooleanMethod(jsearch, savedSearch_isUpdateSequenceNumberSet);
+    if (isSet) {
+        newSearch.updateSequenceNum = env->CallIntMethod(jsearch, savedSearch_getUpdateSequenceNumber);
+        newSearch.__isset.updateSequenceNum = true;
+    }
+
+}
+
+void JavaMachine::mapToLinkedNotebook(LinkedNotebook &linkedNotebook, jobject notebook) {
+    /* suppress unused */
+    linkedNotebook = linkedNotebook;
+    notebook=notebook;
+}
+
+void JavaMachine::mapToResources(vector<Resource> &newResList, jobject jresourceList, int size) {
+    jclass listClass = env->FindClass("java/util/List");
+    jmethodID getMethod = env->GetMethodID(listClass, "get", "(I)Ljava/lang/Object;");
+    for (int i=0; i<size; i++) {
+        Resource newRes;
+        jobject jres;
+        jres = env->CallObjectMethod(jresourceList, getMethod, i);
+        jstring value;
+
+        bool isSet = env->CallBooleanMethod(jres, resource_isGuidSet);
+        if (isSet) {
+            value = (jstring)env->CallObjectMethod(jres, resource_getGuid);
+            jString2String(newRes.guid, value);
+            newRes.__isset.guid = true;
+        }
+
+        isSet = env->CallBooleanMethod(jres, resource_isNoteGuidSet);
+        if (isSet) {
+            value = (jstring)env->CallObjectMethod(jres, resource_getNoteGuid);
+            jString2String(newRes.noteGuid, value);
+            newRes.__isset.noteGuid = true;
+        }
+        isSet = env->CallBooleanMethod(jres, resource_isMimeSet);
+        if (isSet) {
+            value = (jstring)env->CallObjectMethod(jres, resource_getMime);
+            jString2String(newRes.mime, value);
+            newRes.__isset.mime = true;
+        }
+        isSet = env->CallBooleanMethod(jres, resource_isHeightSet);
+        if (isSet) {
+            newRes.height = env->CallShortMethod(jres, resource_getHeight);
+            newRes.__isset.height = true;
+        }
+        isSet = env->CallBooleanMethod(jres, resource_isWidthSet);
+        if (isSet) {
+            newRes.width = env->CallShortMethod(jres, resource_getWidth);
+            newRes.__isset.width = true;
+        }
+        isSet = env->CallBooleanMethod(jres, resource_isDurationSet);
+        if (isSet) {
+            newRes.duration = env->CallShortMethod(jres, resource_getDuration);
+            newRes.__isset.duration = true;
+        }
+        isSet = env->CallBooleanMethod(jres, resource_isUpdateSequenceNumberSet);
+        if (isSet) {
+            newRes.updateSequenceNum = env->CallIntMethod(jres, resource_getUpdateSequenceNumber);
+            newRes.__isset.updateSequenceNum = true;
+        }
+        isSet = env->CallBooleanMethod(jres, resource_isActiveSet);
+        if (isSet) {
+            newRes.active = env->CallBooleanMethod(jres, resource_getActive);
+            newRes.__isset.active = true;
+        }
+        isSet = env->CallBooleanMethod(jres, resource_isRecognitionSet);
+        if (isSet) {
+            jobject jdata = env->CallObjectMethod(jres, resource_getRecognition);
+            mapToData(newRes.recognition, jdata);
+            newRes.__isset.recognition = true;
+        }
+        isSet = env->CallBooleanMethod(jres, resource_isDataSet);
+        if (isSet) {
+            jobject jdata = env->CallObjectMethod(jres, resource_getData);
+            mapToData(newRes.data, jdata);
+            newRes.__isset.data = true;
+        }
+        isSet = env->CallBooleanMethod(jres, resource_isAlternateDataSet);
+        if (isSet) {
+            jobject jdata = env->CallObjectMethod(jres, resource_getAlternateData);
+            mapToData(newRes.alternateData, jdata);
+            newRes.__isset.alternateData = true;
+        }
+        isSet = env->CallBooleanMethod(jres, resource_isAttributesSet);
+        if (isSet) {
+            jobject jdata = env->CallObjectMethod(jres, resource_getAttributes);
+            mapToResourceAttributes(newRes.attributes, jdata);
+            newRes.__isset.attributes = true;
+        }
+        newResList.push_back(newRes);
+    }
+}
+
+
+QStringList JavaMachine::mapToStringList(jobject obj, int size) {
+    QStringList stringList;
+    jclass listClass = env->FindClass("java/util/List");
+    jmethodID getMethod = env->GetMethodID(listClass, "get", "(I)Ljava/lang/Object;");
+    for (int i=0; i<size; i++) {
+        jstring item = (jstring)env->CallObjectMethod(obj, getMethod, i);
+        QString text;
+        jString2QString(text, item);
+        stringList.append(text);
+    }
+    return stringList;
+
+}
+
+void JavaMachine::mapToData(Data &newData, jobject jdata) {
+    int size = 0;
+    bool isSet = env->CallBooleanMethod(jdata, data_isBodyHashSet);
+    if (isSet) {
+        jbyteArray jb = (jbyteArray)env->CallObjectMethod(jdata, data_getBodyHash);
+        QByteArray ba;
+        this->jByteArray2QByteArray(ba,jb, 16);
+        newData.bodyHash = ba.data();
+        newData.__isset.bodyHash = true;
+    }
+    isSet = env->CallBooleanMethod(jdata, data_isSizeSet);
+    if (isSet) {
+        newData.size = env->CallIntMethod(jdata, data_getSize);
+        newData.__isset.size = true;
+        size = newData.size;
+    }
+    isSet = env->CallBooleanMethod(jdata, data_isBodySet);
+    if (isSet) {
+        jbyteArray jb = (jbyteArray)env->CallObjectMethod(jdata, data_getBody);
+        QByteArray ba;
+        jByteArray2QByteArray(ba,jb, size);
+        newData.body.clear();
+        newData.body.append(ba.data(), ba.size());
+        newData.__isset.body = true;
+    }
+}
+
+void JavaMachine::mapToResourceAttributes(ResourceAttributes &attributes, jobject jattributes) {
+    jstring value;
+    bool isSet = env->CallBooleanMethod(jattributes, resourceAttributes_isSourceUrlSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jattributes, resourceAttributes_getSourceUrl);
+        jString2String(attributes.sourceURL, value);
+        attributes.__isset.sourceURL = true;
+    }
+    isSet = env->CallBooleanMethod(jattributes, resourceAttributes_isTimestampSet);
+    if (isSet) {
+        attributes.timestamp = env->CallLongMethod(jattributes, resourceAttributes_getTimestamp);
+        attributes.__isset.timestamp = true;
+    }
+
+    isSet = env->CallBooleanMethod(jattributes, resourceAttributes_isLongitudeSet);
+    if (isSet) {
+        attributes.longitude = env->CallShortMethod(jattributes, resourceAttributes_getLongitude);
+        attributes.__isset.longitude = true;
+    }
+    isSet = env->CallBooleanMethod(jattributes, resourceAttributes_isLatitudeSet);
+    if (isSet) {
+        attributes.latitude = env->CallShortMethod(jattributes, resourceAttributes_getLatitude);
+        attributes.__isset.latitude = true;
+    }
+    isSet = env->CallBooleanMethod(jattributes, resourceAttributes_isAltitudeSet);
+    if (isSet) {
+        attributes.altitude= env->CallShortMethod(jattributes, resourceAttributes_getAltitude);
+        attributes.__isset.altitude = true;
+    }
+    isSet = env->CallBooleanMethod(jattributes, resourceAttributes_isCameraMakeSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jattributes, resourceAttributes_getCameraMake);
+        jString2String(attributes.cameraMake, value);
+        attributes.__isset.cameraMake = true;
+    }
+    isSet = env->CallBooleanMethod(jattributes, resourceAttributes_isCameraModelSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jattributes, resourceAttributes_getCameraModel);
+        jString2String(attributes.cameraModel, value);
+        attributes.__isset.cameraModel = true;
+    }
+    isSet = env->CallBooleanMethod(jattributes, resourceAttributes_isRecoTypeSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jattributes, resourceAttributes_getRecoType);
+        jString2String(attributes.recoType, value);
+        attributes.__isset.recoType = true;
+    }
+    isSet = env->CallBooleanMethod(jattributes, resourceAttributes_isFileNameSet);
+    if (isSet) {
+        value = (jstring)env->CallObjectMethod(jattributes, resourceAttributes_getFileName);
+        jString2String(attributes.fileName, value);
+        attributes.__isset.fileName = true;
+    }
+    isSet = env->CallBooleanMethod(jattributes, resourceAttributes_isAttachmentSet);
+    if (isSet) {
+        attributes.attachment = env->CallBooleanMethod(jattributes, resourceAttributes_getAttachment);
+        attributes.__isset.attachment = true;
+    }
 }

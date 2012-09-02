@@ -6,8 +6,8 @@
 #include <QWidget>
 #include <QPushButton>
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 
 using namespace evernote::edam  ;
 using namespace std;
@@ -20,12 +20,12 @@ private:
     QString activeColor;
     QString inactiveColor;
     Timestamp value;
-    int key;
-    int lid;
+    qint32 key;
+    qint32 lid;
 
 public:
     explicit DateTimeEditor(QWidget *parent = 0);
-    void setNote(int lid, Timestamp value, int key);
+    void setNote(qint32 lid, Timestamp value, qint32 key);
     
 signals:
     

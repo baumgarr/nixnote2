@@ -13,7 +13,7 @@ class NTagView : public QTreeWidget
     Q_OBJECT
 private:
     NTagViewItem *root;
-    QHash<int, NTagViewItem*> dataStore;
+    QHash<qint32, NTagViewItem*> dataStore;
     virtual void mousePressEvent(QMouseEvent *event);
     int filterPosition;
     void copyTreeItem(QTreeWidgetItem *source, QTreeWidgetItem *target);
@@ -49,15 +49,15 @@ public:
 
 signals:
     void updateSelectionRequested();
-    void tagRenamed(int lid, QString oldName, QString newName);
-    void tagDeleted(int lid, QString name);
-    void tagAdded(int lid);
+    void tagRenamed(qint32 lid, QString oldName, QString newName);
+    void tagDeleted(qint32 lid, QString name);
+    void tagAdded(qint32 lid);
 
 public slots:
-    void tagUpdated(int lid, QString name);
+    void tagUpdated(qint32 lid, QString name);
     void rebuildTree();
     void buildSelection();
-    void addNewTag(int lid);
+    void addNewTag(qint32 lid);
     void addRequested();
     void propertiesRequested();
     void deleteRequested();

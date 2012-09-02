@@ -45,14 +45,17 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(&noteTitle, SIGNAL(titleChanged()), this, SLOT(sendUpdateSignal()));
     connect(&dateEditor, SIGNAL(valueChanged()), this, SLOT(sendUpdateSignal()));
     connect(&tagEditor, SIGNAL(tagsUpdated()), this, SLOT(sendUpdateSignal()));
-    connect(&tagEditor, SIGNAL(newTagCreated(int)), this, SLOT(newTagAdded(int)));
+    connect(&tagEditor, SIGNAL(newTagCreated(qint32)), this, SLOT(newTagAdded(qint32)));
     lid = -1;
 }
 
 
-void NBrowserWindow::setContent(int lid, QByteArray c) {
+void NBrowserWindow::setContent(qint32 lid, QByteArray c) {
     NoteTable noteTable;
+    if (lid == -1)
+        return;
     Note n;
+
     noteTable.get(n, lid, false, false);
     noteTitle.setTitle(lid, QString::fromStdString(n.title), QString::fromStdString(n.title));
     dateEditor.setNote(lid, n);
@@ -61,7 +64,7 @@ void NBrowserWindow::setContent(int lid, QByteArray c) {
     // Set the tags
     tagEditor.clear();
     QStringList names;
-    for (int i=0; i<n.tagNames.size(); i++) {
+    for (unsigned int i=0; i<n.tagNames.size(); i++) {
         names << QString::fromStdString(n.tagNames[i]);
     }
     tagEditor.setTags(names);
@@ -99,48 +102,59 @@ void NBrowserWindow::sendUpdateSignal() {
     emit(this->noteUpdated(lid));
 }
 
-void NBrowserWindow::newTagAdded(int lid) {
+void NBrowserWindow::newTagAdded(qint32 lid) {
     emit(tagAdded(lid));
 }
 
-void NBrowserWindow::addTagName(int lid) {
+void NBrowserWindow::addTagName(qint32 lid) {
     TagTable table;
     Tag t;
     table.get(t, lid);
     tagEditor.addTag(QString::fromStdString(t.name));
 }
 
-void NBrowserWindow::tagRenamed(int lid, QString oldName, QString newName) {
+void NBrowserWindow::tagRenamed(qint32 lid, QString oldName, QString newName) {
     tagEditor.tagRenamed(lid, oldName, newName);
 }
 
 
-void NBrowserWindow::tagDeleted(int lid, QString name) {
+void NBrowserWindow::tagDeleted(qint32 lid, QString name) {
+    lid = lid;  /* suppress unused */
     tagEditor.removeTag(name);
 }
 
-void NBrowserWindow::notebookRenamed(int lid, QString oldName, QString newName) {
+void NBrowserWindow::notebookRenamed(qint32 lid, QString oldName, QString newName) {
+    lid = lid;  /* suppress unused */
+    oldName = oldName;  /* suppress unused */
+    newName = newName;  /* suppress unused */
     notebookMenu.reloadData();
 }
 
-void NBrowserWindow::notebookDeleted(int lid, QString name) {
+void NBrowserWindow::notebookDeleted(qint32 lid, QString name) {
+    lid = lid;  /* suppress unused */
+    name=name;  /* suppress unused */
     notebookMenu.reloadData();
 }
 
 void NBrowserWindow::stackRenamed(QString oldName, QString newName) {
+    oldName = oldName;  /* suppress unused */
+    newName = newName;  /* suppress unused */
     notebookMenu.reloadData();
 }
 
 void NBrowserWindow::stackDeleted(QString name) {
+    name=name;  /* suppress unused */
     notebookMenu.reloadData();
 }
 
 void NBrowserWindow::stackAdded(QString name) {
+    name=name;  /* suppress unused */
     notebookMenu.reloadData();
 }
 
 
-void NBrowserWindow::notebookAdded(int lid) {
+void NBrowserWindow::notebookAdded(qint32 lid) {
+    lid = lid;  /* suppress unused */
     notebookMenu.reloadData();
 }
 

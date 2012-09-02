@@ -19,11 +19,11 @@ public:
     void setTags(QStringList names);
     void clear();
     void loadTags();
-    void setCurrentLid(int l);
-    void tagRenamed(int lid, QString oldName, QString newName);
+    void setCurrentLid(qint32 l);
+    void tagRenamed(qint32 lid, QString oldName, QString newName);
 
 private:
-    int currentLid;
+    qint32 currentLid;
     QLabel tagIcon;
     TagEditorNewTag newTag;
     TagViewer tags[MAX_TAGS];
@@ -36,7 +36,7 @@ private:
 signals:
     void buttonClicked(QString);
     void tagsUpdated();
-    void newTagCreated(int lid);
+    void newTagCreated(qint32 lid);
     
 public slots:
     void removeTag(QString text);

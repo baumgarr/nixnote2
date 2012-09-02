@@ -113,8 +113,8 @@ void ImportData::import(QString file) {
     // as well as any awy.
 
     NoteTable noteTable;
-    for (int i=0; i<noteList.size(); i++) {
-        int lid = noteTable.getLid(noteList[i]);
+    for (qint32 i=0; i<noteList.size(); i++) {
+        qint32 lid = noteTable.getLid(noteList[i]);
         if (lid > 0) {
             Note note;
             bool dirty = noteTable.isDirty(lid);
@@ -147,7 +147,7 @@ void ImportData::processNoteNode() {
             noteList.append(QString::fromStdString(note.guid));
         }
         if (name == "updatesequencenumber" && !reader->isEndElement()) {
-            note.updateSequenceNum = textValue().toInt();
+            note.updateSequenceNum = textValue().toLong();
             note.__isset.updateSequenceNum = true;
         }
         if (name == "title" && !reader->isEndElement()) {
@@ -187,7 +187,7 @@ void ImportData::processNoteNode() {
         if (name == "notetags" && (createTags || backup) && !reader->isEndElement()) {
             QStringList names, guids;
             processNoteTagList(guids, names);
-            for (int i=0; i<guids.size(); i++) {
+            for (qint32 i=0; i<guids.size(); i++) {
                 note.tagGuids.push_back(guids[i].toStdString());
                 note.tagNames.push_back(names[i].toStdString());
                 note.__isset.tagGuids = true;
@@ -212,7 +212,7 @@ void ImportData::processNoteNode() {
 
     // Loop through the resources & make sure they all have the
     // proper guid for this note
-    for (int i=0; i<note.resources.size(); i++) {
+    for (unsigned int i=0; i<note.resources.size(); i++) {
         note.resources[i].noteGuid = note.guid;
     }
     NoteTable noteTable;
@@ -222,7 +222,7 @@ void ImportData::processNoteNode() {
         note.updateSequenceNum = 0;
         if (notebookGuid != NULL)
             note.notebookGuid = notebookGuid.toStdString();
-        for (int i=0; i<note.resources.size(); i++) {
+        for (unsigned int i=0; i<note.resources.size(); i++) {
              note.resources[i].updateSequenceNum = 0;
         }
         noteTable.add(0,note, true);
@@ -239,7 +239,8 @@ void ImportData::processNoteNode() {
 //***********************************************************
 void ImportData::processResource(Resource &resource) {
     bool atEnd = false;
-    bool isDirty = false;
+    bool isDirty;
+
     while(!atEnd) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
@@ -426,8 +427,8 @@ void ImportData::processNoteTagList(QStringList &guidList, QStringList &names) {
     // Now look for any matches with existing ones.  If they don't
     // exist we create a dummy record
     TagTable tagTable;
-    for (int i=0; i<guidList.size(); i++) {
-        int lid = tagTable.getLid(guidList[i]);
+    for (qint32 i=0; i<guidList.size(); i++) {
+        qint32 lid = tagTable.getLid(guidList[i]);
         if (lid == 0) {
             Tag newTag;
             newTag.guid = guidList[i].toStdString();
@@ -573,7 +574,8 @@ void ImportData::processSavedSearchNode() {
 //***********************************************************
 void ImportData::processLinkedNotebookNode() {
     LinkedNotebook  linkedNotebook;
-    bool linkedNotebookIsDirty = false;
+    bool linkedNotebookIsDirty=false;
+
     QLOG_ERROR() << "Linked notebook database support not implemented yet";
 
     bool atEnd = false;
@@ -629,6 +631,7 @@ void ImportData::processSharedNotebookNode() {
 
     SharedNotebook sharedNotebook;
     bool sharedNotebookIsDirty = false;
+
     QLOG_ERROR() << "Shared notebook database support not implemented yet";
 
     bool atEnd = false;
@@ -688,6 +691,7 @@ void ImportData::processNotebookNode() {
     bool notebookIsDirty = false;
     bool notebookIsLocal = false;
     bool notebookIsReadOnly = false;
+
 //    notebookIcon = null;
     bool atEnd = false;
 
@@ -775,7 +779,7 @@ void ImportData::processNotebookNode() {
 
     // Check if there is a notebook by this name already.
     // If one exists, we treat this as an update
-    int lid = notebookTable.findByName(notebook.name);
+    qint32 lid = notebookTable.findByName(notebook.name);
     if (lid == 0)
         lid = notebookTable.getLid(notebook.guid);
     if (lid == 0) {
@@ -838,7 +842,7 @@ void ImportData::processTagNode() {
 
     // Check if we have a tag by this name already.  If we
     // do then we treat this as an update.
-    int lid = tagTable.findByName(name);
+    qint32 lid = tagTable.findByName(name);
     if (lid == 0)
         lid = tagTable.getLid(tag.guid);
     if (lid == 0)
@@ -865,8 +869,8 @@ QString ImportData::textValue() {
 //***********************************************************
 //* take a node's value and return the integer value
 //***********************************************************
-int ImportData::intValue() {
-    return textValue().toInt();
+qint32 ImportData::intValue() {
+    return textValue().toLong();
 }
 
 

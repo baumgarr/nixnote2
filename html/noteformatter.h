@@ -12,8 +12,8 @@
 #include <QtXml>
 
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 #include "filters/ensearch.h"
 
 using namespace apache::thrift;
@@ -32,12 +32,12 @@ private:
     EnSearch enSearch;
     bool noteHistory;
     bool formatError;
-    void addImageHighlight(int resLid, QFile &f);
+    void addImageHighlight(qint32 resLid, QFile &f);
     void modifyImageTags(QDomDocument &doc, QDomElement &docElement, QDomElement &enMedia, QDomAttr &hash);
     void modifyApplicationTags(QDomDocument &doc, QDomElement &docElem, QDomElement &enmedia, QDomAttr &hash, QString appl);
     void modifyTodoTags(QDomElement &todo);
     void modifyTags(QDomDocument &doc);
-    QString findIcon(int lid, Resource r, QString appl);
+    QString findIcon(qint32 lid, Resource r, QString appl);
 
 public:
     bool resourceError;

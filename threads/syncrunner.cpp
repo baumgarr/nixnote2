@@ -1,5 +1,4 @@
 
-//#include <QDebug>
 #include <QTimer>
 
 #include "syncrunner.h"
@@ -13,6 +12,7 @@
 #include "sql/notetable.h"
 #include "html/thumbnailer.h"
 #include "nixnote.h"
+#include "communication/communicationmanager.h"
 
 extern Global global;
 
@@ -24,9 +24,10 @@ SyncRunner::SyncRunner()
     secret = "eb8b5740e17cb55f";
 
     // Setup the user agent
-    userAgent = "NixNote/Linux";
+    userAgent = "NixNote2/Linux";
 
     userStoreUrl = "http://www.evernote.com/edam/user";
+    updateSequenceNumber = 0;
 }
 
 SyncRunner::~SyncRunner() {
@@ -37,170 +38,137 @@ SyncRunner::~SyncRunner() {
 
 void SyncRunner::run() {
     QLOG_DEBUG() << "Starting SyncRunner";
-    jvm = new JavaMachine();
-    jvm->create_jvm();
-    refreshTimer = new QTimer();
-    refreshTimer->setInterval(300000);  // Check refresh timer every 5 minutes
-//    connect(refreshTimer, SIGNAL(timeout()), this, SLOT(refreshConnection()));
-    refreshTimer->start();
     exec();
 }
 
 void SyncRunner::synchronize() {
-    keepRunning = true;
-    if (enConnect())  {
-       evernoteSync();
-
-       // End the connection
-       QLOG_DEBUG() << "Emitting syncComplete()";
-       emit syncComplete();
+    QLOG_DEBUG() << "Starting SyncRunner.synchronize()";
+    if (!comm.connect()) {
+        QLOG_ERROR() << "Error initializing socket connections";
+        emit syncComplete();
+        return;
     }
+
+    global.connected = true;
+    keepRunning = true;
+    evernoteSync();
+    emit syncComplete();
 }
 
 
 
 
 void SyncRunner::evernoteSync() {
+    QLOG_DEBUG() << "Starting SyncRunner.evernoteSync()";
     if (!global.connected)
         return;
 
     SyncState syncState;
-    jvm->getSyncState(syncState);
+    comm.getSyncState("", syncState);
 
-    return;
-    ////////////////////////////
-    QLOG_TRACE() << "Entering SyncRunner::evernoteSync()";
-    //SyncState syncState;
-    int highSequenceNumber = 0;
+    fullSync = false;
+    UserTable userTable;
 
-    try {
-        UserTable userTable;
+    qlonglong lastSyncDate = userTable.getLastSyncDate();
+    updateSequenceNumber = userTable.getLastSyncNumber();
 
-        noteStoreClient->getSyncState(syncState, authToken);
-
-        qlonglong lastSyncDate = userTable.getLastSyncDate();
-        updateSequenceNumber = userTable.getLastSyncNumber();
-
-        if (syncState.fullSyncBefore > lastSyncDate) {
-            QLOG_DEBUG() <<  "Full sequence date has expired";
-            lastSyncDate = 0;
-            updateSequenceNumber = 0;
-         }
-
-        // If there are remote changes
-        QLOG_DEBUG() <<  "Current Sequence Number: " << syncState.updateCount;
-        QLOG_DEBUG() <<  "Last Sequence Number: " << updateSequenceNumber;
-
-        if (syncState.updateCount > updateSequenceNumber) {
-                QLOG_DEBUG() <<  "Remote changes found";
-                QLOG_DEBUG() << "Downloading changes";
-                highSequenceNumber = syncState.updateCount;
-                syncRemoteToLocal(noteStoreClient);
-        }
-        userTable.updateSyncState(syncState);
-
-    } catch (EDAMUserException e) {
-        QLOG_FATAL() << e.what();
-        return;
-    }  catch (EDAMSystemException e) {
-        QLOG_FATAL() << e.what() ;
-        return;
-    } catch (EDAMNotFoundException e) {
-        QLOG_FATAL() << e.what();
-        return;
+    if ((syncState.fullSyncBefore/1000) > lastSyncDate) {
+        QLOG_DEBUG() <<  "Full sequence date has expired";
+        lastSyncDate = 0;
+        fullSync = true;
     }
+
+    if (updateSequenceNumber == 0)
+        fullSync = true;
+
+    // If there are remote changes
+    QLOG_DEBUG() <<  "--->>>  Current Sequence Number: " << syncState.updateCount;
+    QLOG_DEBUG() <<  "--->>> Last Sequence Number: " <<  updateSequenceNumber;
+
+    if (syncState.updateCount > updateSequenceNumber) {
+        QLOG_DEBUG() <<  "Remote changes found";
+        QLOG_DEBUG() << "Downloading changes";
+        syncRemoteToLocal(syncState.updateCount);
+    }
+
+    updateNoteTableTags();
     QLOG_TRACE() << "Leaving SyncRunner::evernoteSync()";
 }
 
 
 
-void SyncRunner::syncRemoteToLocal(shared_ptr<NoteStoreClient> client) {
-    /*
+void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     QLOG_TRACE() << "Entering SyncRunner::evernoteSync()";
 
     int chunkSize = 100;
-    fullSync = false;
     bool more = true;
     SyncChunk chunk;
 
-    if (updateSequenceNumber == 0)
-        fullSync = true;
-
-    int sequence = updateSequenceNumber;
+    bool rc;
     while(more && keepRunning)  {
-        if (authRefreshNeeded)
-            if (!refreshConnection())
-                return;
-        try {
-            client->getSyncChunk(chunk, authToken, sequence, chunkSize, fullSync);
 
-        } catch(EDAMUserException e) {
-            error = true;
-            QLOG_FATAL() << "EDAMUserException: " << e.what();
-            return;
-        } catch(EDAMSystemException e) {
-            error = true;
-            QLOG_FATAL() << "EDAMSystemException: " << e.what();
-            return;
-        } catch(TException e) {
-            error = true;
-            QLOG_FATAL() << "TException: " << e.what();
+        QSqlQuery query;
+        query.exec("begin");
+        rc = comm.getSyncChunk("", chunk, updateSequenceNumber, chunkSize, fullSync);
+        if (!rc) {
+            QLOG_ERROR() << "Error retrieving chunk";
             return;
         }
+        QLOG_DEBUG() << "------>>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
 
-        QSqlQuery q;
-        q.exec("begin");
-        syncRemoteTags(chunk.tags);
-        chunk.tags.clear();
-        syncRemoteSearches(chunk.searches);
-        chunk.searches.clear();
-        syncRemoteNotebooks(chunk.notebooks);
-        chunk.notebooks.clear();
-        syncRemoteNotes(chunk.notes, client, fullSync, authToken);
-        chunk.notes.clear();
-        if (fullSync)
-            chunk.resources.clear();
+        if (chunk.tags.size() > 0) {
+            syncRemoteTags(chunk.tags);
+        }
+        if (chunk.notebooks.size() > 0) {
+            syncRemoteNotebooks(chunk.notebooks);
+        }
+        if (chunk.searches.size() > 0) {
+            syncRemoteSearches(chunk.searches);
+        }
+        if (chunk.notes.size() > 0) {
+            QLOG_DEBUG() << "Syncing note chunk.";
+            syncRemoteNotes(chunk.notes);
+            QLOG_DEBUG() << "Note chunk synchronized.";
+        }
 
-        sequence = chunk.chunkHighUSN;
-        QLOG_DEBUG() << "Chunk high sequence number: " << chunk.chunkHighUSN;
-        QLOG_DEBUG() << "Maximum sequence number: " << chunk.updateCount;
-        if (chunk.chunkHighUSN >= chunk.updateCount) {
+        if (chunk.chunkHighUSN >= updateCount) {
             more = false;
         }
-        q.exec("commit");
-
-    }
-    updateNoteTableTags();
-    updateNoteTableNotebooks();
-    QLOG_TRACE() << "Leaving SyncRunner::evernoteSync()";
-    */
+        updateSequenceNumber = chunk.chunkHighUSN;
+        UserTable userTable;
+        userTable.updateLastSyncNumber(updateSequenceNumber);
+        userTable.updateLastSyncDate(chunk.currentTime);
+        query.exec("commit");
+      }
 }
 
 
 bool SyncRunner::enConnect() {
     if (global.connected)
         return true;
-    jvm->connect();
-    return true;
-}
-
-// Refresh a connection before the timer expires
-bool SyncRunner::refreshConnection() {
-    if (!global.connected)
-        return false;
+    return comm.connect();
 }
 
 
 // Synchronize remote tags with the current database
 // If there is a conflict, the remote wins
 void SyncRunner::syncRemoteTags(vector<Tag> tags) {
-    return;
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteTags";
     TagTable tagTable;
 
     for (unsigned int i=0; i<tags.size() && keepRunning; i++) {
         Tag t = tags.at(i);
-        int lid = tagTable.findByName(t.name);
+
+        // There are two ways to get the tag.  We can get
+        // it by name or by guid.  We check both.  We'll find it by
+        // name if a new tag was created locally with the same name
+        // as an unsynced remote.  We then merge them.  We'll find it by guid
+        // if a note was synchrozied with this tag before a chunk
+        // with this tag was downloaded.
+        qint32 lid = tagTable.findByName(t.name);
+        if (lid == 0)
+            lid = tagTable.getLid(t.guid);
+
         if (lid > 0) {
             Tag currentTag;
             tagTable.get(currentTag, lid);
@@ -222,13 +190,12 @@ void SyncRunner::syncRemoteTags(vector<Tag> tags) {
 // Synchronize remote searches with the current database
 // If there is a conflict, the remote wins
 void SyncRunner::syncRemoteSearches(vector<SavedSearch> searches) {
-    return;
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteSearches";
     SearchTable searchTable;
 
     for (unsigned int i=0; i<searches.size() && keepRunning; i++) {
         SavedSearch t = searches.at(i);
-        int lid = searchTable.getLid(t.guid);
+        qint32 lid = searchTable.getLid(t.guid);
         if (lid > 0) {
             searchTable.sync(lid, t);
         } else {
@@ -244,13 +211,22 @@ void SyncRunner::syncRemoteSearches(vector<SavedSearch> searches) {
 // Synchronize remote notebooks with the current database
 // If there is a conflict, the remote wins
 void SyncRunner::syncRemoteNotebooks(vector<Notebook> books) {
-    return;
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteNotebooks";
     NotebookTable notebookTable;
 
     for (unsigned int i=0; i<books.size() && keepRunning; i++) {
         Notebook t = books.at(i);
-        int lid = notebookTable.findByName(t.name);
+
+        // There are two ways to get the notebook.  We can get
+        // it by name or by guid.  We check both.  We'll find it by
+        // name if a new notebook was created locally with the same name
+        // as the remote.  We then merge them.  We'll find it by guid
+        // if a note was synchrozied with this notebook before a chunk
+        // with this notebook was downloaded.
+        qint32 lid = notebookTable.findByName(t.name);
+        if (lid == 0)
+            lid = notebookTable.getLid(t.guid);
+
         if (lid > 0) {
             notebookTable.sync(lid, t);
         } else {
@@ -266,24 +242,19 @@ void SyncRunner::syncRemoteNotebooks(vector<Notebook> books) {
 
 
 // Synchronize remote notes with the current database
-void SyncRunner::syncRemoteNotes(vector<Note> notes, shared_ptr<NoteStoreClient> client, bool full, string token) {
-    return;
+void SyncRunner::syncRemoteNotes(vector<Note> notes) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteNotes";
     NoteTable noteTable;
 
-    Note n;
     for (unsigned int i=0; i<notes.size() && keepRunning; i++) {
         Note t = notes[i];
-        int lid = noteTable.getLid(t.guid);
-        string guid = t.guid;
-        client->getNote(n, token, guid, true, full, true,true);
+        qint32 lid = noteTable.getLid(t.guid);
         if (lid > 0) {
             noteTable.sync(lid, notes.at(i));
         } else {
-            noteTable.sync(n);
+            noteTable.sync(t);
             lid = noteTable.getLid(t.guid);
         }
-        //hammer->setNote(lid, n);
         emit noteUpdated(lid);
     }
 
@@ -294,18 +265,17 @@ void SyncRunner::syncRemoteNotes(vector<Note> notes, shared_ptr<NoteStoreClient>
 
 // Update the note table with any notebooks or tags that have changed
 void SyncRunner::updateNoteTableTags() {
-    return;
     QHashIterator<QString, QString> keys(changedTags);
     NoteTable noteTable;
     TagTable tagTable;
-    QList<int> notesChanged;
+    QList<qint32> notesChanged;
     QHash<QString,QString> tagHash;
 
     // Create a list of tags.  We'll use this multiple times to avoid needing
     // to do multiple lookups.
-    QList<int> tagLids;
+    QList<qint32> tagLids;
     tagTable.getAll(tagLids);
-    for (int i=0; i<tagLids.size(); i++) {
+    for (qint32 i=0; i<tagLids.size(); i++) {
         Tag tag;
         tagTable.get(tag, tagLids.at(i));
         tagHash.insert(QString::fromStdString(tag.guid), QString::fromStdString(tag.name));
@@ -315,11 +285,11 @@ void SyncRunner::updateNoteTableTags() {
         keys.next();
 
         // Find out which notes need to have the tag names updated
-        QList<int> noteLids;
+        QList<qint32> noteLids;
         noteTable.findNotesByTag(noteLids, keys.key());
 
         // Go through the list of notes and rebuild the tag name string
-        for (int i=0; i<noteLids.size(); i++) {
+        for (qint32 i=0; i<noteLids.size(); i++) {
 
             // If we haven't already rebuild this note, then we rebuild it now
             // If multiple tags for a note changed, we can run into the same
@@ -358,7 +328,6 @@ void SyncRunner::updateNoteTableTags() {
 
 // Update the note table with any notebooks or tags that have changed
 void SyncRunner::updateNoteTableNotebooks() {
-    return;
     QHashIterator<QString, QString> keys(changedNotebooks);
     NoteTable noteTable;
 

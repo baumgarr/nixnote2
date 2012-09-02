@@ -75,5 +75,7 @@ void NMainMenuBar::setupHelpMenu() {
 }
 
 void NMainMenuBar::setupShortcut(QAction *action, QString key) {
-
+    /* suppress unused */
+    action=action;
+    key=key;
 }

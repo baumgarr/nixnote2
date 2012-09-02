@@ -21,14 +21,14 @@ private:
     QGridLayout buttonGrid;
     QStringList existingSearches;
     QString originalName;
-    int lid;
+    qint32 lid;
 
 public:
     explicit SavedSearchProperties(QWidget *parent = 0);
     QLineEdit	name;
     QLineEdit	query;
     bool okPressed;
-    void setLid(int lid);
+    void setLid(qint32 lid);
 
 
 signals:

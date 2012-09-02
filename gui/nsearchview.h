@@ -22,7 +22,7 @@ class NSearchView : public QTreeWidget
     Q_OBJECT
 private:
     NSearchViewItem *root;
-    QHash<int, NSearchViewItem*> dataStore;
+    QHash<qint32, NSearchViewItem*> dataStore;
     virtual void mousePressEvent(QMouseEvent *event);
     int filterPosition;
     QMenu context;
@@ -52,7 +52,7 @@ signals:
     void updateSelectionRequested();
 
 public slots:
-    void searchUpdated(int lid, QString name);
+    void searchUpdated(qint32 lid, QString name);
     void buildSelection();
     void updateSelection();
     void addRequested();

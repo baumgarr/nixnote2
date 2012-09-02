@@ -68,6 +68,8 @@ void NoteFormatter::setNoteHistory(bool value) {
 QByteArray NoteFormatter::rebuildNoteHTML() {
     formatError = false;
 
+    QLOG_DEBUG() << "Rebuilding Note: " << QString::fromStdString(note.guid) << " : " <<
+                    QString::fromStdString(note.title);
     // First try to read the document.  If it fails we need to clean it up
     content.append(QString::fromStdString(note.content));
     QDomDocument doc;
@@ -108,11 +110,16 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QDomElement docElem = doc.documentElement();
     docElem.setTagName("body");
     content = doc.toByteArray(3);
-    int index = content.indexOf("<body");
+    qint32 index = content.indexOf("<body");
     content.remove(0,index);
-    content = "<html><head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>" +content +"</html>";
+    content.prepend("<html>");
+    content.prepend("<style type=\"text/css\">.en-crypt-temp { border-collapse:collapse; border-style:solid; border-color:blue; padding:0.0mm 0.0mm 0.0mm 0.0mm; }</style>");
+    content.prepend("<style type=\"text/css\">en-hilight { background-color: rgb(255,255,0) }</style>");
+    content.prepend("<style> img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
+    content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
+    content.append("</html>");
 
-    //QLOG_DEBUG() << "Contents:\n***********\n\n" << content << "\n\n\n";
+    QLOG_DEBUG() << content;
     return content;
 }
 
@@ -129,8 +136,8 @@ void NoteFormatter::modifyTags(QDomDocument &doc) {
 
     // Modify en-media tags
     QDomNodeList anchors = docElem.elementsByTagName("en-media");
-    int enMediaCount = anchors.length();
-    for (int i=enMediaCount-1; i>=0; --i) {
+    qint32 enMediaCount = anchors.length();
+    for (qint32 i=enMediaCount-1; i>=0; --i) {
             QDomElement enmedia = anchors.at(i).toElement();
             if (enmedia.hasAttribute("type")) {
                     QDomAttr attr = enmedia.attributeNode("type");
@@ -148,21 +155,21 @@ void NoteFormatter::modifyTags(QDomDocument &doc) {
 
     // Modify todo tags
     anchors = docElem.elementsByTagName("en-todo");
-    int enTodoCount = anchors.length();
-    for (int i=enTodoCount-1; i>=0; i--) {
+    qint32 enTodoCount = anchors.length();
+    for (qint32 i=enTodoCount-1; i>=0; i--) {
             QDomElement enmedia = anchors.at(i).toElement();
             modifyTodoTags(enmedia);
     }
 
     // Modify en-crypt tags
     anchors = docElem.elementsByTagName("en-crypt");
-    int enCryptLen = anchors.length();
-    for (int i=enCryptLen-1; i>=0; i--) {
+    qint32 enCryptLen = anchors.length();
+    for (qint32 i=enCryptLen-1; i>=0; i--) {
             QDomElement enmedia(anchors.at(i).toElement());
             enmedia.setAttribute("contentEditable","false");
             enmedia.setAttribute("src", QString("file://")+global.fileManager.getImageDirPath("encrypt.png"));
             enmedia.setAttribute("en-tag","en-crypt");
-            //enmedia.setAttribute("alt", enmedia.text());
+            enmedia.setAttribute("alt", enmedia.text());
             global.cryptCounter++;
             enmedia.setAttribute("id", "crypt"+QString().number(global.cryptCounter));
             QString encryptedText = enmedia.text();
@@ -176,7 +183,7 @@ void NoteFormatter::modifyTags(QDomDocument &doc) {
             // Add the commands
             QString hint = enmedia.attribute("hint");
             hint = hint.replace("'","&apos;");
-            enmedia.setAttribute("onClick", "window.jambi.decryptText('crypt"+QString().number(global.cryptCounter)+"', '"+encryptedText+"', '"+hint+"');");
+            enmedia.setAttribute("onClick", "window.jsbridge.decryptText('crypt"+QString().number(global.cryptCounter)+"', '"+encryptedText+"', '"+hint+"');");
             enmedia.setAttribute("onMouseOver", "style.cursor='hand'");
             enmedia.setTagName("img");
             enmedia.removeChild(enmedia.firstChild());   // Remove the actual encrypted text
@@ -212,7 +219,7 @@ QDomDocument NoteFormatter::addHighlight(QDomDocument &doc) {
 
 /* This function works the same as the addHighlight, but instead of highlighting
   text in a note, it highlights the text in an image. */
-void NoteFormatter::addImageHighlight(int resLid, QFile &f) {
+void NoteFormatter::addImageHighlight(qint32 resLid, QFile &f) {
     if (enSearch.hilightWords.size() == 0)
         return;
 
@@ -296,6 +303,7 @@ void NoteFormatter::addImageHighlight(int resLid, QFile &f) {
 /* Modify an image tag.  Basically we turn it back into a picture, write out the file, and
   modify the ENML */
 void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &docElement, QDomElement &enMedia, QDomAttr &hash) {
+    docElement = docElement;  // suppress unused
     QLOG_DEBUG() << "Entering NoteFormatter::modifyImageTags";
     QString type = enMedia.attribute("type");
     if (type.startsWith("image/")) {
@@ -308,7 +316,7 @@ void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &docElement, 
     }
 
     ResourceTable resourceTable;
-    int resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
+    qint32 resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
     Resource r;
     if (resLid>0) {
         //QFile tfile(global.fileManager.getResDirPath(QString::number(resLid)+type));
@@ -355,7 +363,7 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
     }
     ResourceTable resTable;
     QString contextFileName;
-    int resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
+    qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
     Resource r;
     resTable.get(r, resLid);
     if (!r.__isset.data)
@@ -416,37 +424,53 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
 
 
 // Build an icon for any attachments
-QString NoteFormatter::findIcon(int lid, Resource r, QString appl) {
+QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 
     // First get the icon for this type of file
     QString fileName = global.fileManager.getDbaDirPath(QString::number(lid) +QString(".") +appl);
     QIcon icon = QFileIconProvider().icon(QFileInfo(fileName));
 
     // Start drawing a new pixmap for  the image in the note
-    QPoint textPoint(40,15);
-    QPoint sizePoint(40,29);
-    QPixmap pixmap(90,37);
-    pixmap.fill();
+//    QPoint textPoint(40,15);
+//    QPoint sizePoint(40,29);
+//    QPixmap pixmap(90,37);
+//    pixmap.fill();
 
-    // Begin painting
+    // Build a string name for the display
+    QString displayName;
+    if (r.__isset.attributes && r.attributes.__isset.fileName)
+        displayName = QString::fromStdString(r.attributes.fileName);
+    else
+        displayName =  appl.toUpper() +" " +QString(tr("File"));
+
+    // Setup the painter
     QPainter p;
-    p.begin(&pixmap);
-    p.drawPixmap(QPoint(3,3), icon.pixmap(QSize(30,40)));
 
     // Setup the font
     QFont font=p.font() ;
     font.setPointSize ( 8 );
     font.setFamily("Arial");
+    QFontMetrics fm(font);
+    int width =  fm.width(displayName);
+    if (width < 40)  // steup a minimum width
+        width = 40;
+    width=width+50;  // Add 10 px for padding & 40 for the icon
+
+    // Start drawing a new pixmap for  the image in the note
+    QPoint textPoint(40,15);
+    QPoint sizePoint(40,29);
+    QPixmap pixmap(width,37);
+    pixmap.fill();
+
+    p.begin(&pixmap);
     p.setFont(font);
+    p.drawPixmap(QPoint(3,3), icon.pixmap(QSize(30,40)));
 
     // Write out the attributes of the file
-    if (r.__isset.attributes && r.attributes.__isset.fileName)
-        p.drawText(textPoint, QString::fromStdString(r.attributes.fileName));
-    else
-        p.drawText(textPoint, appl.toUpper() +" " +QString(tr("File")));
+    p.drawText(textPoint, displayName);
 
     QString unit = QString(tr("Bytes"));
-    int size = QFileInfo(fileName).size();
+    qint32 size = QFileInfo(fileName).size();
     if (size > 1024) {
         size = size/1024;
         unit = QString(tr("KB"));
@@ -490,8 +514,11 @@ void NoteFormatter::modifyTodoTags(QDomElement &todo) {
 
 /* If we have an ink note, then we need to pull the image and display it */
 bool NoteFormatter::buildInkNote(QDomDocument &doc, QDomElement &docElem, QDomElement &enmedia, QDomAttr &hash, QString appl) {
+    docElem=docElem; // suppress unused
+    appl=appl;  // suppress unused
+
     ResourceTable resTable;
-    int resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
+    qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
     Resource r;
     resTable.get(r, resLid);
 

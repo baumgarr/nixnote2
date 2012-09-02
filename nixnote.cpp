@@ -16,9 +16,11 @@
 #include "gui/nattributetree.h"
 #include "gui/ntrashtree.h"
 #include "filters/filterengine.h"
-#include "java/javamachine.h"
+//#include "java/javamachine.h"
 #include "global.h"
 #include "html/enmlformatter.h"
+#include "oauth/oauthwindow.h"
+#include "oauth/oauthtokenizer.h"
 
 #include "gui/nmainmenubar.h"
 #include "dialog/logindialog.h"
@@ -44,7 +46,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         // Setup the sync thread
         QLOG_TRACE() << "Setting up sync thread";
         connect(this,SIGNAL(syncRequested()),&syncRunner,SLOT(synchronize()));
-       // syncRunner.start(QThread::NormalPriority);
+        syncRunner.start(QThread::NormalPriority);
 
        // indexRunner.start(QThread::LowestPriority);
 
@@ -58,6 +60,9 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         connect(attributeTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
         connect(trashTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
         connect(searchText, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
+
+        //jvm = NULL;
+
 }
 
 
@@ -70,6 +75,9 @@ NixNote::~NixNote()
     syncRunner.quit();
     indexRunner.quit();
     delete db;  // Free up memory used by the database connection
+    delete rightPanelSplitter;
+    delete leftPanelSplitter;
+    delete leftPanel;
 }
 
 
@@ -121,7 +129,7 @@ void NixNote::setupGui() {
     this->setupTabWindow();
     leftPanel->vboxLayout->addStretch();
 
-    QLOG_TRACE() << "Setting up fleft panel";
+    QLOG_TRACE() << "Setting up left panel";
     leftPanel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
     leftScroll = new QScrollArea();
     leftScroll->setWidgetResizable(true);
@@ -159,17 +167,17 @@ void NixNote::setupGui() {
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria()));
 
     // connect so we refresh the note list whenever a note has chaneged
-    connect(tabWindow, SIGNAL(noteUpdated(int)), noteTableView, SLOT(refreshData()));
+    connect(tabWindow, SIGNAL(noteUpdated(qint32)), noteTableView, SLOT(refreshData()));
 
     // connect so we refresh the tag tree when a new tag is added
-    connect(tabWindow, SIGNAL(tagCreated(int)), tagTreeView, SLOT(addNewTag(int)));
+    connect(tabWindow, SIGNAL(tagCreated(qint32)), tagTreeView, SLOT(addNewTag(qint32)));
 
     // Finish by filtering & displaying the data
     updateSelectionCriteria();
 
     // connect signal on a tag rename
-    connect(tagTreeView, SIGNAL(tagRenamed(int,QString,QString)), this, SLOT(updateSelectionCriteria()));
-    connect(notebookTreeView, SIGNAL(notebookRenamed(int,QString,QString)), this, SLOT(updateSelectionCriteria()));
+    connect(tagTreeView, SIGNAL(tagRenamed(qint32,QString,QString)), this, SLOT(updateSelectionCriteria()));
+    connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), this, SLOT(updateSelectionCriteria()));
 }
 
 
@@ -206,7 +214,7 @@ void NixNote::setupSearchTree() {
     leftPanel->addWidget(lbl);
     searchTreeView = new NSearchView(leftPanel);
     leftPanel->addWidget(searchTreeView);
-    connect(&syncRunner, SIGNAL(searchUpdated(int, QString)), searchTreeView, SLOT(searchUpdated(int, QString)));
+    connect(&syncRunner, SIGNAL(searchUpdated(qint32, QString)), searchTreeView, SLOT(searchUpdated(qint32, QString)));
     QLOG_TRACE() << "Exiting NixNote.setupSearchTree()";
 }
 
@@ -222,7 +230,7 @@ void NixNote::setupTagTree() {
     leftPanel->addWidget(lbl);
     tagTreeView = new NTagView(leftPanel);
     leftPanel->addWidget(tagTreeView);
-    connect(&syncRunner, SIGNAL(tagUpdated(int, QString)),tagTreeView, SLOT(tagUpdated(int, QString)));
+    connect(&syncRunner, SIGNAL(tagUpdated(qint32, QString)),tagTreeView, SLOT(tagUpdated(qint32, QString)));
     connect(&syncRunner, SIGNAL(syncComplete()),tagTreeView, SLOT(rebuildTree()));
     QLOG_TRACE() << "Exiting NixNote.setupTagTree()";
 }
@@ -272,7 +280,7 @@ void NixNote::setupSynchronizedNotebookTree() {
 
     notebookTreeView = new NNotebookView(leftPanel);
     leftPanel->addWidget(notebookTreeView);
-    connect(&syncRunner, SIGNAL(notebookUpdated(int, QString)),notebookTreeView, SLOT(notebookUpdated(int, QString)));
+    connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString)),notebookTreeView, SLOT(notebookUpdated(qint32, QString)));
     connect(&syncRunner, SIGNAL(syncComplete()),notebookTreeView, SLOT(rebuildTree()));
     QLOG_TRACE() << "Exiting NixNote.setupSynchronizedNotebookTree()";
 }
@@ -287,13 +295,13 @@ void NixNote::setupTabWindow() {
     tabWindow = new NTabWidget();
     rightPanelSplitter->addWidget(tabWindow);
     NBrowserWindow *newBrowser = new NBrowserWindow();
-    connect(tagTreeView, SIGNAL(tagRenamed(int,QString,QString)), newBrowser, SLOT(tagRenamed(int,QString,QString)));
-    connect(tagTreeView, SIGNAL(tagDeleted(int, QString)), newBrowser, SLOT(tagDeleted(int, QString)));
-    connect(tagTreeView, SIGNAL(tagAdded(int)), newBrowser, SLOT(addTagName(int)));
+    connect(tagTreeView, SIGNAL(tagRenamed(qint32,QString,QString)), newBrowser, SLOT(tagRenamed(qint32,QString,QString)));
+    connect(tagTreeView, SIGNAL(tagDeleted(qint32, QString)), newBrowser, SLOT(tagDeleted(qint32, QString)));
+    connect(tagTreeView, SIGNAL(tagAdded(qint32)), newBrowser, SLOT(addTagName(qint32)));
 
-    connect(notebookTreeView, SIGNAL(notebookRenamed(int,QString,QString)), newBrowser, SLOT(notebookRenamed(int,QString,QString)));
-    connect(notebookTreeView, SIGNAL(notebookDeleted(int, QString)), newBrowser, SLOT(notebookDeleted(int, QString)));
-    connect(notebookTreeView, SIGNAL(notebookAdded(int)), newBrowser, SLOT(notebookAdded(int)));
+    connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), newBrowser, SLOT(notebookRenamed(qint32,QString,QString)));
+    connect(notebookTreeView, SIGNAL(notebookDeleted(qint32, QString)), newBrowser, SLOT(notebookDeleted(qint32, QString)));
+    connect(notebookTreeView, SIGNAL(notebookAdded(qint32)), newBrowser, SLOT(notebookAdded(qint32)));
 
     connect(notebookTreeView, SIGNAL(stackRenamed(QString,QString)), newBrowser, SLOT(stackRenamed(QString,QString)));
     connect(notebookTreeView, SIGNAL(stackDeleted(QString)), newBrowser, SLOT(stackDeleted(QString)));
@@ -328,19 +336,23 @@ void NixNote::closeNixNote() {
 //* User synchronize was requested
 //******************************************************************************
 void NixNote::synchronize() {
-    while (!global.connected) {
-        LoginDialog login;
-        login.exec();
-        if (login.okPressed == true) {
-            global.password = login.password.text().toStdString();
-            global.username = login.userid.text().toStdString();
-            if (syncRunner.enConnect()) {
-                global.connected = true;
-                indexRunner.pauseIndexing = true;
-                menuBar->disconnectAction->setEnabled(true);
-            }
-        } else
+
+    QFile oauthFile(global.fileManager.getHomeDirPath("oauth.txt"));
+    if (!oauthFile.exists()) {
+        OAuthWindow window;
+        window.exec();
+        if (window.error) {
+            setMessage(window.errorMessage);
             return;
+        }
+        if (window.response == "")
+            return;
+
+        oauthFile.open(QIODevice::WriteOnly);
+        QByteArray b;
+        b.append(window.response);
+        oauthFile.write(b);
+        oauthFile.close();
     }
     syncButtonTimer.start(3);
     emit syncRequested();
@@ -379,7 +391,7 @@ void NixNote::updateSyncButton() {
         synchronizeIconAngle = 0;
         QPixmap pix(":synchronize.png");
         syncIcons.push_back(pix);
-        for (int i=0; i<=360; i++) {
+        for (qint32 i=0; i<=360; i++) {
             QPixmap rotatedPix(pix.size());
             QPainter p(&rotatedPix);
             rotatedPix.fill(toolBar->palette().color(QPalette::Button));
@@ -405,7 +417,7 @@ void NixNote::updateSyncButton() {
 void NixNote::openNote(bool newWindow) {
     saveContents();
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
-    int lid;
+    qint32 lid;
     if (criteria->isContentSet()) {
         lid = criteria->getContent();
         tabWindow->openNote(lid, newWindow);
@@ -542,7 +554,7 @@ void NixNote::databaseRestore() {
 //* Set wait cursor
 //*********************************************************
 void NixNote::waitCursor(bool value) {
-
+    value=value; /* suppress warning of unused */
 }
 
 void NixNote::setMessage(QString text) {
@@ -563,10 +575,30 @@ void NixNote::saveContents() {
             EnmlFormatter formatter;
             formatter.setHtml(contents);
             formatter.rebuildNoteEnml();
-            int lid = tabWindow->browserList->at(i)->lid;
+            qint32 lid = tabWindow->browserList->at(i)->lid;
             NoteTable table;
             table.updateNoteContent(lid, formatter.getEnml());
         }
 
     }
 }
+
+
+//bool NixNote::notify(QObject* receiver, QEvent* event)
+//{
+//    try {
+//        return QCoreApplication::notify(receiver, event);
+//    } catch (std::exception &e) {
+//        qFatal("Error %s sending event %s to object %s (%s)",
+//            e.what(), typeid(*event).name(), qPrintable(receiver->objectName()),
+//            typeid(*receiver).name());
+//    } catch (...) {
+//        qFatal("Error <unknown> sending event %s to object %s (%s)",
+//            typeid(*event).name(), qPrintable(receiver->objectName()),
+//            typeid(*receiver).name());
+//    }
+
+//    // qFatal aborts, so this isn't really necessary
+//    // but you might continue if you use a different logging lib
+//    return false;
+//}

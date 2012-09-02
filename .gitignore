@@ -17,6 +17,9 @@
 # dump logs
 *.log
 core
+ 
+# moc_* files
+moc_*.*
 
 # autosave files
 *.autosave

@@ -35,7 +35,7 @@ void IndexRunner::index() {
 
     indexTimer->stop();
 
-    QList<int> lids;
+    QList<qint32> lids;
     NoteTable noteTable;
     ResourceTable resourceTable;
 
@@ -43,7 +43,7 @@ void IndexRunner::index() {
         QLOG_DEBUG() << "Unindexed Notes found: " << lids.size();
 
 
-        for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
+        for (qint32 i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
             QSqlQuery sql;
             sql.prepare("Delete from SearchIndex where lid=:lid");
             sql.bindValue(":lid", lids.at(i));
@@ -60,7 +60,7 @@ void IndexRunner::index() {
     lids.empty();
     if (keepRunning && resourceTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
         QLOG_DEBUG() << "Unindexed Resources found: " << lids.size();
-        for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
+        for (qint32 i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
             Resource r;
             resourceTable.get(r, lids.at(i));
             indexRecognition(lids.at(i), r);
@@ -72,11 +72,11 @@ void IndexRunner::index() {
 }
 
 
-void IndexRunner::indexNote(int lid, Note &n) {
+void IndexRunner::indexNote(qint32 lid, Note &n) {
     QString content = QString::fromStdString(n.content); //.replace(QString("\n"), QString(" "));
 
-    int startPos =content.indexOf(QChar('<'));
-    int endPos = content.indexOf(QChar('>'),startPos)+1;
+    qint32 startPos =content.indexOf(QChar('<'));
+    qint32 endPos = content.indexOf(QChar('>'),startPos)+1;
     content.remove(startPos,endPos-startPos);
 
 
@@ -103,7 +103,7 @@ void IndexRunner::indexNote(int lid, Note &n) {
 }
 
 
-void IndexRunner::indexRecognition(int lid, Resource &r) {
+void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     if (!r.__isset.recognition || !r.recognition.__isset.body)
         return;
 
@@ -119,7 +119,7 @@ void IndexRunner::indexRecognition(int lid, Resource &r) {
     sql.bindValue(":lid", lid);
     sql.exec();
 
-    for (unsigned int i=0; i<anchors.length() && keepRunning && !pauseIndexing; i++) {
+    for (unsigned int i; i<anchors.length() && keepRunning && !pauseIndexing; i++) {
         QDomElement enmedia = anchors.at(i).toElement();
         QString weight = enmedia.attribute("w");
         QString text = enmedia.text();

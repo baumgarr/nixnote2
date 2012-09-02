@@ -10,8 +10,8 @@
 #include <QTimer>
 
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 
 #include <protocol/TBinaryProtocol.h>
 #include <server/TSimpleServer.h>
@@ -25,7 +25,8 @@
 #include <transport/TSSLServerSocket.h>
 #include <transport/TSSLSocket.h>
 #include <transport/THttpClient.h>
-#include "java/javamachine.h"
+//#include "java/javamachine.h"
+#include "communication/communicationmanager.h"
 
 #include <protocol/TBinaryProtocol.h>
 
@@ -47,7 +48,8 @@ private:
     bool idle;
     bool error;
     long evernoteUpdateCount;
-    JavaMachine *jvm;
+    CommunicationManager comm;
+    //JavaMachine *jvm;
 
 
     QVector<QString> errorSharedNotebooks;
@@ -58,6 +60,9 @@ private:
     string secret;
     string authToken;
     string userAgent;
+
+    string username;
+    string password;
 
     shared_ptr<THttpClient> userStoreHttpClient;
     shared_ptr<UserStoreClient> userStoreClient;
@@ -72,19 +77,18 @@ private:
     bool authRefreshNeeded;
     long failedRefreshes;
     long sequenceDate;
-    int updateSequenceNumber;
+    qint32 updateSequenceNumber;
     bool fullSync;
-    QTimer *refreshTimer;
     QHash<QString, QString> changedNotebooks;
     QHash<QString, QString> changedTags;
 
     void evernoteSync();
-    void syncRemoteToLocal(shared_ptr<NoteStoreClient> client);
-    bool refreshConnection();
+    void syncRemoteToLocal(qint32 highSequence);
+    //bool refreshConnection();
     void syncRemoteTags(vector<Tag> tag);
     void syncRemoteSearches(vector<SavedSearch> searches);
     void syncRemoteNotebooks(vector<Notebook> books);
-    void syncRemoteNotes(vector<Note> notes, shared_ptr<NoteStoreClient> client, bool fullSync, string token);
+    void syncRemoteNotes(vector<Note> notes);
     void updateNoteTableTags();
     void updateNoteTableNotebooks();
 
@@ -100,10 +104,10 @@ public:
 
 signals:
     void syncComplete();
-    void searchUpdated(int lid, QString name);
-    void tagUpdated(int lid, QString name);
-    void notebookUpdated(int lid, QString name);
-    void noteUpdated(int lid);
+    void searchUpdated(qint32 lid, QString name);
+    void tagUpdated(qint32 lid, QString name);
+    void notebookUpdated(qint32 lid, QString name);
+    void noteUpdated(qint32 lid);
 
  public slots:
     void synchronize();

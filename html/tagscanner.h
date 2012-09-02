@@ -3,15 +3,15 @@
 
 #include <QObject>
 #include <QHash>
-
+#include <stdint.h>
 
 
 class TagScannerRecord {
 
 public:
     TagScannerRecord(QObject *parent = 0);
-    int startPosition;
-    int endPosition;
+    qint32 startPosition;
+    qint32 endPosition;
 };
 
 
@@ -30,7 +30,7 @@ private:
 public:
     explicit TagScanner(QObject *parent = 0);
     void setData(QString data);
-    int findAll(QList<TagScannerRecord> &recs, QString tagName);
+    qint32 findAll(QList<TagScannerRecord> &recs, QString tagName);
 
 signals:
 

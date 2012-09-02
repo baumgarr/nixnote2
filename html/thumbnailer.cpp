@@ -14,7 +14,7 @@ Thumbnailer::Thumbnailer()
 
 
 /* Set the note we should generate the thumbnail for */
-void Thumbnailer::setNote(int lid, Note n) {
+void Thumbnailer::setNote(qint32 lid, Note n) {
     noteLid = lid;
     NoteFormatter formatter;
     formatter.setNote(n, false);

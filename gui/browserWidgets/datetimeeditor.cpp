@@ -2,8 +2,8 @@
 #include <QDateTimeEdit>
 #include <QVBoxLayout>
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 
 #include "sql/notetable.h"
 
@@ -55,7 +55,7 @@ void DateTimeEditor::focusInEvent(QFocusEvent *e)
 }
 
 
-void DateTimeEditor::setNote(int lid, Timestamp value, int key) {
+void DateTimeEditor::setNote(qint32 lid, Timestamp value, qint32 key) {
     this->lid = lid;
     this->value = value;
     this->key = key;

@@ -9,7 +9,7 @@ public:
     explicit NNotebookViewItem();
     explicit NNotebookViewItem(QTreeWidget* parent);
     QString stack;
-    QList<int> childrenLids;
+    QList<qint32> childrenLids;
 
     bool operator<(const QTreeWidgetItem &other)const;
     void setRootColor(bool val) ;

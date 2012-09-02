@@ -20,13 +20,13 @@ private:
     QGridLayout queryGrid;
     QStringList existingTags;
     QString originalName;
-    int lid;
+    qint32 lid;
 
 public:
     explicit TagProperties(QWidget *parent = 0);
     QLineEdit	name;
     bool okPressed;
-    void setLid(int lid);
+    void setLid(qint32 lid);
 
 
 signals:

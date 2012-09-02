@@ -11,13 +11,13 @@ private:
     QString inactiveColor;
     QString initialTitle;
     QString priorTitle;
-    int currentLid;
+    qint32 currentLid;
     QString defaultTitle;
 
 
 public:
     explicit NTitleEditor(QWidget *parent = 0);
-    void setTitle(int lid, QString title, QString defaultT);
+    void setTitle(qint32 lid, QString title, QString defaultT);
     
 public slots:
     void setActiveColor();

@@ -13,8 +13,8 @@
 
 #include "gui/nwebview.h"
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 #include "gui/browserWidgets/ntitleeditor.h"
 #include "gui/browserWidgets/notebookmenubutton.h"
 #include "gui/browserWidgets/expandbutton.h"
@@ -34,7 +34,7 @@ private:
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
     NWebView editor;
-    void setContent(int lid, QByteArray c);
+    void setContent(qint32 lid, QByteArray c);
     NTitleEditor noteTitle;
     NotebookMenuButton notebookMenu;
     ExpandButton expandButton;
@@ -45,27 +45,27 @@ public:
 
     QHBoxLayout line2Layout;
     QHBoxLayout line3Layout;
-    int lid;
+    qint32 lid;
 
 signals:
-    void noteUpdated(int);
-    int tagAdded(int);
+    void noteUpdated(qint32);
+    qint32 tagAdded(qint32);
 
 public slots:
     void changeExpandState(int value);
-    void tagRenamed(int lid, QString oldName, QString newName);
-    void notebookRenamed(int lid, QString oldName, QString newName);
-    void tagDeleted(int lid, QString name);
-    void notebookDeleted(int lid, QString name);
-    void notebookAdded(int lid);
-    void addTagName(int lid);
+    void tagRenamed(qint32 lid, QString oldName, QString newName);
+    void notebookRenamed(qint32 lid, QString oldName, QString newName);
+    void tagDeleted(qint32 lid, QString name);
+    void notebookDeleted(qint32 lid, QString name);
+    void notebookAdded(qint32 lid);
+    void addTagName(qint32 lid);
     void stackRenamed(QString oldName, QString newName);
     void stackDeleted(QString name);
     void stackAdded(QString name);
 
 private slots:
     void sendUpdateSignal();
-    void newTagAdded(int);
+    void newTagAdded(qint32);
 
 
 };

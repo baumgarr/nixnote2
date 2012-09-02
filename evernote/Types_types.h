@@ -875,7 +875,7 @@ class Resource {
 };
 
 typedef struct _NoteAttributes__isset {
-  _NoteAttributes__isset() : subjectDate(false), latitude(false), longitude(false), altitude(false), author(false), source(false), sourceURL(false), sourceApplication(false), shareDate(false), taskDate(false), taskCompleteDate(false), taskDueDate(false), placeName(false), contentClass(false), applicationData(false) {}
+  _NoteAttributes__isset() : subjectDate(false), latitude(false), longitude(false), altitude(false), author(false), source(false), sourceURL(false), sourceApplication(false), shareDate(false), placeName(false), contentClass(false), applicationData(false), lastEditedBy(false) {}
   bool subjectDate;
   bool latitude;
   bool longitude;
@@ -885,21 +885,19 @@ typedef struct _NoteAttributes__isset {
   bool sourceURL;
   bool sourceApplication;
   bool shareDate;
-  bool taskDate;
-  bool taskCompleteDate;
-  bool taskDueDate;
   bool placeName;
   bool contentClass;
   bool applicationData;
+  bool lastEditedBy;
 } _NoteAttributes__isset;
 
 class NoteAttributes {
  public:
 
-  static const char* ascii_fingerprint; // = "BA560CD15125242A550F8A524019638D";
-  static const uint8_t binary_fingerprint[16]; // = {0xBA,0x56,0x0C,0xD1,0x51,0x25,0x24,0x2A,0x55,0x0F,0x8A,0x52,0x40,0x19,0x63,0x8D};
+  static const char* ascii_fingerprint; // = "0B73D0A9B075CF3F269B31C5A35993D7";
+  static const uint8_t binary_fingerprint[16]; // = {0x0B,0x73,0xD0,0xA9,0xB0,0x75,0xCF,0x3F,0x26,0x9B,0x31,0xC5,0xA3,0x59,0x93,0xD7};
 
-  NoteAttributes() : subjectDate(0), latitude(0), longitude(0), altitude(0), author(""), source(""), sourceURL(""), sourceApplication(""), shareDate(0), taskDate(0), taskCompleteDate(0), taskDueDate(0), placeName(""), contentClass("") {
+  NoteAttributes() : subjectDate(0), latitude(0), longitude(0), altitude(0), author(""), source(""), sourceURL(""), sourceApplication(""), shareDate(0), placeName(""), contentClass(""), lastEditedBy("") {
   }
 
   virtual ~NoteAttributes() throw() {}
@@ -913,12 +911,10 @@ class NoteAttributes {
   std::string sourceURL;
   std::string sourceApplication;
   Timestamp shareDate;
-  Timestamp taskDate;
-  Timestamp taskCompleteDate;
-  Timestamp taskDueDate;
   std::string placeName;
   std::string contentClass;
   LazyMap applicationData;
+  std::string lastEditedBy;
 
   _NoteAttributes__isset __isset;
 
@@ -960,18 +956,6 @@ class NoteAttributes {
       return false;
     else if (__isset.shareDate && !(shareDate == rhs.shareDate))
       return false;
-    if (__isset.taskDate != rhs.__isset.taskDate)
-      return false;
-    else if (__isset.taskDate && !(taskDate == rhs.taskDate))
-      return false;
-    if (__isset.taskCompleteDate != rhs.__isset.taskCompleteDate)
-      return false;
-    else if (__isset.taskCompleteDate && !(taskCompleteDate == rhs.taskCompleteDate))
-      return false;
-    if (__isset.taskDueDate != rhs.__isset.taskDueDate)
-      return false;
-    else if (__isset.taskDueDate && !(taskDueDate == rhs.taskDueDate))
-      return false;
     if (__isset.placeName != rhs.__isset.placeName)
       return false;
     else if (__isset.placeName && !(placeName == rhs.placeName))
@@ -983,6 +967,10 @@ class NoteAttributes {
     if (__isset.applicationData != rhs.__isset.applicationData)
       return false;
     else if (__isset.applicationData && !(applicationData == rhs.applicationData))
+      return false;
+    if (__isset.lastEditedBy != rhs.__isset.lastEditedBy)
+      return false;
+    else if (__isset.lastEditedBy && !(lastEditedBy == rhs.lastEditedBy))
       return false;
     return true;
   }
@@ -1019,8 +1007,8 @@ typedef struct _Note__isset {
 class Note {
  public:
 
-  static const char* ascii_fingerprint; // = "04B8FFD8610609B8E842B881B6FEA0A0";
-  static const uint8_t binary_fingerprint[16]; // = {0x04,0xB8,0xFF,0xD8,0x61,0x06,0x09,0xB8,0xE8,0x42,0xB8,0x81,0xB6,0xFE,0xA0,0xA0};
+  static const char* ascii_fingerprint; // = "01F83A190A0640452F2DA623F3D7E01F";
+  static const uint8_t binary_fingerprint[16]; // = {0x01,0xF8,0x3A,0x19,0x0A,0x06,0x40,0x45,0x2F,0x2D,0xA6,0x23,0xF3,0xD7,0xE0,0x1F};
 
   Note() : guid(""), title(""), content(""), contentHash(""), contentLength(0), created(0), updated(0), deleted(0), active(0), updateSequenceNum(0), notebookGuid("") {
   }
@@ -1171,99 +1159,6 @@ class Publishing {
   }
 
   bool operator < (const Publishing & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
-typedef struct _Notebook__isset {
-  _Notebook__isset() : guid(false), name(false), updateSequenceNum(false), defaultNotebook(false), serviceCreated(false), serviceUpdated(false), publishing(false), published(false), stack(false), sharedNotebookIds(false) {}
-  bool guid;
-  bool name;
-  bool updateSequenceNum;
-  bool defaultNotebook;
-  bool serviceCreated;
-  bool serviceUpdated;
-  bool publishing;
-  bool published;
-  bool stack;
-  bool sharedNotebookIds;
-} _Notebook__isset;
-
-class Notebook {
- public:
-
-  static const char* ascii_fingerprint; // = "F3369A1433C6E2E50BA324743A958530";
-  static const uint8_t binary_fingerprint[16]; // = {0xF3,0x36,0x9A,0x14,0x33,0xC6,0xE2,0xE5,0x0B,0xA3,0x24,0x74,0x3A,0x95,0x85,0x30};
-
-  Notebook() : guid(""), name(""), updateSequenceNum(0), defaultNotebook(0), serviceCreated(0), serviceUpdated(0), published(0), stack("") {
-  }
-
-  virtual ~Notebook() throw() {}
-
-  Guid guid;
-  std::string name;
-  int32_t updateSequenceNum;
-  bool defaultNotebook;
-  Timestamp serviceCreated;
-  Timestamp serviceUpdated;
-  Publishing publishing;
-  bool published;
-  std::string stack;
-  std::vector<int64_t>  sharedNotebookIds;
-
-  _Notebook__isset __isset;
-
-  bool operator == (const Notebook & rhs) const
-  {
-    if (__isset.guid != rhs.__isset.guid)
-      return false;
-    else if (__isset.guid && !(guid == rhs.guid))
-      return false;
-    if (__isset.name != rhs.__isset.name)
-      return false;
-    else if (__isset.name && !(name == rhs.name))
-      return false;
-    if (__isset.updateSequenceNum != rhs.__isset.updateSequenceNum)
-      return false;
-    else if (__isset.updateSequenceNum && !(updateSequenceNum == rhs.updateSequenceNum))
-      return false;
-    if (__isset.defaultNotebook != rhs.__isset.defaultNotebook)
-      return false;
-    else if (__isset.defaultNotebook && !(defaultNotebook == rhs.defaultNotebook))
-      return false;
-    if (__isset.serviceCreated != rhs.__isset.serviceCreated)
-      return false;
-    else if (__isset.serviceCreated && !(serviceCreated == rhs.serviceCreated))
-      return false;
-    if (__isset.serviceUpdated != rhs.__isset.serviceUpdated)
-      return false;
-    else if (__isset.serviceUpdated && !(serviceUpdated == rhs.serviceUpdated))
-      return false;
-    if (__isset.publishing != rhs.__isset.publishing)
-      return false;
-    else if (__isset.publishing && !(publishing == rhs.publishing))
-      return false;
-    if (__isset.published != rhs.__isset.published)
-      return false;
-    else if (__isset.published && !(published == rhs.published))
-      return false;
-    if (__isset.stack != rhs.__isset.stack)
-      return false;
-    else if (__isset.stack && !(stack == rhs.stack))
-      return false;
-    if (__isset.sharedNotebookIds != rhs.__isset.sharedNotebookIds)
-      return false;
-    else if (__isset.sharedNotebookIds && !(sharedNotebookIds == rhs.sharedNotebookIds))
-      return false;
-    return true;
-  }
-  bool operator != (const Notebook &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const Notebook & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
@@ -1445,7 +1340,7 @@ class Ad {
 };
 
 typedef struct _SharedNotebook__isset {
-  _SharedNotebook__isset() : id(false), userId(false), notebookGuid(false), email(false), notebookModifiable(false), requireLogin(false), serviceCreated(false), shareKey(false), username(false) {}
+  _SharedNotebook__isset() : id(false), userId(false), notebookGuid(false), email(false), notebookModifiable(false), requireLogin(false), serviceCreated(false), serviceUpdated(false), shareKey(false), username(false) {}
   bool id;
   bool userId;
   bool notebookGuid;
@@ -1453,6 +1348,7 @@ typedef struct _SharedNotebook__isset {
   bool notebookModifiable;
   bool requireLogin;
   bool serviceCreated;
+  bool serviceUpdated;
   bool shareKey;
   bool username;
 } _SharedNotebook__isset;
@@ -1460,10 +1356,10 @@ typedef struct _SharedNotebook__isset {
 class SharedNotebook {
  public:
 
-  static const char* ascii_fingerprint; // = "3ECBE8380CBD03A6168589256068F022";
-  static const uint8_t binary_fingerprint[16]; // = {0x3E,0xCB,0xE8,0x38,0x0C,0xBD,0x03,0xA6,0x16,0x85,0x89,0x25,0x60,0x68,0xF0,0x22};
+  static const char* ascii_fingerprint; // = "3207505A423D7C9A3D2434B73288DC25";
+  static const uint8_t binary_fingerprint[16]; // = {0x32,0x07,0x50,0x5A,0x42,0x3D,0x7C,0x9A,0x3D,0x24,0x34,0xB7,0x32,0x88,0xDC,0x25};
 
-  SharedNotebook() : id(0), userId(0), notebookGuid(""), email(""), notebookModifiable(0), requireLogin(0), serviceCreated(0), shareKey(""), username("") {
+  SharedNotebook() : id(0), userId(0), notebookGuid(""), email(""), notebookModifiable(0), requireLogin(0), serviceCreated(0), serviceUpdated(0), shareKey(""), username("") {
   }
 
   virtual ~SharedNotebook() throw() {}
@@ -1475,6 +1371,7 @@ class SharedNotebook {
   bool notebookModifiable;
   bool requireLogin;
   Timestamp serviceCreated;
+  Timestamp serviceUpdated;
   std::string shareKey;
   std::string username;
 
@@ -1510,6 +1407,10 @@ class SharedNotebook {
       return false;
     else if (__isset.serviceCreated && !(serviceCreated == rhs.serviceCreated))
       return false;
+    if (__isset.serviceUpdated != rhs.__isset.serviceUpdated)
+      return false;
+    else if (__isset.serviceUpdated && !(serviceUpdated == rhs.serviceUpdated))
+      return false;
     if (__isset.shareKey != rhs.__isset.shareKey)
       return false;
     else if (__isset.shareKey && !(shareKey == rhs.shareKey))
@@ -1531,8 +1432,107 @@ class SharedNotebook {
 
 };
 
+typedef struct _Notebook__isset {
+  _Notebook__isset() : guid(false), name(false), updateSequenceNum(false), defaultNotebook(false), serviceCreated(false), serviceUpdated(false), publishing(false), published(false), stack(false), sharedNotebookIds(false), sharedNotebooks(false) {}
+  bool guid;
+  bool name;
+  bool updateSequenceNum;
+  bool defaultNotebook;
+  bool serviceCreated;
+  bool serviceUpdated;
+  bool publishing;
+  bool published;
+  bool stack;
+  bool sharedNotebookIds;
+  bool sharedNotebooks;
+} _Notebook__isset;
+
+class Notebook {
+ public:
+
+  static const char* ascii_fingerprint; // = "9AB655D904AAA2ED9539B5DC8E957589";
+  static const uint8_t binary_fingerprint[16]; // = {0x9A,0xB6,0x55,0xD9,0x04,0xAA,0xA2,0xED,0x95,0x39,0xB5,0xDC,0x8E,0x95,0x75,0x89};
+
+  Notebook() : guid(""), name(""), updateSequenceNum(0), defaultNotebook(0), serviceCreated(0), serviceUpdated(0), published(0), stack("") {
+  }
+
+  virtual ~Notebook() throw() {}
+
+  Guid guid;
+  std::string name;
+  int32_t updateSequenceNum;
+  bool defaultNotebook;
+  Timestamp serviceCreated;
+  Timestamp serviceUpdated;
+  Publishing publishing;
+  bool published;
+  std::string stack;
+  std::vector<int64_t>  sharedNotebookIds;
+  std::vector<SharedNotebook>  sharedNotebooks;
+
+  _Notebook__isset __isset;
+
+  bool operator == (const Notebook & rhs) const
+  {
+    if (__isset.guid != rhs.__isset.guid)
+      return false;
+    else if (__isset.guid && !(guid == rhs.guid))
+      return false;
+    if (__isset.name != rhs.__isset.name)
+      return false;
+    else if (__isset.name && !(name == rhs.name))
+      return false;
+    if (__isset.updateSequenceNum != rhs.__isset.updateSequenceNum)
+      return false;
+    else if (__isset.updateSequenceNum && !(updateSequenceNum == rhs.updateSequenceNum))
+      return false;
+    if (__isset.defaultNotebook != rhs.__isset.defaultNotebook)
+      return false;
+    else if (__isset.defaultNotebook && !(defaultNotebook == rhs.defaultNotebook))
+      return false;
+    if (__isset.serviceCreated != rhs.__isset.serviceCreated)
+      return false;
+    else if (__isset.serviceCreated && !(serviceCreated == rhs.serviceCreated))
+      return false;
+    if (__isset.serviceUpdated != rhs.__isset.serviceUpdated)
+      return false;
+    else if (__isset.serviceUpdated && !(serviceUpdated == rhs.serviceUpdated))
+      return false;
+    if (__isset.publishing != rhs.__isset.publishing)
+      return false;
+    else if (__isset.publishing && !(publishing == rhs.publishing))
+      return false;
+    if (__isset.published != rhs.__isset.published)
+      return false;
+    else if (__isset.published && !(published == rhs.published))
+      return false;
+    if (__isset.stack != rhs.__isset.stack)
+      return false;
+    else if (__isset.stack && !(stack == rhs.stack))
+      return false;
+    if (__isset.sharedNotebookIds != rhs.__isset.sharedNotebookIds)
+      return false;
+    else if (__isset.sharedNotebookIds && !(sharedNotebookIds == rhs.sharedNotebookIds))
+      return false;
+    if (__isset.sharedNotebooks != rhs.__isset.sharedNotebooks)
+      return false;
+    else if (__isset.sharedNotebooks && !(sharedNotebooks == rhs.sharedNotebooks))
+      return false;
+    return true;
+  }
+  bool operator != (const Notebook &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const Notebook & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
 typedef struct _LinkedNotebook__isset {
-  _LinkedNotebook__isset() : shareName(false), username(false), shardId(false), shareKey(false), uri(false), guid(false), updateSequenceNum(false) {}
+  _LinkedNotebook__isset() : shareName(false), username(false), shardId(false), shareKey(false), uri(false), guid(false), updateSequenceNum(false), noteStoreUrl(false), webApiUrlPrefix(false) {}
   bool shareName;
   bool username;
   bool shardId;
@@ -1540,15 +1540,17 @@ typedef struct _LinkedNotebook__isset {
   bool uri;
   bool guid;
   bool updateSequenceNum;
+  bool noteStoreUrl;
+  bool webApiUrlPrefix;
 } _LinkedNotebook__isset;
 
 class LinkedNotebook {
  public:
 
-  static const char* ascii_fingerprint; // = "313B8BA8E73A1D00DE5964E5A810E343";
-  static const uint8_t binary_fingerprint[16]; // = {0x31,0x3B,0x8B,0xA8,0xE7,0x3A,0x1D,0x00,0xDE,0x59,0x64,0xE5,0xA8,0x10,0xE3,0x43};
+  static const char* ascii_fingerprint; // = "D672C418E1A40B830F2D67227FD5CB1E";
+  static const uint8_t binary_fingerprint[16]; // = {0xD6,0x72,0xC4,0x18,0xE1,0xA4,0x0B,0x83,0x0F,0x2D,0x67,0x22,0x7F,0xD5,0xCB,0x1E};
 
-  LinkedNotebook() : shareName(""), username(""), shardId(""), shareKey(""), uri(""), guid(""), updateSequenceNum(0) {
+  LinkedNotebook() : shareName(""), username(""), shardId(""), shareKey(""), uri(""), guid(""), updateSequenceNum(0), noteStoreUrl(""), webApiUrlPrefix("") {
   }
 
   virtual ~LinkedNotebook() throw() {}
@@ -1560,6 +1562,8 @@ class LinkedNotebook {
   std::string uri;
   Guid guid;
   int32_t updateSequenceNum;
+  std::string noteStoreUrl;
+  std::string webApiUrlPrefix;
 
   _LinkedNotebook__isset __isset;
 
@@ -1592,6 +1596,14 @@ class LinkedNotebook {
     if (__isset.updateSequenceNum != rhs.__isset.updateSequenceNum)
       return false;
     else if (__isset.updateSequenceNum && !(updateSequenceNum == rhs.updateSequenceNum))
+      return false;
+    if (__isset.noteStoreUrl != rhs.__isset.noteStoreUrl)
+      return false;
+    else if (__isset.noteStoreUrl && !(noteStoreUrl == rhs.noteStoreUrl))
+      return false;
+    if (__isset.webApiUrlPrefix != rhs.__isset.webApiUrlPrefix)
+      return false;
+    else if (__isset.webApiUrlPrefix && !(webApiUrlPrefix == rhs.webApiUrlPrefix))
       return false;
     return true;
   }

@@ -27,6 +27,7 @@ FilterCriteria::FilterCriteria(QObject *parent) :
     resetDeletedOnly = false;
     resetContent = false;
     resetSearchString = false;
+    selectedNotesIsSet = false;
 }
 
 
@@ -123,11 +124,11 @@ bool FilterCriteria::isDeletedOnlySet() {
 
 
 
-int FilterCriteria::getContent() {
+qint32 FilterCriteria::getContent() {
     return content;
 }
 
-void FilterCriteria::setContent(int item) {
+void FilterCriteria::setContent(qint32 item) {
     content = item;
     contentIsSet = true;
     valueSet = true;
@@ -144,20 +145,20 @@ bool FilterCriteria::isContentSet() {
 
 
 
-void FilterCriteria::getSelectedNotes(QList<int> &items) {
+void FilterCriteria::getSelectedNotes(QList<qint32> &items) {
     items.clear();
     if (selectedNotesIsSet) {
-        for (int i=0; i<selectedNotes.size(); i++) {
+        for (qint32 i=0; i<selectedNotes.size(); i++) {
             items.append(selectedNotes.at(i));
         }
     }
 }
 
-void FilterCriteria::setSelectedNotes(QList<int> &items) {
+void FilterCriteria::setSelectedNotes(QList<qint32> &items) {
     selectedNotesIsSet = true;
     valueSet = true;
     selectedNotes.clear();
-    for (int i=0; i<items.size(); i++) {
+    for (qint32 i=0; i<items.size(); i++) {
         selectedNotes.append(items.at(i));
     }
 }

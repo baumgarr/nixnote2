@@ -24,7 +24,7 @@ private:
 
 public:
     explicit DataStore(QObject *parent = 0);
-    int getDirtyNoteGuids(QList<QString> &retVal);
+    qint32 getDirtyNoteGuids(QList<QString> &retVal);
 
 signals:
 

@@ -16,7 +16,7 @@ private:
 public:
     explicit TreeWidgetEditor(QTreeWidget *parent = 0);
     void setTreeWidgetItem(QTreeWidgetItem *w, int col);
-    int lid;
+    qint32 lid;
     QString stackName;
     
 signals:

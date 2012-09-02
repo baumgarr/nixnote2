@@ -12,7 +12,7 @@ private:
     QString defaultText;
     QString initialText;
     QString priorText;
-    int currentLid;
+    qint32 currentLid;
 
 public:
     explicit UrlEditor(QWidget *parent = 0);
@@ -22,7 +22,7 @@ public slots:
     void setActiveColor();
     void textModified(QString text);
     void gainedFocus(bool focus);
-    void setUrl(int lid, QString text);
+    void setUrl(qint32 lid, QString text);
 
 signals:
   void focussed(bool hasFocus);

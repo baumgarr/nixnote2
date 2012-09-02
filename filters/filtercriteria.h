@@ -33,10 +33,10 @@ private:
     bool deletedOnly;
     bool deletedOnlyIsSet;
 
-    int content;
+    qint32 content;
     bool contentIsSet;
 
-    QList<int> selectedNotes;
+    QList<qint32> selectedNotes;
     bool selectedNotesIsSet;
 
 public:
@@ -68,13 +68,13 @@ public:
     bool isDeletedOnlySet();
     bool resetDeletedOnly;
 
-    int getContent();
-    void setContent(int content);
+    qint32 getContent();
+    void setContent(qint32 content);
     bool isContentSet();
     bool resetContent;
 
-    void getSelectedNotes(QList<int> &items);
-    void setSelectedNotes(QList<int> &items);
+    void getSelectedNotes(QList<qint32> &items);
+    void setSelectedNotes(QList<qint32> &items);
     bool isSelectedNotesSet();
     bool resetSelectedNotes;
 

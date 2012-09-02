@@ -170,7 +170,7 @@ void NTagView::loadData() {
     TagTable tagTable;
     query.exec("Select lid, name, parent_gid from TagModel order by name");
     while (query.next()) {
-        int lid = query.value(0).toInt();
+        qint32 lid = query.value(0).toInt();
         QString name = query.value(1).toString();
         QString parentGid = query.value(2).toString();
 
@@ -191,7 +191,7 @@ void NTagView::rebuildTree() {
     if (!this->rebuildTagTreeNeeded)
         return;
 
-    QHashIterator<int, NTagViewItem *> i(dataStore);
+    QHashIterator<qint32, NTagViewItem *> i(dataStore);
     TagTable tagTable;
 
     while (i.hasNext()) {
@@ -203,8 +203,10 @@ void NTagView::rebuildTree() {
             }
             NTagViewItem *parent = dataStore[widget->parentLid];
             widget->parent()->removeChild(widget);
-            parent->childrenGuids.append(i.key());
-            parent->addChild(widget);
+            if (parent != NULL) {
+                parent->childrenGuids.append(i.key());
+                parent->addChild(widget);
+            }
         }
     }
     this->sortByColumn(NAME_POSITION, Qt::AscendingOrder);
@@ -212,7 +214,7 @@ void NTagView::rebuildTree() {
     this->resetSize();
 }
 
-void NTagView::tagUpdated(int lid, QString name) {
+void NTagView::tagUpdated(qint32 lid, QString name) {
     this->rebuildTagTreeNeeded = true;
 
     // Check if it already exists
@@ -306,7 +308,7 @@ void NTagView::updateSelection() {
 }
 
 // Add a new tag to the table
-void NTagView::addNewTag(int lid) {
+void NTagView::addNewTag(qint32 lid) {
     TagTable tagTable;
     Tag newTag;
     tagTable.get(newTag, lid);
@@ -345,6 +347,10 @@ void NTagView::dragEnterEvent(QDragEnterEvent *event) {
 
 // Handle what happens when something is dropped onto a tag item
 bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action) {
+    /* suppress unused */
+    action=action;
+    index=index;
+
     QLOG_DEBUG() << "Dropping mime: " << data->formats();
 
 
@@ -357,12 +363,12 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
             return false;
 
         QByteArray d = data->data("application/x-nixnote-tag");
-        int lid = d.toInt();
+        qint32 lid = d.toInt();
         if (lid == 0)
             return false;
 
         newChild = new QTreeWidgetItem(parent);
-        int parentLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
+        qint32 parentLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
         Tag tag;
         TagTable tagTable;
         tagTable.get(tag, lid);
@@ -377,6 +383,7 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
         sortItems(NAME_POSITION, Qt::AscendingOrder);
         return true;
     }
+    return false;
 }
 
 // Implement of dropEvent so dropMimeData gets called
@@ -418,7 +425,7 @@ void NTagView::mouseMoveEvent(QMouseEvent *event)
     mimeData->setData("application/x-nixnote-tag", currentItem()->data(NAME_POSITION, Qt::UserRole).toByteArray());
     drag->setMimeData(mimeData);
 
-    Qt::DropAction dropAction = drag->exec(Qt::CopyAction | Qt::MoveAction);
+    drag->exec(Qt::CopyAction | Qt::MoveAction);
 }
 
 
@@ -452,7 +459,7 @@ void NTagView::addRequested() {
     TagTable table;
     NTagViewItem *newWidget = new NTagViewItem();
     QString name = dialog.name.text().trimmed();
-    int lid = table.findByName(name);
+    qint32 lid = table.findByName(name);
     newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
     newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
     this->dataStore.insert(lid, newWidget);
@@ -470,7 +477,7 @@ void NTagView::propertiesRequested() {
     TagProperties dialog;
     QList<QTreeWidgetItem*> items = selectedItems();
 
-    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     QString oldName = items[0]->data(NAME_POSITION, Qt::DisplayRole).toString();
     dialog.setLid(lid);
 
@@ -492,7 +499,7 @@ void NTagView::propertiesRequested() {
 void NTagView::deleteRequested() {
     QList<QTreeWidgetItem*> items = selectedItems();
 
-    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     if (global.confirmDeletes()) {
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Question);
@@ -531,7 +538,7 @@ void NTagView::renameRequested() {
 
 void NTagView::editComplete() {
     QString text = editor->text().trimmed();
-    int lid = editor->lid;
+    qint32 lid = editor->lid;
     TagTable table;
     Tag tag;
     table.get(tag, lid);
@@ -539,7 +546,7 @@ void NTagView::editComplete() {
 
     // Check that this tag doesn't already exist
     // if it exists, we go back to the original name
-    int check = table.findByName(text);
+    qint32 check = table.findByName(text);
     if (check != 0) {
         NTagViewItem *item = dataStore[lid];
         item->setData(NAME_POSITION, Qt::DisplayRole, QString::fromStdString(tag.name));

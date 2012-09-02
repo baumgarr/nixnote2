@@ -4,8 +4,8 @@
 #include <jni.h>
 #include <QString>
 #include "messageblock.h"
-#include "evernote/NoteStore.h"
-#include "evernote/UserStore.h"
+#include <evernote/NoteStore.h>
+#include <evernote/UserStore.h>
 
 using namespace evernote::edam;
 using namespace std;
@@ -17,6 +17,7 @@ private:
     JNIEnv* env;
     JavaVMInitArgs args;
     JavaVMOption options[1];
+    jobject syncChunk;
 
     // Class & method used to pass error messages back
     jclass messageBlockClass;
@@ -30,6 +31,7 @@ private:
     jmethodID communication_constructor;
     jmethodID communication_getMessageBlock;
     jmethodID communication_getSyncState;
+    jmethodID communication_loadSyncChunk;
 
     // Class & method used for sync state
     jclass syncStateClass;
@@ -41,6 +43,52 @@ private:
     jmethodID syncState_getFullSyncBefore;
     jmethodID syncState_getUpdateCount;
     jmethodID syncState_getUploaded;
+
+    // Class & method used for sync state
+    jclass syncChunkClass;
+    jmethodID syncChunk_getCurrentTime;
+    jmethodID syncChunk_isCurrentTimeSet;
+    jmethodID syncChunk_getChunkHighUSN;
+    jmethodID syncChunk_isSetChunkHighUSN;
+    jmethodID syncChunk_getUpdateCount;
+    jmethodID syncChunk_isSetUpdateCount;
+    jmethodID syncChunk_getNotesSize;
+    jmethodID syncChunk_getNotes;
+    jmethodID syncChunk_isSetNotes;
+    jmethodID syncChunk_getNotebooksSize;
+    jmethodID syncChunk_isSetNotebooks;
+    jmethodID syncChunk_getNotebooks;
+    jmethodID syncChunk_getTagsSize;
+    jmethodID syncChunk_getTags;
+    jmethodID syncChunk_isSetTags;
+    jmethodID syncChunk_getSearchesSize;
+    jmethodID syncChunk_getSearches;
+    jmethodID syncChunk_isSetSearches;
+    jmethodID syncChunk_getResourcesSize;
+    jmethodID syncChunk_getResources;
+    jmethodID syncChunk_isSetResources;
+    jmethodID syncChunk_getLinkedNotebooksSize;
+    jmethodID syncChunk_getLinkedNotebooks;
+    jmethodID syncChunk_isSetLinkedNotebooks;
+    jmethodID syncChunk_getExpungedNotesSize;
+    jmethodID syncChunk_getExpungedNotes;
+    jmethodID syncChunk_isSetExpungedNotes;
+    jmethodID syncChunk_getExpungedNotebooksSize;
+    jmethodID syncChunk_getExpungedNotebooks;
+    jmethodID syncChunk_isSetExpungedNotebooks;
+    jmethodID syncChunk_getExpungedTagsSize;
+    jmethodID syncChunk_getExpungedTags;
+    jmethodID syncChunk_isSetExpungedTags;
+    jmethodID syncChunk_getExpungedSearchesSize;
+    jmethodID syncChunk_getExpungedSearches;
+    jmethodID syncChunk_isSetExpungedSearches;
+    jmethodID syncChunk_getExpungedLinkedNotebooksSize;
+    jmethodID syncChunk_getExpungedLinkedNotebooks;
+    jmethodID syncChunk_isSetExpungedLinkedNotebooks;
+
+    jclass listClass;
+    jmethodID list_get;
+
 
     // Class & method used for user
     jclass userClass;
@@ -165,7 +213,7 @@ private:
     jmethodID data_getSize;
     jmethodID data_isSizeSet;
     jmethodID data_getBody;
-    jmethodID data_isGetBodySet;
+    jmethodID data_isBodySet;
 
     jclass tagClass;
     jmethodID tag_getGuid;
@@ -255,10 +303,9 @@ private:
     jmethodID noteAttributes_isContentClassSet;
     jmethodID noteAttributes_getApplicationData;
     jmethodID noteAttributes_isApplicationDataSet;
-
+    jmethodID noteAttributes_getLastEditedBy;
+    jmethodID noteAttributes_isLastEditedBySet;
     jclass lazyMapClass;
-    jmethodID lazyMap_getKeysOnly;
-    jmethodID lazyMap_getFullMap;
 
     jclass noteClass;
     jmethodID noteClass_getGuid;
@@ -285,12 +332,15 @@ private:
     jmethodID noteClass_isNotebookGuidSet;
     jmethodID noteClass_getTagGuids;
     jmethodID noteClass_isTagGuidsSet;
+    jmethodID noteClass_getTagGuidsSize;
     jmethodID noteClass_getResources;
     jmethodID noteClass_isResourcesSet;
     jmethodID noteClass_getAttributes;
     jmethodID noteClass_isAttributesSet;
     jmethodID noteClass_getTagNames;
     jmethodID noteClass_isTagNamesSet;
+    jmethodID noteClass_getTagNamesSize;
+    jmethodID noteClass_getResourcesSize;
 
     jclass publishingClass;
     jmethodID publishingClass_getUri;
@@ -336,6 +386,9 @@ private:
     jmethodID savedSearch_getUpdateSequenceNumber;
     jmethodID savedSearch_isUpdateSequenceNumberSet;
 
+    jclass queryFormatClass;
+    jmethodID queryFormat_toString;
+
     jclass sharedNotebookClass;
     jmethodID sharedNotebook_getID;
     jmethodID sharedNotebook_isIDSet;
@@ -366,7 +419,28 @@ private:
     jmethodID linkedNotebook_getUpdateSequenceNumber;
     jmethodID linkedNotebook_isUpdateSequenceNumberSet;
 
+    void processChunkNotes(SyncChunk &syncChunk, jobject list, int size);
+    void processChunkNotebooks(SyncChunk &syncChunk, jobject list, int size);
+    void processChunkTags(SyncChunk &syncChunk, jobject list, int size);
+    void processChunkSearches(SyncChunk &syncChunk, jobject list, int size);
+    void processChunkLinkedNotebooks(SyncChunk &syncChunk, jobject list, int size);
+    void processChunkExpungedNotes(SyncChunk &syncChunk, jobject list, int size);
+    void processChunkExpungedNotebooks(SyncChunk &syncChunk, jobject list, int size);
+    void processChunkExpungedTags(SyncChunk &syncChunk, jobject list, int size);
+    void processChunkExpungedLinkedNotebooks(SyncChunk &syncChunk, jobject list, int size);
+    void processChunkExpungedSearches(SyncChunk &syncChunk, jobject list, int size);
+    void processChunkResources(SyncChunk &syncChunk, jobject list, int size);
 
+    void mapToTag(Tag &tag, jobject jtag);
+    void mapToNotebook(Notebook &notebook, jobject jnotebook);
+    void mapToNote(Note &note, jobject jnote);
+    void mapToLinkedNotebook(LinkedNotebook &linkedNotebook,jobject notebook);
+    void mapToSearch(SavedSearch &savedSearch, jobject search);
+    QStringList mapToStringList(jobject jlist, int size);
+    void mapToResources(vector<Resource> &resourceList, jobject jresourceList, int size);
+    void mapToAttributes(NoteAttributes &noteAttributes, jobject attributes);
+    void mapToData(Data &data, jobject jdata);
+    void mapToResourceAttributes(ResourceAttributes &attributes, jobject jattributes);
 
 public:
     JavaMachine();
@@ -374,7 +448,10 @@ public:
     void create_jvm();
     void convertMessageBlock(MessageBlock &mb, jobject messageBlock);
     void jString2QString(QString &qstr, jstring &jstring, bool release=true);
+    void jString2String(string &qstr, jstring &jstring, bool release=true);
+    void jByteArray2QByteArray(QByteArray &qstr, jbyteArray &jb, bool release=true);
     bool getSyncState(SyncState &syncState);
+    bool getSyncChunk(SyncChunk &chunk, int start, int chunkSize, bool fullSync=false);
 };
 
 #endif // JAVAMACHINE_H

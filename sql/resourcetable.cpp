@@ -19,7 +19,7 @@ ResourceTable::ResourceTable()
 
 // Given a resource's lid, we give it a new guid.  This can happen
 // the first time a record is synchronized
-void ResourceTable::updateGuid(int lid, Guid &guid) {
+void ResourceTable::updateGuid(qint32 lid, Guid &guid) {
     QLOG_TRACE() << "Entering ResourceTable::updateGuid()";
 
     QSqlQuery query;
@@ -47,7 +47,7 @@ void ResourceTable::sync(Resource &resource) {
 
 // Synchronize a new resource with what is in the database.  We basically
 // just delete the old one & give it a new entry
-void ResourceTable::sync(int lid, Resource &resource) {
+void ResourceTable::sync(qint32 lid, Resource &resource) {
     QLOG_TRACE() << "Leaving ResourceTable::sync()";
 
     if (lid > 0) {
@@ -71,11 +71,11 @@ void ResourceTable::sync(int lid, Resource &resource) {
 
 
 // Given a resource's GUID, we return the LID
-int ResourceTable::getLid(QString noteGuid, QString guid) {
+qint32 ResourceTable::getLid(QString noteGuid, QString guid) {
 
     QSqlQuery query;
     NoteTable n;
-    int noteLid = n.getLid(noteGuid);
+    qint32 noteLid = n.getLid(noteGuid);
     query.prepare("Select a.lid from DataStore a where a.key=:key and a.data=:data and a.lid = (select b.lid from DataStore b where b.key2=:key2 and b.data=:noteGuid)");
     query.bindValue(":data", guid);
     query.bindValue(":key", RESOURCE_GUID);
@@ -90,7 +90,7 @@ int ResourceTable::getLid(QString noteGuid, QString guid) {
 
 
 // Given a resource's GUID, we return the LID
-int ResourceTable::getLid(string noteGuid, string guid) {
+qint32 ResourceTable::getLid(string noteGuid, string guid) {
     QString nGuid(QString::fromStdString(noteGuid));
     QString rGuid(QString::fromStdString(guid));
     return getLid(nGuid, rGuid);
@@ -99,7 +99,7 @@ int ResourceTable::getLid(string noteGuid, string guid) {
 
 
 // Return a resource structure given the LID
-bool ResourceTable::get(Resource &resource, int lid) {
+bool ResourceTable::get(Resource &resource, qint32 lid) {
 
     QSqlQuery query;
     QByteArray byteArray;
@@ -109,7 +109,7 @@ bool ResourceTable::get(Resource &resource, int lid) {
     if (query.size() == 0)
         return false;
     while (query.next()) {
-        int key = query.value(0).toInt();
+        qint32 key = query.value(0).toInt();
         switch (key) {
         case (RESOURCE_GUID):
             resource.guid = query.value(1).toString().toStdString();
@@ -279,7 +279,7 @@ bool ResourceTable::get(Resource &resource, int lid) {
 
 // Return a resource given the GUID
 bool ResourceTable::get(Resource &resource, QString noteGuid, QString guid) {
-    int lid = getLid(noteGuid, guid);
+    qint32 lid = getLid(noteGuid, guid);
     return get(resource, lid);
 }
 
@@ -287,14 +287,14 @@ bool ResourceTable::get(Resource &resource, QString noteGuid, QString guid) {
 
 // Return a resource given the GUID as a std::string
 bool ResourceTable::get(Resource &resource, string noteGuid, string guid) {
-    int lid = getLid(noteGuid, guid);
+    qint32 lid = getLid(noteGuid, guid);
     return get(resource, lid);
 }
 
 
 
 // Return if a resource is dirty given its lid
-bool ResourceTable::isDirty(int lid) {
+bool ResourceTable::isDirty(qint32 lid) {
     QSqlQuery query;
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
@@ -309,7 +309,7 @@ bool ResourceTable::isDirty(int lid) {
 
 // Determine if a resource is dirty given a guid
 bool ResourceTable::isDirty(QString noteGuid, QString guid) {
-    int lid = getLid(noteGuid, guid);
+    qint32 lid = getLid(noteGuid, guid);
     return isDirty(lid);
 }
 
@@ -323,7 +323,7 @@ bool ResourceTable::isDirty(string noteGuid, string guid) {
 
 
 // Does this resource exist?
-bool ResourceTable::exists(int lid) {
+bool ResourceTable::exists(qint32 lid) {
     QSqlQuery query;
     query.prepare("Select lid from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
@@ -338,21 +338,21 @@ bool ResourceTable::exists(int lid) {
 
 // Determine if a resource exists given a guid
 bool ResourceTable::exists(QString noteGuid, QString guid) {
-    int lid = getLid(noteGuid, guid);
+    qint32 lid = getLid(noteGuid, guid);
     return exists(lid);
 }
 
 
 // Determine if a resource exists given a guid
 bool ResourceTable::exists(string noteGuid, string guid) {
-    int lid = getLid(noteGuid, guid);
+    qint32 lid = getLid(noteGuid, guid);
     return exists(lid);
 }
 
 
-void ResourceTable::add(int l, Resource &t, bool isDirty) {
+void ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
     ConfigStore cs;
-    int lid = l;
+    qint32 lid = l;
     if (lid == 0)
         lid = cs.incrementLidCounter();
 
@@ -370,7 +370,7 @@ void ResourceTable::add(int l, Resource &t, bool isDirty) {
     query.exec();
 
     NoteTable noteTable;
-    int noteLid = noteTable.getLid(t.noteGuid);
+    qint32 noteLid = noteTable.getLid(t.noteGuid);
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_NOTE_LID);
     query.bindValue(":data", noteLid);
@@ -409,7 +409,7 @@ void ResourceTable::add(int l, Resource &t, bool isDirty) {
                 fileExt = "jpg";
             QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +"." +fileExt );
             tfile.open(QIODevice::WriteOnly);
-            tfile.write(b, b.size());
+            tfile.write(b,t.data.size);
             tfile.close();
         }
     }
@@ -584,7 +584,7 @@ void ResourceTable::add(int l, Resource &t, bool isDirty) {
 }
 
 
-bool ResourceTable::getResourceRecognition(Resource &resource, int lid) {
+bool ResourceTable::getResourceRecognition(Resource &resource, qint32 lid) {
 
     QSqlQuery query;
     query.prepare("Select key, data from DataStore where lid=:lid and (key=:body or key=:size or key=:hash)");
@@ -620,9 +620,9 @@ bool ResourceTable::getResourceRecognition(Resource &resource, int lid) {
 
 // Get a resource for a note by the resource data hash.  This is useful
 // when going through a note and finding the resource for that note
-int ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
+qint32 ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
     NoteTable noteTable;
-    int notelid = noteTable.getLid(noteGuid);
+    qint32 notelid = noteTable.getLid(noteGuid);
 
     QSqlQuery query;
     query.prepare("Select lid from DataStore where data=:lid and key=:key");
@@ -631,7 +631,7 @@ int ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
     query.exec();
     while (query.next()) {
         QSqlQuery query2;
-        int lid = query.value(0).toInt();
+        qint32 lid = query.value(0).toInt();
         QByteArray b;
         b.append(hash);
         query2.prepare("Select lid from DataStore where data like :hash and key=:key and lid=:lid");
@@ -645,12 +645,14 @@ int ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
     return 0;
 }
 
-bool ResourceTable::getInkNote(QByteArray &value, int lid) {
+bool ResourceTable::getInkNote(QByteArray &value, qint32 lid) {
+    value=value;  //suppress unused
+    lid=lid;      //suppress unused
     return false;
 }
 
 
-void ResourceTable::setIndexNeeded(int lid, bool indexNeeded) {
+void ResourceTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     QSqlQuery query;
     query.prepare("Delete from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
@@ -666,7 +668,7 @@ void ResourceTable::setIndexNeeded(int lid, bool indexNeeded) {
 
 
 
-int ResourceTable::getIndexNeeded(QList<int> &lids) {
+qint32 ResourceTable::getIndexNeeded(QList<qint32> &lids) {
     QSqlQuery query;
     lids.empty();
     query.prepare("Select lid from DataStore where key=:key and data='true'");

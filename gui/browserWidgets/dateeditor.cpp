@@ -40,7 +40,7 @@ DateEditor::DateEditor(QWidget *parent) :
     hide();
 }
 
-void DateEditor::setNote(int lid, Note n) {
+void DateEditor::setNote(qint32 lid, Note n) {
     createdDate.setNote(lid, n.created, NOTE_CREATED_DATE);
     updatedDate.setNote(lid, n.updated, NOTE_UPDATED_DATE);
     if (n.__isset.attributes && n.attributes.__isset.subjectDate && n.attributes.subjectDate > 0)
@@ -55,6 +55,7 @@ void DateEditor::setNote(int lid, Note n) {
 }
 
 void DateEditor::hideEvent(QHideEvent* event) {
+    event=event;  // suppress unused
     createdDate.hide();
     subjectDate.hide();
     updatedDate.hide();
@@ -62,6 +63,7 @@ void DateEditor::hideEvent(QHideEvent* event) {
 }
 
 void DateEditor::showEvent(QShowEvent* event) {
+    event=event;  // suppress unused
     createdDate.show();
     subjectDate.show();
     updatedDate.show();

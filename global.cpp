@@ -27,6 +27,15 @@ Global::Global()
 }
 
 
+Global::~Global() {
+    FilterCriteria *criteria;
+    for (int i=0; i<filterCriteria.size(); i++) {
+        criteria = filterCriteria[i];
+        if (criteria != NULL)
+            delete criteria;
+    }
+}
+
 //Initial global settings setup
 void Global::setup(StartupConfig startupConfig) {
     fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath);
@@ -35,6 +44,8 @@ void Global::setup(StartupConfig startupConfig) {
     username = "";
     password = "";
     connected = false;
+    //server = "sandbox.evernote.com";
+    server = "www.evernote.com";
 }
 
 
@@ -45,12 +56,6 @@ QString Global::getProgramDirPath() {
     path.chop(path.length()-i);
     return path;
 }
-
-
-bool Global::setupFileIcon(int lid) {
-
-}
-
 
 bool Global::confirmDeletes() {
     return true;

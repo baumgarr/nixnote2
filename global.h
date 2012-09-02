@@ -8,7 +8,7 @@
 #include "settings/startupconfig.h"
 #include "filters/filtercriteria.h"
 #include "models/notecache.h"
-#include "java/javamachine.h"
+//#include "java/javamachine.h"
 
 #include <string>
 
@@ -51,6 +51,7 @@ class Global
 {
 public:
     Global();           // Generic constructor
+    ~Global();          // destructor
     int argc;           // Initial argument count from the program start
     char** argv;        // List of arguments from the program start
     FileManager fileManager;
@@ -61,19 +62,19 @@ public:
     bool connected;
     bool confirmDeletes();
     QString tagBehavior();
+    QString server;
     //JavaMachine jvm;
 
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;
-    int filterPosition;
+    qint32 filterPosition;
 
     // Note cache
     QHash<int, NoteCache*> cache;
 
-
     void setup(StartupConfig config);  // Setup the global variables
     QString getProgramDirPath();      // Get the path the program is executing from
-    bool setupFileIcon(int lid);  // setup a file icon for attachments
+    QList< QPair<int, QString> > passwordRemember;   // Cache of passwords
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);

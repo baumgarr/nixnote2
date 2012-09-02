@@ -60,7 +60,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 //    removeHighlight(doc);
 
 //    // Finish up and return the HTML to the user
-    int index = content.indexOf("<body");
+    qint32 index = content.indexOf("<body");
     content.remove(0,index);
     index = content.indexOf("</body");
     content.truncate(index);
@@ -86,7 +86,7 @@ void EnmlFormatter::scanTags() {
 
 // Parse the children
 void EnmlFormatter::parseNodes(const QDomNodeList &nodes) {
-    for (int i=0; i<nodes.size(); i++) {
+    for (qint32 i=0; i<nodes.size(); i++) {
         if (nodes.at(i).hasChildNodes())
             parseNodes(nodes.at(i).childNodes());
         fixNode(nodes.at(i));

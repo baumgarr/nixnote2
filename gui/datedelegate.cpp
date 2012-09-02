@@ -12,7 +12,6 @@ QString DateDelegate::displayText(const QVariant &value, const QLocale &locale) 
     QDateTime timestamp;
     timestamp.setTime_t(value.toLongLong()/1000);
 
-    QDate currentDate;
     if (timestamp.date() == QDate::currentDate())
             return "Today " + timestamp.time().toString(Qt::SystemLocaleShortDate);
 

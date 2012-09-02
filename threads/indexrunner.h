@@ -9,8 +9,8 @@
 #include <QVector>
 
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 
 #include <html/thumbnailer.h>
 
@@ -28,8 +28,8 @@ class IndexRunner : public QThread
 private:
     Thumbnailer *hammer;
     QTimer *indexTimer;
-    void indexRecognition(int lid, Resource &r);
-    void indexNote(int lid, Note &n);
+    void indexRecognition(qint32 lid, Resource &r);
+    void indexNote(qint32 lid, Note &n);
     QTextDocument *textDocument;
 
 public:

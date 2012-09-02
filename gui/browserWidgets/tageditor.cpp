@@ -32,6 +32,7 @@ TagEditor::TagEditor(QWidget *parent) :
     connect(&newTag, SIGNAL(tabPressed()), this, SLOT(newTagTabPressed()));
     tagNames.empty();
     layout->addWidget(&newTag);
+    delete pix;
     hide();
 }
 
@@ -39,7 +40,7 @@ TagEditor::TagEditor(QWidget *parent) :
 //********************************************************
 //* Set the current note lid
 //********************************************************
-void TagEditor::setCurrentLid(int l) {
+void TagEditor::setCurrentLid(qint32 l) {
     currentLid = l;
 }
 
@@ -63,7 +64,7 @@ void TagEditor::newTagFocusLost(bool focus) {
 bool TagEditor::checkNewTagEditor() {
     if (newTag.getText().trimmed() != "") {
         QString name = newTag.getText().trimmed();
-        for (int i=0; i<tagNames.size(); i++) {
+        for (qint32 i=0; i<tagNames.size(); i++) {
             if (tagNames.at(i).trimmed().toLower() == name.trimmed().toLower()) {
                 newTag.resetText();
                 return false;
@@ -91,7 +92,7 @@ void TagEditor::addTag(QString text) {
     loadTags();
     NoteTable noteTable;
     TagTable tagTable;
-    int tagLid;
+    qint32 tagLid;
     Tag newTag;
     tagLid = tagTable.findByName(text);
     if (tagLid <=0) {
@@ -117,7 +118,7 @@ void TagEditor::addTag(QString text) {
 void TagEditor::loadTags() {
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
 
-    for (int i=0; i<tagNames.size(); i++) {
+    for (qint32 i=0; i<tagNames.size(); i++) {
         tags[i].setText(tagNames[i]);
         tags[i].setVisible(true);
         tags[i].resize();
@@ -129,7 +130,8 @@ void TagEditor::loadTags() {
 //*******************************************************
 //* Signal received that a tag name has been changed
 //*******************************************************
-void TagEditor::tagRenamed(int lid, QString oldName, QString newName) {
+void TagEditor::tagRenamed(qint32 lid, QString oldName, QString newName) {
+    lid=lid;  // suppress unuesd
     tagNames.removeOne(oldName);
     tagNames << newName;
     loadTags();
@@ -145,7 +147,7 @@ void TagEditor::setTags(QStringList s) {
     emptyTags();
 
     // Add the new tag to the list & sort
-    for (int i =0; i<s.size(); i++)
+    for (qint32 i =0; i<s.size(); i++)
         tagNames << s[i];
     loadTags();
 
@@ -158,13 +160,13 @@ void TagEditor::setTags(QStringList s) {
 //*******************************************************
 void TagEditor::removeTag(QString text) {
     bool found = false;
-    int j=-1;
-    for (int i=0; i<tagNames.size(); i++) {
+    qint32 j=-1;
+    for (qint32 i=0; i<tagNames.size(); i++) {
         if (tags[i].text().toLower() == text.toLower()) {
             found = true;
             TagTable tagTable;
             NoteTable noteTable;
-            int tagLid = tagTable.findByName(text);
+            qint32 tagLid = tagTable.findByName(text);
             noteTable.removeTag(currentLid, tagLid, true);
             j = i;
         }
@@ -204,9 +206,10 @@ void TagEditor::clear() {
 //* Hide this window
 //*******************************************************
 void TagEditor::hideEvent(QHideEvent* event) {
+    event=event;  // suppress unused
     tagIcon.hide();
     newTag.hide();
-    for (int i=0; i<MAX_TAGS; i++) {
+    for (qint32 i=0; i<MAX_TAGS; i++) {
         tags[i].hide();
     }
 }
@@ -217,9 +220,10 @@ void TagEditor::hideEvent(QHideEvent* event) {
 //* Show this window
 //*******************************************************
 void TagEditor::showEvent(QShowEvent* event) {
+    event=event;  // suppress unused
     tagIcon.show();
     newTag.show();
-    for (int i=0; i<tagNames.size(); i++)
+    for (qint32 i=0; i<tagNames.size(); i++)
         tags[i].show();
 }
 
@@ -229,7 +233,7 @@ void TagEditor::showEvent(QShowEvent* event) {
 //* Empty out the tags window
 //*******************************************************
 void TagEditor::emptyTags() {
-    for (int i=MAX_TAGS-1; i>=0; i--) {
+    for (qint32 i=MAX_TAGS-1; i>=0; i--) {
         tags[i].clear();
         tags[i].setMinimumWidth(0);
         tags[i].setVisible(false);

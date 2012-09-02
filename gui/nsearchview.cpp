@@ -123,7 +123,7 @@ void NSearchView::loadData() {
     QSqlQuery query;
     query.exec("Select lid, name from SearchModel order by name");
     while (query.next()) {
-        int lid = query.value(0).toInt();
+        qint32 lid = query.value(0).toInt();
         SearchTable table;
         if (!table.isDeleted(lid)) {
             NSearchViewItem *newWidget = new NSearchViewItem();
@@ -135,7 +135,7 @@ void NSearchView::loadData() {
     }
 }
 
-void NSearchView::searchUpdated(int lid, QString name) {
+void NSearchView::searchUpdated(qint32 lid, QString name) {
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
         NSearchViewItem *newWidget = this->dataStore.value(lid);
@@ -309,7 +309,7 @@ void NSearchView::addRequested() {
     SearchTable table;
     NSearchViewItem *newWidget = new NSearchViewItem();
     QString name = dialog.name.text().trimmed();
-    int lid = table.findByName(name);
+    qint32 lid = table.findByName(name);
     newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
     newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
     this->dataStore.insert(lid, newWidget);
@@ -325,7 +325,7 @@ void NSearchView::propertiesRequested() {
     SavedSearchProperties dialog;
     QList<QTreeWidgetItem*> items = selectedItems();
 
-    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     dialog.setLid(lid);
 
     dialog.exec();
@@ -337,7 +337,7 @@ void NSearchView::propertiesRequested() {
 void NSearchView::deleteRequested() {
     QList<QTreeWidgetItem*> items = selectedItems();
 
-    int lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     if (global.confirmDeletes()) {
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Question);
@@ -373,14 +373,14 @@ void NSearchView::renameRequested() {
 
 void NSearchView::editComplete() {
     QString text = editor->text().trimmed();
-    int lid = editor->lid;
+    qint32 lid = editor->lid;
     SearchTable table;
     SavedSearch s;
     table.get(s, lid);
 
     // Check that this search doesn't already exist
     // if it exists, we go back to the original name
-    int check = table.findByName(text);
+    qint32 check = table.findByName(text);
     if (check != 0) {
         NSearchViewItem *item = dataStore[lid];
         item->setData(NAME_POSITION, Qt::DisplayRole, QString::fromStdString(s.name));

@@ -23,6 +23,12 @@ signals:
 public slots:
     void editAlert();
 
+private slots:
+    void exposeToJavascript();
+
+public slots:
+    void decryptText(QString id, QString text, QString hint);
+
 };
 
 #endif // NWEBVIEW_H

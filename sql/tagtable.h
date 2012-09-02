@@ -1,8 +1,8 @@
 #ifndef TAGTABLE_H
 #define TAGTABLE_H
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 #include "global.h"
 
 #include <iostream>
@@ -31,33 +31,33 @@ private:
 
 public:
     TagTable();                             // Constructor
-    int getLid(QString guid);               // given a guid, return the lid
-    int getLid(string guid);                // Given a guid, return the lid
-    int findByName(string &name);           // Find a tag given a name
-    int findByName(QString &name);          // Find a tag given a name
-    int findChildren(QList<int> &list, QString parentGuid);
-    void updateGuid(int lid, Guid &guid);   // Update a tag's guid
-    void deleteTag(int lid);                // delete a tag
-    void expunge(int lid);               // really delete a tag
+    qint32 getLid(QString guid);               // given a guid, return the lid
+    qint32 getLid(string guid);                // Given a guid, return the lid
+    qint32 findByName(string &name);           // Find a tag given a name
+    qint32 findByName(QString &name);          // Find a tag given a name
+    qint32 findChildren(QList<qint32> &list, QString parentGuid);
+    void updateGuid(qint32 lid, Guid &guid);   // Update a tag's guid
+    void deleteTag(qint32 lid);                // delete a tag
+    void expunge(qint32 lid);               // really delete a tag
     void sync(Tag &tag);                    // Sync a tag with a new record
-    void sync(int lid, Tag &tag);           // Sync a tag with a new record
-    void add(int lid, Tag &t, bool isDirty); // Add a new tag
-    bool get(Tag &tag, int lid);           // Get a tag given a lid
+    void sync(qint32 lid, Tag &tag);           // Sync a tag with a new record
+    void add(qint32 lid, Tag &t, bool isDirty); // Add a new tag
+    bool get(Tag &tag, qint32 lid);           // Get a tag given a lid
     bool get(Tag &tag, QString guid);      // get a tag given a guid
     bool get(Tag &tag, string guid);       // get a tag given a guid
-    bool isDirty(int lid);                  // Check if a tag is dirty
+    bool isDirty(qint32 lid);                  // Check if a tag is dirty
     bool isDirty(QString guid);             // Check if a tag is dirty
     bool isDirty(string guid);              // Check if a tag is dirty
     bool setDirty(string guid, bool dirty);  // set the note dirty flag
     bool setDirty(QString guid, bool dirty); // set the note dirty flag
-    bool setDirty(int lid, bool dirty);      // set the note dirty flag
-    bool exists(int lid);                   // Does this tag exist?
+    bool setDirty(qint32 lid, bool dirty);      // set the note dirty flag
+    bool exists(qint32 lid);                   // Does this tag exist?
     bool exists(QString guid);              // Does this tag exist?
     bool exists(string guid);               // Does this tag exist?
-    int getAll(QList<int> &values);                   // Get all possible tag lids
-    bool getGuid(QString &guid, int lid);   // Get a guid for a tag given the lid
+    qint32 getAll(QList<qint32> &values);                   // Get all possible tag lids
+    bool getGuid(QString &guid, qint32 lid);   // Get a guid for a tag given the lid
     void update(Tag &tag, bool dirty);           // Update an existing tag
-    bool isDeleted(int lid);                // is this tag deleted?
+    bool isDeleted(qint32 lid);                // is this tag deleted?
 };
 
 #endif // TAGTABLE_H

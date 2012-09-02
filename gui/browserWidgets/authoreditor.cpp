@@ -34,7 +34,7 @@ void AuthorEditor::setActiveColor() {
 }
 
 
-void AuthorEditor::setAuthor(int lid, QString text) {
+void AuthorEditor::setAuthor(qint32 lid, QString text) {
     currentLid = lid;
     blockSignals(true);
     if (text.trimmed() == "")

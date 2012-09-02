@@ -48,7 +48,7 @@ void NTitleEditor::focusOutEvent(QFocusEvent *e)
 // blanks everything else out.  The default text logic should eventually be
 // moved to the browser editor since it has the actual text of the note
 // we need for the note.
-void NTitleEditor::setTitle(int lid, QString title, QString defaultT) {
+void NTitleEditor::setTitle(qint32 lid, QString title, QString defaultT) {
     priorTitle = title;
     currentLid = lid;
     initialTitle = title;

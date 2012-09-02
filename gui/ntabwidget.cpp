@@ -23,10 +23,9 @@ NTabWidget::NTabWidget()
  //   tabBar.setMaximumHeight(20);
 
     browserList = new QList<NBrowserWindow *>();
-    QVBoxLayout *l = new QVBoxLayout();
-    l->addWidget(&tabBar);
-    l->addWidget(&stack);
-    setLayout(l);
+    vboxlayout.addWidget(&tabBar);
+    vboxlayout.addWidget(&stack);
+    setLayout(&vboxlayout);
 
     connect(&tabBar, SIGNAL(currentChanged(int)),
                  &stack, SLOT(setCurrentIndex(int)));
@@ -34,6 +33,10 @@ NTabWidget::NTabWidget()
                  this, SLOT(closeTab(int)));
     connect(&tabBar, SIGNAL(tabMoved(int, int)),
                  this, SLOT(moveTab(int, int)));
+}
+
+NTabWidget::~NTabWidget() {
+    delete browserList;
 }
 
 void NTabWidget::addBrowser(NBrowserWindow *v, QString title) {
@@ -44,8 +47,8 @@ void NTabWidget::addBrowser(NBrowserWindow *v, QString title) {
     tabBar.setCurrentIndex(index);
     tabBar.raise();
 
-    connect(v, SIGNAL(noteUpdated(int)), this, SLOT(noteUpdateSignaled(int)));
-    connect(v, SIGNAL(tagAdded(int)), this, SLOT(tagCreationSignaled(int)));
+    connect(v, SIGNAL(noteUpdated(qint32)), this, SLOT(noteUpdateSignaled(qint32)));
+    connect(v, SIGNAL(tagAdded(qint32)), this, SLOT(tagCreationSignaled(qint32)));
 
     if (browserList->size() <= 1)
         tabBar.setHidden(true);
@@ -79,7 +82,7 @@ NBrowserWindow* NTabWidget::currentBrowser() {
 }
 
 
-void NTabWidget::openNote(int lid, bool newWindow) {
+void NTabWidget::openNote(qint32 lid, bool newWindow) {
 
     // If the lid < 0, then we just clear it & get out
     if (lid < 0) {
@@ -143,10 +146,10 @@ void NTabWidget::setTitle(int index, QString t) {
 }
 
 
-void NTabWidget::noteUpdateSignaled(int lid) {
+void NTabWidget::noteUpdateSignaled(qint32 lid) {
     emit(this->noteUpdated(lid));
 }
 
-void NTabWidget::tagCreationSignaled(int lid) {
+void NTabWidget::tagCreationSignaled(qint32 lid) {
     emit(this->tagCreated(lid));
 }

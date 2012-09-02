@@ -86,8 +86,8 @@ typedef struct _SyncChunk__isset {
 class SyncChunk {
  public:
 
-  static const char* ascii_fingerprint; // = "6AA62F2CD716D2E20D2225B1A5DE6817";
-  static const uint8_t binary_fingerprint[16]; // = {0x6A,0xA6,0x2F,0x2C,0xD7,0x16,0xD2,0xE2,0x0D,0x22,0x25,0xB1,0xA5,0xDE,0x68,0x17};
+  static const char* ascii_fingerprint; // = "D59CD55325EEC209B3EDAD529EF88313";
+  static const uint8_t binary_fingerprint[16]; // = {0xD5,0x9C,0xD5,0x53,0x25,0xEE,0xC2,0x09,0xB3,0xED,0xAD,0x52,0x9E,0xF8,0x83,0x13};
 
   SyncChunk() : currentTime(0), chunkHighUSN(0), updateCount(0) {
   }
@@ -374,8 +374,8 @@ typedef struct _NoteList__isset {
 class NoteList {
  public:
 
-  static const char* ascii_fingerprint; // = "EA547BD5E9E15BC9B3FC3DCFA10676B3";
-  static const uint8_t binary_fingerprint[16]; // = {0xEA,0x54,0x7B,0xD5,0xE9,0xE1,0x5B,0xC9,0xB3,0xFC,0x3D,0xCF,0xA1,0x06,0x76,0xB3};
+  static const char* ascii_fingerprint; // = "C4253E73F029D45828E9B8E3AFD6A5D4";
+  static const uint8_t binary_fingerprint[16]; // = {0xC4,0x25,0x3E,0x73,0xF0,0x29,0xD4,0x58,0x28,0xE9,0xB8,0xE3,0xAF,0xD6,0xA5,0xD4};
 
   NoteList() : startIndex(0), totalNotes(0), updateCount(0) {
   }
@@ -441,8 +441,8 @@ typedef struct _NoteMetadata__isset {
 class NoteMetadata {
  public:
 
-  static const char* ascii_fingerprint; // = "49B4E2C64AD1B5A204860B68F0C99800";
-  static const uint8_t binary_fingerprint[16]; // = {0x49,0xB4,0xE2,0xC6,0x4A,0xD1,0xB5,0xA2,0x04,0x86,0x0B,0x68,0xF0,0xC9,0x98,0x00};
+  static const char* ascii_fingerprint; // = "2159F77A08C4F7332F71EF5A1BD5AE2B";
+  static const uint8_t binary_fingerprint[16]; // = {0x21,0x59,0xF7,0x7A,0x08,0xC4,0xF7,0x33,0x2F,0x71,0xEF,0x5A,0x1B,0xD5,0xAE,0x2B};
 
   NoteMetadata() : guid(""), title(""), contentLength(0), created(0), updated(0), updateSequenceNum(0), notebookGuid(""), largestResourceMime(""), largestResourceSize(0) {
   }
@@ -530,8 +530,8 @@ typedef struct _NotesMetadataList__isset {
 class NotesMetadataList {
  public:
 
-  static const char* ascii_fingerprint; // = "12D728A0A4D9583C54353A4D3AF9DD79";
-  static const uint8_t binary_fingerprint[16]; // = {0x12,0xD7,0x28,0xA0,0xA4,0xD9,0x58,0x3C,0x54,0x35,0x3A,0x4D,0x3A,0xF9,0xDD,0x79};
+  static const char* ascii_fingerprint; // = "F3D551C521A5C489E7B722A8D6AC7205";
+  static const uint8_t binary_fingerprint[16]; // = {0xF3,0xD5,0x51,0xC5,0x21,0xA5,0xC4,0x89,0xE7,0xB7,0x22,0xA8,0xD6,0xAC,0x72,0x05};
 
   NotesMetadataList() : startIndex(0), totalNotes(0), updateCount(0) {
   }
@@ -831,8 +831,8 @@ typedef struct _NoteEmailParameters__isset {
 class NoteEmailParameters {
  public:
 
-  static const char* ascii_fingerprint; // = "F3C0D8338D013302A98FD285189E2E6B";
-  static const uint8_t binary_fingerprint[16]; // = {0xF3,0xC0,0xD8,0x33,0x8D,0x01,0x33,0x02,0xA9,0x8F,0xD2,0x85,0x18,0x9E,0x2E,0x6B};
+  static const char* ascii_fingerprint; // = "F10DBB1792130CE06A0625E86739805B";
+  static const uint8_t binary_fingerprint[16]; // = {0xF1,0x0D,0xBB,0x17,0x92,0x13,0x0C,0xE0,0x6A,0x06,0x25,0xE8,0x67,0x39,0x80,0x5B};
 
   NoteEmailParameters() : guid(""), subject(""), message("") {
   }
@@ -921,6 +921,45 @@ class NoteVersionId {
   }
 
   bool operator < (const NoteVersionId & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _ClientUsageMetrics__isset {
+  _ClientUsageMetrics__isset() : sessions(false) {}
+  bool sessions;
+} _ClientUsageMetrics__isset;
+
+class ClientUsageMetrics {
+ public:
+
+  static const char* ascii_fingerprint; // = "E7A96B151330359E84C0A3AC91BCBACD";
+  static const uint8_t binary_fingerprint[16]; // = {0xE7,0xA9,0x6B,0x15,0x13,0x30,0x35,0x9E,0x84,0xC0,0xA3,0xAC,0x91,0xBC,0xBA,0xCD};
+
+  ClientUsageMetrics() : sessions(0) {
+  }
+
+  virtual ~ClientUsageMetrics() throw() {}
+
+  int32_t sessions;
+
+  _ClientUsageMetrics__isset __isset;
+
+  bool operator == (const ClientUsageMetrics & rhs) const
+  {
+    if (__isset.sessions != rhs.__isset.sessions)
+      return false;
+    else if (__isset.sessions && !(sessions == rhs.sessions))
+      return false;
+    return true;
+  }
+  bool operator != (const ClientUsageMetrics &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const ClientUsageMetrics & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;

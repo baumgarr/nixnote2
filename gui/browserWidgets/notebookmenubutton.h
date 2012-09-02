@@ -8,8 +8,8 @@
 #include <QAction>
 #include <QActionGroup>
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 
 
 using namespace evernote::edam  ;
@@ -25,7 +25,7 @@ private:
     QList<QMenu*> stackMenus;
     QList<QAction*> actions;
     int currentAction;
-    int currentNoteLid;
+    qint32 currentNoteLid;
     void addNotebookMenuItem(QMenu *menu, QAction *action);
     void addStackMenuItem(QMenu *newMenu);
     QMenu *findStack(Notebook n);
@@ -33,8 +33,8 @@ private:
 public:
     explicit NotebookMenuButton(QWidget *parent = 0);
     void loadData();
-    void setCurrentNotebook(int lid, Note n);
-    void addNotebook(int lid);
+    void setCurrentNotebook(qint32 lid, Note n);
+    void addNotebook(qint32 lid);
     void reloadData();
 
     

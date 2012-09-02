@@ -49,7 +49,7 @@ void FilterEngine::filterNotebook(FilterCriteria *criteria) {
         filterStack(stackName);
     } else {
         FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
-        int notebookLid = criteria->getNotebook()->data(0,Qt::UserRole).toInt();
+        qint32 notebookLid = criteria->getNotebook()->data(0,Qt::UserRole).toInt();
         NotebookTable notebookTable;
         QString notebook;
         notebookTable.getGuid(notebook, notebookLid);
@@ -69,8 +69,8 @@ void FilterEngine::filterIndividualNotebook(QString &notebook) {
 
 void FilterEngine::filterStack(QString &stack) {
     NotebookTable notebookTable;
-    QList<int> books;
-    QList<int> stackBooks;
+    QList<qint32> books;
+    QList<qint32> stackBooks;
     notebookTable.getAll(books);
     notebookTable.getStack(stackBooks, stack);
 
@@ -78,7 +78,7 @@ void FilterEngine::filterStack(QString &stack) {
     sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:type and data=:notebookLid)");
     sql.bindValue(":type", NOTE_NOTEBOOK);
 
-    for (int i=0; i<books.size(); i++) {
+    for (qint32 i=0; i<books.size(); i++) {
         if (!stackBooks.contains(books[i])) {
             Notebook n;
             notebookTable.get(n,books[i]);
@@ -95,19 +95,19 @@ void FilterEngine::filterTags(FilterCriteria *criteria) {
 
     QList<QTreeWidgetItem*> tags = criteria->getTags();
     QList<int> selectedTags;
-    for (int i=0; i<tags.size(); i++) {
+    for (qint32 i=0; i<tags.size(); i++) {
         selectedTags.push_back(tags[i]->data(0,Qt::UserRole).toInt());
     }
 
     NoteTable noteTable;
     TagTable tagTable;
-    QList<int> goodNotes;
-    for (int i=0; i<selectedTags.size(); i++) {
-        QList<int> notes;
+    QList<qint32> goodNotes;
+    for (qint32 i=0; i<selectedTags.size(); i++) {
+        QList<qint32> notes;
         QString tagGuid;
         tagTable.getGuid(tagGuid, selectedTags[i]);
         noteTable.getNotesWithTag(notes, tagGuid);
-        for (int j=0; j<notes.size(); j++) {
+        for (qint32 j=0; j<notes.size(); j++) {
             if (!goodNotes.contains(notes[j]))
                 goodNotes.append(notes[j]);
         }
@@ -117,7 +117,7 @@ void FilterEngine::filterTags(FilterCriteria *criteria) {
     sql.exec("create temporary table if not exists goodLids (lid integer)");
     sql.exec("delete from goodLids");
     sql.prepare("insert into goodLids (lid) values (:note)");
-    for (int i=0; i<goodNotes.size(); i++) {
+    for (qint32 i=0; i<goodNotes.size(); i++) {
         sql.bindValue(":note", goodNotes[i]);
         sql.exec();
     }
@@ -177,10 +177,10 @@ void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
     // First go through the string and put null characters between
     // the search terms.  This helps parse out the terms later, since
     // some may be in quotes
-    int len = search.length();
+    qint32 len = search.length();
     char nextChar = ' ';
     bool quote = false;
-    for (int i=0; i<len; i++) {
+    for (qint32 i=0; i<len; i++) {
         if (search[i]==nextChar && !quote) {
             search[i] = '\0';
             nextChar = ' ';
@@ -200,8 +200,8 @@ void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
 
     // Now that we have null characters between them, we parse
     // out based upon them rather than spaces.
-    int pos = 0;
-    for (int i=0; i<search.length() && search.length() > 0; i++) {
+    qint32 pos = 0;
+    for (qint32 i=0; i<search.length() && search.length() > 0; i++) {
         if (search[i] == '\0') {
            search = search.remove(0,1);
                 i=-1;
@@ -219,7 +219,7 @@ void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
     }
 
     // Now that we have everything separated, we can remove the unneeded " marks
-    for (int i=0; i<words.length(); i++) {
+    for (qint32 i=0; i<words.length(); i++) {
         words[i].remove("\"");
     }
 }
@@ -232,7 +232,7 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
     QSqlQuery sql, sqlnegative;
     sql.prepare("Delete from filter where lid not in (select lid from SearchIndex where content match :word)");
     sqlnegative.prepare("Delete from filter where lid in (select lid from SearchIndex where content match :word)");
-    for (int i=0; i<list.size(); i++) {
+    for (qint32 i=0; i<list.size(); i++) {
         QString string = list[i];
         string.remove(QChar('"'));
 

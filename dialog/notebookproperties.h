@@ -21,14 +21,14 @@ private:
     QGridLayout queryGrid;
     QStringList existingNotebooks;
     QString originalName;
-    int lid;
+    qint32 lid;
     QCheckBox syncBox;
 
 public:
     explicit NotebookProperties(QWidget *parent = 0);
     QLineEdit	name;
     bool okPressed;
-    void setLid(int lid);
+    void setLid(qint32 lid);
 
 
 signals:

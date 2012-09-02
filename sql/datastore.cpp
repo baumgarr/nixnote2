@@ -3,8 +3,8 @@
 #include <QString>
 #include <QList>
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 #include "configstore.h"
 #include "searchtable.h"
 #include "tagtable.h"
@@ -69,6 +69,7 @@ void DataStore::createTable() {
 }
 
 
-int DataStore::getDirtyNoteGuids(QList<QString> &retVal) {
+qint32 DataStore::getDirtyNoteGuids(QList<QString> &retVal) {
+    retVal = retVal;  /* suppress unused warning */
     return 0;
 }

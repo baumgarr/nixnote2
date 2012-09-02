@@ -1,8 +1,8 @@
 #ifndef SHAREDNOTEBOOKTABLE_H
 #define SHAREDNOTEBOOKTABLE_H
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
+#include <evernote/UserStore.h>
+#include <evernote/NoteStore.h>
 #include "global.h"
 
 #include <iostream>
@@ -36,17 +36,17 @@ private:
 
 public:
     SharedNotebookTable();                  // Constructor
-    int getLid(qlonglong id);               // given a guid, return the lid
+    qint32 getLid(qlonglong id);               // given a guid, return the lid
     void sync(SharedNotebook &sharedNotebook); // Sync a notebook with a new record
-    void sync(int lid, SharedNotebook sharedNotebook); // Sync a notebook with a new record
-    void add(int lid, SharedNotebook &t, bool isDirty); // Add a new record
-    bool get(SharedNotebook &notebook, int lid);           // Get a shared notebook given a lid
-    bool isDirty(int lid);                  // Check if a shared notebook is dirty
-    bool exists(int lid);                   // Does this shared notebook exist?
+    void sync(qint32 lid, SharedNotebook sharedNotebook); // Sync a notebook with a new record
+    void add(qint32 lid, SharedNotebook &t, bool isDirty); // Add a new record
+    bool get(SharedNotebook &notebook, qint32 lid);           // Get a shared notebook given a lid
+    bool isDirty(qint32 lid);                  // Check if a shared notebook is dirty
+    bool exists(qint32 lid);                   // Does this shared notebook exist?
     bool exists(qlonglong id);              // Does this shared notebook exist?
-    int getAll(QList<int> &values);                   // Get all possible shared notebook lids
-    qlonglong getId(int lid);   // Get a shared notebook for a tag given the lid
-    int findById(qlonglong id);  // Find a lid by the id
+    qint32 getAll(QList<qint32> &values);                   // Get all possible shared notebook lids
+    qlonglong getId(qint32 lid);   // Get a shared notebook for a tag given the lid
+    qint32 findById(qlonglong id);  // Find a lid by the id
 };
 
 

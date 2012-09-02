@@ -58,6 +58,7 @@ private:
     NTabWidget *tabWindow;
     NAttributeTree *attributeTree;
     LineEdit *searchText;
+//    JavaMachine *jvm;
     QString saveLastPath;   // Last path viewed in the restore dialog
 
     // Tool & menu bar
@@ -93,6 +94,8 @@ public:
     SyncRunner syncRunner;
     IndexRunner indexRunner;
     void closeEvent(QCloseEvent *);
+    //bool notify(QObject* receiver, QEvent* event);
+
 
 
 public slots:

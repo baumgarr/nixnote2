@@ -76,7 +76,7 @@ void SavedSearchProperties::cancelButtonPressed() {
     close();
 }
 
-void SavedSearchProperties::setLid(int lid) {
+void SavedSearchProperties::setLid(qint32 lid) {
     if (lid > 0) {
         this->lid = lid;
         SavedSearch s;
