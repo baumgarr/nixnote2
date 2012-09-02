@@ -88,7 +88,7 @@ NixNote::~NixNote()
 void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
-    setWindowTitle(tr("Nixnote 2"));
+    setWindowTitle(tr("NixNote 2"));
     setWindowIcon(QIcon(":notebook.png"));
 
     QLOG_TRACE() << "Setting up menu bar";

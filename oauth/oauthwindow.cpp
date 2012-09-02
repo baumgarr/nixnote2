@@ -42,7 +42,7 @@ OAuthWindow::OAuthWindow(QWidget *parent) :
 
 
     // Build the window
-    setWindowTitle(tr("Please Grant Nixnote Access"));
+    setWindowTitle(tr("Please Grant NixNote Access"));
     setWindowIcon(QIcon(":password.png"));
     setLayout(&grid);
     grid.addWidget(&authPage);
