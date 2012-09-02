@@ -51,7 +51,7 @@ void Global::setup(StartupConfig startupConfig) {
 
 // Return the path the program is executing under
 QString Global::getProgramDirPath() {
-    QString path(argv[0]);
+    QString path(QFileInfo(this->argv[0]).absoluteFilePath());
     int i = path.lastIndexOf("/");
     path.chop(path.length()-i);
     return path;
