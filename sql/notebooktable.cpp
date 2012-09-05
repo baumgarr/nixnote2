@@ -167,14 +167,14 @@ void NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
     if (t.__isset.serviceCreated) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTEBOOK_SERVICE_CREATED);
-        query.bindValue(":data", t.serviceCreated);
+        query.bindValue(":data", QVariant::fromValue(t.serviceCreated));
         query.exec();
     }
 
     if (t.__isset.serviceUpdated) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTEBOOK_SERVICE_UPDATED);
-        query.bindValue(":data", t.serviceUpdated);
+        query.bindValue(":data", QVariant::fromValue(t.serviceUpdated));
         query.exec();
     }
 

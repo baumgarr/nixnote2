@@ -20,6 +20,7 @@ core
  
 # moc_* files
 moc_*.*
+qrc_*.*
 
 # autosave files
 *.autosave

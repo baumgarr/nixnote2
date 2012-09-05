@@ -69,7 +69,7 @@ void SharedNotebookTable::add(qint32 l, SharedNotebook &t, bool isDirty){
     if (t.__isset.id) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_ID);
-        query.bindValue(":data", t.id);
+        query.bindValue(":data", QVariant::fromValue(t.id));
         query.exec();
     }
 
@@ -95,7 +95,7 @@ void SharedNotebookTable::add(qint32 l, SharedNotebook &t, bool isDirty){
     if (t.__isset.serviceCreated) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_SERVICE_CREATED);
-        query.bindValue(":data", t.serviceCreated);
+        query.bindValue(":data", QVariant::fromValue(t.serviceCreated));
         query.exec();
     }
     if (t.__isset.shareKey) {

@@ -7,6 +7,7 @@
 #include <QWebView>
 #include <QWebFrame>
 #include <QNetworkReply>
+#include <QSslConfiguration>
 
 #include "global.h"
 
@@ -33,20 +34,19 @@ OAuthWindow::OAuthWindow(QWidget *parent) :
 
     // Create the URLs needed for authentication with Evernote
     temporaryCredUrl = "https://"+global.server + "/oauth?oauth_consumer_key=" +consumerKey + "&oauth_signature=" +
-            consumerSecret + "%26&oauth_signature_method=PLAINTEXT&oauth_timestamp="+QString(time)+
-            "&oauth_nonce="+QString(millis) +"&oauth_callback=nnoauth";
+            consumerSecret + "%26&oauth_signature_method=PLAINTEXT&oauth_timestamp="+QString::number(time)+
+            "&oauth_nonce="+QString::number(millis) +"&oauth_callback=nnoauth";
 
     permanentCredUrl = "https://"+global.server + "/oauth?oauth_consumer_key=" +consumerKey + "&oauth_signature=" +
-            consumerSecret + "%26&oauth_signature_method=PLAINTEXT&oauth_timestamp="+QString(time)+
-            "&oauth_nonce="+QString(millis) +"&oauth_token=";
+            consumerSecret + "%26&oauth_signature_method=PLAINTEXT&oauth_timestamp="+QString::number(time)+
+            "&oauth_nonce="+QString::number(millis) +"&oauth_token=";
 
 
     // Build the window
     setWindowTitle(tr("Please Grant NixNote Access"));
     setWindowIcon(QIcon(":password.png"));
     setLayout(&grid);
-    grid.addWidget(&authPage);
-    connect(&tempPage, SIGNAL(loadFinished(bool)), this, SLOT(temporaryCredentialsReceived(bool)));
+    grid.addWidget(&userLoginPage);
 
     error = false;
     errorMessage = "";
@@ -59,86 +59,133 @@ OAuthWindow::OAuthWindow(QWidget *parent) :
         return;
     }
 
+
+    // Turn on TLS (sometimes it isn't on by default)
+    QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+    config.setProtocol(QSsl::TlsV1);
+    config.setProtocol(QSsl::SslV3);
+    QSslConfiguration::setDefaultConfiguration(config);
+
+    // Since this page loads async, we need flags to be sure we don't load something twice
+    authTokenReceived = false;
+    userLoginPageLoaded = false;
+
+
     // Load the temporary URL to start the authentication procesess.  When
     // finished, this QWebView will contain the URL to start the
     // authentication process.
     QUrl tu(temporaryCredUrl);
-    tempPage.load(tu);
+    connect(&tempAuthPage, SIGNAL(loadFinished(bool)), this, SLOT(tempAuthPageLoaded(bool)));
+    connect(tempAuthPage.page()->networkAccessManager(),SIGNAL(finished(QNetworkReply*)), this, SLOT(tempAuthPageReply(QNetworkReply*)));
+
+    QLOG_DEBUG() << "Temporary URL:" << tu.toString();
+    tempAuthPage.load(tu);
 }
 
 
-void OAuthWindow::temporaryCredentialsReceived(bool rc) {
+void OAuthWindow::tempAuthPageLoaded(bool rc) {
     QLOG_DEBUG() << "Temporary credentials received from Evernote";
     if (!rc) {
         errorMessage = tr("Error receiving temporary credentials");
         error = true;
+        QWebFrame *mainFrame = tempAuthPage.page()->mainFrame();
+        QString contents = mainFrame->toHtml();
+        QLOG_DEBUG() << "Reply contents:" << contents;
         close();
         return;
     }
 
-
-    QWebFrame *mainFrame = tempPage.page()->mainFrame();
+    QWebFrame *mainFrame = tempAuthPage.page()->mainFrame();
     QString contents = mainFrame->toPlainText();
     int index = contents.indexOf("&oauth_token_secret");
     contents = contents.left(index);
     QUrl accessUrl(urlBase+"/OAuth.action?" +contents);
 
-    connect(authPage.page()->networkAccessManager(),SIGNAL(finished(QNetworkReply*)),this,SLOT(replyReceived(QNetworkReply*)));
-
-    authPage.load(accessUrl);
-    grid.addWidget(&authPage);
+    connect(userLoginPage.page()->networkAccessManager(),SIGNAL(finished(QNetworkReply*)),this,SLOT(userLoginReply(QNetworkReply*)));
+    userLoginPage.load(accessUrl);
+    grid.addWidget(&userLoginPage);
 }
 
 
-void OAuthWindow::tokenFound(QString token) {
-    QLOG_DEBUG() << "OAuth Token Found: " +token;
-    if (token.indexOf("auth_verifier") <= 0) {
-        errorMessage = tr("Error receiving authorization");
-        error = true;
-        close();
+void OAuthWindow::tempAuthPageReply(QNetworkReply* reply) {
+    QLOG_DEBUG() << "error: " << reply->error();
+    if (reply->error() != QNetworkReply::NoError) {
+        int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        QLOG_DEBUG() << "status:" << statusCode;
+        QLOG_DEBUG() << "error: " << reply->error();
         return;
     }
-
-    connect(&tokenPage, SIGNAL(loadFinished(bool)), this, SLOT(permanentCredentialsReceived(bool)));
-    QLOG_DEBUG() << "Loading URL";
-    tokenPage.load(QUrl(permanentCredUrl+token));
-    QLOG_DEBUG() << "Leaving oauthwindow::tokenfound";
 }
+
 
 
 void OAuthWindow::permanentCredentialsReceived(bool rc) {
-    QLOG_DEBUG() << "Permanent credentials received received from Evernote";
-    rc=rc; // suppress unused;
-//    if (!rc) {
-//        errorMessage = tr("Error receiving permanent credentials");
-//        error = true;
-//        close();
-//    }
-
+    if (authTokenReceived)
+        return;
     QWebFrame *mainFrame;
-    mainFrame = tokenPage.page()->mainFrame();
+    mainFrame = authRequestPage.page()->mainFrame();
     QString contents = mainFrame->toPlainText();
-    QLOG_DEBUG() << "Response: " << contents;
+    QLOG_DEBUG() << "Permanent Auth Response: " << contents;
+    QLOG_DEBUG() << "Permanent credentials received received from Evernote";
+
+    if (!rc) {
+        errorMessage = tr("Error receiving permanent credentials");
+        QLOG_DEBUG() << "Bad return code while receiveng permanent credentials";
+        error = true;
+        return;
+        close();
+    }
+
     if (contents.startsWith("oauth_token=S%3D")) {
+        authTokenReceived = true;
+        QLOG_DEBUG() << "Good authorization token received.";
         QString decoded;
         QByteArray enc;
         enc.append(contents);
         decoded = QUrl::fromEncoded(enc).toString();
         response = decoded;
+        userLoginPage.disconnect(this);
+        tempAuthPage.disconnect(this);
+        authRequestPage.disconnect(this);
+        error = false;
+        errorMessage = "";
         close();
     }
 }
 
-void OAuthWindow::replyReceived(QNetworkReply *reply) {
+
+
+
+void OAuthWindow::userLoginReply(QNetworkReply *reply) {
+    if (userLoginPageLoaded)
+        return;
     QLOG_DEBUG() << "Authentication reply received from Evernote";
-    QString searchReq = "nnoauth?oauth_token=";
-    QString k = reply->url().toString();
+    QLOG_DEBUG() << "error: " << reply->error();
+    QString searchReq = "?oauth_token=";
+    QLOG_DEBUG() << "Reply:" << reply->url().toString();
+
     int pos = reply->url().toString().indexOf(searchReq);
     if (pos>0) {
         QString token = reply->url().toString();
         token = token.mid(pos+searchReq.length());
-        tokenFound(token);
+        if (token.indexOf("auth_verifier") <= 0) {
+            errorMessage = tr("Error receiving authorization");
+            error = true;
+            //close();
+            return;
+        }
+
+        if (reply->isFinished()) {
+            QLOG_DEBUG() << "Loading URL";
+            connect(&authRequestPage, SIGNAL(loadFinished(bool)), this, SLOT(permanentCredentialsReceived(bool)));
+            authRequestPage.load(QUrl(permanentCredUrl+token));
+            userLoginPageLoaded = true;
+        }
     }
 }
+
+
+
+
 
 
