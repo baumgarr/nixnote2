@@ -4,15 +4,16 @@
 #include <QDialog>
 #include <QWebView>
 #include <QGridLayout>
+#include <QNetworkRequest>
 
 class OAuthWindow : public QDialog
 {
     Q_OBJECT
 private:
     QString iconPath;
-    QWebView tempPage;
-    QWebView authPage;
-    QWebView tokenPage;
+    QWebView tempAuthPage;
+    QWebView userLoginPage;
+    QWebView authRequestPage;
     QGridLayout grid;
     QString consumerKey;
     QString consumerSecret;
@@ -23,7 +24,8 @@ private:
     QString accessTokenUrl;
     QString authorizationUrlBase;
     QString callbackUrl;
-    void tokenFound(QString token);
+    bool authTokenReceived;
+    bool userLoginPageLoaded;
 
 public:
     explicit OAuthWindow(QWidget *parent = 0);
@@ -35,9 +37,10 @@ signals:
     void permanentTokenFound(QString token);
     
 public slots:
-    void temporaryCredentialsReceived(bool rc);
+    void tempAuthPageLoaded(bool rc);
     void permanentCredentialsReceived(bool rc);
-    void replyReceived(QNetworkReply *reply);
+    void userLoginReply(QNetworkReply *reply);
+    void tempAuthPageReply(QNetworkReply *reply);
 
 };
 

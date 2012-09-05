@@ -290,7 +290,7 @@ void NoteTable::add(qint32 l, Note &t, bool isDirty) {
         if (t.attributes.__isset.shareDate) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_SHARE_DATE);
-            query.bindValue(":data",t.attributes.shareDate);
+            query.bindValue(":data",QVariant::fromValue(t.attributes.shareDate));
             query.exec();
         }
         if (t.attributes.__isset.placeName) {
@@ -890,7 +890,7 @@ void NoteTable::updateAuthor(qint32 noteLid, QString author, bool setAsDirty=fal
 void NoteTable::updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty = false) {
     QSqlQuery query;
     query.prepare("Update DataStore set data=:ts where lid=:lid and key=:key;");
-    query.bindValue(":ts", ts);
+    query.bindValue(":ts", QVariant::fromValue(ts));
     query.bindValue(":lid", lid);
     query.bindValue(":key",key);
     query.exec();
@@ -908,7 +908,7 @@ void NoteTable::updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty = 
     if (key == NOTE_ATTRIBUTE_SUBJECT_DATE)
         query.prepare("Update NoteTable set dateSubject=:date where lid=:lid");
 
-    query.bindValue(":date", ts);
+    query.bindValue(":date", QVariant::fromValue(ts));
     query.bindValue(":lid", lid);
     query.exec();
 }
