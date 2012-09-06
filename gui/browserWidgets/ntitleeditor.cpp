@@ -73,12 +73,15 @@ void NTitleEditor::titleChanged(QString text) {
 
     // Now check that the text has actually changed.  We need to do this because
     // we can also get here when focus is lost.
-    if (text.trimmed() != initialTitle.trimmed() || priorTitle.trimmed() != text.trimmed()) {
-        NoteTable noteTable;
-        noteTable.updateTitle(currentLid, text, true);
-        emit(titleChanged());
+    if (!hasFocus()) {
+        if (text.trimmed() != initialTitle.trimmed() || priorTitle.trimmed() != text.trimmed()) {
+            NoteTable noteTable;
+            noteTable.updateTitle(currentLid, text, true);
+            emit(titleChanged());
+            priorTitle = text;
+        }
     }
 
-    priorTitle = text;
+    //priorTitle = text;
 }
 
