@@ -14,5 +14,6 @@
         <file alias="attribute.png">images/attribute.png</file>
         <file alias="up_arrow_small.png">images/up_arrow_small.png</file>
         <file alias="down_arrow_small.png">images/down_arrow_small.png</file>
+        <file alias="windowIcon.png">images/window_icon.png</file>
     </qresource>
 </RCC>

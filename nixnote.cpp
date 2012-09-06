@@ -35,6 +35,8 @@ class SyncRunner;
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+
     QFont f = this->font();
     f.setPointSize(8);
     this->setFont(f);
@@ -89,7 +91,7 @@ void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
     setWindowTitle(tr("NixNote 2"));
-    setWindowIcon(QIcon(":notebook.png"));
+    setWindowIcon(QIcon(":windowIcon.png"));
 
     QLOG_TRACE() << "Setting up menu bar";
     menuBar = new NMainMenuBar(this);
@@ -120,7 +122,7 @@ void NixNote::setupGui() {
 
     this->setupNoteList();
     searchText = new LineEdit();
-    leftPanel->addWidget(searchText);
+    //leftPanel->addWidget(searchText);
     this->setupSynchronizedNotebookTree();
     this->setupTagTree();
     this->setupSearchTree();
@@ -130,7 +132,7 @@ void NixNote::setupGui() {
     leftPanel->vboxLayout->addStretch();
 
     QLOG_TRACE() << "Setting up left panel";
-    leftPanel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Maximum);
+    leftPanel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     leftScroll = new QScrollArea();
     leftScroll->setWidgetResizable(true);
     leftScroll->setWidget(leftPanel);

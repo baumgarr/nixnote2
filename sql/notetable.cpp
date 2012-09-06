@@ -125,7 +125,7 @@ void NoteTable::add(qint32 l, Note &t, bool isDirty) {
     if (t.__isset.title) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_TITLE);
-        query.bindValue(":data", QString::fromStdString(t.title));
+        query.bindValue(":data", QString::fromStdString(t.title.c_str()));
         query.exec();
     }
 

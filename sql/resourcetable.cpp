@@ -393,7 +393,7 @@ void ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_DATA_HASH);
             QByteArray b;
-            b.append(QString::fromStdString(t.data.bodyHash));
+            b.append(t.data.bodyHash.data());
             query.bindValue(":data", b.toHex());
             query.exec();
         }
@@ -401,7 +401,7 @@ void ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
         if (t.data.__isset.body) {
             QByteArray b;
             b.clear();
-            b.append(QString::fromStdString(t.data.body));
+            b.append(t.data.body.data(),t.data.size);
             QString fileExt = QString::fromStdString(t.mime);
             int p = fileExt.indexOf("/")+1;
             fileExt.remove(0,p);
@@ -460,7 +460,9 @@ void ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
         if (t.recognition.__isset.bodyHash) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_RECOGNITION_HASH);
-            query.bindValue(":data", QString::fromStdString(t.recognition.bodyHash));
+            QByteArray b;
+            b.append(t.recognition.bodyHash.data());
+            query.bindValue(":data", b.toHex());
             query.exec();
         }
 
@@ -490,7 +492,9 @@ void ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
         if (t.alternateData.__isset.bodyHash) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_ALTERNATE_HASH);
-            query.bindValue(":data", QString::fromStdString(t.alternateData.bodyHash));
+            QByteArray b;
+            b.append(t.alternateData.bodyHash.data());
+            query.bindValue(":data", b.toHex());
             query.exec();
         }
 
