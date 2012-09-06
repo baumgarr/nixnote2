@@ -156,8 +156,10 @@ bool CommunicationManager::initNoteStore() {
 
     try {
 
+
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
-        sslSocketFactory->loadTrustedCertificates("/home/randy/Dropbox/PCA-3G2.pem");
+        QString pgmDir = global.getProgramDirPath() + "/certs/PCA-3G2.pem";
+        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
         sslSocketFactory->authenticate(true);
 
         sslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
