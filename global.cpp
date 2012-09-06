@@ -39,13 +39,18 @@ Global::~Global() {
 //Initial global settings setup
 void Global::setup(StartupConfig startupConfig) {
     fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath);
+    QString settingsFile = fileManager.getHomeDirPath("") + "nixnote.conf";
+    settings = new QSettings(settingsFile, QSettings::IniFormat);
+
     cryptCounter = 0;
     attachmentNameDelimeter = "------";
     username = "";
     password = "";
     connected = false;
-    //server = "sandbox.evernote.com";
-    server = "www.evernote.com";
+
+    settings->beginGroup("Server");
+    server = settings->value("host", "www.evernote.com").toString();
+    settings->endGroup();
 }
 
 

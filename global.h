@@ -2,6 +2,8 @@
 #define GLOBAL_H
 
 #include <QString>
+#include <QSettings>
+
 #include "logger/qslog.h"
 #include "logger/qslogdest.h"
 #include "settings/filemanager.h"
@@ -63,6 +65,7 @@ public:
     bool confirmDeletes();
     QString tagBehavior();
     QString server;
+    QSettings *settings;
     //JavaMachine jvm;
 
     // Filter criteria.  Used for things like the back & forward buttons

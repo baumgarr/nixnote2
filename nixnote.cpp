@@ -148,14 +148,15 @@ void NixNote::setupGui() {
     attributeTree->resetSize();
     trashTree->resetSize();
 
-    QLOG_TRACE() << "Restoring window state";
     // Restore the window state
-    ConfigStore config;
-    QByteArray value;
-    if (config.getSetting(value, CONFIG_STORE_WINDOW_STATE))
-        restoreState(value);
-    if (config.getSetting(value, CONFIG_STORE_WINDOW_GEOMETRY))
-        restoreGeometry(value);
+    QLOG_TRACE() << "Restoring window state";
+    global.settings->beginGroup("SaveState");
+    restoreState(global.settings->value("WindowState").toByteArray());
+    restoreGeometry(global.settings->value("WindowGeometry").toByteArray());
+    if (global.settings->value("isMaximized", false).toBool())
+        this->setWindowState(Qt::WindowMaximized);
+    global.settings->endGroup();
+
 
     // Setup timers
     QLOG_TRACE() << "Setting up timers";
@@ -320,9 +321,18 @@ void NixNote::setupTabWindow() {
 //* Close the program
 //*****************************************************************************
 void NixNote::closeEvent(QCloseEvent *) {
+    syncRunner.quit();
+    indexRunner.quit();
+
     ConfigStore config;
     config.saveSetting(CONFIG_STORE_WINDOW_STATE, saveState());
     config.saveSetting(CONFIG_STORE_WINDOW_GEOMETRY, saveGeometry());
+
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("WindowState", saveState());
+    global.settings->setValue("WindowGeometry", saveGeometry());
+    global.settings->setValue("isMaximized", isMaximized());
+    global.settings->endGroup();
 }
 
 void NixNote::closeNixNote() {
