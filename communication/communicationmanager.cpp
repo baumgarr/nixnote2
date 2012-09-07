@@ -59,6 +59,14 @@ bool CommunicationManager::getSyncState(string token, SyncState &syncState) {
 }
 
 
+void CommunicationManager::disconnect() {
+    if (userStoreHttpClient != NULL)
+        userStoreHttpClient->close();
+    if (noteStoreHttpClient != NULL)
+        noteStoreHttpClient->close();
+    initComplete=false;
+}
+
 
 bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int start, int chunkSize, bool fullSync) {
     if (token == "")

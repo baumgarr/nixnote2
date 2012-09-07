@@ -53,6 +53,8 @@ void SyncRunner::synchronize() {
     keepRunning = true;
     evernoteSync();
     emit syncComplete();
+    comm.disconnect();
+    global.connected=false;
 }
 
 
@@ -82,8 +84,8 @@ void SyncRunner::evernoteSync() {
         fullSync = true;
 
     // If there are remote changes
-    QLOG_DEBUG() <<  "--->>>  Current Sequence Number: " << syncState.updateCount;
-    QLOG_DEBUG() <<  "--->>> Last Sequence Number: " <<  updateSequenceNumber;
+    QLOG_DEBUG() <<  "--->>>  Current Chunk High Sequence Number: " << syncState.updateCount;
+    QLOG_DEBUG() <<  "--->>>  Last User High Sequence Number: " <<  updateSequenceNumber;
 
     if (syncState.updateCount > updateSequenceNumber) {
         QLOG_DEBUG() <<  "Remote changes found";
@@ -255,6 +257,9 @@ void SyncRunner::syncRemoteNotes(vector<Note> notes) {
             noteTable.sync(t);
             lid = noteTable.getLid(t.guid);
         }
+        // Remove it from the cache (if it exists)
+        if (global.cache.contains(lid))
+            global.cache.remove(lid);
         emit noteUpdated(lid);
     }
 
