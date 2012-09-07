@@ -33,6 +33,7 @@ NTabWidget::NTabWidget()
                  this, SLOT(closeTab(int)));
     connect(&tabBar, SIGNAL(tabMoved(int, int)),
                  this, SLOT(moveTab(int, int)));
+    this->layout()->setMargin(0);
 }
 
 NTabWidget::~NTabWidget() {
