@@ -169,7 +169,7 @@ void NixNote::setupGui() {
     // Setup so we refresh whenever the sync is done.
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria()));
 
-    // connect so we refresh the note list whenever a note has chaneged
+    // connect so we refresh the note list whenever a note has changed
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), noteTableView, SLOT(refreshData()));
 
     // connect so we refresh the tag tree when a new tag is added
