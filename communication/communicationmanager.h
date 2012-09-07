@@ -74,6 +74,7 @@ public:
     bool getSyncState(string authToken, SyncState &syncState);
     bool getSyncChunk(string token, SyncChunk &chunk, int start, int chunkSize, bool fullSync=false);
     string getToken();
+    void disconnect();
 };
 
 #endif // COMMUNICATIONMANAGER_H
