@@ -115,6 +115,7 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
     if (newWindow && !found) {
         view = new NBrowserWindow();
         addBrowser(view, QString::fromStdString(n.title));
+        connect(view, SIGNAL(noteUpdated(qint32)), this, SLOT(noteTitleUpdateSignaled(qint32)));
     } else {
         view = currentBrowser();
         tabBar.setTabText(tabBar.currentIndex(), QString::fromStdString(n.title));
@@ -148,8 +149,19 @@ void NTabWidget::setTitle(int index, QString t) {
 
 void NTabWidget::noteUpdateSignaled(qint32 lid) {
     emit(this->noteUpdated(lid));
+
+    Note n;
+    NoteTable noteTable;
+    noteTable.get(n, lid, false,false);
+    for (int i=0;i<browserList->size(); i++) {
+        if (browserList->at(i)->lid == lid) {
+            setTitle(i, QString::fromStdString(n.title));
+            return;
+        }
+    }
 }
 
 void NTabWidget::tagCreationSignaled(qint32 lid) {
     emit(this->tagCreated(lid));
 }
+
