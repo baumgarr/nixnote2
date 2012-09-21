@@ -1,6 +1,10 @@
+
 #include "communicationmanager.h"
 #include "oauth/oauthtokenizer.h"
 #include "global.h"
+
+#include <execinfo.h>
+#include "evernote/UserStore_constants.h"
 
 extern Global global;
 
@@ -59,14 +63,6 @@ bool CommunicationManager::getSyncState(string token, SyncState &syncState) {
 }
 
 
-void CommunicationManager::disconnect() {
-    if (userStoreHttpClient != NULL)
-        userStoreHttpClient->close();
-    if (noteStoreHttpClient != NULL)
-        noteStoreHttpClient->close();
-    initComplete=false;
-}
-
 
 bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int start, int chunkSize, bool fullSync) {
     if (token == "")
@@ -121,26 +117,20 @@ bool CommunicationManager::initUserStore() {
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
         QString pgmDir = global.getProgramDirPath() + "/certs/PCA-3G2.pem";
         sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-        sslSocketFactory->authenticate(true);
+       // sslSocketFactory->authenticate(true);
 
         sslSocketUserStore = sslSocketFactory->createSocket(evernoteHost, 443);
-
         shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(sslSocketUserStore));
         userStoreHttpClient = shared_ptr<TTransport>(new THttpClient(bufferedTransport, evernoteHost, userStorePath));
 
         userStoreHttpClient->open();
         shared_ptr<TProtocol> iprot(new TBinaryProtocol(userStoreHttpClient));
         userStoreClient = shared_ptr<UserStoreClient>(new UserStoreClient(iprot));
-
-//        authenticationResult = shared_ptr<AuthenticationResult>(new AuthenticationResult());
-
-//        QLOG_DEBUG() << "authenticating";
-//        userStoreClient->authenticate(
-//                    *authenticationResult,
-//                    "<userid>",
-//                    "<password>",
-//                    EDAM_CONSUMER_KEY,
-//                    EDAM_CONSUMER_SECRET);
+        UserStoreConstants version;
+        if (!userStoreClient->checkVersion(clientName, version.EDAM_VERSION_MAJOR, version.EDAM_VERSION_MINOR)) {
+                QLOG_ERROR() << "Incompatible Evernote API version";
+                return false;
+        }
 
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -168,7 +158,7 @@ bool CommunicationManager::initNoteStore() {
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
         QString pgmDir = global.getProgramDirPath() + "/certs/PCA-3G2.pem";
         sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-        sslSocketFactory->authenticate(true);
+        //sslSocketFactory->authenticate(true);
 
         sslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
         shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(sslSocketNoteStore));
@@ -191,9 +181,18 @@ bool CommunicationManager::initNoteStore() {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
         return false;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        QLOG_ERROR() << "\n\nTTransportException:" << e.what() << endl;
         return false;
     }
     QLOG_DEBUG() << "Leaving CommunicationManager::initNoteStore()";
     return true;
+}
+
+
+void CommunicationManager::disconnect() {
+    if (userStoreHttpClient != NULL)
+        userStoreHttpClient->close();
+    if (noteStoreHttpClient != NULL)
+        noteStoreHttpClient->close();
+    initComplete=false;
 }

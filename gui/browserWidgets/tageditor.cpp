@@ -127,6 +127,21 @@ void TagEditor::loadTags() {
 }
 
 
+
+//*******************************************************
+//* Reload the tags after a sync
+//*******************************************************
+void TagEditor::reloadTags() {
+    NoteTable noteTable;
+    Note n;
+    noteTable.get(n, currentLid, false,false);
+    QStringList names;
+    for (int i=0; i<n.tagNames.size(); i++) {
+        names << QString::fromStdString(n.tagNames[i]);
+    }
+    setTags(names);
+}
+
 //*******************************************************
 //* Signal received that a tag name has been changed
 //*******************************************************
@@ -145,12 +160,12 @@ void TagEditor::setTags(QStringList s) {
 
     // First blank out the old tags.
     emptyTags();
+    tagNames.clear();
 
     // Add the new tag to the list & sort
     for (qint32 i =0; i<s.size(); i++)
         tagNames << s[i];
     loadTags();
-
     newTag.setTags(s);
 }
 

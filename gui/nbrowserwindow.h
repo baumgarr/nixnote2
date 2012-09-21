@@ -34,7 +34,7 @@ private:
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
     NWebView editor;
-    void setContent(qint32 lid, QByteArray c);
+    void setContent(qint32 lid);
     NTitleEditor noteTitle;
     NotebookMenuButton notebookMenu;
     ExpandButton expandButton;
@@ -62,6 +62,7 @@ public slots:
     void stackRenamed(QString oldName, QString newName);
     void stackDeleted(QString name);
     void stackAdded(QString name);
+    void noteSyncUpdate(qint32 lid);
 
 private slots:
     void sendUpdateSignal();

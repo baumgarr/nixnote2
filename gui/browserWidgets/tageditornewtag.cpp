@@ -59,6 +59,7 @@ void TagEditorNewTag::loadCompleter() {
         tagTable.getGuid(guid, tagList[i]);
         tagTable.get(t, guid);
         QString name = QString::fromStdString(t.name);
+        QLOG_DEBUG() << "Tag Completer Name:" << name;
         if (!currentTags.contains(name))
             tagNames << name;
     }

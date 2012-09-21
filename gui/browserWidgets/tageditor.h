@@ -42,6 +42,7 @@ public slots:
     void removeTag(QString text);
     void newTagFocusLost(bool focus);
     void newTagTabPressed();
+    void reloadTags();
 
 protected:
     void hideEvent(QHideEvent* event);

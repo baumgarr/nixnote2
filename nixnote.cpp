@@ -295,20 +295,12 @@ void NixNote::setupSynchronizedNotebookTree() {
 //*****************************************************************************
 void NixNote::setupTabWindow() {
     QLOG_TRACE() << "Exiting NixNote.setupTabWindow()";
-    tabWindow = new NTabWidget();
+    tabWindow = new NTabWidget(&syncRunner, notebookTreeView, tagTreeView);
     rightPanelSplitter->addWidget(tabWindow);
     NBrowserWindow *newBrowser = new NBrowserWindow();
-    connect(tagTreeView, SIGNAL(tagRenamed(qint32,QString,QString)), newBrowser, SLOT(tagRenamed(qint32,QString,QString)));
-    connect(tagTreeView, SIGNAL(tagDeleted(qint32, QString)), newBrowser, SLOT(tagDeleted(qint32, QString)));
-    connect(tagTreeView, SIGNAL(tagAdded(qint32)), newBrowser, SLOT(addTagName(qint32)));
-
-    connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), newBrowser, SLOT(notebookRenamed(qint32,QString,QString)));
-    connect(notebookTreeView, SIGNAL(notebookDeleted(qint32, QString)), newBrowser, SLOT(notebookDeleted(qint32, QString)));
-    connect(notebookTreeView, SIGNAL(notebookAdded(qint32)), newBrowser, SLOT(notebookAdded(qint32)));
-
-    connect(notebookTreeView, SIGNAL(stackRenamed(QString,QString)), newBrowser, SLOT(stackRenamed(QString,QString)));
-    connect(notebookTreeView, SIGNAL(stackDeleted(QString)), newBrowser, SLOT(stackDeleted(QString)));
-    connect(notebookTreeView, SIGNAL(stackAdded(QString)), newBrowser, SLOT(stackAdded(QString)));
+    connect(&syncRunner, SIGNAL(syncComplete()), &newBrowser->notebookMenu, SLOT(reloadData()));
+    connect(&syncRunner, SIGNAL(syncComplete()), &newBrowser->tagEditor, SLOT(reloadTags()));
+    connect(&syncRunner, SIGNAL(noteUpdated(qint32)), newBrowser, SLOT(noteSyncUpdate(qint32)));
     tabWindow->addBrowser(newBrowser, "");
     rightPanelSplitter->setStretchFactor(1,10);
 

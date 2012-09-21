@@ -32,14 +32,16 @@ private:
 
 public:
     explicit NotebookMenuButton(QWidget *parent = 0);
-    void loadData();
     void setCurrentNotebook(qint32 lid, Note n);
     void addNotebook(qint32 lid);
-    void reloadData();
 
     
 signals:
     void notebookChanged();
+
+public slots:
+    void loadData();
+    void reloadData();
     
 private slots:
     void notebookSelected();

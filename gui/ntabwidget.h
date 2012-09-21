@@ -2,6 +2,9 @@
 #define NTABWIDGET_H
 
 #include "gui/nbrowserwindow.h"
+#include "gui/ntagview.h"
+#include "gui/nnotebookview.h"
+#include "threads/syncrunner.h"
 
 #include <QTabBar>
 #include <QStackedWidget>
@@ -9,8 +12,14 @@
 class NTabWidget : public QWidget
 {
     Q_OBJECT
+private:
+    void setupConnections(NBrowserWindow *browserWindow);
+    NTagView *tagTreeView;
+    NNotebookView *notebookTreeView;
+    SyncRunner *syncThread;
+
 public:
-    explicit NTabWidget();
+    explicit NTabWidget(SyncRunner *s, NNotebookView *n, NTagView *t);
     ~NTabWidget();
     QTabBar tabBar;
     QVBoxLayout vboxlayout;
@@ -32,8 +41,7 @@ public slots:
     void moveTab(int to, int from);
     void openNote(int lid, bool newWindow);
     void tagCreationSignaled(qint32 lid);
-
-private slots:
+    void noteSyncSignaled(qint32 lid);
     void noteUpdateSignaled(qint32);
 
 };

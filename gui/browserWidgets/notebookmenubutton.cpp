@@ -16,7 +16,7 @@ NotebookMenuButton::NotebookMenuButton(QWidget *parent) :
     loadData();
     QFont f = rootMenu.font();
     f.setBold(false);
-    f.setPointSize(10);
+    f.setPointSize(8);
     rootMenu.setFont(f);
 }
 
@@ -49,6 +49,7 @@ void NotebookMenuButton::setCurrentNotebook(int lid, Note note) {
 
 // Read in all of the data and build the menu.
 void NotebookMenuButton::loadData() {
+    rootMenu.clear();
     NotebookTable notebookTable;
 
     QList<qint32> lids;
