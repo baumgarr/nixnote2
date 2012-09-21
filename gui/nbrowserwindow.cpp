@@ -3,10 +3,14 @@
 #include "sql/notebooktable.h"
 #include "gui/browserWidgets/urleditor.h"
 #include "sql/tagtable.h"
+#include "html/noteformatter.h"
+#include "global.h"
 
 #include <QVBoxLayout>
 #include <QAction>
 #include <QMenu>
+
+extern Global global;
 
 NBrowserWindow::NBrowserWindow(QWidget *parent) :
     QWidget(parent)
@@ -50,16 +54,35 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 }
 
 
-void NBrowserWindow::setContent(qint32 lid, QByteArray c) {
-    NoteTable noteTable;
+void NBrowserWindow::setContent(qint32 lid) {
+
     if (lid == -1)
         return;
+    this->lid = lid;
+
+
+    NoteTable noteTable;
     Note n;
 
-    noteTable.get(n, lid, false, false);
+    noteTable.get(n, this->lid, false, false);
+    QByteArray content;
+
+    if (!global.cache.contains(lid)) {
+        NoteFormatter formatter;
+        formatter.setNote(n, false);
+        content = formatter.rebuildNoteHTML();
+        NoteCache *newCache = new NoteCache();
+        newCache->noteContent = content;
+        global.cache.insert(lid, newCache);
+    } else {
+        NoteCache *c = global.cache[lid];
+        content = c->noteContent;
+    }
+
+
     noteTitle.setTitle(lid, QString::fromStdString(n.title), QString::fromStdString(n.title));
     dateEditor.setNote(lid, n);
-    editor.setContent(c);
+    editor.setContent(content);
 
     // Set the tags
     tagEditor.clear();
@@ -158,4 +181,11 @@ void NBrowserWindow::notebookAdded(qint32 lid) {
     notebookMenu.reloadData();
 }
 
+
+void NBrowserWindow::noteSyncUpdate(qint32 lid) {
+    if (lid != this->lid)
+        return;
+    setContent(lid);
+
+}
 

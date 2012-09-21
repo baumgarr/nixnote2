@@ -38,6 +38,7 @@ SyncRunner::~SyncRunner() {
 
 void SyncRunner::run() {
     QLOG_DEBUG() << "Starting SyncRunner";
+    this->setPriority(QThread::LowPriority);
     exec();
 }
 

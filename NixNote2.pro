@@ -111,6 +111,46 @@ SOURCES += main.cpp\
     oauth/oauthtokenizer.cpp \
     oauth/oauthwindow.cpp \
     communication/communicationmanager.cpp
+#    thrift/TApplicationException.cpp  \
+#    thrift/Thrift.cpp  \
+#    thrift/VirtualProfiling.cpp \
+#    thrift/async/TAsyncChannel.cpp \
+#    thrift/async/TAsyncProtocolProcessor.cpp \
+#    thrift/async/TEvhttpClientChannel.cpp   \
+#    thrift/async/TEvhttpServer.cpp \
+#    thrift/concurrency/BoostMonitor.cpp \
+#    thrift/concurrency/BoostThreadFactory.cpp \
+#    thrift/concurrency/Mutex.cpp \
+#    thrift/concurrency/ThreadManager.cpp \
+#    thrift/concurrency/Util.cpp \
+#    thrift/concurrency/BoostMutex.cpp \
+#    thrift/concurrency/Monitor.cpp \
+#    thrift/concurrency/PosixThreadFactory.cpp \
+#    thrift/concurrency/TimerManager.cpp \
+#    thrift/processor/PeekProcessor.cpp \
+#    thrift/protocol/TBase64Utils.cpp   \
+#    thrift/protocol/TDebugProtocol.cpp \
+#    thrift/protocol/TDenseProtocol.cpp \
+#    thrift/protocol/TJSONProtocol.cpp \
+#    thrift/protocol/TBinaryProtocol.tcc  \
+#    thrift/protocol/TCompactProtocol.tcc \
+#    thrift/protocol/TBufferTransports.cpp \
+#    thrift/protocol/THttpServer.cpp  \
+#    thrift/protocol/TSocket.cpp \
+#    thrift/protocol/TTransportException.cpp \
+#    thrift/protocol/TFDTransport.cpp \
+#    thrift/protocol/THttpTransport.cpp \
+#    thrift/protocol/TSocketPool.cpp \
+#    thrift/protocol/TTransportUtils.cpp \
+#    thrift/protocol/TFileTransport.cpp \
+#    thrift/protocol/TServerSocket.cpp  \
+#    thrift/protocol/TSSLServerSocket.cpp \
+#    thrift/protocol/TZlibTransport.cpp \
+#    thrift/protocol/THttpClient.cpp \
+#    thrift/protocol/TSimpleFileTransport.cpp \
+#    thrift/protocol/TSSLSocket.cpp
+
+
 
 HEADERS  += nixnote.h \
     global.h \
@@ -198,9 +238,63 @@ HEADERS  += nixnote.h \
     oauth/oauthtokenizer.h \
     oauth/oauthwindow.h \
     communication/communicationmanager.h
+#    thrift/TApplicationException.h  \
+#    thrift/Thrift.h \
+#    thrift/TLogging.h  \
+#    thrift/TProcessor.h \
+#    thrift/TReflectionLocal.h \
+#    thrift/async/TAsyncBufferProcessor.h \
+#    thrift/async/TAsyncChannel.h \
+#    thrift/async/TAsyncProcessor.h \
+#    thrift/async/TAsyncProtocolProcessor.h \
+#    thrift/async/TEvhttpClientChannel.h \
+#    thrift/async/TEvhttpServer.h \
+#    thrift/concurrency/BoostThreadFactory.h \
+#    thrift/concurrency/Monitor.h \
+#    thrift/concurrency/PosixThreadFactory.h \
+#    thrift/concurrency/TimerManager.h \
+#    thrift/concurrency/Exception.h \
+#    thrift/concurrency/Mutex.h \
+#    thrift/concurrency/Thread.h \
+#    thrift/concurrency/Util.h \
+#    thrift/concurrency/FunctionRunner.h \
+#    thrift/concurrency/PlatformThreadFactory.h \
+#    thrift/concurrency/ThreadManager.h \
+#    thrift/processor/PeekProcessor.h  \
+#    thrift/processor/StatsProcessor.h \
+#    thrift/protocol/TBase64Utils.h     \
+#    thrift/protocol/TCompactProtocol.h  \
+#    thrift/protocol/TDenseProtocol.h  \
+#    thrift/protocol/TProtocolException.h \
+#    thrift/protocol/TProtocolTap.h \
+#    thrift/protocol/TBinaryProtocol.h \
+#    thrift/protocol/TDebugProtocol.h \
+#    thrift/protocol/TJSONProtocol.h \
+#    thrift/protocol/TProtocol.h \
+#    thrift/protocol/TVirtualProtocol.h \
+#    thrift/transport/TBufferTransports.h \
+#    thrift/transport/THttpTransport.h \
+#    thrift/transport/TSocket.h \
+#    thrift/transport/TTransport.h \
+#    thrift/transport/TFDTransport.h \
+#    thrift/transport/TServerSocket.h \
+#    thrift/transport/TSocketPool.h \
+#    thrift/transport/TTransportUtils.h \
+#    thrift/transport/TFileTransport.h \
+#    thrift/transport/TServerTransport.h \
+#    thrift/transport/TSSLServerSocket.h \
+#    thrift/transport/TVirtualTransport.h \
+#    thrift/transport/THttpClient.h \
+#    thrift/transport/TShortReadTransport.h \
+#    thrift/transport/TSSLSocket.h \
+#    thrift/transport/TZlibTransport.h \
+#    thrift/transport/THttpServer.h \
+#    thrift/transport/TSimpleFileTransport.h \
+#    thrift/transport/TTransportException.h
 
 
-LIBS += -L./lib -lthrift -lpthread
+#LIBS += -L./lib -lthrift -lpthread
+LIBS += -lthrift -lpthread
 INCLUDEPATH += /usr/local/include/thrift \
 
 #LIBS +=  -L/usr/lib/jvm/java-6-openjdk/jre/lib/i386/server -ljvm -lpthread -lthrift
