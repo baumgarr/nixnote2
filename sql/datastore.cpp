@@ -8,6 +8,7 @@
 #include "configstore.h"
 #include "searchtable.h"
 #include "tagtable.h"
+#include "notebooktable.h"
 
 
 #define GUID 1;
@@ -65,7 +66,13 @@ void DataStore::createTable() {
         QLOG_ERROR() << "Creation of SearchIndex table failed: " << sql.lastError();
     }
 
-
+    Notebook notebook;
+    NotebookTable table;
+    notebook.name = "My Notebook";
+    notebook.defaultNotebook = true;
+    notebook.__isset.name = true;
+    notebook.__isset.defaultNotebook = true;
+    table.add(0,notebook,true,false);
 }
 
 

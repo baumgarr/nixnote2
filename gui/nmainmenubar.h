@@ -10,11 +10,7 @@ class NMainMenuBar : public QMenuBar
     Q_OBJECT
 private:
     NixNote *parent;
-    QMenu *fileMenu;
-    QMenu *editMenu;
-    QMenu *viewMenu;
-    QMenu *toolsMenu;
-    QMenu *helpMenu;
+
 
     void setupFileMenu();
     void setupEditMenu();
@@ -24,10 +20,19 @@ private:
     void setupShortcut(QAction *action, QString key);
 
 public:
+    QMenu *fileMenu;
+    QMenu *editMenu;
+    QMenu *viewMenu;
+    QMenu *toolsMenu;
+    QMenu *helpMenu;
     QAction *exitAction;
+
     QAction *synchronizeAction;
     QAction *disconnectAction;
     QAction *restoreDatabaseAction;
+    QAction *viewSourceAction;
+    QAction *accountDialogAction;
+    QAction *aboutAction;
 
     explicit NMainMenuBar(NixNote *parent = 0);
 

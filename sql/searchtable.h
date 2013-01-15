@@ -54,6 +54,8 @@ public:
     bool update(qint32 lid, SavedSearch &s, bool isDirty);   // Update an existing saved search
     void deleteSearch(qint32 lid);
     void expunge(qint32 lid);
+    void expunge(QString guid);
+    void expunge(string guid);
     void setDirty(qint32 lid, bool dirty);
     bool isDeleted(qint32 lid);
 };

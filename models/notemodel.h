@@ -13,6 +13,7 @@ public:
     int columnCount(const QModelIndex &parent) const;
     void createTable();
     Qt::ItemFlags flags(const QModelIndex &index) const;
+    QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
 
 signals:
 

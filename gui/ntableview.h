@@ -31,6 +31,7 @@ public:
     void mouseReleaseEvent(QMouseEvent *event);
     void getSelectedLids(bool newWindow);
     void refreshSelection();
+    void keyPressEvent(QKeyEvent *event);
 
 signals:
     void openNote(bool newWindow);

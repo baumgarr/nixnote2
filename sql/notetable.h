@@ -69,7 +69,7 @@ public:
     void updateGuid(qint32 lid, Guid &guid);    // Update a note's guid
     void sync(Note &note);                    // Sync a note with a new record
     void sync(qint32 lid, Note &note);           // Sync a note with a new record
-    void add(qint32 lid, Note &t, bool isDirty); // Add a new note
+    qint32 add(qint32 lid, Note &t, bool isDirty); // Add a new note
     bool get(Note &note, qint32 lid, bool loadResources, bool loadResourceRecognition);           // Get a note given a lid
     bool get(Note &note, QString guid, bool loadResources, bool loadResourceRecognition);      // get a note given a guid
     bool get(Note &note, string guid,bool loadResources, bool loadResourceRecognition);       // get a note given a guid
@@ -102,6 +102,8 @@ public:
     void rebuildNoteListTags(qint32 lid);   // Update the note's tags in the display table
     void deleteNote(qint32 lid, bool isDirty);           // mark a note for deletion
     void expunge(qint32 lid);              // expunge a note permanently
+    void expunge(QString guid);            // expunge a note permanently
+    void expunge(string guid);             // expunge a note permanently
     qint32 findNotesByNotebook(QList<qint32> &notes, QString guid);
     qint32 findNotesByNotebook(QList<qint32> &notes, string guid);
     void updateNoteContent(qint32 lid, QString content);

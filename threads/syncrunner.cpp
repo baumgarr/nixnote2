@@ -10,6 +10,7 @@
 #include "sql/searchtable.h"
 #include "sql/notebooktable.h"
 #include "sql/notetable.h"
+#include "sql/resourcetable.h"
 #include "html/thumbnailer.h"
 #include "nixnote.h"
 #include "communication/communicationmanager.h"
@@ -37,9 +38,10 @@ SyncRunner::~SyncRunner() {
 
 
 void SyncRunner::run() {
-    QLOG_DEBUG() << "Starting SyncRunner";
+    QLOG_DEBUG() << "SyncRunner starting";
     this->setPriority(QThread::LowPriority);
     exec();
+    QLOG_DEBUG() << "Syncrunner exiting.";
 }
 
 void SyncRunner::synchronize() {
@@ -84,6 +86,7 @@ void SyncRunner::evernoteSync() {
     if (updateSequenceNumber == 0)
         fullSync = true;
 
+    emit setMessage(tr("Beginning Sync"));
     // If there are remote changes
     QLOG_DEBUG() <<  "--->>>  Current Chunk High Sequence Number: " << syncState.updateCount;
     QLOG_DEBUG() <<  "--->>>  Last User High Sequence Number: " <<  updateSequenceNumber;
@@ -91,10 +94,18 @@ void SyncRunner::evernoteSync() {
     if (syncState.updateCount > updateSequenceNumber) {
         QLOG_DEBUG() <<  "Remote changes found";
         QLOG_DEBUG() << "Downloading changes";
+        emit setMessage(tr("Downloading changes"));
         syncRemoteToLocal(syncState.updateCount);
     }
 
     updateNoteTableTags();
+    User user;
+    comm.getUserInfo(user);
+    userTable.updateUser(user);
+    comm.getSyncState("", syncState);
+    userTable.updateSyncState(syncState);
+
+    emit setMessage(tr("Sync Complete"));
     QLOG_TRACE() << "Leaving SyncRunner::evernoteSync()";
 }
 
@@ -118,25 +129,30 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             return;
         }
         QLOG_DEBUG() << "------>>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
+        int pct = (updateSequenceNumber*100/chunk.chunkHighUSN);
+        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete."));
 
-        if (chunk.tags.size() > 0) {
+        if (chunk.expungedNotes.size() > 0)
+            syncRemoteExpungedNotes(chunk.expungedNotes);
+        if (chunk.expungedTags.size() > 0)
+            syncRemoteExpungedTags(chunk.expungedTags);
+        if (chunk.expungedNotebooks.size() > 0)
+            syncRemoteExpungedNotebooks(chunk.expungedNotebooks);
+        if (chunk.expungedSearches.size() > 0)
+            syncRemoteExpungedSavedSearches(chunk.expungedSearches);
+        if (chunk.tags.size() > 0)
             syncRemoteTags(chunk.tags);
-        }
-        if (chunk.notebooks.size() > 0) {
+        if (chunk.notebooks.size() > 0)
             syncRemoteNotebooks(chunk.notebooks);
-        }
-        if (chunk.searches.size() > 0) {
+        if (chunk.searches.size() > 0)
             syncRemoteSearches(chunk.searches);
-        }
-        if (chunk.notes.size() > 0) {
-            QLOG_DEBUG() << "Syncing note chunk.";
+        if (chunk.notes.size() > 0)
             syncRemoteNotes(chunk.notes);
-            QLOG_DEBUG() << "Note chunk synchronized.";
-        }
+        if (chunk.resources.size() > 0)
+            syncRemoteResources(chunk.resources);
 
-        if (chunk.chunkHighUSN >= updateCount) {
+        if (chunk.chunkHighUSN >= updateCount)
             more = false;
-        }
         updateSequenceNumber = chunk.chunkHighUSN;
         UserTable userTable;
         userTable.updateLastSyncNumber(updateSequenceNumber);
@@ -152,6 +168,54 @@ bool SyncRunner::enConnect() {
     return comm.connect();
 }
 
+// Expunge deleted notes from the local database
+void SyncRunner::syncRemoteExpungedNotes(vector<string> guids) {
+    QLOG_TRACE() << "Entering SyncRunner::syncRemoteExpungedNotes";
+    NoteTable noteTable;
+    for (unsigned int i=0; i<guids.size(); i++) {
+        noteTable.expunge(guids[i]);
+    }
+    QLOG_TRACE() << "Leaving SyncRunner::syncRemoteExpungedNotes";
+}
+
+
+// Expunge deleted notebooks from the local database
+void SyncRunner::syncRemoteExpungedNotebooks(vector<string> guids) {
+    QLOG_TRACE() << "Entering SyncRunner::syncRemoteExpungedNotebooks";
+    NotebookTable notebookTable;
+    for (unsigned int i=0; i<guids.size(); i++) {
+        int lid = notebookTable.getLid(guids[i]);
+        notebookTable.expunge(guids[i]);
+        emit notebookExpunged(lid);
+    }
+    QLOG_TRACE() << "Leaving SyncRunner::syncRemoteExpungedNotebooks";
+}
+
+
+// Expunge deleted tags from the local database
+void SyncRunner::syncRemoteExpungedTags(vector<string> guids) {
+    QLOG_TRACE() << "Entering SyncRunner::syncRemoteExpungedTags";
+    TagTable tagTable;
+    for (unsigned int i=0; i<guids.size(); i++) {
+        int lid = tagTable.getLid(guids[i]);
+        tagTable.expunge(guids[i]);
+        emit tagExpunged(lid);
+    }
+    QLOG_TRACE() << "Leaving SyncRunner::syncRemoteExpungedTags";
+}
+
+
+// Expunge deleted tags from the local database
+void SyncRunner::syncRemoteExpungedSavedSearches(vector<string> guids) {
+    QLOG_TRACE() << "Entering SyncRunner::syncRemoteExpungedSavedSearches";
+    SearchTable searchTable;
+    for (unsigned int i=0; i<guids.size(); i++) {
+        int lid = searchTable.getLid(guids[i]);
+        searchTable.expunge(guids[i]);
+        emit searchExpunged(lid);
+    }
+    QLOG_TRACE() << "Leaving SyncRunner::syncRemoteExpungedSavedSearches";
+}
 
 // Synchronize remote tags with the current database
 // If there is a conflict, the remote wins
@@ -265,6 +329,24 @@ void SyncRunner::syncRemoteNotes(vector<Note> notes) {
     }
 
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteNotes";
+}
+
+
+
+// Synchronize remote resources with the current database
+void SyncRunner::syncRemoteResources(vector<Resource> resources) {
+    QLOG_TRACE() << "Entering SyncRunner::syncRemoteResources";
+    ResourceTable resTable;
+
+    for (unsigned int i=0; i<resources.size(); i++) {
+        Resource r = resources[i];
+        qint32 lid = resTable.getLid(r.noteGuid, r.guid);
+        if (lid > 0)
+            resTable.sync(lid, r);
+        else
+            resTable.sync(r);
+    }
+    QLOG_TRACE() << "Leaving SyncRunner::syncRemoteResources";
 }
 
 

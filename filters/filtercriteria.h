@@ -46,41 +46,49 @@ public:
     QTreeWidgetItem* getNotebook();
     void setNotebook(QTreeWidgetItem &item);
     bool isNotebookSet();
+    void unsetNotebook();
     bool resetNotebook;
 
     QList<QTreeWidgetItem*> getTags();
     void setTags(QList<QTreeWidgetItem*> &items);
     bool isTagsSet();
+    void unsetTags();
     bool resetTags;
 
     NSearchViewItem* getSavedSearch();
     void setSavedSearch(NSearchViewItem &item);
     bool isSavedSearchSet();
+    void unsetSavedSearch();
     bool resetSavedSearch;
 
     QTreeWidgetItem* getAttribute();
     void setAttribute(QTreeWidgetItem &item);
     bool isAttributeSet();
+    void unsetAttribute();
     bool resetAttribute;
 
     bool getDeletedOnly();
     void setDeletedOnly(bool value);
     bool isDeletedOnlySet();
+    void unsetDeletedOnly();
     bool resetDeletedOnly;
 
     qint32 getContent();
     void setContent(qint32 content);
     bool isContentSet();
+    void unsetContent();
     bool resetContent;
 
     void getSelectedNotes(QList<qint32> &items);
     void setSelectedNotes(QList<qint32> &items);
     bool isSelectedNotesSet();
+    void unsetSelectedNotes();
     bool resetSelectedNotes;
 
     QString getSearchString();
     void setSearchString(QString string);
     bool isSearchStringSet();
+    void unsetSearchString();
     bool resetSearchString;
 
     void duplicate(FilterCriteria &criteria);

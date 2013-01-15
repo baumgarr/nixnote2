@@ -1,0 +1,124 @@
+DEBUG 2012-09-12 13:40:48.678 ( main.cpp @ 36 ) Saving command line parameters 
+ INFO 2012-09-12 13:40:48.684 Built with Qt 4.8.1 running on 4.8.1 
+DEBUG 2012-09-12 13:40:48.684 ( main.cpp @ 42 ) Program starting 
+DEBUG 2012-09-12 13:40:48.684 ( main.cpp @ 48 ) Running global setup 
+DEBUG 2012-09-12 13:40:48.687 ( sql/databaseconnection.cpp @ 14 ) SQL drivers available:  ("QSQLITE") 
+TRACE 2012-09-12 13:40:48.687 ( sql/databaseconnection.cpp @ 15 ) Adding database SQLITE 
+TRACE 2012-09-12 13:40:48.692 ( sql/databaseconnection.cpp @ 17 ) Setting DB name 
+TRACE 2012-09-12 13:40:48.692 ( sql/databaseconnection.cpp @ 19 ) Opening database 
+TRACE 2012-09-12 13:40:48.693 ( sql/databaseconnection.cpp @ 22 ) Preparing tables 
+TRACE 2012-09-12 13:40:48.702 ( sql/databaseconnection.cpp @ 30 ) Creating filter table 
+TRACE 2012-09-12 13:40:48.803 ( sql/databaseconnection.cpp @ 33 ) Adding to filter table 
+TRACE 2012-09-12 13:40:48.814 ( sql/databaseconnection.cpp @ 35 ) Addition complete 
+TRACE 2012-09-12 13:40:48.814 ( nixnote.cpp @ 45 ) Setting up global settings 
+TRACE 2012-09-12 13:40:48.814 ( nixnote.cpp @ 49 ) Setting up sync thread 
+TRACE 2012-09-12 13:40:48.814 ( nixnote.cpp @ 55 ) Setting up GUI 
+TRACE 2012-09-12 13:40:48.815 ( nixnote.cpp @ 96 ) Setting up menu bar 
+DEBUG 2012-09-12 13:40:48.816 ( threads/syncrunner.cpp @ 40 ) Starting SyncRunner 
+TRACE 2012-09-12 13:40:48.972 ( nixnote.cpp @ 100 ) Setting up tool bar 
+TRACE 2012-09-12 13:40:48.975 ( nixnote.cpp @ 115 ) Adding main splitter 
+TRACE 2012-09-12 13:40:48.976 ( nixnote.cpp @ 199 ) Starting NixNote.setupNoteList() 
+TRACE 2012-09-12 13:40:48.996 ( gui/ntableview.cpp @ 23 ) Entering NTableView constructor 
+TRACE 2012-09-12 13:40:48.998 ( gui/ntableview.cpp @ 29 ) Setting up edit triggers 
+TRACE 2012-09-12 13:40:48.999 ( gui/ntableview.cpp @ 33 ) Setting up fort metrics 
+TRACE 2012-09-12 13:40:48.999 ( gui/ntableview.cpp @ 36 ) Initializing proxy 
+TRACE 2012-09-12 13:40:49.000 ( filters/notesortfilterproxymodel.cpp @ 7 ) Entering NoteSortFilterProxyModel constructor 
+TRACE 2012-09-12 13:40:49.001 ( filters/notesortfilterproxymodel.cpp @ 9 ) Exiting NoteSortFilterProxyModel constructor 
+TRACE 2012-09-12 13:40:49.001 ( gui/ntableview.cpp @ 111 ) Getting valid lids in filter 
+DEBUG 2012-09-12 13:40:49.002 ( gui/ntableview.cpp @ 118 ) Valid LIDs retrieved.  Refreshing selection 
+TRACE 2012-09-12 13:40:49.005 ( gui/ntableview.cpp @ 137 ) Highlighting selected rows after refresh 
+TRACE 2012-09-12 13:40:49.005 ( gui/ntableview.cpp @ 150 ) Highlighting complete 
+TRACE 2012-09-12 13:40:49.006 ( gui/ntableview.cpp @ 153 ) Selecting one item if nothing else is selected 
+DEBUG 2012-09-12 13:40:49.006 ( gui/ntableview.cpp @ 161 )  Selecting row  71 lid:  236 
+TRACE 2012-09-12 13:40:49.007 ( gui/ntableview.cpp @ 172 ) refleshSelection() complete 
+TRACE 2012-09-12 13:40:49.021 ( gui/ntableview.cpp @ 45 ) Setting up table deligates 
+TRACE 2012-09-12 13:40:49.022 ( gui/ntableview.cpp @ 58 ) Setting up column headers 
+TRACE 2012-09-12 13:40:49.023 ( gui/ntableview.cpp @ 89 ) Exiting NTableView constructor 
+TRACE 2012-09-12 13:40:49.024 ( nixnote.cpp @ 203 ) Leaving NixNote.setupNoteList() 
+TRACE 2012-09-12 13:40:49.027 ( nixnote.cpp @ 278 ) Exiting NixNote.setupSynchronizedNotebookTree() 
+TRACE 2012-09-12 13:40:49.037 ( nixnote.cpp @ 288 ) Exiting NixNote.setupSynchronizedNotebookTree() 
+TRACE 2012-09-12 13:40:49.038 ( nixnote.cpp @ 229 ) Starting NixNote.setupTagTree() 
+TRACE 2012-09-12 13:40:49.052 ( nixnote.cpp @ 238 ) Exiting NixNote.setupTagTree() 
+TRACE 2012-09-12 13:40:49.053 ( nixnote.cpp @ 213 ) Starting NixNote.setupSearchTree() 
+TRACE 2012-09-12 13:40:49.057 ( nixnote.cpp @ 221 ) Exiting NixNote.setupSearchTree() 
+TRACE 2012-09-12 13:40:49.058 ( nixnote.cpp @ 247 ) Starting NixNote.setupAttributeTree() 
+TRACE 2012-09-12 13:40:49.061 ( nixnote.cpp @ 254 ) Exiting NixNote.setupAttributeTree() 
+TRACE 2012-09-12 13:40:49.062 ( nixnote.cpp @ 262 ) Starting NixNote.setupTrashTree() 
+TRACE 2012-09-12 13:40:49.064 ( nixnote.cpp @ 269 ) Exiting NixNote.setupTrashTree() 
+TRACE 2012-09-12 13:40:49.065 ( nixnote.cpp @ 297 ) Exiting NixNote.setupTabWindow() 
+TRACE 2012-09-12 13:40:49.241 ( nixnote.cpp @ 305 ) Exiting NixNote.setupTabWindow() 
+TRACE 2012-09-12 13:40:49.242 ( nixnote.cpp @ 134 ) Setting up left panel 
+TRACE 2012-09-12 13:40:49.248 ( nixnote.cpp @ 147 ) Resetting left side widgets 
+TRACE 2012-09-12 13:40:49.250 ( nixnote.cpp @ 154 ) Restoring window state 
+TRACE 2012-09-12 13:40:49.252 ( nixnote.cpp @ 164 ) Setting up timers 
+TRACE 2012-09-12 13:40:49.253 ( nixnote.cpp @ 168 ) Setting up more connections for tab windows & threads 
+TRACE 2012-09-12 13:40:49.254 ( nixnote.cpp @ 441 ) starting NixNote.updateSelectionCriteria() 
+DEBUG 2012-09-12 13:40:49.255 ( html/noteformatter.cpp @ 71 ) Rebuilding Note:  "c7229987-66c1-4830-8771-93053e40a467"  :  "Hello World Today" 
+TRACE 2012-09-12 13:40:49.255 ( html/noteformatter.cpp @ 133 ) Entering NeverNote.modifyTags 
+TRACE 2012-09-12 13:40:49.256 ( html/noteformatter.cpp @ 205 ) Leaving NeverNote.modifyTags 
+DEBUG 2012-09-12 13:40:49.257 ( html/noteformatter.cpp @ 122 ) "<head><meta http-equiv="content-type" content="text-html; charset=utf-8"></head><style> img { height:auto; width:auto; max-height:auto; max-width:100%; }</style><style type="text/css">en-hilight { background-color: rgb(255,255,0) }</style><style type="text/css">.en-crypt-temp { border-collapse:collapse; border-style:solid; border-color:blue; padding:0.0mm 0.0mm 0.0mm 0.0mm; }</style><html><body>
+   <div>Hello World Today</div>
+</body>
+</html>" 
+DEBUG 2012-09-12 13:40:49.289 ( filters/filterengine.cpp @ 22 ) Purging filters 
+DEBUG 2012-09-12 13:40:49.312 ( filters/filterengine.cpp @ 24 ) Resetting filter table 
+DEBUG 2012-09-12 13:40:49.353 ( filters/filterengine.cpp @ 26 ) Reset complete 
+DEBUG 2012-09-12 13:40:49.353 ( filters/filterengine.cpp @ 29 ) Filtering notebooks 
+DEBUG 2012-09-12 13:40:49.353 ( filters/filterengine.cpp @ 31 ) Filtering tags 
+DEBUG 2012-09-12 13:40:49.354 ( filters/filterengine.cpp @ 33 ) Filtering trash 
+DEBUG 2012-09-12 13:40:49.386 ( filters/filterengine.cpp @ 35 ) Filtering search string 
+DEBUG 2012-09-12 13:40:49.386 ( filters/filterengine.cpp @ 37 ) Filtering complete 
+TRACE 2012-09-12 13:40:49.386 ( nixnote.cpp @ 460 ) Refreshing data 
+TRACE 2012-09-12 13:40:49.386 ( gui/ntableview.cpp @ 111 ) Getting valid lids in filter 
+DEBUG 2012-09-12 13:40:49.386 ( gui/ntableview.cpp @ 118 ) Valid LIDs retrieved.  Refreshing selection 
+TRACE 2012-09-12 13:40:49.388 ( gui/ntableview.cpp @ 137 ) Highlighting selected rows after refresh 
+TRACE 2012-09-12 13:40:49.388 ( gui/ntableview.cpp @ 150 ) Highlighting complete 
+TRACE 2012-09-12 13:40:49.388 ( gui/ntableview.cpp @ 153 ) Selecting one item if nothing else is selected 
+DEBUG 2012-09-12 13:40:49.388 ( gui/ntableview.cpp @ 161 )  Selecting row  70 lid:  14 
+DEBUG 2012-09-12 13:40:49.389 ( html/noteformatter.cpp @ 71 ) Rebuilding Note:  "4b365a53-2183-496a-90f9-298d31b15b9c"  :  "New Tab T2" 
+TRACE 2012-09-12 13:40:49.389 ( html/noteformatter.cpp @ 133 ) Entering NeverNote.modifyTags 
+TRACE 2012-09-12 13:40:49.389 ( html/noteformatter.cpp @ 358 ) Entering NeverNote.modifyApplicationTags 
+QPainter::font: Painter not active
+TRACE 2012-09-12 13:40:49.460 ( html/noteformatter.cpp @ 420 ) Leaving NeverNote.modifyApplicationTags 
+TRACE 2012-09-12 13:40:49.460 ( html/noteformatter.cpp @ 205 ) Leaving NeverNote.modifyTags 
+DEBUG 2012-09-12 13:40:49.460 ( html/noteformatter.cpp @ 122 ) "<head><meta http-equiv="content-type" content="text-html; charset=utf-8"></head><style> img { height:auto; width:auto; max-height:auto; max-width:100%; }</style><style type="text/css">en-hilight { background-color: rgb(255,255,0) }</style><style type="text/css">.en-crypt-temp { border-collapse:collapse; border-style:solid; border-color:blue; padding:0.0mm 0.0mm 0.0mm 0.0mm; }</style><html><body>
+   <a en-tag="en-media" lid="16" title="nnres://645adaf1-295a-457d-9e45-894b8293afd3------evernote-api.pdf" type="application/pdf" href="nnres://645adaf1-295a-457d-9e45-894b8293afd3------evernote-api.pdf" border="0" align="left" hash="a289d5761ead609d8c78197a24c14d9a" onContextMenu="window.jambi.resourceContextMenu('/home/randy/.nixnote/tmp/------evernote-api.pdf');">
+      <img title="evernote-api.pdf" src="file:////home/randy/.nixnote/tmp/16_icon.png"/>
+   </a>abc<br/>
+   <br/>Local<br/>
+</body>
+</html>" 
+TRACE 2012-09-12 13:40:49.506 ( gui/ntableview.cpp @ 172 ) refleshSelection() complete 
+TRACE 2012-09-12 13:40:49.506 ( nixnote.cpp @ 58 ) Connecting signals 
+DEBUG 2012-09-12 13:40:52.530 ( threads/syncrunner.cpp @ 46 ) Starting SyncRunner.synchronize() 
+DEBUG 2012-09-12 13:40:52.535 ( communication/communicationmanager.cpp @ 126 ) Default cert path:  /usr/lib/ssl/certs 
+DEBUG 2012-09-12 13:40:52.535 ( communication/communicationmanager.cpp @ 129 ) Inside CommunicationManager::initUserStore() 
+ERROR 2012-09-12 13:40:52.850 TTransportException: SSL_connect: certificate verify failed 
+
+ERROR 2012-09-12 13:40:52.854 Error initializing socket connections 
+TRACE 2012-09-12 13:40:52.855 ( gui/ntableview.cpp @ 111 ) Getting valid lids in filter 
+DEBUG 2012-09-12 13:40:52.857 ( gui/ntableview.cpp @ 118 ) Valid LIDs retrieved.  Refreshing selection 
+TRACE 2012-09-12 13:40:52.861 ( gui/ntableview.cpp @ 137 ) Highlighting selected rows after refresh 
+TRACE 2012-09-12 13:40:52.862 ( gui/ntableview.cpp @ 150 ) Highlighting complete 
+TRACE 2012-09-12 13:40:52.862 ( gui/ntableview.cpp @ 153 ) Selecting one item if nothing else is selected 
+DEBUG 2012-09-12 13:40:52.868 ( gui/ntableview.cpp @ 161 )  Selecting row  70 lid:  14 
+TRACE 2012-09-12 13:40:52.890 ( gui/ntableview.cpp @ 172 ) refleshSelection() complete 
+TRACE 2012-09-12 13:40:52.891 ( nixnote.cpp @ 441 ) starting NixNote.updateSelectionCriteria() 
+DEBUG 2012-09-12 13:40:52.893 ( filters/filterengine.cpp @ 22 ) Purging filters 
+DEBUG 2012-09-12 13:40:52.917 ( filters/filterengine.cpp @ 24 ) Resetting filter table 
+DEBUG 2012-09-12 13:40:52.931 ( filters/filterengine.cpp @ 26 ) Reset complete 
+DEBUG 2012-09-12 13:40:52.932 ( filters/filterengine.cpp @ 29 ) Filtering notebooks 
+DEBUG 2012-09-12 13:40:52.933 ( filters/filterengine.cpp @ 31 ) Filtering tags 
+DEBUG 2012-09-12 13:40:52.934 ( filters/filterengine.cpp @ 33 ) Filtering trash 
+DEBUG 2012-09-12 13:40:52.953 ( filters/filterengine.cpp @ 35 ) Filtering search string 
+DEBUG 2012-09-12 13:40:52.955 ( filters/filterengine.cpp @ 37 ) Filtering complete 
+TRACE 2012-09-12 13:40:52.955 ( nixnote.cpp @ 460 ) Refreshing data 
+TRACE 2012-09-12 13:40:52.956 ( gui/ntableview.cpp @ 111 ) Getting valid lids in filter 
+DEBUG 2012-09-12 13:40:52.957 ( gui/ntableview.cpp @ 118 ) Valid LIDs retrieved.  Refreshing selection 
+TRACE 2012-09-12 13:40:52.959 ( gui/ntableview.cpp @ 137 ) Highlighting selected rows after refresh 
+TRACE 2012-09-12 13:40:52.959 ( gui/ntableview.cpp @ 150 ) Highlighting complete 
+TRACE 2012-09-12 13:40:52.959 ( gui/ntableview.cpp @ 153 ) Selecting one item if nothing else is selected 
+DEBUG 2012-09-12 13:40:52.959 ( gui/ntableview.cpp @ 161 )  Selecting row  70 lid:  14 
+TRACE 2012-09-12 13:40:52.960 ( gui/ntableview.cpp @ 172 ) refleshSelection() complete 
+TRACE 2012-09-12 13:40:56.257 ( filters/notesortfilterproxymodel.cpp @ 15 ) Entering NoteSortFilterProxyModel destructor 
+TRACE 2012-09-12 13:40:56.274 ( filters/notesortfilterproxymodel.cpp @ 17 ) Exiting NoteSortFilterProxyModel constructor 

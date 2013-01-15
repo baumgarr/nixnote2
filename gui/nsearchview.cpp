@@ -158,6 +158,19 @@ void NSearchView::searchUpdated(qint32 lid, QString name) {
 
 
 
+void NSearchView::searchExpunged(qint32 lid) {
+    // Check if it already exists
+    if (this->dataStore.contains(lid)) {
+        NSearchViewItem *item = this->dataStore.value(lid);
+        this->removeItemWidget(item, 0);
+        delete item;
+    }
+    this->resetSize();
+}
+
+
+
+
 
 void NSearchView::calculateHeight()
 {

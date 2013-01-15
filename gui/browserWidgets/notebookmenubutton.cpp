@@ -18,6 +18,7 @@ NotebookMenuButton::NotebookMenuButton(QWidget *parent) :
     f.setBold(false);
     f.setPointSize(8);
     rootMenu.setFont(f);
+    currentAction = 0;
 }
 
 
@@ -33,7 +34,8 @@ void NotebookMenuButton::setCurrentNotebook(int lid, Note note) {
     NotebookTable notebookTable;
     Notebook notebook;
     notebookTable.get(notebook, note.notebookGuid);
-    actions[currentAction]->setChecked(false);
+    if (currentAction < actions.size())
+        actions[currentAction]->setChecked(false);
     this->setText(QString::fromStdString(notebook.name));
     for (int i=0; i<actions.size(); i++) {
         if (actions[i]->text().toLower().trimmed() == QString::fromStdString(notebook.name).toLower().trimmed()) {

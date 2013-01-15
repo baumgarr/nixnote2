@@ -21,6 +21,7 @@
 #include "gui/nmainmenubar.h"
 #include "gui/nattributetree.h"
 #include "gui/ntrashtree.h"
+#include "dialog/accountdialog.h"
 
 
 
@@ -50,12 +51,12 @@ private:
     NNotebookView *notebookTreeView;
     NTrashTree *trashTree;
     NTagView *tagTreeView;
+    NTabWidget *tabWindow;
     QSplitter *mainSplitter;
     QSplitter *leftPanelSplitter;
     WidgetPanel *leftPanel;
     QSplitter *rightPanelSplitter;
     QScrollArea *leftScroll;
-    NTabWidget *tabWindow;
     NAttributeTree *attributeTree;
     LineEdit *searchText;
 //    JavaMachine *jvm;
@@ -68,6 +69,10 @@ private:
     QAction *rightArrowButton;
     QAction *homeButton;
     QAction *syncButton;
+    QAction *newNoteButton;
+    QAction *trunkButton;
+    QAction *usageButton;
+    QAction *toolsAccountAction;
 
     // Sync Button rotate
     QTimer syncButtonTimer;
@@ -84,7 +89,6 @@ private:
     void setupTabWindow();
     void initializeGlobalSettings();
     void waitCursor(bool value);
-    void setMessage(QString msg);
     void saveContents();
 
 
@@ -109,6 +113,12 @@ public slots:
     void rightButtonTriggered();
     void openNote(bool newWindow);
     void databaseRestore();
+    void resetView();
+    void newNote();
+    void openTrunk();
+    void openAccount();
+    void openAbout();
+    void setMessage(QString msg);
 
 signals:
     void syncRequested();

@@ -186,6 +186,15 @@ void NTableView::mouseReleaseEvent(QMouseEvent *e) {
     QTableView::mouseReleaseEvent(e);
 }
 
+
+void NTableView::keyPressEvent(QKeyEvent *event) {
+    QTableView::keyPressEvent(event);
+    if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down ||
+            event->key() == Qt::Key_PageUp || event->key() == Qt::Key_PageDown)
+        this->getSelectedLids(false);
+
+}
+
 void NTableView::getSelectedLids(bool newWindow) {
 
     QList<qint32> lids;

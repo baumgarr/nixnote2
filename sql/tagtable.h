@@ -39,6 +39,8 @@ public:
     void updateGuid(qint32 lid, Guid &guid);   // Update a tag's guid
     void deleteTag(qint32 lid);                // delete a tag
     void expunge(qint32 lid);               // really delete a tag
+    void expunge(QString guid);             // really delete a tag
+    void expunge(string guid);              // really delete a tag
     void sync(Tag &tag);                    // Sync a tag with a new record
     void sync(qint32 lid, Tag &tag);           // Sync a tag with a new record
     void add(qint32 lid, Tag &t, bool isDirty); // Add a new tag

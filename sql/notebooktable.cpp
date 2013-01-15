@@ -520,6 +520,17 @@ void NotebookTable::expunge(qint32 lid) {
 }
 
 
+void NotebookTable::expunge(string guid) {
+    int lid = this->getLid(guid);
+    this->expunge(lid);
+}
+
+
+void NotebookTable::expunge(QString guid) {
+    int lid = this->getLid(guid);
+    this->expunge(lid);
+}
+
 void NotebookTable::renameStack(QString oldName, QString newName) {
     QList<qint32> lids;
     findByStack(lids, oldName);
@@ -591,4 +602,27 @@ void NotebookTable::removeFromStack(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_STACK);
     query.exec();
+}
+
+
+
+qint32 NotebookTable::getDefaultNotebookLid() {
+    QSqlQuery query;
+    query.exec("Select lid from datastore where key=3007 and data='true'");
+    if (query.next()) {
+        return query.value(0).toInt();
+    } else {
+        query.exec("Select lid from datastore where key=3001");
+        if (query.next()) {
+            return query.value(0).toInt();
+        }
+    }
+    return 0;
+}
+
+QString NotebookTable::getDefaultNotebookGuid() {
+    qint32 lid = getDefaultNotebookLid();
+    QString guid;
+    this->getGuid(guid, lid);
+    return guid;
 }

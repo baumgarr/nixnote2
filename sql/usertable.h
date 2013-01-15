@@ -13,12 +13,14 @@ private:
 
 public:
     UserTable();
-    void updateUser(AuthenticationResult r);
+    void updateUser(User &user);
     void updateSyncState(SyncState s);
     qlonglong getLastSyncDate();
     qint32 getLastSyncNumber();
     void updateLastSyncDate(long date);
     void updateLastSyncNumber(qint32 usn);
+    void getUser(User &user);
+    qlonglong getUploadAmt();
 };
 
 #endif // USER_H

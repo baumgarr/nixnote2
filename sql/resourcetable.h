@@ -60,6 +60,9 @@ public:
     ResourceTable();                             // Constructor
     qint32 getLid(QString noteGuid, QString guid);            // given a guid, return the lid
     qint32 getLid(string noteGuid, string guid);             // Given a guid, return the lid
+    qint32 getLid(string resourceGuid);
+    qint32 getLid(QString resourceGuid);
+    QString getGuid(int lid);                   // Given a lid, get the guid
     void updateGuid(qint32 lid, Guid &guid);    // Update a resource's guid
     void sync(Resource &resource);                    // Sync a resource with a new record
     void sync(qint32 lid, Resource &resource);           // Sync a resource with a new record
@@ -77,7 +80,11 @@ public:
     qint32 getLidByHashHex(QString noteGuid, QString hash);
     bool getInkNote(QByteArray &value, qint32 lid);
     void setIndexNeeded(qint32 lid, bool indexNeeded);    // flag if a resource needs reindexing
+    void expunge(int lid);                                // erase a resource
+    void expunge(QString guid);                           // erase a resource
+    void expunge(string guid);                            // erase a resource
     qint32 getIndexNeeded(QList<qint32> &lids);           // Get a list of all resources needing indexing
+    bool getResourceList(QList<qint32> &resourceList, qint32 noteLid);  // Get resources for a note
 };
 
 

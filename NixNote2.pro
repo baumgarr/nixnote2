@@ -110,7 +110,12 @@ SOURCES += main.cpp\
     dialog/endecryptdialog.cpp \
     oauth/oauthtokenizer.cpp \
     oauth/oauthwindow.cpp \
-    communication/communicationmanager.cpp
+    communication/communicationmanager.cpp \
+    gui/browserWidgets/colormenu.cpp \
+    xml/xmlhighlighter.cpp \
+    gui/browserWidgets/toolbarwidgetaction.cpp \
+    utilities/mimereference.cpp \
+    dialog/accountdialog.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -237,7 +242,12 @@ HEADERS  += nixnote.h \
     dialog/endecryptdialog.h \
     oauth/oauthtokenizer.h \
     oauth/oauthwindow.h \
-    communication/communicationmanager.h
+    communication/communicationmanager.h \
+    gui/browserWidgets/colormenu.h \
+    xml/xmlhighlighter.h \
+    gui/browserWidgets/toolbarwidgetaction.h \
+    utilities/mimereference.h \
+    dialog/accountdialog.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \
@@ -293,8 +303,8 @@ HEADERS  += nixnote.h \
 #    thrift/transport/TTransportException.h
 
 
-#LIBS += -L./lib -lthrift -lpthread
-LIBS += -lthrift -lpthread
+LIBS += -L./lib -lthrift -lpthread
+#LIBS += -lthrift -lpthread
 INCLUDEPATH += /usr/local/include/thrift \
 
 #LIBS +=  -L/usr/lib/jvm/java-6-openjdk/jre/lib/i386/server -ljvm -lpthread -lthrift

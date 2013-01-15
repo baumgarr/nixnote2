@@ -53,6 +53,7 @@ signals:
 
 public slots:
     void searchUpdated(qint32 lid, QString name);
+    void searchExpunged(qint32 lid);
     void buildSelection();
     void updateSelection();
     void addRequested();
