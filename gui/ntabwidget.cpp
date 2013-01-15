@@ -92,7 +92,6 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
     // If the lid < 0, then we just clear it & get out
     if (lid < 0) {
         QLOG_DEBUG() << tabBar->currentIndex();
-        tabBar->setTabText(tabBar->currentIndex(), QString(""));
         currentBrowser()->setContent(-1);
         return;
     }

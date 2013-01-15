@@ -57,7 +57,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 
         QLOG_TRACE() << "Setting up GUI";
         this->setupGui();
-        //this->openNote(false);
+        global.filterPosition = 0;
+        this->openNote(false);
 
         QLOG_TRACE() << "Connecting signals";
         connect(tagTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
@@ -201,7 +202,6 @@ void NixNote::setupGui() {
 
         for (int i=0; i<lidList.size(); i++) {
             global.filterPosition = i;
-
             if(i==0)
                 openNote(false);
             else
@@ -230,7 +230,6 @@ void NixNote::setupGui() {
     // connect signal on a tag rename
     connect(tagTreeView, SIGNAL(tagRenamed(qint32,QString,QString)), this, SLOT(updateSelectionCriteria()));
     connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), this, SLOT(updateSelectionCriteria()));
-
     this->updateSelectionCriteria();
     // Set default focuse to the editor window
     tabWindow->currentBrowser()->editor->setFocus();

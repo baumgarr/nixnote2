@@ -165,6 +165,7 @@ bool FilterCriteria::isLidSet() {
     return contentIsSet;
 }
 
+
 void FilterCriteria::unsetLid() {
     contentIsSet = false;
 }
@@ -232,6 +233,10 @@ void FilterCriteria::duplicate(FilterCriteria &newFilter) {
 
     if (contentIsSet)
         newFilter.setLid(content);
+
+    for (int i=0; i<selectedNotes.size(); i++) {
+        newFilter.selectedNotes.append(selectedNotes[i]);
+    }
 
     for (int i=0; i<selectedNotes.size(); i++) {
         newFilter.selectedNotes.append(selectedNotes[i]);
