@@ -10,6 +10,10 @@ WidgetPanel::WidgetPanel(QWidget *parent) :
     vboxLayout->setSizeConstraint(QLayout::SetNoConstraint);
 }
 
+WidgetPanel::~WidgetPanel() {
+    delete vboxLayout;
+}
+
 void WidgetPanel::addWidget(QWidget *widget) {
     vboxLayout->addWidget(widget);
 }

@@ -14,6 +14,7 @@ public:
      QVBoxLayout *vboxLayout;
 
     explicit WidgetPanel(QWidget *parent = 0);
+    ~WidgetPanel();
     void addWidget(QWidget *widget);
 
 signals:

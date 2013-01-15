@@ -112,6 +112,7 @@ public:
 
     void tabPressed();
     void backtabPressed();
+    void clear();
 
 signals:
     void noteUpdated(qint32);

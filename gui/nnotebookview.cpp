@@ -114,6 +114,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
 
 // Destructor
 NNotebookView::~NNotebookView() {
+    this->blockSignals(true);
     delete root;
 }
 

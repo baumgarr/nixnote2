@@ -19,23 +19,24 @@ NTabWidget::NTabWidget(SyncRunner *s, NNotebookView *n, NTagView *t)
     f.setPointSize(8);
     this->setFont(f);
 
-    tabBar.setHidden(true);
-    tabBar.setMovable(true);
-    tabBar.setTabsClosable(true);
-    tabBar.setShape(QTabBar::RoundedNorth);
+    tabBar = new QTabBar(this);
+    tabBar->setHidden(true);
+    tabBar->setMovable(true);
+    tabBar->setTabsClosable(true);
+    tabBar->setShape(QTabBar::RoundedNorth);
  //   tabBar.setMinimumHeight(20);
  //   tabBar.setMaximumHeight(20);
 
     browserList = new QList<NBrowserWindow *>();
-    vboxlayout.addWidget(&tabBar);
+    vboxlayout.addWidget(tabBar);
     vboxlayout.addWidget(&stack);
     setLayout(&vboxlayout);
 
-    connect(&tabBar, SIGNAL(currentChanged(int)),
+    connect(tabBar, SIGNAL(currentChanged(int)),
                  &stack, SLOT(setCurrentIndex(int)));
-    connect(&tabBar, SIGNAL(tabCloseRequested(int)),
+    connect(tabBar, SIGNAL(tabCloseRequested(int)),
                  this, SLOT(closeTab(int)));
-    connect(&tabBar, SIGNAL(tabMoved(int, int)),
+    connect(tabBar, SIGNAL(tabMoved(int, int)),
                  this, SLOT(moveTab(int, int)));
     this->layout()->setMargin(0);
 }
@@ -45,30 +46,30 @@ NTabWidget::~NTabWidget() {
 }
 
 void NTabWidget::addBrowser(NBrowserWindow *v, QString title) {
-    tabBar.addTab(title);
+    tabBar->addTab(title);
     int index = stack.addWidget(v);
     stack.setCurrentIndex(index);
     browserList->append(v);
-    tabBar.setCurrentIndex(index);
-    tabBar.raise();
+    tabBar->setCurrentIndex(index);
+    tabBar->raise();
 
     setupConnections(v);
 
     if (browserList->size() <= 1)
-        tabBar.setHidden(true);
+        tabBar->setHidden(true);
     else
-        tabBar.setHidden(false);
+        tabBar->setHidden(false);
     return;
 }
 
 void NTabWidget::closeTab(int index) {
-    tabBar.removeTab(index);
+    tabBar->removeTab(index);
     stack.removeWidget(browserList->at(index));
     browserList->removeAt(index);
     if (browserList->size() <= 1)
-        tabBar.setHidden(true);
+        tabBar->setHidden(true);
     else
-        tabBar.setHidden(false);
+        tabBar->setHidden(false);
 }
 
 
@@ -82,7 +83,7 @@ void NTabWidget::moveTab(int from, int to) {
 
 
 NBrowserWindow* NTabWidget::currentBrowser() {
-    return this->browserList->at(tabBar.currentIndex());
+    return this->browserList->at(tabBar->currentIndex());
 }
 
 
@@ -90,7 +91,8 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
 
     // If the lid < 0, then we just clear it & get out
     if (lid < 0) {
-        tabBar.setTabText(tabBar.currentIndex(), QString(""));
+        QLOG_DEBUG() << tabBar->currentIndex();
+        tabBar->setTabText(tabBar->currentIndex(), QString(""));
         currentBrowser()->setContent(-1);
         return;
     }
@@ -107,8 +109,8 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
     for (int i=0;i<browserList->size() && !found; i++) {
         if (browserList->at(i)->lid == lid) {
             found = true;
-            tabBar.setCurrentIndex(i);
-            tabBar.raise();
+            tabBar->setCurrentIndex(i);
+            tabBar->raise();
             stack.setCurrentIndex(i);
             stack.raise();
             return;
@@ -122,7 +124,7 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
         connect(view, SIGNAL(noteUpdated(qint32)), this, SLOT(noteTitleUpdateSignaled(qint32)));
     } else {
         view = currentBrowser();
-        tabBar.setTabText(tabBar.currentIndex(), QString::fromStdString(n.title));
+        tabBar->setTabText(tabBar->currentIndex(), QString::fromStdString(n.title));
     }
 
     view->setContent(lid);
@@ -130,11 +132,11 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
 
 
 void NTabWidget::setTitle(QString t) {
-    this->setTitle(tabBar.currentIndex(), t);
+    this->setTitle(tabBar->currentIndex(), t);
 }
 
 void NTabWidget::setTitle(int index, QString t) {
-    tabBar.setTabText(index, t);
+    tabBar->setTabText(index, t);
 }
 
 

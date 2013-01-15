@@ -19,7 +19,7 @@ Global::Global()
     criteria->resetAttribute = true;
     criteria->resetDeletedOnly = true;
     criteria->setDeletedOnly(false);
-    criteria->resetContent = true;
+    criteria->resetLid = true;
     criteria->resetSearchString = true;
     username = "";
     password = "";

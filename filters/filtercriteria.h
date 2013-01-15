@@ -73,11 +73,11 @@ public:
     void unsetDeletedOnly();
     bool resetDeletedOnly;
 
-    qint32 getContent();
-    void setContent(qint32 content);
-    bool isContentSet();
-    void unsetContent();
-    bool resetContent;
+    qint32 getLid();
+    void setLid(qint32 content);
+    bool isLidSet();
+    void unsetLid();
+    bool resetLid;
 
     void getSelectedNotes(QList<qint32> &items);
     void setSelectedNotes(QList<qint32> &items);

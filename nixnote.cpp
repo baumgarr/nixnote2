@@ -19,7 +19,6 @@
 #include "gui/nattributetree.h"
 #include "gui/ntrashtree.h"
 #include "filters/filterengine.h"
-//#include "java/javamachine.h"
 #include "global.h"
 #include "html/enmlformatter.h"
 #include "oauth/oauthwindow.h"
@@ -58,8 +57,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 
         QLOG_TRACE() << "Setting up GUI";
         this->setupGui();
-        global.filterPosition = 0;
-        this->openNote(false);
+        //this->openNote(false);
 
         QLOG_TRACE() << "Connecting signals";
         connect(tagTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
@@ -79,10 +77,10 @@ NixNote::~NixNote()
 {
     syncRunner.quit();
     indexRunner.quit();
-    delete db;  // Free up memory used by the database connection
-    delete rightPanelSplitter;
-    delete leftPanelSplitter;
-    delete leftPanel;
+//    delete db;  // Free up memory used by the database connection
+//    delete rightPanelSplitter;
+//    delete leftPanelSplitter;
+//    delete leftPanel;
 }
 
 
@@ -188,25 +186,28 @@ void NixNote::setupGui() {
     QStringList lidList = lidListString.split(' ');
     // If we have old notes we were viewing the last time
     if (lidList.size() > 0) {
-        // Remove everything in the filter because we are restoring things
-        for (int i=0; i<global.filterCriteria.size();i++)
-            delete(global.filterCriteria.takeAt(i));
+        FilterCriteria *filter = global.filterCriteria[global.filterPosition];
+
         for (int i=0; i<lidList.size(); i++) {
+            // if we are doing multiple notes, they each need
+            // to be added to the selection criteria.
+            if (i>0)
+                filter = new FilterCriteria();
             int lid = lidList[i].toInt();
-            FilterCriteria *filter = new FilterCriteria();
-            filter->setContent(lid);
-            global.filterCriteria.append(filter);
+            filter->setLid(lid);
+            if (i>0)
+                global.filterCriteria.append(filter);
         }
 
         for (int i=0; i<lidList.size(); i++) {
             global.filterPosition = i;
+
             if(i==0)
                 openNote(false);
             else
                 openNote(true);
         }
     }
-
 
     // Setup timers
     QLOG_TRACE() << "Setting up timers";
@@ -230,6 +231,7 @@ void NixNote::setupGui() {
     connect(tagTreeView, SIGNAL(tagRenamed(qint32,QString,QString)), this, SLOT(updateSelectionCriteria()));
     connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), this, SLOT(updateSelectionCriteria()));
 
+    this->updateSelectionCriteria();
     // Set default focuse to the editor window
     tabWindow->currentBrowser()->editor->setFocus();
 
@@ -488,8 +490,8 @@ void NixNote::openNote(bool newWindow) {
     saveContents();
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     qint32 lid;
-    if (criteria->isContentSet()) {
-        lid = criteria->getContent();
+    if (criteria->isLidSet()) {
+        lid = criteria->getLid();
         tabWindow->openNote(lid, newWindow);
     } else {
         tabWindow->openNote(-1, false);
@@ -526,8 +528,20 @@ void NixNote::updateSelectionCriteria() {
 
     FilterEngine filterEngine;
     filterEngine.filter();
+
     QLOG_TRACE() << "Refreshing data";
     noteTableView->refreshData();
+
+    QList<qint32> selectedNotes;
+    global.filterCriteria[global.filterPosition]->getSelectedNotes(selectedNotes);
+    if (selectedNotes.size() == 0) {
+        tabWindow->currentBrowser()->clear();
+    }
+    QLOG_DEBUG() << tabWindow->currentBrowser()->lid;
+    if (selectedNotes.size() > 0) {
+        tabWindow->currentBrowser()->setContent(selectedNotes.at(0));
+        openNote(false);
+    }
 }
 
 
@@ -700,7 +714,7 @@ void NixNote::newNote() {
 
     FilterCriteria *criteria = new FilterCriteria();
     global.filterCriteria[global.filterPosition]->duplicate(*criteria);
-    criteria->setContent(lid);
+    criteria->setLid(lid);
     global.filterCriteria.append(criteria);
     global.filterPosition++;
     openNote(false);

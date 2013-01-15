@@ -37,7 +37,7 @@ NTableView::NTableView(QWidget *parent) :
     this->proxy = new NoteSortFilterProxyModel();
     proxy->setSourceModel(model());
     proxy->setFilterKeyColumn(NOTE_TABLE_LID_POSITION);
-    refreshData();
+    //refreshData();
     setModel(proxy);
     this->setSortingEnabled(true);
 
@@ -120,7 +120,6 @@ void NTableView::refreshData() {
     while(model()->canFetchMore())
         model()->fetchMore();
     refreshSelection();
-
 }
 
 
@@ -131,8 +130,24 @@ void NTableView::refreshSelection() {
 
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     QList<qint32> historyList;
-    historyList.clear();
     criteria->getSelectedNotes(historyList);
+
+//    if (global.filterPosition > 0 && historyList.size() == 0) {
+//        FilterCriteria *priorCriteria = global.filterCriteria[global.filterPosition-1];
+
+//        if (priorCriteria->isSelectedNotesSet() && !criteria->isSelectedNotesSet()) {
+//            QList<qint32> oldList;
+//            priorCriteria->getSelectedNotes(oldList);
+//            criteria->setSelectedNotes(oldList);
+//            criteria->getSelectedNotes(historyList);
+//        }
+//        if (priorCriteria->isLidSet() && !criteria->isLidSet()) {
+//            qint32 priorLid = priorCriteria->getLid();
+//            qint32 currentLid = criteria->getLid();
+//            if (historyList.contains(priorLid))
+//                criteria->setLid(priorCriteria->getLid());
+//        }
+//    }
 
     QLOG_TRACE() << "Highlighting selected rows after refresh";
     // Check the highlighted LIDs from the history selection.
@@ -159,7 +174,7 @@ void NTableView::refreshSelection() {
             qint32 rowLid = idx.data().toInt();
             if (rowLid > 0) {
                 QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
-                criteria->setContent(rowLid);
+                criteria->setLid(rowLid);
                 selectRow(j);
                 this->blockSignals(false);
                 emit openNote(false);
@@ -202,7 +217,7 @@ void NTableView::getSelectedLids(bool newWindow) {
     // chop off the end of the history & start a new one
     if (global.filterPosition+1 < global.filterCriteria.size()) {
         while (global.filterPosition+1 < global.filterCriteria.size())
-            global.filterCriteria.removeLast();
+            delete global.filterCriteria.takeAt(global.filterCriteria.size()-1);
     }
     FilterCriteria *newFilter = new FilterCriteria();
     global.filterCriteria.at(global.filterPosition)->duplicate(*newFilter);
@@ -231,8 +246,9 @@ void NTableView::getSelectedLids(bool newWindow) {
 
     newFilter->setSelectedNotes(lids);
     if (lids.size() > 0) {
-        newFilter->setContent(lids.at(0));
+        newFilter->setLid(lids.at(0));
         emit openNote(newWindow);
     }
 }
+
 

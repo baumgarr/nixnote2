@@ -21,7 +21,7 @@ private:
 public:
     explicit NTabWidget(SyncRunner *s, NNotebookView *n, NTagView *t);
     ~NTabWidget();
-    QTabBar tabBar;
+    QTabBar *tabBar;
     QVBoxLayout vboxlayout;
     QList<NBrowserWindow *> *browserList;
     void addBrowser(NBrowserWindow *v, QString title);

@@ -25,7 +25,7 @@ FilterCriteria::FilterCriteria(QObject *parent) :
     resetSavedSearch = false;
     resetAttribute = false;
     resetDeletedOnly = false;
-    resetContent = false;
+    resetLid = false;
     resetSearchString = false;
     selectedNotesIsSet = false;
 }
@@ -147,21 +147,25 @@ void FilterCriteria::unsetDeletedOnly() {
 
 
 
-qint32 FilterCriteria::getContent() {
+qint32 FilterCriteria::getLid() {
     return content;
 }
 
-void FilterCriteria::setContent(qint32 item) {
+void FilterCriteria::setLid(qint32 item) {
     content = item;
     contentIsSet = true;
     valueSet = true;
+    if (!selectedNotes.contains(item) && item >= 0) {
+        selectedNotes.append(item);
+        selectedNotesIsSet = true;
+    }
 }
 
-bool FilterCriteria::isContentSet() {
+bool FilterCriteria::isLidSet() {
     return contentIsSet;
 }
 
-void FilterCriteria::unsetContent() {
+void FilterCriteria::unsetLid() {
     contentIsSet = false;
 }
 
@@ -227,7 +231,7 @@ void FilterCriteria::duplicate(FilterCriteria &newFilter) {
         newFilter.setAttribute(*attribute);
 
     if (contentIsSet)
-        newFilter.setContent(content);
+        newFilter.setLid(content);
 
     for (int i=0; i<selectedNotes.size(); i++) {
         newFilter.selectedNotes.append(selectedNotes[i]);
@@ -256,7 +260,7 @@ void FilterCriteria::duplicate(FilterCriteria &newFilter) {
     newFilter.resetSavedSearch = resetSavedSearch;
     newFilter.resetAttribute = resetAttribute;
     newFilter.resetDeletedOnly = resetDeletedOnly;
-    newFilter.resetContent = resetContent;
+    newFilter.resetLid = resetLid;
     newFilter.resetSearchString = resetSearchString;
 
 

@@ -256,8 +256,10 @@ void NBrowserWindow::setupToolBar() {
 void NBrowserWindow::setContent(qint32 lid) {
 
     // First, make sure we have a valid lid
-    if (lid == -1)
+    if (lid == -1) {
+        clear();
         return;
+    }
 
     // let's load the new note
     this->lid = lid;
@@ -302,6 +304,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     else
         urlEditor.setUrl(lid, "");
     setSource();
+    editor->page()->setContentEditable(true);
 }
 
 
@@ -864,6 +867,18 @@ void NBrowserWindow::toggleSource() {
         showSource(false);
     else
         showSource(true);
+}
+
+void NBrowserWindow::clear() {
+    sourceEdit->blockSignals(true);
+    editor->blockSignals(true);
+    sourceEdit->setPlainText("");
+    editor->setContent("<html><body></body></html>");
+    sourceEdit->setReadOnly(true);
+    editor->page()->setContentEditable(false);
+    lid = -1;
+    editor->blockSignals(false);
+    sourceEdit->blockSignals(false);
 }
 
 void NBrowserWindow::setSource() {

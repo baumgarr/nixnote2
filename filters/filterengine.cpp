@@ -36,6 +36,43 @@ void FilterEngine::filter() {
     filterSearchString(criteria);
     QLOG_DEBUG() << "Filtering complete";
 
+    // Remove any selected notes that are not in the filter.
+    QList<qint32> oldLids;
+    if (global.filterPosition > 0) {
+        QSqlQuery query;
+        query.exec("select lid from filter");
+        QList<qint32> goodLids;
+
+        while (query.next()) {
+            goodLids.append(query.value(0).toInt());
+        }
+
+        FilterCriteria *priorFilter = global.filterCriteria[global.filterPosition-1];
+        priorFilter->getSelectedNotes(oldLids);
+        if (oldLids.size() > 0) {
+
+            for (int i=0; i<oldLids.size(); i++) {
+                if (!goodLids.contains(oldLids[i]))
+                    oldLids.removeAll(oldLids[i]);
+            }
+            criteria->setSelectedNotes(oldLids);
+            if (priorFilter->isLidSet() && oldLids.contains(priorFilter->getLid()))
+                criteria->setLid(priorFilter->getLid());
+            else
+                criteria->unsetLid();
+        }
+
+        // Now, if we are not viewing a current lid, loop back to try and find a good lid
+        // from the history.  This isn't really needed but it should take you back to the
+        // last note you were viewing that matches this criteria.
+        for (int i=global.filterPosition-1 && goodLids.size() > 0; i>=0; i--) {
+            priorFilter = global.filterCriteria[i];
+            if (priorFilter->isLidSet() && goodLids.contains(priorFilter->getLid())) {
+                criteria->setLid(priorFilter->getLid());
+                i=-1;
+            }
+        }
+    }
 }
 
 
