@@ -2,6 +2,7 @@
 #include "filters/ensearch.h"
 #include "sql/resourcetable.h"
 #include "global.h"
+#include "utilities/mimereference.h"
 
 #include <QFileIconProvider>
 #include <QIcon>
@@ -110,16 +111,14 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QDomElement docElem = doc.documentElement();
     docElem.setTagName("body");
     content = doc.toByteArray(3);
-    qint32 index = content.indexOf("<body");
+        qint32 index = content.indexOf("<body");
     content.remove(0,index);
-    content.prepend("<html>");
     content.prepend("<style type=\"text/css\">.en-crypt-temp { border-collapse:collapse; border-style:solid; border-color:blue; padding:0.0mm 0.0mm 0.0mm 0.0mm; }</style>");
     content.prepend("<style type=\"text/css\">en-hilight { background-color: rgb(255,255,0) }</style>");
     content.prepend("<style> img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
     content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
+    content.prepend("<html>");
     content.append("</html>");
-
-    QLOG_DEBUG() << content;
     return content;
 }
 
@@ -305,22 +304,18 @@ void NoteFormatter::addImageHighlight(qint32 resLid, QFile &f) {
 void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &docElement, QDomElement &enMedia, QDomAttr &hash) {
     docElement = docElement;  // suppress unused
     QLOG_DEBUG() << "Entering NoteFormatter::modifyImageTags";
-    QString type = enMedia.attribute("type");
-    if (type.startsWith("image/")) {
-        type.remove(0,6);
-        if (type == "jpeg")
-            type = "jpg";
-        type.prepend(".");
-    } else {
-        type="";
-    }
-
+    QString mimetype = enMedia.attribute("type");
     ResourceTable resourceTable;
     qint32 resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
     Resource r;
     if (resLid>0) {
         //QFile tfile(global.fileManager.getResDirPath(QString::number(resLid)+type));
         resourceTable.get(r, resLid);
+        MimeReference ref;
+        QString filename;
+        if (r.__isset.attributes && r.attributes.__isset.fileName)
+            filename = QString::fromStdString(r.attributes.fileName);
+        QString type = ref.getExtensionFromMime(mimetype, filename);
 
         if (r.__isset.data && r.data.__isset.body && r.data.body.length() > 0) {
             enMedia.setAttribute("src", "file:///"+global.fileManager.getDbDirPath(QString("dba/") +QString::number(resLid) +type));
@@ -370,33 +365,35 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
         resourceError = true;
     else {
         QString fileDetails = "";
-        if (r.__isset.attributes && r.attributes.__isset.fileName) {
+        MimeReference ref;
+        if (r.__isset.attributes && r.attributes.__isset.fileName)
             fileDetails = QString::fromStdString(r.attributes.fileName);
+        fileDetails = ref.getExtensionFromMime(QString::fromStdString(r.mime), fileDetails);
 
-            if (fileDetails != "") {
-                if (!noteHistory) {
-                    enmedia.setAttribute("href", QString("nnres://") +QString::fromStdString(r.guid)
-                                            +global.attachmentNameDelimeter +fileDetails);
-                    contextFileName = global.fileManager.getTmpDirPath(QString(resLid) +global.attachmentNameDelimeter + fileDetails);
-                } else {
-                    enmedia.setAttribute("href", QString("nnres://") +QString::fromStdString(r.guid) + QString(note.updateSequenceNum)
-                                            +global.attachmentNameDelimeter +fileDetails);
-                    contextFileName = global.fileManager.getTmpDirPath(QString(resLid) + QString(note.updateSequenceNum)
-                                            +global.attachmentNameDelimeter + fileDetails);
-                }
+
+        if (fileDetails != "") {
+            if (!noteHistory) {
+                enmedia.setAttribute("href", QString("nnres:") +QString::number(resLid)
+                                     +global.attachmentNameDelimeter +fileDetails);
+                contextFileName = global.fileManager.getTmpDirPath(QString::number(resLid) +global.attachmentNameDelimeter + fileDetails);
             } else {
-                if (!noteHistory) {
-                    enmedia.setAttribute("href", "nnres://" +QString::fromStdString(r.guid) +QString(note.updateSequenceNum)
-                                                            +global.attachmentNameDelimeter +appl);
-                    contextFileName = global.fileManager.getTmpDirPath(QString(resLid) +QString("-")
-                                                            +QString(note.updateSequenceNum)
-                                                            +global.attachmentNameDelimeter + appl);
-                } else {
-                    enmedia.setAttribute("href", "nnres://" +QString::fromStdString(r.guid)
-                                                            +global.attachmentNameDelimeter +appl);
-                    contextFileName = global.fileManager.getTmpDirPath(QString(QString(resLid))
-                                                            +global.attachmentNameDelimeter + appl);
-                }
+                enmedia.setAttribute("href", QString("nnres:") +QString::number(resLid) +QString("-")+ QString::number(note.updateSequenceNum)
+                                     +global.attachmentNameDelimeter +fileDetails);
+                contextFileName = global.fileManager.getTmpDirPath(QString::number(resLid) +QString("-")+ QString(note.updateSequenceNum)
+                                                                   +global.attachmentNameDelimeter + fileDetails);
+            }
+        } else {
+            if (!noteHistory) {
+                enmedia.setAttribute("href", "nnres:" +QString::number(resLid) +QString("-") +QString(note.updateSequenceNum)
+                                     +global.attachmentNameDelimeter +appl);
+                contextFileName = global.fileManager.getTmpDirPath(QString::number(resLid) +QString("-")
+                                                                   +QString(note.updateSequenceNum)
+                                                                   +global.attachmentNameDelimeter + appl);
+            } else {
+                enmedia.setAttribute("href", "nnres:" +QString::number(resLid)
+                                     +global.attachmentNameDelimeter +appl);
+                contextFileName = global.fileManager.getTmpDirPath(QString::number(resLid)
+                                                                   +global.attachmentNameDelimeter + appl);
             }
         }
 
@@ -406,15 +403,24 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
         enmedia.setAttribute("en-tag", "en-media");
         enmedia.setAttribute("lid", QString::number(resLid));
         enmedia.setTagName("a");
+
         QDomElement newText = doc.createElement("img");
         QFile tfile(contextFileName);
         tfile.open(QIODevice::WriteOnly);
         tfile.close();
 
         // Build an icon of the image
-        QString icon = findIcon(resLid, r, appl);
+        QString fileExt;
+        if (r.__isset.attributes && r.attributes.__isset.fileName)
+            fileExt = QString::fromStdString(r.attributes.fileName);
+        else
+            fileExt = appl;
+        fileExt = ref.getExtensionFromMime(r.mime, r.attributes.fileName);
+        QString icon = findIcon(resLid, r, fileExt);
         newText.setAttribute("src", "file:///"+icon);
-        newText.setAttribute("title", fileDetails);
+        if (r.__isset.attributes && r.attributes.__isset.fileName)
+            newText.setAttribute("title",QString::fromStdString(r.attributes.fileName));
+        newText.setAttribute("en-tag", "temporary");
         enmedia.removeChild(enmedia.firstChild());
         enmedia.appendChild(newText);
         QLOG_TRACE() << "Leaving NeverNote.modifyApplicationTags";
@@ -427,14 +433,8 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
 QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 
     // First get the icon for this type of file
-    QString fileName = global.fileManager.getDbaDirPath(QString::number(lid) +QString(".") +appl);
+    QString fileName = global.fileManager.getDbaDirPath(QString::number(lid) +appl);
     QIcon icon = QFileIconProvider().icon(QFileInfo(fileName));
-
-    // Start drawing a new pixmap for  the image in the note
-//    QPoint textPoint(40,15);
-//    QPoint sizePoint(40,29);
-//    QPixmap pixmap(90,37);
-//    pixmap.fill();
 
     // Build a string name for the display
     QString displayName;
@@ -480,6 +480,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
         unit= QString("MB");
     }
     p.drawText(sizePoint, QString::number(size).trimmed() +" " +unit);
+    p.drawRect(0,0,width-1,37-1);   // Draw a rectangle around the image.
     p.end();
 
     // Now that it is drawn, we write it out to a temporary file

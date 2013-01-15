@@ -32,8 +32,6 @@ NNotebookView::NNotebookView(QWidget *parent) :
     this->setRootIsDecorated(true);
     this->setSortingEnabled(false);
     this->header()->setVisible(false);
-    // QString qss = "QTreeWidget::branch:closed:has-children  {border-image: none; image: url(qss/branch-closed.png); } QTreeWidget::branch:open:has-children { border-image: none; image: url(qss/branch-open.png); }";
-    //this->setStyleSheet(qss + QString("QTreeWidget { background-color: rgb(216,216,216);  border: none; image: url(qss/branch-closed.png);  }"));
     this->setStyleSheet(QString("QTreeWidget { border: none; background-color: transparent; }"));
 
     // Build the root item
@@ -43,6 +41,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
     root->setData(NAME_POSITION, Qt::UserRole, "root");
     root->setData(NAME_POSITION, Qt::DisplayRole, tr("Synchronized Notebooks"));
     root->setRootColor(true);
+    root->setExpanded(true);
     this->setMinimumHeight(1);
     this->addTopLevelItem(root);
     this->rebuildNotebookTreeNeeded = true;
@@ -355,6 +354,21 @@ void NNotebookView::updateSelection() {
 
 
 
+void NNotebookView::notebookExpunged(qint32 lid) {
+    // Check if it already exists
+    if (this->dataStore.contains(lid)) {
+        NNotebookViewItem *item = this->dataStore.value(lid);
+        NNotebookViewItem *parent = (NNotebookViewItem*)item->parent();
+        this->removeItemWidget(item, 0);
+        delete item;
+        if (parent != NULL && parent->childCount() == 0) {
+            this->removeItemWidget(parent, 0);
+            delete parent;
+        }
+
+    }
+    this->resetSize();
+}
 
 
 

@@ -19,6 +19,7 @@ EnmlFormatter::EnmlFormatter(QObject *parent) :
     QObject(parent)
 {
     //doc = new QDomDocument();
+    formattingError = false;
 }
 
 /* Return the formatted content */
@@ -43,24 +44,22 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 //    // wouldn't be needed, but WebKit doesn't always give back good HTML.
 
     QProcess tidyProcess;
-    tidyProcess.start("tidy -raw -q -e", QIODevice::ReadWrite|QIODevice::Unbuffered);
+    tidyProcess.start("tidy -raw -q -asxhtml -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
     QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
     tidyProcess.write(content);
     tidyProcess.closeWriteChannel();
     QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
     QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
-    QLOG_DEBUG() << "Tidy Stdout:" << tidyProcess.readAllStandardOutput();
+//    QLOG_DEBUG() << "Tidy Stdout:" << tidyProcess.readAllStandardOutput();
+    content = tidyProcess.readAllStandardOutput();
 
-
-    // Remove all the temporary file names
-    doc.setContent(content);
-    scanTags();
 
 //    // If we have search criteria, then do the highlighting
 //    removeHighlight(doc);
 
 //    // Finish up and return the HTML to the user
     qint32 index = content.indexOf("<body");
+    index = content.indexOf(">", index)+1;
     content.remove(0,index);
     index = content.indexOf("</body");
     content.truncate(index);
@@ -72,14 +71,21 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     b.append("</en-note>");
     content.clear();
     content = b;
+
+    // Remove all the temporary file names
+    doc.setContent(content);
+    scanTags();
+
     return content;
 }
 
 
 // Start looking through the tree.
 void EnmlFormatter::scanTags() {
-    if (doc.hasChildNodes())
+    if (doc.hasChildNodes()) {
         parseNodes(doc.childNodes());
+    }
+    QLOG_DEBUG() << "Doc:" << doc.toString();
     return;
 }
 
@@ -148,6 +154,13 @@ void EnmlFormatter::fixNode(const QDomNode &node) {
             return;
         }
 
+        // Check if we have a temporary image.  If so, remove it
+        if (enType.toLower() ==  "temporary") {;
+            QDomNode parent = e.parentNode();
+            parent.removeChild(e);
+            return;
+        }
+
         // Check if we have a LaTeX image.  Remove the parent link tag
         if (enType.toLower() ==  "en-latex") {
             enType = "en-media";
@@ -156,9 +169,12 @@ void EnmlFormatter::fixNode(const QDomNode &node) {
             parent.parentNode().replaceChild(e, parent);
         }
 
+
         // If we've gotten this far, we have an en-media tag
         e.setTagName(enType);
-        resources.append(e.attribute("guid"));
+        QLOG_DEBUG() << enType;
+        QLOG_DEBUG() << doc.toString();
+        resources.append(e.attribute("lid").toInt());
         e.removeAttribute("guid");
         e.removeAttribute("src");
         e.removeAttribute("en-new");
@@ -217,7 +233,7 @@ QDomNode EnmlFormatter::fixLinkNode(const QDomNode &node) {
         e.removeAttribute("en-type");
         e.removeAttribute("en-tag");
         e.removeAttribute("en-new");
-        resources.append(e.attribute("guid"));
+        resources.append(e.attribute("lid").toInt());
         e.removeAttribute("href");
         e.removeAttribute("guid");
         e.setNodeValue("");

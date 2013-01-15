@@ -30,12 +30,10 @@ NTagView::NTagView(QWidget *parent) :
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    this->setRootIsDecorated(true);
+    this->setRootIsDecorated(false);
     this->setSortingEnabled(false);
     this->header()->setVisible(false);
-    //QString qss = "QTreeWidget::branch:closed:has-children  {border-image: none; image: url(qss/branch-closed.png); } QTreeWidget::branch:open:has-children { border-image: none; image: url(qss/branch-open.png); }";
-    //this->setStyleSheet(qss + QString("QTreeWidget { background-color: rgb(216,216,216);  border: none; image: url(qss/branch-closed.png);  }"));
-    this->setStyleSheet("QTreeWidget {  border: none; background-color:transparent; }");
+    this->setStyleSheet("QTreeWidget {  border-top-style: none; border: none; background-color:transparent;}");
 
     // Build the root item
     QIcon icon(":tag.png");
@@ -43,7 +41,8 @@ NTagView::NTagView(QWidget *parent) :
     root->setIcon(NAME_POSITION,icon);
     root->setData(NAME_POSITION, Qt::UserRole, "root");
     root->setData(NAME_POSITION, Qt::DisplayRole, tr("Tags"));
-    root->setRootColor(true);
+    root->setExpanded(true);
+
     this->setMinimumHeight(1);
     this->addTopLevelItem(root);
     this->rebuildTagTreeNeeded = true;
@@ -560,5 +559,18 @@ void NTagView::editComplete() {
     this->sortByColumn(NAME_POSITION);
     emit(tagRenamed(lid, oldName, text));
 }
+
+
+
+void NTagView::tagExpunged(qint32 lid) {
+    // Check if it already exists
+    if (this->dataStore.contains(lid)) {
+        NTagViewItem *item = this->dataStore.value(lid);
+        this->removeItemWidget(item, 0);
+        delete item;
+    }
+    this->resetSize();
+}
+
 
 

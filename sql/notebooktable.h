@@ -67,6 +67,8 @@ public:
     bool findGuidByName(QString &retval, QString &guid);  // Search for a notebook's guid based upon its name
     void deleteNotebook(qint32 lid);           // mark a notebook for deletion
     void expunge(qint32 lid);          // purge a notebook
+    void expunge(string guid);         // purge a notebook
+    void expunge(QString guid);        // purge a notebook
     bool isDeleted(qint32 lid);            // is this notebook deleted?
     bool update(Notebook &notebook, bool isDirty);
     bool isLocal();
@@ -75,6 +77,8 @@ public:
     void getStacks(QStringList &stacks);
     bool isStacked(qint32 lid);
     void removeFromStack(qint32 lid);
+    qint32 getDefaultNotebookLid();
+    QString getDefaultNotebookGuid();
 
 };
 

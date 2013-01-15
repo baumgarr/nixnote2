@@ -46,6 +46,10 @@ void FilterCriteria::setNotebook(QTreeWidgetItem &item) {
     valueSet = true;
 }
 
+void FilterCriteria::unsetNotebook() {
+    notebookIsSet = false;
+}
+
 bool FilterCriteria::isNotebookSet() {
     return notebookIsSet;
 }
@@ -68,6 +72,11 @@ bool FilterCriteria::isTagsSet() {
     return tagsIsSet;
 }
 
+void FilterCriteria::unsetTags() {
+    tagsIsSet = false;
+}
+
+
 
 
 
@@ -85,6 +94,11 @@ void FilterCriteria::setSavedSearch(NSearchViewItem &item) {
 bool FilterCriteria::isSavedSearchSet() {
     return savedSearchIsSet;
 }
+
+void FilterCriteria::unsetSavedSearch() {
+    savedSearchIsSet = false;
+}
+
 
 
 
@@ -105,6 +119,11 @@ bool FilterCriteria::isAttributeSet() {
     return attributeIsSet;
 }
 
+void FilterCriteria::unsetAttribute() {
+    attributeIsSet = false;
+}
+
+
 
 
 
@@ -122,6 +141,10 @@ bool FilterCriteria::isDeletedOnlySet() {
     return deletedOnlyIsSet;
 }
 
+void FilterCriteria::unsetDeletedOnly() {
+    deletedOnlyIsSet = false;
+}
+
 
 
 qint32 FilterCriteria::getContent() {
@@ -137,6 +160,11 @@ void FilterCriteria::setContent(qint32 item) {
 bool FilterCriteria::isContentSet() {
     return contentIsSet;
 }
+
+void FilterCriteria::unsetContent() {
+    contentIsSet = false;
+}
+
 
 
 
@@ -167,6 +195,10 @@ bool FilterCriteria::isSelectedNotesSet() {
     return selectedNotesIsSet;
 }
 
+void FilterCriteria::unsetSelectedNotes() {
+    selectedNotesIsSet = false;
+}
+
 
 
 
@@ -184,6 +216,11 @@ bool FilterCriteria::isSearchStringSet() {
     return searchStringIsSet;
 }
 
+void FilterCriteria::unsetSearchString() {
+    searchStringIsSet = false;
+}
+
+
 
 void FilterCriteria::duplicate(FilterCriteria &newFilter) {
     if (attributeIsSet)
@@ -191,6 +228,10 @@ void FilterCriteria::duplicate(FilterCriteria &newFilter) {
 
     if (contentIsSet)
         newFilter.setContent(content);
+
+    for (int i=0; i<selectedNotes.size(); i++) {
+        newFilter.selectedNotes.append(selectedNotes[i]);
+    }
 
     if (deletedOnlyIsSet)
         newFilter.setDeletedOnly(deletedOnly);
@@ -217,5 +258,6 @@ void FilterCriteria::duplicate(FilterCriteria &newFilter) {
     newFilter.resetDeletedOnly = resetDeletedOnly;
     newFilter.resetContent = resetContent;
     newFilter.resetSearchString = resetSearchString;
+
 
 }

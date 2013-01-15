@@ -62,6 +62,7 @@ public slots:
     void propertiesRequested();
     void deleteRequested();
     void renameRequested();
+    void tagExpunged(qint32 lid);
 
 protected:
     void dragMoveEvent(QDragMoveEvent *event);

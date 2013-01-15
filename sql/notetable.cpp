@@ -98,7 +98,7 @@ qint32 NoteTable::getLid(string guid) {
 
 
 // Add a new note to the database
-void NoteTable::add(qint32 l, Note &t, bool isDirty) {
+qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
     QLOG_DEBUG() << "Adding note: " << QString::fromStdString(t.title);
     ResourceTable resTable;
     ConfigStore cs;
@@ -109,7 +109,7 @@ void NoteTable::add(qint32 l, Note &t, bool isDirty) {
     qint32 notebookLid;
 
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-    if (lid ==0)
+    if (lid <= 0)
         lid = cs.incrementLidCounter();
 
     query.bindValue(":lid", lid);
@@ -340,7 +340,7 @@ void NoteTable::add(qint32 l, Note &t, bool isDirty) {
     }
 
     updateNoteList(lid, t, isDirty);
-
+    return lid;
 }
 
 
@@ -428,7 +428,7 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
     else
         hasTodo = false;
     query.bindValue(":hasTodo", hasTodo);
-    query.bindValue(":isDirty", isDirty);
+    query.bindValue(":isDirty", !isDirty);
     qlonglong size = t.content.length();
     for (unsigned int i=0; i<t.resources.size(); i++) {
         size+=t.resources[i].data.size;
@@ -598,6 +598,23 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadResource
             note.tagGuids.push_back(tag.guid);
             note.tagNames.push_back(tag.name);
             break;
+        }
+    }
+
+    ResourceTable resTable;
+    QList<qint32> resList;
+    if (resTable.getResourceList(resList, lid)) {
+        for (int i=0; i<resList.size(); i++) {
+            Resource resource;
+            if (loadResources) {
+                resTable.get(resource, resList[i]);
+            } else {
+                QString resGuid = resTable.getGuid(resList[i]);
+                resource.guid = resGuid.toStdString();
+                resource.__isset.guid = true;
+            }
+            note.__isset.resources = true;
+            note.resources.push_back(resource);
         }
     }
 
@@ -1030,11 +1047,33 @@ void NoteTable::deleteNote(qint32 lid, bool isDirty=true) {
 
 
 void NoteTable::expunge(qint32 lid) {
+    Note note;
+    this->get(note, lid, true, false);
+    ResourceTable resTable;
+    for (unsigned int i=0; note.__isset.resources && i<note.resources.size(); i++) {
+        Resource r = note.resources[i];
+        resTable.expunge(r.guid);
+    }
+
     QSqlQuery query;
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
 }
+
+
+void NoteTable::expunge(string guid) {
+    int lid = this->getLid(guid);
+    this->expunge(lid);
+}
+
+
+void NoteTable::expunge(QString guid) {
+    int lid = this->getLid(guid);
+    this->expunge(lid);
+}
+
+
 
 
 

@@ -48,6 +48,9 @@ int main(int argc, char *argv[])
     QLOG_DEBUG() << "Running global setup";
     global.setup(startupConfig);
 
+    // Save the clipboard
+    global.clipboard = QApplication::clipboard();
+
     NixNote w;
     w.show();
     //w.showMaximized();

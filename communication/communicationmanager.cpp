@@ -75,6 +75,12 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
             noteStoreClient->getNote(n, token, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
             chunk.notes[i] = n;
         }
+        for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
+            QLOG_DEBUG() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
+            Resource r;
+            noteStoreClient->getResource(r, token, chunk.resources[i].guid, true, true, true, true);
+            chunk.resources[i] = r;
+        }
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         return false;
@@ -111,9 +117,6 @@ string CommunicationManager::getToken() {
 bool CommunicationManager::initUserStore() {
     QLOG_DEBUG() << "Inside CommunicationManager::initUserStore()";
     try {
-
-
-
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
         QString pgmDir = global.getProgramDirPath() + "/certs/PCA-3G2.pem";
         sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
@@ -190,9 +193,32 @@ bool CommunicationManager::initNoteStore() {
 
 
 void CommunicationManager::disconnect() {
-    if (userStoreHttpClient != NULL)
-        userStoreHttpClient->close();
-    if (noteStoreHttpClient != NULL)
+    if (noteStoreHttpClient != NULL && noteStoreHttpClient->isOpen()) {
+        noteStoreHttpClient->flush();
         noteStoreHttpClient->close();
+    }
+    if (userStoreHttpClient != NULL && userStoreHttpClient->isOpen()) {
+        userStoreHttpClient->flush();
+        userStoreHttpClient->close();
+    }
     initComplete=false;
 }
+
+
+
+
+bool CommunicationManager::getUserInfo(User &user) {
+    QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo";
+    try {
+       userStoreClient->getUser(user, authToken);
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return false;
+    }
+    return true;
+}
+
+

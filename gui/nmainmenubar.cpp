@@ -47,6 +47,8 @@ void NMainMenuBar::setupEditMenu() {
 
 void NMainMenuBar::setupViewMenu() {
     viewMenu = this->addMenu(tr("&View"));
+    viewSourceAction = new QAction(tr("Show Source"), this);
+    viewMenu->addAction(viewSourceAction);
 }
 
 void NMainMenuBar::setupToolsMenu() {
@@ -68,10 +70,20 @@ void NMainMenuBar::setupToolsMenu() {
   disconnectAction->setFont(f);
   toolsMenu->addAction(disconnectAction);
   disconnectAction->setEnabled(false);
+
+  accountDialogAction = new QAction(tr("Account"), this);
+  accountDialogAction->setToolTip(tr("Account information"));
+  connect(accountDialogAction, SIGNAL(triggered()), parent, SLOT(openAccount()));
+  toolsMenu->addAction(accountDialogAction);
+
 }
 
 void NMainMenuBar::setupHelpMenu() {
     helpMenu = this->addMenu(tr("&Help"));
+    aboutAction = new QAction(tr("About"), this);
+    aboutAction->setToolTip(tr("About"));
+    connect(aboutAction, SIGNAL(triggered()), parent, SLOT(openAbout()));
+    helpMenu->addAction(aboutAction);
 }
 
 void NMainMenuBar::setupShortcut(QAction *action, QString key) {

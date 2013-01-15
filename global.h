@@ -66,6 +66,7 @@ public:
     QString tagBehavior();
     QString server;
     QSettings *settings;
+    QClipboard *clipboard;
     //JavaMachine jvm;
 
     // Filter criteria.  Used for things like the back & forward buttons

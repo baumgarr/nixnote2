@@ -296,6 +296,17 @@ void SearchTable::expunge(qint32 lid) {
 }
 
 
+void SearchTable::expunge(string guid) {
+    expunge(getLid(guid));
+}
+
+void SearchTable::expunge(QString guid) {
+    expunge(getLid(guid));
+}
+
+
+
+
 // Determine if a search is dirty given a guid
 bool SearchTable::exists(QString guid) {
     qint32 lid = getLid(guid);

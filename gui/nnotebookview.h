@@ -65,6 +65,7 @@ public slots:
     void moveToStackRequested();
     void moveToNewStackRequested();
     void removeFromStackRequested();
+    void notebookExpunged(qint32 lid);
 };
 
 #endif // NNOTEBOOKVIEW_H

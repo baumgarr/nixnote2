@@ -388,11 +388,31 @@ void TagTable::deleteTag(qint32 lid) {
 
 
 void TagTable::expunge(qint32 lid) {
+    QString tagGuid;
+    this->getGuid(tagGuid, lid);
     QSqlQuery query;
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
+
+    NoteTable noteTable;
+    QList<int> notes;
+    noteTable.findNotesByTag(notes, tagGuid);
+    for (int i=0; i<notes.size(); i++)
+        noteTable.removeTag(notes[i], lid, false);
 }
+
+
+void TagTable::expunge(string guid) {
+    int lid = this->getLid(guid);
+    expunge(lid);
+}
+
+void TagTable::expunge(QString guid) {
+    int lid = this->getLid(guid);
+    expunge(lid);
+}
+
 
 // Is this search deleted?
 bool TagTable::isDeleted(qint32 lid) {

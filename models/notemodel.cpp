@@ -119,3 +119,15 @@ Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const
     return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
 }
 
+
+
+QVariant NoteModel::data (const QModelIndex & index, int role) const {
+//    if (index.column() != NOTE_TABLE_IS_DIRTY_POSITION || role != Qt::DisplayRole)
+        return QSqlTableModel::data(index,role);
+
+//    QVariant v = QSqlTableModel::data(index, role);
+//    if (v.toBool())
+//        return "false";
+//    else
+//        return "";
+}

@@ -1,6 +1,7 @@
 #include "resourcetable.h"
 #include "configstore.h"
 #include "notetable.h"
+#include "utilities/mimereference.h"
 
 #include <QSqlTableModel>
 
@@ -76,7 +77,7 @@ qint32 ResourceTable::getLid(QString noteGuid, QString guid) {
     QSqlQuery query;
     NoteTable n;
     qint32 noteLid = n.getLid(noteGuid);
-    query.prepare("Select a.lid from DataStore a where a.key=:key and a.data=:data and a.lid = (select b.lid from DataStore b where b.key2=:key2 and b.data=:noteGuid)");
+    query.prepare("Select a.lid from DataStore a where a.key=:key and a.lid = (select b.lid from DataStore b where b.key=:key2 and b.data=:noteGuid)");
     query.bindValue(":data", guid);
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":noteGuid", noteLid);
@@ -97,6 +98,35 @@ qint32 ResourceTable::getLid(string noteGuid, string guid) {
 }
 
 
+qint32 ResourceTable::getLid(string resourceGuid) {
+    return this->getLid(QString::fromStdString(resourceGuid));
+}
+
+qint32 ResourceTable::getLid(QString resourceGuid) {
+    QSqlQuery query;
+    query.prepare("Select lid from DataStore where key=:key and data=:guid");
+    query.bindValue(":key", RESOURCE_GUID);
+    query.bindValue(":data", resourceGuid);
+    query.exec();
+    if (query.next())
+        return query.value(0).toInt();
+    else
+        return 0;
+}
+
+
+
+QString ResourceTable::getGuid(int lid) {
+    QSqlQuery query;
+    query.prepare("Select data from DataStore where key=:key and lid=:lid");
+    query.bindValue(":key", RESOURCE_GUID);
+    query.bindValue(":lid", lid);
+    query.exec();
+    if (query.next())
+        return query.value(0).toString();
+    else
+        return "";
+}
 
 // Return a resource structure given the LID
 bool ResourceTable::get(Resource &resource, qint32 lid) {
@@ -125,7 +155,7 @@ bool ResourceTable::get(Resource &resource, qint32 lid) {
 //            resource.data.body = QString(byteArray).toStdString();
 //            resource.__isset.data = true;
 //            resource.data.__isset.body = true;
-//            break;
+              break;
         case (RESOURCE_DATA_HASH):
             byteArray.clear();
             byteArray.append(query.value(1).toByteArray());
@@ -255,12 +285,13 @@ bool ResourceTable::get(Resource &resource, qint32 lid) {
     }
 
     // Now read the binary data from the disk
-    QString fileExt = QString::fromStdString(resource.mime);
-    int p = fileExt.indexOf("/")+1;
-    fileExt.remove(0,p);
-    if (fileExt == "jpeg")
-        fileExt = "jpg";
-    QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +"." +fileExt );
+    QString mimetype = QString::fromStdString(resource.mime);
+    MimeReference ref;
+    QString filename;
+    if (resource.__isset.attributes && resource.attributes.__isset.fileName)
+        filename = QString::fromStdString(resource.attributes.fileName);
+    QString fileExt = ref.getExtensionFromMime(mimetype, filename);
+    QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
     tfile.open(QIODevice::ReadOnly);
     QByteArray b = tfile.readAll();
     resource.data.body.clear();
@@ -393,7 +424,7 @@ void ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_DATA_HASH);
             QByteArray b;
-            b.append(t.data.bodyHash.data());
+            b.append(t.data.bodyHash.data(),t.data.bodyHash.size());
             query.bindValue(":data", b.toHex());
             query.exec();
         }
@@ -402,12 +433,13 @@ void ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
             QByteArray b;
             b.clear();
             b.append(t.data.body.data(),t.data.size);
-            QString fileExt = QString::fromStdString(t.mime);
-            int p = fileExt.indexOf("/")+1;
-            fileExt.remove(0,p);
-            if (fileExt == "jpeg")
-                fileExt = "jpg";
-            QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +"." +fileExt );
+            QString mimetype = QString::fromStdString(t.mime);
+            QString filename;
+            MimeReference ref;
+            if (t.__isset.attributes && t.attributes.__isset.fileName)
+                filename = QString::fromStdString(t.attributes.fileName);
+            QString fileExt = ref.getExtensionFromMime(mimetype, filename);
+            QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
             tfile.open(QIODevice::WriteOnly);
             tfile.write(b,t.data.size);
             tfile.close();
@@ -682,4 +714,53 @@ qint32 ResourceTable::getIndexNeeded(QList<qint32> &lids) {
         lids.append(query.value(0).toInt());
     }
     return lids.size();
+}
+
+
+
+bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid) {
+
+    QSqlQuery query;
+    query.prepare("Select lid from DataStore where key=:key and data=:notelid");
+    query.bindValue(":key", RESOURCE_NOTE_LID);
+    query.bindValue(":notelid", noteLid);
+    query.exec();
+    while (query.next()) {
+        int resLid = query.value(0).toInt();
+        resourceList.append(resLid);
+    }
+    if (resourceList.size() > 0)
+        return true;
+    else
+        return false;
+}
+
+
+void ResourceTable::expunge(qint32 lid) {
+    QSqlQuery query;
+    query.prepare("delete from DataStore where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+
+    // Delete the physical files
+    QDir myDir(global.fileManager.getDbaDirPath());
+    QString num = QString::number(lid);
+    QStringList filter;
+    filter.append(num+QString(".*"));
+    QStringList list = myDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
+    for (int i=0; i<list.size(); i++) {
+        myDir.remove(list[i]);
+    }
+}
+
+
+void ResourceTable::expunge(string guid) {
+    int lid = this->getLid(guid);
+    this->expunge(lid);
+}
+
+
+void ResourceTable::expunge(QString guid) {
+    int lid = this->getLid(guid);
+    this->expunge(lid);
 }

@@ -15,5 +15,31 @@
         <file alias="up_arrow_small.png">images/up_arrow_small.png</file>
         <file alias="down_arrow_small.png">images/down_arrow_small.png</file>
         <file alias="windowIcon.png">images/window_icon.png</file>
+        <file alias="undo.png">images/undo.png</file>
+        <file alias="redo.png">images/redo.png</file>
+        <file alias="bold.png">images/bold.png</file>
+        <file alias="bulletList.png">images/bulletList.png</file>
+        <file alias="copy.png">images/copy.png</file>
+        <file alias="cut.png">images/cut.png</file>
+        <file alias="hline.png">images/hline.png</file>
+        <file alias="fontHighlight.png">images/fontHilight.png</file>
+        <file alias="fontColor.png">images/fontColor.png</file>
+        <file alias="shiftRight.png">images/indent.png</file>
+        <file alias="centerAlign.png">images/justifyCenter.png</file>
+        <file alias="leftAlign.png">images/justifyLeft.png</file>
+        <file alias="rightAlign.png">images/justifyRight.png</file>
+        <file alias="link.png">images/link.png</file>
+        <file alias="numberList.png">images/numberList.png</file>
+        <file alias="shiftLeft.png">images/outdent.png</file>
+        <file alias="underline.png">images/underline.png</file>
+        <file alias="strikethrough.png">images/strikethrough.png</file>
+        <file alias="spellCheck.png">images/spellCheck.png</file>
+        <file alias="paste.png">images/paste.png</file>
+        <file alias="todo.png">images/todo.png</file>
+        <file alias="italics.png">images/italic.png</file>
+        <file alias="newNote.png">images/newNote.png</file>
+        <file alias="trunk.png">images/trunk.png</file>
+        <file alias="usage.png">images/usage.png</file>
+        <file alias="black_dot.png">images/black_dot.png</file>
     </qresource>
 </RCC>

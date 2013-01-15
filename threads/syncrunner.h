@@ -85,10 +85,17 @@ private:
     void evernoteSync();
     void syncRemoteToLocal(qint32 highSequence);
     //bool refreshConnection();
+    void syncRemoteExpungedNotes(vector<string> guids);
+    void syncRemoteExpungedNotebooks(vector<string> guids);
+    void syncRemoteExpungedTags(vector<string> guids);
+    void syncRemoteExpungedSavedSearches(vector<string> guid);
+
     void syncRemoteTags(vector<Tag> tag);
     void syncRemoteSearches(vector<SavedSearch> searches);
     void syncRemoteNotebooks(vector<Notebook> books);
     void syncRemoteNotes(vector<Note> notes);
+    void syncRemoteResources(vector<Resource> resources);
+
     void updateNoteTableTags();
     void updateNoteTableNotebooks();
 
@@ -104,10 +111,14 @@ public:
 
 signals:
     void syncComplete();
+    void setMessage(QString message);
     void searchUpdated(qint32 lid, QString name);
     void tagUpdated(qint32 lid, QString name);
     void notebookUpdated(qint32 lid, QString name);
     void noteUpdated(qint32 lid);
+    void tagExpunged(qint32 lid);
+    void notebookExpunged(qint32 lid);
+    void searchExpunged(qint32 lid);
 
  public slots:
     void synchronize();
