@@ -65,10 +65,7 @@ void NTitleEditor::titleChanged(QString text) {
 
     // Check that we have some type of title.  If not we go with
     // the default
-    if (text.trimmed() == "" && !hasFocus())
-        setText(defaultTitle);
-    else
-        setText(text);
+    text = cleanupTitle(text);
     this->blockSignals(false);
 
     // Now check that the text has actually changed.  We need to do this because
@@ -78,10 +75,39 @@ void NTitleEditor::titleChanged(QString text) {
             NoteTable noteTable;
             noteTable.updateTitle(currentLid, text, true);
             emit(titleChanged());
+            setText(text);
             priorTitle = text;
         }
     }
-
+    blockSignals(false);
     //priorTitle = text;
 }
 
+
+
+QString NTitleEditor::cleanupTitle(QString text) {
+    if (text == "" && !hasFocus()) {
+        text = tr("Untitled Note");
+    }
+
+    text = text.trimmed();
+
+    LimitsConstants limits;
+    if (text.length() > limits.EDAM_NOTE_TITLE_LEN_MAX)
+        text = text.mid(0,limits.EDAM_NOTE_TITLE_LEN_MAX-1);
+
+    return text;
+}
+
+
+void NTitleEditor::setTitleFromContent(QString s) {
+    if (priorTitle != tr("Untitled Note"))
+        return;
+    int newline = s.indexOf("\n");
+    if (newline >= 0)
+        s = s.mid(0,newline);
+    s = cleanupTitle(s);
+    blockSignals(true);
+    this->setText(s);
+    blockSignals(false);
+}

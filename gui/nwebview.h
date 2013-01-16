@@ -8,6 +8,7 @@
 #include <QAction>
 
 #include "gui/nbrowserwindow.h"
+#include "gui/browserWidgets/ntitleeditor.h"
 
 class NBrowserWindow;
 
@@ -25,6 +26,7 @@ private:
 public:
     explicit NWebView(NBrowserWindow *parent = 0);
     NBrowserWindow *parent;
+    NTitleEditor *titleEditor;
     QMenu *contextMenu;
     QMenu *tableMenu;
     QMenu *imageMenu;
@@ -73,9 +75,11 @@ public slots:
     void setBackgroundOrange();
     void setBackgroundPowderBlue();
     void printNodeName(QString s);
+    void setTitleEditor(NTitleEditor *editor);
 
 private slots:
     void exposeToJavascript();
+    void setDefaultTitle();
 
 
 };

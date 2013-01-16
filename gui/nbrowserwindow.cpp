@@ -51,6 +51,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     this->loadFontNames();
 
     editor = new NWebView(this);
+    editor->setTitleEditor(&noteTitle);
     layout->addWidget(&buttonBar);
     setupToolBar();
 

@@ -289,3 +289,17 @@ void NWebView::setBackgroundPowderBlue() { parent->setBackgroundColor("powderblu
 void NWebView::printNodeName(QString s) {
     QLOG_DEBUG() << s;
 }
+
+
+void NWebView::setTitleEditor(NTitleEditor *editor) {
+    titleEditor = editor;
+    if (editor == NULL)
+        return;
+    connect(page(), SIGNAL(contentsChanged()), this, SLOT(setDefaultTitle()));
+}
+
+
+void NWebView::setDefaultTitle() {
+    QString body = this->page()->mainFrame()->toPlainText();
+    titleEditor->setTitleFromContent(body);
+}

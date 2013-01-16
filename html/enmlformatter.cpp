@@ -85,7 +85,7 @@ void EnmlFormatter::scanTags() {
     if (doc.hasChildNodes()) {
         parseNodes(doc.childNodes());
     }
-    QLOG_DEBUG() << "Doc:" << doc.toString();
+    //QLOG_DEBUG() << "Doc:" << doc.toString();
     return;
 }
 
