@@ -114,11 +114,12 @@ void SyncRunner::evernoteSync() {
 void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     QLOG_TRACE() << "Entering SyncRunner::evernoteSync()";
 
-    int chunkSize = 100;
+    int chunkSize = 50;
     bool more = true;
     SyncChunk chunk;
 
     bool rc;
+    int startingSequenceNumber = updateSequenceNumber;
     while(more && keepRunning)  {
 
         QSqlQuery query;
@@ -129,7 +130,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             return;
         }
         QLOG_DEBUG() << "------>>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
-        int pct = (updateSequenceNumber*100/chunk.chunkHighUSN);
+        int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
         emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete."));
 
         if (chunk.expungedNotes.size() > 0)

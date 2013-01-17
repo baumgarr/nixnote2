@@ -86,14 +86,15 @@ public:
     ToolbarWidgetAction *shiftLeftButtonAction;
     ToolbarWidgetAction *bulletListButtonAction;
     ToolbarWidgetAction *numberListButtonAction;
+    QShortcut *focusNoteShortcut;
+    QShortcut *focusTitleShortcut;
+    QShortcut *insertDatetimeShortcut;
     QAction *fontColorButtonAction;
     QToolButton *fontColorButton;
     QAction *highlightButtonAction;
     QToolButton *highlightButton;
     ToolbarWidgetAction *spellButtonAction;
-    //QPushButton *spellButton;
     ToolbarWidgetAction *todoButtonAction;
-    //QPushButton *todoButton;
     QComboBox *fontSize;
     QComboBox *fontNames;
     QToolButton *fontColor;
@@ -113,6 +114,7 @@ public:
     void tabPressed();
     void backtabPressed();
     void clear();
+    void setupShortcut(QShortcut *action, QString text);
 
 signals:
     void noteUpdated(qint32);
@@ -170,6 +172,9 @@ public slots:
     void linkClicked(const QUrl url);
     void toggleSource();
     void setSource();
+    void focusTitle();
+    void focusNote();
+    void insertDatetime();
 
     void exposeToJavascript();
     void boldActive();

@@ -536,7 +536,6 @@ void NixNote::updateSelectionCriteria() {
     if (selectedNotes.size() == 0) {
         tabWindow->currentBrowser()->clear();
     }
-    QLOG_DEBUG() << tabWindow->currentBrowser()->lid;
     if (selectedNotes.size() > 0) {
         tabWindow->currentBrowser()->setContent(selectedNotes.at(0));
         openNote(false);

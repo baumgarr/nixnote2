@@ -78,6 +78,18 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     setLayout(layout);
     layout->setMargin(0);
 
+    // Setup shortcuts
+    focusNoteShortcut = new QShortcut(this);
+    setupShortcut(focusNoteShortcut, "Focus_Note");
+    connect(focusNoteShortcut, SIGNAL(activated()), this, SLOT(focusNote()));
+    focusTitleShortcut = new QShortcut(this);
+    setupShortcut(focusTitleShortcut, "Focus_Title");
+    connect(focusTitleShortcut, SIGNAL(activated()), this, SLOT(focusTitle()));
+    insertDatetimeShortcut = new QShortcut(this);
+    setupShortcut(insertDatetimeShortcut, "Insert_DateTime");
+    connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
+
+
     // Setup the signals
     connect(&expandButton, SIGNAL(stateChanged(int)), this, SLOT(changeExpandState(int)));
     connect(&notebookMenu, SIGNAL(notebookChanged()), this, SLOT(sendUpdateSignal()));
@@ -228,7 +240,6 @@ void NBrowserWindow::setupToolBar() {
     todoButtonAction->createWidget(0);
     buttonBar.addAction(todoButtonAction);
 
-
     // Toolbar action
     connect(undoButtonAction->button, SIGNAL(clicked()), this, SLOT(undoButtonPressed()));
     connect(redoButtonAction->button, SIGNAL(clicked()), this, SLOT(redoButtonPressed()));
@@ -252,6 +263,14 @@ void NBrowserWindow::setupToolBar() {
     connect(fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
     connect(fontColor->menu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
     connect(highlightColor->menu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHilightClicked()));
+}
+
+
+void NBrowserWindow::setupShortcut(QShortcut *action, QString text) {
+    if (!global.shortcutKeys->containsAction(&text))
+        return;
+    QKeySequence key(global.shortcutKeys->getShortcut(&text));
+    action->setKey(key);
 }
 
 void NBrowserWindow::setContent(qint32 lid) {
@@ -946,5 +965,25 @@ void NBrowserWindow::setInsideLink(QString link) {
 
 void NBrowserWindow::editLatex(QString guid) {
 
+}
+
+
+
+void NBrowserWindow::focusTitle() {
+    this->noteTitle.setFocus();
+}
+
+void NBrowserWindow::focusNote() {
+    this->editor->setFocus();
+}
+
+void NBrowserWindow::insertDatetime() {
+    QDateTime dt = QDateTime::currentDateTime();
+    QLocale locale;
+    QString dts = dt.toString(locale.dateTimeFormat(QLocale::ShortFormat));
+
+    editor->page()->mainFrame()->evaluateJavaScript(
+        "document.execCommand('insertHtml', false, '"+dts+"');");
+    editor->setFocus();
 }
 

@@ -10,6 +10,7 @@
 Global::Global()
 {
     FilterCriteria *criteria = new FilterCriteria();
+    shortcutKeys = new ShortcutKeys();
     filterCriteria.push_back(criteria);
     filterPosition = 0;
 

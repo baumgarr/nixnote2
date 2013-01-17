@@ -49,6 +49,7 @@ public:
     QAction *deleteTableRowAction;
     QAction *openAction;
     QAction *insertQuickLinkAction;
+
     bool isDirty;
     NWebPage *editorPage;
     bool event(QEvent *event);

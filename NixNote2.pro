@@ -115,7 +115,8 @@ SOURCES += main.cpp\
     xml/xmlhighlighter.cpp \
     gui/browserWidgets/toolbarwidgetaction.cpp \
     utilities/mimereference.cpp \
-    dialog/accountdialog.cpp
+    dialog/accountdialog.cpp \
+    gui/shortcutkeys.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -247,7 +248,8 @@ HEADERS  += nixnote.h \
     xml/xmlhighlighter.h \
     gui/browserWidgets/toolbarwidgetaction.h \
     utilities/mimereference.h \
-    dialog/accountdialog.h
+    dialog/accountdialog.h \
+    gui/shortcutkeys.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

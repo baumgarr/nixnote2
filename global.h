@@ -10,6 +10,8 @@
 #include "settings/startupconfig.h"
 #include "filters/filtercriteria.h"
 #include "models/notecache.h"
+#include "gui/shortcutkeys.h"
+
 //#include "java/javamachine.h"
 
 #include <string>
@@ -67,6 +69,7 @@ public:
     QString server;
     QSettings *settings;
     QClipboard *clipboard;
+    ShortcutKeys *shortcutKeys;
     //JavaMachine jvm;
 
     // Filter criteria.  Used for things like the back & forward buttons
