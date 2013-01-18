@@ -97,6 +97,7 @@ void OAuthWindow::tempAuthPageLoaded(bool rc) {
 
     QWebFrame *mainFrame = tempAuthPage.page()->mainFrame();
     QString contents = mainFrame->toPlainText();
+    QLOG_DEBUG() << "Temporary Cred Contents: " << contents;
     int index = contents.indexOf("&oauth_token_secret");
     contents = contents.left(index);
     QUrl accessUrl(urlBase+"/OAuth.action?" +contents);
@@ -111,8 +112,8 @@ void OAuthWindow::tempAuthPageReply(QNetworkReply* reply) {
     QLOG_DEBUG() << "error: " << reply->error();
     if (reply->error() != QNetworkReply::NoError) {
         int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-        QLOG_DEBUG() << "status:" << statusCode;
-        QLOG_DEBUG() << "error: " << reply->error();
+//        QLOG_DEBUG() << "status:" << statusCode;
+//        QLOG_DEBUG() << "error: " << reply->error();
         return;
     }
 }
@@ -125,8 +126,7 @@ void OAuthWindow::permanentCredentialsReceived(bool rc) {
     QWebFrame *mainFrame;
     mainFrame = authRequestPage.page()->mainFrame();
     QString contents = mainFrame->toPlainText();
-    QLOG_DEBUG() << "Permanent Auth Response: " << contents;
-    QLOG_DEBUG() << "Permanent credentials received received from Evernote";
+
 
     if (!rc) {
         errorMessage = tr("Error receiving permanent credentials");
@@ -137,6 +137,8 @@ void OAuthWindow::permanentCredentialsReceived(bool rc) {
     }
 
     if (contents.startsWith("oauth_token=S%3D")) {
+        QLOG_DEBUG() << "Permanent Auth Response: " << contents;
+        QLOG_DEBUG() << "Permanent credentials received received from Evernote";
         authTokenReceived = true;
         QLOG_DEBUG() << "Good authorization token received.";
         QString decoded;
@@ -159,10 +161,10 @@ void OAuthWindow::permanentCredentialsReceived(bool rc) {
 void OAuthWindow::userLoginReply(QNetworkReply *reply) {
     if (userLoginPageLoaded)
         return;
-    QLOG_DEBUG() << "Authentication reply received from Evernote";
-    QLOG_DEBUG() << "error: " << reply->error();
+//    QLOG_DEBUG() << "Authentication reply received from Evernote";
+//    QLOG_DEBUG() << "error: " << reply->error();
     QString searchReq = "?oauth_token=";
-    QLOG_DEBUG() << "Reply:" << reply->url().toString();
+//    QLOG_DEBUG() << "Reply:" << reply->url().toString();
 
     int pos = reply->url().toString().indexOf(searchReq);
     if (pos>0) {
@@ -177,6 +179,8 @@ void OAuthWindow::userLoginReply(QNetworkReply *reply) {
 
         if (reply->isFinished()) {
             QLOG_DEBUG() << "Loading URL";
+            QLOG_DEBUG() << "Permanent URL: " << permanentCredUrl;
+            QLOG_DEBUG() << "Token: " << token;
             connect(&authRequestPage, SIGNAL(loadFinished(bool)), this, SLOT(permanentCredentialsReceived(bool)));
             authRequestPage.load(QUrl(permanentCredUrl+token));
             userLoginPageLoaded = true;
