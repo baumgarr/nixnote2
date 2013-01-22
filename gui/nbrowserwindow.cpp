@@ -1057,7 +1057,7 @@ void NBrowserWindow::rotateImage(qreal degrees) {
     QCryptographicHash hash(QCryptographicHash::Md5);
     QByteArray b = hash.hash(filedata, QCryptographicHash::Md5);
     QString newhash =  b.toHex();
-    updateImageHash(newhash, b);
+    updateImageHash(newhash);
 
     // Reload the web page
     editor->triggerPageAction(QWebPage::ReloadAndBypassCache);
