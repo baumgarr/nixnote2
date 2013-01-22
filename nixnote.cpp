@@ -96,20 +96,21 @@ void NixNote::setupGui() {
     setWindowTitle(tr("NixNote 2"));
     setWindowIcon(QIcon(":windowIcon.png"));
 
-    QLOG_TRACE() << "Setting up menu bar";
+    //QLOG_TRACE() << "Setting up menu bar";
     menuBar = new NMainMenuBar(this);
-    //setMenuBar(menuBar);
+    setMenuBar(menuBar);
 
     QLOG_TRACE() << "Setting up tool bar";
     toolBar = addToolBar(tr("ToolBar"));
+    //menuBar = new NMainMenuBar(this);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolBar->setObjectName("toolBar");
-    toolBar->addWidget(menuBar);
+    //toolBar->addWidget(menuBar);
     menuBar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     toolBar->setFloatable(true);
     toolBar->setMovable(true);
     toolBar->setAllowedAreas(Qt::BottomToolBarArea | Qt::TopToolBarArea);
-    toolBar->addSeparator();
+    //toolBar->addSeparator();
     leftArrowButton = toolBar->addAction(QIcon(":left_arrow.png"), tr("Back"));
     rightArrowButton = toolBar->addAction(QIcon(":right_arrow.png"), tr("Next"));
 

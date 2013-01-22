@@ -34,7 +34,7 @@ public:
     QAction *accountDialogAction;
     QAction *aboutAction;
 
-    explicit NMainMenuBar(NixNote *parent = 0);
+    explicit NMainMenuBar(QWidget *parent = 0);
 
 signals:
 

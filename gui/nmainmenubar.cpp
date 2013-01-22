@@ -2,10 +2,10 @@
 #include <QAbstractAnimation>
 #include <QFileIconProvider>
 
-NMainMenuBar::NMainMenuBar(NixNote *parent) :
+NMainMenuBar::NMainMenuBar(QWidget *parent) :
     QMenuBar(parent)
 {
-    this->parent = parent;
+    this->parent = (NixNote*)parent;
     setupFileMenu();
     setupEditMenu();
     setupViewMenu();
