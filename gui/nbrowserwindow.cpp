@@ -19,6 +19,7 @@
 #include "gui/browserWidgets/colormenu.h"
 #include "gui/browserWidgets/toolbarwidgetaction.h"
 #include "dialog/insertlinkdialog.h"
+#include "dialog/tabledialog.h"
 
 extern Global global;
 
@@ -733,7 +734,7 @@ void NBrowserWindow::bulletListButtonPressed() {
 void NBrowserWindow::contentChanged() {
     this->editor->isDirty = true;
     saveNoteContent();
-    emit(this->noteUpdated(lid));
+    this->sendUpdateSignal();
 }
 
 
@@ -899,26 +900,129 @@ void NBrowserWindow::encryptButtonPressed() {
 
 
 void NBrowserWindow::insertTableButtonPressed() {
+    TableDialog dialog(this);
+    dialog.exec();
+    if (!dialog.isOkPressed()) {
+        return;
+    }
 
+    int cols = dialog.getCols();
+    int rows = dialog.getRows();
+    int width = dialog.getWidth();
+    bool percent = dialog.isPercent();
+
+    QString newHTML = QString("<table border=\"1\" width=\"") +QString::number(width);
+    if (percent)
+        newHTML = newHTML +"%";
+    newHTML = newHTML + "\"><tbody>";
+
+    for (int i=0; i<rows; i++) {
+        newHTML = newHTML +"<tr>";
+        for (int j=0; j<cols; j++) {
+            newHTML = newHTML +"<td>&nbsp;</td>";
+        }
+        newHTML = newHTML +"</tr>";
+    }
+    newHTML = newHTML+"</tbody></table>";
+
+    QString script = "document.execCommand('insertHtml', false, '"+newHTML+"');";
+    editor->page()->mainFrame()->evaluateJavaScript(script);
+    contentChanged();
 }
 
 void NBrowserWindow::insertTableRowButtonPressed() {
-
+    QString js ="function insertTableRow() {"
+        "   var selObj = window.getSelection();"
+        "   var selRange = selObj.getRangeAt(0);"
+        "   var workingNode = window.getSelection().anchorNode.parentNode;"
+        "   var cellCount = 0;"
+        "   while(workingNode != null) { "
+        "      if (workingNode.nodeName.toLowerCase()=='tr') {"
+        "           row = document.createElement('TR');"
+        "           var nodes = workingNode.getElementsByTagName('td');"
+        "           for (j=0; j<nodes.length; j=j+1) {"
+        "              cell = document.createElement('TD');"
+        "              cell.innerHTML='&nbsp;';"
+        "              row.appendChild(cell);"
+        "           }"
+        "           workingNode.parentNode.insertBefore(row,workingNode.nextSibling);"
+        "           return;"
+        "      }"
+        "      workingNode = workingNode.parentNode;"
+        "   }"
+        "} insertTableRow();";
+    editor->page()->mainFrame()->evaluateJavaScript(js);
+    contentChanged();
 }
 
 
 void NBrowserWindow::insertTableColumnButtonPressed() {
-
+    QString js = "function insertTableColumn() {"
+            "   var selObj = window.getSelection();"
+            "   var selRange = selObj.getRangeAt(0);"
+            "   var workingNode = window.getSelection().anchorNode.parentNode;"
+            "   var current = 0;"
+            "   while (workingNode.nodeName.toLowerCase() != 'table' && workingNode != null) {"
+            "       if (workingNode.nodeName.toLowerCase() == 'td') {"
+            "          var td = workingNode;"
+            "          while (td.previousSibling != null) { "
+            "             current = current+1; td = td.previousSibling;"
+            "          }"
+            "       }"
+            "       workingNode = workingNode.parentNode; "
+            "   }"
+            "   if (workingNode == null) return;"
+            "   for (var i=0; i<workingNode.rows.length; i++) { "
+            "      var cell = workingNode.rows[i].insertCell(current+1); "
+            "      cell.innerHTML = '&nbsp'; "
+            "   }"
+            "} insertTableColumn();";
+        editor->page()->mainFrame()->evaluateJavaScript(js);
+        contentChanged();
 }
 
 
 void NBrowserWindow::deleteTableRowButtonPressed() {
-
+    QString js = "function deleteTableRow() {"
+        "   var selObj = window.getSelection();"
+        "   var selRange = selObj.getRangeAt(0);"
+        "   var workingNode = window.getSelection().anchorNode.parentNode;"
+        "   var cellCount = 0;"
+        "   while(workingNode != null) { "
+        "      if (workingNode.nodeName.toLowerCase()=='tr') {"
+        "           workingNode.parentNode.removeChild(workingNode);"
+        "           return;"
+        "      }"
+        "      workingNode = workingNode.parentNode;"
+        "   }"
+        "} deleteTableRow();";
+    editor->page()->mainFrame()->evaluateJavaScript(js);
+    contentChanged();
 }
 
 
 void NBrowserWindow::deleteTableColumnButtonPressed() {
-
+    QString js = "function deleteTableColumn() {"
+            "   var selObj = window.getSelection();"
+            "   var selRange = selObj.getRangeAt(0);"
+            "   var workingNode = window.getSelection().anchorNode.parentNode;"
+            "   var current = 0;"
+            "   while (workingNode.nodeName.toLowerCase() != 'table' && workingNode != null) {"
+            "       if (workingNode.nodeName.toLowerCase() == 'td') {"
+            "          var td = workingNode;"
+            "          while (td.previousSibling != null) { "
+            "             current = current+1; td = td.previousSibling;"
+            "          }"
+            "       }"
+            "       workingNode = workingNode.parentNode; "
+            "   }"
+            "   if (workingNode == null) return;"
+            "   for (var i=0; i<workingNode.rows.length; i++) { "
+            "      workingNode.rows[i].deleteCell(current); "
+            "   }"
+            "} deleteTableColumn();";
+        editor->page()->mainFrame()->evaluateJavaScript(js);
+        contentChanged();
 }
 
 void NBrowserWindow::rotateImageLeftButtonPressed() {
@@ -942,12 +1046,11 @@ void NBrowserWindow::rotateImageRightButtonPressed() {
      editor->downloadAttachmentAction->setEnabled(false);
      editor->rotateImageLeftAction->setEnabled(false);
      editor->rotateImageRightAction->setEnabled(false);
-     editor->insertTableAction->setEnabled(false);
+     editor->insertTableAction->setEnabled(true);
      editor->insertTableColumnAction->setEnabled(false);
      editor->insertTableRowAction->setEnabled(false);
      editor->deleteTableRowAction->setEnabled(false);
      editor->deleteTableColumnAction->setEnabled(false);
-     //editor->insertLinkAction->setEnabled(false);
      editor->insertLinkAction->setText(tr("Insert Link"));
      editor->insertQuickLinkAction->setEnabled(false);
 
@@ -1165,7 +1268,7 @@ void NBrowserWindow::toggleSource() {
 
 
 
-// Clear otu the window's contents
+// Clear out the window's contents
 void NBrowserWindow::clear() {
     sourceEdit->blockSignals(true);
     editor->blockSignals(true);
@@ -1246,7 +1349,7 @@ void NBrowserWindow::setInsideList() {
 
 // If we are within a table, set the menu options active
 void NBrowserWindow::setInsideTable() {
-    editor->insertTableAction->setEnabled(true);
+    editor->insertTableAction->setEnabled(false);
     editor->insertTableRowAction->setEnabled(true);
     editor->insertTableColumnAction->setEnabled(true);
     editor->deleteTableRowAction->setEnabled(true);

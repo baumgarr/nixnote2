@@ -117,7 +117,8 @@ SOURCES += main.cpp\
     utilities/mimereference.cpp \
     dialog/accountdialog.cpp \
     gui/shortcutkeys.cpp \
-    dialog/insertlinkdialog.cpp
+    dialog/insertlinkdialog.cpp \
+    dialog/tabledialog.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -251,7 +252,8 @@ HEADERS  += nixnote.h \
     utilities/mimereference.h \
     dialog/accountdialog.h \
     gui/shortcutkeys.h \
-    dialog/insertlinkdialog.h
+    dialog/insertlinkdialog.h \
+    dialog/tabledialog.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \
