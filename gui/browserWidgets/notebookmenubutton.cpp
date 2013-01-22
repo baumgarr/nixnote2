@@ -136,7 +136,7 @@ QMenu* NotebookMenuButton::findStack(Notebook n) {
     // Create a new stack.  We add a dummy action item to the
     // menu so we know where to add the menu later.  This
     // keeps things in sorted order
-    QMenu *newMenu = new QMenu();
+    QMenu *newMenu = new QMenu(this);
     newMenu->setTitle(stack);
     QFont f = newMenu->font();
     f.setPointSize(10);

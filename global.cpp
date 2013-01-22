@@ -73,11 +73,26 @@ QString Global::tagBehavior() {
 }
 
 
+void Global::appendFilter(FilterCriteria *criteria) {
+    // First, find out if we're already viewing history.  If we are we
+    // chop off the end of the history & start a new one
+    if (filterPosition+1 < filterCriteria.size()) {
+        int position = filterPosition;
+        while (position+1 < filterCriteria.size())
+            delete filterCriteria.takeAt(position);
+    }
+
+    filterCriteria.append(criteria);
+}
+
+
+
 // Utility function for case insensitive sorting
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
  {
      return s1.toLower() < s2.toLower();
  }
+
 
 
 Global global;

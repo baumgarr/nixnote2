@@ -115,10 +115,12 @@ public:
     void backtabPressed();
     void clear();
     void setupShortcut(QShortcut *action, QString text);
+    void contentChanged();
 
 signals:
     void noteUpdated(qint32);
     qint32 tagAdded(qint32);
+    void evernoteLinkClicked(qint32 lid, bool newWindow);
 
 public slots:
     void changeExpandState(int value);

@@ -154,6 +154,7 @@ void NTabWidget::noteUpdateSignaled(qint32 lid) {
 }
 
 
+
 void NTabWidget::noteSyncSignaled(qint32 lid) {
     emit(this->noteUpdated(lid));
 
@@ -191,4 +192,14 @@ void NTabWidget::setupConnections(NBrowserWindow *newBrowser) {
     connect(newBrowser, SIGNAL(tagAdded(qint32)), this, SLOT(tagCreationSignaled(qint32)));
 
     connect(syncThread, SIGNAL(noteUpdated(qint32)), this, SLOT(noteSyncSignaled(qint32)));
+
+//    connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32, bool)), this, SLOT(openNote(qint32, bool)));
+    connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool)), this, SLOT(evernoteLinkClicked(qint32, bool)));
+}
+
+
+
+void NTabWidget::evernoteLinkClicked(qint32 openLid, bool newWindow) {
+    emit(updateSelectionRequested());
+    openNote(openLid, newWindow);
 }

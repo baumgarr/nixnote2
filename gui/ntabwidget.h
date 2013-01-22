@@ -39,10 +39,11 @@ signals:
 public slots:
     void closeTab(int index);
     void moveTab(int to, int from);
-    void openNote(int lid, bool newWindow);
+    void openNote(qint32 lid, bool newWindow);
     void tagCreationSignaled(qint32 lid);
     void noteSyncSignaled(qint32 lid);
     void noteUpdateSignaled(qint32);
+    void evernoteLinkClicked(qint32 openLid, bool newWindow);
 
 };
 

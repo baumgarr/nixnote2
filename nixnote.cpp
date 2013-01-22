@@ -224,6 +224,8 @@ void NixNote::setupGui() {
     // connect so we refresh the tag tree when a new tag is added
     connect(tabWindow, SIGNAL(tagCreated(qint32)), tagTreeView, SLOT(addNewTag(qint32)));
 
+    connect(tabWindow, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
+
     // Finish by filtering & displaying the data
     //updateSelectionCriteria();
 

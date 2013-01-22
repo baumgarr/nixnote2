@@ -82,6 +82,7 @@ public:
     void setup(StartupConfig config);  // Setup the global variables
     QString getProgramDirPath();      // Get the path the program is executing from
     QList< QPair<int, QString> > passwordRemember;   // Cache of passwords
+    void appendFilter(FilterCriteria *criteria);
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);

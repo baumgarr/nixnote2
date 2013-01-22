@@ -51,7 +51,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     connect(pasteWithoutFormatAction, SIGNAL(triggered()), parent, SLOT(pasteWithoutFormatButtonPressed()));
     contextMenu->addSeparator();
 
-    QMenu *colorMenu = new QMenu(tr("Background Color"));
+    QMenu *colorMenu = new QMenu(tr("Background Color"), this);
     QAction *action = setupColorMenuOption(tr("White"));
     colorMenu->addAction(action);
     connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundWhite()));
@@ -110,7 +110,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     connect(insertLatexAction, SIGNAL(triggered()),parent, SLOT(insertLatexButtonPressed()));
     contextMenu->addSeparator();
 
-    tableMenu = new QMenu(tr("Table"));
+    tableMenu = new QMenu(tr("Table"), this);
     contextMenu->addMenu(tableMenu);
     insertTableAction = new QAction(tr("Insert Table"), this);
     tableMenu->addAction(insertTableAction);
@@ -131,7 +131,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     connect(deleteTableColumnAction, SIGNAL(triggered()), parent, SLOT(deleteTableColumnButtonPressed()));
     contextMenu->addSeparator();
 
-    imageMenu = new QMenu(tr("Image"));
+    imageMenu = new QMenu(tr("Image"), this);
     contextMenu->addMenu(imageMenu);
     rotateImageLeftAction = new QAction(tr("Rotate Left"), this);
     imageMenu->addAction(rotateImageLeftAction);

@@ -202,6 +202,7 @@ bool FilterCriteria::isSelectedNotesSet() {
 
 void FilterCriteria::unsetSelectedNotes() {
     selectedNotesIsSet = false;
+    this->selectedNotes.clear();
 }
 
 

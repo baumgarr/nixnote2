@@ -18,6 +18,7 @@
 #include <QClipboard>
 #include "gui/browserWidgets/colormenu.h"
 #include "gui/browserWidgets/toolbarwidgetaction.h"
+#include "dialog/insertlinkdialog.h"
 
 extern Global global;
 
@@ -111,6 +112,8 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 }
 
 
+
+// Setup the toolbar window of the editor
 void NBrowserWindow::setupToolBar() {
     undoButtonAction = new ToolbarWidgetAction();
     undoButtonAction->setType(ToolbarWidgetAction::Undo);
@@ -266,6 +269,9 @@ void NBrowserWindow::setupToolBar() {
 }
 
 
+
+
+// Load any shortcut keys
 void NBrowserWindow::setupShortcut(QShortcut *action, QString text) {
     if (!global.shortcutKeys->containsAction(&text))
         return;
@@ -273,6 +279,8 @@ void NBrowserWindow::setupShortcut(QShortcut *action, QString text) {
     action->setKey(key);
 }
 
+
+// Load the note content into the window
 void NBrowserWindow::setContent(qint32 lid) {
 
     // First, make sure we have a valid lid
@@ -329,6 +337,9 @@ void NBrowserWindow::setContent(qint32 lid) {
 
 
 
+
+// Show / hide various note attributes depending upon what the user
+// has clicked
 void NBrowserWindow::changeExpandState(int value) {
     switch (value) {
     case EXPANDBUTTON_1:
@@ -347,14 +358,22 @@ void NBrowserWindow::changeExpandState(int value) {
 }
 
 
+
+// Send a signal that the note has been updated
 void NBrowserWindow::sendUpdateSignal() {
     emit(this->noteUpdated(lid));
 }
 
+
+
+// Send a signal that a tag has been added to a note
 void NBrowserWindow::newTagAdded(qint32 lid) {
     emit(tagAdded(lid));
 }
 
+
+
+// Add a tag to a note
 void NBrowserWindow::addTagName(qint32 lid) {
     TagTable table;
     Tag t;
@@ -362,16 +381,24 @@ void NBrowserWindow::addTagName(qint32 lid) {
     tagEditor.addTag(QString::fromStdString(t.name));
 }
 
+
+
+// Rename a tag in a note.
 void NBrowserWindow::tagRenamed(qint32 lid, QString oldName, QString newName) {
     tagEditor.tagRenamed(lid, oldName, newName);
 }
 
 
+
+// Remove a tag in a note
 void NBrowserWindow::tagDeleted(qint32 lid, QString name) {
     lid = lid;  /* suppress unused */
     tagEditor.removeTag(name);
 }
 
+
+
+// A notebook was renamed
 void NBrowserWindow::notebookRenamed(qint32 lid, QString oldName, QString newName) {
     lid = lid;  /* suppress unused */
     oldName = oldName;  /* suppress unused */
@@ -379,36 +406,51 @@ void NBrowserWindow::notebookRenamed(qint32 lid, QString oldName, QString newNam
     notebookMenu.reloadData();
 }
 
+
+
+
+// A notebook was deleted
 void NBrowserWindow::notebookDeleted(qint32 lid, QString name) {
     lid = lid;  /* suppress unused */
     name=name;  /* suppress unused */
     notebookMenu.reloadData();
 }
 
+
+
+// A stack was renamed
 void NBrowserWindow::stackRenamed(QString oldName, QString newName) {
     oldName = oldName;  /* suppress unused */
     newName = newName;  /* suppress unused */
     notebookMenu.reloadData();
 }
 
+
+
+// A stack was deleted
 void NBrowserWindow::stackDeleted(QString name) {
     name=name;  /* suppress unused */
     notebookMenu.reloadData();
 }
 
+
+
+// A stack was added
 void NBrowserWindow::stackAdded(QString name) {
     name=name;  /* suppress unused */
     notebookMenu.reloadData();
 }
 
 
+
+// A notebook was added
 void NBrowserWindow::notebookAdded(qint32 lid) {
     lid = lid;  /* suppress unused */
     notebookMenu.reloadData();
 }
 
 
-
+// A note was synchronized with Evernote's servers
 void NBrowserWindow::noteSyncUpdate(qint32 lid) {
     if (lid != this->lid)
         return;
@@ -417,6 +459,8 @@ void NBrowserWindow::noteSyncUpdate(qint32 lid) {
 
 
 
+
+// A note's content was updated
 void NBrowserWindow::noteContentUpdated() {
     if (editor->isDirty) {
         NoteTable noteTable;
@@ -432,6 +476,8 @@ void NBrowserWindow::noteContentUpdated() {
 
 
 
+
+// Save the note's content
 void NBrowserWindow::saveNoteContent() {
     if (this->editor->isDirty) {
         QString contents = editor->editorPage->mainFrame()->toHtml();
@@ -453,6 +499,8 @@ void NBrowserWindow::saveNoteContent() {
 }
 
 
+
+// Load the list of font names
 void NBrowserWindow::loadFontNames() {
     QFontDatabase fonts;
     QStringList fontFamilies = fonts.families();
@@ -464,6 +512,9 @@ void NBrowserWindow::loadFontNames() {
     }
 }
 
+
+
+// Load the list of font sizes
 void NBrowserWindow::loadFontSizeCombobox(QString name) {
     QFontDatabase fdb;
     fontSize->clear();
@@ -475,30 +526,41 @@ void NBrowserWindow::loadFontSizeCombobox(QString name) {
 }
 
 
+
+// The undo edit button was pressed
 void NBrowserWindow::undoButtonPressed() {
     this->editor->triggerPageAction(QWebPage::Undo);
     this->editor->setFocus();
     microFocusChanged();
 }
 
+
+
+// The redo edit button was pressed
 void NBrowserWindow::redoButtonPressed() {
     this->editor->triggerPageAction(QWebPage::Redo);
     this->editor->setFocus();
     microFocusChanged();
 }
 
+
+// The cut button was pressed
 void NBrowserWindow::cutButtonPressed() {
     this->editor->triggerPageAction(QWebPage::Cut);
     this->editor->setFocus();
     microFocusChanged();
 }
 
+
+// The copy button was pressed
 void NBrowserWindow::copyButtonPressed() {
     this->editor->triggerPageAction(QWebPage::Copy);
     this->editor->setFocus();
     microFocusChanged();
 }
 
+
+// The paste button was pressed
 void NBrowserWindow::pasteButtonPressed() {
     this->editor->triggerPageAction(QWebPage::Paste);
     this->editor->setFocus();
@@ -506,6 +568,8 @@ void NBrowserWindow::pasteButtonPressed() {
 }
 
 
+
+// The paste without mime format was pressed
 void NBrowserWindow::pasteWithoutFormatButtonPressed() {
     const QMimeData *mime = global.clipboard->mimeData();
     if (!mime->hasText())
@@ -549,24 +613,35 @@ QString NBrowserWindow::fixEncryptionPaste(QString data) {
     return QString("<tbody><tr><td>")+data+QString("</td></tr></tbody>");
 }
 
+
+
+// The bold button was pressed / toggled
 void NBrowserWindow::boldButtonPressed() {
     this->editor->triggerPageAction(QWebPage::ToggleBold);
     this->editor->setFocus();
     microFocusChanged();
 }
 
+
+
+// The toggled button was pressed/toggled
 void NBrowserWindow::italicsButtonPressed() {
     this->editor->triggerPageAction(QWebPage::ToggleItalic);
     this->editor->setFocus();
     microFocusChanged();
 }
 
+
+// The underline button was toggled
 void NBrowserWindow::underlineButtonPressed() {
     this->editor->triggerPageAction(QWebPage::ToggleUnderline);
     this->editor->setFocus();
     microFocusChanged();
 }
 
+
+
+// The strikethrough button was pressed
 void NBrowserWindow::strikethroughButtonPressed() {
     this->editor->triggerPageAction(QWebPage::ToggleStrikethrough);
     this->editor->setFocus();
@@ -574,6 +649,8 @@ void NBrowserWindow::strikethroughButtonPressed() {
 }
 
 
+
+// The horizontal line button was pressed
 void NBrowserWindow::horizontalLineButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('insertHorizontalRule', false, '');");
@@ -582,6 +659,8 @@ void NBrowserWindow::horizontalLineButtonPressed() {
 }
 
 
+
+// The center align button was pressed
 void NBrowserWindow::alignCenterButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('JustifyCenter', false, '');");
@@ -589,6 +668,9 @@ void NBrowserWindow::alignCenterButtonPressed() {
     microFocusChanged();
 }
 
+
+
+// The left allign button was pressed
 void NBrowserWindow::alignLeftButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('JustifyLeft', false, '');");
@@ -596,6 +678,9 @@ void NBrowserWindow::alignLeftButtonPressed() {
     microFocusChanged();
 }
 
+
+
+// The allign right button was pressed
 void NBrowserWindow::alignRightButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('JustifyRight', false, '');");
@@ -604,6 +689,8 @@ void NBrowserWindow::alignRightButtonPressed() {
 }
 
 
+
+// The shift right button was pressed
 void NBrowserWindow::shiftRightButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('indent', false, '');");
@@ -611,6 +698,9 @@ void NBrowserWindow::shiftRightButtonPressed() {
     microFocusChanged();
 }
 
+
+
+// The shift left button was pressed
 void NBrowserWindow::shiftLeftButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('outdent', false, '');");
@@ -619,6 +709,9 @@ void NBrowserWindow::shiftLeftButtonPressed() {
 }
 
 
+
+
+// The number list button was pressed
 void NBrowserWindow::numberListButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('InsertOrderedList', false, '');");
@@ -626,6 +719,9 @@ void NBrowserWindow::numberListButtonPressed() {
     microFocusChanged();
 }
 
+
+
+// The bullet list button was pressed
 void NBrowserWindow::bulletListButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('InsertUnorderedList', false, '');");
@@ -633,13 +729,22 @@ void NBrowserWindow::bulletListButtonPressed() {
     microFocusChanged();
 }
 
+
+void NBrowserWindow::contentChanged() {
+    this->editor->isDirty = true;
+    saveNoteContent();
+    emit(this->noteUpdated(lid));
+}
+
+
+// The todo button was pressed
 void NBrowserWindow::todoButtonPressed() {
     QString script_start="document.execCommand('insertHtml', false, '";
     QString script_end = "');";
     QString todo =
             "<input TYPE=\"CHECKBOX\" value=\"false\" " +
             QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
-            QString("onClick=\"value=checked; window.jsbridge.contentChanged(); \" />");
+            QString("onClick=\"value=checked; window.browserWindow.contentChanged(); \" />");
     editor->page()->mainFrame()->evaluateJavaScript(
             script_start + todo + script_end);
     editor->setFocus();
@@ -647,6 +752,8 @@ void NBrowserWindow::todoButtonPressed() {
 }
 
 
+
+// The font size button was pressed
 void NBrowserWindow::fontSizeSelected(int index) {
     int size = fontSize->itemData(index).toInt();
 
@@ -662,6 +769,9 @@ void NBrowserWindow::fontSizeSelected(int index) {
     microFocusChanged();
 }
 
+
+
+// The font name list was selected
 void NBrowserWindow::fontNameSelected(int index) {
     QString font = fontNames->itemData(index).toString();
     loadFontSizeCombobox(font);
@@ -672,6 +782,8 @@ void NBrowserWindow::fontNameSelected(int index) {
 }
 
 
+
+// The font highlight color was pressed
 void NBrowserWindow::fontHilightClicked() {
     QColor *color = highlightColorMenu.getColor();
     if (color->isValid()) {
@@ -683,6 +795,8 @@ void NBrowserWindow::fontHilightClicked() {
 }
 
 
+
+// The font color was pressed
 void NBrowserWindow::fontColorClicked() {
     QColor *color = fontColorMenu.getColor();
     if (color->isValid()) {
@@ -695,7 +809,77 @@ void NBrowserWindow::fontColorClicked() {
 
 
 void NBrowserWindow::insertLinkButtonPressed() {
+    QString text = editor->selectedText();
+    if (text.trimmed() == "" && currentHyperlink.trimmed() == "")
+        return;
 
+    InsertLinkDialog dialog(insertHyperlink);
+    if (currentHyperlink != NULL && currentHyperlink != "") {
+        dialog.setUrl(currentHyperlink);
+    }
+    dialog.exec();
+    if (!dialog.okButtonPressed()) {
+        return;
+    }
+
+    // Take care of inserting new links
+    if (insertHyperlink) {
+        QString selectedText = editor->selectedText();
+        if (dialog.getUrl().trimmed() == "")
+            return;
+        QString dUrl = dialog.getUrl().trimmed().replace("'", "\\'");
+        QString url = QString("<a href=\"") +dUrl
+                +QString("\" title=") +dUrl
+                +QString(" >") +selectedText +QString("</a>");
+        QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+        editor->page()->mainFrame()->evaluateJavaScript(script);
+        return;
+    }
+
+    QString x = dialog.getUrl();
+    // Edit existing links
+    QString js =  "function getCursorPos() {"
+            "var cursorPos;"
+            "if (window.getSelection) {"
+            "   var selObj = window.getSelection();"
+            "   var selRange = selObj.getRangeAt(0);"
+            "   var workingNode = window.getSelection().anchorNode.parentNode;"
+            "   while(workingNode != null) { "
+            "      if (workingNode.nodeName.toLowerCase()=='a') workingNode.setAttribute('href','";
+    js = js + dialog.getUrl() +QString("');")
+            +QString("      workingNode = workingNode.parentNode;")
+            +QString("   }")
+            +QString("}")
+            +QString("} getCursorPos();");
+    editor->page()->mainFrame()->evaluateJavaScript(js);
+
+    if (dialog.getUrl().trimmed() != "" ) {
+        contentChanged();
+        return;
+    }
+
+    // Remove URL
+    js = QString( "function getCursorPos() {")
+            + QString("var cursorPos;")
+            + QString("if (window.getSelection) {")
+            + QString("   var selObj = window.getSelection();")
+            + QString("   var selRange = selObj.getRangeAt(0);")
+            + QString("   var workingNode = window.getSelection().anchorNode.parentNode;")
+            + QString("   while(workingNode != null) { ")
+            + QString("      if (workingNode.nodeName.toLowerCase()=='a') { ")
+            + QString("         workingNode.removeAttribute('href');")
+            + QString("         workingNode.removeAttribute('title');")
+            + QString("         var text = document.createTextNode(workingNode.innerText);")
+            + QString("         workingNode.parentNode.insertBefore(text, workingNode);")
+            + QString("         workingNode.parentNode.removeChild(workingNode);")
+            + QString("      }")
+            + QString("      workingNode = workingNode.parentNode;")
+            + QString("   }")
+            + QString("}")
+            + QString("} getCursorPos();");
+        editor->page()->mainFrame()->evaluateJavaScript(js);
+
+        contentChanged();
 }
 
 
@@ -763,7 +947,8 @@ void NBrowserWindow::rotateImageRightButtonPressed() {
      editor->insertTableRowAction->setEnabled(false);
      editor->deleteTableRowAction->setEnabled(false);
      editor->deleteTableColumnAction->setEnabled(false);
-     editor->insertLinkAction->setEnabled(false);
+     //editor->insertLinkAction->setEnabled(false);
+     editor->insertLinkAction->setText(tr("Insert Link"));
      editor->insertQuickLinkAction->setEnabled(false);
 
      insertHyperlink = true;
@@ -780,7 +965,7 @@ void NBrowserWindow::rotateImageRightButtonPressed() {
         +QString("   var selRange = selObj.getRangeAt(0);")
         +QString("   var workingNode = window.getSelection().anchorNode.parentNode;")
         +QString("   while(workingNode != null) { ")
-        //+QString("      window.jsbridge.printNodeName(workingNode.nodeName);")
+        //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
         +QString("      if (workingNode.nodeName=='TABLE') { if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea(); }")
         +QString("      if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
         +QString("      if (workingNode.nodeName=='I') window.browserWindow.italicsActive();")
@@ -801,14 +986,87 @@ void NBrowserWindow::rotateImageRightButtonPressed() {
 }
 
 
+
+ // Tab button pressed
  void NBrowserWindow::tabPressed() {
+     if (insideEncryption)
+         return;
+     if (!insideList && !insideTable) {
+         QString script_start =  "document.execCommand('insertHtml', false, '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');";
+         editor->page()->mainFrame()->evaluateJavaScript(script_start);
+         return;
+     }
+     if (insideList) {
+         shiftRightButtonPressed();
+     }
+     if (insideTable) {
+         QString js =  "function getCursorPosition() { "
+                 "   var selObj = window.getSelection();"
+                 "   var selRange = selObj.getRangeAt(0);"
+                 "   var workingNode = window.getSelection().anchorNode;"
+                 "   var rowCount = 0;"
+                 "   var colCount = 0;"
+                 "   while(workingNode != null && workingNode.nodeName.toLowerCase() != 'table') { "
+                 "      if (workingNode.nodeName.toLowerCase()=='tr') {"
+                 "         rowCount = rowCount+1;"
+                 "      }"
+                 "      if (workingNode.nodeName.toLowerCase() == 'td') {"
+                 "         colCount = colCount+1;"
+                 "      }"
+                 "      if (workingNode.previousSibling != null)"
+                 "          workingNode = workingNode.previousSibling;"
+                 "      else "
+                 "           workingNode = workingNode.parentNode;"
+                 "   }"
+                 "   var nodes = workingNode.getElementsByTagName('tr');"
+                 "   var tableRows = nodes.length;"
+                 "   nodes = nodes[0].getElementsByTagName('td');"
+                 "   var tableColumns = nodes.length;"
+                 "   window.jambi.setTableCursorPositionTab(rowCount, colCount, tableRows, tableColumns);"
+                 "} getCursorPosition();";
+         editor->page()->mainFrame()->evaluateJavaScript(js);
+     }
 
  }
 
+
+ // Backtab pressed.
  void NBrowserWindow::backtabPressed() {
-
+     if (insideEncryption)
+         return;
+     if (insideList)
+         shiftLeftButtonPressed();
+     if (insideTable) {
+         QString js = "function getCursorPosition() { "
+                 "   var selObj = window.getSelection();"
+                 "   var selRange = selObj.getRangeAt(0);"
+                 "   var workingNode = window.getSelection().anchorNode;"
+                 "   var rowCount = 0;"
+                 "   var colCount = 0;"
+                 "   while(workingNode != null && workingNode.nodeName.toLowerCase() != 'table') { "
+                 "      if (workingNode.nodeName.toLowerCase()=='tr') {"
+                 "         rowCount = rowCount+1;"
+                 "      }"
+                 "      if (workingNode.nodeName.toLowerCase() == 'td') {"
+                 "         colCount = colCount+1;"
+                 "      }"
+                 "      if (workingNode.previousSibling != null)"
+                 "          workingNode = workingNode.previousSibling;"
+                 "      else "
+                 "           workingNode = workingNode.parentNode;"
+                 "   }"
+                 "   var nodes = workingNode.getElementsByTagName('tr');"
+                 "   var tableRows = nodes.length;"
+                 "   nodes = nodes[0].getElementsByTagName('td');"
+                 "   var tableColumns = nodes.length;"
+                 "   window.jambi.setTableCursorPositionBackTab(rowCount, colCount, tableRows, tableColumns);"
+                 "} getCursorPosition();";
+         editor->page()->mainFrame()->evaluateJavaScript(js);
+     }
  }
 
+
+// Set the backgroud color of a note
  void NBrowserWindow::setBackgroundColor(QString value) {
      QString js = QString("function changeBackground(color) {")
          +QString("document.body.style.background = color;")
@@ -820,6 +1078,7 @@ void NBrowserWindow::rotateImageRightButtonPressed() {
  }
 
 
+ // The user clicked a link in the note
  void NBrowserWindow::linkClicked(const QUrl url) {
      if (url.toString().startsWith("latex", Qt::CaseInsensitive)) {
          int position = url.toString().lastIndexOf(".");
@@ -829,22 +1088,34 @@ void NBrowserWindow::rotateImageRightButtonPressed() {
          editLatex(guid);
          return;
      }
-     /*
-     if (url.toString().startsWith("evernote:/view/", Qt::CaseInsensitive)) {
+     if (url.toString().startsWith("evernote:/view/", Qt::CaseInsensitive) ||
+             url.toString().startsWith("evernote:///view/", Qt::CaseInsensitive)) {
          QStringList tokens;
-         tokens = QStringList::to
-         StringTokenizer tokens = new StringTokenizer(url.toString().replace("evernote:/view/", ""), "/");
-         tokens.nextToken();
-         tokens.nextToken();
-         String sid = tokens.nextToken();
-         String lid = tokens.nextToken();
+         if (url.toString().startsWith("evernote:/view/", Qt::CaseInsensitive))
+            tokens = url.toString().replace("evernote:/view/", "").split("/", QString::SkipEmptyParts);
+         else
+            tokens = url.toString().replace("evernote:///view/", "").split("/", QString::SkipEmptyParts);
+         QString oguid =tokens[2];
+         QString eguid = tokens[3];
+         NoteTable ntable;
+         qint32 newlid = ntable.getLid(eguid);
+         if (newlid <= 0)
+             newlid = ntable.getLid(oguid);
+         if (newlid <= 0)
+             return;
 
-         // Emit that we want to switch to a new note
-         evernoteLinkClicked.emit(sid, lid);
 
+         // Setup a new filter
+         FilterCriteria *criteria = new FilterCriteria();
+         global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+         criteria->unsetSelectedNotes();
+         criteria->unsetLid();
+         criteria->setLid(newlid);
+         global.appendFilter(criteria);
+         global.filterPosition++;
+         emit(evernoteLinkClicked(newlid, false));
          return;
      }
-   */
      if (url.toString().startsWith("nnres:", Qt::CaseInsensitive)) {
          if (url.toString().endsWith("/vnd.evernote.ink")) {
              QMessageBox::information(this, tr("Unable Open"), QString(tr("This is an ink note.\nInk notes are not supported since Evernote has not\n published any specifications on them\nand I'm too lazy to figure them out by myself.")));
@@ -871,6 +1142,7 @@ void NBrowserWindow::rotateImageRightButtonPressed() {
          QDesktopServices::openUrl(fileUrl);
          return;
      }
+     QDesktopServices::openUrl(url);
  }
 
 
@@ -882,6 +1154,8 @@ void NBrowserWindow::showSource(bool value) {
  }
 
 
+
+// Toggle the show source button
 void NBrowserWindow::toggleSource() {
     if (sourceEdit->isVisible())
         showSource(false);
@@ -889,6 +1163,9 @@ void NBrowserWindow::toggleSource() {
         showSource(true);
 }
 
+
+
+// Clear otu the window's contents
 void NBrowserWindow::clear() {
     sourceEdit->blockSignals(true);
     editor->blockSignals(true);
@@ -901,6 +1178,9 @@ void NBrowserWindow::clear() {
     sourceEdit->blockSignals(false);
 }
 
+
+
+// Set the source for the "show source" button
 void NBrowserWindow::setSource() {
     QString text = editor->editorPage->mainFrame()->toHtml();
     sourceEdit->blockSignals(true);
@@ -920,33 +1200,51 @@ void NBrowserWindow::setSource() {
 }
 
 
+
+// Expose the programs to the javascript process
 void NBrowserWindow::exposeToJavascript() {
     editor->page()->mainFrame()->addToJavaScriptWindowObject("browserWindow", this);
 }
 
 
+
+// If we are within bold text, set the bold button active
 void NBrowserWindow::boldActive() {
     boldButtonAction->button->setDown(true);
 }
 
 
+
+// If we are within italics text, make the text button active
 void NBrowserWindow::italicsActive() {
     italicsButtonAction->button->setDown(true);
 }
 
+
+
+// If we are within encrypted text, make sure we force a paste text
 void NBrowserWindow::insideEncryptionArea() {
     insideEncryption = true;
     forceTextPaste = true;
 }
 
+
+
+// If we are within underlined text, make the button active
 void NBrowserWindow::underlineActive() {
     underlineButtonAction->button->setDown(true);
 }
 
-void NBrowserWindow::setInsideList() {
 
+
+// Set true if we are within some type of list
+void NBrowserWindow::setInsideList() {
+    insideList = true;
 }
 
+
+
+// If we are within a table, set the menu options active
 void NBrowserWindow::setInsideTable() {
     editor->insertTableAction->setEnabled(true);
     editor->insertTableRowAction->setEnabled(true);
@@ -957,26 +1255,37 @@ void NBrowserWindow::setInsideTable() {
     insideTable = true;
 }
 
+
+// Set if we are within a link
 void NBrowserWindow::setInsideLink(QString link) {
-    editor->insertLinkAction->setText(tr("Edit Hyperlink"));
+    currentHyperlink = link;
+    editor->insertLinkAction->setText(tr("Edit Link"));
     currentHyperlink = link;
     insertHyperlink = false;
 }
 
+
+
+
+// Edit a latex formula
 void NBrowserWindow::editLatex(QString guid) {
 
 }
 
 
-
+// Set the focus to the note title
 void NBrowserWindow::focusTitle() {
     this->noteTitle.setFocus();
 }
 
+
+// Set the focus to the note
 void NBrowserWindow::focusNote() {
     this->editor->setFocus();
 }
 
+
+// Insert the date/time into a note
 void NBrowserWindow::insertDatetime() {
     QDateTime dt = QDateTime::currentDateTime();
     QLocale locale;
