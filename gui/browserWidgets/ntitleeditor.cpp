@@ -86,11 +86,10 @@ void NTitleEditor::titleChanged(QString text) {
 
 
 QString NTitleEditor::cleanupTitle(QString text) {
-    if (text == "" && !hasFocus()) {
-        text = tr("Untitled Note");
-    }
-
     text = text.trimmed();
+    if (text == "" && !hasFocus()) {
+        text = tr("Untitled note");
+    }
 
     LimitsConstants limits;
     if (text.length() > limits.EDAM_NOTE_TITLE_LEN_MAX)
@@ -101,7 +100,7 @@ QString NTitleEditor::cleanupTitle(QString text) {
 
 
 void NTitleEditor::setTitleFromContent(QString s) {
-    if (priorTitle != tr("Untitled Note"))
+    if (priorTitle.toLower() != tr("untitled note"))
         return;
     int newline = s.indexOf("\n");
     if (newline >= 0)
