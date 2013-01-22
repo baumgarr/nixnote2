@@ -5,6 +5,7 @@
 #include "sql/tagtable.h"
 #include "html/noteformatter.h"
 #include "html/enmlformatter.h"
+#include "sql/resourcetable.h"
 #include "global.h"
 
 #include <QVBoxLayout>
@@ -1026,12 +1027,74 @@ void NBrowserWindow::deleteTableColumnButtonPressed() {
 }
 
 void NBrowserWindow::rotateImageLeftButtonPressed() {
-
+    rotateImage(-90.0);
 }
+
+
+
 
 void NBrowserWindow::rotateImageRightButtonPressed() {
-
+    rotateImage(90.0);
 }
+
+
+void NBrowserWindow::rotateImage(qreal degrees) {
+
+    // rotate the image
+    QWebSettings::setMaximumPagesInCache(0);
+    QWebSettings::setObjectCacheCapacities(0, 0, 0);
+    QImage image(global.fileManager.getDbaDirPath() +selectedFileName);
+    QMatrix matrix;
+    matrix.rotate( degrees );
+    image = image.transformed(matrix);
+    image.save(global.fileManager.getDbaDirPath() +selectedFileName);
+    editor->setHtml(editor->page()->mainFrame()->toHtml());
+
+    // Now, we need to update the note's MD5
+    QFile f(global.fileManager.getDbaDirPath() +selectedFileName);
+    f.open(QIODevice::ReadOnly);
+    QByteArray filedata = f.readAll();
+    QCryptographicHash hash(QCryptographicHash::Md5);
+    QByteArray b = hash.hash(filedata, QCryptographicHash::Md5);
+    QString newhash =  b.toHex();
+    updateImageHash(newhash, b);
+
+    // Reload the web page
+    editor->triggerPageAction(QWebPage::ReloadAndBypassCache);
+    contentChanged();
+}
+
+
+void NBrowserWindow::updateImageHash(QString newhash) {
+    QString content = editor->page()->mainFrame()->toHtml();
+    int pos = content.indexOf("<img ");
+    for (; pos>0; pos=content.indexOf("<img ", pos+1) ) {
+        int endPos = content.indexOf(">", pos);
+        QString section = content.mid(pos, endPos-pos);
+        if (section.indexOf("lid=\"" +QString::number(selectedFileLid) + "\"") > 0) {
+            ResourceTable rtable;
+            QString oldhash = section.mid(section.indexOf("hash=\"")+6);
+            oldhash = oldhash.mid(0,oldhash.indexOf("\""));
+            section.replace(oldhash, newhash);
+            QString newcontent = content.mid(0,pos) +section +content.mid(endPos);
+            QLOG_DEBUG() << "***\n\nOLD\n\n***\n" << content;
+            QLOG_DEBUG() << "***\n\nNEW\n\n***\n" << newcontent;
+            editor->page()->mainFrame()->setHtml(newcontent);
+            rtable.updateResourceHash(selectedFileLid, newhash);
+            return;
+        }
+    }
+}
+
+void NBrowserWindow::imageContextMenu(QString l, QString f) {
+    editor->downloadAttachmentAction()->setEnabled(true);
+    editor->rotateImageRightAction->setEnabled(true);
+    editor->rotateImageLeftAction->setEnabled(true);
+    editor->openAction->setEnabled(true);
+    selectedFileName = f;
+    selectedFileLid = l.toInt();
+}
+
 
 
 
@@ -1043,7 +1106,7 @@ void NBrowserWindow::rotateImageRightButtonPressed() {
      italicsButtonAction->button->setDown(false);
      underlineButtonAction->button->setDown(false);
      editor->openAction->setEnabled(false);
-     editor->downloadAttachmentAction->setEnabled(false);
+     editor->downloadAttachmentAction()->setEnabled(false);
      editor->rotateImageLeftAction->setEnabled(false);
      editor->rotateImageRightAction->setEnabled(false);
      editor->insertTableAction->setEnabled(true);
@@ -1053,6 +1116,8 @@ void NBrowserWindow::rotateImageRightButtonPressed() {
      editor->deleteTableColumnAction->setEnabled(false);
      editor->insertLinkAction->setText(tr("Insert Link"));
      editor->insertQuickLinkAction->setEnabled(false);
+     editor->rotateImageRightAction->setEnabled(false);
+     editor->rotateImageLeftAction->setEnabled(false);
 
      insertHyperlink = true;
      currentHyperlink ="";

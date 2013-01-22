@@ -36,8 +36,7 @@ public:
     QAction *pasteWithoutFormatAction;
     QAction *todoAction;
     QAction *encryptAction;
-    QAction *downloadAttachmentAction;
-    QAction *downloadImageAction;
+    QAction *downloadAttachmentAction();
     QAction *rotateImageRightAction;
     QAction *rotateImageLeftAction;
     QAction *insertLinkAction;

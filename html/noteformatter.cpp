@@ -302,7 +302,6 @@ void NoteFormatter::addImageHighlight(qint32 resLid, QFile &f) {
 /* Modify an image tag.  Basically we turn it back into a picture, write out the file, and
   modify the ENML */
 void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &docElement, QDomElement &enMedia, QDomAttr &hash) {
-    docElement = docElement;  // suppress unused
     QLOG_DEBUG() << "Entering NoteFormatter::modifyImageTags";
     QString mimetype = enMedia.attribute("type");
     ResourceTable resourceTable;
@@ -321,17 +320,18 @@ void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &docElement, 
             enMedia.setAttribute("src", "file:///"+global.fileManager.getDbDirPath(QString("dba/") +QString::number(resLid) +type));
             // Check if this is a LaTeX image
             if (r.__isset.attributes && r.attributes.__isset.sourceURL &&
-                !QString::fromStdString(r.attributes.sourceURL).toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
-                    enMedia.setAttribute("onContextMenu", "window.jambi.imageContextMenu('" +QString(resLid)  +"');");
-            } else {
+                QString::fromStdString(r.attributes.sourceURL).toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
                 QDomElement newText(doc.createElement("a"));
                 enMedia.setAttribute("en-tag", "en-latex");
-                newText.setAttribute("anMouseOver", "style.cursor='hand'");
+                newText.setAttribute("onMouseOver", "style.cursor='hand'");
                 newText.setAttribute("title", QString::fromStdString(r.attributes.sourceURL));
                 newText.setAttribute("href", "latex://"+resLid);
                 enMedia.parentNode().replaceChild(newText, enMedia);
                 newText.appendChild(enMedia);
             }
+            enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
+                                 +QString::number(resLid) +"', '"
+                                 +QString::number(resLid) +type  +"');");
 
         }
     } else {
@@ -399,7 +399,7 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
 
         // Setup the context menu.  This is useful if we want to do a "save as" or such
         contextFileName = contextFileName.replace("\\", "/");
-        enmedia.setAttribute("onContextMenu", "window.jambi.resourceContextMenu('" +contextFileName +"');");
+        enmedia.setAttribute("onContextMenu", "window.browserWindow.resourceContextMenu('" +contextFileName +"');");
         enmedia.setAttribute("en-tag", "en-media");
         enmedia.setAttribute("lid", QString::number(resLid));
         enmedia.setTagName("a");

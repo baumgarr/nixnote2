@@ -86,6 +86,7 @@ void EnmlFormatter::scanTags() {
         parseNodes(doc.childNodes());
     }
     //QLOG_DEBUG() << "Doc:" << doc.toString();
+    content = doc.toByteArray();
     return;
 }
 
@@ -179,6 +180,8 @@ void EnmlFormatter::fixNode(const QDomNode &node) {
         e.removeAttribute("src");
         e.removeAttribute("en-new");
         e.removeAttribute("en-tag");
+        e.removeAttribute("oncontextmenu");
+        e.removeAttribute("lid");
     }
 
     // Tags like <ul><ul><li>1</li></ul></ul> are technically valid, but Evernote

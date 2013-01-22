@@ -764,3 +764,13 @@ void ResourceTable::expunge(QString guid) {
     int lid = this->getLid(guid);
     this->expunge(lid);
 }
+
+
+void ResourceTable::updateResourceHash(qint32 lid, QString newhash) {
+    QSqlQuery query;
+    query.prepare("Update datastore set data=:hash where key=:key and lid=:lid");
+    query.bindValue(":hash", newhash);
+    query.bindValue(":key", RESOURCE_DATA_HASH);
+    query.bindValue(":lid", lid);
+    query.exec();
+}

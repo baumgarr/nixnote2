@@ -54,6 +54,10 @@ private:
     bool insideEncryption;
     bool forceTextPaste;
     void editLatex(QString guid);
+    QString selectedFileName;
+    qint32 selectedFileLid;
+    void rotateImage(qreal degrees);
+    void updateImageHash(QString newhash);
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
@@ -187,6 +191,7 @@ public slots:
     void setInsideTable();
     void setInsideLink(QString link);
     QString fixEncryptionPaste(QString data);
+    void imageContextMenu(QString l, QString f);
 
 
 

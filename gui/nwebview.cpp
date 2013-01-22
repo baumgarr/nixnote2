@@ -141,9 +141,8 @@ NWebView::NWebView(NBrowserWindow *parent) :
     connect(rotateImageRightAction, SIGNAL(triggered()), parent, SLOT(rotateImageRightButtonPressed()));
     contextMenu->addSeparator();
 
-    downloadAttachmentAction = pageAction(QWebPage::DownloadLinkToDisk);
-    downloadAttachmentAction->setText(tr("Save Attachment"));
-    contextMenu->addAction(downloadAttachmentAction);
+    downloadAttachmentAction()->setText(tr("Save Attachment"));
+    contextMenu->addAction(downloadAttachmentAction());
 
     connect(editorPage, SIGNAL(contentsChanged()), this, SLOT(editAlert()));
     editorPage->setContentEditable(true);
@@ -151,6 +150,10 @@ NWebView::NWebView(NBrowserWindow *parent) :
     connect(this->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(exposeToJavascript()));
 }
 
+
+QAction *NWebView::downloadAttachmentAction() {
+    return pageAction(QWebPage::DownloadLinkToDisk);
+}
 
 QAction* NWebView::setupColorMenuOption(QString color) {
     QAction *backgroundColor = new QAction(color, this);
