@@ -15,7 +15,7 @@ class NTableView : public QTableView
 {
     Q_OBJECT
 private:
-    unsigned int filterPosition;
+    //unsigned int filterPosition;
     DateDelegate *dateDelegate;
     NumberDelegate *blankNumber;
     NumberDelegate *kbNumber;

@@ -56,7 +56,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_SIZE_POSITION, kbNumber);
 
     QLOG_TRACE() << "Setting up column headers";
-    this->setColumnHidden(NOTE_TABLE_LID_POSITION,true);
+    //this->setColumnHidden(NOTE_TABLE_LID_POSITION,true);
     this->setColumnHidden(NOTE_TABLE_NOTEBOOK_LID_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_DATE_DELETED_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_ALTITUDE_POSITION, true);
@@ -219,13 +219,9 @@ void NTableView::getSelectedLids(bool newWindow) {
         while (global.filterPosition+1 < global.filterCriteria.size())
             delete global.filterCriteria.takeAt(global.filterCriteria.size()-1);
     }
+
     FilterCriteria *newFilter = new FilterCriteria();
     global.filterCriteria.at(global.filterPosition)->duplicate(*newFilter);
-    filterPosition++;
-    global.filterCriteria.push_back(newFilter);
-    global.filterPosition++;
-
-
 
     // This is a bit of a hack.  Basically we loop through
     // everything selected.  For each item selected we look at
@@ -245,8 +241,13 @@ void NTableView::getSelectedLids(bool newWindow) {
     }
 
     newFilter->setSelectedNotes(lids);
-    if (lids.size() > 0) {
+    if (lids.size() > 0)
         newFilter->setLid(lids.at(0));
+    global.filterCriteria.push_back(newFilter);
+    global.filterPosition++;
+
+
+    if (lids.size() > 0) {
         emit openNote(newWindow);
     }
 }

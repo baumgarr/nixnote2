@@ -512,12 +512,22 @@ void NixNote::openNote(bool newWindow) {
 //*****************************************************
 void NixNote::updateSelectionCriteria() {
     QLOG_TRACE() << "starting NixNote.updateSelectionCriteria()";
+
+    FilterEngine filterEngine;
+    filterEngine.filter();
+
+    QLOG_TRACE() << "Refreshing data";
+
+    noteTableView->refreshData();
+
     tagTreeView->updateSelection();
     notebookTreeView->updateSelection();
     searchTreeView->updateSelection();
     attributeTree->updateSelection();
     trashTree->updateSelection();
     searchText->updateSelection();
+    //noteTableView->refreshSelection();
+
 
     rightArrowButton->setEnabled(false);
     leftArrowButton->setEnabled(false);
@@ -526,13 +536,7 @@ void NixNote::updateSelectionCriteria() {
     if (global.filterPosition > 0)
         leftArrowButton->setEnabled(true);
 
-    openNote(false);
-
-    FilterEngine filterEngine;
-    filterEngine.filter();
-
-    QLOG_TRACE() << "Refreshing data";
-    noteTableView->refreshData();
+    //openNote(false);
 
     QList<qint32> selectedNotes;
     global.filterCriteria[global.filterPosition]->getSelectedNotes(selectedNotes);
