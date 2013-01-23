@@ -117,12 +117,7 @@ void EnmlFormatter::fixNode(const QDomNode &node) {
         QString value = e.attribute("value");
         if (value.trimmed() == "")
             value = "false";
-        e.removeAttribute("value");
-        e.removeAttribute("unchecked");
-        e.setAttribute("checked", value);
-        e.removeAttribute("onclick");
-        e.removeAttribute("onmouseover");
-        e.removeAttribute("type");
+        cleanupElementAttributes(e);
     }
 
     if (node.nodeName().toLower() == "a") {
@@ -173,30 +168,10 @@ void EnmlFormatter::fixNode(const QDomNode &node) {
 
         // If we've gotten this far, we have an en-media tag
         e.setTagName(enType);
-        QLOG_DEBUG() << enType;
-        QLOG_DEBUG() << doc.toString();
         resources.append(e.attribute("lid").toInt());
-        e.removeAttribute("guid");
-        e.removeAttribute("src");
-        e.removeAttribute("en-new");
-        e.removeAttribute("en-tag");
-        e.removeAttribute("oncontextmenu");
-        e.removeAttribute("lid");
-    }
 
-    // Tags like <ul><ul><li>1</li></ul></ul> are technically valid, but Evernote
-    // expects that a <ul> tag only has a <li>, so we will need to change them
-    // to this:  <ul><li><ul><li>1</li></ul></li></ul>
-//    if (node.nodeName().equalsIgnoreCase("ul")) {
-//        QDomNode firstChild = node.firstChild();
-//        QDomElement childElement = firstChild.toElement();
-//        if (childElement.nodeName().equalsIgnoreCase("ul")) {
-//            QDomElement newElement = doc.createElement("li");
-//            node.insertBefore(newElement, firstChild);
-//            node.removeChild(firstChild);
-//            newElement.appendChild(firstChild);
-//        }
-//    }
+        cleanupElementAttributes(e);
+    }
 
     if (node.nodeName().toLower() == "en-hilight") {
         QDomElement e = node.toElement();
@@ -243,4 +218,110 @@ QDomNode EnmlFormatter::fixLinkNode(const QDomNode &node) {
         e.removeChild(e.firstChildElement());
     }
     return e;
+}
+
+
+
+void EnmlFormatter::cleanupElementAttributes(QDomElement &e) {
+    QDomNamedNodeMap attributeMap = e.attributes();
+    for (int i=attributeMap.size()-1; i>=0; i--) {
+        QString name = attributeMap.item(i).nodeName();
+        if (!isAttributeValid(name))
+            e.removeAttribute(name);
+    }
+}
+
+bool EnmlFormatter::isAttributeValid(QString attribute) {
+    attribute = attribute.toLower().trimmed();
+    if (attribute.startsWith("on")) return false;
+    if (attribute == "id") return false;
+    if (attribute == "class") return false;
+    if (attribute == "accesskey") return false;
+    if (attribute == "data") return false;
+    if (attribute == "dynsrc") return false;
+    if (attribute == "tabindex") return false;
+
+    // These are things that are NixNote specific
+    if (attribute == "en-tag") return false;
+    if (attribute == "src") return false;
+    if (attribute == "en-new") return false;
+    if (attribute == "guid") return false;
+    if (attribute == "lid") return false;
+    return true;
+}
+
+
+bool EnmlFormatter::isElementValid(QString element) {
+    element = element.trimmed().toLower();
+    if (element == "a") return true;
+    if (element == "abbr") return true;
+    if (element == "acronym") return true;
+    if (element == "address") return true;
+    if (element == "area") return true;
+    if (element == "b") return true;
+    if (element == "bdo") return true;
+    if (element == "big") return true;
+    if (element == "blockquote") return true;
+    if (element == "br") return true;
+    if (element == "caption") return true;
+    if (element == "center") return true;
+    if (element == "cite") return true;
+    if (element == "code") return true;
+    if (element == "col") return true;
+    if (element == "colgroup") return true;
+    if (element == "dd") return true;
+    if (element == "del") return true;
+    if (element == "dfn") return true;
+    if (element == "div") return true;
+    if (element == "dl") return true;
+    if (element == "dt") return true;
+    if (element == "em") return true;
+    if (element == "en-media") return true;
+    if (element == "en-crypt") return true;
+    if (element == "en-todo") return true;
+    if (element == "en-note") return true;
+    if (element == "font") return true;
+    if (element == "h1") return true;
+    if (element == "h1") return true;
+    if (element == "h1") return true;
+    if (element == "h2") return true;
+    if (element == "h3") return true;
+    if (element == "h4") return true;
+    if (element == "h5") return true;
+    if (element == "h6") return true;
+    if (element == "hr") return true;
+    if (element == "i") return true;
+    if (element == "img") return true;
+    if (element == "ins") return true;
+    if (element == "kbd") return true;
+    if (element == "li") return true;
+    if (element == "map") return true;
+    if (element == "ol") return true;
+    if (element == "p") return true;
+    if (element == "pre") return true;
+    if (element == "q") return true;
+    if (element == "s") return true;
+    if (element == "samp") return true;
+    if (element == "small") return true;
+    if (element == "span") return true;
+    if (element == "strike") return true;
+    if (element == "strong") return true;
+    if (element == "sub") return true;
+    if (element == "sup") return true;
+    if (element == "table") return true;
+    if (element == "tbody") return true;
+    if (element == "td") return true;
+    if (element == "tfoot") return true;
+    if (element == "th") return true;
+    if (element == "thread") return true;
+    if (element == "title") return true;
+    if (element == "tr") return true;
+    if (element == "tt") return true;
+    if (element == "u") return true;
+    if (element == "ul") return true;
+    if (element == "var") return true;
+    if (element == "xmp") return true;
+
+    return false;
+
 }

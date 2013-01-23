@@ -29,6 +29,9 @@ class EnmlFormatter : public QObject
 private:
     QByteArray content;
     QDomDocument doc;
+    bool isAttributeValid(QString attribute);
+    bool isElementValid(QString element);
+    void cleanupElementAttributes(QDomElement &e);
 
 
 public:
