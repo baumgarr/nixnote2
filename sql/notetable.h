@@ -66,6 +66,7 @@ public:
     NoteTable();                             // Constructor
     qint32 getLid(QString guid);            // given a guid, return the lid
     qint32 getLid(string guid);             // Given a guid, return the lid
+    QString getGuid(int lid);               // given a lid, get the guid
     void updateGuid(qint32 lid, Guid &guid);    // Update a note's guid
     void sync(Note &note);                    // Sync a note with a new record
     void sync(qint32 lid, Note &note);           // Sync a note with a new record

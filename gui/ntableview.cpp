@@ -56,7 +56,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_SIZE_POSITION, kbNumber);
 
     QLOG_TRACE() << "Setting up column headers";
-    //this->setColumnHidden(NOTE_TABLE_LID_POSITION,true);
+    this->setColumnHidden(NOTE_TABLE_LID_POSITION,true);
     this->setColumnHidden(NOTE_TABLE_NOTEBOOK_LID_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_DATE_DELETED_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_ALTITUDE_POSITION, true);

@@ -79,13 +79,28 @@ qint32 NoteTable::getLid(QString guid) {
 
     QSqlQuery query;
     query.prepare("Select lid from DataStore where key=:key and data=:data");
-    query.bindValue(":data", guid);
     query.bindValue(":key", NOTE_GUID);
+    query.bindValue(":data", guid);
     query.exec();
     if (query.next())
         return query.value(0).toInt();
     else
         return 0;
+}
+
+
+// Given a note's lid, return the guid
+QString NoteTable::getGuid(qint32 lid) {
+
+    QSqlQuery query;
+    query.prepare("Select data from DataStore where key=:key and lid=:lid");
+    query.bindValue(":key", NOTE_GUID);
+    query.bindValue(":lid", lid);
+    query.exec();
+    if (query.next())
+        return query.value(0).toString();
+    else
+        return "";
 }
 
 

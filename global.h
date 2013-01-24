@@ -70,6 +70,7 @@ public:
     QSettings *settings;
     QClipboard *clipboard;
     ShortcutKeys *shortcutKeys;
+    QList<qint32> expungedResources;
     //JavaMachine jvm;
 
     // Filter criteria.  Used for things like the back & forward buttons

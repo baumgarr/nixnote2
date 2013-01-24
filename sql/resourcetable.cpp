@@ -381,10 +381,10 @@ bool ResourceTable::exists(string noteGuid, string guid) {
 }
 
 
-void ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
+qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
     ConfigStore cs;
     qint32 lid = l;
-    if (lid == 0)
+    if (lid <= 0)
         lid = cs.incrementLidCounter();
 
     QSqlQuery query;
@@ -617,6 +617,7 @@ void ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
             query.exec();
         }
     }
+    return lid;
 }
 
 

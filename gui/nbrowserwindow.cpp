@@ -21,6 +21,7 @@
 #include "gui/browserWidgets/toolbarwidgetaction.h"
 #include "dialog/insertlinkdialog.h"
 #include "dialog/tabledialog.h"
+#include "sql/configstore.h"
 
 extern Global global;
 
@@ -482,11 +483,27 @@ void NBrowserWindow::noteContentUpdated() {
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
     if (this->editor->isDirty) {
+        NoteTable table;
         QString contents = editor->editorPage->mainFrame()->toHtml();
         EnmlFormatter formatter;
         formatter.setHtml(contents);
         formatter.rebuildNoteEnml();
-        NoteTable table;
+
+        // get a list of lids found in the note.
+        // Purge anything that is no longer needed.
+        QList<qint32> validLids = formatter.resources;
+        QList<qint32> oldLids;
+        ResourceTable resTable;
+        resTable.getResourceList(oldLids, lid);
+
+        for (int i=0; i<oldLids.size(); i++) {
+            if (!validLids.contains(oldLids[i])) {
+                resTable.expunge(oldLids[i]);
+            }
+        }
+
+
+
         table.updateNoteContent(lid, formatter.getEnml());
 
         NoteCache* cache = global.cache[lid];
@@ -564,6 +581,22 @@ void NBrowserWindow::copyButtonPressed() {
 
 // The paste button was pressed
 void NBrowserWindow::pasteButtonPressed() {
+    if (forceTextPaste) {
+        pasteWithoutFormatButtonPressed();
+        return;
+    }
+
+    QClipboard *clipboard = global.clipboard;
+    const QMimeData *mime = clipboard->mimeData();
+
+    if (mime->hasImage()) {
+        editor->setFocus();
+        insertImage(mime);
+        editor->setFocus();
+        return;
+    }
+
+
     this->editor->triggerPageAction(QWebPage::Paste);
     this->editor->setFocus();
     microFocusChanged();
@@ -1464,3 +1497,94 @@ void NBrowserWindow::insertDatetime() {
     editor->setFocus();
 }
 
+
+
+// Insert an image into the editor
+void NBrowserWindow::insertImage(const QMimeData *mime) {
+    QImage img = qvariant_cast<QImage>(mime->imageData());
+    QString script_start = "document.execCommand('insertHTML', false, '";
+    QString script_end = "');";
+
+    Resource newRes;
+    QByteArray imageBa((char *)img.bits(), img.byteCount());
+    qint32 rlid = createResource(newRes, 0, imageBa, "image/jpeg", false);
+    if (rlid <= 0)
+        return;
+
+    QString g =  QString::number(rlid)+QString(".jpg");
+    QString path = global.fileManager.getDbaDirPath() + g;
+
+    // Open the file & write the data
+    img.save(path);
+
+    // do the actual insert into the note
+    QString buffer;
+    QByteArray hash(newRes.data.bodyHash.c_str(), newRes.data.bodyHash.size());
+    buffer.append("<img src=\"file://");
+    buffer.append(path);
+    buffer.append("\" type=\"image/jpeg\" hash=\"");
+    //buffer.append(QString::fromStdString(newRes.data.bodyHash));
+    buffer.append(hash.toHex());
+    buffer.append("\" onContextMenu=\"window.browser.imageContextMenu(&apos;");
+    buffer.append(QString::number(rlid));
+    buffer.append("&apos;, &apos;");
+    buffer.append(g);
+    buffer.append("&apos;);\" ");
+    buffer.append(" en-tag=\"en-media\" style=\"cursor: default;\" lid=\"");
+    buffer.append(QString::number(rlid));
+    buffer.append("\">");
+
+    editor->page()->mainFrame()->evaluateJavaScript(
+            script_start + buffer + script_end);
+
+    return;
+}
+
+
+
+qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data,  QString mime, bool attachment) {
+    ConfigStore cs;
+    qint32 rlid = cs.incrementLidCounter();
+
+    QCryptographicHash md5hash(QCryptographicHash::Md5);
+    QByteArray hash = md5hash.hash(data, QCryptographicHash::Md5);
+
+    QUuid uuid;
+    QString guid =  uuid.createUuid().toString().replace("{","").replace("}","");
+    NoteTable noteTable;
+    r.guid = guid.toStdString();
+    r.__isset.guid = true;
+    r.noteGuid = noteTable.getGuid(lid).toStdString();
+    if (r.noteGuid == "")
+        return 0;
+    r.__isset.noteGuid = true;
+    r.mime = mime.toStdString();
+    r.__isset.mime = true;
+    r.active = true;
+    r.__isset.active = true;
+    r.updateSequenceNum = sequence;
+    r.__isset.updateSequenceNum = true;
+    r.width = 0;
+    r.__isset.width = 0;
+    r.height = 0;
+    r.__isset.height = 0;
+    r.duration = 0;
+    r.__isset.duration = 0;
+
+    Data *d = &r.data;
+    r.__isset.data = true;
+    d->body = QString(data).toStdString();
+    d->__isset.body = true;
+    d->bodyHash.append(hash.data(), hash.size());
+    d->__isset.bodyHash = true;
+    d->size = data.size();
+    d->__isset.size = true;
+
+    ResourceAttributes *a = &r.attributes;
+    a->attachment = attachment;
+    a->__isset.attachment = true;
+
+    ResourceTable resourceTable;
+    resourceTable.add(rlid, r, true);
+    return rlid;
+}

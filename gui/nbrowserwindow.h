@@ -58,6 +58,8 @@ private:
     qint32 selectedFileLid;
     void rotateImage(qreal degrees);
     void updateImageHash(QString newhash);
+    void insertImage(const QMimeData *mime);
+    qint32 createResource(Resource &r, int sequence, QByteArray data, QString mime, bool attachment);
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
