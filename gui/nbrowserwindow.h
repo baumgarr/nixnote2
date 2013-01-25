@@ -182,6 +182,7 @@ public slots:
     void setSource();
     void focusTitle();
     void focusNote();
+    void imageContextMenu(QString lid, QString filename);
     void insertDatetime();
 
     void exposeToJavascript();
@@ -193,7 +194,6 @@ public slots:
     void setInsideTable();
     void setInsideLink(QString link);
     QString fixEncryptionPaste(QString data);
-    void imageContextMenu(QString l, QString f);
 
 
 

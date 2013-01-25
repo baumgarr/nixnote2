@@ -323,9 +323,9 @@ void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &docElement, 
                 QString::fromStdString(r.attributes.sourceURL).toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
                 QDomElement newText(doc.createElement("a"));
                 enMedia.setAttribute("en-tag", "en-latex");
-                newText.setAttribute("onMouseOver", "style.cursor='hand'");
+                newText.setAttribute("onMouseOver", "style.cursor='pointer'");
                 newText.setAttribute("title", QString::fromStdString(r.attributes.sourceURL));
-                newText.setAttribute("href", "latex://"+resLid);
+                newText.setAttribute("href", "latex://"+QString::number(resLid));
                 enMedia.parentNode().replaceChild(newText, enMedia);
                 newText.appendChild(enMedia);
             }

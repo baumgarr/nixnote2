@@ -7,6 +7,14 @@
 #include "html/enmlformatter.h"
 #include "sql/resourcetable.h"
 #include "global.h"
+#include "gui/browserWidgets/colormenu.h"
+#include "gui/browserWidgets/toolbarwidgetaction.h"
+#include "dialog/insertlinkdialog.h"
+#include "dialog/tabledialog.h"
+#include "dialog/insertlatexdialog.h"
+#include "dialog/encryptdialog.h"
+#include "sql/configstore.h"
+#include "utilities/encrypt.h"
 
 #include <QVBoxLayout>
 #include <QAction>
@@ -17,11 +25,10 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QClipboard>
-#include "gui/browserWidgets/colormenu.h"
-#include "gui/browserWidgets/toolbarwidgetaction.h"
-#include "dialog/insertlinkdialog.h"
-#include "dialog/tabledialog.h"
-#include "sql/configstore.h"
+#include <iostream>
+#include <istream>
+
+
 
 extern Global global;
 
@@ -924,12 +931,23 @@ void NBrowserWindow::insertQuickLinkButtonPressed() {
 
 
 void NBrowserWindow::insertLatexButtonPressed() {
-
+    this->editLatex("");
 }
 
 
 void NBrowserWindow::encryptButtonPressed() {
+        EnCrypt encrypt;
 
+    QString text = editor->selectedText();
+    if (text.trimmed() == "")
+        return;
+    text = text.replace("\n", "<br/>");
+
+    EnCryptDialog dialog;
+    dialog.exec();
+    if (!dialog.okPressed()) {
+        return;
+    }
 }
 
 
@@ -1281,12 +1299,8 @@ void NBrowserWindow::imageContextMenu(QString l, QString f) {
 
  // The user clicked a link in the note
  void NBrowserWindow::linkClicked(const QUrl url) {
-     if (url.toString().startsWith("latex", Qt::CaseInsensitive)) {
-         int position = url.toString().lastIndexOf(".");
-         QString guid = url.toString().mid(0,position);
-         position = guid.lastIndexOf("/");
-         guid = guid.right(position+1);
-         editLatex(guid);
+     if (url.toString().startsWith("latex://", Qt::CaseInsensitive)) {
+         editLatex(url.toString().mid(8));
          return;
      }
      if (url.toString().startsWith("evernote:/view/", Qt::CaseInsensitive) ||
@@ -1470,7 +1484,134 @@ void NBrowserWindow::setInsideLink(QString link) {
 
 // Edit a latex formula
 void NBrowserWindow::editLatex(QString guid) {
+    QString text = editor->selectedText();
+    if (text.trimmed() == "\n" || text.trimmed() == "") {
+        InsertLatexDialog dialog;
+        if (guid.trimmed() != "") {
+            Resource r;
+            ResourceTable resTable;
+            resTable.get(r, guid.toInt());
+            if (r.__isset.attributes && r.attributes.__isset.sourceURL) {
+                QString formula = QString::fromStdString(r.attributes.sourceURL);
+                formula = formula.replace("http://latex.codecogs.com/gif.latex?", "");
+                dialog.setFormula(formula);
+            }
+        }
+        dialog.exec();
+        if (!dialog.okPressed()) {
+            return;
+        }
+        text = dialog.getFormula().trimmed();
+    }
 
+    ConfigStore cs;
+    qint32 newlid = cs.incrementLidCounter();
+    Resource r;
+    NoteTable ntable;
+    ResourceTable rtable;
+    QString outfile = global.fileManager.getDbaDirPath() + QString::number(newlid) +QString(".gif");
+
+    // Run it through "mimetex" to create the gif
+        text = text.replace("'", "\\'");
+    QProcess latexProcess;
+    QStringList args;
+    args.append("-e");
+    args.append(outfile);
+    args.append(text);
+    QString formula = "mimetex -e "+outfile +" '" +text +"'";
+    QLOG_DEBUG() << "Formula:" << formula;
+    //latexProcess.start(formula, QIODevice::ReadWrite|QIODevice::Unbuffered);
+    latexProcess.start("mimetex", args, QIODevice::ReadWrite|QIODevice::Unbuffered);
+
+    QLOG_DEBUG() << "Starting mimetex " << latexProcess.waitForStarted();
+    QLOG_DEBUG() << "Stopping mimetex " << latexProcess.waitForFinished() << " Return Code: " << latexProcess.state();
+    QLOG_DEBUG() << "mimetex Errors:" << latexProcess.readAllStandardError();
+    QLOG_DEBUG() << "mimetex Output:" << latexProcess.readAllStandardOutput();
+
+    // Now, check if the file exists.  If it does, we continue to create the resource
+    QFile f(outfile);
+    if (!f.exists()) {
+        QMessageBox msgBox;
+        msgBox.setText(tr("Unable to create LaTeX image"));
+        msgBox.setInformativeText(tr("Unable to create LaTeX image.  Are you sure mimetex is installed?"));
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setIcon(QMessageBox::Critical);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+        return;
+    }
+    f.open(QIODevice::ReadOnly);
+    QByteArray data = f.readAll();
+    f.close();
+    f.open(QIODevice::ReadOnly);
+    r.data.body.resize(data.size());
+    char *dataptr = (char *)&r.data.body.data()[0];
+    f.read(dataptr, r.data.body.size());
+    f.close();
+
+    r.guid = QString::number(newlid).toStdString();
+    r.__isset.guid = true;
+    r.noteGuid = ntable.getGuid(lid).toStdString();
+    r.__isset.guid = true;
+
+    QCryptographicHash md5hash(QCryptographicHash::Md5);
+    QByteArray hash = md5hash.hash(data, QCryptographicHash::Md5);
+
+    r.__isset.noteGuid = true;
+    r.mime = "image/gif";
+    r.__isset.mime = true;
+    r.active = true;
+    r.__isset.active = true;
+    r.updateSequenceNum = 0;
+    r.__isset.updateSequenceNum = true;
+    r.width = 0;
+    r.__isset.width = 0;
+    r.height = 0;
+    r.__isset.height = 0;
+    r.duration = 0;
+    r.__isset.duration = 0;
+
+    r.__isset.data = true;
+    r.data.__isset.body = true;
+    r.data.bodyHash.append(hash.data(), hash.size());
+    r.data.__isset.bodyHash = true;
+    r.data.size = data.size();
+    r.data.__isset.size = true;
+
+    r.__isset.attributes = true;
+    r.attributes.attachment = false;
+    r.attributes.__isset.attachment = true;
+    r.attributes.sourceURL = "http://latex.codecogs.com/gif.latex?" +text.toStdString();
+    r.attributes.__isset.sourceURL = true;
+
+    rtable.add(newlid, r, true);
+
+    // do the actual insert into the note
+    QString buffer;
+    buffer.append("<a onmouseover=\"cursor:&apos;hand&apos; title=\"");
+    buffer.append(text);
+    buffer.append("\" href=\"latex://");
+    buffer.append(QString::number(newlid));
+    buffer.append("\">");
+    buffer.append("<img src=\"file://");
+    buffer.append(outfile);
+    buffer.append("\" type=\"image/gif\" hash=\"");
+    buffer.append(hash.toHex());
+    buffer.append("\" onContextMenu=\"window.browser.imageContextMenu(&apos;");
+    buffer.append(QString::number(newlid));
+    buffer.append("&apos;, &apos;");
+    buffer.append(outfile);
+    buffer.append("&apos;);\" ");
+    buffer.append(" en-tag=\"en-media\" lid=\"");
+    buffer.append(QString::number(newlid));
+    buffer.append("\"></a>");
+    QLOG_DEBUG() << buffer;
+
+    QString script_start = "document.execCommand('insertHTML', false, '";
+    QString script_end = "');";
+
+    editor->page()->mainFrame()->evaluateJavaScript(
+            script_start + buffer + script_end);
 }
 
 
