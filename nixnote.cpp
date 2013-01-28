@@ -67,6 +67,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         connect(attributeTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
         connect(trashTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
         connect(searchText, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
+        QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 
 

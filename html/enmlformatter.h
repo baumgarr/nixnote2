@@ -36,7 +36,7 @@ private:
 
 public:
     bool formattingError;
-    QList<int> resources;
+    QList<qint32> resources;
 
     explicit EnmlFormatter(QObject *parent = 0);
     void setHtml(QString html);

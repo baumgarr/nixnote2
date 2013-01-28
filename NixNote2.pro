@@ -120,7 +120,9 @@ SOURCES += main.cpp\
     dialog/insertlinkdialog.cpp \
     dialog/tabledialog.cpp \
     dialog/encryptdialog.cpp \
-    dialog/insertlatexdialog.cpp
+    dialog/insertlatexdialog.cpp \
+    gui/plugins/popplerviewer.cpp \
+    gui/plugins/pluginfactory.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -257,7 +259,9 @@ HEADERS  += nixnote.h \
     dialog/insertlinkdialog.h \
     dialog/tabledialog.h \
     dialog/encryptdialog.h \
-    dialog/insertlatexdialog.h
+    dialog/insertlatexdialog.h \
+    gui/plugins/popplerviewer.h \
+    gui/plugins/pluginfactory.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \
@@ -313,9 +317,10 @@ HEADERS  += nixnote.h \
 #    thrift/transport/TTransportException.h
 
 
-LIBS += -L./lib -lthrift -lpthread
+LIBS += -L./lib -lthrift -lpthread  -L/usr/lib -lpoppler-qt4
 #LIBS += -lthrift -lpthread
 INCLUDEPATH += /usr/local/include/thrift \
+            /usr/include/poppler/qt4
 
 #LIBS +=  -L/usr/lib/jvm/java-6-openjdk/jre/lib/i386/server -ljvm -lpthread -lthrift
         # -L./libencrypt -lencrypt

@@ -364,6 +364,10 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
     if (!r.__isset.data)
         resourceError = true;
     else {
+        if (r.mime == "application/pdf" && pdfPreview) {
+            modifyPdfTags(resLid, enmedia);
+            return;
+        }
         QString fileDetails = "";
         MimeReference ref;
         if (r.__isset.attributes && r.attributes.__isset.fileName)
@@ -555,3 +559,14 @@ bool NoteFormatter::buildInkNote(QDomDocument &doc, QDomElement &docElem, QDomEl
     }
     return false;
 }
+
+
+
+void NoteFormatter::modifyPdfTags(qint32 resLid, QDomElement &enmedia) {
+    enmedia.setTagName("object");
+    //enmedia.setAttribute("type", "nixnote/pdf");
+    enmedia.setAttribute("width", "100%");
+    enmedia.setAttribute("height", "100%");
+    enmedia.setAttribute("lid", resLid);
+}
+

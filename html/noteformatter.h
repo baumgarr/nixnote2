@@ -35,6 +35,7 @@ private:
     void addImageHighlight(qint32 resLid, QFile &f);
     void modifyImageTags(QDomDocument &doc, QDomElement &docElement, QDomElement &enMedia, QDomAttr &hash);
     void modifyApplicationTags(QDomDocument &doc, QDomElement &docElem, QDomElement &enmedia, QDomAttr &hash, QString appl);
+    void modifyPdfTags(qint32 resLid, QDomElement &enmedia);
     void modifyTodoTags(QDomElement &todo);
     void modifyTags(QDomDocument &doc);
     QString findIcon(qint32 lid, Resource r, QString appl);

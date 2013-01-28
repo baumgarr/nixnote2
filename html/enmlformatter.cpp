@@ -199,6 +199,23 @@ void EnmlFormatter::fixNode(const QDomNode &node) {
         QDomText cryptValue = doc.createTextNode(crypt);
         e.appendChild(cryptValue);
     }
+
+    // we may have a good plugin
+    if (node.nodeName().toLower() == "object") {
+        QDomElement e = node.toElement();
+        QString type = e.attribute("type", "");
+        if (type == "application/pdf") {
+            qint32 lid = e.attribute("lid", "0").toInt();
+            if (lid>0)
+                resources.append(lid);
+
+            e.setTagName("en-media");
+            e.removeAttribute("lid");
+            e.removeAttribute("height");
+            e.removeAttribute("width");
+        }
+
+    }
 }
 
 

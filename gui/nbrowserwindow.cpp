@@ -9,6 +9,7 @@
 #include "global.h"
 #include "gui/browserWidgets/colormenu.h"
 #include "gui/browserWidgets/toolbarwidgetaction.h"
+#include "gui/plugins/pluginfactory.h"
 #include "dialog/insertlinkdialog.h"
 #include "dialog/tabledialog.h"
 #include "dialog/insertlatexdialog.h"
@@ -117,6 +118,10 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     editor->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     connect(editor->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(exposeToJavascript()));
     connect(editor->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), editor, SLOT(exposeToJavascript()));
+
+    editor->page()->settings()->setAttribute(QWebSettings::PluginsEnabled, true);
+    factory = new PluginFactory(this);
+    editor->page()->setPluginFactory(factory);
 
     lid = -1;
 }
@@ -311,7 +316,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     if (!global.cache.contains(lid)) {
         NoteFormatter formatter;
-        formatter.setNote(n, false);
+        formatter.setNote(n, true);
         content = formatter.rebuildNoteHTML();
         NoteCache *newCache = new NoteCache();
         newCache->noteContent = content;
@@ -325,6 +330,22 @@ void NBrowserWindow::setContent(qint32 lid) {
     noteTitle.setTitle(lid, QString::fromStdString(n.title), QString::fromStdString(n.title));
     dateEditor.setNote(lid, n);
     editor->setContent(content);
+
+//    QString x = QString("<html><body><p>x<p>"
+//            "<object type=\"text/csv;header=present;charset=utf8\""
+//            " data=\"qrc:/data/accounts.csv\""
+//            " \"width=\"110%\" height=\"110%\"></object></body></html>");
+//    x = QString("<html><body><p>x<p>"
+//                "<object type=\"nixnote/pdf;"
+//            " \" width=100%; height=100%;></object>"
+//                "<object type=\"nixnote/pdf;"
+//            " \" width=100%; height=100%;></object>"
+//                "<object type=\"nixnote/pdf;"
+//            " \" width=100%; height=100%;></object>"
+//                "</body></html>");
+//    QByteArray y;
+//    y.append(x);
+//    editor->setContent(y);
 
     // Set the tags
     tagEditor.clear();

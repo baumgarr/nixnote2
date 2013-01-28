@@ -22,6 +22,7 @@
 #include <evernote/NoteStore.h>
 #include "gui/browserWidgets/ntitleeditor.h"
 #include "gui/browserWidgets/notebookmenubutton.h"
+#include "gui/plugins/pluginfactory.h"
 #include "gui/browserWidgets/expandbutton.h"
 #include "gui/browserWidgets/urleditor.h"
 #include "gui/browserWidgets/tageditor.h"
@@ -60,6 +61,7 @@ private:
     void updateImageHash(QString newhash);
     void insertImage(const QMimeData *mime);
     qint32 createResource(Resource &r, int sequence, QByteArray data, QString mime, bool attachment);
+    PluginFactory *factory;
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
