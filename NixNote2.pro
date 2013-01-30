@@ -121,6 +121,7 @@ SOURCES += main.cpp\
     dialog/tabledialog.cpp \
     dialog/encryptdialog.cpp \
     dialog/insertlatexdialog.cpp \
+    botan/botan_all.cpp \
     gui/plugins/popplerviewer.cpp \
     gui/plugins/pluginfactory.cpp
 #    thrift/TApplicationException.cpp  \
@@ -260,6 +261,7 @@ HEADERS  += nixnote.h \
     dialog/tabledialog.h \
     dialog/encryptdialog.h \
     dialog/insertlatexdialog.h \
+    botan/botan_all.h \
     gui/plugins/popplerviewer.h \
     gui/plugins/pluginfactory.h
 #    thrift/TApplicationException.h  \

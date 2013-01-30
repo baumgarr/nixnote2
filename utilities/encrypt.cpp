@@ -3,143 +3,126 @@
 #include <QString>
 #include <algorithm>
 #include <stdexcept>
+#include "botan/botan_all.h"
+#include "global.h"
+#include <boost/crc.hpp>
+
+extern Global global;
 
 
 
 #define MY_CIPHER_MODE EVP_rc2_cbc()    // RC2 CBC mode
 
 using namespace std;
+using namespace Botan;
 
 EnCrypt::EnCrypt()
 {
 
-    QString d = "Data";
-    QString k = "key";
-    encrypt(d, k, 10);
+    QString d = "asd1jkl12345";
+    QString k = "asd1jkl";
+    QString enc = encrypt(d, k);
+    QString dec = decrypt(enc, k);
 
 }
 
 
 
-QString EnCrypt::encrypt(QString text, QString passphrase, int keylen) {
-    int outlen;
-    unsigned char iv[] = {1,2,3,4,5,6,7,8};
+QString EnCrypt::encrypt(QString text, QString passphrase) {
+    QByteArray xkey2(passphrase.toUtf8());
+    SymmetricKey key((const byte*)xkey2.data(), xkey2.length()); // encoded string
+
+    // Pad the key & passphrase
+    QByteArray textArray = text.toUtf8();
+
+    int align8 = (textArray.length()+4)%8;
+    int paddingNeeded = 8-align8;
+    int size = textArray.length();
+    textArray.resize(paddingNeeded+size);
+    for (int i=0; i<paddingNeeded; i++)
+        textArray[size+i] = 0;
 
 
-    unsigned char *pEncryptedStr;
-    pEncryptedStr = (unsigned char*)malloc(text.length()*2+1);
-    unsigned char pDecryptedStr[1024];
+    // now calcualate the CRC
+    QByteArray crc;
+    crc = CRC32(textArray);
+    if (crc.length()!=4) {
+        QLOG_ERROR() << "Invalid CRC returned";
+        return "";
+    }
+    QByteArray total = crc+textArray;
 
-    memset(pEncryptedStr, 0, text.length()*2+1);
-    memset(pDecryptedStr, 0, sizeof(pDecryptedStr));
-    unsigned char *v;
 
-    do_encrypt(text.toStdString().c_str(), pEncryptedStr, &outlen, (unsigned char *)passphrase.toStdString().c_str(), iv);
-    string rval(reinterpret_cast<const char *> (pEncryptedStr),
-            sizeof (pEncryptedStr) / sizeof (pEncryptedStr[0]));
+    // The algorithm we want is specified by a string
+    Pipe pipe(get_cipher("RC2/ECB/NoPadding", key, ENCRYPTION));
 
-    string asHex = string_to_hex(rval);
-    string asStr = hex_to_string(asHex);
+    pipe.process_msg((const byte*)total.data(), total.size());
 
-    bool rv = do_decrypt((unsigned char *)asStr.c_str(), pDecryptedStr, outlen, (unsigned char*)passphrase.toStdString().c_str(), iv);
-
-    int i=0;
-    i++;
+    string c1 = pipe.read_all_as_string();
+    QByteArray result;
+    result.append(QString::fromStdString(c1));
+    result = result.toBase64();
+    return QString(result);
 }
 
 
-QString EnCrypt::decrypt(QString text, QString passphrase, int keylen) {
+QString EnCrypt::decrypt(QString text, QString passphrase) {
+    QByteArray xkey2;
+    xkey2.append(passphrase.toUtf8());
 
+
+    SymmetricKey key((const byte*)xkey2.data(), xkey2.length()); // encoded string
+
+    // Turn the hex string back into cypher gibberish
+    QByteArray ba64;
+    ba64.append(text);
+    QByteArray ba = QByteArray::fromBase64(ba64);
+
+    ba = QByteArray::fromBase64("OI9WcCRoSLwSr6z4i2pvu9XsgMx0k8zxg1Tzk2bn5yXelooq/CVXJxywqgA9aKw2MERlFK2mXu9dHr1oJQ+YWflGVc58NeNWiE/JP8qlo6rzSs0RXFgGbDdOfSdlzgcS");
+
+    // Separate out the CRC & the text
+    try {
+        // The algorithm we want is specified by a string
+        Pipe pipe(get_cipher("RC2/ECB/NoPadding", key, DECRYPTION));
+        string stringMsg;
+        stringMsg.append(ba.data(), ba.length());
+        pipe.process_msg(stringMsg);
+        QString c1 = QString::fromStdString(pipe.read_all_as_string());
+        QString msgCrc = c1.mid(0,4);
+        QString msg = c1.mid(4);
+        ba.clear();
+        ba.append(msg);
+        QByteArray crc = CRC32(ba);
+        if (crc  != msgCrc)
+            return "";
+
+        // Trim off trailing blanks
+        int cnt = 0;
+        bool finished = false;
+        for (int i=msg.length()-1; i>=0 && !finished; i--) {
+            if (msg[i] == 0)
+                cnt++;
+            else
+                finished=true;
+        }
+        msg = msg.mid(0,msg.length()-cnt);
+        return msg;
+
+
+    } catch (Exception e) {
+        QLOG_DEBUG() << e.what();
+        return "";
+    }
 }
 
 
 
-bool EnCrypt::do_encrypt(const char *in, unsigned char *out, int *outlen, unsigned char *key, unsigned char *iv) {
-    int buflen, tmplen;
 
-    EVP_CIPHER_CTX ctx;
-      EVP_CIPHER_CTX_init(&ctx);
-      EVP_EncryptInit_ex(&ctx, MY_CIPHER_MODE, NULL, key, iv);
-
-    if(!EVP_EncryptUpdate(&ctx, out, &buflen, (unsigned char*)in, strlen(in)))
-      {
-          return false;
-    }
-
-    if(!EVP_EncryptFinal_ex(&ctx, out + buflen, &tmplen))
-      {
-          return false;
-    }
-
-    buflen += tmplen;
-    *outlen = buflen;
-      EVP_CIPHER_CTX_cleanup(&ctx);
-
-    return true;
-}
-
-bool EnCrypt::do_decrypt(const unsigned char *in, unsigned char *out, int inlen, unsigned char *key, unsigned char *iv) {
-    int buflen, tmplen;
-
-    EVP_CIPHER_CTX ctx;
-    EVP_CIPHER_CTX_init(&ctx);
-    EVP_DecryptInit_ex(&ctx, MY_CIPHER_MODE, NULL, key, iv);
-
-    if(!EVP_DecryptUpdate(&ctx, out, &buflen, in, inlen))
-    {
-      return false;
-    }
-
-    if(!EVP_DecryptFinal_ex(&ctx, out + buflen, &tmplen))
-      {
-          return false;
-    }
-
-    int decryptedLength = buflen + tmplen;
-      out[decryptedLength] = '\0';
-
-    EVP_CIPHER_CTX_cleanup(&ctx);
-
-    return true;
-}
-
-
-string EnCrypt::string_to_hex(const std::string& input)
-{
-    static const char* const lut = "0123456789ABCDEF";
-    size_t len = input.length();
-
-    std::string output;
-    output.reserve(2 * len);
-    for (size_t i = 0; i < len; ++i)
-    {
-        const unsigned char c = input[i];
-        output.push_back(lut[c >> 4]);
-        output.push_back(lut[c & 15]);
-    }
-    return output;
-}
-
-
-string EnCrypt::hex_to_string(const std::string& input)
-{
-    static const char* const lut = "0123456789ABCDEF";
-    size_t len = input.length();
-    if (len & 1) throw std::invalid_argument("odd length");
-
-    std::string output;
-    output.reserve(len / 2);
-    for (size_t i = 0; i < len; i += 2)
-    {
-        char a = input[i];
-        const char* p = std::lower_bound(lut, lut + 16, a);
-        if (*p != a) throw std::invalid_argument("not a hex digit");
-
-        char b = input[i + 1];
-        const char* q = std::lower_bound(lut, lut + 16, b);
-        if (*q != b) throw std::invalid_argument("not a hex digit");
-
-        output.push_back(((p - lut) << 4) | (q - lut));
-    }
-    return output;
+QByteArray EnCrypt::CRC32(QByteArray ba) {
+    boost::crc_32_type result;
+    result.process_bytes(ba.data(), ba.size());
+    qulonglong  crc = result.checksum();
+    QByteArray rc;
+    rc.setNum(crc,16);
+    return rc.mid(0,4).toUpper();
 }

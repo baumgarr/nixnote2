@@ -17,8 +17,9 @@ private:
 
 public:
     EnCrypt();
-    QString encrypt(QString text, QString passphrase, int keylen);
-    QString decrypt(QString text, QString passphrase, int keylen);
+    QString encrypt(QString text, QString passphrase);
+    QString decrypt(QString text, QString passphrase);
+    QByteArray CRC32(QByteArray ba);
 };
 
 #endif // ENCRYPT_H

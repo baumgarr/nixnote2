@@ -2,11 +2,19 @@
 #include "nixnote.h"
 #include "global.h"
 #include "settings/startupconfig.h"
+#include "botan/botan_all.h"
 
 #include "logger/qslog.h"
 #include <QtCore/QCoreApplication>
 #include <QDir>
 #include <iostream>
+#include "utilities/encrypt.h"
+
+
+//using namespace std;
+//using namespace Botan;
+//#include <QString>
+//#include <QByteArray>
 
 
 //*********************************************
@@ -16,6 +24,11 @@ extern Global global;
 
 int main(int argc, char *argv[])
 {
+
+        Botan::LibraryInitializer botanInit;
+            EnCrypt en;
+
+
     // Setup the QApplication so we can begin
     QApplication a(argc, argv);
 
