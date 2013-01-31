@@ -314,16 +314,24 @@ void NBrowserWindow::setContent(qint32 lid) {
     noteTable.get(n, this->lid, false, false);
     QByteArray content;
 
+    bool inkNote;
+    bool readOnly;
     if (!global.cache.contains(lid)) {
         NoteFormatter formatter;
         formatter.setNote(n, true);
         content = formatter.rebuildNoteHTML();
         NoteCache *newCache = new NoteCache();
+        newCache->isReadOnly = formatter.readOnly;
+        newCache->isInkNote = formatter.inkNote;
         newCache->noteContent = content;
         global.cache.insert(lid, newCache);
+        readOnly = formatter.readOnly;
+        inkNote = formatter.inkNote;
     } else {
         NoteCache *c = global.cache[lid];
         content = c->noteContent;
+        readOnly = c->isReadOnly;
+        inkNote = c->isInkNote;
     }
 
 
@@ -331,23 +339,11 @@ void NBrowserWindow::setContent(qint32 lid) {
     dateEditor.setNote(lid, n);
     editor->setContent(content);
 
-//    QString x = QString("<html><body><p>x<p>"
-//            "<object type=\"text/csv;header=present;charset=utf8\""
-//            " data=\"qrc:/data/accounts.csv\""
-//            " \"width=\"110%\" height=\"110%\"></object></body></html>");
-//    x = QString("<html><body><p>x<p>"
-//                "<object type=\"nixnote/pdf;"
-//            " \" width=100%; height=100%;></object>"
-//                "<object type=\"nixnote/pdf;"
-//            " \" width=100%; height=100%;></object>"
-//                "<object type=\"nixnote/pdf;"
-//            " \" width=100%; height=100%;></object>"
-//                "</body></html>");
-//    QByteArray y;
-//    y.append(x);
-//    editor->setContent(y);
-
     // Set the tags
+    if (!inkNote && !readOnly)
+        editor->page()->setContentEditable(true);
+    else
+        editor->page()->setContentEditable(false);
     tagEditor.clear();
     QStringList names;
     for (unsigned int i=0; i<n.tagNames.size(); i++) {
@@ -363,7 +359,6 @@ void NBrowserWindow::setContent(qint32 lid) {
     else
         urlEditor.setUrl(lid, "");
     setSource();
-    editor->page()->setContentEditable(true);
 }
 
 

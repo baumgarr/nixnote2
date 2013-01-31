@@ -40,13 +40,14 @@ SyncRunner::~SyncRunner() {
 void SyncRunner::run() {
     QLOG_DEBUG() << "SyncRunner starting";
     this->setPriority(QThread::LowPriority);
+    comm = new CommunicationManager(this);
     exec();
     QLOG_DEBUG() << "Syncrunner exiting.";
 }
 
 void SyncRunner::synchronize() {
     QLOG_DEBUG() << "Starting SyncRunner.synchronize()";
-    if (!comm.connect()) {
+    if (!comm->connect()) {
         QLOG_ERROR() << "Error initializing socket connections";
         emit syncComplete();
         return;
@@ -56,7 +57,7 @@ void SyncRunner::synchronize() {
     keepRunning = true;
     evernoteSync();
     emit syncComplete();
-    comm.disconnect();
+    comm->disconnect();
     global.connected=false;
 }
 
@@ -68,11 +69,15 @@ void SyncRunner::evernoteSync() {
     if (!global.connected)
         return;
 
+    User user;
+    UserTable userTable;
+    comm->getUserInfo(user);
+    userTable.updateUser(user);
+
     SyncState syncState;
-    comm.getSyncState("", syncState);
+    comm->getSyncState("", syncState);
 
     fullSync = false;
-    UserTable userTable;
 
     qlonglong lastSyncDate = userTable.getLastSyncDate();
     updateSequenceNumber = userTable.getLastSyncNumber();
@@ -99,10 +104,9 @@ void SyncRunner::evernoteSync() {
     }
 
     updateNoteTableTags();
-    User user;
-    comm.getUserInfo(user);
+    comm->getUserInfo(user);
     userTable.updateUser(user);
-    comm.getSyncState("", syncState);
+    comm->getSyncState("", syncState);
     userTable.updateSyncState(syncState);
 
     emit setMessage(tr("Sync Complete"));
@@ -124,7 +128,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
         QSqlQuery query;
         query.exec("begin");
-        rc = comm.getSyncChunk("", chunk, updateSequenceNumber, chunkSize, fullSync);
+        rc = comm->getSyncChunk("", chunk, updateSequenceNumber, chunkSize, fullSync);
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
             return;
@@ -152,6 +156,19 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         if (chunk.resources.size() > 0)
             syncRemoteResources(chunk.resources);
 
+        // Save any ink notes
+        while (comm->inkNoteList->size() > 0) {
+            QPair<QString, QImage *> *pair = comm->inkNoteList->takeFirst();
+            ResourceTable resTable;
+            qint32 resLid = resTable.getLid(pair->first);
+            if (resLid > 0) {
+                QString filename = global.fileManager.getDbaDirPath() + QString::number(resLid) + QString(".png");
+                pair->second->save(filename);
+            }
+            delete pair->second;
+            delete pair;
+        }
+
         if (chunk.chunkHighUSN >= updateCount)
             more = false;
         updateSequenceNumber = chunk.chunkHighUSN;
@@ -166,7 +183,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 bool SyncRunner::enConnect() {
     if (global.connected)
         return true;
-    return comm.connect();
+    return comm->connect();
 }
 
 // Expunge deleted notes from the local database
@@ -427,3 +444,4 @@ void SyncRunner::updateNoteTableNotebooks() {
     }
 
 }
+

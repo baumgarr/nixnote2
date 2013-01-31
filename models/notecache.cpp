@@ -8,4 +8,5 @@ NoteCache::NoteCache(QObject *parent) :
     noteContent = "";
     isReadOnly = false;
     isContentReadOnly = false;
+    isInkNote = false;
 }

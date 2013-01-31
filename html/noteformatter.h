@@ -53,7 +53,7 @@ public:
     void setNoteHistory(bool value);
     QByteArray rebuildNoteHTML();
     QDomDocument addHighlight(QDomDocument &doc);
-    bool  buildInkNote(QDomDocument &doc, QDomElement &docElem, QDomElement &enmedia, QDomAttr &hash, QString appl);
+    bool  buildInkNote(QDomElement &docElem, QDomAttr &hash);
 
 
 signals:

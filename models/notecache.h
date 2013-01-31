@@ -17,6 +17,7 @@ public:
     QByteArray noteContent;
     bool isReadOnly;
     bool isContentReadOnly;
+    bool isInkNote;
 
 signals:
 

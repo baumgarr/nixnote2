@@ -4,17 +4,27 @@
 #include "global.h"
 
 #include <execinfo.h>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 #include "evernote/UserStore_constants.h"
+#include "sql/resourcetable.h"
+#include <sql/usertable.h>
+#include <QObject>
+#include <QPainter>
 
 extern Global global;
 
-CommunicationManager::CommunicationManager()
+CommunicationManager::CommunicationManager(QObject *parent) :
+    QObject(parent)
 {
     initComplete = false;
-//    evernoteHost = global.server;
     evernoteHost = global.server.toStdString();
     userStorePath = "/edam/user";
     clientName = "NixNote/Linux";
+    networkAccessManager = new QNetworkAccessManager();
+    inkNoteList = new QList< QPair<QString, QImage*>* >();
+    //networkAccessManager->connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteReady(QNetworkReply*)));
 }
 
 
@@ -67,6 +77,16 @@ bool CommunicationManager::getSyncState(string token, SyncState &syncState) {
 bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int start, int chunkSize, bool fullSync) {
     if (token == "")
         token = authToken;
+
+    // Get rid of old stuff from last chunk
+    while(inkNoteList->size() > 0) {
+        QPair<QString, QImage*> *pair = inkNoteList->takeLast();
+        delete pair->second;
+        delete pair;
+    }
+    inkNoteList->empty();
+
+    // Try to get the chunk
     try {
         noteStoreClient->getSyncChunk(chunk, token, start, chunkSize, fullSync);
         for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
@@ -74,6 +94,9 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
             Note n;
             noteStoreClient->getNote(n, token, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
             chunk.notes[i] = n;
+            if (n.__isset.resources && n.resources.size() > 0) {
+                checkForInkNotes(n.resources);
+            }
         }
         for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
             QLOG_DEBUG() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
@@ -81,6 +104,8 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
             noteStoreClient->getResource(r, token, chunk.resources[i].guid, true, true, true, true);
             chunk.resources[i] = r;
         }
+        if (chunk.__isset.resources && chunk.resources.size()>0)
+            checkForInkNotes(chunk.resources);
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         return false;
@@ -206,7 +231,6 @@ void CommunicationManager::disconnect() {
 
 
 
-
 bool CommunicationManager::getUserInfo(User &user) {
     QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo";
     try {
@@ -221,4 +245,82 @@ bool CommunicationManager::getUserInfo(User &user) {
     return true;
 }
 
+
+
+void CommunicationManager::checkForInkNotes(vector<Resource> &resources) {
+    for (unsigned int i=0; i<resources.size(); i++) {
+        Resource *r = &resources[i];
+        if (r->__isset.mime && r->mime == "application/vnd.evernote.ink") {
+            downloadInkNoteImage(QString::fromStdString(r->guid), r);
+        }
+    }
+}
+
+
+
+
+void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r) {
+    UserTable userTable;
+    User u;
+    userTable.getUser(u);
+    QString urlBase = QString::fromStdString("https://")+QString::fromStdString(evernoteHost)
+            +QString("/shard/")
+            +QString::fromStdString(u.shardId)
+            +QString("/res/")
+            +guid +QString(".ink?slice=");
+    int sliceCount = 1+((r->height-1)/600);
+    QSize size;
+    size.setHeight(r->height);
+    size.setWidth(r->width);
+    QUrl *postData = new QUrl();
+    postData->addQueryItem("auth", QString::fromStdString(authToken));
+
+    QEventLoop loop;
+    QObject::connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
+
+    int position = 0;
+    QImage *newImage = NULL;
+    for (int i=0; i<sliceCount && position >=0; i++) {
+        QUrl url(urlBase+QString::number(i+1));
+
+        QNetworkRequest request(url);
+
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+        QNetworkReply *reply = networkAccessManager->post(request,postData->encodedQuery());
+
+        // Execute the event loop here, now we will wait here until readyRead() signal is emitted
+        // which in turn will trigger event loop quit.
+        loop.exec();
+        QImage replyImage;
+        replyImage.loadFromData(reply->readAll());
+        if (newImage == NULL)
+            newImage= new QImage(size, replyImage.format());
+        position = inkNoteReady(newImage, &replyImage, position);
+        if (position == -1) {
+            QLOG_ERROR() << "Error fetching ink note slice " << reply->errorString();
+        }
+    }
+    QPair<QString, QImage*> *newPair = new QPair<QString, QImage*>();
+    newPair->first = guid;
+    newPair->second = newImage;
+    inkNoteList->append(newPair);
+
+    QObject::disconnect(&loop, SLOT(quit()));
+
+}
+
+
+
+
+int CommunicationManager::inkNoteReady(QImage *img, QImage *replyImage, int position) {
+    int priorPosition = position;
+    position = position+replyImage->height();
+    if (!replyImage->isNull()) {
+        QPainter p(img);
+        p.drawImage(QRect(0,priorPosition, replyImage->width(), position), *replyImage);
+        p.end();
+        return position;
+    }
+    return -1;
+}
 

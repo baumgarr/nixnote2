@@ -160,8 +160,6 @@ void NoteFormatter::modifyTags(QDomDocument &doc) {
             modifyTodoTags(enmedia);
     }
 
-    // Modify en-crypt tags
-    anchors = docElem.elementsByTagName("en-crypt");
     qint32 enCryptLen = anchors.length();
     for (qint32 i=enCryptLen-1; i>=0; i--) {
             QDomElement enmedia(anchors.at(i).toElement());
@@ -353,7 +351,9 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
     QLOG_TRACE() <<  "Entering NeverNote.modifyApplicationTags";
     if (appl.toLower() == "vnd.evernote.ink") {
             inkNote = true;
-        if (buildInkNote(doc, docElem, enmedia, hash, appl))
+            readOnly = true;
+            buildInkNote(enmedia, hash);
+            QLOG_DEBUG() << doc.toString();
             return;
     }
     ResourceTable resTable;
@@ -518,46 +518,20 @@ void NoteFormatter::modifyTodoTags(QDomElement &todo) {
 
 
 /* If we have an ink note, then we need to pull the image and display it */
-bool NoteFormatter::buildInkNote(QDomDocument &doc, QDomElement &docElem, QDomElement &enmedia, QDomAttr &hash, QString appl) {
-    docElem=docElem; // suppress unused
-    appl=appl;  // suppress unused
+bool NoteFormatter::buildInkNote(QDomElement &docElem, QDomAttr &hash) {
 
     ResourceTable resTable;
     qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
-    Resource r;
-    resTable.get(r, resLid);
-
-    // If we can't find the resource, then fall back to the old method.  We'll return & show
-    // an error later
-    if (!r.__isset.data)
+    if (resLid <= 0)
         return false;
+    docElem.setAttribute("en-tag", "en-media");
+    docElem.setAttribute("lid", QString::number(resLid));
+    docElem.setAttribute("type", "application/vnd.evernote.ink");
+    QString filename = QString("file:///") +global.fileManager.getDbaDirPath()+QString::number(resLid)+QString(".png");
+    docElem.setAttribute("src", filename);
+    docElem.setTagName("img");
 
-    // If there isn't some type of error, continue on.
-    if (!resourceError) {
-
-        // Get a list of images in the database.  We'll use these to bulid the page.
-       QByteArray data;
-       resTable.getInkNote(data, resLid);
-
-        // If no pictures are found, go back to & just show the icon
-        if (data.size() == 0)
-            return false;
-
-        // We have pictures, so append them to the page.  This really isn't proper since
-        // we leave the en-media tag in place, but since we can't edit the page it doesn't
-        // hurt anything.
-        QFile f(global.fileManager.getTmpDirPath(QString(resLid)+"-inknote" +".png"));
-        f.open(QFile::WriteOnly);
-        f.write(data);
-        f.close();
-
-        QDomElement newImage(doc.createElement("img"));
-        //newImage.setAttribute("src", QUrl.fromLocalFile(f.fileName()));
-        newImage.setAttribute("src", "InkNote");
-        enmedia.appendChild(newImage);
-        return true;
-    }
-    return false;
+    return true;
 }
 
 
@@ -569,4 +543,3 @@ void NoteFormatter::modifyPdfTags(qint32 resLid, QDomElement &enmedia) {
     enmedia.setAttribute("height", "100%");
     enmedia.setAttribute("lid", resLid);
 }
-

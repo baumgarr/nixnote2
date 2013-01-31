@@ -683,8 +683,12 @@ qint32 ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
 }
 
 bool ResourceTable::getInkNote(QByteArray &value, qint32 lid) {
-    value=value;  //suppress unused
-    lid=lid;      //suppress unused
+    QString fileName = global.fileManager.getDbaDirPath()+QString::number(lid)+QString(".png");
+    QFile f(fileName);
+    f.open(QIODevice::ReadOnly);
+    value = f.readAll();
+    if (value.size() > 0)
+            return true;
     return false;
 }
 

@@ -21,6 +21,8 @@
 #include <transport/TSSLSocket.h>
 #include <transport/THttpClient.h>
 #include <server/TSimpleServer.h>
+#include <QObject>
+#include <QNetworkAccessManager>
 
 using boost::shared_ptr;
 
@@ -46,8 +48,10 @@ using namespace ::apache::thrift::server;
 //#define EDAM_NOTE_STORE_PATH "/edam/note/s1"
 //#define EDAM_CLIENT_NAME "NixNote/Linux"
 
-class CommunicationManager
+class CommunicationManager : public QObject
 {
+    Q_OBJECT
+
 private:
     bool initComplete;
     bool initNoteStore();
@@ -59,6 +63,7 @@ private:
     shared_ptr<TSocket> sslSocketNoteStore;
     shared_ptr<TTransport> noteStoreHttpClient;
     shared_ptr<NoteStoreClient> noteStoreClient;
+    void downloadInkNoteImage(QString guid, Resource *r);
 
     shared_ptr<TSocket> sslSocketUserStore;
     shared_ptr<TTransport> userStoreHttpClient;
@@ -66,9 +71,11 @@ private:
     //shared_ptr<AuthenticationResult> authenticationResult;
     string authToken;
     bool init();
+    QNetworkAccessManager *networkAccessManager;
+    void checkForInkNotes(vector<Resource> &resources);
 
 public:
-    CommunicationManager();
+    CommunicationManager(QObject *parent = 0);
     ~CommunicationManager();
     bool connect();
     bool getSyncState(string authToken, SyncState &syncState);
@@ -76,6 +83,10 @@ public:
     string getToken();
     void disconnect();
     bool getUserInfo(User &user);
+    QList< QPair<QString, QImage*>* > *inkNoteList;
+
+public slots:
+    int inkNoteReady(QImage *newImage, QImage *replyImage, int position);
 };
 
 #endif // COMMUNICATIONMANAGER_H

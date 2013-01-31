@@ -48,7 +48,7 @@ private:
     bool idle;
     bool error;
     long evernoteUpdateCount;
-    CommunicationManager comm;
+    CommunicationManager *comm;
     //JavaMachine *jvm;
 
 
@@ -98,6 +98,8 @@ private:
 
     void updateNoteTableTags();
     void updateNoteTableNotebooks();
+
+    void checkForInkNotes(vector<Resource> &resources);
 
 
 public:

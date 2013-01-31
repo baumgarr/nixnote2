@@ -263,7 +263,8 @@ HEADERS  += nixnote.h \
     dialog/insertlatexdialog.h \
     botan/botan_all.h \
     gui/plugins/popplerviewer.h \
-    gui/plugins/pluginfactory.h
+    gui/plugins/pluginfactory.h \
+    communication/inknoterequest.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \
