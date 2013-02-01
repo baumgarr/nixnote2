@@ -335,15 +335,17 @@ void NBrowserWindow::setContent(qint32 lid) {
     }
 
 
+    setReadOnly(readOnly);
+
     noteTitle.setTitle(lid, QString::fromStdString(n.title), QString::fromStdString(n.title));
     dateEditor.setNote(lid, n);
     editor->setContent(content);
 
-    // Set the tags
-    if (!inkNote && !readOnly)
-        editor->page()->setContentEditable(true);
-    else
+    // is this an ink note?
+    if (inkNote)
         editor->page()->setContentEditable(false);
+
+    // Set the tag names
     tagEditor.clear();
     QStringList names;
     for (unsigned int i=0; i<n.tagNames.size(); i++) {
@@ -359,6 +361,27 @@ void NBrowserWindow::setContent(qint32 lid) {
     else
         urlEditor.setUrl(lid, "");
     setSource();
+}
+
+
+
+void NBrowserWindow::setReadOnly(bool readOnly) {
+    if (readOnly) {
+        noteTitle.setFocusPolicy(Qt::NoFocus);
+        tagEditor.setEnabled(false);
+        authorEditor.setFocusPolicy(Qt::NoFocus);
+        urlEditor.setFocusPolicy(Qt::NoFocus);
+        notebookMenu.setEnabled(false);
+        dateEditor.setEnabled(false);
+        return;
+    }
+    noteTitle.setFocusPolicy(Qt::StrongFocus);
+    tagEditor.setEnabled(true);
+    authorEditor.setFocusPolicy(Qt::StrongFocus);
+    urlEditor.setFocusPolicy(Qt::StrongFocus);
+    notebookMenu.setEnabled(true);
+    dateEditor.setEnabled(true);
+
 }
 
 

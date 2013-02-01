@@ -75,6 +75,7 @@ public:
     TagEditor tagEditor;
     DateEditor dateEditor;
     AuthorEditor authorEditor;
+    void setReadOnly(bool readOnly);
 
     QToolBar buttonBar;
     ToolbarWidgetAction *undoButtonAction;

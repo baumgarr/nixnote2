@@ -31,7 +31,10 @@ void NoteFormatter::setNote(Note n, bool pdfPreview) {
     this->note = n;
     content = "";
     this->enableHighlight = false;
-    readOnly = true;
+    readOnly = false;
+    inkNote = false;
+    if (note.__isset.attributes && note.attributes.__isset.contentClass && note.attributes.contentClass != "")
+        readOnly = true;
 
 }
 
