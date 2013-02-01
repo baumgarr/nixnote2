@@ -36,9 +36,15 @@ NNotebookView::NNotebookView(QWidget *parent) :
 
     // Build the root item
     QIcon icon(":notebook_small.png");
+//    root = new NNotebookViewItem(this);
+//    root->setIcon(NAME_POSITION,icon);
+//    root->setData(NAME_POSITION, Qt::UserRole, "rootlocal");
+//    root->setData(NAME_POSITION, Qt::DisplayRole, tr("Local  Notebooks"));
+//    root->setRootColor(true);
+//    root->setExpanded(true);
     root = new NNotebookViewItem(this);
     root->setIcon(NAME_POSITION,icon);
-    root->setData(NAME_POSITION, Qt::UserRole, "root");
+    root->setData(NAME_POSITION, Qt::UserRole, "rootsynchronized");
     root->setData(NAME_POSITION, Qt::DisplayRole, tr("Synchronized Notebooks"));
     root->setRootColor(true);
     root->setExpanded(true);
@@ -176,7 +182,7 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
         selectionModel()->select(item, QItemSelectionModel::Deselect);
 
     for (int i=0; i<this->selectedItems() .size(); i++) {
-        if (this->selectedIndexes().at(i).data(Qt::UserRole) == "root") {
+        if (this->selectedIndexes().at(i).data(Qt::UserRole).toString().startsWith("root", Qt::CaseInsensitive)) {
             selectionModel()->select(this->selectedIndexes().at(i), QItemSelectionModel::Deselect);
         }
     }
@@ -292,7 +298,7 @@ void NNotebookView::buildSelection() {
     QLOG_TRACE() << "Inside NNotebookView::buildSelection()";
 
     QList<QTreeWidgetItem*> selectedItems = this->selectedItems();
-    if (selectedItems.size() > 0 && selectedItems[0]->data(0,Qt::UserRole) == "root")
+    if (selectedItems.size() > 0 && selectedItems[0]->data(0,Qt::UserRole).toString().startsWith("root"), Qt::CaseInsensitive)
         return;
 
     // First, find out if we're already viewing history.  If we are we
