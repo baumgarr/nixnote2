@@ -345,7 +345,7 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
             query.bindValue(":data", true);
             query.exec();
         }
-        position = content.indexOf("<en-todo>");
+        position = content.indexOf("en-todo checked=\"false\"");
         if (position > 0) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
