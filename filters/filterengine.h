@@ -13,6 +13,7 @@ private:
     void filterStack(QString& stack);
     void filterTags(FilterCriteria *criteria);
     void filterTrash(FilterCriteria *criteria);
+    void filterAttributes(FilterCriteria *criteria);
     void filterSearchString(FilterCriteria *criteria);
     void filterSearchStringAll(QStringList list);
     void splitSearchTerms(QStringList &list, QString search);

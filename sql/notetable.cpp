@@ -247,10 +247,22 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
 
     for (unsigned int i=0; t.__isset.resources && i<t.resources.size(); i++) {
         qint32 resLid;
+        Resource *r;
+        r = &t.resources[i];
         resLid = resTable.getLid(t.guid,t.resources[i].guid);
         if (resLid == 0)
             resLid = cs.incrementLidCounter();
         resTable.add(resLid, t.resources[i], isDirty);
+
+        if (r->__isset.mime) {
+            QString mime = QString::fromStdString(r->mime);
+            if (!mime.startsWith("image/") && mime != "vnd.evernote.ink") {
+                query.bindValue(":lid", lid);
+                query.bindValue(":key", NOTE_HAS_ATTACHMENT);
+                query.bindValue(":data", true);
+                query.exec();
+            }
+        }
     }
 
     if (t.__isset.attributes) {
@@ -412,7 +424,7 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
     if (t.__isset.attributes && t.attributes.__isset.sourceURL)
         query.bindValue(":sourceUrl", QString::fromStdString(t.attributes.sourceURL));
     else
-        query.bindValue("::sourceUrl", "");
+        query.bindValue(":sourceUrl", "");
     if (t.__isset.attributes && t.attributes.__isset.sourceApplication)
         query.bindValue(":sourceApplication", QString::fromStdString(t.attributes.sourceApplication));
     else

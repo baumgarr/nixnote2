@@ -4,7 +4,9 @@
 #include "sql/notetable.h"
 #include "sql/notebooktable.h"
 #include "sql/tagtable.h"
+#include "gui/nattributetree.h"
 #include "sql/notebooktable.h"
+#include "sql/resourcetable.h"
 
 #include <QtSql>
 
@@ -35,6 +37,8 @@ void FilterEngine::filter() {
     QLOG_DEBUG() << "Filtering search string";
     filterSearchString(criteria);
     QLOG_DEBUG() << "Filtering complete";
+    QLOG_DEBUG() << "Filtering attributes";
+    filterAttributes(criteria);
 
     // Remove any selected notes that are not in the filter.
     QList<qint32> oldLids;
@@ -59,6 +63,302 @@ void FilterEngine::filter() {
     }
 
 }
+
+
+
+void FilterEngine::filterAttributes(FilterCriteria *criteria) {
+    if (!criteria->isSet() || !criteria->isAttributeSet())
+        return;
+
+    int attribute = criteria->getAttribute()->data(0,Qt::UserRole).toInt();
+    QSqlQuery sql;
+    QDateTime dt;
+    dt.setDate(QDate().currentDate());
+    int dow = QDate().currentDate().dayOfWeek();
+    int moy = QDate().currentDate().month();
+    int dom = QDate().currentDate().day();
+    dt.setTime(QTime(0,0,0,1));
+
+    if (attribute == CREATED_SINCE_TODAY) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_SINCE_YESTERDAY) {
+        dt = dt.addDays(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_SINCE_THIS_WEEK) {
+        dt = dt.addDays(-1*dow);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_SINCE_LAST_WEEK) {
+        dt = dt.addDays(-1*dow-7);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_SINCE_THIS_MONTH) {
+        dt = dt.addDays(-1*dom+1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_SINCE_LAST_MONTH) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_SINCE_THIS_YEAR) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1*moy+1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_SINCE_LAST_YEAR) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1*moy+1);
+        dt = dt.addYears(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+
+
+    if (attribute == CREATED_BEFORE_TODAY) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_BEFORE_YESTERDAY) {
+        dt = dt.addDays(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_BEFORE_THIS_WEEK) {
+        dt = dt.addDays(-1*dow);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_BEFORE_LAST_WEEK) {
+        dt = dt.addDays(-1*dow-7);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_BEFORE_THIS_MONTH) {
+        dt = dt.addDays(-1*dom+1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_BEFORE_LAST_MONTH) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_BEFORE_THIS_YEAR) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1*moy+1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == CREATED_BEFORE_LAST_YEAR) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1*moy+1);
+        dt = dt.addYears(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_CREATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+
+    if (attribute == MODIFIED_SINCE_TODAY) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_SINCE_YESTERDAY) {
+        dt = dt.addDays(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_SINCE_THIS_WEEK) {
+        dt = dt.addDays(-1*dow);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_SINCE_LAST_WEEK) {
+        dt = dt.addDays(-1*dow-7);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_SINCE_THIS_MONTH) {
+        dt = dt.addDays(-1*dom+1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_SINCE_LAST_MONTH) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_SINCE_THIS_YEAR) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1*moy+1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_SINCE_LAST_YEAR) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1*moy+1);
+        dt = dt.addYears(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+
+
+    if (attribute == MODIFIED_BEFORE_TODAY) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_BEFORE_YESTERDAY) {
+        dt = dt.addDays(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_BEFORE_THIS_WEEK) {
+        dt = dt.addDays(-1*dow);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_BEFORE_LAST_WEEK) {
+        dt = dt.addDays(-1*dow-7);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_BEFORE_THIS_MONTH) {
+        dt = dt.addDays(-1*dom+1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_BEFORE_LAST_MONTH) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_BEFORE_THIS_YEAR) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1*moy+1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+    if (attribute == MODIFIED_BEFORE_LAST_YEAR) {
+        dt = dt.addDays(-1*dom+1);
+        dt = dt.addMonths(-1*moy+1);
+        dt = dt.addYears(-1);
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+        sql.bindValue(":key", NOTE_UPDATED_DATE);
+        sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    }
+
+    if (attribute == CONTAINS_IMAGES) {
+        sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like 'image/%'))");
+        sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
+        sql.bindValue(":mimekey", RESOURCE_MIME);
+    }
+    if (attribute == CONTAINS_AUDIO) {
+        sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like 'audio/%'))");
+        sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
+        sql.bindValue(":mimekey", RESOURCE_MIME);
+    }
+    if (attribute == CONTAINS_INK) {
+        sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data = 'application/vnd.evernote.ink'))");
+        sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
+        sql.bindValue(":mimekey", RESOURCE_MIME);
+    }
+    if (attribute == CONTAINS_ENCRYPTED_TEXT) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:encryptedkey)");
+        sql.bindValue(":encryptedkey", NOTE_HAS_ENCRYPT);
+    }
+    if (attribute == CONTAINS_TODO_ITEMS) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where (key=:comp or key=:uncomp) and data='true')");
+        sql.bindValue(":comp", NOTE_HAS_TODO_COMPLETED);
+        sql.bindValue(":uncomp", NOTE_HAS_TODO_UNCOMPLETED);
+    }
+    if (attribute == CONTAINS_FINISHED_TODO_ITEMS) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:comp and data='true')");
+        sql.bindValue(":comp", NOTE_HAS_TODO_COMPLETED);
+    }
+    if (attribute == CONTAINS_UNFINISHED_TODO_ITEMS) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:uncomp and data='true')");
+        sql.bindValue(":uncomp", NOTE_HAS_TODO_UNCOMPLETED);
+    }
+    if (attribute == CONTAINS_PDF_DOCUMENT) {
+        sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data ='application/pdf'))");
+        sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
+        sql.bindValue(":mimekey", RESOURCE_MIME);
+    }
+    if (attribute == CONTAINS_ATTACHMENT) {
+        sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key)");
+        sql.bindValue(":key", NOTE_HAS_ATTACHMENT);
+    }
+    if (attribute == SOURCE_EMAIL) {
+        sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data = 'mail.clip')");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
+    }
+    if (attribute == SOURCE_EMAILED_TO_EVERNOTE) {
+        sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data = 'mail.smtp')");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
+    }
+    if (attribute == SOURCE_MOBILE) {
+        sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like 'mobile.%')");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
+    }
+    if (attribute == SOURCE_WEB_PAGE) {
+        sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data = 'web.clip')");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
+    }
+    if (attribute == SOURCE_ANOTHER_APPLICATION) {
+        sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data != 'web.clip' and "
+                    "data not like 'mobile.%' and data != 'mail.smtp' and data != 'mail.clip')");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
+    }
+
+
+
+    sql.exec();
+    QLOG_DEBUG() << sql.lastError();
+
+}
+
 
 
 void FilterEngine::filterNotebook(FilterCriteria *criteria) {

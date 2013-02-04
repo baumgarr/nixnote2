@@ -349,7 +349,7 @@ void NixNote::setupSynchronizedNotebookTree() {
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
     lbl->setText("<hr>");
-    leftPanel->addWidget(lbl);
+    //leftPanel->addWidget(lbl);
 
     notebookTreeView = new NNotebookView(leftPanel);
     leftPanel->addWidget(notebookTreeView);

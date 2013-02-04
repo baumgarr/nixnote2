@@ -293,7 +293,7 @@ NAttributeTree::NAttributeTree(QWidget *parent) :
     this->containsRoot->addChild(containsUnfinishedToDoItems);
 
     this->containsFinishedToDoItems->setText(0, tr("Finished to-do items"));
-    this->containsFinishedToDoItems->setData(0, Qt::UserRole, CONTAINS_IMAGES);
+    this->containsFinishedToDoItems->setData(0, Qt::UserRole, CONTAINS_FINISHED_TODO_ITEMS);
     this->containsRoot->addChild(containsFinishedToDoItems);
 
     this->containsPDFDocument->setText(0, tr("PDF document"));
