@@ -19,6 +19,7 @@ private:
     void filterSearchStringNotebookAll(QString string);
     void filterSearchTodoAll(QStringList list);
     void filterSearchStringTodoAll(QString string);
+    void filterSearchStringTagAll(QString string);
     bool anyFlagSet;
 
 public:

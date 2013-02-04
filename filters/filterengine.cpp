@@ -263,25 +263,69 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
                 string.startsWith("-notebook:", Qt::CaseInsensitive)) {
             filterSearchStringNotebookAll(string);
         } else {
-        if (string.startsWith("todo:", Qt::CaseInsensitive) ||
+            if (string.startsWith("todo:", Qt::CaseInsensitive) ||
                     string.startsWith("-todo:", Qt::CaseInsensitive)) {
                 filterSearchStringTodoAll(string);
-        // Else we are just searching text
-        } else {
-            if (string.indexOf("*") > 0)
-                string.replace('*', '%');
-            if (string.startsWith("-")) {
-                string = string.remove(0,1);
-                sqlnegative.bindValue(":word", string.trimmed()+"*");
-                sqlnegative.exec();
+                // Else we are just searching text
             } else {
-                sql.bindValue(":word", string.trimmed()+"*");
-                sql.exec();
+                if (string.startsWith("tag:", Qt::CaseInsensitive) ||
+                        string.startsWith("-tag:", Qt::CaseInsensitive)) {
+                    filterSearchStringTagAll(string);
+                } else {
+                    if (string.startsWith("-")) {
+                        string = string.remove(0,1);
+                        sqlnegative.bindValue(":word", string.trimmed()+"*");
+                        sqlnegative.exec();
+                    } else {
+                        sql.bindValue(":word", string.trimmed()+"*");
+                        sql.exec();
+                    }
+                }
             }
-        }
         }
     }
 }
+
+
+// filter based upon the tag string the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringTagAll(QString string) {
+    if (!string.startsWith("-")) {
+        string.remove(0,4);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery tagSql;
+        if (string.indexOf("*") < 0)
+            tagSql.prepare("Delete from filter where lid not in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data=:tagname and key=:tagnamekey))");
+        else {
+            tagSql.prepare("Delete from filter where lid not in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data like :tagname and key=:tagnamekey))");
+            string = string.replace("*", "%");
+        }
+        tagSql.bindValue(":tagname", string);
+        tagSql.bindValue(":tagnamekey", TAG_NAME);
+        tagSql.bindValue(":notetagkey", NOTE_TAG);
+
+        tagSql.exec();
+    } else {
+        string.remove(0,5);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery tagSql;
+        if (string.indexOf("*") < 0)
+            tagSql.prepare("Delete from filter where lid in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data=:tagname and key=:tagnamekey))");
+        else {
+            tagSql.prepare("Delete from filter where lid in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data like :tagname and key=:tagnamekey))");
+            string = string.replace("*", "%");
+        }
+        tagSql.bindValue(":tagname", string);
+        tagSql.bindValue(":tagnamekey", TAG_NAME);
+        tagSql.bindValue(":notetagkey", NOTE_TAG);
+        tagSql.exec();
+    }
+}
+
 
 
 // filter based upon the notebook string the user specified.  This is for the "all"
