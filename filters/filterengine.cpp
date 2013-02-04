@@ -36,9 +36,10 @@ void FilterEngine::filter() {
     filterTrash(criteria);
     QLOG_DEBUG() << "Filtering search string";
     filterSearchString(criteria);
-    QLOG_DEBUG() << "Filtering complete";
     QLOG_DEBUG() << "Filtering attributes";
     filterAttributes(criteria);
+    QLOG_DEBUG() << "Filtering complete";
+
 
     // Remove any selected notes that are not in the filter.
     QList<qint32> oldLids;
@@ -558,31 +559,76 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
         QString string = list[i];
         string.remove(QChar('"'));
 
+        bool filterFound = false;
         // If we have a notebook search request
         if (string.startsWith("notebook:", Qt::CaseInsensitive) ||
                 string.startsWith("-notebook:", Qt::CaseInsensitive)) {
             filterSearchStringNotebookAll(string);
-        } else {
-            if (string.startsWith("todo:", Qt::CaseInsensitive) ||
-                    string.startsWith("-todo:", Qt::CaseInsensitive)) {
-                filterSearchStringTodoAll(string);
-                // Else we are just searching text
+            filterFound = true;
+        }
+        if (string.startsWith("todo:", Qt::CaseInsensitive) ||
+                string.startsWith("-todo:", Qt::CaseInsensitive)) {
+            filterSearchStringTodoAll(string);
+            filterFound = true;
+        }
+        if (string.startsWith("tag:", Qt::CaseInsensitive) ||
+                string.startsWith("-tag:", Qt::CaseInsensitive)) {
+            filterSearchStringTagAll(string);
+            filterFound = true;
+        }
+        if (string.startsWith("intitle:", Qt::CaseInsensitive) ||
+                string.startsWith("-intitle:", Qt::CaseInsensitive)) {
+            filterSearchStringIntitleAll(string);
+            filterFound = true;
+        }
+        if (!filterFound) {
+            if (string.startsWith("-")) {
+                string = string.remove(0,1);
+                sqlnegative.bindValue(":word", string.trimmed()+"*");
+                sqlnegative.exec();
             } else {
-                if (string.startsWith("tag:", Qt::CaseInsensitive) ||
-                        string.startsWith("-tag:", Qt::CaseInsensitive)) {
-                    filterSearchStringTagAll(string);
-                } else {
-                    if (string.startsWith("-")) {
-                        string = string.remove(0,1);
-                        sqlnegative.bindValue(":word", string.trimmed()+"*");
-                        sqlnegative.exec();
-                    } else {
-                        sql.bindValue(":word", string.trimmed()+"*");
-                        sql.exec();
-                    }
-                }
+                sql.bindValue(":word", string.trimmed()+"*");
+                sql.exec();
             }
         }
+    }
+}
+
+
+
+
+
+// filter based upon the title string the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringIntitleAll(QString string) {
+    if (!string.startsWith("-")) {
+        string.remove(0,8);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery tagSql;
+        string = string.replace("*", "%");
+        if (string.indexOf("%") < 0)
+            string = QString("%") +string +QString("%");
+        tagSql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :title)");
+        tagSql.bindValue(":key", NOTE_TITLE);
+        tagSql.bindValue(":data", string);
+
+        tagSql.exec();
+    } else {
+        string.remove(0,9);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery tagSql;
+        string = string.replace("*", "%");
+        if (string.indexOf("%") < 0)
+            string = QString("%") +string +QString("%");
+        tagSql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :title)");
+        tagSql.bindValue(":key", NOTE_TITLE);
+        tagSql.bindValue(":data", string);
+
+        tagSql.exec();
     }
 }
 
