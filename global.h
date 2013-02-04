@@ -47,7 +47,7 @@
 #define NOTE_TABLE_COLUMN_COUNT 20
 
 
-#define MINIMUM_RECOGNITION_WEIGHT 80
+#define MINIMUM_RECOGNITION_WEIGHT 40
 
 using namespace std;
 

@@ -20,7 +20,7 @@ IndexRunner::~IndexRunner() {
 
 
 void IndexRunner::run() {
-    hammer = new Thumbnailer();
+//    hammer = new Thumbnailer();
     QLOG_DEBUG() << "Starting IndexRunner";
     indexTimer = new QTimer();
     indexTimer->setInterval(4000);
@@ -28,6 +28,8 @@ void IndexRunner::run() {
     indexTimer->start();
     textDocument = new QTextDocument();
     exec();
+    QLOG_DEBUG() << "Indexrunner exiting.";
+
 }
 
 
@@ -44,11 +46,6 @@ void IndexRunner::index() {
 
 
         for (qint32 i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
-            QSqlQuery sql;
-            sql.prepare("Delete from SearchIndex where lid=:lid");
-            sql.bindValue(":lid", lids.at(i));
-            sql.exec();
-
             Note n;
             noteTable.get(n, lids.at(i), false, false);
             indexNote(lids.at(i),n);
@@ -63,7 +60,8 @@ void IndexRunner::index() {
         for (qint32 i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
             Resource r;
             resourceTable.get(r, lids.at(i));
-            indexRecognition(lids.at(i), r);
+            qint32 noteLid = noteTable.getLid(r.noteGuid);
+            indexRecognition(noteLid, r);
             resourceTable.setIndexNeeded(lids.at(i), false);
         }
     }
@@ -79,7 +77,14 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     qint32 endPos = content.indexOf(QChar('>'),startPos)+1;
     content.remove(startPos,endPos-startPos);
 
+    // Remove encrypted text
+    while (content.indexOf("<en-crypt") > 0) {
+        startPos = content.indexOf("<en-crypt");
+        endPos = content.indexOf("</en-crypt>") + 11;
+        content = content.mid(0,startPos)+content.mid(endPos);
+    }
 
+    // Remove any XML tags
     while (content.indexOf(QChar('<'))>=0 && keepRunning && !pauseIndexing) {
         startPos = content.indexOf(QChar('<'));
         endPos = content.indexOf(QChar('>'),startPos)+1;
@@ -90,14 +95,13 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     content = textDocument->toPlainText() + " " + QString::fromStdString(n.title);
 
     QSqlQuery sql;
-    sql.exec("begin");
     sql.prepare("Delete from SearchIndex where lid=:lid and source='text'");
     sql.bindValue(":lid", lid);
     sql.exec();
-    sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'note', :content)");
+    sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'text', :content)");
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
-    sql.bindValue(":content", content);
+    sql.bindValue(":content", QString::fromStdString(n.title) + QString(" " ) +content);
     sql.exec();
 
 }
@@ -108,30 +112,32 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
         return;
 
     QDomDocument doc;
-    doc.setContent(QString::fromStdString(r.recognition.body));
-    QDomElement docElem = doc.documentElement();
+    QString emsg;
+    doc.setContent(QString::fromStdString(r.recognition.body), &emsg);
+    QLOG_DEBUG() << doc.toString();
 
     // look for text tags
-    QDomNodeList anchors = docElem.elementsByTagName("t");
+    QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
     QSqlQuery sql;
-    sql.exec("begin");
     sql.prepare("Delete from SearchIndex where lid=:lid and source='recognition'");
     sql.bindValue(":lid", lid);
     sql.exec();
 
+    QSqlQuery trans;
+    trans.exec("begin");
+    sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
     for (unsigned int i; i<anchors.length() && keepRunning && !pauseIndexing; i++) {
         QDomElement enmedia = anchors.at(i).toElement();
         QString weight = enmedia.attribute("w");
         QString text = enmedia.text();
         if (text != "") {
             int w = weight.toInt();
-            sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
             sql.bindValue(":lid", lid);
             sql.bindValue(":weight", w);
             sql.bindValue(":content", text);
             sql.exec();
         }
     }
-    sql.exec("commit");
+    trans.exec("commit");
 }
 

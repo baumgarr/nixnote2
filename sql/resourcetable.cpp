@@ -138,6 +138,7 @@ bool ResourceTable::get(Resource &resource, qint32 lid) {
     query.exec();
     if (query.size() == 0)
         return false;
+    NoteTable ntable;
     while (query.next()) {
         qint32 key = query.value(0).toInt();
         switch (key) {
@@ -145,8 +146,8 @@ bool ResourceTable::get(Resource &resource, qint32 lid) {
             resource.guid = query.value(1).toString().toStdString();
             resource.__isset.guid = true;
             break;
-        case (RESOURCE_NOTE_LID) :
-            resource.noteGuid = query.value(1).toString().toStdString();
+        case (RESOURCE_NOTE_LID):
+            resource.noteGuid = ntable.getGuid(query.value(1).toInt()).toStdString();
             resource.__isset.noteGuid = true;
             break;
         case (RESOURCE_DATA_BODY):
@@ -173,7 +174,7 @@ bool ResourceTable::get(Resource &resource, qint32 lid) {
             resource.__isset.mime = true;
             break;
         case (RESOURCE_ACTIVE):
-            resource.active = query.value(1).toString().toInt();
+            resource.active = query.value(1).toBool();
             resource.__isset.active = true;
             break;
         case (RESOURCE_HEIGHT):

@@ -57,6 +57,8 @@ private:
     WidgetPanel *leftPanel;
     QSplitter *rightPanelSplitter;
     QScrollArea *leftScroll;
+    QWidget *topRightWidget;
+    QVBoxLayout *topRightLayout;
     NAttributeTree *attributeTree;
     LineEdit *searchText;
 //    JavaMachine *jvm;

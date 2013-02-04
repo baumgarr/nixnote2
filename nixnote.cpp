@@ -53,7 +53,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         connect(&syncRunner, SIGNAL(setMessage(QString)), this, SLOT(setMessage(QString)));
         syncRunner.start(QThread::NormalPriority);
 
-       // indexRunner.start(QThread::LowestPriority);
+        indexRunner.start(QThread::LowestPriority);
 
         QLOG_TRACE() << "Setting up GUI";
         this->setupGui();
@@ -146,8 +146,6 @@ void NixNote::setupGui() {
     leftPanel = new WidgetPanel();
 
     this->setupNoteList();
-    searchText = new LineEdit();
-    //leftPanel->addWidget(searchText);
     this->setupSynchronizedNotebookTree();
     this->setupTagTree();
     this->setupSearchTree();
@@ -254,8 +252,20 @@ void NixNote::initializeGlobalSettings() {
 //******************************************************************************
 void NixNote::setupNoteList() {
    QLOG_TRACE() << "Starting NixNote.setupNoteList()";
+   searchText = new LineEdit();
+
+   // Setup a generic widget to hold the search & note table
+   topRightWidget  = new QWidget(this);
+   topRightLayout = new QVBoxLayout(this);
+   topRightLayout->addWidget(searchText);
+   topRightWidget->setLayout(topRightLayout);
    noteTableView = new NTableView();
-   rightPanelSplitter->addWidget(noteTableView);
+  // rightPanelSplitter->addWidget(noteTableView);
+   topRightLayout->addWidget(noteTableView);
+   topRightLayout->setContentsMargins(QMargins(0,0,0,0));
+
+   // Add the generic widget
+   rightPanelSplitter->addWidget(topRightWidget);
    connect(&syncRunner, SIGNAL(syncComplete()), noteTableView, SLOT(refreshData()));
    QLOG_TRACE() << "Leaving NixNote.setupNoteList()";
 }

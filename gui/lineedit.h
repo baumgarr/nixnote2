@@ -19,6 +19,7 @@
      Q_OBJECT
  private:
      int filterPosition;
+     QString savedText;
 
  public:
      LineEdit(QWidget *parent = 0);
@@ -30,6 +31,7 @@
  private slots:
      void updateCloseButton(const QString &text);
      void buildSelection();
+     void textChanged(QString text);
 
  private:
      QToolButton *clearButton;

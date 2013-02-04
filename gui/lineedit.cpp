@@ -36,6 +36,7 @@ extern Global global;
      setMinimumSize(qMax(msz.width(), clearButton->sizeHint().height() + frameWidth * 2 + 2),
                     qMax(msz.height(), clearButton->sizeHint().height() + frameWidth * 2 + 2));
      connect(this, SIGNAL(returnPressed()), this, SLOT(buildSelection()));
+     connect(this, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
      connect(clearButton, SIGNAL(clicked()), this, SLOT(buildSelection()));
  }
 
@@ -62,6 +63,7 @@ extern Global global;
  //*************************************************************
  void LineEdit::buildSelection() {
      QLOG_TRACE() << "Inside LineEdit::buildSelection()";
+     savedText = text().trimmed();
 
      // First, find out if we're already viewing history.  If we are we
      // chop off the end of the history & start a new one
@@ -109,3 +111,9 @@ extern Global global;
 
      blockSignals(false);
  }
+
+void LineEdit::textChanged(QString text) {
+    if (text == "" && savedText != "") {
+        buildSelection();
+    }
+}
