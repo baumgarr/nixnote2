@@ -30,6 +30,7 @@ private:
     QTimer *indexTimer;
     void indexRecognition(qint32 lid, Resource &r);
     void indexNote(qint32 lid, Note &n);
+    void indexPdf(qint32 lid, Resource &r);
     QTextDocument *textDocument;
 
 public:

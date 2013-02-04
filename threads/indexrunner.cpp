@@ -4,7 +4,11 @@
 #include "sql/resourcetable.h"
 #include <QTextDocument>
 #include <QtXml>
+#include <poppler-qt4.h>
 
+
+extern Global global;
+using namespace Poppler;
 
 IndexRunner::IndexRunner()
 {
@@ -62,6 +66,8 @@ void IndexRunner::index() {
             resourceTable.get(r, lids.at(i));
             qint32 noteLid = noteTable.getLid(r.noteGuid);
             indexRecognition(noteLid, r);
+            if (r.__isset.mime && r.mime == "application/pdf")
+                indexPdf(noteLid, r);
             resourceTable.setIndexNeeded(lids.at(i), false);
         }
     }
@@ -114,7 +120,6 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     QDomDocument doc;
     QString emsg;
     doc.setContent(QString::fromStdString(r.recognition.body), &emsg);
-    QLOG_DEBUG() << doc.toString();
 
     // look for text tags
     QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
@@ -141,3 +146,26 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     trans.exec("commit");
 }
 
+
+
+void IndexRunner::indexPdf(qint32 lid, Resource &r) {
+    ResourceTable rtable;
+    qint32 reslid = rtable.getLid(r.guid);
+    if (lid <= 0)
+        return;
+    QString file = global.fileManager.getDbaDirPath() + QString::number(reslid) +".pdf";
+
+    QString text = "";
+    Poppler::Document *doc = Poppler::Document::load(file);
+    for (int i=0; i<doc->numPages(); i++) {
+        QRectF rect;
+        text = text + doc->page(i)->text(rect) + QString(" ");
+    }
+    QSqlQuery sql;
+    sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
+    sql.bindValue(":lid", lid);
+    sql.bindValue(":weight", 100);
+    sql.bindValue(":content", text);
+    sql.exec();
+
+}
