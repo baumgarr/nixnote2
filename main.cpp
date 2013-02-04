@@ -24,10 +24,7 @@ extern Global global;
 
 int main(int argc, char *argv[])
 {
-
-        Botan::LibraryInitializer botanInit;
-            EnCrypt en;
-
+    Botan::LibraryInitializer botanInit;
 
     // Setup the QApplication so we can begin
     QApplication a(argc, argv);

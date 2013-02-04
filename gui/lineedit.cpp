@@ -35,6 +35,13 @@ extern Global global;
      QSize msz = minimumSizeHint();
      setMinimumSize(qMax(msz.width(), clearButton->sizeHint().height() + frameWidth * 2 + 2),
                     qMax(msz.height(), clearButton->sizeHint().height() + frameWidth * 2 + 2));
+
+     defaultText = QString(tr("Search"));
+     this->setText(defaultText);
+
+     inactiveColor = "QLineEdit {color: gray; font:italic;} ";
+     activeColor = "QLineEdit {color: black; font:normal;} ";
+
      connect(this, SIGNAL(returnPressed()), this, SLOT(buildSelection()));
      connect(this, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
      connect(clearButton, SIGNAL(clicked()), this, SLOT(buildSelection()));
@@ -100,11 +107,13 @@ extern Global global;
      FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
      if (global.filterPosition != filterPosition) {
          if (criteria->resetSearchString) {
-             setText("");
+             setText(defaultText);
+             setStyleSheet(inactiveColor);
          }
 
          if (criteria->isSearchStringSet()) {
              setText(criteria->getSearchString());
+             setStyleSheet(activeColor);
          }
      }
      filterPosition = global.filterPosition;
@@ -113,7 +122,36 @@ extern Global global;
  }
 
 void LineEdit::textChanged(QString text) {
-    if (text == "" && savedText != "") {
+    this->blockSignals(true);
+    if (text.trimmed() == "" && !hasFocus())
+        this->setText(defaultText);
+    this->blockSignals(false);
+    if ((text == defaultText || text == "") && savedText != "") {
         buildSelection();
     }
+}
+
+void LineEdit::focusInEvent(QFocusEvent *e)
+{
+  QLineEdit::focusInEvent(e);
+  if (this->text() == defaultText) {
+    blockSignals(true);
+    setText("");
+    blockSignals(false);
+  }
+  setStyleSheet(activeColor);
+//  this->setCursor(Qt::ArrowCursor);
+}
+
+void LineEdit::focusOutEvent(QFocusEvent *e)
+{
+  QLineEdit::focusOutEvent(e);
+  if (this->text().trimmed() == "") {
+    blockSignals(true);
+    setText(defaultText);
+    blockSignals(false);
+    setStyleSheet(inactiveColor);
+  }
+//  this->setCursor(Qt::PointingHandCursor);
+
 }

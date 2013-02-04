@@ -20,6 +20,9 @@
  private:
      int filterPosition;
      QString savedText;
+     QString defaultText;
+     QString activeColor;
+     QString inactiveColor;
 
  public:
      LineEdit(QWidget *parent = 0);
@@ -27,6 +30,8 @@
 
  protected:
      void resizeEvent(QResizeEvent *);
+     void focusInEvent(QFocusEvent *e);
+     void focusOutEvent(QFocusEvent *e);
 
  private slots:
      void updateCloseButton(const QString &text);
