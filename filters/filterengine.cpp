@@ -581,9 +581,60 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             filterSearchStringIntitleAll(string);
             filterFound = true;
         }
-        if (string.startsWith("mime:", Qt::CaseInsensitive) ||
-                string.startsWith("-mime:", Qt::CaseInsensitive)) {
-            filterSearchStringMimeAll(string);
+        if (string.startsWith("resource:", Qt::CaseInsensitive) ||
+                string.startsWith("-resource:", Qt::CaseInsensitive)) {
+            filterSearchStringResourceAll(string);
+            filterFound = true;
+        }
+        if (string.startsWith("longitude:", Qt::CaseInsensitive) ||
+                string.startsWith("-longitude:", Qt::CaseInsensitive)) {
+            filterSearchStringCoordinatesAll(string, NOTE_ATTRIBUTE_LONGITUDE);
+            filterFound = true;
+        }
+        if (string.startsWith("latitude:", Qt::CaseInsensitive) ||
+                string.startsWith("-latitude:", Qt::CaseInsensitive)) {
+            filterSearchStringCoordinatesAll(string, NOTE_ATTRIBUTE_LATITUDE);
+            filterFound = true;
+        }
+        if (string.startsWith("altitude:", Qt::CaseInsensitive) ||
+                string.startsWith("-altitude:", Qt::CaseInsensitive)) {
+            filterSearchStringCoordinatesAll(string, NOTE_ATTRIBUTE_ALTITUDE);
+            filterFound = true;
+        }
+        if (string.startsWith("author:", Qt::CaseInsensitive) ||
+                string.startsWith("-author:", Qt::CaseInsensitive)) {
+            filterSearchStringAuthorAll(string);
+            filterFound = true;
+        }
+        if (string.startsWith("source:", Qt::CaseInsensitive) ||
+                string.startsWith("-source:", Qt::CaseInsensitive)) {
+            filterSearchStringSourceAll(string);
+            filterFound = true;
+        }
+        if (string.startsWith("sourceapplication:", Qt::CaseInsensitive) ||
+                string.startsWith("-sourceapplication:", Qt::CaseInsensitive)) {
+            filterSearchStringSourceApplicationAll(string);
+            filterFound = true;
+        }
+        if (string.startsWith("contentclass:", Qt::CaseInsensitive) ||
+                string.startsWith("-contentclass:", Qt::CaseInsensitive)) {
+            filterSearchStringContentClassAll(string);
+            filterFound = true;
+        }
+        if (string.startsWith("recotype:", Qt::CaseInsensitive) ||
+                string.startsWith("-recotype:", Qt::CaseInsensitive)) {
+            filterSearchStringResourceRecognitionTypeAll(string);
+            filterFound = true;
+        }
+        if (string.startsWith("placename:", Qt::CaseInsensitive) ||
+                string.startsWith("-placename:", Qt::CaseInsensitive)) {
+            filterSearchStringContentClassAll(string);
+            filterFound = true;
+        }
+        if (string.startsWith("created:", Qt::CaseInsensitive) ||
+                string.startsWith("-created:", Qt::CaseInsensitive)) {
+            filterSearchStringDateAll(string);
+            calculateDateTime(string);
             filterFound = true;
         }
         if (!filterFound) {
@@ -640,11 +691,240 @@ void FilterEngine::filterSearchStringIntitleAll(QString string) {
 
 
 
+// filter based upon the note coordinates the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringCoordinatesAll(QString string, int key) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "0";
+        // Filter out the records
+        QSqlQuery sql;
+        sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data >= :data)");
+        sql.bindValue(":key", key);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "0";
+        // Filter out the records
+        QSqlQuery sql;
+        sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data <= :data)");
+        sql.bindValue(":key", key);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+// filter based upon the note author the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringAuthorAll(QString string) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
+        sql.bindValue(":data", string);
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+
+
+// filter based upon the note source the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringSourceAll(QString string) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
+        sql.bindValue(":data", string);
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+
+
+// filter based upon the note content class the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringContentClassAll(QString string) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
+        sql.bindValue(":data", string);
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+// filter based upon the note content class the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringPlaceNameAll(QString string) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_PLACE_NAME);
+        sql.bindValue(":data", string);
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_PLACE_NAME);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+
+
+// filter based upon the note source application the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringSourceApplicationAll(QString string) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
+        sql.bindValue(":data", string);
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+
+
+
 // filter based upon the mime type the user specified.  This is for the "all"
 // filter and not the "any".
-void FilterEngine::filterSearchStringMimeAll(QString string) {
+void FilterEngine::filterSearchStringResourceAll(QString string) {
     if (!string.startsWith("-")) {
-        string.remove(0,5);
+        string.remove(0,9);
         if (string == "")
             string = "*";
         // Filter out the records
@@ -660,7 +940,7 @@ void FilterEngine::filterSearchStringMimeAll(QString string) {
         sql.exec();
         QLOG_DEBUG() << sql.lastError();
     } else {
-        string.remove(0,6);
+        string.remove(0,10);
         if (string == "")
             string = "*";
         // Filter out the records
@@ -672,6 +952,45 @@ void FilterEngine::filterSearchStringMimeAll(QString string) {
             sql.prepare("Delete from filter where lid in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data=:data))");
         sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
         sql.bindValue(":mimekey", RESOURCE_MIME);
+        sql.bindValue(":data", string);
+        sql.exec();
+    }
+}
+
+
+
+// filter based upon the mime type the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringResourceRecognitionTypeAll(QString string) {
+    if (!string.startsWith("-")) {
+        string.remove(0,9);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        string = string.replace("*", "%");
+        if (string.indexOf("%") < 0)
+            sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data=:data))");
+        else
+            sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like :data))");
+        sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
+        sql.bindValue(":mimekey", RESOURCE_RECO_TYPE);
+        sql.bindValue(":data", string);
+        sql.exec();
+        QLOG_DEBUG() << sql.lastError();
+    } else {
+        string.remove(0,10);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        string = string.replace("*", "%");
+        if (string.indexOf("%") < 0)
+            sql.prepare("Delete from filter where lid in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like :data))");
+        else
+            sql.prepare("Delete from filter where lid in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data=:data))");
+        sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
+        sql.bindValue(":mimekey", RESOURCE_RECO_TYPE);
         sql.bindValue(":data", string);
         sql.exec();
     }
@@ -800,4 +1119,110 @@ void FilterEngine::filterSearchStringTodoAll(QString string) {
         }
         sql.exec();
     }
+}
+
+
+
+
+
+void FilterEngine::filterSearchStringDateAll(QString string) {
+    int separator = string.indexOf(":")+1;
+    QString tempString = string.mid(separator);
+    QDateTime dt = calculateDateTime(tempString);
+    QSqlQuery sql;
+    int key=0;
+
+    if (string.startsWith("created:")) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
+        key = NOTE_CREATED_DATE;
+    }
+    if (string.startsWith("-created:")) {
+        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
+        key = NOTE_CREATED_DATE;
+    }
+
+    sql.bindValue(":key", key);
+    sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    sql.exec();
+
+}
+
+
+
+
+
+QDateTime FilterEngine::calculateDateTime(QString string) {
+    QDateTime tam;  // datetime - midnight today
+    tam.setDate(QDate().currentDate());
+    tam.setTime(QTime(0,0,0,1));
+
+    int dow = QDate().currentDate().dayOfWeek();  // Current day of week
+    int moy = QDate().currentDate().month();  // Current month
+    int dom = QDate().currentDate().day();   // current day of month
+
+    int offset;
+    QDateTime value;
+    if (string.startsWith("today")) {
+        value = tam;
+        string = string.mid(5);
+        offset = 0;
+        if (string != "")
+            offset = string.toInt();
+        value = value.addDays(offset);
+        return value;
+    }
+    if (string.startsWith("month")) {
+        value = tam;
+        value = value.addDays(-1*dom+1);
+        string = string.mid(5);
+        offset = 0;
+        if (string != "")
+            offset = string.toInt();
+        value = value.addMonths(offset);
+        QLOG_DEBUG() << value.toString();
+        return value;
+    }
+    if (string.startsWith("year")) {
+        value = tam;
+        value = value.addDays(-1*dom+1);
+        value = value.addMonths(-1*moy+1);
+        string = string.mid(4);
+        offset = 0;
+        if (string != "")
+            offset = string.toInt();
+        value = value.addYears(offset);
+        QLOG_DEBUG() << value.toString();
+        return value;
+    }
+    if (string.startsWith("week")) {
+        value = tam;
+        value = value.addDays(-1*dow);
+        string = string.mid(4);
+        offset = 0;
+        if (string != "")
+            offset = string.toInt();
+        value = value.addDays(offset*7);
+        QLOG_DEBUG() << value.toString();
+        return value;
+    }
+
+    // If we've gotten this far then we have some type of number
+    int year = string.mid(0,4).toInt();
+    int month = string.mid(4,2).toInt();
+    int day = string.mid(6,2).toInt();
+    int hour = 0;
+    int minute = 0;
+    int seconds = 0;
+    value.setDate(QDate(year, month, day));
+
+    string = string.mid(8);
+    if (string.startsWith("t",Qt::CaseInsensitive)) {
+        hour = string.mid(1,2).toInt();
+        minute = string.mid(3,2).toInt();
+        seconds = string.mid(5,2).toInt();
+        value.setTime(QTime(hour, minute, seconds, 0));
+        if (string.endsWith("z", Qt::CaseInsensitive))
+            value = value.toUTC();
+    }
+    return value;
 }

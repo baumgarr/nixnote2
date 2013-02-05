@@ -22,7 +22,16 @@ private:
     void filterSearchStringTodoAll(QString string);
     void filterSearchStringTagAll(QString string);
     void filterSearchStringIntitleAll(QString string);
-    void filterSearchStringMimeAll(QString string);
+    void filterSearchStringResourceAll(QString string);
+    void filterSearchStringCoordinatesAll(QString string, int key);
+    void filterSearchStringAuthorAll(QString string);
+    void filterSearchStringSourceAll(QString string);
+    void filterSearchStringSourceApplicationAll(QString string);
+    void filterSearchStringContentClassAll(QString string);
+    void filterSearchStringPlaceNameAll(QString string);
+    void filterSearchStringResourceRecognitionTypeAll(QString string);
+    QDateTime calculateDateTime(QString string);
+    void filterSearchStringDateAll(QString string);
     bool anyFlagSet;
 
 public:
