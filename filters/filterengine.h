@@ -22,6 +22,7 @@ private:
     void filterSearchStringTodoAll(QString string);
     void filterSearchStringTagAll(QString string);
     void filterSearchStringIntitleAll(QString string);
+    void filterSearchStringMimeAll(QString string);
     bool anyFlagSet;
 
 public:

@@ -581,6 +581,11 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             filterSearchStringIntitleAll(string);
             filterFound = true;
         }
+        if (string.startsWith("mime:", Qt::CaseInsensitive) ||
+                string.startsWith("-mime:", Qt::CaseInsensitive)) {
+            filterSearchStringMimeAll(string);
+            filterFound = true;
+        }
         if (!filterFound) {
             if (string.startsWith("-")) {
                 string = string.remove(0,1);
@@ -629,6 +634,46 @@ void FilterEngine::filterSearchStringIntitleAll(QString string) {
         tagSql.bindValue(":data", string);
 
         tagSql.exec();
+    }
+}
+
+
+
+
+// filter based upon the mime type the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringMimeAll(QString string) {
+    if (!string.startsWith("-")) {
+        string.remove(0,5);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        string = string.replace("*", "%");
+        if (string.indexOf("%") < 0)
+            sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data=:data))");
+        else
+            sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like :data))");
+        sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
+        sql.bindValue(":mimekey", RESOURCE_MIME);
+        sql.bindValue(":data", string);
+        sql.exec();
+        QLOG_DEBUG() << sql.lastError();
+    } else {
+        string.remove(0,6);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        string = string.replace("*", "%");
+        if (string.indexOf("%") < 0)
+            sql.prepare("Delete from filter where lid in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like :data))");
+        else
+            sql.prepare("Delete from filter where lid in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data=:data))");
+        sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
+        sql.bindValue(":mimekey", RESOURCE_MIME);
+        sql.bindValue(":data", string);
+        sql.exec();
     }
 }
 
