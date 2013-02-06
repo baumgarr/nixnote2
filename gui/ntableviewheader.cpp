@@ -9,7 +9,5 @@
 NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent) :
     QHeaderView(orientation, parent)
 {
-
 }
-
 

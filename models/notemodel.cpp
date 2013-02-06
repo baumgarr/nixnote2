@@ -34,7 +34,6 @@ NoteModel::~NoteModel() {
 }
 
 
-
 //* Create the NoteModel table.
 void NoteModel::createTable() {
     QLOG_TRACE() << "Entering NoteModel::createTable()";

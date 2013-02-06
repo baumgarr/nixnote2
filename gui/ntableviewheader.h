@@ -15,6 +15,7 @@ signals:
 
 public slots:
 
+
 };
 
 #endif // NTABLEVIEWHEADER_H

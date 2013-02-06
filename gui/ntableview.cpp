@@ -36,7 +36,16 @@ NTableView::NTableView(QWidget *parent) :
     QLOG_TRACE() << "Initializing proxy";
     this->proxy = new NoteSortFilterProxyModel();
     proxy->setSourceModel(model());
+    global.settings->beginGroup("SaveState");
+    int order = global.settings->value("sortOrder", 0).toInt();
+    int col = global.settings->value("sortColumn", NOTE_TABLE_DATE_CREATED_POSITION).toInt();
+    global.settings->endGroup();
     proxy->setFilterKeyColumn(NOTE_TABLE_LID_POSITION);
+    if (order)
+        sortByColumn(col, Qt::DescendingOrder);
+    else
+        sortByColumn(col, Qt::AscendingOrder);
+
     //refreshData();
     setModel(proxy);
     this->setSortingEnabled(true);
