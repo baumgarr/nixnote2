@@ -203,3 +203,34 @@ void NTabWidget::evernoteLinkClicked(qint32 openLid, bool newWindow) {
     emit(updateSelectionRequested());
     openNote(openLid, newWindow);
 }
+
+
+
+void NTabWidget::undoButtonPressed() {
+    currentBrowser()->undoButtonPressed();
+}
+
+void NTabWidget::redoButtonPressed() {
+    currentBrowser()->redoButtonPressed();
+}
+
+void NTabWidget::cutButtonPressed() {
+    currentBrowser()->cutButtonPressed();
+}
+
+void NTabWidget::copyButtonPressed() {
+    currentBrowser()->copyButtonPressed();
+}
+
+void NTabWidget::pasteButtonPressed() {
+    currentBrowser()->pasteButtonPressed();
+}
+
+void NTabWidget::pasteAsTextButtonPressed() {
+    currentBrowser()->pasteWithoutFormatButtonPressed();
+}
+
+
+void NTabWidget::selectAllButtonPressed() {
+    currentBrowser()->selectAllButtonPressed();
+}

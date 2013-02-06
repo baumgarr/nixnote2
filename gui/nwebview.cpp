@@ -34,19 +34,22 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addSeparator();
 
     cutAction = new QAction(tr("Cut"), this);
+    this->setupShortcut(cutAction, "Edit_Cut");
     contextMenu->addAction(cutAction);
     connect(cutAction, SIGNAL(triggered()), parent, SLOT(cutButtonPressed()));
 
     copyAction = new QAction(tr("Copy"), this);
+    this->setupShortcut(copyAction, "Edit_Copy");
     contextMenu->addAction(copyAction);
     connect(copyAction, SIGNAL(triggered()), parent, SLOT(copyButtonPressed()));
 
     pasteAction = new QAction(tr("Paste"), this);
+    setupShortcut(pasteAction, "Edit_Paste");
     contextMenu->addAction(pasteAction);
     connect(pasteAction, SIGNAL(triggered()), parent, SLOT(pasteButtonPressed()));
 
-    pasteWithoutFormatAction = new QAction(tr("Paste Without Formatting"), this);
-    pasteWithoutFormatAction->setText(tr("Paste Without Formatting"));
+    pasteWithoutFormatAction = new QAction(tr("Paste as Text"), this);
+    this->setupShortcut(pasteWithoutFormatAction, "Edit_Paste_Without_Formatting");
     contextMenu->addAction(pasteWithoutFormatAction);
     connect(pasteWithoutFormatAction, SIGNAL(triggered()), parent, SLOT(pasteWithoutFormatButtonPressed()));
     contextMenu->addSeparator();
@@ -91,43 +94,53 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     todoAction = new QAction(tr("To-do"), this);
     contextMenu->addAction(todoAction);
+    this->setupShortcut(todoAction, "Edit_Insert_Todo");
     connect(todoAction, SIGNAL(triggered()), parent, SLOT(todoButtonPressed()));
 
     encryptAction = new QAction(tr("Encrypted Selected Text"), this);
     contextMenu->addAction(encryptAction);
+    this->setupShortcut(encryptAction, "Edit_EncryptText");
     connect(encryptAction, SIGNAL(triggered()), parent, SLOT(encryptButtonPressed()));
 
     insertLinkAction = new QAction(tr("Insert Hyperlink"), this);
     contextMenu->addAction(insertLinkAction);
+    this->setupShortcut(insertLinkAction, "Edit_InsertHyperlink");
     connect(insertLinkAction, SIGNAL(triggered()),parent, SLOT(insertLinkButtonPressed()));
 
     insertQuickLinkAction = new QAction(tr("Quick Link"), this);
     contextMenu->addAction(insertQuickLinkAction);
+    this->setupShortcut(insertQuickLinkAction, "Edit_InsertQuickLink");
     connect(insertQuickLinkAction, SIGNAL(triggered()),parent, SLOT(insertQuickLinkButtonPressed()));
 
     insertLatexAction = new QAction(tr("Insert LaTeX Formula"), this);
     contextMenu->addAction(insertLatexAction);
+    this->setupShortcut(insertLatexAction, "Edit_Insert_Latex");
     connect(insertLatexAction, SIGNAL(triggered()),parent, SLOT(insertLatexButtonPressed()));
     contextMenu->addSeparator();
 
     tableMenu = new QMenu(tr("Table"), this);
     contextMenu->addMenu(tableMenu);
     insertTableAction = new QAction(tr("Insert Table"), this);
+    this->setupShortcut(insertTableAction, "Edit_Insert_Table");
     tableMenu->addAction(insertTableAction);
     connect(insertTableAction, SIGNAL(triggered()), parent, SLOT(insertTableButtonPressed()));
     tableMenu->addSeparator();
     insertTableRowAction = new QAction(tr("Insert Row"), this);
+    this->setupShortcut(insertTableRowAction, "Edit_Insert_Table_Row");
     tableMenu->addAction(insertTableRowAction);
     connect(insertTableRowAction, SIGNAL(triggered()), parent, SLOT(insertTableRowButtonPressed()));
     insertTableColumnAction = new QAction(tr("Insert Column"), this);
+    this->setupShortcut(insertTableColumnAction, "Edit_Insert_Table_Column");
     tableMenu->addAction(insertTableColumnAction);
     connect(insertTableColumnAction, SIGNAL(triggered()), parent, SLOT(insertTableColumnButtonPressed()));
     tableMenu->addSeparator();
     deleteTableRowAction = new QAction(tr("Delete Row"), this);
     tableMenu->addAction(deleteTableRowAction);
+    this->setupShortcut(deleteTableRowAction, "Edit_Delete_Table_Row");
     connect(deleteTableRowAction, SIGNAL(triggered()), parent, SLOT(deleteTableRowButtonPressed()));
     deleteTableColumnAction = new QAction(tr("Delete Column"), this);
     tableMenu->addAction(deleteTableColumnAction);
+    this->setupShortcut(deleteTableColumnAction, "Edit_Delete_Table_Column");
     connect(deleteTableColumnAction, SIGNAL(triggered()), parent, SLOT(deleteTableColumnButtonPressed()));
     contextMenu->addSeparator();
 
@@ -135,8 +148,10 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addMenu(imageMenu);
     rotateImageLeftAction = new QAction(tr("Rotate Left"), this);
     imageMenu->addAction(rotateImageLeftAction);
+    this->setupShortcut(rotateImageLeftAction, "Edit_Image_Rotate_Left");
     connect(rotateImageLeftAction, SIGNAL(triggered()), parent, SLOT(rotateImageLeftButtonPressed()));
     rotateImageRightAction = new QAction(tr("Rotate Right"), this);
+    this->setupShortcut(rotateImageRightAction, "Edit_Image_Rotate_Right");
     imageMenu->addAction(rotateImageRightAction);
     connect(rotateImageRightAction, SIGNAL(triggered()), parent, SLOT(rotateImageRightButtonPressed()));
     contextMenu->addSeparator();
@@ -305,4 +320,13 @@ void NWebView::setTitleEditor(NTitleEditor *editor) {
 void NWebView::setDefaultTitle() {
     QString body = this->page()->mainFrame()->toPlainText();
     titleEditor->setTitleFromContent(body);
+}
+
+
+
+void NWebView::setupShortcut(QAction *action, QString text) {
+    if (!global.shortcutKeys->containsAction(&text))
+        return;
+    QKeySequence key(global.shortcutKeys->getShortcut(&text));
+    action->setShortcut(key);
 }

@@ -379,6 +379,16 @@ void NixNote::setupTabWindow() {
 
     connect(noteTableView, SIGNAL(openNote(bool)), this, SLOT(openNote(bool)));
     connect(menuBar->viewSourceAction, SIGNAL(triggered()), tabWindow->currentBrowser(), SLOT(toggleSource()));
+
+    connect(menuBar->undoAction, SIGNAL(triggered()), tabWindow, SLOT(undoButtonPressed()));
+    connect(menuBar->redoAction, SIGNAL(triggered()), tabWindow, SLOT(redoButtonPressed()));
+    connect(menuBar->cutAction, SIGNAL(triggered()), tabWindow, SLOT(cutButtonPressed()));
+    connect(menuBar->copyAction, SIGNAL(triggered()), tabWindow, SLOT(copyButtonPressed()));
+    connect(menuBar->pasteAction, SIGNAL(triggered()), tabWindow, SLOT(pasteButtonPressed()));
+    connect(menuBar->pasteAsTextAction, SIGNAL(triggered()), tabWindow, SLOT(pasteWithoutFormatButtonPressed()));
+    connect(menuBar->selectAllAction, SIGNAL(triggered()), tabWindow, SLOT(selectAllButtonPressed()));
+
+
     QLOG_TRACE() << "Exiting NixNote.setupTabWindow()";
 }
 

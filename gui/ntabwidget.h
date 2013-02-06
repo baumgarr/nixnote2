@@ -9,6 +9,8 @@
 #include <QTabBar>
 #include <QStackedWidget>
 
+class SyncRunner;
+
 class NTabWidget : public QWidget
 {
     Q_OBJECT
@@ -44,6 +46,14 @@ public slots:
     void noteSyncSignaled(qint32 lid);
     void noteUpdateSignaled(qint32);
     void evernoteLinkClicked(qint32 openLid, bool newWindow);
+
+    void undoButtonPressed();
+    void redoButtonPressed();
+    void cutButtonPressed();
+    void copyButtonPressed();
+    void pasteButtonPressed();
+    void pasteAsTextButtonPressed();
+    void selectAllButtonPressed();
 
 };
 

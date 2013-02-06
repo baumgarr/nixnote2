@@ -32,6 +32,7 @@
 #include "gui/nwebview.h"
 #include "xml/xmlhighlighter.h"
 #include "gui/browserWidgets/toolbarwidgetaction.h"
+#include "gui/nmainmenubar.h"
 
 class ToolbarWidgetAction;
 
@@ -39,6 +40,7 @@ using namespace evernote::edam  ;
 
 class NWebView;
 class NBrowserWindow;
+class NMainMenuBar;
 
 class NBrowserWindow : public QWidget
 {
@@ -76,6 +78,7 @@ public:
     DateEditor dateEditor;
     AuthorEditor authorEditor;
     void setReadOnly(bool readOnly);
+    NMainMenuBar *mainMenuBarHook;
 
     QToolBar buttonBar;
     ToolbarWidgetAction *undoButtonAction;
@@ -153,6 +156,7 @@ public slots:
     void pasteButtonPressed();
     void pasteWithoutFormatButtonPressed();
     void boldButtonPressed();
+    void selectAllButtonPressed();
     void italicsButtonPressed();
     void underlineButtonPressed();
     void strikethroughButtonPressed();

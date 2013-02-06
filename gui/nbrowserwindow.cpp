@@ -650,6 +650,16 @@ void NBrowserWindow::pasteButtonPressed() {
 
 
 
+
+// The paste button was pressed
+void NBrowserWindow::selectAllButtonPressed() {
+    this->editor->triggerPageAction(QWebPage::SelectAll);
+    this->editor->setFocus();
+    microFocusChanged();
+}
+
+
+
 // The paste without mime format was pressed
 void NBrowserWindow::pasteWithoutFormatButtonPressed() {
     const QMimeData *mime = global.clipboard->mimeData();

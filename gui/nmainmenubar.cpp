@@ -1,6 +1,9 @@
 #include "nmainmenubar.h"
+#include "global.h"
 #include <QAbstractAnimation>
 #include <QFileIconProvider>
+
+extern Global global;
 
 NMainMenuBar::NMainMenuBar(QWidget *parent) :
     QMenuBar(parent)
@@ -43,6 +46,39 @@ void NMainMenuBar::setupFileMenu() {
 
 void NMainMenuBar::setupEditMenu() {
     editMenu = this->addMenu(tr("&Edit"));
+
+    undoAction = new QAction(tr("Undo"), this);
+    setupShortcut(undoAction, QString("Edit_Undo"));
+    editMenu->addAction(undoAction);
+
+    redoAction = new QAction(tr("Undo"), this);
+    setupShortcut(redoAction, QString("Edit_Redo"));
+    editMenu->addAction(redoAction);
+
+    editMenu->addSeparator();
+
+    cutAction = new QAction(tr("Cut"), this);
+    setupShortcut(cutAction, QString("Edit_Cut"));
+    editMenu->addAction(cutAction);
+
+    copyAction = new QAction(tr("Copy"), this);
+    setupShortcut(copyAction, QString("Edit_Copy"));
+    editMenu->addAction(copyAction);
+
+    pasteAction = new QAction(tr("Paste"), this);
+    setupShortcut(pasteAction, QString("Edit_Paste"));
+    editMenu->addAction(pasteAction);
+
+    pasteAsTextAction = new QAction(tr("Paste as Text"), this);
+    setupShortcut(pasteAsTextAction, QString("Edit_Paste_Without_Formatting"));
+    editMenu->addAction(pasteAsTextAction);
+
+    editMenu->addSeparator();
+
+    selectAllAction = new QAction(tr("Select All"), this);
+    setupShortcut(selectAllAction, QString("Edit_Select_All"));
+    editMenu->addAction(selectAllAction);
+
 }
 
 void NMainMenuBar::setupViewMenu() {
@@ -86,8 +122,9 @@ void NMainMenuBar::setupHelpMenu() {
     helpMenu->addAction(aboutAction);
 }
 
-void NMainMenuBar::setupShortcut(QAction *action, QString key) {
-    /* suppress unused */
-    action=action;
-    key=key;
+void NMainMenuBar::setupShortcut(QAction *action, QString text) {
+    if (!global.shortcutKeys->containsAction(&text))
+        return;
+    QKeySequence key(global.shortcutKeys->getShortcut(&text));
+    action->setShortcut(key);
 }

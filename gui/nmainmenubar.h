@@ -17,7 +17,7 @@ private:
     void setupViewMenu();
     void setupToolsMenu();
     void setupHelpMenu();
-    void setupShortcut(QAction *action, QString key);
+    void setupShortcut(QAction *action, QString text);
 
 public:
     QMenu *fileMenu;
@@ -33,6 +33,14 @@ public:
     QAction *viewSourceAction;
     QAction *accountDialogAction;
     QAction *aboutAction;
+
+    QAction *undoAction;
+    QAction *redoAction;
+    QAction *cutAction;
+    QAction *copyAction;
+    QAction *pasteAction;
+    QAction *pasteAsTextAction;
+    QAction *selectAllAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 

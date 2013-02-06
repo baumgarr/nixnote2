@@ -38,6 +38,7 @@ class NMainMenuBar;
 class NixNote;
 class SyncRunner;
 class IndexRunner;
+class NTabWidget;
 
 // Define the actual class
 class NixNote : public QMainWindow
