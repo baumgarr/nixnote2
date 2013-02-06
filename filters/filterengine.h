@@ -32,6 +32,20 @@ private:
     void filterSearchStringResourceRecognitionTypeAll(QString string);
     QDateTime calculateDateTime(QString string);
     void filterSearchStringDateAll(QString string);
+
+    void filterSearchStringAny(QStringList list);
+    void filterSearchStringNotebookAny(QString string);
+    void filterSearchStringTodoAny(QString string);
+    void filterSearchStringTagAny(QString string);
+    void filterSearchStringIntitleAny(QString string);
+    void filterSearchStringResourceAny(QString string);
+    void filterSearchStringCoordinatesAny(QString string, int key);
+    void filterSearchStringAuthorAny(QString string);
+    void filterSearchStringDateAny(QString string);
+    void filterSearchStringSourceAny(QString string);
+    void filterSearchStringSourceApplicationAny(QString string);
+    void filterSearchStringContentClassAny(QString string);
+    void filterSearchStringResourceRecognitionTypeAny(QString string);
     bool anyFlagSet;
 
 public:

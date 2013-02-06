@@ -352,12 +352,7 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
                     "data not like 'mobile.%' and data != 'mail.smtp' and data != 'mail.clip')");
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
     }
-
-
-
     sql.exec();
-    QLOG_DEBUG() << sql.lastError();
-
 }
 
 
@@ -448,7 +443,7 @@ void FilterEngine::filterTags(FilterCriteria *criteria) {
 }
 
 
-// If they only chose one notebook, then delete everything else
+// If they only chose one tag, then delete everything else
 void FilterEngine::filterTrash(FilterCriteria *criteria) {
     if (!criteria->isSet() || !criteria->isDeletedOnlySet()
             || (criteria->isDeletedOnlySet() && !criteria->getDeletedOnly()))
@@ -478,15 +473,16 @@ void FilterEngine::filterSearchString(FilterCriteria *criteria) {
         return;
 
     anyFlagSet = false;
-    if (criteria->getSearchString().trimmed().startsWith(":any", Qt::CaseInsensitive))
+    if (criteria->getSearchString().trimmed().startsWith("any:", Qt::CaseInsensitive))
         anyFlagSet = true;
 
     // Tokenize out the words
     QStringList list;
     splitSearchTerms(list, criteria->getSearchString());
-    if (!anyFlagSet) {
+    if (!anyFlagSet)
         filterSearchStringAll(list);
-    }
+    else
+        filterSearchStringAny(list);
 
 
 }
@@ -632,9 +628,12 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             filterFound = true;
         }
         if (string.startsWith("created:", Qt::CaseInsensitive) ||
-                string.startsWith("-created:", Qt::CaseInsensitive)) {
+                string.startsWith("-created:", Qt::CaseInsensitive) ||
+                string.startsWith("updated:", Qt::CaseInsensitive) ||
+                string.startsWith("-updated:", Qt::CaseInsensitive) ||
+                string.startsWith("subjectdate:", Qt::CaseInsensitive) ||
+                string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
             filterSearchStringDateAll(string);
-            calculateDateTime(string);
             filterFound = true;
         }
         if (!filterFound) {
@@ -938,7 +937,6 @@ void FilterEngine::filterSearchStringResourceAll(QString string) {
         sql.bindValue(":mimekey", RESOURCE_MIME);
         sql.bindValue(":data", string);
         sql.exec();
-        QLOG_DEBUG() << sql.lastError();
     } else {
         string.remove(0,10);
         if (string == "")
@@ -977,7 +975,6 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAll(QString string) 
         sql.bindValue(":mimekey", RESOURCE_RECO_TYPE);
         sql.bindValue(":data", string);
         sql.exec();
-        QLOG_DEBUG() << sql.lastError();
     } else {
         string.remove(0,10);
         if (string == "")
@@ -1132,13 +1129,29 @@ void FilterEngine::filterSearchStringDateAll(QString string) {
     QSqlQuery sql;
     int key=0;
 
-    if (string.startsWith("created:")) {
+    if (string.startsWith("created:", Qt::CaseInsensitive)) {
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
         key = NOTE_CREATED_DATE;
     }
-    if (string.startsWith("-created:")) {
-        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
+    if (string.startsWith("updated:", Qt::CaseInsensitive)) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
+        key = NOTE_UPDATED_DATE;
+    }
+    if (string.startsWith("subjectdate:", Qt::CaseInsensitive)) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
+        key = NOTE_ATTRIBUTE_SUBJECT_DATE;
+    }
+    if (string.startsWith("-created:", Qt::CaseInsensitive)) {
+        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000)))");;
         key = NOTE_CREATED_DATE;
+    }
+    if (string.startsWith("-updated:", Qt::CaseInsensitive)) {
+        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000)))");;
+        key = NOTE_UPDATED_DATE;
+    }
+    if (string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
+        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000)))");;
+        key = NOTE_ATTRIBUTE_SUBJECT_DATE;
     }
 
     sql.bindValue(":key", key);
@@ -1225,4 +1238,603 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
             value = value.toUTC();
     }
     return value;
+}
+
+
+
+
+
+// Filter based upon the words the user specified (as opposed to the notebook, tags ...)
+// this is for the "any" filter (the default), not the default of all
+void FilterEngine::filterSearchStringAny(QStringList list) {
+    // Filter out the records
+    QSqlQuery sql, sqlnegative;
+    sql.exec("create temporary table if not exists anylidsfilter (lid int);");
+    sql.exec("delete from anylidsfilter");
+
+    sql.prepare("insert into anylidsfilter (lid) select lid from SearchIndex where content match :word");
+    sqlnegative.prepare("insert into anylidsfilter (lid) select lid from SearchIndex where lid not in (select lid from searchindex where content match :word)");
+
+    // We start at the second entry because the first is "any:"
+    for (qint32 i=1; i<list.size(); i++) {
+        QString string = list[i];
+        string.remove(QChar('"'));
+
+        bool filterFound = false;
+        // If we have a notebook search request
+        if (string.startsWith("notebook:", Qt::CaseInsensitive) ||
+                string.startsWith("-notebook:", Qt::CaseInsensitive)) {
+            filterSearchStringNotebookAny(string);
+            filterFound = true;
+        }
+        if (string.startsWith("todo:", Qt::CaseInsensitive) ||
+                string.startsWith("-todo:", Qt::CaseInsensitive)) {
+            filterSearchStringTodoAny(string);
+            filterFound = true;
+        }
+        if (string.startsWith("tag:", Qt::CaseInsensitive) ||
+                string.startsWith("-tag:", Qt::CaseInsensitive)) {
+            filterSearchStringTagAny(string);
+            filterFound = true;
+        }
+        if (string.startsWith("intitle:", Qt::CaseInsensitive) ||
+                string.startsWith("-intitle:", Qt::CaseInsensitive)) {
+            filterSearchStringIntitleAny(string);
+            filterFound = true;
+        }
+        if (string.startsWith("resource:", Qt::CaseInsensitive) ||
+                string.startsWith("-resource:", Qt::CaseInsensitive)) {
+            filterSearchStringResourceAny(string);
+            filterFound = true;
+        }
+        if (string.startsWith("longitude:", Qt::CaseInsensitive) ||
+                string.startsWith("-longitude:", Qt::CaseInsensitive)) {
+            filterSearchStringCoordinatesAny(string, NOTE_ATTRIBUTE_LONGITUDE);
+            filterFound = true;
+        }
+        if (string.startsWith("latitude:", Qt::CaseInsensitive) ||
+                string.startsWith("-latitude:", Qt::CaseInsensitive)) {
+            filterSearchStringCoordinatesAny(string, NOTE_ATTRIBUTE_LATITUDE);
+            filterFound = true;
+        }
+        if (string.startsWith("altitude:", Qt::CaseInsensitive) ||
+                string.startsWith("-altitude:", Qt::CaseInsensitive)) {
+            filterSearchStringCoordinatesAny(string, NOTE_ATTRIBUTE_ALTITUDE);
+            filterFound = true;
+        }
+        if (string.startsWith("author:", Qt::CaseInsensitive) ||
+                string.startsWith("-author:", Qt::CaseInsensitive)) {
+            filterSearchStringAuthorAny(string);
+            filterFound = true;
+        }
+        if (string.startsWith("source:", Qt::CaseInsensitive) ||
+                string.startsWith("-source:", Qt::CaseInsensitive)) {
+            filterSearchStringSourceAny(string);
+            filterFound = true;
+        }
+        if (string.startsWith("sourceapplication:", Qt::CaseInsensitive) ||
+                string.startsWith("-sourceapplication:", Qt::CaseInsensitive)) {
+            filterSearchStringSourceApplicationAny(string);
+            filterFound = true;
+        }
+        if (string.startsWith("contentclass:", Qt::CaseInsensitive) ||
+                string.startsWith("-contentclass:", Qt::CaseInsensitive)) {
+            filterSearchStringContentClassAny(string);
+            filterFound = true;
+        }
+        if (string.startsWith("recotype:", Qt::CaseInsensitive) ||
+                string.startsWith("-recotype:", Qt::CaseInsensitive)) {
+            filterSearchStringResourceRecognitionTypeAny(string);
+            filterFound = true;
+        }
+//        if (string.startsWith("placename:", Qt::CaseInsensitive) ||
+//                string.startsWith("-placename:", Qt::CaseInsensitive)) {
+//            filterSearchStringContentClassAll(string);
+//            filterFound = true;
+//        }
+        if (string.startsWith("created:", Qt::CaseInsensitive) ||
+                string.startsWith("-created:", Qt::CaseInsensitive) ||
+                string.startsWith("updated:", Qt::CaseInsensitive) ||
+                string.startsWith("-updated:", Qt::CaseInsensitive) ||
+                string.startsWith("subjectDate:", Qt::CaseInsensitive) ||
+                string.startsWith("-subjectdate", Qt::CaseInsensitive)) {
+            filterSearchStringDateAny(string);
+            filterFound = true;
+        }
+
+        if (!filterFound) {
+            if (string.startsWith("-")) {
+                string = string.remove(0,1);
+                sqlnegative.bindValue(":word", string.trimmed()+"*");
+                sqlnegative.exec();
+            } else {
+                sql.bindValue(":word", string.trimmed()+"*");
+                sql.exec();
+            }
+        }
+    }
+
+    sql.exec("delete from filter where lid not in (select lid from anylidsfilter)");
+}
+
+
+
+// filter based upon the notebook string the user specified.  This is for the "any"
+// filter and not the default
+void FilterEngine::filterSearchStringNotebookAny(QString string) {
+
+    if (!string.startsWith("-")) {
+        string.remove(0,9);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery notebookSql;
+        if (string.indexOf("*") < 0)
+            notebookSql.prepare("insert into anylidsfilter (lid) select lid from NoteTable where notebook=:notebook");
+        else {
+            notebookSql.prepare("insert into anylidsfilter (lid) select lid from NoteTable where notebook like :notebook");
+            string.replace("*", "%");
+        }
+        notebookSql.bindValue(":notebook", string);
+        notebookSql.exec();
+    } else {
+        string.remove(0,10);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery notebookSql;
+        if (string.indexOf("*") < 0)
+            notebookSql.prepare("insert into anylidsfilter (lid) select lid from NoteTable where notebook <> :notebook");
+        else {
+            notebookSql.prepare("insert into anylidsfilter (lid) select lid from NoteTable where notebook not like :notebook");
+            string.replace("*", "%");
+        }
+        notebookSql.bindValue(":notebook", string);
+        notebookSql.exec();
+    }
+}
+
+
+
+
+// filter based upon the notebook string the user specified.  This is for the "any:"
+// filter and not the default
+void FilterEngine::filterSearchStringTodoAny(QString string) {
+    if (!string.startsWith("-")) {
+        string.remove(0,5);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.startsWith("*")) {
+            sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key1 or key=:key2");
+            sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
+            sql.bindValue(":key2", NOTE_HAS_TODO_UNCOMPLETED);
+        }
+        if (string.startsWith("true", Qt::CaseInsensitive)) {
+            sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key1");
+            sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
+        }
+        if (string.startsWith("false", Qt::CaseInsensitive)) {
+            sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key1");
+            sql.bindValue(":key1", NOTE_HAS_TODO_UNCOMPLETED);
+        }
+        sql.exec();
+    } else {
+        string.remove(0,6);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.startsWith("*")) {
+            sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key<>:key1 or key<>:key2");
+            sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
+            sql.bindValue(":key2", NOTE_HAS_TODO_UNCOMPLETED);
+        }
+        if (string.startsWith("true", Qt::CaseInsensitive)) {
+            sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key1");
+            sql.bindValue(":key1", NOTE_HAS_TODO_UNCOMPLETED);
+        }
+        if (string.startsWith("false", Qt::CaseInsensitive)) {
+            sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key1");
+            sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
+        }
+        sql.exec();
+    }
+}
+
+
+
+
+// filter based upon the tag string the user specified.  This is for the "any:"
+// filter and not the default
+void FilterEngine::filterSearchStringTagAny(QString string) {
+    if (!string.startsWith("-")) {
+        string.remove(0,4);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery tagSql;
+        if (string.indexOf("*") < 0)
+            tagSql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data=:tagname and key=:tagnamekey)");
+        else {
+            tagSql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data like :tagname and key=:tagnamekey)");
+            string = string.replace("*", "%");
+        }
+        tagSql.bindValue(":tagname", string);
+        tagSql.bindValue(":tagnamekey", TAG_NAME);
+        tagSql.bindValue(":notetagkey", NOTE_TAG);
+
+        tagSql.exec();
+    } else {
+        string.remove(0,5);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery tagSql;
+        if (string.indexOf("*") < 0)
+            tagSql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data=:tagname and key=:tagnamekey))");
+        else {
+            tagSql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data like :tagname and key=:tagnamekey))");
+            string = string.replace("*", "%");
+        }
+        tagSql.bindValue(":tagname", string);
+        tagSql.bindValue(":tagnamekey", TAG_NAME);
+        tagSql.bindValue(":notetagkey", NOTE_TAG);
+        tagSql.exec();
+    }
+}
+
+
+
+// filter based upon the title string the user specified.  This is for the "any"
+// filter and not the default.
+void FilterEngine::filterSearchStringIntitleAny(QString string) {
+    if (!string.startsWith("-")) {
+        int pos = string.indexOf(":")+1;
+        string = string.mid(pos);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery tagSql;
+        string = string.replace("*", "%");
+        if (string.indexOf("%") < 0)
+            string = QString("%") +string +QString("%");
+        tagSql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :title");
+        tagSql.bindValue(":key", NOTE_TITLE);
+        tagSql.bindValue(":data", string);
+
+        tagSql.exec();
+    } else {
+        int pos = string.indexOf(":")+1;
+        string = string.mid(pos);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery tagSql;
+        string = string.replace("*", "%");
+        if (string.indexOf("%") < 0)
+            string = QString("%") +string +QString("%");
+        tagSql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :title)");
+        tagSql.bindValue(":key", NOTE_TITLE);
+        tagSql.bindValue(":data", string);
+
+        tagSql.exec();
+    }
+}
+
+
+
+
+// filter based upon the mime type the user specified.  This is for the "any:"
+// filter and not the default
+void FilterEngine::filterSearchStringResourceAny(QString string) {
+    if (!string.startsWith("-")) {
+        string.remove(0,9);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        string = string.replace("*", "%");
+        if (string.indexOf("%") < 0)
+            sql.prepare("insert into anylidsfilter (lid) select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data=:data)");
+        else
+            sql.prepare("insert into anylidsfilter (lid) select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like :data)");
+        sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
+        sql.bindValue(":mimekey", RESOURCE_MIME);
+        sql.bindValue(":data", string);
+        sql.exec();
+        QLOG_DEBUG() << sql.lastError();
+    } else {
+        string.remove(0,10);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        string = string.replace("*", "%");
+        if (string.indexOf("%") < 0)
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select data from datastore where key=:notelid and lid in (select lid from DataStore where data=:data and key = :mimekey))");
+        else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select data from datastore where key=:notelid and lid not in (select lid from DataStore where data=:data and key like :mimekey))");
+        sql.bindValue(":notelid", RESOURCE_NOTE_LID);
+        sql.bindValue(":mimekey", RESOURCE_MIME);
+        sql.bindValue(":data", string);
+        sql.exec();
+        QLOG_DEBUG() << sql.lastError();
+    }
+}
+
+
+
+
+// filter based upon the note coordinates the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringCoordinatesAny(QString string, int key) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "0";
+        // Filter out the records
+        QSqlQuery sql;
+        sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data >= :data");
+        sql.bindValue(":key", key);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "0";
+        // Filter out the records
+        QSqlQuery sql;
+        sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data <= :data");
+        sql.bindValue(":key", key);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+
+
+// filter based upon the note author the user specified.  This is for the "any"
+// filter and not the default
+void FilterEngine::filterSearchStringAuthorAny(QString string) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :data");
+        } else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data = :data");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
+        sql.bindValue(":data", string);
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data = :data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+
+
+void FilterEngine::filterSearchStringDateAny(QString string) {
+    int separator = string.indexOf(":")+1;
+    QString tempString = string.mid(separator);
+    QDateTime dt = calculateDateTime(tempString);
+    QSqlQuery sql;
+    int key=0;
+
+    if (string.startsWith("created:", Qt::CaseInsensitive)) {
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
+        key = NOTE_CREATED_DATE;
+    }
+    if (string.startsWith("updated:", Qt::CaseInsensitive)) {
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
+        key = NOTE_UPDATED_DATE;
+    }
+    if (string.startsWith("subjectdate:", Qt::CaseInsensitive)) {
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
+        key = NOTE_ATTRIBUTE_SUBJECT_DATE;
+    }
+    if (string.startsWith("-created:", Qt::CaseInsensitive)) {
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000))");
+        key = NOTE_CREATED_DATE;
+    }
+    if (string.startsWith("-updated:", Qt::CaseInsensitive)) {
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000))");
+        key = NOTE_UPDATED_DATE;
+    }
+    if (string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000))");
+        key = NOTE_ATTRIBUTE_SUBJECT_DATE;
+    }
+
+    sql.bindValue(":key", key);
+    sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    sql.exec();
+
+}
+
+
+
+
+
+
+// filter based upon the note source the user specified.  This is for the "any"
+// filter and not the default.
+void FilterEngine::filterSearchStringSourceAny(QString string) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :data");
+        } else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data=:data");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
+        sql.bindValue(":data", string);
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+
+
+// filter based upon the note source the user specified.  This is for the "any"
+// filter and not the default.
+void FilterEngine::filterSearchStringSourceApplicationAny(QString string) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :data");
+        } else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data=:data");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
+        sql.bindValue(":data", string);
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+
+
+
+// filter based upon the note source the user specified.  This is for the "any"
+// filter and not the default.
+void FilterEngine::filterSearchStringContentClassAny(QString string) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :data");
+        } else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data=:data");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
+        sql.bindValue(":data", string);
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
+}
+
+
+
+// filter based upon the note source the user specified.  This is for the "any"
+// filter and not the default.
+void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) {
+    bool negative = false;
+    if (string.startsWith("-"))
+        negative = true;
+    int separator = string.indexOf(":")+1;
+    string = string.mid(separator);
+    if (negative) {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :data");
+        } else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data=:data");
+        sql.bindValue(":key", RESOURCE_RECO_TYPE);
+        sql.bindValue(":data", string);
+        sql.exec();
+    } else {
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        QSqlQuery sql;
+        if (string.indexOf("*")>=0) {
+            string = string.replace("*", "%");
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :data)");
+        } else
+            sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data=:data)");
+        sql.bindValue(":key", RESOURCE_RECO_TYPE);
+        sql.bindValue(":data", string.toDouble());
+        sql.exec();
+    }
 }
