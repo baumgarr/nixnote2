@@ -163,6 +163,7 @@ void NoteFormatter::modifyTags(QDomDocument &doc) {
             modifyTodoTags(enmedia);
     }
 
+    anchors = docElem.elementsByTagName("en-crypt");
     qint32 enCryptLen = anchors.length();
     for (qint32 i=enCryptLen-1; i>=0; i--) {
             QDomElement enmedia(anchors.at(i).toElement());
