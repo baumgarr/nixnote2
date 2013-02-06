@@ -280,8 +280,8 @@ void NixNote::setupSearchTree() {
     QLOG_TRACE() << "Starting NixNote.setupSearchTree()";
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
-    lbl->setText("<hr>");
-    leftPanel->addWidget(lbl);
+    //lbl->setText("<hr>");
+    //leftPanel->addWidget(lbl);
     searchTreeView = new NSearchView(leftPanel);
     leftPanel->addWidget(searchTreeView);
     connect(&syncRunner, SIGNAL(searchUpdated(qint32, QString)), searchTreeView, SLOT(searchUpdated(qint32, QString)));
@@ -298,9 +298,11 @@ void NixNote::setupTagTree() {
     QLOG_TRACE() << "Starting NixNote.setupTagTree()";
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
-    lbl->setText("<hr>");
-    leftPanel->addWidget(lbl);
+    //lbl->setText("<hr>");
+    //leftPanel->addWidget(lbl);
     tagTreeView = new NTagView(leftPanel);
+//    leftPanel->setStyleSheet("border:none; background-color:red;");
+//    tagTreeView->setStyleSheet("border-top:50px;");
     leftPanel->addWidget(tagTreeView);
     connect(&syncRunner, SIGNAL(tagUpdated(qint32, QString)),tagTreeView, SLOT(tagUpdated(qint32, QString)));
     connect(&syncRunner, SIGNAL(tagExpunged(qint32)), tagTreeView, SLOT(tagExpunged(qint32)));
@@ -317,8 +319,8 @@ void NixNote::setupAttributeTree() {
     QLOG_TRACE() << "Starting NixNote.setupAttributeTree()";
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
-    lbl->setText("<hr>");
-    leftPanel->addWidget(lbl);
+    //lbl->setText("<hr>");
+    //leftPanel->addWidget(lbl);
     attributeTree = new NAttributeTree(leftPanel);
     leftPanel->addWidget(attributeTree);
     QLOG_TRACE() << "Exiting NixNote.setupAttributeTree()";
@@ -333,8 +335,8 @@ void NixNote::setupTrashTree() {
     trashTree = new NTrashTree(leftPanel);
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
-    lbl->setText("<hr>");
-    leftPanel->addWidget(lbl);
+    //lbl->setText("<hr>");
+    //leftPanel->addWidget(lbl);
     leftPanel->addWidget(trashTree);
     QLOG_TRACE() << "Exiting NixNote.setupTrashTree()";
 }
@@ -348,7 +350,7 @@ void NixNote::setupSynchronizedNotebookTree() {
     QLOG_TRACE() << "Exiting NixNote.setupSynchronizedNotebookTree()";
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
-    lbl->setText("<hr>");
+    //lbl->setText("<hr>");
     //leftPanel->addWidget(lbl);
 
     notebookTreeView = new NNotebookView(leftPanel);

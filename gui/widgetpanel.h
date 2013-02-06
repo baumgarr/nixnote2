@@ -17,6 +17,7 @@ public:
     ~WidgetPanel();
     void addWidget(QWidget *widget);
 
+
 signals:
 
 public slots:

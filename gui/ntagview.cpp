@@ -33,7 +33,8 @@ NTagView::NTagView(QWidget *parent) :
     this->setRootIsDecorated(false);
     this->setSortingEnabled(false);
     this->header()->setVisible(false);
-    this->setStyleSheet("QTreeWidget {  border-top-style: none; border: none; background-color:transparent;}");
+    this->header()->setStyleSheet("border:none; background-color:red;");
+    this->setStyleSheet("QTreeWidget {  border-top-style: none; border-style:none; border: none; background-color:transparent;}");
 
     // Build the root item
     QIcon icon(":tag.png");
@@ -571,6 +572,3 @@ void NTagView::tagExpunged(qint32 lid) {
     }
     this->resetSize();
 }
-
-
-

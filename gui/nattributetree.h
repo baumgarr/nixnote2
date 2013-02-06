@@ -2,6 +2,7 @@
 #define NATTRIBUTETREE_H
 
 #include <QTreeWidget>
+#include <QMouseEvent>
 
 #define CREATED_SINCE_TODAY 1
 #define CREATED_SINCE_YESTERDAY 2
@@ -142,6 +143,7 @@ public:
     ~NAttributeTree();
     void updateSelection();
     void resetSize();
+    void mousePressEvent(QMouseEvent *event);
 
 signals:
     void updateSelectionRequested();

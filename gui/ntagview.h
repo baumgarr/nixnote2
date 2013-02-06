@@ -27,7 +27,6 @@ private:
     QShortcut *deleteShortcut;
     TreeWidgetEditor *editor;
 
-
 private slots:
     int calculateHeightRec(QTreeWidgetItem * item);
     void calculateHeight();

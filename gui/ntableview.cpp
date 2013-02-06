@@ -43,7 +43,6 @@ NTableView::NTableView(QWidget *parent) :
     this->setSortingEnabled(true);
     proxy->setFilterKeyColumn(NOTE_TABLE_LID_POSITION);
     sortByColumn(col, order);
-    //proxy->sort(col,order);
     noteModel->sort(col,order);
 
     //refreshData();

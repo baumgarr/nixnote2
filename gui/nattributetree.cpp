@@ -475,3 +475,21 @@ void NAttributeTree::updateSelection() {
 
     blockSignals(false);
 }
+
+
+// This alows for the tree item to be toggled.  If the prior item is selected again
+// it is deselected.  If it is the root item, we don't permit the selection.
+void NAttributeTree::mousePressEvent(QMouseEvent *event)
+{
+    QModelIndex item = indexAt(event->pos());
+    bool selected = selectionModel()->isSelected(indexAt(event->pos()));
+    QTreeView::mousePressEvent(event);
+    if (selected)
+        selectionModel()->select(item, QItemSelectionModel::Deselect);
+
+    for (int i=0; i<this->selectedItems() .size(); i++) {
+        if (this->selectedIndexes().at(i).data(Qt::UserRole) == "root") {
+            selectionModel()->select(this->selectedIndexes().at(i), QItemSelectionModel::Deselect);
+        }
+    }
+}

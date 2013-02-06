@@ -6,7 +6,7 @@ WidgetPanel::WidgetPanel(QWidget *parent) :
 {
     vboxLayout = new QVBoxLayout();
     this->setLayout(vboxLayout);
-    vboxLayout->setSpacing(0);
+    vboxLayout->setSpacing(10);
     vboxLayout->setSizeConstraint(QLayout::SetNoConstraint);
 }
 
@@ -17,3 +17,9 @@ WidgetPanel::~WidgetPanel() {
 void WidgetPanel::addWidget(QWidget *widget) {
     vboxLayout->addWidget(widget);
 }
+
+
+
+
+
+
