@@ -54,6 +54,8 @@ public slots:
     void pasteButtonPressed();
     void pasteAsTextButtonPressed();
     void selectAllButtonPressed();
+    void viewExtendedInformation();
+    void toggleSource();
 
 };
 

@@ -2,6 +2,8 @@
 #define NMAINMENUBAR_H
 
 #include <QMenuBar>
+#include <QFont>
+
 #include "nixnote.h"
 class NixNote;
 
@@ -10,6 +12,7 @@ class NMainMenuBar : public QMenuBar
     Q_OBJECT
 private:
     NixNote *parent;
+    QFont font;
 
 
     void setupFileMenu();
@@ -25,12 +28,12 @@ public:
     QMenu *viewMenu;
     QMenu *toolsMenu;
     QMenu *helpMenu;
-    QAction *exitAction;
+    QMenu *findReplaceMenu;
 
+    QAction *exitAction;
     QAction *synchronizeAction;
     QAction *disconnectAction;
     QAction *restoreDatabaseAction;
-    QAction *viewSourceAction;
     QAction *accountDialogAction;
     QAction *aboutAction;
 
@@ -41,6 +44,21 @@ public:
     QAction *pasteAction;
     QAction *pasteAsTextAction;
     QAction *selectAllAction;
+
+    QAction *searchNotesAction;
+    QAction *searchFindAction;
+    QAction *searchFindNextAction;
+    QAction *searchFindPrevAction;
+    QAction *searchFindReplaceAction;
+    QAction *resetSearchAction;
+
+    QAction *viewSourceAction;
+    QAction *viewExtendedInformation;
+    QAction *viewLeftPanel;
+    QAction *viewNoteList;
+    QAction *viewNotePanel;
+    QAction *viewToolbar;
+    QAction *viewStatusbar;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 

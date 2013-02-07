@@ -40,6 +40,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     Edit_Paste = new QString("Ctrl+V");			// Paste
     Edit_Paste_Without_Formatting = new QString("Ctrl+Shift+P"); // Paste as plain text
     Edit_Preferences = new QString();			// Settings dialog box
+    Edit_Select_All = new QString("Ctrl+A");
 
     Edit_Insert_Hyperlink = new QString("Ctrl+K");  	// Insert a hyperlink
     Edit_Insert_Table = new QString();  				// Insert a table
@@ -49,9 +50,18 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     Edit_Encrypt_Text = new QString();
     Edit_Rotate_Image_Right = new QString();
     Edit_Rotate_Image_Left = new QString();
+    Edit_Search_Notes = new QString("F6");
+    Edit_Search_Find = new QString("Ctrl+F");
+    Edit_Search_Find_Next = new QString("Ctrl+G");
+    Edit_Search_Find_Prev = new QString("Ctrl+Shift+G");
+    Edit_Search_Find_Replace = new QString("Ctrl+H");
+    Edit_Reset_Search = new QString("Ctrl+Shift+A");
 
     View_Extended_Information = new QString("F8");	// View details on the current note
-
+    View_Show_Left_Side = new QString("F10");       // Show/hide the left side panel
+    View_Show_Note_List = new QString("F11");      // Show/hide the list of notes
+    View_Show_Note_Panel = new QString("Ctrl+F11");  // Show/hide the note browser
+    View_Source = new QString();
 
     Format_Bold = new QString("Ctrl+B");			// Bold (duh)
     Format_Underline = new QString("Ctrl+U");		// Underline
@@ -112,8 +122,19 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     loadkey(QString("Edit_Insert_Todo"), Edit_Insert_Todo);
     loadkey(QString("Edit_Rotate_Image_Right"), Edit_Rotate_Image_Right);
     loadkey(QString("Edit_Rotate_Image_Left"), Edit_Rotate_Image_Left);
+    loadkey(QString("Edit_Select_All"), Edit_Select_All);
+    loadkey(QString("Edit_Search_Notes"), Edit_Search_Notes);
+    loadkey(QString("Edit_Search_Find"), Edit_Search_Find);
+    loadkey(QString("Edit_Search_Find_Next"), Edit_Search_Find_Next);
+    loadkey(QString("Edit_Search_Find_Prev"), Edit_Search_Find_Prev);
+    loadkey(QString("Edit_Search_Find_Replace"), Edit_Search_Find_Replace);
+    loadkey(QString("Edit_Reset_Search"), Edit_Reset_Search);
 
     loadkey(QString("View_Extended_Information"), View_Extended_Information);
+    loadkey(QString("View_Source"), View_Source);
+    loadkey(QString("View_Show_Left_Side"), View_Show_Left_Side);
+    loadkey(QString("View_Show_Note_List"), View_Show_Note_List);
+    loadkey(QString("View_Show_Note_Panel"), View_Show_Note_Panel);
 
     loadkey(QString("Format_Bold"), Format_Bold);
     loadkey(QString("Format_Underline"), Format_Underline);

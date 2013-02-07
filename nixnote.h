@@ -22,6 +22,7 @@
 #include "gui/nattributetree.h"
 #include "gui/ntrashtree.h"
 #include "dialog/accountdialog.h"
+#include "gui/findreplace.h"
 
 
 
@@ -61,7 +62,7 @@ private:
     QWidget *topRightWidget;
     QVBoxLayout *topRightLayout;
     NAttributeTree *attributeTree;
-//    JavaMachine *jvm;
+    FindReplace *findReplaceWindow;
     QString saveLastPath;   // Last path viewed in the restore dialog
 
     // Tool & menu bar
@@ -127,6 +128,13 @@ public slots:
     void toggleTabWindow();
     void toggleToolbar();
     void toggleStatusbar();
+    void findReplaceInNote();
+    void findReplaceAllInNotePressed();
+    void findReplaceInNotePressed();
+    void findInNote();
+    void findNextInNote();
+    void findPrevInNote();
+    void findReplaceWindowHidden();
 
 signals:
     void syncRequested();

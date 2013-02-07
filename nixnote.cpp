@@ -8,6 +8,7 @@
 #include <QFileDialog>
 #include <QStringList>
 #include <QDesktopServices>
+#include <QClipboard>
 #include <QStatusBar>
 
 #include "sql/notetable.h"
@@ -16,6 +17,7 @@
 #include "settings/startupconfig.h"
 #include "dialog/logindialog.h"
 #include "gui/lineedit.h"
+#include "gui/findreplace.h"
 #include "gui/nattributetree.h"
 #include "gui/ntrashtree.h"
 #include "filters/filterengine.h"
@@ -369,7 +371,13 @@ void NixNote::setupSynchronizedNotebookTree() {
 void NixNote::setupTabWindow() {
     QLOG_TRACE() << "Exiting NixNote.setupTabWindow()";
     tabWindow = new NTabWidget(&syncRunner, notebookTreeView, tagTreeView);
-    rightPanelSplitter->addWidget(tabWindow);
+    findReplaceWindow = new FindReplace(this);
+    QWidget *tabPanel = new QWidget(this);
+    tabPanel->setLayout(new QVBoxLayout(this));
+    tabPanel->layout()->addWidget(tabWindow);
+    tabPanel->layout()->addWidget(findReplaceWindow);
+    rightPanelSplitter->addWidget(tabPanel);
+
     NBrowserWindow *newBrowser = new NBrowserWindow();
     connect(&syncRunner, SIGNAL(syncComplete()), &newBrowser->notebookMenu, SLOT(reloadData()));
     connect(&syncRunner, SIGNAL(syncComplete()), &newBrowser->tagEditor, SLOT(reloadTags()));
@@ -388,6 +396,12 @@ void NixNote::setupTabWindow() {
     connect(menuBar->pasteAsTextAction, SIGNAL(triggered()), tabWindow, SLOT(pasteWithoutFormatButtonPressed()));
     connect(menuBar->selectAllAction, SIGNAL(triggered()), tabWindow, SLOT(selectAllButtonPressed()));
     connect(menuBar->viewExtendedInformation, SIGNAL(triggered()), tabWindow, SLOT(viewExtendedInformation()));
+
+    connect(findReplaceWindow->nextButton, SIGNAL(clicked()), this, SLOT(findNextInNote()));
+    connect(findReplaceWindow->prevButton, SIGNAL(clicked()), this, SLOT(findPrevInNote()));
+    connect(findReplaceWindow->replaceButton, SIGNAL(clicked()), this, SLOT(findReplaceInNotePressed()));
+    connect(findReplaceWindow->replaceAllButton, SIGNAL(clicked()), this, SLOT(findReplaceAllInNotePressed()));
+    connect(findReplaceWindow->closeButton, SIGNAL(clicked()), this, SLOT(findReplaceWindowHidden()));
 
 
     QLOG_TRACE() << "Exiting NixNote.setupTabWindow()";
@@ -818,23 +832,71 @@ void NixNote::toggleStatusbar() {
 }
 
 
+void NixNote::findInNote() {
+    findReplaceWindow->showFind();
+}
+
+void NixNote::findNextInNote() {
+    findReplaceWindow->showFind();
+    QString find = findReplaceWindow->findLine->text();
+    if (find != "")
+        tabWindow->currentBrowser()->editor->page()->findText(find,
+            findReplaceWindow->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+}
+
+void NixNote::findPrevInNote() {
+    findReplaceWindow->showFind();
+    QString find = findReplaceWindow->findLine->text();
+    if (find != "")
+        tabWindow->currentBrowser()->editor->page()->findText(find,
+            findReplaceWindow->getCaseSensitive() | QWebPage::FindBackward | QWebPage::FindWrapsAroundDocument);
+
+}
+
+void NixNote::findReplaceWindowHidden() {
+    for (int i=0; i<tabWindow->browserList->size(); i++) {
+        NBrowserWindow *b;
+        b = tabWindow->browserList->at(i);
+        b->editor->page()->findText("");
+    }
+}
+
+void NixNote::findReplaceInNote() {
+    findReplaceWindow->showFindReplace();
+}
 
 
-//bool NixNote::notify(QObject* receiver, QEvent* event)
-//{
-//    try {
-//        return QCoreApplication::notify(receiver, event);
-//    } catch (std::exception &e) {
-//        qFatal("Error %s sending event %s to object %s (%s)",
-//            e.what(), typeid(*event).name(), qPrintable(receiver->objectName()),
-//            typeid(*receiver).name());
-//    } catch (...) {
-//        qFatal("Error <unknown> sending event %s to object %s (%s)",
-//            typeid(*event).name(), qPrintable(receiver->objectName()),
-//            typeid(*receiver).name());
-//    }
+void NixNote::findReplaceInNotePressed() {
+    QString find = findReplaceWindow->findLine->text();
+    QString replace = findReplaceWindow->replaceLine->text();
+    if (find == "")
+        return;
+    bool found = false;
+    found = tabWindow->currentBrowser()->editor->page()->findText(find,
+        findReplaceWindow->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    if (!found)
+        return;
 
-//    // qFatal aborts, so this isn't really necessary
-//    // but you might continue if you use a different logging lib
-//    return false;
-//}
+    QClipboard *clip = global.clipboard;
+    clip->setText(replace);
+    tabWindow->currentBrowser()->editor->pasteAction->trigger();
+}
+
+
+void NixNote::findReplaceAllInNotePressed() {
+    QString find = findReplaceWindow->findLine->text();
+    QString replace = findReplaceWindow->replaceLine->text();
+    if (find == "")
+        return;
+    bool found = false;
+    while (true) {
+        found = tabWindow->currentBrowser()->editor->page()->findText(find,
+            findReplaceWindow->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+        if (!found)
+            return;
+        QClipboard *clip = global.clipboard;
+        clip->setText(replace);
+        tabWindow->currentBrowser()->editor->pasteAction->trigger();
+    }
+}
+

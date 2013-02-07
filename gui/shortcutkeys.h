@@ -57,8 +57,19 @@ public:
     QString *Edit_Encrypt_Text;			// Encrypt selected text
     QString *Edit_Rotate_Image_Right;		// Rotate an image right
     QString *Edit_Rotate_Image_Left;		// Rotate an image left
+    QString *Edit_Select_All;
+    QString *Edit_Search_Notes;
+    QString *Edit_Reset_Search;
+    QString *Edit_Search_Find;
+    QString *Edit_Search_Find_Next;
+    QString *Edit_Search_Find_Prev;
+    QString *Edit_Search_Find_Replace;
 
     QString *View_Extended_Information;	// View details on the current note
+    QString *View_Show_Left_Side;           // Show/hide the left hand panel
+    QString *View_Show_Note_List;
+    QString *View_Show_Note_Panel;
+    QString *View_Source;
 
     QString *Format_Bold;					// Bold (duh)
     QString *Format_Underline;				// Underline

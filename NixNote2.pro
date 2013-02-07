@@ -123,7 +123,8 @@ SOURCES += main.cpp\
     dialog/insertlatexdialog.cpp \
     botan/botan_all.cpp \
     gui/plugins/popplerviewer.cpp \
-    gui/plugins/pluginfactory.cpp
+    gui/plugins/pluginfactory.cpp \
+    gui/findreplace.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -264,7 +265,8 @@ HEADERS  += nixnote.h \
     botan/botan_all.h \
     gui/plugins/popplerviewer.h \
     gui/plugins/pluginfactory.h \
-    communication/inknoterequest.h
+    communication/inknoterequest.h \
+    gui/findreplace.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

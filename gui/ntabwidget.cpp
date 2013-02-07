@@ -234,3 +234,24 @@ void NTabWidget::pasteAsTextButtonPressed() {
 void NTabWidget::selectAllButtonPressed() {
     currentBrowser()->selectAllButtonPressed();
 }
+
+
+void NTabWidget::viewExtendedInformation() {
+    switch (currentBrowser()->expandButton.currentState)  {
+    case (EXPANDBUTTON_1) :
+        currentBrowser()->expandButton.click();
+        currentBrowser()->expandButton.click();
+        break;
+    case (EXPANDBUTTON_2) :
+        currentBrowser()->expandButton.click();
+        break;
+    case (EXPANDBUTTON_3) :
+        currentBrowser()->expandButton.click();
+        break;
+    }
+}
+
+
+void NTabWidget::toggleSource() {
+    currentBrowser()->toggleSource();
+}
