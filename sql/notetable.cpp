@@ -1122,7 +1122,7 @@ qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, string guid) {
 }
 
 
-void NoteTable::updateNoteContent(qint32 lid, QString content) {
+void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     QSqlQuery query;
     query.prepare("update datastore set data=:content where lid=:lid and key=:key");
     query.bindValue(":content", content);
@@ -1135,4 +1135,17 @@ void NoteTable::updateNoteContent(qint32 lid, QString content) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_CONTENT_LENGTH);
     query.exec();
+
+    query.prepare("update datastore set data=:dirty where lid=:lid and key=:key");
+    query.bindValue(":dirty", isDirty);
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ISDIRTY);
+    query.exec();
+
+    query.prepare("update datastore set data='true' where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_INDEX_NEEDED);
+    query.exec();
+
+
 }

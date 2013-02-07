@@ -107,7 +107,7 @@ public:
     void expunge(string guid);             // expunge a note permanently
     qint32 findNotesByNotebook(QList<qint32> &notes, QString guid);
     qint32 findNotesByNotebook(QList<qint32> &notes, string guid);
-    void updateNoteContent(qint32 lid, QString content);
+    void updateNoteContent(qint32 lid, QString content, bool isDirty=true);
 };
 
 
