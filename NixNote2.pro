@@ -320,7 +320,7 @@ HEADERS  += nixnote.h \
 #    thrift/transport/TTransportException.h
 
 
-LIBS +=    -Wl,-rpath,./lib -L./lib -lthrift -lpthread  -L/usr/lib -lpoppler-qt4
+LIBS +=    -Wl,-rpath,./lib32:./lib64 -L./lib -L./liba -lthrift -lpthread  -L/usr/lib -lpoppler-qt4
 #LIBS += -lthrift -lpthread
 INCLUDEPATH += /usr/local/include/thrift \
             /usr/include/poppler/qt4
