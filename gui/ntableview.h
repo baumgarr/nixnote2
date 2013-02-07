@@ -39,6 +39,7 @@ signals:
 
 public slots:
     void refreshData();
+    void focusOutEvent(QFocusEvent *event);
 
 };
 

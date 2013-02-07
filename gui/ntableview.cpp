@@ -108,6 +108,20 @@ NTableView::~NTableView() {
 }
 
 
+void NTableView::focusOutEvent(QFocusEvent *event) {
+
+    int order = proxy->sortOrder();
+    int col = proxy->sortColumn();
+
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("sortOrder", order);
+    global.settings->setValue("sortColumn", col);
+    global.settings->endGroup();
+
+    QTableView::focusOutEvent(event);
+}
+
+
 NoteModel* NTableView::model() {
     return noteModel;
 }
