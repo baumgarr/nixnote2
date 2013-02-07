@@ -98,6 +98,7 @@ void NixNote::setupGui() {
     setWindowIcon(QIcon(":windowIcon.png"));
 
     //QLOG_TRACE() << "Setting up menu bar";
+    searchText = new LineEdit();
     menuBar = new NMainMenuBar(this);
     setMenuBar(menuBar);
 
@@ -252,7 +253,6 @@ void NixNote::initializeGlobalSettings() {
 //******************************************************************************
 void NixNote::setupNoteList() {
    QLOG_TRACE() << "Starting NixNote.setupNoteList()";
-   searchText = new LineEdit();
 
    // Setup a generic widget to hold the search & note table
    topRightWidget  = new QWidget(this);
@@ -378,7 +378,7 @@ void NixNote::setupTabWindow() {
     rightPanelSplitter->setStretchFactor(1,10);
 
     connect(noteTableView, SIGNAL(openNote(bool)), this, SLOT(openNote(bool)));
-    connect(menuBar->viewSourceAction, SIGNAL(triggered()), tabWindow->currentBrowser(), SLOT(toggleSource()));
+    connect(menuBar->viewSourceAction, SIGNAL(triggered()), tabWindow, SLOT(toggleSource()));
 
     connect(menuBar->undoAction, SIGNAL(triggered()), tabWindow, SLOT(undoButtonPressed()));
     connect(menuBar->redoAction, SIGNAL(triggered()), tabWindow, SLOT(redoButtonPressed()));
@@ -387,6 +387,7 @@ void NixNote::setupTabWindow() {
     connect(menuBar->pasteAction, SIGNAL(triggered()), tabWindow, SLOT(pasteButtonPressed()));
     connect(menuBar->pasteAsTextAction, SIGNAL(triggered()), tabWindow, SLOT(pasteWithoutFormatButtonPressed()));
     connect(menuBar->selectAllAction, SIGNAL(triggered()), tabWindow, SLOT(selectAllButtonPressed()));
+    connect(menuBar->viewExtendedInformation, SIGNAL(triggered()), tabWindow, SLOT(viewExtendedInformation()));
 
 
     QLOG_TRACE() << "Exiting NixNote.setupTabWindow()";
@@ -774,6 +775,48 @@ void NixNote::openAbout() {
                           "\n\nLicensed under the Gnu Public License v2."
                           ));
 }
+
+
+void NixNote::toggleLeftPanel() {
+    if (leftPanel->isVisible())
+        leftScroll->hide();
+    else
+        leftScroll->show();
+}
+
+
+void NixNote::toggleNoteList() {
+    if (topRightWidget->isVisible())
+        topRightWidget->hide();
+    else
+        topRightWidget->show();
+}
+
+
+void NixNote::toggleTabWindow() {
+    if (tabWindow->isVisible())
+        tabWindow->hide();
+    else
+        tabWindow->show();
+}
+
+
+void NixNote::toggleToolbar() {
+    if (toolBar->isVisible())
+        toolBar->hide();
+    else
+        toolBar->show();
+}
+
+
+
+void NixNote::toggleStatusbar() {
+    if (statusBar()->isVisible())
+        statusBar()->hide();
+    else
+        statusBar()->show();
+}
+
 
 
 

@@ -61,7 +61,6 @@ private:
     QWidget *topRightWidget;
     QVBoxLayout *topRightLayout;
     NAttributeTree *attributeTree;
-    LineEdit *searchText;
 //    JavaMachine *jvm;
     QString saveLastPath;   // Last path viewed in the restore dialog
 
@@ -102,6 +101,7 @@ public:
     IndexRunner indexRunner;
     void closeEvent(QCloseEvent *);
     //bool notify(QObject* receiver, QEvent* event);
+    LineEdit *searchText;
 
 
 
@@ -122,6 +122,11 @@ public slots:
     void openAccount();
     void openAbout();
     void setMessage(QString msg);
+    void toggleLeftPanel();
+    void toggleNoteList();
+    void toggleTabWindow();
+    void toggleToolbar();
+    void toggleStatusbar();
 
 signals:
     void syncRequested();
