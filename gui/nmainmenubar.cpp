@@ -83,6 +83,11 @@ void NMainMenuBar::setupEditMenu() {
 
     editMenu->addSeparator();
 
+    deleteNoteAction = new QAction(tr("Delete"), this);
+    setupShortcut(deleteNoteAction, QString("File_Note_Delete"));
+    deleteNoteAction->setFont(font);
+    //editMenu->addAction(deleteNoteAction);
+
     selectAllAction = new QAction(tr("Select All"), this);
     setupShortcut(selectAllAction, QString("Edit_Select_All"));
     selectAllAction->setFont(font);

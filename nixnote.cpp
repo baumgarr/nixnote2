@@ -269,6 +269,11 @@ void NixNote::setupNoteList() {
    // Add the generic widget
    rightPanelSplitter->addWidget(topRightWidget);
    connect(&syncRunner, SIGNAL(syncComplete()), noteTableView, SLOT(refreshData()));
+
+   noteTableView->contextMenu->insertAction(noteTableView->deleteNoteAction, newNoteButton);
+   noteTableView->contextMenu->insertSeparator(noteTableView->deleteNoteAction);
+   connect(noteTableView, SIGNAL(notesDeleted(QList<qint32>,bool)), this, SLOT(notesDeleted(QList<qint32>)));
+
    QLOG_TRACE() << "Leaving NixNote.setupNoteList()";
 }
 
@@ -690,6 +695,8 @@ void NixNote::waitCursor(bool value) {
     value=value; /* suppress warning of unused */
 }
 
+
+// Show a message in the status bar
 void NixNote::setMessage(QString text) {
     statusBar()->showMessage(text);
 }
@@ -731,6 +738,8 @@ void NixNote::resetView() {
 }
 
 
+
+// Create a new note
 void NixNote::newNote() {
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
            QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
@@ -772,6 +781,15 @@ void NixNote::newNote() {
 }
 
 
+
+// Slot for when notes have been deleted from the notes list.
+void NixNote::notesDeleted(QList<qint32> lids) {
+    updateSelectionCriteria();
+
+}
+
+
+// Open the trunk web site
 void NixNote::openTrunk() {
     QDesktopServices::openUrl(QUrl("http://www.evernote.com/trunk"));
 }

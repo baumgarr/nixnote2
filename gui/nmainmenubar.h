@@ -43,6 +43,7 @@ public:
     QAction *copyAction;
     QAction *pasteAction;
     QAction *pasteAsTextAction;
+    QAction *deleteNoteAction;
     QAction *selectAllAction;
 
     QAction *searchNotesAction;

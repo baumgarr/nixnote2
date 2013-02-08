@@ -119,6 +119,7 @@ public slots:
     void databaseRestore();
     void resetView();
     void newNote();
+    void notesDeleted(QList<qint32> lid);
     void openTrunk();
     void openAccount();
     void openAbout();

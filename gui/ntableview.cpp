@@ -5,7 +5,8 @@
 #include <QApplication>
 #include <QMouseEvent>
 #include <QSqlQuery>
-
+#include <QMessageBox>
+#include <sql/notetable.h>
 
 //*****************************************************************
 //* This class overrides QTableView and is used to provide a
@@ -93,6 +94,16 @@ NTableView::NTableView(QWidget *parent) :
     this->model()->setHeaderData(NOTE_TABLE_IS_DIRTY_POSITION, Qt::Horizontal, QObject::tr("Synchronized"));
     this->model()->setHeaderData(NOTE_TABLE_SIZE_POSITION, Qt::Horizontal, QObject::tr("Size"));
 
+    contextMenu = new QMenu(this);
+
+    openNoteAction = new QAction(tr("Open Note"), this);
+    contextMenu->addAction(openNoteAction);
+    connect(openNoteAction, SIGNAL(triggered()), this, SLOT(openNoteContextMenuTriggered()));
+
+    deleteNoteAction = new QAction(tr("Delete Note"), this);
+    contextMenu->addAction(deleteNoteAction);
+    connect(deleteNoteAction, SIGNAL(triggered()), this, SLOT(deleteSelectedNotes()));
+
     QLOG_TRACE() << "Exiting NTableView constructor";
 }
 
@@ -108,16 +119,14 @@ NTableView::~NTableView() {
 }
 
 
+// On a focus out event, save the sort order.
 void NTableView::focusOutEvent(QFocusEvent *event) {
-
     int order = proxy->sortOrder();
     int col = proxy->sortColumn();
-
     global.settings->beginGroup("SaveState");
     global.settings->setValue("sortOrder", order);
     global.settings->setValue("sortColumn", col);
     global.settings->endGroup();
-
     QTableView::focusOutEvent(event);
 }
 
@@ -127,7 +136,21 @@ NoteModel* NTableView::model() {
 }
 
 
+void NTableView::contextMenuEvent(QContextMenuEvent *event) {
+    openNoteAction->setEnabled(false);
+    deleteNoteAction->setEnabled(false);
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() > 0) {
+        deleteNoteAction->setEnabled(true);
+        openNoteAction->setEnabled(true);
+    }
+    contextMenu->popup(event->globalPos());
+}
 
+
+
+// Update the list of notes.
 void NTableView::refreshData() {
     QLOG_TRACE() << "Getting valid lids in filter";
     QSqlQuery sql;
@@ -144,7 +167,7 @@ void NTableView::refreshData() {
 }
 
 
-
+// The note list changed, so we need to reselect any valid notes.
 void NTableView::refreshSelection() {
 
     this->blockSignals(true);
@@ -152,23 +175,6 @@ void NTableView::refreshSelection() {
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     QList<qint32> historyList;
     criteria->getSelectedNotes(historyList);
-
-//    if (global.filterPosition > 0 && historyList.size() == 0) {
-//        FilterCriteria *priorCriteria = global.filterCriteria[global.filterPosition-1];
-
-//        if (priorCriteria->isSelectedNotesSet() && !criteria->isSelectedNotesSet()) {
-//            QList<qint32> oldList;
-//            priorCriteria->getSelectedNotes(oldList);
-//            criteria->setSelectedNotes(oldList);
-//            criteria->getSelectedNotes(historyList);
-//        }
-//        if (priorCriteria->isLidSet() && !criteria->isLidSet()) {
-//            qint32 priorLid = priorCriteria->getLid();
-//            qint32 currentLid = criteria->getLid();
-//            if (historyList.contains(priorLid))
-//                criteria->setLid(priorCriteria->getLid());
-//        }
-//    }
 
     QLOG_TRACE() << "Highlighting selected rows after refresh";
     // Check the highlighted LIDs from the history selection.
@@ -189,20 +195,8 @@ void NTableView::refreshSelection() {
     QLOG_TRACE() << "Selecting one item if nothing else is selected";
     QModelIndexList l = selectedIndexes();
     if (l.size() == 0) {
-        int rowCount = proxy->rowCount(QModelIndex());
-        for (int j=rowCount-1; j>=0; j--) {
-            QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
-            qint32 rowLid = idx.data().toInt();
-            if (rowLid > 0) {
-                QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
-                criteria->setLid(rowLid);
-                selectRow(j);
-                this->blockSignals(false);
-                emit openNote(false);
-                this->blockSignals(true);
-                j=-1;
-            }
-        }
+        qint32 rowLid = selectAnyNoteFromList();
+        criteria->setLid(rowLid);
     }
 
     QLOG_TRACE() << "refleshSelection() complete";
@@ -211,29 +205,39 @@ void NTableView::refreshSelection() {
 
 
 
-
+// Listen for mouse press events.  This helps determine if we should
+// open a note in a new window or the existing window
 void NTableView::mouseReleaseEvent(QMouseEvent *e) {
     if ( e->button() == Qt::RightButton ) {
     } else if ( e->button() == Qt::LeftButton ) {
-            this->getSelectedLids(false);
+            this->openSelectedLids(false);
     } else if ( e->button() == Qt::MidButton ) {
-            this->getSelectedLids(true);
+            this->openSelectedLids(true);
     }
     QTableView::mouseReleaseEvent(e);
 }
 
 
+
+// Listen for up & down arrows
 void NTableView::keyPressEvent(QKeyEvent *event) {
     QTableView::keyPressEvent(event);
     if (event->key() == Qt::Key_Up || event->key() == Qt::Key_Down ||
             event->key() == Qt::Key_PageUp || event->key() == Qt::Key_PageDown)
-        this->getSelectedLids(false);
+        this->openSelectedLids(false);
 
 }
 
-void NTableView::getSelectedLids(bool newWindow) {
+
+
+// Open a selected note.  This is not done via the context menu.
+void NTableView::openSelectedLids(bool newWindow) {
 
     QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
     // First, find out if we're already viewing history.  If we are we
     // chop off the end of the history & start a new one
     if (global.filterPosition+1 < global.filterCriteria.size()) {
@@ -243,23 +247,6 @@ void NTableView::getSelectedLids(bool newWindow) {
 
     FilterCriteria *newFilter = new FilterCriteria();
     global.filterCriteria.at(global.filterPosition)->duplicate(*newFilter);
-
-    // This is a bit of a hack.  Basically we loop through
-    // everything selected.  For each item selected we look at
-    // the lid position and pull the lid from the table.
-    // Since multiple items in a row are selected, we end up
-    // getting the same lid multiple times, but it is the best
-    // way since I can't determine exactly how many rows are
-    // selected.
-    qint32 priorLid = -1;
-    QModelIndexList l = selectedIndexes();
-    for (int i=0; i<l.size(); i++) {
-        qint32 currentLid =  l.at(i).sibling(l.at(i).row(),NOTE_TABLE_LID_POSITION).data().toInt();
-        if (priorLid != currentLid) {
-            lids.append(currentLid);
-            priorLid = currentLid;
-        }
-    }
 
     newFilter->setSelectedNotes(lids);
     if (lids.size() > 0)
@@ -274,3 +261,139 @@ void NTableView::getSelectedLids(bool newWindow) {
 }
 
 
+
+
+// Delete the selected notes
+void NTableView::deleteSelectedNotes() {
+    QList<qint32> lids;
+    this->getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    QString typeDelete;
+    QString msg;
+    FilterCriteria *f  = global.filterCriteria[global.filterPosition];
+    bool expunged = false;
+    typeDelete = tr("Delete ");
+
+    if (f->isDeletedOnlySet() && f->getDeletedOnly()) {
+        typeDelete = tr("Permanently delete ");
+        expunged = true;
+    }
+
+
+    if (lids.size() == 1)
+        msg = typeDelete + tr("selected note?");
+    else
+        msg = typeDelete +QString::number(lids.size()) + " notes?";
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(tr("Verify Delete"));
+    msgBox.setText(msg);
+    msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setDefaultButton(QMessageBox::Yes);
+    int rc = msgBox.exec();
+    if (rc != QMessageBox::Yes)
+        return;
+
+    NoteTable ntable;
+    QSqlQuery sql;
+    QSqlQuery transaction;
+    transaction.exec("begin");
+    sql.prepare("Delete from filter where lid=:lid");
+    for (int i=0; i<lids.size(); i++) {
+        ntable.deleteNote(lids[i], true);
+        if (expunged)
+            ntable.expunge(lids[i]);
+        sql.bindValue(":lid", lids[i]);
+        sql.exec();
+    }
+    transaction.exec("commit");
+    emit(notesDeleted(lids, expunged));
+}
+
+
+// Get a list of selected lids from the table
+void NTableView::getSelectedLids(QList<qint32> &lids) {
+
+    lids.empty();
+
+    // This is a bit of a hack.  Basically we loop through
+    // everything selected.  For each item selected we look at
+    // the lid position and pull the lid from the table.
+    // Since multiple items in a row are selected, we end up
+    // getting the same lid multiple times, but it is the best
+    // way since I can't determine exactly how many rows are
+    // selected.
+    QModelIndexList l = selectedIndexes();
+    for (int i=0; i<l.size(); i++) {
+        qint32 currentLid =  l.at(i).sibling(l.at(i).row(),NOTE_TABLE_LID_POSITION).data().toInt();
+        if (!lids.contains(currentLid)) {
+            lids.append(currentLid);
+        }
+    }
+}
+
+
+
+// Check if any specific lid is selected
+bool NTableView::isLidSelected(qint32 lid) {
+    QModelIndexList l = selectedIndexes();
+    for (int i=0; i<l.size(); i++) {
+        qint32 currentLid =  l.at(i).sibling(l.at(i).row(),NOTE_TABLE_LID_POSITION).data().toInt();
+        if (currentLid == lid)
+            return true;
+    }
+    return false;
+}
+
+
+
+// Pick a note, any note, to open.  This is normally done to force any note to be opened if nothing is currently
+// selected.
+qint32 NTableView::selectAnyNoteFromList() {
+    QModelIndexList l = selectedIndexes();
+    int rowCount = proxy->rowCount(QModelIndex());
+    for (int j=rowCount-1; j>=0; j--) {
+        QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
+        qint32 rowLid = idx.data().toInt();
+        if (rowLid > 0) {
+            QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
+            selectRow(j);
+            this->blockSignals(false);
+            emit openNote(false);
+            this->blockSignals(true);
+            return rowLid;
+        }
+    }
+    return -1;
+}
+
+
+
+// A user asked to open new notes via the context menu.
+void NTableView::openNoteContextMenuTriggered() {
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    // First, find out if we're already viewing history.  If we are we
+    // chop off the end of the history & start a new one
+    if (global.filterPosition+1 < global.filterCriteria.size()) {
+        while (global.filterPosition+1 < global.filterCriteria.size())
+            delete global.filterCriteria.takeAt(global.filterCriteria.size()-1);
+    }
+
+    for (int i=0; i<lids.size(); i++) {
+        FilterCriteria *newFilter = new FilterCriteria();
+        global.filterCriteria.at(global.filterPosition)->duplicate(*newFilter);
+
+        newFilter->setSelectedNotes(lids);
+        newFilter->setLid(lids.at(i));
+        global.filterCriteria.push_back(newFilter);
+        global.filterPosition++;
+        emit openNote(true);
+    }
+}
