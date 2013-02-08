@@ -596,6 +596,11 @@ void NixNote::updateSelectionCriteria() {
         tabWindow->currentBrowser()->setContent(selectedNotes.at(0));
         openNote(false);
     }
+
+    if (global.filterCriteria[global.filterPosition]->isDeletedOnlySet() && global.filterCriteria[global.filterPosition]->getDeletedOnly())
+        newNoteButton->setEnabled(false);
+    else
+        newNoteButton->setEnabled(true);
 }
 
 
