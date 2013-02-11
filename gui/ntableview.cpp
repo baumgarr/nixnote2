@@ -7,6 +7,8 @@
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <sql/notetable.h>
+#include <QClipboard>
+#include "sql/usertable.h"
 
 //*****************************************************************
 //* This class overrides QTableView and is used to provide a
@@ -95,14 +97,28 @@ NTableView::NTableView(QWidget *parent) :
     this->model()->setHeaderData(NOTE_TABLE_SIZE_POSITION, Qt::Horizontal, QObject::tr("Size"));
 
     contextMenu = new QMenu(this);
+    QFont font;
+    font.setPointSize(8);
 
     openNoteAction = new QAction(tr("Open Note"), this);
     contextMenu->addAction(openNoteAction);
     connect(openNoteAction, SIGNAL(triggered()), this, SLOT(openNoteContextMenuTriggered()));
+    openNoteAction->setFont(font);
 
     deleteNoteAction = new QAction(tr("Delete Note"), this);
     contextMenu->addAction(deleteNoteAction);
     connect(deleteNoteAction, SIGNAL(triggered()), this, SLOT(deleteSelectedNotes()));
+    deleteNoteAction->setFont(font);
+
+    copyNoteLinkAction = new QAction(tr("Copy Note Link"), this);
+    contextMenu->addAction(copyNoteLinkAction);
+    copyNoteLinkAction->setFont(font);
+    connect(copyNoteLinkAction, SIGNAL(triggered()), this, SLOT(copyNoteLink()));
+
+    copyNoteAction = new QAction(tr("Copy Note"), this);
+    contextMenu->addAction(copyNoteAction);
+    copyNoteAction->setFont(font);
+    connect(copyNoteAction, SIGNAL(triggered()), this, SLOT(copyNote()));
 
     QLOG_TRACE() << "Exiting NTableView constructor";
 }
@@ -396,4 +412,66 @@ void NTableView::openNoteContextMenuTriggered() {
         global.filterPosition++;
         emit openNote(true);
     }
+}
+
+
+
+void NTableView::copyNote() {
+
+}
+
+
+
+// Copy a note link into the clipboard
+void NTableView::copyNoteLink() {
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+
+    UserTable userTable;
+    User user;
+    userTable.getUser(user);
+    bool syncneeded = false;
+    QString userid;
+
+    if (user.__isset.id)
+        userid = QVariant(user.id).toString();
+    else {
+        syncneeded = true;
+        userid = "0000";
+    }
+
+    QString shard;
+    if (user.__isset.shardId)
+        shard = QString::fromStdString(user.shardId);
+    else {
+        syncneeded = true;
+        shard = "s0";
+    }
+
+    Note note;
+    NoteTable ntable;
+    ntable.get(note, lids[0], false,false);
+
+    QString guid = QString::fromStdString(note.guid);
+    QString localid;
+    if (!note.__isset.updateSequenceNum || note.updateSequenceNum == 0) {
+        syncneeded = true;
+        localid = QString::number(lids[0]);
+    } else
+        localid = guid;
+
+    QString lidUrl = "evernote:///view/" + userid +"/" +shard + "/" +guid + "/" +localid;
+    if (syncneeded) {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(tr("Unsynchronized Note"));
+        msgBox.setText(tr("This note has never been synchronized.\nUsing this in a note link can cause problems unless you synchronize it first."));
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        msgBox.setIcon(QMessageBox::Warning);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.exec();
+    }
+    global.clipboard->setText(lidUrl);
 }

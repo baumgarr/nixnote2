@@ -33,9 +33,13 @@ public:
     void openSelectedLids(bool newWindow);
     void refreshSelection();
     void keyPressEvent(QKeyEvent *event);
+
     QMenu *contextMenu;
     QAction *deleteNoteAction;
     QAction *openNoteAction;
+    QAction *copyNoteLinkAction;
+    QAction *copyNoteAction;
+
     void getSelectedLids(QList<qint32> &lids);
     bool isLidSelected(qint32 lid);
     qint32 selectAnyNoteFromList();
@@ -51,6 +55,8 @@ public slots:
     void contextMenuEvent(QContextMenuEvent *event);
     void deleteSelectedNotes();
     void openNoteContextMenuTriggered();
+    void copyNoteLink();
+    void copyNote();
 
 };
 

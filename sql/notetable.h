@@ -83,6 +83,7 @@ public:
     qint32 findNotesByTag(QList<qint32> &values, QString tags);
     qint32 findNotesByTag(QList<qint32> &values, string tags);
     qint32 findNotesByTag(QList<qint32> &values, qint32 tagLid);
+    qint32 findNotesByTitle(QList<qint32> &lids, QString title);
     void updateNoteListTags(qint32 noteLid, QString tags);
     void updateNoteListNotebooks(QString guid, QString name);
     qint32 getNotesWithTag(QList<qint32> &retval, QString tag);  // Find all notes for a specific tag;

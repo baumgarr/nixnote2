@@ -1146,6 +1146,20 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
+}
 
 
+
+qint32 NoteTable::findNotesByTitle(QList<qint32> &lids, QString title) {
+    QSqlQuery query;
+    lids.empty();
+
+    query.prepare("select lid from notetable where title like :title order by datecreated;");
+    query.bindValue(":title", title);
+    query.exec();
+
+    while (query.next()) {
+        lids.append(query.value(0).toInt());
+    }
+    return lids.size();
 }

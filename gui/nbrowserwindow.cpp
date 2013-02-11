@@ -5,6 +5,7 @@
 #include "sql/tagtable.h"
 #include "html/noteformatter.h"
 #include "html/enmlformatter.h"
+#include "sql/usertable.h"
 #include "sql/resourcetable.h"
 #include "global.h"
 #include "gui/browserWidgets/colormenu.h"
@@ -642,6 +643,46 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
+    if (mime->hasText()) {
+        QString urltext = mime->text();
+        if (urltext.toLower().mid(0,17) == "evernote:///view/") {
+            urltext = urltext.mid(17);
+            int pos = urltext.indexOf("/");
+            QString userid = urltext.mid(0,pos-1);
+            urltext = urltext.mid(pos+1);
+            pos = urltext.indexOf("/");
+            QString shard = urltext.mid(0,pos);
+            urltext = urltext.mid(pos+1);
+            pos = urltext.indexOf("/");
+            QString uid = urltext.mid(0,pos);
+            urltext = urltext.mid(pos+1);
+            pos = urltext.indexOf("/");
+            QString guid = urltext.mid(0,pos);
+            urltext = urltext.mid(pos);
+            pos = urltext.indexOf("/");
+            QString locguid = urltext.mid(pos);
+            QString linkedNotebookGuid = urltext.mid(pos);
+
+            Note n;
+            bool goodrc = false;
+            NoteTable ntable;
+            goodrc = ntable.get(n, guid,false,false);
+            if (!goodrc)
+                goodrc = ntable.get(n,locguid,false,false);
+
+            // If we have a good return, then we can paste the link, otherwise we fall out
+            // to a normal paste.
+            if (goodrc) {
+                QString url = QString("<a href=\"") +global.clipboard->text()
+                        +QString("\" title=") +QString::fromStdString(n.title)
+                        +QString(" >") +QString::fromStdString(n.title) +QString("</a>");
+                QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+                editor->page()->mainFrame()->evaluateJavaScript(script);
+                return;
+            }
+        }
+    }
+
 
     this->editor->triggerPageAction(QWebPage::Paste);
     this->editor->setFocus();
@@ -975,7 +1016,37 @@ void NBrowserWindow::insertLinkButtonPressed() {
 
 
 void NBrowserWindow::insertQuickLinkButtonPressed() {
+    QString text = editor->selectedText();
+    if (text.trimmed() == "")
+        return;
 
+    NoteTable ntable;
+    QList<qint32> lids;
+    if (!ntable.findNotesByTitle(lids, text))
+        if (!ntable.findNotesByTitle(lids, text.trimmed()+"%"))
+            if (!ntable.findNotesByNotebook(lids, "%"+text.trimmed()+"%"))
+                return;
+    Note n;
+
+    // If we have a good return, then we can paste the link, otherwise we fall out
+    // to a normal paste.
+    if (ntable.get(n, lids[0],false,false)) {
+        UserTable utable;
+        User user;
+        utable.getUser(user);
+
+        QString href = "evernote:///view/" + QString::number(user.id) + QString("/") +
+                QString::fromStdString(user.shardId) +QString("/") +
+                QString::fromStdString(n.guid) +QString("/") +
+                QString::fromStdString(n.guid);
+
+        QString url = QString("<a href=\"") +href
+                +QString("\" title=") +text
+                +QString("\">") +text +QString("</a>");
+        QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+        editor->page()->mainFrame()->evaluateJavaScript(script);
+        return;
+    }
 }
 
 
@@ -1215,7 +1286,7 @@ void NBrowserWindow::imageContextMenu(QString l, QString f) {
      editor->deleteTableRowAction->setEnabled(false);
      editor->deleteTableColumnAction->setEnabled(false);
      editor->insertLinkAction->setText(tr("Insert Link"));
-     editor->insertQuickLinkAction->setEnabled(false);
+     editor->insertQuickLinkAction->setEnabled(true);
      editor->rotateImageRightAction->setEnabled(false);
      editor->rotateImageLeftAction->setEnabled(false);
 
