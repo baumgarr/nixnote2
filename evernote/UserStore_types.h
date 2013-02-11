@@ -17,35 +17,31 @@
 
 namespace evernote { namespace edam {
 
-enum SponsoredGroupRole {
-  GROUP_MEMBER = 1,
-  GROUP_ADMIN = 2,
-  GROUP_OWNER = 3
-};
-
 typedef struct _PublicUserInfo__isset {
-  _PublicUserInfo__isset() : privilege(false), username(false), noteStoreUrl(false) {}
+  _PublicUserInfo__isset() : privilege(false), username(false), noteStoreUrl(false), webApiUrlPrefix(false) {}
   bool privilege;
   bool username;
   bool noteStoreUrl;
+  bool webApiUrlPrefix;
 } _PublicUserInfo__isset;
 
 class PublicUserInfo {
  public:
 
-  static const char* ascii_fingerprint; // = "ACE0BEB227C4D0B5BB056041973A6030";
-  static const uint8_t binary_fingerprint[16]; // = {0xAC,0xE0,0xBE,0xB2,0x27,0xC4,0xD0,0xB5,0xBB,0x05,0x60,0x41,0x97,0x3A,0x60,0x30};
+  static const char* ascii_fingerprint; // = "136F76319E3F0B8411FD5BB100F8885A";
+  static const uint8_t binary_fingerprint[16]; // = {0x13,0x6F,0x76,0x31,0x9E,0x3F,0x0B,0x84,0x11,0xFD,0x5B,0xB1,0x00,0xF8,0x88,0x5A};
 
-  PublicUserInfo() : userId(0), shardId(""), username(""), noteStoreUrl("") {
+  PublicUserInfo() : userId(0), shardId(""), username(""), noteStoreUrl(""), webApiUrlPrefix("") {
   }
 
   virtual ~PublicUserInfo() throw() {}
 
   evernote::edam::UserID userId;
   std::string shardId;
-  evernote::edam::PrivilegeLevel privilege;
+  evernote::edam::PrivilegeLevel::type privilege;
   std::string username;
   std::string noteStoreUrl;
+  std::string webApiUrlPrefix;
 
   _PublicUserInfo__isset __isset;
 
@@ -67,6 +63,10 @@ class PublicUserInfo {
       return false;
     else if (__isset.noteStoreUrl && !(noteStoreUrl == rhs.noteStoreUrl))
       return false;
+    if (__isset.webApiUrlPrefix != rhs.__isset.webApiUrlPrefix)
+      return false;
+    else if (__isset.webApiUrlPrefix && !(webApiUrlPrefix == rhs.webApiUrlPrefix))
+      return false;
     return true;
   }
   bool operator != (const PublicUserInfo &rhs) const {
@@ -74,90 +74,6 @@ class PublicUserInfo {
   }
 
   bool operator < (const PublicUserInfo & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
-typedef struct _PremiumInfo__isset {
-  _PremiumInfo__isset() : premiumExpirationDate(false), sponsoredGroupName(false), sponsoredGroupRole(false), businessName(false), businessAdmin(false) {}
-  bool premiumExpirationDate;
-  bool sponsoredGroupName;
-  bool sponsoredGroupRole;
-  bool businessName;
-  bool businessAdmin;
-} _PremiumInfo__isset;
-
-class PremiumInfo {
- public:
-
-  static const char* ascii_fingerprint; // = "6C8AD5B945651CA70292CC21A279E3F5";
-  static const uint8_t binary_fingerprint[16]; // = {0x6C,0x8A,0xD5,0xB9,0x45,0x65,0x1C,0xA7,0x02,0x92,0xCC,0x21,0xA2,0x79,0xE3,0xF5};
-
-  PremiumInfo() : currentTime(0), premium(0), premiumRecurring(0), premiumExpirationDate(0), premiumExtendable(0), premiumPending(0), premiumCancellationPending(0), canPurchaseUploadAllowance(0), sponsoredGroupName(""), businessName(""), businessAdmin(0) {
-  }
-
-  virtual ~PremiumInfo() throw() {}
-
-  evernote::edam::Timestamp currentTime;
-  bool premium;
-  bool premiumRecurring;
-  evernote::edam::Timestamp premiumExpirationDate;
-  bool premiumExtendable;
-  bool premiumPending;
-  bool premiumCancellationPending;
-  bool canPurchaseUploadAllowance;
-  std::string sponsoredGroupName;
-  SponsoredGroupRole sponsoredGroupRole;
-  std::string businessName;
-  bool businessAdmin;
-
-  _PremiumInfo__isset __isset;
-
-  bool operator == (const PremiumInfo & rhs) const
-  {
-    if (!(currentTime == rhs.currentTime))
-      return false;
-    if (!(premium == rhs.premium))
-      return false;
-    if (!(premiumRecurring == rhs.premiumRecurring))
-      return false;
-    if (__isset.premiumExpirationDate != rhs.__isset.premiumExpirationDate)
-      return false;
-    else if (__isset.premiumExpirationDate && !(premiumExpirationDate == rhs.premiumExpirationDate))
-      return false;
-    if (!(premiumExtendable == rhs.premiumExtendable))
-      return false;
-    if (!(premiumPending == rhs.premiumPending))
-      return false;
-    if (!(premiumCancellationPending == rhs.premiumCancellationPending))
-      return false;
-    if (!(canPurchaseUploadAllowance == rhs.canPurchaseUploadAllowance))
-      return false;
-    if (__isset.sponsoredGroupName != rhs.__isset.sponsoredGroupName)
-      return false;
-    else if (__isset.sponsoredGroupName && !(sponsoredGroupName == rhs.sponsoredGroupName))
-      return false;
-    if (__isset.sponsoredGroupRole != rhs.__isset.sponsoredGroupRole)
-      return false;
-    else if (__isset.sponsoredGroupRole && !(sponsoredGroupRole == rhs.sponsoredGroupRole))
-      return false;
-    if (__isset.businessName != rhs.__isset.businessName)
-      return false;
-    else if (__isset.businessName && !(businessName == rhs.businessName))
-      return false;
-    if (__isset.businessAdmin != rhs.__isset.businessAdmin)
-      return false;
-    else if (__isset.businessAdmin && !(businessAdmin == rhs.businessAdmin))
-      return false;
-    return true;
-  }
-  bool operator != (const PremiumInfo &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const PremiumInfo & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
@@ -175,8 +91,8 @@ typedef struct _AuthenticationResult__isset {
 class AuthenticationResult {
  public:
 
-  static const char* ascii_fingerprint; // = "FADFDE6430A32EB9D23A3D14199996E1";
-  static const uint8_t binary_fingerprint[16]; // = {0xFA,0xDF,0xDE,0x64,0x30,0xA3,0x2E,0xB9,0xD2,0x3A,0x3D,0x14,0x19,0x99,0x96,0xE1};
+  static const char* ascii_fingerprint; // = "B833D34A0783BF79414A90DA9ABDB79E";
+  static const uint8_t binary_fingerprint[16]; // = {0xB8,0x33,0xD3,0x4A,0x07,0x83,0xBF,0x79,0x41,0x4A,0x90,0xDA,0x9A,0xBD,0xB7,0x9E};
 
   AuthenticationResult() : currentTime(0), authenticationToken(""), expiration(0), noteStoreUrl(""), webApiUrlPrefix("") {
   }
@@ -231,7 +147,7 @@ class AuthenticationResult {
 };
 
 typedef struct _BootstrapSettings__isset {
-  _BootstrapSettings__isset() : enableFacebookSharing(false), enableGiftSubscriptions(false), enableSupportTickets(false), enableSharedNotebooks(false), enableSingleNoteSharing(false), enableSponsoredAccounts(false), enableTwitterSharing(false) {}
+  _BootstrapSettings__isset() : enableFacebookSharing(false), enableGiftSubscriptions(false), enableSupportTickets(false), enableSharedNotebooks(false), enableSingleNoteSharing(false), enableSponsoredAccounts(false), enableTwitterSharing(false), enableLinkedInSharing(false), enablePublicNotebooks(false) {}
   bool enableFacebookSharing;
   bool enableGiftSubscriptions;
   bool enableSupportTickets;
@@ -239,15 +155,17 @@ typedef struct _BootstrapSettings__isset {
   bool enableSingleNoteSharing;
   bool enableSponsoredAccounts;
   bool enableTwitterSharing;
+  bool enableLinkedInSharing;
+  bool enablePublicNotebooks;
 } _BootstrapSettings__isset;
 
 class BootstrapSettings {
  public:
 
-  static const char* ascii_fingerprint; // = "3419C0A13B768EA9DB70C9DB8AC18624";
-  static const uint8_t binary_fingerprint[16]; // = {0x34,0x19,0xC0,0xA1,0x3B,0x76,0x8E,0xA9,0xDB,0x70,0xC9,0xDB,0x8A,0xC1,0x86,0x24};
+  static const char* ascii_fingerprint; // = "70BFB06B5A018C74836FE173445B1EBF";
+  static const uint8_t binary_fingerprint[16]; // = {0x70,0xBF,0xB0,0x6B,0x5A,0x01,0x8C,0x74,0x83,0x6F,0xE1,0x73,0x44,0x5B,0x1E,0xBF};
 
-  BootstrapSettings() : serviceHost(""), marketingUrl(""), supportUrl(""), accountEmailDomain(""), enableFacebookSharing(0), enableGiftSubscriptions(0), enableSupportTickets(0), enableSharedNotebooks(0), enableSingleNoteSharing(0), enableSponsoredAccounts(0), enableTwitterSharing(0) {
+  BootstrapSettings() : serviceHost(""), marketingUrl(""), supportUrl(""), accountEmailDomain(""), enableFacebookSharing(0), enableGiftSubscriptions(0), enableSupportTickets(0), enableSharedNotebooks(0), enableSingleNoteSharing(0), enableSponsoredAccounts(0), enableTwitterSharing(0), enableLinkedInSharing(0), enablePublicNotebooks(0) {
   }
 
   virtual ~BootstrapSettings() throw() {}
@@ -263,6 +181,8 @@ class BootstrapSettings {
   bool enableSingleNoteSharing;
   bool enableSponsoredAccounts;
   bool enableTwitterSharing;
+  bool enableLinkedInSharing;
+  bool enablePublicNotebooks;
 
   _BootstrapSettings__isset __isset;
 
@@ -304,6 +224,14 @@ class BootstrapSettings {
       return false;
     else if (__isset.enableTwitterSharing && !(enableTwitterSharing == rhs.enableTwitterSharing))
       return false;
+    if (__isset.enableLinkedInSharing != rhs.__isset.enableLinkedInSharing)
+      return false;
+    else if (__isset.enableLinkedInSharing && !(enableLinkedInSharing == rhs.enableLinkedInSharing))
+      return false;
+    if (__isset.enablePublicNotebooks != rhs.__isset.enablePublicNotebooks)
+      return false;
+    else if (__isset.enablePublicNotebooks && !(enablePublicNotebooks == rhs.enablePublicNotebooks))
+      return false;
     return true;
   }
   bool operator != (const BootstrapSettings &rhs) const {
@@ -321,8 +249,8 @@ class BootstrapSettings {
 class BootstrapProfile {
  public:
 
-  static const char* ascii_fingerprint; // = "EB65540F13576566FA9A11C6E66235D1";
-  static const uint8_t binary_fingerprint[16]; // = {0xEB,0x65,0x54,0x0F,0x13,0x57,0x65,0x66,0xFA,0x9A,0x11,0xC6,0xE6,0x62,0x35,0xD1};
+  static const char* ascii_fingerprint; // = "09FEABA36C8610270E1D3AD124EFFDF3";
+  static const uint8_t binary_fingerprint[16]; // = {0x09,0xFE,0xAB,0xA3,0x6C,0x86,0x10,0x27,0x0E,0x1D,0x3A,0xD1,0x24,0xEF,0xFD,0xF3};
 
   BootstrapProfile() : name("") {
   }
@@ -355,8 +283,8 @@ class BootstrapProfile {
 class BootstrapInfo {
  public:
 
-  static const char* ascii_fingerprint; // = "F58F1BBA49CBAFA58A368FB854546947";
-  static const uint8_t binary_fingerprint[16]; // = {0xF5,0x8F,0x1B,0xBA,0x49,0xCB,0xAF,0xA5,0x8A,0x36,0x8F,0xB8,0x54,0x54,0x69,0x47};
+  static const char* ascii_fingerprint; // = "ECB0F629D029C81964A245F17D9BBA00";
+  static const uint8_t binary_fingerprint[16]; // = {0xEC,0xB0,0xF6,0x29,0xD0,0x29,0xC8,0x19,0x64,0xA2,0x45,0xF1,0x7D,0x9B,0xBA,0x00};
 
   BootstrapInfo() {
   }

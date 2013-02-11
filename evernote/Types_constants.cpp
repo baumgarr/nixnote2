@@ -10,6 +10,12 @@ namespace evernote { namespace edam {
 const TypesConstants g_Types_constants;
 
 TypesConstants::TypesConstants() {
+  CLASSIFICATION_RECIPE_USER_NON_RECIPE = "000";
+
+  CLASSIFICATION_RECIPE_USER_RECIPE = "001";
+
+  CLASSIFICATION_RECIPE_SERVICE_RECIPE = "002";
+
   EDAM_NOTE_SOURCE_WEB_CLIP = "web.clip";
 
   EDAM_NOTE_SOURCE_MAIL_CLIP = "mail.clip";

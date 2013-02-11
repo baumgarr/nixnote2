@@ -27,13 +27,13 @@ AccountDialog::AccountDialog(QWidget *parent) :
     UserTable userTable;
     userTable.getUser(user);
     if (user.__isset.privilege) {
-        if (user.privilege == PREMIUM)
+        if (user.privilege == PrivilegeLevel::PREMIUM)
             premium->setText(tr("Premium"));
-        if (user.privilege == MANAGER)
+        if (user.privilege == PrivilegeLevel::MANAGER)
             premium->setText(tr("Manager"));
-        if (user.privilege == SUPPORT)
+        if (user.privilege == PrivilegeLevel::SUPPORT)
             premium->setText(tr("Support"));
-        if (user.privilege == ADMIN)
+        if (user.privilege == PrivilegeLevel::ADMIN)
             premium->setText(tr("Admin"));
     }
     QString username = "*unknown*";

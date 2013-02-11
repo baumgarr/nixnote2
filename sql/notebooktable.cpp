@@ -268,11 +268,11 @@ bool NotebookTable::get(Notebook &notebook, qint32 lid) {
             break;
         case (NOTEBOOK_PUBLISHING_ORDER): {
             qint32 value = query.value(1).toInt();
-            if (value == CREATED) notebook.publishing.order = CREATED;
-            if (value == UPDATED) notebook.publishing.order = UPDATED;
-            if (value == RELEVANCE) notebook.publishing.order = RELEVANCE;
-            if (value == UPDATE_SEQUENCE_NUMBER) notebook.publishing.order = UPDATE_SEQUENCE_NUMBER;
-            if (value == TITLE) notebook.publishing.order = TITLE;
+            notebook.publishing.order = NoteSortOrder::CREATED;
+            if (value == NoteSortOrder::UPDATED) notebook.publishing.order = NoteSortOrder::UPDATED;
+            if (value == NoteSortOrder::RELEVANCE) notebook.publishing.order = NoteSortOrder::RELEVANCE;
+            if (value == NoteSortOrder::UPDATE_SEQUENCE_NUMBER) notebook.publishing.order = NoteSortOrder::UPDATE_SEQUENCE_NUMBER;
+            if (value == NoteSortOrder::TITLE) notebook.publishing.order = NoteSortOrder::TITLE;
             notebook.__isset.publishing = true;
             notebook.publishing.__isset.order = true;
             break; }

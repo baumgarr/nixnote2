@@ -1489,14 +1489,14 @@ uint32_t NoteStore_listNotebooks_result::read(::apache::thrift::protocol::TProto
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->success.clear();
-            uint32_t _size156;
-            ::apache::thrift::protocol::TType _etype159;
-            iprot->readListBegin(_etype159, _size156);
-            this->success.resize(_size156);
-            uint32_t _i160;
-            for (_i160 = 0; _i160 < _size156; ++_i160)
+            uint32_t _size166;
+            ::apache::thrift::protocol::TType _etype169;
+            iprot->readListBegin(_etype169, _size166);
+            this->success.resize(_size166);
+            uint32_t _i170;
+            for (_i170 = 0; _i170 < _size166; ++_i170)
             {
-              xfer += this->success[_i160].read(iprot);
+              xfer += this->success[_i170].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -1543,10 +1543,10 @@ uint32_t NoteStore_listNotebooks_result::write(::apache::thrift::protocol::TProt
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
     {
       xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, this->success.size());
-      std::vector<evernote::edam::Notebook> ::const_iterator _iter161;
-      for (_iter161 = this->success.begin(); _iter161 != this->success.end(); ++_iter161)
+      std::vector<evernote::edam::Notebook> ::const_iterator _iter171;
+      for (_iter171 = this->success.begin(); _iter171 != this->success.end(); ++_iter171)
       {
-        xfer += (*_iter161).write(oprot);
+        xfer += (*_iter171).write(oprot);
       }
       xfer += oprot->writeListEnd();
     }
@@ -1589,14 +1589,14 @@ uint32_t NoteStore_listNotebooks_presult::read(::apache::thrift::protocol::TProt
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             (*(this->success)).clear();
-            uint32_t _size162;
-            ::apache::thrift::protocol::TType _etype165;
-            iprot->readListBegin(_etype165, _size162);
-            (*(this->success)).resize(_size162);
-            uint32_t _i166;
-            for (_i166 = 0; _i166 < _size162; ++_i166)
+            uint32_t _size172;
+            ::apache::thrift::protocol::TType _etype175;
+            iprot->readListBegin(_etype175, _size172);
+            (*(this->success)).resize(_size172);
+            uint32_t _i176;
+            for (_i176 = 0; _i176 < _size172; ++_i176)
             {
-              xfer += (*(this->success))[_i166].read(iprot);
+              xfer += (*(this->success))[_i176].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -2825,14 +2825,14 @@ uint32_t NoteStore_listTags_result::read(::apache::thrift::protocol::TProtocol* 
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->success.clear();
-            uint32_t _size167;
-            ::apache::thrift::protocol::TType _etype170;
-            iprot->readListBegin(_etype170, _size167);
-            this->success.resize(_size167);
-            uint32_t _i171;
-            for (_i171 = 0; _i171 < _size167; ++_i171)
+            uint32_t _size177;
+            ::apache::thrift::protocol::TType _etype180;
+            iprot->readListBegin(_etype180, _size177);
+            this->success.resize(_size177);
+            uint32_t _i181;
+            for (_i181 = 0; _i181 < _size177; ++_i181)
             {
-              xfer += this->success[_i171].read(iprot);
+              xfer += this->success[_i181].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -2879,10 +2879,10 @@ uint32_t NoteStore_listTags_result::write(::apache::thrift::protocol::TProtocol*
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
     {
       xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, this->success.size());
-      std::vector<evernote::edam::Tag> ::const_iterator _iter172;
-      for (_iter172 = this->success.begin(); _iter172 != this->success.end(); ++_iter172)
+      std::vector<evernote::edam::Tag> ::const_iterator _iter182;
+      for (_iter182 = this->success.begin(); _iter182 != this->success.end(); ++_iter182)
       {
-        xfer += (*_iter172).write(oprot);
+        xfer += (*_iter182).write(oprot);
       }
       xfer += oprot->writeListEnd();
     }
@@ -2925,14 +2925,14 @@ uint32_t NoteStore_listTags_presult::read(::apache::thrift::protocol::TProtocol*
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             (*(this->success)).clear();
-            uint32_t _size173;
-            ::apache::thrift::protocol::TType _etype176;
-            iprot->readListBegin(_etype176, _size173);
-            (*(this->success)).resize(_size173);
-            uint32_t _i177;
-            for (_i177 = 0; _i177 < _size173; ++_i177)
+            uint32_t _size183;
+            ::apache::thrift::protocol::TType _etype186;
+            iprot->readListBegin(_etype186, _size183);
+            (*(this->success)).resize(_size183);
+            uint32_t _i187;
+            for (_i187 = 0; _i187 < _size183; ++_i187)
             {
-              xfer += (*(this->success))[_i177].read(iprot);
+              xfer += (*(this->success))[_i187].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -3069,14 +3069,14 @@ uint32_t NoteStore_listTagsByNotebook_result::read(::apache::thrift::protocol::T
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->success.clear();
-            uint32_t _size178;
-            ::apache::thrift::protocol::TType _etype181;
-            iprot->readListBegin(_etype181, _size178);
-            this->success.resize(_size178);
-            uint32_t _i182;
-            for (_i182 = 0; _i182 < _size178; ++_i182)
+            uint32_t _size188;
+            ::apache::thrift::protocol::TType _etype191;
+            iprot->readListBegin(_etype191, _size188);
+            this->success.resize(_size188);
+            uint32_t _i192;
+            for (_i192 = 0; _i192 < _size188; ++_i192)
             {
-              xfer += this->success[_i182].read(iprot);
+              xfer += this->success[_i192].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -3131,10 +3131,10 @@ uint32_t NoteStore_listTagsByNotebook_result::write(::apache::thrift::protocol::
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
     {
       xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, this->success.size());
-      std::vector<evernote::edam::Tag> ::const_iterator _iter183;
-      for (_iter183 = this->success.begin(); _iter183 != this->success.end(); ++_iter183)
+      std::vector<evernote::edam::Tag> ::const_iterator _iter193;
+      for (_iter193 = this->success.begin(); _iter193 != this->success.end(); ++_iter193)
       {
-        xfer += (*_iter183).write(oprot);
+        xfer += (*_iter193).write(oprot);
       }
       xfer += oprot->writeListEnd();
     }
@@ -3181,14 +3181,14 @@ uint32_t NoteStore_listTagsByNotebook_presult::read(::apache::thrift::protocol::
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             (*(this->success)).clear();
-            uint32_t _size184;
-            ::apache::thrift::protocol::TType _etype187;
-            iprot->readListBegin(_etype187, _size184);
-            (*(this->success)).resize(_size184);
-            uint32_t _i188;
-            for (_i188 = 0; _i188 < _size184; ++_i188)
+            uint32_t _size194;
+            ::apache::thrift::protocol::TType _etype197;
+            iprot->readListBegin(_etype197, _size194);
+            (*(this->success)).resize(_size194);
+            uint32_t _i198;
+            for (_i198 = 0; _i198 < _size194; ++_i198)
             {
-              xfer += (*(this->success))[_i188].read(iprot);
+              xfer += (*(this->success))[_i198].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -4459,14 +4459,14 @@ uint32_t NoteStore_listSearches_result::read(::apache::thrift::protocol::TProtoc
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->success.clear();
-            uint32_t _size189;
-            ::apache::thrift::protocol::TType _etype192;
-            iprot->readListBegin(_etype192, _size189);
-            this->success.resize(_size189);
-            uint32_t _i193;
-            for (_i193 = 0; _i193 < _size189; ++_i193)
+            uint32_t _size199;
+            ::apache::thrift::protocol::TType _etype202;
+            iprot->readListBegin(_etype202, _size199);
+            this->success.resize(_size199);
+            uint32_t _i203;
+            for (_i203 = 0; _i203 < _size199; ++_i203)
             {
-              xfer += this->success[_i193].read(iprot);
+              xfer += this->success[_i203].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -4513,10 +4513,10 @@ uint32_t NoteStore_listSearches_result::write(::apache::thrift::protocol::TProto
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
     {
       xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, this->success.size());
-      std::vector<evernote::edam::SavedSearch> ::const_iterator _iter194;
-      for (_iter194 = this->success.begin(); _iter194 != this->success.end(); ++_iter194)
+      std::vector<evernote::edam::SavedSearch> ::const_iterator _iter204;
+      for (_iter204 = this->success.begin(); _iter204 != this->success.end(); ++_iter204)
       {
-        xfer += (*_iter194).write(oprot);
+        xfer += (*_iter204).write(oprot);
       }
       xfer += oprot->writeListEnd();
     }
@@ -4559,14 +4559,14 @@ uint32_t NoteStore_listSearches_presult::read(::apache::thrift::protocol::TProto
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             (*(this->success)).clear();
-            uint32_t _size195;
-            ::apache::thrift::protocol::TType _etype198;
-            iprot->readListBegin(_etype198, _size195);
-            (*(this->success)).resize(_size195);
-            uint32_t _i199;
-            for (_i199 = 0; _i199 < _size195; ++_i199)
+            uint32_t _size205;
+            ::apache::thrift::protocol::TType _etype208;
+            iprot->readListBegin(_etype208, _size205);
+            (*(this->success)).resize(_size205);
+            uint32_t _i209;
+            for (_i209 = 0; _i209 < _size205; ++_i209)
             {
-              xfer += (*(this->success))[_i199].read(iprot);
+              xfer += (*(this->success))[_i209].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -8633,14 +8633,14 @@ uint32_t NoteStore_getNoteTagNames_result::read(::apache::thrift::protocol::TPro
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->success.clear();
-            uint32_t _size200;
-            ::apache::thrift::protocol::TType _etype203;
-            iprot->readListBegin(_etype203, _size200);
-            this->success.resize(_size200);
-            uint32_t _i204;
-            for (_i204 = 0; _i204 < _size200; ++_i204)
+            uint32_t _size210;
+            ::apache::thrift::protocol::TType _etype213;
+            iprot->readListBegin(_etype213, _size210);
+            this->success.resize(_size210);
+            uint32_t _i214;
+            for (_i214 = 0; _i214 < _size210; ++_i214)
             {
-              xfer += iprot->readString(this->success[_i204]);
+              xfer += iprot->readString(this->success[_i214]);
             }
             iprot->readListEnd();
           }
@@ -8695,10 +8695,10 @@ uint32_t NoteStore_getNoteTagNames_result::write(::apache::thrift::protocol::TPr
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
     {
       xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, this->success.size());
-      std::vector<std::string> ::const_iterator _iter205;
-      for (_iter205 = this->success.begin(); _iter205 != this->success.end(); ++_iter205)
+      std::vector<std::string> ::const_iterator _iter215;
+      for (_iter215 = this->success.begin(); _iter215 != this->success.end(); ++_iter215)
       {
-        xfer += oprot->writeString((*_iter205));
+        xfer += oprot->writeString((*_iter215));
       }
       xfer += oprot->writeListEnd();
     }
@@ -8745,14 +8745,14 @@ uint32_t NoteStore_getNoteTagNames_presult::read(::apache::thrift::protocol::TPr
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             (*(this->success)).clear();
-            uint32_t _size206;
-            ::apache::thrift::protocol::TType _etype209;
-            iprot->readListBegin(_etype209, _size206);
-            (*(this->success)).resize(_size206);
-            uint32_t _i210;
-            for (_i210 = 0; _i210 < _size206; ++_i210)
+            uint32_t _size216;
+            ::apache::thrift::protocol::TType _etype219;
+            iprot->readListBegin(_etype219, _size216);
+            (*(this->success)).resize(_size216);
+            uint32_t _i220;
+            for (_i220 = 0; _i220 < _size216; ++_i220)
             {
-              xfer += iprot->readString((*(this->success))[_i210]);
+              xfer += iprot->readString((*(this->success))[_i220]);
             }
             iprot->readListEnd();
           }
@@ -9757,14 +9757,14 @@ uint32_t NoteStore_expungeNotes_args::read(::apache::thrift::protocol::TProtocol
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->noteGuids.clear();
-            uint32_t _size211;
-            ::apache::thrift::protocol::TType _etype214;
-            iprot->readListBegin(_etype214, _size211);
-            this->noteGuids.resize(_size211);
-            uint32_t _i215;
-            for (_i215 = 0; _i215 < _size211; ++_i215)
+            uint32_t _size221;
+            ::apache::thrift::protocol::TType _etype224;
+            iprot->readListBegin(_etype224, _size221);
+            this->noteGuids.resize(_size221);
+            uint32_t _i225;
+            for (_i225 = 0; _i225 < _size221; ++_i225)
             {
-              xfer += iprot->readString(this->noteGuids[_i215]);
+              xfer += iprot->readString(this->noteGuids[_i225]);
             }
             iprot->readListEnd();
           }
@@ -9794,10 +9794,10 @@ uint32_t NoteStore_expungeNotes_args::write(::apache::thrift::protocol::TProtoco
   xfer += oprot->writeFieldBegin("noteGuids", ::apache::thrift::protocol::T_LIST, 2);
   {
     xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, this->noteGuids.size());
-    std::vector<evernote::edam::Guid> ::const_iterator _iter216;
-    for (_iter216 = this->noteGuids.begin(); _iter216 != this->noteGuids.end(); ++_iter216)
+    std::vector<evernote::edam::Guid> ::const_iterator _iter226;
+    for (_iter226 = this->noteGuids.begin(); _iter226 != this->noteGuids.end(); ++_iter226)
     {
-      xfer += oprot->writeString((*_iter216));
+      xfer += oprot->writeString((*_iter226));
     }
     xfer += oprot->writeListEnd();
   }
@@ -9816,10 +9816,10 @@ uint32_t NoteStore_expungeNotes_pargs::write(::apache::thrift::protocol::TProtoc
   xfer += oprot->writeFieldBegin("noteGuids", ::apache::thrift::protocol::T_LIST, 2);
   {
     xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, (*(this->noteGuids)).size());
-    std::vector<evernote::edam::Guid> ::const_iterator _iter217;
-    for (_iter217 = (*(this->noteGuids)).begin(); _iter217 != (*(this->noteGuids)).end(); ++_iter217)
+    std::vector<evernote::edam::Guid> ::const_iterator _iter227;
+    for (_iter227 = (*(this->noteGuids)).begin(); _iter227 != (*(this->noteGuids)).end(); ++_iter227)
     {
-      xfer += oprot->writeString((*_iter217));
+      xfer += oprot->writeString((*_iter227));
     }
     xfer += oprot->writeListEnd();
   }
@@ -10529,14 +10529,14 @@ uint32_t NoteStore_listNoteVersions_result::read(::apache::thrift::protocol::TPr
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->success.clear();
-            uint32_t _size218;
-            ::apache::thrift::protocol::TType _etype221;
-            iprot->readListBegin(_etype221, _size218);
-            this->success.resize(_size218);
-            uint32_t _i222;
-            for (_i222 = 0; _i222 < _size218; ++_i222)
+            uint32_t _size228;
+            ::apache::thrift::protocol::TType _etype231;
+            iprot->readListBegin(_etype231, _size228);
+            this->success.resize(_size228);
+            uint32_t _i232;
+            for (_i232 = 0; _i232 < _size228; ++_i232)
             {
-              xfer += this->success[_i222].read(iprot);
+              xfer += this->success[_i232].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -10591,10 +10591,10 @@ uint32_t NoteStore_listNoteVersions_result::write(::apache::thrift::protocol::TP
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
     {
       xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, this->success.size());
-      std::vector<NoteVersionId> ::const_iterator _iter223;
-      for (_iter223 = this->success.begin(); _iter223 != this->success.end(); ++_iter223)
+      std::vector<NoteVersionId> ::const_iterator _iter233;
+      for (_iter233 = this->success.begin(); _iter233 != this->success.end(); ++_iter233)
       {
-        xfer += (*_iter223).write(oprot);
+        xfer += (*_iter233).write(oprot);
       }
       xfer += oprot->writeListEnd();
     }
@@ -10641,14 +10641,14 @@ uint32_t NoteStore_listNoteVersions_presult::read(::apache::thrift::protocol::TP
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             (*(this->success)).clear();
-            uint32_t _size224;
-            ::apache::thrift::protocol::TType _etype227;
-            iprot->readListBegin(_etype227, _size224);
-            (*(this->success)).resize(_size224);
-            uint32_t _i228;
-            for (_i228 = 0; _i228 < _size224; ++_i228)
+            uint32_t _size234;
+            ::apache::thrift::protocol::TType _etype237;
+            iprot->readListBegin(_etype237, _size234);
+            (*(this->success)).resize(_size234);
+            uint32_t _i238;
+            for (_i238 = 0; _i238 < _size234; ++_i238)
             {
-              xfer += (*(this->success))[_i228].read(iprot);
+              xfer += (*(this->success))[_i238].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -13701,660 +13701,6 @@ uint32_t NoteStore_getResourceAttributes_presult::read(::apache::thrift::protoco
   return xfer;
 }
 
-uint32_t NoteStore_getAccountSize_args::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->authenticationToken);
-          this->__isset.authenticationToken = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t NoteStore_getAccountSize_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("NoteStore_getAccountSize_args");
-  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString(this->authenticationToken);
-  xfer += oprot->writeFieldEnd();
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-uint32_t NoteStore_getAccountSize_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("NoteStore_getAccountSize_pargs");
-  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString((*(this->authenticationToken)));
-  xfer += oprot->writeFieldEnd();
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-uint32_t NoteStore_getAccountSize_result::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 0:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64(this->success);
-          this->__isset.success = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->userException.read(iprot);
-          this->__isset.userException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 2:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->systemException.read(iprot);
-          this->__isset.systemException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t NoteStore_getAccountSize_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
-
-  uint32_t xfer = 0;
-
-  xfer += oprot->writeStructBegin("NoteStore_getAccountSize_result");
-
-  if (this->__isset.success) {
-    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_I64, 0);
-    xfer += oprot->writeI64(this->success);
-    xfer += oprot->writeFieldEnd();
-  } else if (this->__isset.userException) {
-    xfer += oprot->writeFieldBegin("userException", ::apache::thrift::protocol::T_STRUCT, 1);
-    xfer += this->userException.write(oprot);
-    xfer += oprot->writeFieldEnd();
-  } else if (this->__isset.systemException) {
-    xfer += oprot->writeFieldBegin("systemException", ::apache::thrift::protocol::T_STRUCT, 2);
-    xfer += this->systemException.write(oprot);
-    xfer += oprot->writeFieldEnd();
-  }
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-uint32_t NoteStore_getAccountSize_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 0:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64((*(this->success)));
-          this->__isset.success = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->userException.read(iprot);
-          this->__isset.userException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 2:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->systemException.read(iprot);
-          this->__isset.systemException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t NoteStore_getAds_args::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->authenticationToken);
-          this->__isset.authenticationToken = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 2:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->adParameters.read(iprot);
-          this->__isset.adParameters = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t NoteStore_getAds_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("NoteStore_getAds_args");
-  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString(this->authenticationToken);
-  xfer += oprot->writeFieldEnd();
-  xfer += oprot->writeFieldBegin("adParameters", ::apache::thrift::protocol::T_STRUCT, 2);
-  xfer += this->adParameters.write(oprot);
-  xfer += oprot->writeFieldEnd();
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-uint32_t NoteStore_getAds_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("NoteStore_getAds_pargs");
-  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString((*(this->authenticationToken)));
-  xfer += oprot->writeFieldEnd();
-  xfer += oprot->writeFieldBegin("adParameters", ::apache::thrift::protocol::T_STRUCT, 2);
-  xfer += (*(this->adParameters)).write(oprot);
-  xfer += oprot->writeFieldEnd();
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-uint32_t NoteStore_getAds_result::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 0:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            this->success.clear();
-            uint32_t _size229;
-            ::apache::thrift::protocol::TType _etype232;
-            iprot->readListBegin(_etype232, _size229);
-            this->success.resize(_size229);
-            uint32_t _i233;
-            for (_i233 = 0; _i233 < _size229; ++_i233)
-            {
-              xfer += this->success[_i233].read(iprot);
-            }
-            iprot->readListEnd();
-          }
-          this->__isset.success = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->userException.read(iprot);
-          this->__isset.userException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 2:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->systemException.read(iprot);
-          this->__isset.systemException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t NoteStore_getAds_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
-
-  uint32_t xfer = 0;
-
-  xfer += oprot->writeStructBegin("NoteStore_getAds_result");
-
-  if (this->__isset.success) {
-    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
-    {
-      xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, this->success.size());
-      std::vector<evernote::edam::Ad> ::const_iterator _iter234;
-      for (_iter234 = this->success.begin(); _iter234 != this->success.end(); ++_iter234)
-      {
-        xfer += (*_iter234).write(oprot);
-      }
-      xfer += oprot->writeListEnd();
-    }
-    xfer += oprot->writeFieldEnd();
-  } else if (this->__isset.userException) {
-    xfer += oprot->writeFieldBegin("userException", ::apache::thrift::protocol::T_STRUCT, 1);
-    xfer += this->userException.write(oprot);
-    xfer += oprot->writeFieldEnd();
-  } else if (this->__isset.systemException) {
-    xfer += oprot->writeFieldBegin("systemException", ::apache::thrift::protocol::T_STRUCT, 2);
-    xfer += this->systemException.write(oprot);
-    xfer += oprot->writeFieldEnd();
-  }
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-uint32_t NoteStore_getAds_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 0:
-        if (ftype == ::apache::thrift::protocol::T_LIST) {
-          {
-            (*(this->success)).clear();
-            uint32_t _size235;
-            ::apache::thrift::protocol::TType _etype238;
-            iprot->readListBegin(_etype238, _size235);
-            (*(this->success)).resize(_size235);
-            uint32_t _i239;
-            for (_i239 = 0; _i239 < _size235; ++_i239)
-            {
-              xfer += (*(this->success))[_i239].read(iprot);
-            }
-            iprot->readListEnd();
-          }
-          this->__isset.success = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->userException.read(iprot);
-          this->__isset.userException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 2:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->systemException.read(iprot);
-          this->__isset.systemException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t NoteStore_getRandomAd_args::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRING) {
-          xfer += iprot->readString(this->authenticationToken);
-          this->__isset.authenticationToken = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 2:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->adParameters.read(iprot);
-          this->__isset.adParameters = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t NoteStore_getRandomAd_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("NoteStore_getRandomAd_args");
-  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString(this->authenticationToken);
-  xfer += oprot->writeFieldEnd();
-  xfer += oprot->writeFieldBegin("adParameters", ::apache::thrift::protocol::T_STRUCT, 2);
-  xfer += this->adParameters.write(oprot);
-  xfer += oprot->writeFieldEnd();
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-uint32_t NoteStore_getRandomAd_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
-  uint32_t xfer = 0;
-  xfer += oprot->writeStructBegin("NoteStore_getRandomAd_pargs");
-  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
-  xfer += oprot->writeString((*(this->authenticationToken)));
-  xfer += oprot->writeFieldEnd();
-  xfer += oprot->writeFieldBegin("adParameters", ::apache::thrift::protocol::T_STRUCT, 2);
-  xfer += (*(this->adParameters)).write(oprot);
-  xfer += oprot->writeFieldEnd();
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-uint32_t NoteStore_getRandomAd_result::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 0:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->success.read(iprot);
-          this->__isset.success = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->userException.read(iprot);
-          this->__isset.userException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 2:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->systemException.read(iprot);
-          this->__isset.systemException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
-uint32_t NoteStore_getRandomAd_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
-
-  uint32_t xfer = 0;
-
-  xfer += oprot->writeStructBegin("NoteStore_getRandomAd_result");
-
-  if (this->__isset.success) {
-    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRUCT, 0);
-    xfer += this->success.write(oprot);
-    xfer += oprot->writeFieldEnd();
-  } else if (this->__isset.userException) {
-    xfer += oprot->writeFieldBegin("userException", ::apache::thrift::protocol::T_STRUCT, 1);
-    xfer += this->userException.write(oprot);
-    xfer += oprot->writeFieldEnd();
-  } else if (this->__isset.systemException) {
-    xfer += oprot->writeFieldBegin("systemException", ::apache::thrift::protocol::T_STRUCT, 2);
-    xfer += this->systemException.write(oprot);
-    xfer += oprot->writeFieldEnd();
-  }
-  xfer += oprot->writeFieldStop();
-  xfer += oprot->writeStructEnd();
-  return xfer;
-}
-
-uint32_t NoteStore_getRandomAd_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
-
-  uint32_t xfer = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TType ftype;
-  int16_t fid;
-
-  xfer += iprot->readStructBegin(fname);
-
-  using ::apache::thrift::protocol::TProtocolException;
-
-
-  while (true)
-  {
-    xfer += iprot->readFieldBegin(fname, ftype, fid);
-    if (ftype == ::apache::thrift::protocol::T_STOP) {
-      break;
-    }
-    switch (fid)
-    {
-      case 0:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += (*(this->success)).read(iprot);
-          this->__isset.success = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 1:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->userException.read(iprot);
-          this->__isset.userException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      case 2:
-        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
-          xfer += this->systemException.read(iprot);
-          this->__isset.systemException = true;
-        } else {
-          xfer += iprot->skip(ftype);
-        }
-        break;
-      default:
-        xfer += iprot->skip(ftype);
-        break;
-    }
-    xfer += iprot->readFieldEnd();
-  }
-
-  xfer += iprot->readStructEnd();
-
-  return xfer;
-}
-
 uint32_t NoteStore_getPublicNotebook_args::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
@@ -14799,6 +14145,238 @@ uint32_t NoteStore_createSharedNotebook_presult::read(::apache::thrift::protocol
   return xfer;
 }
 
+uint32_t NoteStore_updateSharedNotebook_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->authenticationToken);
+          this->__isset.authenticationToken = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->sharedNotebook.read(iprot);
+          this->__isset.sharedNotebook = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t NoteStore_updateSharedNotebook_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("NoteStore_updateSharedNotebook_args");
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->authenticationToken);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("sharedNotebook", ::apache::thrift::protocol::T_STRUCT, 2);
+  xfer += this->sharedNotebook.write(oprot);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t NoteStore_updateSharedNotebook_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("NoteStore_updateSharedNotebook_pargs");
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->authenticationToken)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("sharedNotebook", ::apache::thrift::protocol::T_STRUCT, 2);
+  xfer += (*(this->sharedNotebook)).write(oprot);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t NoteStore_updateSharedNotebook_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->success);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->userException.read(iprot);
+          this->__isset.userException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->notFoundException.read(iprot);
+          this->__isset.notFoundException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t NoteStore_updateSharedNotebook_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+
+  uint32_t xfer = 0;
+
+  xfer += oprot->writeStructBegin("NoteStore_updateSharedNotebook_result");
+
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_I32, 0);
+    xfer += oprot->writeI32(this->success);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.userException) {
+    xfer += oprot->writeFieldBegin("userException", ::apache::thrift::protocol::T_STRUCT, 1);
+    xfer += this->userException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.notFoundException) {
+    xfer += oprot->writeFieldBegin("notFoundException", ::apache::thrift::protocol::T_STRUCT, 2);
+    xfer += this->notFoundException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.systemException) {
+    xfer += oprot->writeFieldBegin("systemException", ::apache::thrift::protocol::T_STRUCT, 3);
+    xfer += this->systemException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t NoteStore_updateSharedNotebook_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32((*(this->success)));
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->userException.read(iprot);
+          this->__isset.userException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->notFoundException.read(iprot);
+          this->__isset.notFoundException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
 uint32_t NoteStore_sendMessageToSharedNotebookMembers_args::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
@@ -14847,14 +14425,14 @@ uint32_t NoteStore_sendMessageToSharedNotebookMembers_args::read(::apache::thrif
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->recipients.clear();
-            uint32_t _size240;
-            ::apache::thrift::protocol::TType _etype243;
-            iprot->readListBegin(_etype243, _size240);
-            this->recipients.resize(_size240);
-            uint32_t _i244;
-            for (_i244 = 0; _i244 < _size240; ++_i244)
+            uint32_t _size239;
+            ::apache::thrift::protocol::TType _etype242;
+            iprot->readListBegin(_etype242, _size239);
+            this->recipients.resize(_size239);
+            uint32_t _i243;
+            for (_i243 = 0; _i243 < _size239; ++_i243)
             {
-              xfer += iprot->readString(this->recipients[_i244]);
+              xfer += iprot->readString(this->recipients[_i243]);
             }
             iprot->readListEnd();
           }
@@ -14890,10 +14468,10 @@ uint32_t NoteStore_sendMessageToSharedNotebookMembers_args::write(::apache::thri
   xfer += oprot->writeFieldBegin("recipients", ::apache::thrift::protocol::T_LIST, 4);
   {
     xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, this->recipients.size());
-    std::vector<std::string> ::const_iterator _iter245;
-    for (_iter245 = this->recipients.begin(); _iter245 != this->recipients.end(); ++_iter245)
+    std::vector<std::string> ::const_iterator _iter244;
+    for (_iter244 = this->recipients.begin(); _iter244 != this->recipients.end(); ++_iter244)
     {
-      xfer += oprot->writeString((*_iter245));
+      xfer += oprot->writeString((*_iter244));
     }
     xfer += oprot->writeListEnd();
   }
@@ -14918,10 +14496,10 @@ uint32_t NoteStore_sendMessageToSharedNotebookMembers_pargs::write(::apache::thr
   xfer += oprot->writeFieldBegin("recipients", ::apache::thrift::protocol::T_LIST, 4);
   {
     xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRING, (*(this->recipients)).size());
-    std::vector<std::string> ::const_iterator _iter246;
-    for (_iter246 = (*(this->recipients)).begin(); _iter246 != (*(this->recipients)).end(); ++_iter246)
+    std::vector<std::string> ::const_iterator _iter245;
+    for (_iter245 = (*(this->recipients)).begin(); _iter245 != (*(this->recipients)).end(); ++_iter245)
     {
-      xfer += oprot->writeString((*_iter246));
+      xfer += oprot->writeString((*_iter245));
     }
     xfer += oprot->writeListEnd();
   }
@@ -15173,14 +14751,14 @@ uint32_t NoteStore_listSharedNotebooks_result::read(::apache::thrift::protocol::
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->success.clear();
-            uint32_t _size247;
-            ::apache::thrift::protocol::TType _etype250;
-            iprot->readListBegin(_etype250, _size247);
-            this->success.resize(_size247);
-            uint32_t _i251;
-            for (_i251 = 0; _i251 < _size247; ++_i251)
+            uint32_t _size246;
+            ::apache::thrift::protocol::TType _etype249;
+            iprot->readListBegin(_etype249, _size246);
+            this->success.resize(_size246);
+            uint32_t _i250;
+            for (_i250 = 0; _i250 < _size246; ++_i250)
             {
-              xfer += this->success[_i251].read(iprot);
+              xfer += this->success[_i250].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -15235,10 +14813,10 @@ uint32_t NoteStore_listSharedNotebooks_result::write(::apache::thrift::protocol:
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
     {
       xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, this->success.size());
-      std::vector<evernote::edam::SharedNotebook> ::const_iterator _iter252;
-      for (_iter252 = this->success.begin(); _iter252 != this->success.end(); ++_iter252)
+      std::vector<evernote::edam::SharedNotebook> ::const_iterator _iter251;
+      for (_iter251 = this->success.begin(); _iter251 != this->success.end(); ++_iter251)
       {
-        xfer += (*_iter252).write(oprot);
+        xfer += (*_iter251).write(oprot);
       }
       xfer += oprot->writeListEnd();
     }
@@ -15285,14 +14863,14 @@ uint32_t NoteStore_listSharedNotebooks_presult::read(::apache::thrift::protocol:
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             (*(this->success)).clear();
-            uint32_t _size253;
-            ::apache::thrift::protocol::TType _etype256;
-            iprot->readListBegin(_etype256, _size253);
-            (*(this->success)).resize(_size253);
-            uint32_t _i257;
-            for (_i257 = 0; _i257 < _size253; ++_i257)
+            uint32_t _size252;
+            ::apache::thrift::protocol::TType _etype255;
+            iprot->readListBegin(_etype255, _size252);
+            (*(this->success)).resize(_size252);
+            uint32_t _i256;
+            for (_i256 = 0; _i256 < _size252; ++_i256)
             {
-              xfer += (*(this->success))[_i257].read(iprot);
+              xfer += (*(this->success))[_i256].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -15369,14 +14947,14 @@ uint32_t NoteStore_expungeSharedNotebooks_args::read(::apache::thrift::protocol:
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->sharedNotebookIds.clear();
-            uint32_t _size258;
-            ::apache::thrift::protocol::TType _etype261;
-            iprot->readListBegin(_etype261, _size258);
-            this->sharedNotebookIds.resize(_size258);
-            uint32_t _i262;
-            for (_i262 = 0; _i262 < _size258; ++_i262)
+            uint32_t _size257;
+            ::apache::thrift::protocol::TType _etype260;
+            iprot->readListBegin(_etype260, _size257);
+            this->sharedNotebookIds.resize(_size257);
+            uint32_t _i261;
+            for (_i261 = 0; _i261 < _size257; ++_i261)
             {
-              xfer += iprot->readI64(this->sharedNotebookIds[_i262]);
+              xfer += iprot->readI64(this->sharedNotebookIds[_i261]);
             }
             iprot->readListEnd();
           }
@@ -15406,10 +14984,10 @@ uint32_t NoteStore_expungeSharedNotebooks_args::write(::apache::thrift::protocol
   xfer += oprot->writeFieldBegin("sharedNotebookIds", ::apache::thrift::protocol::T_LIST, 2);
   {
     xfer += oprot->writeListBegin(::apache::thrift::protocol::T_I64, this->sharedNotebookIds.size());
-    std::vector<int64_t> ::const_iterator _iter263;
-    for (_iter263 = this->sharedNotebookIds.begin(); _iter263 != this->sharedNotebookIds.end(); ++_iter263)
+    std::vector<int64_t> ::const_iterator _iter262;
+    for (_iter262 = this->sharedNotebookIds.begin(); _iter262 != this->sharedNotebookIds.end(); ++_iter262)
     {
-      xfer += oprot->writeI64((*_iter263));
+      xfer += oprot->writeI64((*_iter262));
     }
     xfer += oprot->writeListEnd();
   }
@@ -15428,10 +15006,10 @@ uint32_t NoteStore_expungeSharedNotebooks_pargs::write(::apache::thrift::protoco
   xfer += oprot->writeFieldBegin("sharedNotebookIds", ::apache::thrift::protocol::T_LIST, 2);
   {
     xfer += oprot->writeListBegin(::apache::thrift::protocol::T_I64, (*(this->sharedNotebookIds)).size());
-    std::vector<int64_t> ::const_iterator _iter264;
-    for (_iter264 = (*(this->sharedNotebookIds)).begin(); _iter264 != (*(this->sharedNotebookIds)).end(); ++_iter264)
+    std::vector<int64_t> ::const_iterator _iter263;
+    for (_iter263 = (*(this->sharedNotebookIds)).begin(); _iter263 != (*(this->sharedNotebookIds)).end(); ++_iter263)
     {
-      xfer += oprot->writeI64((*_iter264));
+      xfer += oprot->writeI64((*_iter263));
     }
     xfer += oprot->writeListEnd();
   }
@@ -16147,14 +15725,14 @@ uint32_t NoteStore_listLinkedNotebooks_result::read(::apache::thrift::protocol::
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             this->success.clear();
-            uint32_t _size265;
-            ::apache::thrift::protocol::TType _etype268;
-            iprot->readListBegin(_etype268, _size265);
-            this->success.resize(_size265);
-            uint32_t _i269;
-            for (_i269 = 0; _i269 < _size265; ++_i269)
+            uint32_t _size264;
+            ::apache::thrift::protocol::TType _etype267;
+            iprot->readListBegin(_etype267, _size264);
+            this->success.resize(_size264);
+            uint32_t _i268;
+            for (_i268 = 0; _i268 < _size264; ++_i268)
             {
-              xfer += this->success[_i269].read(iprot);
+              xfer += this->success[_i268].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -16209,10 +15787,10 @@ uint32_t NoteStore_listLinkedNotebooks_result::write(::apache::thrift::protocol:
     xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_LIST, 0);
     {
       xfer += oprot->writeListBegin(::apache::thrift::protocol::T_STRUCT, this->success.size());
-      std::vector<evernote::edam::LinkedNotebook> ::const_iterator _iter270;
-      for (_iter270 = this->success.begin(); _iter270 != this->success.end(); ++_iter270)
+      std::vector<evernote::edam::LinkedNotebook> ::const_iterator _iter269;
+      for (_iter269 = this->success.begin(); _iter269 != this->success.end(); ++_iter269)
       {
-        xfer += (*_iter270).write(oprot);
+        xfer += (*_iter269).write(oprot);
       }
       xfer += oprot->writeListEnd();
     }
@@ -16259,14 +15837,14 @@ uint32_t NoteStore_listLinkedNotebooks_presult::read(::apache::thrift::protocol:
         if (ftype == ::apache::thrift::protocol::T_LIST) {
           {
             (*(this->success)).clear();
-            uint32_t _size271;
-            ::apache::thrift::protocol::TType _etype274;
-            iprot->readListBegin(_etype274, _size271);
-            (*(this->success)).resize(_size271);
-            uint32_t _i275;
-            for (_i275 = 0; _i275 < _size271; ++_i275)
+            uint32_t _size270;
+            ::apache::thrift::protocol::TType _etype273;
+            iprot->readListBegin(_etype273, _size270);
+            (*(this->success)).resize(_size270);
+            uint32_t _i274;
+            for (_i274 = 0; _i274 < _size270; ++_i274)
             {
-              xfer += (*(this->success))[_i275].read(iprot);
+              xfer += (*(this->success))[_i274].read(iprot);
             }
             iprot->readListEnd();
           }
@@ -17865,6 +17443,252 @@ uint32_t NoteStore_authenticateToSharedNote_presult::read(::apache::thrift::prot
         if (ftype == ::apache::thrift::protocol::T_STRUCT) {
           xfer += this->systemException.read(iprot);
           this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t NoteStore_findRelated_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->authenticationToken);
+          this->__isset.authenticationToken = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->query.read(iprot);
+          this->__isset.query = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->resultSpec.read(iprot);
+          this->__isset.resultSpec = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t NoteStore_findRelated_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("NoteStore_findRelated_args");
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->authenticationToken);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("query", ::apache::thrift::protocol::T_STRUCT, 2);
+  xfer += this->query.write(oprot);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("resultSpec", ::apache::thrift::protocol::T_STRUCT, 3);
+  xfer += this->resultSpec.write(oprot);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t NoteStore_findRelated_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("NoteStore_findRelated_pargs");
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->authenticationToken)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("query", ::apache::thrift::protocol::T_STRUCT, 2);
+  xfer += (*(this->query)).write(oprot);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("resultSpec", ::apache::thrift::protocol::T_STRUCT, 3);
+  xfer += (*(this->resultSpec)).write(oprot);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t NoteStore_findRelated_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->success.read(iprot);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->userException.read(iprot);
+          this->__isset.userException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->notFoundException.read(iprot);
+          this->__isset.notFoundException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t NoteStore_findRelated_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+
+  uint32_t xfer = 0;
+
+  xfer += oprot->writeStructBegin("NoteStore_findRelated_result");
+
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRUCT, 0);
+    xfer += this->success.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.userException) {
+    xfer += oprot->writeFieldBegin("userException", ::apache::thrift::protocol::T_STRUCT, 1);
+    xfer += this->userException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.systemException) {
+    xfer += oprot->writeFieldBegin("systemException", ::apache::thrift::protocol::T_STRUCT, 2);
+    xfer += this->systemException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.notFoundException) {
+    xfer += oprot->writeFieldBegin("notFoundException", ::apache::thrift::protocol::T_STRUCT, 3);
+    xfer += this->notFoundException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t NoteStore_findRelated_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += (*(this->success)).read(iprot);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->userException.read(iprot);
+          this->__isset.userException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->notFoundException.read(iprot);
+          this->__isset.notFoundException = true;
         } else {
           xfer += iprot->skip(ftype);
         }
@@ -21868,206 +21692,6 @@ void NoteStoreClient::recv_getResourceAttributes(evernote::edam::ResourceAttribu
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "getResourceAttributes failed: unknown result");
 }
 
-int64_t NoteStoreClient::getAccountSize(const std::string& authenticationToken)
-{
-  send_getAccountSize(authenticationToken);
-  return recv_getAccountSize();
-}
-
-void NoteStoreClient::send_getAccountSize(const std::string& authenticationToken)
-{
-  int32_t cseqid = 0;
-  oprot_->writeMessageBegin("getAccountSize", ::apache::thrift::protocol::T_CALL, cseqid);
-
-  NoteStore_getAccountSize_pargs args;
-  args.authenticationToken = &authenticationToken;
-  args.write(oprot_);
-
-  oprot_->writeMessageEnd();
-  oprot_->getTransport()->flush();
-  oprot_->getTransport()->writeEnd();
-}
-
-int64_t NoteStoreClient::recv_getAccountSize()
-{
-
-  int32_t rseqid = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TMessageType mtype;
-
-  iprot_->readMessageBegin(fname, mtype, rseqid);
-  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
-    ::apache::thrift::TApplicationException x;
-    x.read(iprot_);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-    throw x;
-  }
-  if (mtype != ::apache::thrift::protocol::T_REPLY) {
-    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::INVALID_MESSAGE_TYPE);
-  }
-  if (fname.compare("getAccountSize") != 0) {
-    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::WRONG_METHOD_NAME);
-  }
-  int64_t _return;
-  NoteStore_getAccountSize_presult result;
-  result.success = &_return;
-  result.read(iprot_);
-  iprot_->readMessageEnd();
-  iprot_->getTransport()->readEnd();
-
-  if (result.__isset.success) {
-    return _return;
-  }
-  if (result.__isset.userException) {
-    throw result.userException;
-  }
-  if (result.__isset.systemException) {
-    throw result.systemException;
-  }
-  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "getAccountSize failed: unknown result");
-}
-
-void NoteStoreClient::getAds(std::vector<evernote::edam::Ad> & _return, const std::string& authenticationToken, const AdParameters& adParameters)
-{
-  send_getAds(authenticationToken, adParameters);
-  recv_getAds(_return);
-}
-
-void NoteStoreClient::send_getAds(const std::string& authenticationToken, const AdParameters& adParameters)
-{
-  int32_t cseqid = 0;
-  oprot_->writeMessageBegin("getAds", ::apache::thrift::protocol::T_CALL, cseqid);
-
-  NoteStore_getAds_pargs args;
-  args.authenticationToken = &authenticationToken;
-  args.adParameters = &adParameters;
-  args.write(oprot_);
-
-  oprot_->writeMessageEnd();
-  oprot_->getTransport()->flush();
-  oprot_->getTransport()->writeEnd();
-}
-
-void NoteStoreClient::recv_getAds(std::vector<evernote::edam::Ad> & _return)
-{
-
-  int32_t rseqid = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TMessageType mtype;
-
-  iprot_->readMessageBegin(fname, mtype, rseqid);
-  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
-    ::apache::thrift::TApplicationException x;
-    x.read(iprot_);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-    throw x;
-  }
-  if (mtype != ::apache::thrift::protocol::T_REPLY) {
-    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::INVALID_MESSAGE_TYPE);
-  }
-  if (fname.compare("getAds") != 0) {
-    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::WRONG_METHOD_NAME);
-  }
-  NoteStore_getAds_presult result;
-  result.success = &_return;
-  result.read(iprot_);
-  iprot_->readMessageEnd();
-  iprot_->getTransport()->readEnd();
-
-  if (result.__isset.success) {
-    // _return pointer has now been filled
-    return;
-  }
-  if (result.__isset.userException) {
-    throw result.userException;
-  }
-  if (result.__isset.systemException) {
-    throw result.systemException;
-  }
-  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "getAds failed: unknown result");
-}
-
-void NoteStoreClient::getRandomAd(evernote::edam::Ad& _return, const std::string& authenticationToken, const AdParameters& adParameters)
-{
-  send_getRandomAd(authenticationToken, adParameters);
-  recv_getRandomAd(_return);
-}
-
-void NoteStoreClient::send_getRandomAd(const std::string& authenticationToken, const AdParameters& adParameters)
-{
-  int32_t cseqid = 0;
-  oprot_->writeMessageBegin("getRandomAd", ::apache::thrift::protocol::T_CALL, cseqid);
-
-  NoteStore_getRandomAd_pargs args;
-  args.authenticationToken = &authenticationToken;
-  args.adParameters = &adParameters;
-  args.write(oprot_);
-
-  oprot_->writeMessageEnd();
-  oprot_->getTransport()->flush();
-  oprot_->getTransport()->writeEnd();
-}
-
-void NoteStoreClient::recv_getRandomAd(evernote::edam::Ad& _return)
-{
-
-  int32_t rseqid = 0;
-  std::string fname;
-  ::apache::thrift::protocol::TMessageType mtype;
-
-  iprot_->readMessageBegin(fname, mtype, rseqid);
-  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
-    ::apache::thrift::TApplicationException x;
-    x.read(iprot_);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-    throw x;
-  }
-  if (mtype != ::apache::thrift::protocol::T_REPLY) {
-    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::INVALID_MESSAGE_TYPE);
-  }
-  if (fname.compare("getRandomAd") != 0) {
-    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
-    iprot_->readMessageEnd();
-    iprot_->getTransport()->readEnd();
-    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::WRONG_METHOD_NAME);
-  }
-  NoteStore_getRandomAd_presult result;
-  result.success = &_return;
-  result.read(iprot_);
-  iprot_->readMessageEnd();
-  iprot_->getTransport()->readEnd();
-
-  if (result.__isset.success) {
-    // _return pointer has now been filled
-    return;
-  }
-  if (result.__isset.userException) {
-    throw result.userException;
-  }
-  if (result.__isset.systemException) {
-    throw result.systemException;
-  }
-  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "getRandomAd failed: unknown result");
-}
-
 void NoteStoreClient::getPublicNotebook(evernote::edam::Notebook& _return, const evernote::edam::UserID userId, const std::string& publicUri)
 {
   send_getPublicNotebook(userId, publicUri);
@@ -22203,6 +21827,76 @@ void NoteStoreClient::recv_createSharedNotebook(evernote::edam::SharedNotebook& 
     throw result.systemException;
   }
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "createSharedNotebook failed: unknown result");
+}
+
+int32_t NoteStoreClient::updateSharedNotebook(const std::string& authenticationToken, const evernote::edam::SharedNotebook& sharedNotebook)
+{
+  send_updateSharedNotebook(authenticationToken, sharedNotebook);
+  return recv_updateSharedNotebook();
+}
+
+void NoteStoreClient::send_updateSharedNotebook(const std::string& authenticationToken, const evernote::edam::SharedNotebook& sharedNotebook)
+{
+  int32_t cseqid = 0;
+  oprot_->writeMessageBegin("updateSharedNotebook", ::apache::thrift::protocol::T_CALL, cseqid);
+
+  NoteStore_updateSharedNotebook_pargs args;
+  args.authenticationToken = &authenticationToken;
+  args.sharedNotebook = &sharedNotebook;
+  args.write(oprot_);
+
+  oprot_->writeMessageEnd();
+  oprot_->getTransport()->flush();
+  oprot_->getTransport()->writeEnd();
+}
+
+int32_t NoteStoreClient::recv_updateSharedNotebook()
+{
+
+  int32_t rseqid = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TMessageType mtype;
+
+  iprot_->readMessageBegin(fname, mtype, rseqid);
+  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
+    ::apache::thrift::TApplicationException x;
+    x.read(iprot_);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw x;
+  }
+  if (mtype != ::apache::thrift::protocol::T_REPLY) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::INVALID_MESSAGE_TYPE);
+  }
+  if (fname.compare("updateSharedNotebook") != 0) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::WRONG_METHOD_NAME);
+  }
+  int32_t _return;
+  NoteStore_updateSharedNotebook_presult result;
+  result.success = &_return;
+  result.read(iprot_);
+  iprot_->readMessageEnd();
+  iprot_->getTransport()->readEnd();
+
+  if (result.__isset.success) {
+    return _return;
+  }
+  if (result.__isset.userException) {
+    throw result.userException;
+  }
+  if (result.__isset.notFoundException) {
+    throw result.notFoundException;
+  }
+  if (result.__isset.systemException) {
+    throw result.systemException;
+  }
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "updateSharedNotebook failed: unknown result");
 }
 
 int32_t NoteStoreClient::sendMessageToSharedNotebookMembers(const std::string& authenticationToken, const evernote::edam::Guid& notebookGuid, const std::string& messageText, const std::vector<std::string> & recipients)
@@ -23102,6 +22796,77 @@ void NoteStoreClient::recv_authenticateToSharedNote(evernote::edam::Authenticati
     throw result.systemException;
   }
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "authenticateToSharedNote failed: unknown result");
+}
+
+void NoteStoreClient::findRelated(RelatedResult& _return, const std::string& authenticationToken, const RelatedQuery& query, const RelatedResultSpec& resultSpec)
+{
+  send_findRelated(authenticationToken, query, resultSpec);
+  recv_findRelated(_return);
+}
+
+void NoteStoreClient::send_findRelated(const std::string& authenticationToken, const RelatedQuery& query, const RelatedResultSpec& resultSpec)
+{
+  int32_t cseqid = 0;
+  oprot_->writeMessageBegin("findRelated", ::apache::thrift::protocol::T_CALL, cseqid);
+
+  NoteStore_findRelated_pargs args;
+  args.authenticationToken = &authenticationToken;
+  args.query = &query;
+  args.resultSpec = &resultSpec;
+  args.write(oprot_);
+
+  oprot_->writeMessageEnd();
+  oprot_->getTransport()->flush();
+  oprot_->getTransport()->writeEnd();
+}
+
+void NoteStoreClient::recv_findRelated(RelatedResult& _return)
+{
+
+  int32_t rseqid = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TMessageType mtype;
+
+  iprot_->readMessageBegin(fname, mtype, rseqid);
+  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
+    ::apache::thrift::TApplicationException x;
+    x.read(iprot_);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw x;
+  }
+  if (mtype != ::apache::thrift::protocol::T_REPLY) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::INVALID_MESSAGE_TYPE);
+  }
+  if (fname.compare("findRelated") != 0) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::WRONG_METHOD_NAME);
+  }
+  NoteStore_findRelated_presult result;
+  result.success = &_return;
+  result.read(iprot_);
+  iprot_->readMessageEnd();
+  iprot_->getTransport()->readEnd();
+
+  if (result.__isset.success) {
+    // _return pointer has now been filled
+    return;
+  }
+  if (result.__isset.userException) {
+    throw result.userException;
+  }
+  if (result.__isset.systemException) {
+    throw result.systemException;
+  }
+  if (result.__isset.notFoundException) {
+    throw result.notFoundException;
+  }
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "findRelated failed: unknown result");
 }
 
 bool NoteStoreProcessor::process(boost::shared_ptr< ::apache::thrift::protocol::TProtocol> piprot, boost::shared_ptr< ::apache::thrift::protocol::TProtocol> poprot) {
@@ -25224,108 +24989,6 @@ void NoteStoreProcessor::process_getResourceAttributes(int32_t seqid, ::apache::
   oprot->getTransport()->writeEnd();
 }
 
-void NoteStoreProcessor::process_getAccountSize(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot)
-{
-  NoteStore_getAccountSize_args args;
-  args.read(iprot);
-  iprot->readMessageEnd();
-  iprot->getTransport()->readEnd();
-
-  NoteStore_getAccountSize_result result;
-  try {
-    result.success = iface_->getAccountSize(args.authenticationToken);
-    result.__isset.success = true;
-  } catch (evernote::edam::EDAMUserException &userException) {
-    result.userException = userException;
-    result.__isset.userException = true;
-  } catch (evernote::edam::EDAMSystemException &systemException) {
-    result.systemException = systemException;
-    result.__isset.systemException = true;
-  } catch (const std::exception& e) {
-    ::apache::thrift::TApplicationException x(e.what());
-    oprot->writeMessageBegin("getAccountSize", ::apache::thrift::protocol::T_EXCEPTION, seqid);
-    x.write(oprot);
-    oprot->writeMessageEnd();
-    oprot->getTransport()->flush();
-    oprot->getTransport()->writeEnd();
-    return;
-  }
-
-  oprot->writeMessageBegin("getAccountSize", ::apache::thrift::protocol::T_REPLY, seqid);
-  result.write(oprot);
-  oprot->writeMessageEnd();
-  oprot->getTransport()->flush();
-  oprot->getTransport()->writeEnd();
-}
-
-void NoteStoreProcessor::process_getAds(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot)
-{
-  NoteStore_getAds_args args;
-  args.read(iprot);
-  iprot->readMessageEnd();
-  iprot->getTransport()->readEnd();
-
-  NoteStore_getAds_result result;
-  try {
-    iface_->getAds(result.success, args.authenticationToken, args.adParameters);
-    result.__isset.success = true;
-  } catch (evernote::edam::EDAMUserException &userException) {
-    result.userException = userException;
-    result.__isset.userException = true;
-  } catch (evernote::edam::EDAMSystemException &systemException) {
-    result.systemException = systemException;
-    result.__isset.systemException = true;
-  } catch (const std::exception& e) {
-    ::apache::thrift::TApplicationException x(e.what());
-    oprot->writeMessageBegin("getAds", ::apache::thrift::protocol::T_EXCEPTION, seqid);
-    x.write(oprot);
-    oprot->writeMessageEnd();
-    oprot->getTransport()->flush();
-    oprot->getTransport()->writeEnd();
-    return;
-  }
-
-  oprot->writeMessageBegin("getAds", ::apache::thrift::protocol::T_REPLY, seqid);
-  result.write(oprot);
-  oprot->writeMessageEnd();
-  oprot->getTransport()->flush();
-  oprot->getTransport()->writeEnd();
-}
-
-void NoteStoreProcessor::process_getRandomAd(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot)
-{
-  NoteStore_getRandomAd_args args;
-  args.read(iprot);
-  iprot->readMessageEnd();
-  iprot->getTransport()->readEnd();
-
-  NoteStore_getRandomAd_result result;
-  try {
-    iface_->getRandomAd(result.success, args.authenticationToken, args.adParameters);
-    result.__isset.success = true;
-  } catch (evernote::edam::EDAMUserException &userException) {
-    result.userException = userException;
-    result.__isset.userException = true;
-  } catch (evernote::edam::EDAMSystemException &systemException) {
-    result.systemException = systemException;
-    result.__isset.systemException = true;
-  } catch (const std::exception& e) {
-    ::apache::thrift::TApplicationException x(e.what());
-    oprot->writeMessageBegin("getRandomAd", ::apache::thrift::protocol::T_EXCEPTION, seqid);
-    x.write(oprot);
-    oprot->writeMessageEnd();
-    oprot->getTransport()->flush();
-    oprot->getTransport()->writeEnd();
-    return;
-  }
-
-  oprot->writeMessageBegin("getRandomAd", ::apache::thrift::protocol::T_REPLY, seqid);
-  result.write(oprot);
-  oprot->writeMessageEnd();
-  oprot->getTransport()->flush();
-  oprot->getTransport()->writeEnd();
-}
-
 void NoteStoreProcessor::process_getPublicNotebook(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot)
 {
   NoteStore_getPublicNotebook_args args;
@@ -25391,6 +25054,43 @@ void NoteStoreProcessor::process_createSharedNotebook(int32_t seqid, ::apache::t
   }
 
   oprot->writeMessageBegin("createSharedNotebook", ::apache::thrift::protocol::T_REPLY, seqid);
+  result.write(oprot);
+  oprot->writeMessageEnd();
+  oprot->getTransport()->flush();
+  oprot->getTransport()->writeEnd();
+}
+
+void NoteStoreProcessor::process_updateSharedNotebook(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot)
+{
+  NoteStore_updateSharedNotebook_args args;
+  args.read(iprot);
+  iprot->readMessageEnd();
+  iprot->getTransport()->readEnd();
+
+  NoteStore_updateSharedNotebook_result result;
+  try {
+    result.success = iface_->updateSharedNotebook(args.authenticationToken, args.sharedNotebook);
+    result.__isset.success = true;
+  } catch (evernote::edam::EDAMUserException &userException) {
+    result.userException = userException;
+    result.__isset.userException = true;
+  } catch (evernote::edam::EDAMNotFoundException &notFoundException) {
+    result.notFoundException = notFoundException;
+    result.__isset.notFoundException = true;
+  } catch (evernote::edam::EDAMSystemException &systemException) {
+    result.systemException = systemException;
+    result.__isset.systemException = true;
+  } catch (const std::exception& e) {
+    ::apache::thrift::TApplicationException x(e.what());
+    oprot->writeMessageBegin("updateSharedNotebook", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    x.write(oprot);
+    oprot->writeMessageEnd();
+    oprot->getTransport()->flush();
+    oprot->getTransport()->writeEnd();
+    return;
+  }
+
+  oprot->writeMessageBegin("updateSharedNotebook", ::apache::thrift::protocol::T_REPLY, seqid);
   result.write(oprot);
   oprot->writeMessageEnd();
   oprot->getTransport()->flush();
@@ -25870,6 +25570,43 @@ void NoteStoreProcessor::process_authenticateToSharedNote(int32_t seqid, ::apach
   }
 
   oprot->writeMessageBegin("authenticateToSharedNote", ::apache::thrift::protocol::T_REPLY, seqid);
+  result.write(oprot);
+  oprot->writeMessageEnd();
+  oprot->getTransport()->flush();
+  oprot->getTransport()->writeEnd();
+}
+
+void NoteStoreProcessor::process_findRelated(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot)
+{
+  NoteStore_findRelated_args args;
+  args.read(iprot);
+  iprot->readMessageEnd();
+  iprot->getTransport()->readEnd();
+
+  NoteStore_findRelated_result result;
+  try {
+    iface_->findRelated(result.success, args.authenticationToken, args.query, args.resultSpec);
+    result.__isset.success = true;
+  } catch (evernote::edam::EDAMUserException &userException) {
+    result.userException = userException;
+    result.__isset.userException = true;
+  } catch (evernote::edam::EDAMSystemException &systemException) {
+    result.systemException = systemException;
+    result.__isset.systemException = true;
+  } catch (evernote::edam::EDAMNotFoundException &notFoundException) {
+    result.notFoundException = notFoundException;
+    result.__isset.notFoundException = true;
+  } catch (const std::exception& e) {
+    ::apache::thrift::TApplicationException x(e.what());
+    oprot->writeMessageBegin("findRelated", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    x.write(oprot);
+    oprot->writeMessageEnd();
+    oprot->getTransport()->flush();
+    oprot->getTransport()->writeEnd();
+    return;
+  }
+
+  oprot->writeMessageBegin("findRelated", ::apache::thrift::protocol::T_REPLY, seqid);
   result.write(oprot);
   oprot->writeMessageEnd();
   oprot->getTransport()->flush();

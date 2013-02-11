@@ -8,7 +8,9 @@
 #include <QtCore/QCoreApplication>
 #include <QDir>
 #include <iostream>
-#include "utilities/encrypt.h"
+
+//#include "utilities/encrypt.h"
+#include "application.h"
 
 
 //using namespace std;
@@ -27,7 +29,7 @@ int main(int argc, char *argv[])
     Botan::LibraryInitializer botanInit;
 
     // Setup the QApplication so we can begin
-    QApplication a(argc, argv);
+    Application a(argc, argv);
 
     // Setup the QLOG functions for debugging & messages
     QsLogging::Logger& logger = QsLogging::Logger::instance();
@@ -65,5 +67,9 @@ int main(int argc, char *argv[])
     w.show();
     //w.showMaximized();
 
-    return a.exec();
+//    try {
+        return a.exec();
+//    } catch (std::exception e) {
+//        QLOG_DEBUG() << e.what();
+//    }
 }

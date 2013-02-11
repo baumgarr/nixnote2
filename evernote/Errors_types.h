@@ -15,24 +15,26 @@
 
 namespace evernote { namespace edam {
 
-enum EDAMErrorCode {
-  UNKNOWN = 1,
-  BAD_DATA_FORMAT = 2,
-  PERMISSION_DENIED = 3,
-  INTERNAL_ERROR = 4,
-  DATA_REQUIRED = 5,
-  LIMIT_REACHED = 6,
-  QUOTA_REACHED = 7,
-  INVALID_AUTH = 8,
-  AUTH_EXPIRED = 9,
-  DATA_CONFLICT = 10,
-  ENML_VALIDATION = 11,
-  SHARD_UNAVAILABLE = 12,
-  LEN_TOO_SHORT = 13,
-  LEN_TOO_LONG = 14,
-  TOO_FEW = 15,
-  TOO_MANY = 16,
-  UNSUPPORTED_OPERATION = 17
+struct EDAMErrorCode {
+  enum type {
+    UNKNOWN = 1,
+    BAD_DATA_FORMAT = 2,
+    PERMISSION_DENIED = 3,
+    INTERNAL_ERROR = 4,
+    DATA_REQUIRED = 5,
+    LIMIT_REACHED = 6,
+    QUOTA_REACHED = 7,
+    INVALID_AUTH = 8,
+    AUTH_EXPIRED = 9,
+    DATA_CONFLICT = 10,
+    ENML_VALIDATION = 11,
+    SHARD_UNAVAILABLE = 12,
+    LEN_TOO_SHORT = 13,
+    LEN_TOO_LONG = 14,
+    TOO_FEW = 15,
+    TOO_MANY = 16,
+    UNSUPPORTED_OPERATION = 17
+  };
 };
 
 typedef struct _EDAMUserException__isset {
@@ -51,7 +53,7 @@ class EDAMUserException : public ::apache::thrift::TException {
 
   virtual ~EDAMUserException() throw() {}
 
-  EDAMErrorCode errorCode;
+  EDAMErrorCode::type errorCode;
   std::string parameter;
 
   _EDAMUserException__isset __isset;
@@ -93,7 +95,7 @@ class EDAMSystemException : public ::apache::thrift::TException {
 
   virtual ~EDAMSystemException() throw() {}
 
-  EDAMErrorCode errorCode;
+  EDAMErrorCode::type errorCode;
   std::string message;
 
   _EDAMSystemException__isset __isset;

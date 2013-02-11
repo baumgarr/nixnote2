@@ -124,7 +124,9 @@ SOURCES += main.cpp\
     botan/botan_all.cpp \
     gui/plugins/popplerviewer.cpp \
     gui/plugins/pluginfactory.cpp \
-    gui/findreplace.cpp
+    gui/findreplace.cpp \
+    sql/linkednotebooktable.cpp \
+    application.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -266,7 +268,9 @@ HEADERS  += nixnote.h \
     gui/plugins/popplerviewer.h \
     gui/plugins/pluginfactory.h \
     communication/inknoterequest.h \
-    gui/findreplace.h
+    gui/findreplace.h \
+    sql/linkednotebooktable.h \
+    application.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

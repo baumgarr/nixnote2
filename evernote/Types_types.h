@@ -16,34 +16,75 @@
 
 namespace evernote { namespace edam {
 
-enum PrivilegeLevel {
-  NORMAL = 1,
-  PREMIUM = 3,
-  MANAGER = 7,
-  SUPPORT = 8,
-  ADMIN = 9
+struct PrivilegeLevel {
+  enum type {
+    NORMAL = 1,
+    PREMIUM = 3,
+    MANAGER = 7,
+    SUPPORT = 8,
+    ADMIN = 9
+  };
 };
 
-enum QueryFormat {
-  USER = 1,
-  SEXP = 2
+struct QueryFormat {
+  enum type {
+    USER = 1,
+    SEXP = 2
+  };
 };
 
-enum NoteSortOrder {
-  CREATED = 1,
-  UPDATED = 2,
-  RELEVANCE = 3,
-  UPDATE_SEQUENCE_NUMBER = 4,
-  TITLE = 5
+struct NoteSortOrder {
+  enum type {
+    CREATED = 1,
+    UPDATED = 2,
+    RELEVANCE = 3,
+    UPDATE_SEQUENCE_NUMBER = 4,
+    TITLE = 5
+  };
 };
 
-enum PremiumOrderStatus {
-  NONE = 0,
-  PENDING = 1,
-  ACTIVE = 2,
-  FAILED = 3,
-  CANCELLATION_PENDING = 4,
-  CANCELED = 5
+struct PremiumOrderStatus {
+  enum type {
+    NONE = 0,
+    PENDING = 1,
+    ACTIVE = 2,
+    FAILED = 3,
+    CANCELLATION_PENDING = 4,
+    CANCELED = 5
+  };
+};
+
+struct SharedNotebookPrivilegeLevel {
+  enum type {
+    READ_NOTEBOOK = 0,
+    MODIFY_NOTEBOOK_PLUS_ACTIVITY = 1,
+    READ_NOTEBOOK_PLUS_ACTIVITY = 2,
+    GROUP = 3,
+    FULL_ACCESS = 4,
+    BUSINESS_FULL_ACCESS = 5
+  };
+};
+
+struct SponsoredGroupRole {
+  enum type {
+    GROUP_MEMBER = 1,
+    GROUP_ADMIN = 2,
+    GROUP_OWNER = 3
+  };
+};
+
+struct BusinessUserRole {
+  enum type {
+    ADMIN = 1,
+    NORMAL = 2
+  };
+};
+
+struct SharedNotebookInstanceRestrictions {
+  enum type {
+    ONLY_JOINED_OR_PREVIEW = 1,
+    NO_SHARED_NOTEBOOKS = 2
+  };
 };
 
 typedef int32_t UserID;
@@ -104,7 +145,7 @@ class Data {
 };
 
 typedef struct _UserAttributes__isset {
-  _UserAttributes__isset() : defaultLocationName(false), defaultLatitude(false), defaultLongitude(false), preactivation(false), viewedPromotions(false), incomingEmailAddress(false), recentMailedAddresses(false), comments(false), dateAgreedToTermsOfService(false), maxReferrals(false), referralCount(false), refererCode(false), sentEmailDate(false), sentEmailCount(false), dailyEmailLimit(false), emailOptOutDate(false), partnerEmailOptInDate(false), preferredLanguage(false), preferredCountry(false), clipFullPage(false), twitterUserName(false), twitterId(false), groupName(false), recognitionLanguage(false), customerProfileId(false), referralProof(false), educationalDiscount(false), businessAddress(false), hideSponsorBilling(false) {}
+  _UserAttributes__isset() : defaultLocationName(false), defaultLatitude(false), defaultLongitude(false), preactivation(false), viewedPromotions(false), incomingEmailAddress(false), recentMailedAddresses(false), comments(false), dateAgreedToTermsOfService(false), maxReferrals(false), referralCount(false), refererCode(false), sentEmailDate(false), sentEmailCount(false), dailyEmailLimit(false), emailOptOutDate(false), partnerEmailOptInDate(false), preferredLanguage(false), preferredCountry(false), clipFullPage(false), twitterUserName(false), twitterId(false), groupName(false), recognitionLanguage(false), customerProfileId(false), referralProof(false), educationalDiscount(false), businessAddress(false), hideSponsorBilling(false), taxExempt(false) {}
   bool defaultLocationName;
   bool defaultLatitude;
   bool defaultLongitude;
@@ -134,15 +175,16 @@ typedef struct _UserAttributes__isset {
   bool educationalDiscount;
   bool businessAddress;
   bool hideSponsorBilling;
+  bool taxExempt;
 } _UserAttributes__isset;
 
 class UserAttributes {
  public:
 
-  static const char* ascii_fingerprint; // = "6CAC11DEC2432B22604C49C302DEDA87";
-  static const uint8_t binary_fingerprint[16]; // = {0x6C,0xAC,0x11,0xDE,0xC2,0x43,0x2B,0x22,0x60,0x4C,0x49,0xC3,0x02,0xDE,0xDA,0x87};
+  static const char* ascii_fingerprint; // = "56CD7D04A061F8C882583E1E94128707";
+  static const uint8_t binary_fingerprint[16]; // = {0x56,0xCD,0x7D,0x04,0xA0,0x61,0xF8,0xC8,0x82,0x58,0x3E,0x1E,0x94,0x12,0x87,0x07};
 
-  UserAttributes() : defaultLocationName(""), defaultLatitude(0), defaultLongitude(0), preactivation(0), incomingEmailAddress(""), comments(""), dateAgreedToTermsOfService(0), maxReferrals(0), referralCount(0), refererCode(""), sentEmailDate(0), sentEmailCount(0), dailyEmailLimit(0), emailOptOutDate(0), partnerEmailOptInDate(0), preferredLanguage(""), preferredCountry(""), clipFullPage(0), twitterUserName(""), twitterId(""), groupName(""), recognitionLanguage(""), customerProfileId(0), referralProof(""), educationalDiscount(0), businessAddress(""), hideSponsorBilling(0) {
+  UserAttributes() : defaultLocationName(""), defaultLatitude(0), defaultLongitude(0), preactivation(0), incomingEmailAddress(""), comments(""), dateAgreedToTermsOfService(0), maxReferrals(0), referralCount(0), refererCode(""), sentEmailDate(0), sentEmailCount(0), dailyEmailLimit(0), emailOptOutDate(0), partnerEmailOptInDate(0), preferredLanguage(""), preferredCountry(""), clipFullPage(0), twitterUserName(""), twitterId(""), groupName(""), recognitionLanguage(""), customerProfileId(0), referralProof(""), educationalDiscount(0), businessAddress(""), hideSponsorBilling(0), taxExempt(0) {
   }
 
   virtual ~UserAttributes() throw() {}
@@ -176,6 +218,7 @@ class UserAttributes {
   bool educationalDiscount;
   std::string businessAddress;
   bool hideSponsorBilling;
+  bool taxExempt;
 
   _UserAttributes__isset __isset;
 
@@ -297,6 +340,10 @@ class UserAttributes {
       return false;
     else if (__isset.hideSponsorBilling && !(hideSponsorBilling == rhs.hideSponsorBilling))
       return false;
+    if (__isset.taxExempt != rhs.__isset.taxExempt)
+      return false;
+    else if (__isset.taxExempt && !(taxExempt == rhs.taxExempt))
+      return false;
     return true;
   }
   bool operator != (const UserAttributes &rhs) const {
@@ -311,7 +358,7 @@ class UserAttributes {
 };
 
 typedef struct _Accounting__isset {
-  _Accounting__isset() : uploadLimit(false), uploadLimitEnd(false), uploadLimitNextMonth(false), premiumServiceStatus(false), premiumOrderNumber(false), premiumCommerceService(false), premiumServiceStart(false), premiumServiceSKU(false), lastSuccessfulCharge(false), lastFailedCharge(false), lastFailedChargeReason(false), nextPaymentDue(false), premiumLockUntil(false), updated(false), premiumSubscriptionNumber(false), lastRequestedCharge(false), currency(false), unitPrice(false) {}
+  _Accounting__isset() : uploadLimit(false), uploadLimitEnd(false), uploadLimitNextMonth(false), premiumServiceStatus(false), premiumOrderNumber(false), premiumCommerceService(false), premiumServiceStart(false), premiumServiceSKU(false), lastSuccessfulCharge(false), lastFailedCharge(false), lastFailedChargeReason(false), nextPaymentDue(false), premiumLockUntil(false), updated(false), premiumSubscriptionNumber(false), lastRequestedCharge(false), currency(false), unitPrice(false), businessId(false), businessName(false), businessRole(false) {}
   bool uploadLimit;
   bool uploadLimitEnd;
   bool uploadLimitNextMonth;
@@ -330,15 +377,18 @@ typedef struct _Accounting__isset {
   bool lastRequestedCharge;
   bool currency;
   bool unitPrice;
+  bool businessId;
+  bool businessName;
+  bool businessRole;
 } _Accounting__isset;
 
 class Accounting {
  public:
 
-  static const char* ascii_fingerprint; // = "23B10A942EDA85D9402DED7C09922347";
-  static const uint8_t binary_fingerprint[16]; // = {0x23,0xB1,0x0A,0x94,0x2E,0xDA,0x85,0xD9,0x40,0x2D,0xED,0x7C,0x09,0x92,0x23,0x47};
+  static const char* ascii_fingerprint; // = "90BE739176B61E8E85A75627C80583E5";
+  static const uint8_t binary_fingerprint[16]; // = {0x90,0xBE,0x73,0x91,0x76,0xB6,0x1E,0x8E,0x85,0xA7,0x56,0x27,0xC8,0x05,0x83,0xE5};
 
-  Accounting() : uploadLimit(0), uploadLimitEnd(0), uploadLimitNextMonth(0), premiumOrderNumber(""), premiumCommerceService(""), premiumServiceStart(0), premiumServiceSKU(""), lastSuccessfulCharge(0), lastFailedCharge(0), lastFailedChargeReason(""), nextPaymentDue(0), premiumLockUntil(0), updated(0), premiumSubscriptionNumber(""), lastRequestedCharge(0), currency(""), unitPrice(0) {
+  Accounting() : uploadLimit(0), uploadLimitEnd(0), uploadLimitNextMonth(0), premiumOrderNumber(""), premiumCommerceService(""), premiumServiceStart(0), premiumServiceSKU(""), lastSuccessfulCharge(0), lastFailedCharge(0), lastFailedChargeReason(""), nextPaymentDue(0), premiumLockUntil(0), updated(0), premiumSubscriptionNumber(""), lastRequestedCharge(0), currency(""), unitPrice(0), businessId(0), businessName("") {
   }
 
   virtual ~Accounting() throw() {}
@@ -346,7 +396,7 @@ class Accounting {
   int64_t uploadLimit;
   Timestamp uploadLimitEnd;
   int64_t uploadLimitNextMonth;
-  PremiumOrderStatus premiumServiceStatus;
+  PremiumOrderStatus::type premiumServiceStatus;
   std::string premiumOrderNumber;
   std::string premiumCommerceService;
   Timestamp premiumServiceStart;
@@ -361,6 +411,9 @@ class Accounting {
   Timestamp lastRequestedCharge;
   std::string currency;
   int32_t unitPrice;
+  int32_t businessId;
+  std::string businessName;
+  BusinessUserRole::type businessRole;
 
   _Accounting__isset __isset;
 
@@ -438,6 +491,18 @@ class Accounting {
       return false;
     else if (__isset.unitPrice && !(unitPrice == rhs.unitPrice))
       return false;
+    if (__isset.businessId != rhs.__isset.businessId)
+      return false;
+    else if (__isset.businessId && !(businessId == rhs.businessId))
+      return false;
+    if (__isset.businessName != rhs.__isset.businessName)
+      return false;
+    else if (__isset.businessName && !(businessName == rhs.businessName))
+      return false;
+    if (__isset.businessRole != rhs.__isset.businessRole)
+      return false;
+    else if (__isset.businessRole && !(businessRole == rhs.businessRole))
+      return false;
     return true;
   }
   bool operator != (const Accounting &rhs) const {
@@ -451,8 +516,80 @@ class Accounting {
 
 };
 
+typedef struct _PremiumInfo__isset {
+  _PremiumInfo__isset() : premiumExpirationDate(false), sponsoredGroupName(false), sponsoredGroupRole(false) {}
+  bool premiumExpirationDate;
+  bool sponsoredGroupName;
+  bool sponsoredGroupRole;
+} _PremiumInfo__isset;
+
+class PremiumInfo {
+ public:
+
+  static const char* ascii_fingerprint; // = "1C3FEBFCC34CFA6368AF9D1447D203CA";
+  static const uint8_t binary_fingerprint[16]; // = {0x1C,0x3F,0xEB,0xFC,0xC3,0x4C,0xFA,0x63,0x68,0xAF,0x9D,0x14,0x47,0xD2,0x03,0xCA};
+
+  PremiumInfo() : currentTime(0), premium(0), premiumRecurring(0), premiumExpirationDate(0), premiumExtendable(0), premiumPending(0), premiumCancellationPending(0), canPurchaseUploadAllowance(0), sponsoredGroupName("") {
+  }
+
+  virtual ~PremiumInfo() throw() {}
+
+  Timestamp currentTime;
+  bool premium;
+  bool premiumRecurring;
+  Timestamp premiumExpirationDate;
+  bool premiumExtendable;
+  bool premiumPending;
+  bool premiumCancellationPending;
+  bool canPurchaseUploadAllowance;
+  std::string sponsoredGroupName;
+  SponsoredGroupRole::type sponsoredGroupRole;
+
+  _PremiumInfo__isset __isset;
+
+  bool operator == (const PremiumInfo & rhs) const
+  {
+    if (!(currentTime == rhs.currentTime))
+      return false;
+    if (!(premium == rhs.premium))
+      return false;
+    if (!(premiumRecurring == rhs.premiumRecurring))
+      return false;
+    if (__isset.premiumExpirationDate != rhs.__isset.premiumExpirationDate)
+      return false;
+    else if (__isset.premiumExpirationDate && !(premiumExpirationDate == rhs.premiumExpirationDate))
+      return false;
+    if (!(premiumExtendable == rhs.premiumExtendable))
+      return false;
+    if (!(premiumPending == rhs.premiumPending))
+      return false;
+    if (!(premiumCancellationPending == rhs.premiumCancellationPending))
+      return false;
+    if (!(canPurchaseUploadAllowance == rhs.canPurchaseUploadAllowance))
+      return false;
+    if (__isset.sponsoredGroupName != rhs.__isset.sponsoredGroupName)
+      return false;
+    else if (__isset.sponsoredGroupName && !(sponsoredGroupName == rhs.sponsoredGroupName))
+      return false;
+    if (__isset.sponsoredGroupRole != rhs.__isset.sponsoredGroupRole)
+      return false;
+    else if (__isset.sponsoredGroupRole && !(sponsoredGroupRole == rhs.sponsoredGroupRole))
+      return false;
+    return true;
+  }
+  bool operator != (const PremiumInfo &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const PremiumInfo & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
 typedef struct _User__isset {
-  _User__isset() : id(false), username(false), email(false), name(false), timezone(false), privilege(false), created(false), updated(false), deleted(false), active(false), shardId(false), attributes(false), accounting(false) {}
+  _User__isset() : id(false), username(false), email(false), name(false), timezone(false), privilege(false), created(false), updated(false), deleted(false), active(false), shardId(false), attributes(false), accounting(false), premiumInfo(false) {}
   bool id;
   bool username;
   bool email;
@@ -466,13 +603,14 @@ typedef struct _User__isset {
   bool shardId;
   bool attributes;
   bool accounting;
+  bool premiumInfo;
 } _User__isset;
 
 class User {
  public:
 
-  static const char* ascii_fingerprint; // = "4355DE4397AAC316893BF7D65A259E7E";
-  static const uint8_t binary_fingerprint[16]; // = {0x43,0x55,0xDE,0x43,0x97,0xAA,0xC3,0x16,0x89,0x3B,0xF7,0xD6,0x5A,0x25,0x9E,0x7E};
+  static const char* ascii_fingerprint; // = "1F3FDAAFFE6360D4E039B08F59F0C47C";
+  static const uint8_t binary_fingerprint[16]; // = {0x1F,0x3F,0xDA,0xAF,0xFE,0x63,0x60,0xD4,0xE0,0x39,0xB0,0x8F,0x59,0xF0,0xC4,0x7C};
 
   User() : id(0), username(""), email(""), name(""), timezone(""), created(0), updated(0), deleted(0), active(0), shardId("") {
   }
@@ -484,7 +622,7 @@ class User {
   std::string email;
   std::string name;
   std::string timezone;
-  PrivilegeLevel privilege;
+  PrivilegeLevel::type privilege;
   Timestamp created;
   Timestamp updated;
   Timestamp deleted;
@@ -492,6 +630,7 @@ class User {
   std::string shardId;
   UserAttributes attributes;
   Accounting accounting;
+  PremiumInfo premiumInfo;
 
   _User__isset __isset;
 
@@ -548,6 +687,10 @@ class User {
     if (__isset.accounting != rhs.__isset.accounting)
       return false;
     else if (__isset.accounting && !(accounting == rhs.accounting))
+      return false;
+    if (__isset.premiumInfo != rhs.__isset.premiumInfo)
+      return false;
+    else if (__isset.premiumInfo && !(premiumInfo == rhs.premiumInfo))
       return false;
     return true;
   }
@@ -875,7 +1018,7 @@ class Resource {
 };
 
 typedef struct _NoteAttributes__isset {
-  _NoteAttributes__isset() : subjectDate(false), latitude(false), longitude(false), altitude(false), author(false), source(false), sourceURL(false), sourceApplication(false), shareDate(false), placeName(false), contentClass(false), applicationData(false), lastEditedBy(false) {}
+  _NoteAttributes__isset() : subjectDate(false), latitude(false), longitude(false), altitude(false), author(false), source(false), sourceURL(false), sourceApplication(false), shareDate(false), placeName(false), contentClass(false), applicationData(false), lastEditedBy(false), classifications(false) {}
   bool subjectDate;
   bool latitude;
   bool longitude;
@@ -889,13 +1032,14 @@ typedef struct _NoteAttributes__isset {
   bool contentClass;
   bool applicationData;
   bool lastEditedBy;
+  bool classifications;
 } _NoteAttributes__isset;
 
 class NoteAttributes {
  public:
 
-  static const char* ascii_fingerprint; // = "0B73D0A9B075CF3F269B31C5A35993D7";
-  static const uint8_t binary_fingerprint[16]; // = {0x0B,0x73,0xD0,0xA9,0xB0,0x75,0xCF,0x3F,0x26,0x9B,0x31,0xC5,0xA3,0x59,0x93,0xD7};
+  static const char* ascii_fingerprint; // = "64A556515DA663FB8DCF33EA2E006F34";
+  static const uint8_t binary_fingerprint[16]; // = {0x64,0xA5,0x56,0x51,0x5D,0xA6,0x63,0xFB,0x8D,0xCF,0x33,0xEA,0x2E,0x00,0x6F,0x34};
 
   NoteAttributes() : subjectDate(0), latitude(0), longitude(0), altitude(0), author(""), source(""), sourceURL(""), sourceApplication(""), shareDate(0), placeName(""), contentClass(""), lastEditedBy("") {
   }
@@ -915,6 +1059,7 @@ class NoteAttributes {
   std::string contentClass;
   LazyMap applicationData;
   std::string lastEditedBy;
+  std::map<std::string, std::string>  classifications;
 
   _NoteAttributes__isset __isset;
 
@@ -972,6 +1117,10 @@ class NoteAttributes {
       return false;
     else if (__isset.lastEditedBy && !(lastEditedBy == rhs.lastEditedBy))
       return false;
+    if (__isset.classifications != rhs.__isset.classifications)
+      return false;
+    else if (__isset.classifications && !(classifications == rhs.classifications))
+      return false;
     return true;
   }
   bool operator != (const NoteAttributes &rhs) const {
@@ -1007,8 +1156,8 @@ typedef struct _Note__isset {
 class Note {
  public:
 
-  static const char* ascii_fingerprint; // = "01F83A190A0640452F2DA623F3D7E01F";
-  static const uint8_t binary_fingerprint[16]; // = {0x01,0xF8,0x3A,0x19,0x0A,0x06,0x40,0x45,0x2F,0x2D,0xA6,0x23,0xF3,0xD7,0xE0,0x1F};
+  static const char* ascii_fingerprint; // = "32938BE14CEDE761FF195A9B8C770212";
+  static const uint8_t binary_fingerprint[16]; // = {0x32,0x93,0x8B,0xE1,0x4C,0xED,0xE7,0x61,0xFF,0x19,0x5A,0x9B,0x8C,0x77,0x02,0x12};
 
   Note() : guid(""), title(""), content(""), contentHash(""), contentLength(0), created(0), updated(0), deleted(0), active(0), updateSequenceNum(0), notebookGuid("") {
   }
@@ -1128,7 +1277,7 @@ class Publishing {
   virtual ~Publishing() throw() {}
 
   std::string uri;
-  NoteSortOrder order;
+  NoteSortOrder::type order;
   bool ascending;
   std::string publicDescription;
 
@@ -1165,6 +1314,57 @@ class Publishing {
 
 };
 
+typedef struct _BusinessNotebook__isset {
+  _BusinessNotebook__isset() : notebookDescription(false), privilege(false), recommended(false) {}
+  bool notebookDescription;
+  bool privilege;
+  bool recommended;
+} _BusinessNotebook__isset;
+
+class BusinessNotebook {
+ public:
+
+  static const char* ascii_fingerprint; // = "7A9832B34C9AE8645C18E89943F26D8C";
+  static const uint8_t binary_fingerprint[16]; // = {0x7A,0x98,0x32,0xB3,0x4C,0x9A,0xE8,0x64,0x5C,0x18,0xE8,0x99,0x43,0xF2,0x6D,0x8C};
+
+  BusinessNotebook() : notebookDescription(""), recommended(0) {
+  }
+
+  virtual ~BusinessNotebook() throw() {}
+
+  std::string notebookDescription;
+  SharedNotebookPrivilegeLevel::type privilege;
+  bool recommended;
+
+  _BusinessNotebook__isset __isset;
+
+  bool operator == (const BusinessNotebook & rhs) const
+  {
+    if (__isset.notebookDescription != rhs.__isset.notebookDescription)
+      return false;
+    else if (__isset.notebookDescription && !(notebookDescription == rhs.notebookDescription))
+      return false;
+    if (__isset.privilege != rhs.__isset.privilege)
+      return false;
+    else if (__isset.privilege && !(privilege == rhs.privilege))
+      return false;
+    if (__isset.recommended != rhs.__isset.recommended)
+      return false;
+    else if (__isset.recommended && !(recommended == rhs.recommended))
+      return false;
+    return true;
+  }
+  bool operator != (const BusinessNotebook &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const BusinessNotebook & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
 typedef struct _SavedSearch__isset {
   _SavedSearch__isset() : guid(false), name(false), query(false), format(false), updateSequenceNum(false) {}
   bool guid;
@@ -1188,7 +1388,7 @@ class SavedSearch {
   Guid guid;
   std::string name;
   std::string query;
-  QueryFormat format;
+  QueryFormat::type format;
   int32_t updateSequenceNum;
 
   _SavedSearch__isset __isset;
@@ -1228,119 +1428,8 @@ class SavedSearch {
 
 };
 
-typedef struct _Ad__isset {
-  _Ad__isset() : id(false), width(false), height(false), advertiserName(false), imageUrl(false), destinationUrl(false), displaySeconds(false), score(false), image(false), imageMime(false), html(false), displayFrequency(false), openInTrunk(false) {}
-  bool id;
-  bool width;
-  bool height;
-  bool advertiserName;
-  bool imageUrl;
-  bool destinationUrl;
-  bool displaySeconds;
-  bool score;
-  bool image;
-  bool imageMime;
-  bool html;
-  bool displayFrequency;
-  bool openInTrunk;
-} _Ad__isset;
-
-class Ad {
- public:
-
-  static const char* ascii_fingerprint; // = "B8D16DBF4D96C6731F20EB1819144E0E";
-  static const uint8_t binary_fingerprint[16]; // = {0xB8,0xD1,0x6D,0xBF,0x4D,0x96,0xC6,0x73,0x1F,0x20,0xEB,0x18,0x19,0x14,0x4E,0x0E};
-
-  Ad() : id(0), width(0), height(0), advertiserName(""), imageUrl(""), destinationUrl(""), displaySeconds(0), score(0), image(""), imageMime(""), html(""), displayFrequency(0), openInTrunk(0) {
-  }
-
-  virtual ~Ad() throw() {}
-
-  int32_t id;
-  int16_t width;
-  int16_t height;
-  std::string advertiserName;
-  std::string imageUrl;
-  std::string destinationUrl;
-  int16_t displaySeconds;
-  double score;
-  std::string image;
-  std::string imageMime;
-  std::string html;
-  double displayFrequency;
-  bool openInTrunk;
-
-  _Ad__isset __isset;
-
-  bool operator == (const Ad & rhs) const
-  {
-    if (__isset.id != rhs.__isset.id)
-      return false;
-    else if (__isset.id && !(id == rhs.id))
-      return false;
-    if (__isset.width != rhs.__isset.width)
-      return false;
-    else if (__isset.width && !(width == rhs.width))
-      return false;
-    if (__isset.height != rhs.__isset.height)
-      return false;
-    else if (__isset.height && !(height == rhs.height))
-      return false;
-    if (__isset.advertiserName != rhs.__isset.advertiserName)
-      return false;
-    else if (__isset.advertiserName && !(advertiserName == rhs.advertiserName))
-      return false;
-    if (__isset.imageUrl != rhs.__isset.imageUrl)
-      return false;
-    else if (__isset.imageUrl && !(imageUrl == rhs.imageUrl))
-      return false;
-    if (__isset.destinationUrl != rhs.__isset.destinationUrl)
-      return false;
-    else if (__isset.destinationUrl && !(destinationUrl == rhs.destinationUrl))
-      return false;
-    if (__isset.displaySeconds != rhs.__isset.displaySeconds)
-      return false;
-    else if (__isset.displaySeconds && !(displaySeconds == rhs.displaySeconds))
-      return false;
-    if (__isset.score != rhs.__isset.score)
-      return false;
-    else if (__isset.score && !(score == rhs.score))
-      return false;
-    if (__isset.image != rhs.__isset.image)
-      return false;
-    else if (__isset.image && !(image == rhs.image))
-      return false;
-    if (__isset.imageMime != rhs.__isset.imageMime)
-      return false;
-    else if (__isset.imageMime && !(imageMime == rhs.imageMime))
-      return false;
-    if (__isset.html != rhs.__isset.html)
-      return false;
-    else if (__isset.html && !(html == rhs.html))
-      return false;
-    if (__isset.displayFrequency != rhs.__isset.displayFrequency)
-      return false;
-    else if (__isset.displayFrequency && !(displayFrequency == rhs.displayFrequency))
-      return false;
-    if (__isset.openInTrunk != rhs.__isset.openInTrunk)
-      return false;
-    else if (__isset.openInTrunk && !(openInTrunk == rhs.openInTrunk))
-      return false;
-    return true;
-  }
-  bool operator != (const Ad &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const Ad & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
 typedef struct _SharedNotebook__isset {
-  _SharedNotebook__isset() : id(false), userId(false), notebookGuid(false), email(false), notebookModifiable(false), requireLogin(false), serviceCreated(false), serviceUpdated(false), shareKey(false), username(false) {}
+  _SharedNotebook__isset() : id(false), userId(false), notebookGuid(false), email(false), notebookModifiable(false), requireLogin(false), serviceCreated(false), serviceUpdated(false), shareKey(false), username(false), privilege(false), allowPreview(false) {}
   bool id;
   bool userId;
   bool notebookGuid;
@@ -1351,15 +1440,17 @@ typedef struct _SharedNotebook__isset {
   bool serviceUpdated;
   bool shareKey;
   bool username;
+  bool privilege;
+  bool allowPreview;
 } _SharedNotebook__isset;
 
 class SharedNotebook {
  public:
 
-  static const char* ascii_fingerprint; // = "3207505A423D7C9A3D2434B73288DC25";
-  static const uint8_t binary_fingerprint[16]; // = {0x32,0x07,0x50,0x5A,0x42,0x3D,0x7C,0x9A,0x3D,0x24,0x34,0xB7,0x32,0x88,0xDC,0x25};
+  static const char* ascii_fingerprint; // = "76B3B96355CD4C54BDB337E59754EACE";
+  static const uint8_t binary_fingerprint[16]; // = {0x76,0xB3,0xB9,0x63,0x55,0xCD,0x4C,0x54,0xBD,0xB3,0x37,0xE5,0x97,0x54,0xEA,0xCE};
 
-  SharedNotebook() : id(0), userId(0), notebookGuid(""), email(""), notebookModifiable(0), requireLogin(0), serviceCreated(0), serviceUpdated(0), shareKey(""), username("") {
+  SharedNotebook() : id(0), userId(0), notebookGuid(""), email(""), notebookModifiable(0), requireLogin(0), serviceCreated(0), serviceUpdated(0), shareKey(""), username(""), allowPreview(0) {
   }
 
   virtual ~SharedNotebook() throw() {}
@@ -1374,6 +1465,8 @@ class SharedNotebook {
   Timestamp serviceUpdated;
   std::string shareKey;
   std::string username;
+  SharedNotebookPrivilegeLevel::type privilege;
+  bool allowPreview;
 
   _SharedNotebook__isset __isset;
 
@@ -1419,6 +1512,14 @@ class SharedNotebook {
       return false;
     else if (__isset.username && !(username == rhs.username))
       return false;
+    if (__isset.privilege != rhs.__isset.privilege)
+      return false;
+    else if (__isset.privilege && !(privilege == rhs.privilege))
+      return false;
+    if (__isset.allowPreview != rhs.__isset.allowPreview)
+      return false;
+    else if (__isset.allowPreview && !(allowPreview == rhs.allowPreview))
+      return false;
     return true;
   }
   bool operator != (const SharedNotebook &rhs) const {
@@ -1432,8 +1533,161 @@ class SharedNotebook {
 
 };
 
+typedef struct _NotebookRestrictions__isset {
+  _NotebookRestrictions__isset() : noReadNotes(false), noCreateNotes(false), noUpdateNotes(false), noExpungeNotes(false), noShareNotes(false), noEmailNotes(false), noSendMessageToRecipients(false), noUpdateNotebook(false), noExpungeNotebook(false), noSetDefaultNotebook(false), noSetNotebookStack(false), noPublishToPublic(false), noPublishToBusinessLibrary(false), noCreateTags(false), noUpdateTags(false), noExpungeTags(false), noSetParentTag(false), noCreateSharedNotebooks(false), updateWhichSharedNotebookRestrictions(false), expungeWhichSharedNotebookRestrictions(false) {}
+  bool noReadNotes;
+  bool noCreateNotes;
+  bool noUpdateNotes;
+  bool noExpungeNotes;
+  bool noShareNotes;
+  bool noEmailNotes;
+  bool noSendMessageToRecipients;
+  bool noUpdateNotebook;
+  bool noExpungeNotebook;
+  bool noSetDefaultNotebook;
+  bool noSetNotebookStack;
+  bool noPublishToPublic;
+  bool noPublishToBusinessLibrary;
+  bool noCreateTags;
+  bool noUpdateTags;
+  bool noExpungeTags;
+  bool noSetParentTag;
+  bool noCreateSharedNotebooks;
+  bool updateWhichSharedNotebookRestrictions;
+  bool expungeWhichSharedNotebookRestrictions;
+} _NotebookRestrictions__isset;
+
+class NotebookRestrictions {
+ public:
+
+  static const char* ascii_fingerprint; // = "2F7A0A57E7093F201243B7214760883C";
+  static const uint8_t binary_fingerprint[16]; // = {0x2F,0x7A,0x0A,0x57,0xE7,0x09,0x3F,0x20,0x12,0x43,0xB7,0x21,0x47,0x60,0x88,0x3C};
+
+  NotebookRestrictions() : noReadNotes(0), noCreateNotes(0), noUpdateNotes(0), noExpungeNotes(0), noShareNotes(0), noEmailNotes(0), noSendMessageToRecipients(0), noUpdateNotebook(0), noExpungeNotebook(0), noSetDefaultNotebook(0), noSetNotebookStack(0), noPublishToPublic(0), noPublishToBusinessLibrary(0), noCreateTags(0), noUpdateTags(0), noExpungeTags(0), noSetParentTag(0), noCreateSharedNotebooks(0) {
+  }
+
+  virtual ~NotebookRestrictions() throw() {}
+
+  bool noReadNotes;
+  bool noCreateNotes;
+  bool noUpdateNotes;
+  bool noExpungeNotes;
+  bool noShareNotes;
+  bool noEmailNotes;
+  bool noSendMessageToRecipients;
+  bool noUpdateNotebook;
+  bool noExpungeNotebook;
+  bool noSetDefaultNotebook;
+  bool noSetNotebookStack;
+  bool noPublishToPublic;
+  bool noPublishToBusinessLibrary;
+  bool noCreateTags;
+  bool noUpdateTags;
+  bool noExpungeTags;
+  bool noSetParentTag;
+  bool noCreateSharedNotebooks;
+  SharedNotebookInstanceRestrictions::type updateWhichSharedNotebookRestrictions;
+  SharedNotebookInstanceRestrictions::type expungeWhichSharedNotebookRestrictions;
+
+  _NotebookRestrictions__isset __isset;
+
+  bool operator == (const NotebookRestrictions & rhs) const
+  {
+    if (__isset.noReadNotes != rhs.__isset.noReadNotes)
+      return false;
+    else if (__isset.noReadNotes && !(noReadNotes == rhs.noReadNotes))
+      return false;
+    if (__isset.noCreateNotes != rhs.__isset.noCreateNotes)
+      return false;
+    else if (__isset.noCreateNotes && !(noCreateNotes == rhs.noCreateNotes))
+      return false;
+    if (__isset.noUpdateNotes != rhs.__isset.noUpdateNotes)
+      return false;
+    else if (__isset.noUpdateNotes && !(noUpdateNotes == rhs.noUpdateNotes))
+      return false;
+    if (__isset.noExpungeNotes != rhs.__isset.noExpungeNotes)
+      return false;
+    else if (__isset.noExpungeNotes && !(noExpungeNotes == rhs.noExpungeNotes))
+      return false;
+    if (__isset.noShareNotes != rhs.__isset.noShareNotes)
+      return false;
+    else if (__isset.noShareNotes && !(noShareNotes == rhs.noShareNotes))
+      return false;
+    if (__isset.noEmailNotes != rhs.__isset.noEmailNotes)
+      return false;
+    else if (__isset.noEmailNotes && !(noEmailNotes == rhs.noEmailNotes))
+      return false;
+    if (__isset.noSendMessageToRecipients != rhs.__isset.noSendMessageToRecipients)
+      return false;
+    else if (__isset.noSendMessageToRecipients && !(noSendMessageToRecipients == rhs.noSendMessageToRecipients))
+      return false;
+    if (__isset.noUpdateNotebook != rhs.__isset.noUpdateNotebook)
+      return false;
+    else if (__isset.noUpdateNotebook && !(noUpdateNotebook == rhs.noUpdateNotebook))
+      return false;
+    if (__isset.noExpungeNotebook != rhs.__isset.noExpungeNotebook)
+      return false;
+    else if (__isset.noExpungeNotebook && !(noExpungeNotebook == rhs.noExpungeNotebook))
+      return false;
+    if (__isset.noSetDefaultNotebook != rhs.__isset.noSetDefaultNotebook)
+      return false;
+    else if (__isset.noSetDefaultNotebook && !(noSetDefaultNotebook == rhs.noSetDefaultNotebook))
+      return false;
+    if (__isset.noSetNotebookStack != rhs.__isset.noSetNotebookStack)
+      return false;
+    else if (__isset.noSetNotebookStack && !(noSetNotebookStack == rhs.noSetNotebookStack))
+      return false;
+    if (__isset.noPublishToPublic != rhs.__isset.noPublishToPublic)
+      return false;
+    else if (__isset.noPublishToPublic && !(noPublishToPublic == rhs.noPublishToPublic))
+      return false;
+    if (__isset.noPublishToBusinessLibrary != rhs.__isset.noPublishToBusinessLibrary)
+      return false;
+    else if (__isset.noPublishToBusinessLibrary && !(noPublishToBusinessLibrary == rhs.noPublishToBusinessLibrary))
+      return false;
+    if (__isset.noCreateTags != rhs.__isset.noCreateTags)
+      return false;
+    else if (__isset.noCreateTags && !(noCreateTags == rhs.noCreateTags))
+      return false;
+    if (__isset.noUpdateTags != rhs.__isset.noUpdateTags)
+      return false;
+    else if (__isset.noUpdateTags && !(noUpdateTags == rhs.noUpdateTags))
+      return false;
+    if (__isset.noExpungeTags != rhs.__isset.noExpungeTags)
+      return false;
+    else if (__isset.noExpungeTags && !(noExpungeTags == rhs.noExpungeTags))
+      return false;
+    if (__isset.noSetParentTag != rhs.__isset.noSetParentTag)
+      return false;
+    else if (__isset.noSetParentTag && !(noSetParentTag == rhs.noSetParentTag))
+      return false;
+    if (__isset.noCreateSharedNotebooks != rhs.__isset.noCreateSharedNotebooks)
+      return false;
+    else if (__isset.noCreateSharedNotebooks && !(noCreateSharedNotebooks == rhs.noCreateSharedNotebooks))
+      return false;
+    if (__isset.updateWhichSharedNotebookRestrictions != rhs.__isset.updateWhichSharedNotebookRestrictions)
+      return false;
+    else if (__isset.updateWhichSharedNotebookRestrictions && !(updateWhichSharedNotebookRestrictions == rhs.updateWhichSharedNotebookRestrictions))
+      return false;
+    if (__isset.expungeWhichSharedNotebookRestrictions != rhs.__isset.expungeWhichSharedNotebookRestrictions)
+      return false;
+    else if (__isset.expungeWhichSharedNotebookRestrictions && !(expungeWhichSharedNotebookRestrictions == rhs.expungeWhichSharedNotebookRestrictions))
+      return false;
+    return true;
+  }
+  bool operator != (const NotebookRestrictions &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const NotebookRestrictions & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
 typedef struct _Notebook__isset {
-  _Notebook__isset() : guid(false), name(false), updateSequenceNum(false), defaultNotebook(false), serviceCreated(false), serviceUpdated(false), publishing(false), published(false), stack(false), sharedNotebookIds(false), sharedNotebooks(false) {}
+  _Notebook__isset() : guid(false), name(false), updateSequenceNum(false), defaultNotebook(false), serviceCreated(false), serviceUpdated(false), publishing(false), published(false), stack(false), sharedNotebookIds(false), sharedNotebooks(false), businessNotebook(false), contact(false), restrictions(false) {}
   bool guid;
   bool name;
   bool updateSequenceNum;
@@ -1445,13 +1699,16 @@ typedef struct _Notebook__isset {
   bool stack;
   bool sharedNotebookIds;
   bool sharedNotebooks;
+  bool businessNotebook;
+  bool contact;
+  bool restrictions;
 } _Notebook__isset;
 
 class Notebook {
  public:
 
-  static const char* ascii_fingerprint; // = "9AB655D904AAA2ED9539B5DC8E957589";
-  static const uint8_t binary_fingerprint[16]; // = {0x9A,0xB6,0x55,0xD9,0x04,0xAA,0xA2,0xED,0x95,0x39,0xB5,0xDC,0x8E,0x95,0x75,0x89};
+  static const char* ascii_fingerprint; // = "DAFC8A653255B66BE2EAB3DF3AD55EB1";
+  static const uint8_t binary_fingerprint[16]; // = {0xDA,0xFC,0x8A,0x65,0x32,0x55,0xB6,0x6B,0xE2,0xEA,0xB3,0xDF,0x3A,0xD5,0x5E,0xB1};
 
   Notebook() : guid(""), name(""), updateSequenceNum(0), defaultNotebook(0), serviceCreated(0), serviceUpdated(0), published(0), stack("") {
   }
@@ -1469,6 +1726,9 @@ class Notebook {
   std::string stack;
   std::vector<int64_t>  sharedNotebookIds;
   std::vector<SharedNotebook>  sharedNotebooks;
+  BusinessNotebook businessNotebook;
+  User contact;
+  NotebookRestrictions restrictions;
 
   _Notebook__isset __isset;
 
@@ -1518,6 +1778,18 @@ class Notebook {
       return false;
     else if (__isset.sharedNotebooks && !(sharedNotebooks == rhs.sharedNotebooks))
       return false;
+    if (__isset.businessNotebook != rhs.__isset.businessNotebook)
+      return false;
+    else if (__isset.businessNotebook && !(businessNotebook == rhs.businessNotebook))
+      return false;
+    if (__isset.contact != rhs.__isset.contact)
+      return false;
+    else if (__isset.contact && !(contact == rhs.contact))
+      return false;
+    if (__isset.restrictions != rhs.__isset.restrictions)
+      return false;
+    else if (__isset.restrictions && !(restrictions == rhs.restrictions))
+      return false;
     return true;
   }
   bool operator != (const Notebook &rhs) const {
@@ -1532,7 +1804,7 @@ class Notebook {
 };
 
 typedef struct _LinkedNotebook__isset {
-  _LinkedNotebook__isset() : shareName(false), username(false), shardId(false), shareKey(false), uri(false), guid(false), updateSequenceNum(false), noteStoreUrl(false), webApiUrlPrefix(false) {}
+  _LinkedNotebook__isset() : shareName(false), username(false), shardId(false), shareKey(false), uri(false), guid(false), updateSequenceNum(false), noteStoreUrl(false), webApiUrlPrefix(false), stack(false), businessId(false) {}
   bool shareName;
   bool username;
   bool shardId;
@@ -1542,15 +1814,17 @@ typedef struct _LinkedNotebook__isset {
   bool updateSequenceNum;
   bool noteStoreUrl;
   bool webApiUrlPrefix;
+  bool stack;
+  bool businessId;
 } _LinkedNotebook__isset;
 
 class LinkedNotebook {
  public:
 
-  static const char* ascii_fingerprint; // = "D672C418E1A40B830F2D67227FD5CB1E";
-  static const uint8_t binary_fingerprint[16]; // = {0xD6,0x72,0xC4,0x18,0xE1,0xA4,0x0B,0x83,0x0F,0x2D,0x67,0x22,0x7F,0xD5,0xCB,0x1E};
+  static const char* ascii_fingerprint; // = "A7A04DDD02DE723E01FAAF74523796C6";
+  static const uint8_t binary_fingerprint[16]; // = {0xA7,0xA0,0x4D,0xDD,0x02,0xDE,0x72,0x3E,0x01,0xFA,0xAF,0x74,0x52,0x37,0x96,0xC6};
 
-  LinkedNotebook() : shareName(""), username(""), shardId(""), shareKey(""), uri(""), guid(""), updateSequenceNum(0), noteStoreUrl(""), webApiUrlPrefix("") {
+  LinkedNotebook() : shareName(""), username(""), shardId(""), shareKey(""), uri(""), guid(""), updateSequenceNum(0), noteStoreUrl(""), webApiUrlPrefix(""), stack(""), businessId(0) {
   }
 
   virtual ~LinkedNotebook() throw() {}
@@ -1564,6 +1838,8 @@ class LinkedNotebook {
   int32_t updateSequenceNum;
   std::string noteStoreUrl;
   std::string webApiUrlPrefix;
+  std::string stack;
+  int32_t businessId;
 
   _LinkedNotebook__isset __isset;
 
@@ -1605,6 +1881,14 @@ class LinkedNotebook {
       return false;
     else if (__isset.webApiUrlPrefix && !(webApiUrlPrefix == rhs.webApiUrlPrefix))
       return false;
+    if (__isset.stack != rhs.__isset.stack)
+      return false;
+    else if (__isset.stack && !(stack == rhs.stack))
+      return false;
+    if (__isset.businessId != rhs.__isset.businessId)
+      return false;
+    else if (__isset.businessId && !(businessId == rhs.businessId))
+      return false;
     return true;
   }
   bool operator != (const LinkedNotebook &rhs) const {
@@ -1612,6 +1896,69 @@ class LinkedNotebook {
   }
 
   bool operator < (const LinkedNotebook & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _NotebookDescriptor__isset {
+  _NotebookDescriptor__isset() : guid(false), notebookDisplayName(false), contactName(false), hasSharedNotebook(false), joinedUserCount(false) {}
+  bool guid;
+  bool notebookDisplayName;
+  bool contactName;
+  bool hasSharedNotebook;
+  bool joinedUserCount;
+} _NotebookDescriptor__isset;
+
+class NotebookDescriptor {
+ public:
+
+  static const char* ascii_fingerprint; // = "7C04E117F0486F5C405AFB211B3082DD";
+  static const uint8_t binary_fingerprint[16]; // = {0x7C,0x04,0xE1,0x17,0xF0,0x48,0x6F,0x5C,0x40,0x5A,0xFB,0x21,0x1B,0x30,0x82,0xDD};
+
+  NotebookDescriptor() : guid(""), notebookDisplayName(""), contactName(""), hasSharedNotebook(0), joinedUserCount(0) {
+  }
+
+  virtual ~NotebookDescriptor() throw() {}
+
+  Guid guid;
+  std::string notebookDisplayName;
+  std::string contactName;
+  bool hasSharedNotebook;
+  int32_t joinedUserCount;
+
+  _NotebookDescriptor__isset __isset;
+
+  bool operator == (const NotebookDescriptor & rhs) const
+  {
+    if (__isset.guid != rhs.__isset.guid)
+      return false;
+    else if (__isset.guid && !(guid == rhs.guid))
+      return false;
+    if (__isset.notebookDisplayName != rhs.__isset.notebookDisplayName)
+      return false;
+    else if (__isset.notebookDisplayName && !(notebookDisplayName == rhs.notebookDisplayName))
+      return false;
+    if (__isset.contactName != rhs.__isset.contactName)
+      return false;
+    else if (__isset.contactName && !(contactName == rhs.contactName))
+      return false;
+    if (__isset.hasSharedNotebook != rhs.__isset.hasSharedNotebook)
+      return false;
+    else if (__isset.hasSharedNotebook && !(hasSharedNotebook == rhs.hasSharedNotebook))
+      return false;
+    if (__isset.joinedUserCount != rhs.__isset.joinedUserCount)
+      return false;
+    else if (__isset.joinedUserCount && !(joinedUserCount == rhs.joinedUserCount))
+      return false;
+    return true;
+  }
+  bool operator != (const NotebookDescriptor &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const NotebookDescriptor & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;

@@ -359,7 +359,15 @@ void UserTable::getUser(User &user) {
         }
         if (query.value(0) == USER_PRIVILEGE) {
             int priv = QVariant(query.value(1)).toInt();
-            user.privilege = PrivilegeLevel(priv);
+            user.privilege = PrivilegeLevel::NORMAL;
+            if (priv == PrivilegeLevel::ADMIN)
+                user.privilege = PrivilegeLevel::ADMIN;
+            if (priv == PrivilegeLevel::PREMIUM)
+                user.privilege = PrivilegeLevel::PREMIUM;
+            if (priv == PrivilegeLevel::MANAGER)
+                user.privilege = PrivilegeLevel::MANAGER;
+            if (priv == PrivilegeLevel::SUPPORT)
+                user.privilege = PrivilegeLevel::SUPPORT;
             user.__isset.privilege = true;
         }
         if (query.value(0) == USER_CREATED) {

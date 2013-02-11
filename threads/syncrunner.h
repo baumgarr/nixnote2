@@ -95,6 +95,7 @@ private:
     void syncRemoteNotebooks(vector<Notebook> books);
     void syncRemoteNotes(vector<Note> notes);
     void syncRemoteResources(vector<Resource> resources);
+    void syncRemoteLinkedNotebooks(vector<LinkedNotebook> books);
 
     void updateNoteTableTags();
     void updateNoteTableNotebooks();

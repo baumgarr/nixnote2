@@ -14,6 +14,9 @@ class TypesConstants {
  public:
   TypesConstants();
 
+  std::string CLASSIFICATION_RECIPE_USER_NON_RECIPE;
+  std::string CLASSIFICATION_RECIPE_USER_RECIPE;
+  std::string CLASSIFICATION_RECIPE_SERVICE_RECIPE;
   std::string EDAM_NOTE_SOURCE_WEB_CLIP;
   std::string EDAM_NOTE_SOURCE_MAIL_CLIP;
   std::string EDAM_NOTE_SOURCE_MAIL_SMTP_GATEWAY;

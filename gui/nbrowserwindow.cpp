@@ -312,7 +312,10 @@ void NBrowserWindow::setContent(qint32 lid) {
     NoteTable noteTable;
     Note n;
 
-    noteTable.get(n, this->lid, false, false);
+    bool rc = noteTable.get(n, this->lid, false, false);
+    if (!rc)
+        return;
+
     QByteArray content;
 
     bool inkNote;

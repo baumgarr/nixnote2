@@ -35,7 +35,7 @@ uint32_t EDAMUserException::read(::apache::thrift::protocol::TProtocol* iprot) {
         if (ftype == ::apache::thrift::protocol::T_I32) {
           int32_t ecast0;
           xfer += iprot->readI32(ecast0);
-          this->errorCode = (EDAMErrorCode)ecast0;
+          this->errorCode = (EDAMErrorCode::type)ecast0;
           isset_errorCode = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -107,7 +107,7 @@ uint32_t EDAMSystemException::read(::apache::thrift::protocol::TProtocol* iprot)
         if (ftype == ::apache::thrift::protocol::T_I32) {
           int32_t ecast1;
           xfer += iprot->readI32(ecast1);
-          this->errorCode = (EDAMErrorCode)ecast1;
+          this->errorCode = (EDAMErrorCode::type)ecast1;
           isset_errorCode = true;
         } else {
           xfer += iprot->skip(ftype);

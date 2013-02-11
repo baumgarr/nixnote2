@@ -188,8 +188,8 @@ bool SearchTable::get(SavedSearch &search ,qint32 lid) {
             break;
         case (SEARCH_FORMAT):
             qint32 value = query.value(1).toInt();
-            if (value == USER) search.format = USER;
-            if (value == SEXP) search.format = SEXP;
+            search.format = QueryFormat::USER;
+            if (value == QueryFormat::SEXP) search.format = QueryFormat::SEXP;
             search.__isset.format = true;
             break;
         }

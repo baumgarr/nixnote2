@@ -10,6 +10,7 @@
 #include "sql/searchtable.h"
 #include "sql/notebooktable.h"
 #include "sql/notetable.h"
+#include "sql/linkednotebooktable.h"
 #include "sql/resourcetable.h"
 #include "html/thumbnailer.h"
 #include "nixnote.h"
@@ -116,7 +117,7 @@ void SyncRunner::evernoteSync() {
 
 
 void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
-    QLOG_TRACE() << "Entering SyncRunner::evernoteSync()";
+    QLOG_TRACE() << "Entering SyncRunner::SyncRemoteToLocal()";
 
     int chunkSize = 50;
     bool more = true;
@@ -155,6 +156,8 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             syncRemoteNotes(chunk.notes);
         if (chunk.resources.size() > 0)
             syncRemoteResources(chunk.resources);
+        if (chunk.linkedNotebooks.size() > 0)
+            syncRemoteLinkedNotebooks(chunk.linkedNotebooks);
 
         // Save any ink notes
         while (comm->inkNoteList->size() > 0) {
@@ -443,5 +446,14 @@ void SyncRunner::updateNoteTableNotebooks() {
         noteTable.updateNoteListNotebooks(keys.key(), keys.value());
     }
 
+}
+
+
+
+// Synchronize remote resources with the current database
+void SyncRunner::syncRemoteLinkedNotebooks(vector<LinkedNotebook> books) {
+    LinkedNotebookTable btable;
+    for (int i=0; i<books.size(); i++)
+        btable.sync(books[i]);
 }
 

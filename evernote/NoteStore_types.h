@@ -86,8 +86,8 @@ typedef struct _SyncChunk__isset {
 class SyncChunk {
  public:
 
-  static const char* ascii_fingerprint; // = "D59CD55325EEC209B3EDAD529EF88313";
-  static const uint8_t binary_fingerprint[16]; // = {0xD5,0x9C,0xD5,0x53,0x25,0xEE,0xC2,0x09,0xB3,0xED,0xAD,0x52,0x9E,0xF8,0x83,0x13};
+  static const char* ascii_fingerprint; // = "20A441A1EFC4392D73AB88C4F0107C2B";
+  static const uint8_t binary_fingerprint[16]; // = {0x20,0xA4,0x41,0xA1,0xEF,0xC4,0x39,0x2D,0x73,0xAB,0x88,0xC4,0xF0,0x10,0x7C,0x2B};
 
   SyncChunk() : currentTime(0), chunkHighUSN(0), updateCount(0) {
   }
@@ -290,7 +290,7 @@ class SyncChunkFilter {
 };
 
 typedef struct _NoteFilter__isset {
-  _NoteFilter__isset() : order(false), ascending(false), words(false), notebookGuid(false), tagGuids(false), timeZone(false), inactive(false) {}
+  _NoteFilter__isset() : order(false), ascending(false), words(false), notebookGuid(false), tagGuids(false), timeZone(false), inactive(false), emphasized(false) {}
   bool order;
   bool ascending;
   bool words;
@@ -298,15 +298,16 @@ typedef struct _NoteFilter__isset {
   bool tagGuids;
   bool timeZone;
   bool inactive;
+  bool emphasized;
 } _NoteFilter__isset;
 
 class NoteFilter {
  public:
 
-  static const char* ascii_fingerprint; // = "E3FEA280E924E0A51D5D872FA8A51D7F";
-  static const uint8_t binary_fingerprint[16]; // = {0xE3,0xFE,0xA2,0x80,0xE9,0x24,0xE0,0xA5,0x1D,0x5D,0x87,0x2F,0xA8,0xA5,0x1D,0x7F};
+  static const char* ascii_fingerprint; // = "93B29CDDEFE43048C2B95A27B35D2189";
+  static const uint8_t binary_fingerprint[16]; // = {0x93,0xB2,0x9C,0xDD,0xEF,0xE4,0x30,0x48,0xC2,0xB9,0x5A,0x27,0xB3,0x5D,0x21,0x89};
 
-  NoteFilter() : order(0), ascending(0), words(""), notebookGuid(""), timeZone(""), inactive(0) {
+  NoteFilter() : order(0), ascending(0), words(""), notebookGuid(""), timeZone(""), inactive(0), emphasized("") {
   }
 
   virtual ~NoteFilter() throw() {}
@@ -318,6 +319,7 @@ class NoteFilter {
   std::vector<evernote::edam::Guid>  tagGuids;
   std::string timeZone;
   bool inactive;
+  std::string emphasized;
 
   _NoteFilter__isset __isset;
 
@@ -351,6 +353,10 @@ class NoteFilter {
       return false;
     else if (__isset.inactive && !(inactive == rhs.inactive))
       return false;
+    if (__isset.emphasized != rhs.__isset.emphasized)
+      return false;
+    else if (__isset.emphasized && !(emphasized == rhs.emphasized))
+      return false;
     return true;
   }
   bool operator != (const NoteFilter &rhs) const {
@@ -374,8 +380,8 @@ typedef struct _NoteList__isset {
 class NoteList {
  public:
 
-  static const char* ascii_fingerprint; // = "C4253E73F029D45828E9B8E3AFD6A5D4";
-  static const uint8_t binary_fingerprint[16]; // = {0xC4,0x25,0x3E,0x73,0xF0,0x29,0xD4,0x58,0x28,0xE9,0xB8,0xE3,0xAF,0xD6,0xA5,0xD4};
+  static const char* ascii_fingerprint; // = "CE2F7250677813368E2387275337ED1E";
+  static const uint8_t binary_fingerprint[16]; // = {0xCE,0x2F,0x72,0x50,0x67,0x78,0x13,0x36,0x8E,0x23,0x87,0x27,0x53,0x37,0xED,0x1E};
 
   NoteList() : startIndex(0), totalNotes(0), updateCount(0) {
   }
@@ -441,8 +447,8 @@ typedef struct _NoteMetadata__isset {
 class NoteMetadata {
  public:
 
-  static const char* ascii_fingerprint; // = "2159F77A08C4F7332F71EF5A1BD5AE2B";
-  static const uint8_t binary_fingerprint[16]; // = {0x21,0x59,0xF7,0x7A,0x08,0xC4,0xF7,0x33,0x2F,0x71,0xEF,0x5A,0x1B,0xD5,0xAE,0x2B};
+  static const char* ascii_fingerprint; // = "775A062017D1BA5630CFA0816588305D";
+  static const uint8_t binary_fingerprint[16]; // = {0x77,0x5A,0x06,0x20,0x17,0xD1,0xBA,0x56,0x30,0xCF,0xA0,0x81,0x65,0x88,0x30,0x5D};
 
   NoteMetadata() : guid(""), title(""), contentLength(0), created(0), updated(0), updateSequenceNum(0), notebookGuid(""), largestResourceMime(""), largestResourceSize(0) {
   }
@@ -530,8 +536,8 @@ typedef struct _NotesMetadataList__isset {
 class NotesMetadataList {
  public:
 
-  static const char* ascii_fingerprint; // = "F3D551C521A5C489E7B722A8D6AC7205";
-  static const uint8_t binary_fingerprint[16]; // = {0xF3,0xD5,0x51,0xC5,0x21,0xA5,0xC4,0x89,0xE7,0xB7,0x22,0xA8,0xD6,0xAC,0x72,0x05};
+  static const char* ascii_fingerprint; // = "44AEB155A48293C43C0BB4F462E18FE6";
+  static const uint8_t binary_fingerprint[16]; // = {0x44,0xAE,0xB1,0x55,0xA4,0x82,0x93,0xC4,0x3C,0x0B,0xB4,0xF4,0x62,0xE1,0x8F,0xE6};
 
   NotesMetadataList() : startIndex(0), totalNotes(0), updateCount(0) {
   }
@@ -724,100 +730,6 @@ class NoteCollectionCounts {
 
 };
 
-
-class AdImpressions {
- public:
-
-  static const char* ascii_fingerprint; // = "6435B39C87AB0E30F30BEDEFD7328C0D";
-  static const uint8_t binary_fingerprint[16]; // = {0x64,0x35,0xB3,0x9C,0x87,0xAB,0x0E,0x30,0xF3,0x0B,0xED,0xEF,0xD7,0x32,0x8C,0x0D};
-
-  AdImpressions() : adId(0), impressionCount(0), impressionTime(0) {
-  }
-
-  virtual ~AdImpressions() throw() {}
-
-  int32_t adId;
-  int32_t impressionCount;
-  int32_t impressionTime;
-
-  bool operator == (const AdImpressions & rhs) const
-  {
-    if (!(adId == rhs.adId))
-      return false;
-    if (!(impressionCount == rhs.impressionCount))
-      return false;
-    if (!(impressionTime == rhs.impressionTime))
-      return false;
-    return true;
-  }
-  bool operator != (const AdImpressions &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const AdImpressions & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
-typedef struct _AdParameters__isset {
-  _AdParameters__isset() : clientLanguage(false), impressions(false), supportHtml(false), clientProperties(false) {}
-  bool clientLanguage;
-  bool impressions;
-  bool supportHtml;
-  bool clientProperties;
-} _AdParameters__isset;
-
-class AdParameters {
- public:
-
-  static const char* ascii_fingerprint; // = "E18D1AB8E98004C28B4CF16AA27309AA";
-  static const uint8_t binary_fingerprint[16]; // = {0xE1,0x8D,0x1A,0xB8,0xE9,0x80,0x04,0xC2,0x8B,0x4C,0xF1,0x6A,0xA2,0x73,0x09,0xAA};
-
-  AdParameters() : clientLanguage(""), supportHtml(0) {
-  }
-
-  virtual ~AdParameters() throw() {}
-
-  std::string clientLanguage;
-  std::vector<AdImpressions>  impressions;
-  bool supportHtml;
-  std::map<std::string, std::string>  clientProperties;
-
-  _AdParameters__isset __isset;
-
-  bool operator == (const AdParameters & rhs) const
-  {
-    if (__isset.clientLanguage != rhs.__isset.clientLanguage)
-      return false;
-    else if (__isset.clientLanguage && !(clientLanguage == rhs.clientLanguage))
-      return false;
-    if (__isset.impressions != rhs.__isset.impressions)
-      return false;
-    else if (__isset.impressions && !(impressions == rhs.impressions))
-      return false;
-    if (__isset.supportHtml != rhs.__isset.supportHtml)
-      return false;
-    else if (__isset.supportHtml && !(supportHtml == rhs.supportHtml))
-      return false;
-    if (__isset.clientProperties != rhs.__isset.clientProperties)
-      return false;
-    else if (__isset.clientProperties && !(clientProperties == rhs.clientProperties))
-      return false;
-    return true;
-  }
-  bool operator != (const AdParameters &rhs) const {
-    return !(*this == rhs);
-  }
-
-  bool operator < (const AdParameters & ) const;
-
-  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
-  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
-
-};
-
 typedef struct _NoteEmailParameters__isset {
   _NoteEmailParameters__isset() : guid(false), note(false), toAddresses(false), ccAddresses(false), subject(false), message(false) {}
   bool guid;
@@ -831,8 +743,8 @@ typedef struct _NoteEmailParameters__isset {
 class NoteEmailParameters {
  public:
 
-  static const char* ascii_fingerprint; // = "F10DBB1792130CE06A0625E86739805B";
-  static const uint8_t binary_fingerprint[16]; // = {0xF1,0x0D,0xBB,0x17,0x92,0x13,0x0C,0xE0,0x6A,0x06,0x25,0xE8,0x67,0x39,0x80,0x5B};
+  static const char* ascii_fingerprint; // = "56FF91D4CE9612B9F3443012BA35FAD6";
+  static const uint8_t binary_fingerprint[16]; // = {0x56,0xFF,0x91,0xD4,0xCE,0x96,0x12,0xB9,0xF3,0x44,0x30,0x12,0xBA,0x35,0xFA,0xD6};
 
   NoteEmailParameters() : guid(""), subject(""), message("") {
   }
@@ -960,6 +872,189 @@ class ClientUsageMetrics {
   }
 
   bool operator < (const ClientUsageMetrics & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _RelatedQuery__isset {
+  _RelatedQuery__isset() : noteGuid(false), plainText(false), filter(false) {}
+  bool noteGuid;
+  bool plainText;
+  bool filter;
+} _RelatedQuery__isset;
+
+class RelatedQuery {
+ public:
+
+  static const char* ascii_fingerprint; // = "98542AA5E3BA0C4C5CB7DE85C90729CF";
+  static const uint8_t binary_fingerprint[16]; // = {0x98,0x54,0x2A,0xA5,0xE3,0xBA,0x0C,0x4C,0x5C,0xB7,0xDE,0x85,0xC9,0x07,0x29,0xCF};
+
+  RelatedQuery() : noteGuid(""), plainText("") {
+  }
+
+  virtual ~RelatedQuery() throw() {}
+
+  std::string noteGuid;
+  std::string plainText;
+  NoteFilter filter;
+
+  _RelatedQuery__isset __isset;
+
+  bool operator == (const RelatedQuery & rhs) const
+  {
+    if (__isset.noteGuid != rhs.__isset.noteGuid)
+      return false;
+    else if (__isset.noteGuid && !(noteGuid == rhs.noteGuid))
+      return false;
+    if (__isset.plainText != rhs.__isset.plainText)
+      return false;
+    else if (__isset.plainText && !(plainText == rhs.plainText))
+      return false;
+    if (__isset.filter != rhs.__isset.filter)
+      return false;
+    else if (__isset.filter && !(filter == rhs.filter))
+      return false;
+    return true;
+  }
+  bool operator != (const RelatedQuery &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const RelatedQuery & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _RelatedResult__isset {
+  _RelatedResult__isset() : notes(false), notebooks(false), tags(false), containingNotebooks(false), debugInfo(false) {}
+  bool notes;
+  bool notebooks;
+  bool tags;
+  bool containingNotebooks;
+  bool debugInfo;
+} _RelatedResult__isset;
+
+class RelatedResult {
+ public:
+
+  static const char* ascii_fingerprint; // = "06C62C0870774D14F08AEBE79BF17FC9";
+  static const uint8_t binary_fingerprint[16]; // = {0x06,0xC6,0x2C,0x08,0x70,0x77,0x4D,0x14,0xF0,0x8A,0xEB,0xE7,0x9B,0xF1,0x7F,0xC9};
+
+  RelatedResult() : debugInfo("") {
+  }
+
+  virtual ~RelatedResult() throw() {}
+
+  std::vector<evernote::edam::Note>  notes;
+  std::vector<evernote::edam::Notebook>  notebooks;
+  std::vector<evernote::edam::Tag>  tags;
+  std::vector<evernote::edam::NotebookDescriptor>  containingNotebooks;
+  std::string debugInfo;
+
+  _RelatedResult__isset __isset;
+
+  bool operator == (const RelatedResult & rhs) const
+  {
+    if (__isset.notes != rhs.__isset.notes)
+      return false;
+    else if (__isset.notes && !(notes == rhs.notes))
+      return false;
+    if (__isset.notebooks != rhs.__isset.notebooks)
+      return false;
+    else if (__isset.notebooks && !(notebooks == rhs.notebooks))
+      return false;
+    if (__isset.tags != rhs.__isset.tags)
+      return false;
+    else if (__isset.tags && !(tags == rhs.tags))
+      return false;
+    if (__isset.containingNotebooks != rhs.__isset.containingNotebooks)
+      return false;
+    else if (__isset.containingNotebooks && !(containingNotebooks == rhs.containingNotebooks))
+      return false;
+    if (__isset.debugInfo != rhs.__isset.debugInfo)
+      return false;
+    else if (__isset.debugInfo && !(debugInfo == rhs.debugInfo))
+      return false;
+    return true;
+  }
+  bool operator != (const RelatedResult &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const RelatedResult & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _RelatedResultSpec__isset {
+  _RelatedResultSpec__isset() : maxNotes(false), maxNotebooks(false), maxTags(false), writableNotebooksOnly(false), includeContainingNotebooks(false), includeDebugInfo(false) {}
+  bool maxNotes;
+  bool maxNotebooks;
+  bool maxTags;
+  bool writableNotebooksOnly;
+  bool includeContainingNotebooks;
+  bool includeDebugInfo;
+} _RelatedResultSpec__isset;
+
+class RelatedResultSpec {
+ public:
+
+  static const char* ascii_fingerprint; // = "01A1DFD093FDCE31CD2872FDE4A7946D";
+  static const uint8_t binary_fingerprint[16]; // = {0x01,0xA1,0xDF,0xD0,0x93,0xFD,0xCE,0x31,0xCD,0x28,0x72,0xFD,0xE4,0xA7,0x94,0x6D};
+
+  RelatedResultSpec() : maxNotes(0), maxNotebooks(0), maxTags(0), writableNotebooksOnly(0), includeContainingNotebooks(0), includeDebugInfo(0) {
+  }
+
+  virtual ~RelatedResultSpec() throw() {}
+
+  int32_t maxNotes;
+  int32_t maxNotebooks;
+  int32_t maxTags;
+  bool writableNotebooksOnly;
+  bool includeContainingNotebooks;
+  bool includeDebugInfo;
+
+  _RelatedResultSpec__isset __isset;
+
+  bool operator == (const RelatedResultSpec & rhs) const
+  {
+    if (__isset.maxNotes != rhs.__isset.maxNotes)
+      return false;
+    else if (__isset.maxNotes && !(maxNotes == rhs.maxNotes))
+      return false;
+    if (__isset.maxNotebooks != rhs.__isset.maxNotebooks)
+      return false;
+    else if (__isset.maxNotebooks && !(maxNotebooks == rhs.maxNotebooks))
+      return false;
+    if (__isset.maxTags != rhs.__isset.maxTags)
+      return false;
+    else if (__isset.maxTags && !(maxTags == rhs.maxTags))
+      return false;
+    if (__isset.writableNotebooksOnly != rhs.__isset.writableNotebooksOnly)
+      return false;
+    else if (__isset.writableNotebooksOnly && !(writableNotebooksOnly == rhs.writableNotebooksOnly))
+      return false;
+    if (__isset.includeContainingNotebooks != rhs.__isset.includeContainingNotebooks)
+      return false;
+    else if (__isset.includeContainingNotebooks && !(includeContainingNotebooks == rhs.includeContainingNotebooks))
+      return false;
+    if (__isset.includeDebugInfo != rhs.__isset.includeDebugInfo)
+      return false;
+    else if (__isset.includeDebugInfo && !(includeDebugInfo == rhs.includeDebugInfo))
+      return false;
+    return true;
+  }
+  bool operator != (const RelatedResultSpec &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const RelatedResultSpec & ) const;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
