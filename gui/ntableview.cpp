@@ -9,6 +9,8 @@
 #include <sql/notetable.h>
 #include <QClipboard>
 #include "sql/usertable.h"
+#include "sql/notetable.h"
+#include "sql/notebooktable.h"
 
 //*****************************************************************
 //* This class overrides QTableView and is used to provide a
@@ -158,7 +160,20 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
     QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() > 0) {
-        deleteNoteAction->setEnabled(true);
+        bool readOnlySelected =  false;
+        for (int i=0; i<lids.size(); i++) {
+            Note n;
+            NotebookTable bTable;
+            NoteTable nTable;
+            nTable.get(n, lids[i], false, false);
+            qint32 notebookLid = bTable.getLid(n.notebookGuid);
+            if (bTable.isReadOnly(notebookLid)) {
+                readOnlySelected = true;
+                i=lids.size();
+            }
+        }
+        if (!readOnlySelected)
+            deleteNoteAction->setEnabled(true);
         openNoteAction->setEnabled(true);
     }
     contextMenu->popup(event->globalPos());

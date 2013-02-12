@@ -136,6 +136,7 @@ public slots:
     void findNextInNote();
     void findPrevInNote();
     void findReplaceWindowHidden();
+    void checkReadOnlyNotebook();
 
 signals:
     void syncRequested();

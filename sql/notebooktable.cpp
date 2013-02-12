@@ -3,6 +3,7 @@
 #include <evernote/NoteStore.h>
 #include "sql/configstore.h"
 #include "sql/notetable.h"
+#include "sql/sharednotebooktable.h"
 #include "global.h"
 
 #include <iostream>
@@ -633,4 +634,22 @@ QString NotebookTable::getDefaultNotebookGuid() {
     QString guid;
     this->getGuid(guid, lid);
     return guid;
+}
+
+
+bool NotebookTable::isReadOnly(qint32 notebookLid) {
+    if (notebookLid <= 0)
+        return true;
+    else {
+        SharedNotebook sharedNotebook;
+        SharedNotebookTable stable;
+        bool found = stable.get(sharedNotebook, notebookLid);
+        if (found) {
+            if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK)
+                return true;
+            if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
+                return true;
+        }
+    }
+    return false;
 }

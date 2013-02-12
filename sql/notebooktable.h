@@ -83,6 +83,7 @@ public:
     void removeFromStack(qint32 lid);
     qint32 getDefaultNotebookLid();
     QString getDefaultNotebookGuid();
+    bool isReadOnly(qint32 notebookLid);
 
 };
 

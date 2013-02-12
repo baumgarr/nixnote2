@@ -132,19 +132,8 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     if (!formatError && !readOnly) {
         NotebookTable ntable;
         qint32 notebookLid = ntable.getLid(note.notebookGuid);
-        if (notebookLid <= 0)
+        if (ntable.isReadOnly(notebookLid))
             readOnly = true;
-        else {
-            SharedNotebook sharedNotebook;
-            SharedNotebookTable stable;
-            bool found = stable.get(sharedNotebook, notebookLid);
-            if (found) {
-                if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK)
-                    readOnly = true;
-                if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
-                    readOnly = true;
-            }
-        }
     }
     return content;
 }

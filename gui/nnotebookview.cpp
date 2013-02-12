@@ -45,7 +45,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
     root = new NNotebookViewItem(this);
     root->setIcon(NAME_POSITION,icon);
     root->setData(NAME_POSITION, Qt::UserRole, "rootsynchronized");
-    root->setData(NAME_POSITION, Qt::DisplayRole, tr("Synchronized Notebooks"));
+    root->setData(NAME_POSITION, Qt::DisplayRole, tr("Notebooks"));
     root->setRootColor(true);
     root->setExpanded(true);
     this->setMinimumHeight(1);
@@ -196,10 +196,11 @@ void NNotebookView::loadData() {
     dataStore.clear();
     query.exec("Select lid, name, stack from NotebookModel order by name");
     while (query.next()) {
+        qint32 lid = query.value(0).toInt();
         if (!notebookTable.isDeleted(query.value(0).toInt())) {
             NNotebookViewItem *newWidget = new NNotebookViewItem();
             newWidget->setData(NAME_POSITION, Qt::DisplayRole, query.value(1).toString());
-            newWidget->setData(NAME_POSITION, Qt::UserRole, query.value(0).toInt());
+            newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
             newWidget->stack = query.value(2).toString();
             this->dataStore.insert(query.value(0).toInt(), newWidget);
             root->addChild(newWidget);

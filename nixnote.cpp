@@ -228,6 +228,7 @@ void NixNote::setupGui() {
     connect(tabWindow, SIGNAL(tagCreated(qint32)), tagTreeView, SLOT(addNewTag(qint32)));
 
     connect(tabWindow, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
+    connect(tabWindow->tabBar, SIGNAL(currentChanged(int)), this, SLOT(checkReadOnlyNotebook()));
 
     // Finish by filtering & displaying the data
     //updateSelectionCriteria();
@@ -551,6 +552,7 @@ void NixNote::openNote(bool newWindow) {
         rightArrowButton->setEnabled(true);
     if (global.filterPosition > 0)
         leftArrowButton->setEnabled(true);
+    checkReadOnlyNotebook();
 }
 
 //*****************************************************
@@ -599,6 +601,23 @@ void NixNote::updateSelectionCriteria() {
         newNoteButton->setEnabled(false);
     else
         newNoteButton->setEnabled(true);
+}
+
+
+void NixNote::checkReadOnlyNotebook() {
+    qint32 lid = tabWindow->currentBrowser()->lid;
+    Note n;
+    NoteTable ntable;
+    NotebookTable btable;
+    ntable.get(n, lid, false,false);
+    qint32 notebookLid = btable.getLid(n.notebookGuid);
+    if (btable.isReadOnly(notebookLid)) {
+        newNoteButton->setEnabled(false);
+        menuBar->deleteNoteAction->setEnabled(false);
+    } else {
+        newNoteButton->setEnabled(true);
+        menuBar->deleteNoteAction->setEnabled(true);
+    }
 }
 
 
