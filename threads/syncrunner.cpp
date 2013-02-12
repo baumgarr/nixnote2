@@ -12,6 +12,7 @@
 #include "sql/notetable.h"
 #include "sql/linkednotebooktable.h"
 #include "sql/resourcetable.h"
+#include "sql/sharednotebooktable.h"
 #include "html/thumbnailer.h"
 #include "nixnote.h"
 #include "communication/communicationmanager.h"
@@ -138,39 +139,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
         emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete."));
 
-        if (chunk.expungedNotes.size() > 0)
-            syncRemoteExpungedNotes(chunk.expungedNotes);
-        if (chunk.expungedTags.size() > 0)
-            syncRemoteExpungedTags(chunk.expungedTags);
-        if (chunk.expungedNotebooks.size() > 0)
-            syncRemoteExpungedNotebooks(chunk.expungedNotebooks);
-        if (chunk.expungedSearches.size() > 0)
-            syncRemoteExpungedSavedSearches(chunk.expungedSearches);
-        if (chunk.tags.size() > 0)
-            syncRemoteTags(chunk.tags);
-        if (chunk.notebooks.size() > 0)
-            syncRemoteNotebooks(chunk.notebooks);
-        if (chunk.searches.size() > 0)
-            syncRemoteSearches(chunk.searches);
-        if (chunk.notes.size() > 0)
-            syncRemoteNotes(chunk.notes);
-        if (chunk.resources.size() > 0)
-            syncRemoteResources(chunk.resources);
-        if (chunk.linkedNotebooks.size() > 0)
-            syncRemoteLinkedNotebooks(chunk.linkedNotebooks);
-
-        // Save any ink notes
-        while (comm->inkNoteList->size() > 0) {
-            QPair<QString, QImage *> *pair = comm->inkNoteList->takeFirst();
-            ResourceTable resTable;
-            qint32 resLid = resTable.getLid(pair->first);
-            if (resLid > 0) {
-                QString filename = global.fileManager.getDbaDirPath() + QString::number(resLid) + QString(".png");
-                pair->second->save(filename);
-            }
-            delete pair->second;
-            delete pair;
-        }
+        processSyncChunk(chunk);
 
         if (chunk.chunkHighUSN >= updateCount)
             more = false;
@@ -178,8 +147,64 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         UserTable userTable;
         userTable.updateLastSyncNumber(updateSequenceNumber);
         userTable.updateLastSyncDate(chunk.currentTime);
+
         query.exec("commit");
-      }
+    }
+    emit setMessage(tr("Download 100% complete."));
+    syncRemoteLinkedNotebooksActual();
+}
+
+
+
+// Deal with the sync chunk returned
+void SyncRunner::processSyncChunk(SyncChunk &chunk) {
+
+    if (chunk.expungedNotes.size() > 0)
+        syncRemoteExpungedNotes(chunk.expungedNotes);
+    if (chunk.expungedTags.size() > 0)
+        syncRemoteExpungedTags(chunk.expungedTags);
+    if (chunk.expungedNotebooks.size() > 0)
+        syncRemoteExpungedNotebooks(chunk.expungedNotebooks);
+    if (chunk.expungedSearches.size() > 0)
+        syncRemoteExpungedSavedSearches(chunk.expungedSearches);
+    if (chunk.expungedLinkedNotebooks.size() > 0)
+        syncRemoteExpungedLinkedNotebooks(chunk.expungedLinkedNotebooks);
+    if (chunk.tags.size() > 0)
+        syncRemoteTags(chunk.tags);
+    if (chunk.notebooks.size() > 0)
+        syncRemoteNotebooks(chunk.notebooks);
+    if (chunk.searches.size() > 0)
+        syncRemoteSearches(chunk.searches);
+    if (chunk.notes.size() > 0)
+        syncRemoteNotes(chunk.notes);
+    if (chunk.resources.size() > 0)
+        syncRemoteResources(chunk.resources);
+    if (chunk.linkedNotebooks.size() > 0)
+        syncRemoteLinkedNotebooks(chunk.linkedNotebooks);
+
+    chunk.expungedLinkedNotebooks.clear();;
+    chunk.expungedNotebooks.clear();
+    chunk.expungedNotes.clear();
+    chunk.expungedSearches.clear();
+    chunk.expungedTags.clear();
+    chunk.notebooks.clear();
+    chunk.notes.clear();
+    chunk.tags.clear();
+    chunk.linkedNotebooks.clear();
+    chunk.searches.clear();
+
+    // Save any ink notes
+    while (comm->inkNoteList->size() > 0) {
+        QPair<QString, QImage *> *pair = comm->inkNoteList->takeFirst();
+        ResourceTable resTable;
+        qint32 resLid = resTable.getLid(pair->first);
+        if (resLid > 0) {
+            QString filename = global.fileManager.getDbaDirPath() + QString::number(resLid) + QString(".png");
+            pair->second->save(filename);
+        }
+        delete pair->second;
+        delete pair;
+    }
 }
 
 
@@ -450,10 +475,87 @@ void SyncRunner::updateNoteTableNotebooks() {
 
 
 
-// Synchronize remote resources with the current database
+// Synchronize remote linked notebooks
 void SyncRunner::syncRemoteLinkedNotebooks(vector<LinkedNotebook> books) {
-    LinkedNotebookTable btable;
-    for (int i=0; i<books.size(); i++)
-        btable.sync(books[i]);
+    LinkedNotebookTable ltable;
+    for (unsigned int i=0; i<books.size(); i++) {
+        qint32 lid = ltable.sync(books[i]);
+        comm->authenticateToLinkedNotebookShard(books[i]);
+        SharedNotebook sharedNotebook;
+        comm->getSharedNotebookByAuth(sharedNotebook);
+        SharedNotebookTable stable;
+        stable.sync(lid, sharedNotebook);
+        NotebookTable ntable;
+
+        // Build the dummy notebook entry
+        Notebook book;
+        book.guid = sharedNotebook.notebookGuid;
+        book.__isset.guid = true;
+
+        book.name = books[i].shareName;
+        book.__isset.name = true;
+
+        book.updateSequenceNum = 0;
+        book.__isset.updateSequenceNum = true;
+
+        if (books[i].__isset.stack) {
+            book.__isset.stack = true;
+            book.stack = books[i].stack;
+        }
+
+        ntable.sync(lid, book);
+        comm->disconnectFromLinkedNotebook();
+        emit notebookUpdated(lid, QString::fromStdString(books[i].shareName));
+
+    }
 }
+
+
+
+
+// Synchronize remote linked notebooks
+void SyncRunner::syncRemoteLinkedNotebooksActual() {
+    LinkedNotebookTable ltable;
+    QList<qint32> lids;
+    ltable.getAll(lids);
+    for (int i=0; i<lids.size(); i++) {
+        LinkedNotebook book;
+        ltable.get(book, lids[i]);
+        qint32 usn = ltable.getLastUpdateSequenceNumber(lids[i]);
+        if (usn < book.updateSequenceNum) {
+            bool fs = false;
+            if (usn == 0)
+                fs = true;
+            SyncChunk chunk;
+            int chunkSize = 50;
+            comm->authenticateToLinkedNotebookShard(book);
+            bool more = true;
+            SyncState syncState;
+            comm->getLinkedNotebookSyncState(syncState, book);
+            int startingSequenceNumber = usn;
+            while (more && keepRunning) {
+                comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, fs);
+                processSyncChunk(chunk);
+                if (chunk.chunkHighUSN >= syncState.updateCount)
+                    more = false;
+                ltable.setLastUpdateSequenceNumber(lids[i], chunk.chunkHighUSN);
+                usn = chunk.chunkHighUSN;
+                int pct = (usn-startingSequenceNumber)*100/(chunk.updateCount-startingSequenceNumber);
+                emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for shared notebook ") +QString::fromStdString(book.shareName) + tr("."));
+            }
+            comm->disconnectFromLinkedNotebook();
+        }
+    }
+}
+
+
+
+
+// Synchronize remote expunged linked notebooks
+void SyncRunner::syncRemoteExpungedLinkedNotebooks(vector<string> guids) {
+    LinkedNotebookTable btable;
+    for (int i=0; i<guids.size(); i++)
+        btable.expunge(guids[0]);
+}
+
 

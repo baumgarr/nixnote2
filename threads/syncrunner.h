@@ -87,6 +87,7 @@ private:
     //bool refreshConnection();
     void syncRemoteExpungedNotes(vector<string> guids);
     void syncRemoteExpungedNotebooks(vector<string> guids);
+    void processSyncChunk(SyncChunk &chunk);
     void syncRemoteExpungedTags(vector<string> guids);
     void syncRemoteExpungedSavedSearches(vector<string> guid);
 
@@ -96,6 +97,8 @@ private:
     void syncRemoteNotes(vector<Note> notes);
     void syncRemoteResources(vector<Resource> resources);
     void syncRemoteLinkedNotebooks(vector<LinkedNotebook> books);
+    void syncRemoteExpungedLinkedNotebooks(vector<string> guids);
+    void syncRemoteLinkedNotebooksActual();
 
     void updateNoteTableTags();
     void updateNoteTableNotebooks();

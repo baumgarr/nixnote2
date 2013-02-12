@@ -23,12 +23,16 @@
 #define NOTEBOOK_IS_DEFAULT                 3007
 #define NOTEBOOK_SERVICE_CREATED            3008
 #define NOTEBOOK_SERVICE_UPDATED            3009
+#define NOTEBOOK_ALIAS                      3010
+
 #define NOTEBOOK_PUBLISHED                  3100
 #define NOTEBOOK_PUBLISHING_URI             3101
 #define NOTEBOOK_PUBLISHING_ORDER           3102
 #define NOTEBOOK_PUBLISHING_ASCENDING       3103
 #define NOTEBOOK_PUBLISHING_DESCRIPTION     3104
 #define NOTEBOOK_IS_DELETED                 3105
+
+
 
 
 using namespace evernote::edam  ;
@@ -46,9 +50,9 @@ public:
     qint32 findByName(string &name);           // Find a notebook given a name
     qint32 findByName(QString &name);          // Find a notebook given a name
     void updateGuid(qint32 lid, Guid &guid);    // Update a notebook's guid
-    void sync(Notebook &notebook);                    // Sync a notebook with a new record
-    void sync(qint32 lid, Notebook &notebook);           // Sync a notebook with a new record
-    void add(qint32 lid, Notebook &t, bool isDirty, bool isLocal = false); // Add a new notebook
+    qint32 sync(Notebook &notebook);                    // Sync a notebook with a new record
+    qint32 sync(qint32 lid, Notebook &notebook);           // Sync a notebook with a new record
+    qint32 add(qint32 lid, Notebook &t, bool isDirty, bool isLocal = false); // Add a new notebook
     bool get(Notebook &notebook, qint32 lid);           // Get a notebook given a lid
     bool get(Notebook &notebook, QString guid);      // get a notebook given a guid
     bool get(Notebook &notebook, string guid);       // get a notebook given a guid

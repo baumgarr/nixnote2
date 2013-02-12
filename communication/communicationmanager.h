@@ -56,6 +56,7 @@ private:
     bool initComplete;
     bool initNoteStore();
     bool initUserStore();
+
     string userStorePath;
     string noteStorePath;
     string clientName;
@@ -63,6 +64,13 @@ private:
     shared_ptr<TSocket> sslSocketNoteStore;
     shared_ptr<TTransport> noteStoreHttpClient;
     shared_ptr<NoteStoreClient> noteStoreClient;
+
+    string linkedNoteStorePath;
+    shared_ptr<TSocket> linkedSslSocketNoteStore;
+    shared_ptr<TTransport> linkedNoteStoreHttpClient;
+    shared_ptr<NoteStoreClient> linkedNoteStoreClient;
+    AuthenticationResult linkedAuthToken;
+
     void downloadInkNoteImage(QString guid, Resource *r);
 
     shared_ptr<TSocket> sslSocketUserStore;
@@ -80,10 +88,16 @@ public:
     bool connect();
     bool getSyncState(string authToken, SyncState &syncState);
     bool getSyncChunk(string token, SyncChunk &chunk, int start, int chunkSize, bool fullSync=false);
+    bool authenticateToLinkedNotebookShard(LinkedNotebook book);
+    bool getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook book);
+    bool getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook book, int start, int chunkSize, bool fullSync=false);
     string getToken();
     void disconnect();
+    void disconnectFromLinkedNotebook();
+    bool authenticateToLinkedNotebook(AuthenticationResult &authResult, LinkedNotebook book);
     bool getUserInfo(User &user);
     QList< QPair<QString, QImage*>* > *inkNoteList;
+    bool getSharedNotebookByAuth(SharedNotebook &sharedNotebook);
 
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);

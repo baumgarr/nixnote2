@@ -51,7 +51,7 @@ void NoteTable::sync(qint32 lid, Note &note) {
         QSqlQuery query;
 
         // Delete the old record
-        query.prepare("Delete from DataStore where lid=:lid");
+        query.prepare("Delete from DataStore where lid=:lid and key>=3000 and key<3200");
         query.bindValue(":lid", lid);
         query.exec();
 

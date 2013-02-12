@@ -338,7 +338,6 @@ void NBrowserWindow::setContent(qint32 lid) {
         inkNote = c->isInkNote;
     }
 
-
     setReadOnly(readOnly);
 
     noteTitle.setTitle(lid, QString::fromStdString(n.title), QString::fromStdString(n.title));
@@ -377,6 +376,7 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
         urlEditor.setFocusPolicy(Qt::NoFocus);
         notebookMenu.setEnabled(false);
         dateEditor.setEnabled(false);
+        editor->page()->setContentEditable(false);
         return;
     }
     noteTitle.setFocusPolicy(Qt::StrongFocus);
@@ -385,6 +385,7 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
     urlEditor.setFocusPolicy(Qt::StrongFocus);
     notebookMenu.setEnabled(true);
     dateEditor.setEnabled(true);
+    editor->page()->setContentEditable(true);
 
 }
 

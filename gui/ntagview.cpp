@@ -30,11 +30,10 @@ NTagView::NTagView(QWidget *parent) :
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
     this->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    this->setRootIsDecorated(false);
+    this->setRootIsDecorated(true);
     this->setSortingEnabled(false);
     this->header()->setVisible(false);
-    this->header()->setStyleSheet("border:none; background-color:red;");
-    this->setStyleSheet("QTreeWidget {  border-top-style: none; border-style:none; border: none; background-color:transparent;}");
+    this->setStyleSheet("QTreeWidget { border: none; background-color:transparent;}");
 
     // Build the root item
     QIcon icon(":tag.png");

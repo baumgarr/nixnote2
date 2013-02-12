@@ -58,7 +58,7 @@ bool CommunicationManager::getSyncState(string token, SyncState &syncState) {
         token = authToken;
     try {
         noteStoreClient->getSyncState(syncState, token);
-        cout << "New count: "<< syncState.updateCount << endl;
+        QLOG_DEBUG() << "New count: "<< syncState.updateCount;
         return true;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -120,6 +120,131 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
 }
 
 
+bool CommunicationManager::getSharedNotebookByAuth(SharedNotebook &sharedNotebook) {
+    try {
+        linkedNoteStoreClient->getSharedNotebookByAuth(sharedNotebook, linkedAuthToken.authenticationToken);
+        return true;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return false;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        return false;
+    }
+}
+
+
+bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook book) {
+
+
+    QLOG_DEBUG() << "Inside CommunicationManager::authenticateToLinkedNotebook()";
+
+    disconnectFromLinkedNotebook();
+
+    try {
+
+        shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
+        QString pgmDir = global.getProgramDirPath() + "/certs/PCA-3G2.pem";
+        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
+        sslSocketFactory->authenticate(true);
+
+        linkedSslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
+        shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(linkedSslSocketNoteStore));
+
+        linkedNoteStorePath = "/edam/note/" +book.shardId;
+        linkedNoteStoreHttpClient = shared_ptr<TTransport>(new THttpClient(bufferedTransport, evernoteHost, linkedNoteStorePath));
+
+        linkedNoteStoreHttpClient->open();
+        shared_ptr<TProtocol> noteStoreProtocol(new TBinaryProtocol(linkedNoteStoreHttpClient));
+        linkedNoteStoreClient = shared_ptr<NoteStoreClient>(new NoteStoreClient(noteStoreProtocol));
+
+        linkedNoteStoreClient->authenticateToSharedNotebook(linkedAuthToken, book.shareKey, authToken);
+
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.what() << endl;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return false;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        return false;
+    }
+    QLOG_DEBUG() << "Leaving CommunicationManager::authenticateToLinkedNotebookShard()";
+    return true;
+}
+
+
+
+bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook linkedNotebook) {
+    try {
+        linkedNoteStoreClient->getLinkedNotebookSyncState(syncState, linkedAuthToken.authenticationToken, linkedNotebook);
+        QLOG_DEBUG() << "New linked notebook count: "<< syncState.updateCount;
+        return true;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return false;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        return false;
+    }
+}
+
+
+
+
+bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook linkedNotebook, int start, int chunkSize, bool fullSync) {
+
+    // Get rid of old stuff from last chunk
+    while(inkNoteList->size() > 0) {
+        QPair<QString, QImage*> *pair = inkNoteList->takeLast();
+        delete pair->second;
+        delete pair;
+    }
+    inkNoteList->empty();
+
+    // Try to get the chunk
+    try {
+        linkedNoteStoreClient->getLinkedNotebookSyncChunk(chunk, authToken, linkedNotebook, start, chunkSize, fullSync);
+        for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
+            QLOG_DEBUG() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
+            Note n;
+            linkedNoteStoreClient->getNote(n, authToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
+            //n.notebookGuid = linkedNotebook.guid;
+            chunk.notes[i] = n;
+            if (n.__isset.resources && n.resources.size() > 0) {
+                checkForInkNotes(n.resources);
+            }
+        }
+        for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
+            QLOG_DEBUG() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
+            Resource r;
+            linkedNoteStoreClient->getResource(r, authToken, chunk.resources[i].guid, true, true, true, true);
+            chunk.resources[i] = r;
+        }
+        if (chunk.__isset.resources && chunk.resources.size()>0)
+            checkForInkNotes(chunk.resources);
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return false;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        return false;
+    }
+    return true;
+}
+
+
+
 
 
 bool CommunicationManager::init() {
@@ -145,7 +270,7 @@ bool CommunicationManager::initUserStore() {
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
         QString pgmDir = global.getProgramDirPath() + "/certs/PCA-3G2.pem";
         sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-       // sslSocketFactory->authenticate(true);
+        sslSocketFactory->authenticate(true);
 
         sslSocketUserStore = sslSocketFactory->createSocket(evernoteHost, 443);
         shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(sslSocketUserStore));
@@ -175,6 +300,7 @@ bool CommunicationManager::initUserStore() {
 }
 
 
+
 bool CommunicationManager::initNoteStore() {
 
 
@@ -186,7 +312,7 @@ bool CommunicationManager::initNoteStore() {
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
         QString pgmDir = global.getProgramDirPath() + "/certs/PCA-3G2.pem";
         sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-        //sslSocketFactory->authenticate(true);
+        sslSocketFactory->authenticate(true);
 
         sslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
         shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(sslSocketNoteStore));
@@ -226,7 +352,15 @@ void CommunicationManager::disconnect() {
         userStoreHttpClient->flush();
         userStoreHttpClient->close();
     }
+    disconnectFromLinkedNotebook();
     initComplete=false;
+}
+
+void  CommunicationManager::disconnectFromLinkedNotebook() {
+    if (linkedNoteStoreClient != NULL && linkedNoteStoreHttpClient->isOpen()) {
+        linkedNoteStoreHttpClient->flush();
+        linkedNoteStoreHttpClient->close();
+    }
 }
 
 

@@ -1,6 +1,9 @@
 #include "noteformatter.h"
 #include "filters/ensearch.h"
 #include "sql/resourcetable.h"
+#include "sql/notebooktable.h"
+#include "sql/sharednotebooktable.h"
+#include "sql/linkednotebooktable.h"
 #include "global.h"
 #include "utilities/mimereference.h"
 
@@ -70,10 +73,13 @@ void NoteFormatter::setNoteHistory(bool value) {
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
-    formatError = false;
 
     QLOG_DEBUG() << "Rebuilding Note: " << QString::fromStdString(note.guid) << " : " <<
                     QString::fromStdString(note.title);
+
+    formatError = false;
+    readOnly = false;
+
     // First try to read the document.  If it fails we need to clean it up
     content.append(QString::fromStdString(note.content));
     QDomDocument doc;
@@ -122,6 +128,24 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
     content.prepend("<html>");
     content.append("</html>");
+
+    if (!formatError && !readOnly) {
+        NotebookTable ntable;
+        qint32 notebookLid = ntable.getLid(note.notebookGuid);
+        if (notebookLid <= 0)
+            readOnly = true;
+        else {
+            SharedNotebook sharedNotebook;
+            SharedNotebookTable stable;
+            bool found = stable.get(sharedNotebook, notebookLid);
+            if (found) {
+                if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK)
+                    readOnly = true;
+                if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
+                    readOnly = true;
+            }
+        }
+    }
     return content;
 }
 

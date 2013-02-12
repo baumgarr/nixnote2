@@ -30,8 +30,15 @@ qint32 NotebookTable::findByName(string &name) {
     query.exec();
     if (query.next())
         return query.value(0).toInt();
-    else
-        return 0;
+
+    query.prepare("Select lid from DataStore where key=:key and data=:name");
+    query.bindValue(":key", NOTEBOOK_ALIAS);
+    query.bindValue(":name", QString::fromStdString(name));
+    query.exec();
+    if (query.next())
+        return query.value(0).toInt();
+
+    return 0;
 }
 
 
@@ -62,22 +69,22 @@ void NotebookTable::updateGuid(qint32 lid, Guid &guid) {
 
 // Synchronize a new notebook with what is in the database.  We basically
 // just delete the old one & give it a new entry
-void NotebookTable::sync(Notebook &notebook) {
-    sync(0, notebook);
+qint32 NotebookTable::sync(Notebook &notebook) {
+    return sync(0, notebook);
 }
 
 
 
 // Synchronize a new notebook with what is in the database.  We basically
 // just delete the old one & give it a new entry
-void NotebookTable::sync(qint32 lid, Notebook &notebook) {
+qint32 NotebookTable::sync(qint32 lid, Notebook &notebook) {
     if (lid > 0) {
         QSqlQuery query;
         NoteTable noteTable;
         noteTable.updateNotebookName(lid, QString::fromStdString(notebook.name));
 
         // Delete the old record
-        query.prepare("Delete from DataStore where lid=:lid");
+        query.prepare("Delete from DataStore where lid=:lid and key>=3000 and key<3200");
         query.bindValue(":lid", lid);
         query.exec();
     } else {
@@ -85,7 +92,7 @@ void NotebookTable::sync(qint32 lid, Notebook &notebook) {
         lid = cs.incrementLidCounter();
     }
 
-    add(lid, notebook, false);
+    return add(lid, notebook, false);
 }
 
 
@@ -115,7 +122,7 @@ qint32 NotebookTable::getLid(string guid) {
 
 
 // Add a new notebook to the database
-void NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
+qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
     QSqlQuery query;
     ConfigStore cs;
 
@@ -215,6 +222,7 @@ void NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
             query.exec();
         }
     }
+    return lid;
 }
 
 
@@ -457,7 +465,7 @@ bool NotebookTable::findGuidByName(QString &retval, QString &guid) {
 
 
 
-// Delete this tag
+// Delete this notebook
 void NotebookTable::deleteNotebook(qint32 lid) {
     if (!exists(lid))
         return;
@@ -514,7 +522,7 @@ bool NotebookTable::update(Notebook &notebook, bool isDirty) {
 
 void NotebookTable::expunge(qint32 lid) {
     QSqlQuery query;
-    query.prepare("delete from DataStore where lid=:lid");
+    query.prepare("delete from DataStore where lid=:lid and key>=3000 and key<3200");
     query.bindValue(":lid", lid);
     query.exec();
 }

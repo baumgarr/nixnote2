@@ -36,7 +36,7 @@ void SharedNotebookTable::sync(qint32 l, SharedNotebook sharedNotebook){
     if (lid > 0) {
         QSqlQuery query;
         // Delete the old record
-        query.prepare("Delete from DataStore where lid=:lid");
+        query.prepare("Delete from DataStore where lid=:lid and key>=3300 and key <3400");
         query.bindValue(":lid", lid);
         query.exec();
     } else {
@@ -82,14 +82,14 @@ void SharedNotebookTable::add(qint32 l, SharedNotebook &t, bool isDirty){
 
     if (t.__isset.notebookModifiable) {
         query.bindValue(":lid", lid);
-        query.bindValue(":key", SHAREDNOTEBOOK_NOTEBOOK_MODIFIABLE);
-        query.bindValue(":data", t.notebookModifiable);
+        query.bindValue(":key", SHAREDNOTEBOOK_PRIVILEGE);
+        query.bindValue(":data", t.privilege);
         query.exec();
     }
     if (t.__isset.requireLogin) {
         query.bindValue(":lid", lid);
-        query.bindValue(":key", SHAREDNOTEBOOK_REQUIRE_LOGIN);
-        query.bindValue(":data", t.requireLogin);
+        query.bindValue(":key", SHAREDNOTEBOOK_ALLOW_PREVIEW);
+        query.bindValue(":data", t.allowPreview);
         query.exec();
     }
     if (t.__isset.serviceCreated) {
@@ -125,54 +125,76 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
-    if (query.size() == 0)
-        return false;
+    bool returnVal = false;
     while (query.next()) {
         qint32 key = query.value(0).toInt();
         switch (key) {
         case (SHAREDNOTEBOOK_EMAIL):
             notebook.email = query.value(1).toString().toStdString();
             notebook.__isset.email = true;
+            returnVal = true;
             break;
         case (SHAREDNOTEBOOK_ISDIRTY):
+            returnVal = true;
             break;
         case (SHAREDNOTEBOOK_SERVICE_CREATED):
             notebook.serviceCreated = query.value(1).toLongLong();
             notebook.__isset.serviceCreated = true;
+            returnVal = true;
             break;
         case (SHAREDNOTEBOOK_SERVICE_UPDATED):
+            returnVal = true;
             break;
-        case (SHAREDNOTEBOOK_NOTEBOOK_MODIFIABLE):
-            notebook.notebookModifiable = query.value(1).toBool();
-            notebook.__isset.notebookModifiable = true;
+        case (SHAREDNOTEBOOK_ALLOW_PREVIEW):
+            notebook.allowPreview = query.value(1).toBool();
+            notebook.__isset.allowPreview = true;
+            returnVal = true;
             break;
         case (SHAREDNOTEBOOK_ID):
             notebook.id = query.value(1).toLongLong();
             notebook.__isset.id = true;
+            returnVal = true;
             break;
         case (SHAREDNOTEBOOK_NOTEBOOK_GUID):
             notebook.notebookGuid = query.value(1).toString().toStdString();
             notebook.__isset.notebookGuid = true;
+            returnVal = true;
             break;
-        case (SHAREDNOTEBOOK_REQUIRE_LOGIN):
-            notebook.requireLogin = query.value(1).toBool();
-            notebook.__isset.requireLogin = true;
+        case (SHAREDNOTEBOOK_PRIVILEGE): {
+            int priv = query.value(1).toInt();
+            notebook.privilege = SharedNotebookPrivilegeLevel::READ_NOTEBOOK;
+            if (priv == SharedNotebookPrivilegeLevel::FULL_ACCESS)
+                notebook.privilege = SharedNotebookPrivilegeLevel::FULL_ACCESS;
+            if (priv == SharedNotebookPrivilegeLevel::BUSINESS_FULL_ACCESS)
+                notebook.privilege = SharedNotebookPrivilegeLevel::BUSINESS_FULL_ACCESS;
+            if (priv == SharedNotebookPrivilegeLevel::GROUP)
+                notebook.privilege = SharedNotebookPrivilegeLevel::GROUP;
+            if (priv == SharedNotebookPrivilegeLevel::MODIFY_NOTEBOOK_PLUS_ACTIVITY)
+                notebook.privilege = SharedNotebookPrivilegeLevel::MODIFY_NOTEBOOK_PLUS_ACTIVITY;
+            if (priv == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
+                notebook.privilege = SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY;
+            notebook.__isset.privilege = true;
+            returnVal = true;
             break;
+        }
         case (SHAREDNOTEBOOK_USERID):
             notebook.userId = query.value(1).toInt();
             notebook.__isset.userId = true;
+            returnVal = true;
             break;
         case (SHAREDNOTEBOOK_SHARE_KEY):
             notebook.shareKey = query.value(1).toString().toStdString();
             notebook.__isset.shareKey = true;
+            returnVal = true;
             break;
         case (SHAREDNOTEBOOK_USERNAME):
             notebook.username = query.value(1).toString().toStdString();
             notebook.__isset.username = true;
+            returnVal =true;
             break;
         }
     }
-    return true;
+    return returnVal;
 }
 
 
