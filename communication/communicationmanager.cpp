@@ -147,7 +147,7 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook book
     try {
 
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
-        QString pgmDir = global.getProgramDirPath() + "/certs/PCA-3G2.pem";
+        QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
         sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
         sslSocketFactory->authenticate(true);
 
@@ -268,7 +268,7 @@ bool CommunicationManager::initUserStore() {
     QLOG_DEBUG() << "Inside CommunicationManager::initUserStore()";
     try {
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
-        QString pgmDir = global.getProgramDirPath() + "/certs/PCA-3G2.pem";
+        QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
         sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
         sslSocketFactory->authenticate(true);
 
@@ -310,7 +310,7 @@ bool CommunicationManager::initNoteStore() {
 
 
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
-        QString pgmDir = global.getProgramDirPath() + "/certs/PCA-3G2.pem";
+        QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
         sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
         sslSocketFactory->authenticate(true);
 

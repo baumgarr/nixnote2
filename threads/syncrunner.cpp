@@ -29,12 +29,12 @@ SyncRunner::SyncRunner()
     // Setup the user agent
     userAgent = "NixNote2/Linux";
 
-    userStoreUrl = "http://www.evernote.com/edam/user";
-    updateSequenceNumber = 0;
-}
+    userStoreUrl = QString("http://" +global.server +"/edam/user").toStdString();
+            updateSequenceNumber = 0;
+        }
 
-SyncRunner::~SyncRunner() {
-}
+        SyncRunner::~SyncRunner() {
+        }
 
 
 
