@@ -82,6 +82,8 @@ private:
     QList<QPixmap> syncIcons;
     unsigned int synchronizeIconAngle;
 
+    QTimer heartbeatTimer;   // Timer to check shared memory for other instance commands.
+
     void setupGui();
     void setupNoteList();
     void setupSearchTree();
@@ -137,6 +139,7 @@ public slots:
     void findPrevInNote();
     void findReplaceWindowHidden();
     void checkReadOnlyNotebook();
+    void heartbeatTimerTriggered();
 
 signals:
     void syncRequested();

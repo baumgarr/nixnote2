@@ -9,6 +9,7 @@
 //******************************************
 Global::Global()
 {
+    sharedMemory = new QSharedMemory("1b73cc55-9a2f-441b-877a-ca1d0131cd21");
     FilterCriteria *criteria = new FilterCriteria();
     shortcutKeys = new ShortcutKeys();
     filterCriteria.push_back(criteria);

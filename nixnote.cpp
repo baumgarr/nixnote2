@@ -41,6 +41,11 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
+    heartbeatTimer.setInterval(1000);
+    heartbeatTimer.setSingleShot(false);
+    connect(&heartbeatTimer, SIGNAL(timeout()), this, SLOT(heartbeatTimerTriggered()));
+    heartbeatTimer.start();
+
     QFont f = this->font();
     f.setPointSize(8);
     this->setFont(f);
@@ -940,5 +945,27 @@ void NixNote::findReplaceAllInNotePressed() {
     }
 }
 
+
+
+void NixNote::heartbeatTimerTriggered() {
+    char *buffer = (char*)malloc(global.sharedMemory->size());
+    global.sharedMemory->lock();
+    memcpy(buffer, global.sharedMemory->data(), global.sharedMemory->size());
+    memset(global.sharedMemory->data(), 0, global.sharedMemory->size());
+    global.sharedMemory->unlock();
+
+    QByteArray data = QByteArray::fromRawData(buffer, global.sharedMemory->size());
+    QLOG_DEBUG() << data.mid(0,20);
+    if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
+        QLOG_ERROR() << "Immediate shutdown requested by shared memory segment.";
+        this->close();
+        return;
+    }
+    if (data.startsWith("SHOW_WINDOW")) {
+        this->raise();
+        this->show();
+        return;
+    }
+}
 
 

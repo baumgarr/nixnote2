@@ -15,6 +15,7 @@
 //#include "java/javamachine.h"
 
 #include <string>
+#include <QSharedMemory>
 
 //*******************************
 //* This class is used to store
@@ -64,6 +65,7 @@ public:
     string username;
     string password;
     bool connected;
+    QSharedMemory *sharedMemory;
     bool confirmDeletes();
     QString tagBehavior();
     QString server;
