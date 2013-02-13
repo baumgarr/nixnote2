@@ -25,7 +25,8 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
 
     image = new QImage(doc->page(currentPage)->renderToImage());
     scene = new QGraphicsScene();
-    view = new QGraphicsView(scene);
+    view = new PopplerGraphicsView(scene);
+    view->filename = file;
     item = new QGraphicsPixmapItem(QPixmap::fromImage(*image));
     scene->addItem(item);
     view->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);

@@ -11,6 +11,8 @@
 #include <QGraphicsView>
 #include <poppler-qt4.h>
 
+#include "gui/plugins/popplergraphicsview.h"
+
 class PopplerViewer : public QWidget
 {
     Q_OBJECT
@@ -20,7 +22,7 @@ public:
 
 private:
     QGraphicsScene *scene;
-    QGraphicsView *view;
+    PopplerGraphicsView *view;
     QGraphicsPixmapItem *item;
     QImage *image;
     QString mimeType;

@@ -127,7 +127,8 @@ SOURCES += main.cpp\
     gui/findreplace.cpp \
     sql/linkednotebooktable.cpp \
     application.cpp \
-    dialog/databasestatus.cpp
+    dialog/databasestatus.cpp \
+    gui/plugins/popplergraphicsview.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -272,7 +273,8 @@ HEADERS  += nixnote.h \
     gui/findreplace.h \
     sql/linkednotebooktable.h \
     application.h \
-    dialog/databasestatus.h
+    dialog/databasestatus.h \
+    gui/plugins/popplergraphicsview.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

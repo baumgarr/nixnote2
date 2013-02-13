@@ -54,7 +54,7 @@ void NMainMenuBar::setupEditMenu() {
     undoAction->setFont(font);
     editMenu->addAction(undoAction);
 
-    redoAction = new QAction(tr("Undo"), this);
+    redoAction = new QAction(tr("Redo"), this);
     setupShortcut(redoAction, QString("Edit_Redo"));
     redoAction->setFont(font);
     editMenu->addAction(redoAction);
