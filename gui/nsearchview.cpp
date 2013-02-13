@@ -251,8 +251,14 @@ void NSearchView::buildSelection() {
     global.filterPosition++;
 
     if (selectedItems.size() > 0) {
-        newFilter->setNotebook(*(selectedItems[0]));
+        newFilter->setSavedSearch(*(NSearchViewItem*)(selectedItems[0]));
+        qint32 lid = selectedItems[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+        SearchTable stable;
+        SavedSearch search;
+        if (stable.get(search, lid))
+            newFilter->setSearchString(QString::fromStdString(search.query));
     }
+
     newFilter->resetAttribute = true;
     newFilter->resetDeletedOnly = true;
     newFilter->resetNotebook =true;

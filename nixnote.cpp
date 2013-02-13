@@ -974,5 +974,3 @@ void NixNote::openDatabaseStatus() {
     DatabaseStatus dbstatus;
     dbstatus.exec();
 }
-
-
