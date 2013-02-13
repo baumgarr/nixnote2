@@ -25,6 +25,7 @@
 #include "html/enmlformatter.h"
 #include "oauth/oauthwindow.h"
 #include "oauth/oauthtokenizer.h"
+#include "dialog/databasestatus.h"
 
 #include "gui/nmainmenubar.h"
 #include "dialog/logindialog.h"
@@ -955,7 +956,6 @@ void NixNote::heartbeatTimerTriggered() {
     global.sharedMemory->unlock();
 
     QByteArray data = QByteArray::fromRawData(buffer, global.sharedMemory->size());
-    QLOG_DEBUG() << data.mid(0,20);
     if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
         QLOG_ERROR() << "Immediate shutdown requested by shared memory segment.";
         this->close();
@@ -966,6 +966,13 @@ void NixNote::heartbeatTimerTriggered() {
         this->show();
         return;
     }
+}
+
+
+
+void NixNote::openDatabaseStatus() {
+    DatabaseStatus dbstatus;
+    dbstatus.exec();
 }
 
 

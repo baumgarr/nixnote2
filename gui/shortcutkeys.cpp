@@ -83,6 +83,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     Online_Synchronize = new QString("F9");		// Synchronize with Evernote
     Online_Connect = new QString();				// Connect to Evernote
     Tools_Account_Information = new QString();	// Show account information
+    Tools_Database_Status = new QString();      // Show database status
 
     About_Release_Notes = new QString();			// Current version's release notes
     About_Log = new QString();					// Message log
@@ -152,7 +153,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     loadkey(QString("Format_Indent_Increase"), Format_Indent_Increase);
     loadkey(QString("Format_Indent_Decrease"), Format_Indent_Decrease);
     loadkey(QString("Tools_Synchronize"), Online_Synchronize);
-
+    loadkey(QString("Tools_Database_Status"), Tools_Database_Status);
 
     loadkey(QString("Focus_Title"), Focus_Title);
     loadkey(QString("Focus_Tag"), Focus_Tag);

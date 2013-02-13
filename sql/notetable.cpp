@@ -1163,3 +1163,30 @@ qint32 NoteTable::findNotesByTitle(QList<qint32> &lids, QString title) {
     }
     return lids.size();
 }
+
+
+qint32 NoteTable::getCount() {
+    QSqlQuery query;
+    query.prepare("Select count(lid) from DataStore where key=:key and lid not in (select lid from datastore where key=:key2 and data = 'true')");
+    query.bindValue(":key", NOTE_GUID);
+    query.bindValue(":key2", NOTE_EXPUNGED_FROM_TRASH);
+    query.exec();
+    if (query.next())
+        return query.value(0).toInt();
+    return 0;
+
+}
+
+
+
+qint32 NoteTable::getUnindexedCount() {
+    QSqlQuery query;
+    query.prepare("Select count(lid) from DataStore where key=:key and data='true' and lid not in (select lid from datastore where key=:key2 and data = 'true')");
+    query.bindValue(":key", NOTE_INDEX_NEEDED);
+    query.bindValue(":key2", NOTE_EXPUNGED_FROM_TRASH);
+    query.exec();
+    if (query.next())
+        return query.value(0).toInt();
+    return 0;
+
+}

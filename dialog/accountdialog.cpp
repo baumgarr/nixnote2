@@ -99,7 +99,7 @@ AccountDialog::AccountDialog(QWidget *parent) :
 }
 
 
-    // OK button pushed, close the window
+// OK button pushed, close the window
 void AccountDialog::okPushed() {
     this->close();
 }

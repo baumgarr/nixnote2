@@ -780,3 +780,28 @@ void ResourceTable::updateResourceHash(qint32 lid, QString newhash) {
     query.bindValue(":lid", lid);
     query.exec();
 }
+
+
+
+
+qint32 ResourceTable::getCount() {
+    QSqlQuery query;
+    query.prepare("Select count(lid) from DataStore where key=:key;");
+    query.bindValue(":key", RESOURCE_GUID);
+    query.exec();
+    if (query.next())
+        return query.value(0).toInt();
+    return 0;
+}
+
+
+
+qint32 ResourceTable::getUnindexedCount() {
+    QSqlQuery query;
+    query.prepare("Select count(lid) from DataStore where key=:key and data='true'");
+    query.bindValue(":key", RESOURCE_INDEX_NEEDED);
+    query.exec();
+    if (query.next())
+        return query.value(0).toInt();
+    return 0;
+}

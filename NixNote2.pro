@@ -126,7 +126,8 @@ SOURCES += main.cpp\
     gui/plugins/pluginfactory.cpp \
     gui/findreplace.cpp \
     sql/linkednotebooktable.cpp \
-    application.cpp
+    application.cpp \
+    dialog/databasestatus.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -270,7 +271,8 @@ HEADERS  += nixnote.h \
     communication/inknoterequest.h \
     gui/findreplace.h \
     sql/linkednotebooktable.h \
-    application.h
+    application.h \
+    dialog/databasestatus.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

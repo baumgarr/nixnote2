@@ -124,6 +124,7 @@ public slots:
     void notesDeleted(QList<qint32> lid);
     void openTrunk();
     void openAccount();
+    void openDatabaseStatus();
     void openAbout();
     void setMessage(QString msg);
     void toggleLeftPanel();

@@ -33,6 +33,7 @@ public:
     QAction *exitAction;
     QAction *synchronizeAction;
     QAction *disconnectAction;
+    QAction *databaseStatusDialogAction;
     QAction *restoreDatabaseAction;
     QAction *accountDialogAction;
     QAction *aboutAction;

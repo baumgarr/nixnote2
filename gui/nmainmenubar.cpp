@@ -203,8 +203,6 @@ void NMainMenuBar::setupViewMenu() {
     viewStatusbar->setChecked(true);
     connect(viewStatusbar, SIGNAL(triggered()), parent, SLOT(toggleStatusbar()));
 
-
-
 }
 
 void NMainMenuBar::setupToolsMenu() {
@@ -220,16 +218,23 @@ void NMainMenuBar::setupToolsMenu() {
   disconnectAction = new QAction(tr("Disconnect"), this);
   synchronizeAction->setToolTip(tr("Disconnect from Evernote"));
   connect(disconnectAction, SIGNAL(triggered()), parent, SLOT(disconnect()));
-  setupShortcut(disconnectAction, QString("Tools_Synchronize"));
+  setupShortcut(disconnectAction, QString(""));
   disconnectAction->setFont(font);
   toolsMenu->addAction(disconnectAction);
   disconnectAction->setEnabled(false);
+  disconnectAction->setVisible(false);  /// We can probably delete this whole menu option
 
   accountDialogAction = new QAction(tr("Account"), this);
   accountDialogAction->setToolTip(tr("Account information"));
   accountDialogAction->setFont(font);
   connect(accountDialogAction, SIGNAL(triggered()), parent, SLOT(openAccount()));
   toolsMenu->addAction(accountDialogAction);
+
+  databaseStatusDialogAction = new QAction(tr("Database Status"), this);
+  databaseStatusDialogAction->setToolTip(tr("Account information"));
+  accountDialogAction->setFont(font);
+  connect(databaseStatusDialogAction, SIGNAL(triggered()), parent, SLOT(openDatabaseStatus()));
+  toolsMenu->addAction(databaseStatusDialogAction);
 
 }
 
