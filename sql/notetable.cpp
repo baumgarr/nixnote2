@@ -1073,6 +1073,47 @@ void NoteTable::deleteNote(qint32 lid, bool isDirty=true) {
 }
 
 
+
+void NoteTable::restoreNote(qint32 lid, bool isDirty=true) {
+    QSqlQuery query;
+    query.prepare("delete from DataStore where key=:key and lid=:lid");
+    query.bindValue(":key", NOTE_ACTIVE);
+    query.bindValue(":lid", lid);
+    query.exec();
+
+    query.prepare("delete from DataStore where key=:key and lid=:lid");
+    query.bindValue(":key", NOTE_DELETED_DATE);
+    query.bindValue(":lid", lid);
+    query.exec();
+
+    if (isDirty) {
+        query.prepare("delete from DataStore where key=:key and lid=:lid");
+        query.bindValue(":key", NOTE_ISDIRTY);
+        query.bindValue(":lid", lid);
+        query.exec();
+    }
+
+    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ACTIVE);
+    query.bindValue(":data", true);
+    query.exec();
+
+    query.prepare("update notetable set dateDeleted=0 where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+
+    if (isDirty) {
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_ISDIRTY);
+        query.bindValue(":data", true);
+        query.exec();
+
+    }
+}
+
+
 void NoteTable::expunge(qint32 lid) {
     Note note;
     this->get(note, lid, true, false);

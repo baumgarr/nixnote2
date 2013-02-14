@@ -280,6 +280,7 @@ void NixNote::setupNoteList() {
    noteTableView->contextMenu->insertAction(noteTableView->deleteNoteAction, newNoteButton);
    noteTableView->contextMenu->insertSeparator(noteTableView->deleteNoteAction);
    connect(noteTableView, SIGNAL(notesDeleted(QList<qint32>,bool)), this, SLOT(notesDeleted(QList<qint32>)));
+   connect(noteTableView, SIGNAL(notesRestored(QList<qint32>)), this, SLOT(notesRestored(QList<qint32>)));
 
    QLOG_TRACE() << "Leaving NixNote.setupNoteList()";
 }
@@ -813,8 +814,14 @@ void NixNote::newNote() {
 // Slot for when notes have been deleted from the notes list.
 void NixNote::notesDeleted(QList<qint32> lids) {
     updateSelectionCriteria();
-
 }
+
+// Slot for when notes have been deleted from the notes list.
+void NixNote::notesRestored(QList<qint32> lids) {
+    updateSelectionCriteria();
+}
+
+
 
 
 // Open the trunk web site

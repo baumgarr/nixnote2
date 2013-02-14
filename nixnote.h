@@ -141,6 +141,7 @@ public slots:
     void findReplaceWindowHidden();
     void checkReadOnlyNotebook();
     void heartbeatTimerTriggered();
+    void notesRestored(QList<qint32>);
 
 signals:
     void syncRequested();

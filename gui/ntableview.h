@@ -36,6 +36,7 @@ public:
 
     QMenu *contextMenu;
     QAction *deleteNoteAction;
+    QAction *restoreNoteAction;
     QAction *openNoteAction;
     QAction *copyNoteLinkAction;
     QAction *copyNoteAction;
@@ -47,6 +48,7 @@ public:
 signals:
     void openNote(bool newWindow);
     void notesDeleted(QList<qint32> lid, bool expunged);
+    void notesRestored(QList<qint32>);
 
 
 public slots:
@@ -54,6 +56,7 @@ public slots:
     void focusOutEvent(QFocusEvent *event);
     void contextMenuEvent(QContextMenuEvent *event);
     void deleteSelectedNotes();
+    void restoreSelectedNotes();
     void openNoteContextMenuTriggered();
     void copyNoteLink();
     void copyNote();

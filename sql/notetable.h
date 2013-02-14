@@ -103,6 +103,7 @@ public:
     void addTag(qint32 lid, qint32 tag, bool isDirty);
     void rebuildNoteListTags(qint32 lid);   // Update the note's tags in the display table
     void deleteNote(qint32 lid, bool isDirty);           // mark a note for deletion
+    void restoreNote(qint32 lid, bool isDirty);         // unmark a note for deletion
     void expunge(qint32 lid);              // expunge a note permanently
     void expunge(QString guid);            // expunge a note permanently
     void expunge(string guid);             // expunge a note permanently

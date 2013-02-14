@@ -112,6 +112,12 @@ NTableView::NTableView(QWidget *parent) :
     connect(deleteNoteAction, SIGNAL(triggered()), this, SLOT(deleteSelectedNotes()));
     deleteNoteAction->setFont(font);
 
+    restoreNoteAction = new QAction(tr("Restore Note"), this);
+    contextMenu->addAction(restoreNoteAction);
+    connect(restoreNoteAction, SIGNAL(triggered()), this, SLOT(restoreSelectedNotes()));
+    restoreNoteAction->setFont(font);
+    restoreNoteAction->setVisible(false);
+
     copyNoteLinkAction = new QAction(tr("Copy Note Link"), this);
     contextMenu->addAction(copyNoteLinkAction);
     copyNoteLinkAction->setFont(font);
@@ -176,6 +182,11 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
             deleteNoteAction->setEnabled(true);
         openNoteAction->setEnabled(true);
     }
+    if (global.filterCriteria[global.filterPosition]->isDeletedOnlySet() &&
+            global.filterCriteria[global.filterPosition]->getDeletedOnly())
+        restoreNoteAction->setVisible(true);
+    else
+        restoreNoteAction->setVisible(false);
     contextMenu->popup(event->globalPos());
 }
 
@@ -291,6 +302,26 @@ void NTableView::openSelectedLids(bool newWindow) {
     }
 }
 
+// Restore notes from the trash
+void NTableView::restoreSelectedNotes() {
+    QList<qint32> lids;
+    this->getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    NoteTable ntable;
+    QSqlQuery sql;
+    QSqlQuery transaction;
+    transaction.exec("begin");
+    sql.prepare("Delete from filter where lid=:lid");
+    for (int i=0; i<lids.size(); i++) {
+        ntable.restoreNote(lids[i], true);
+        sql.bindValue(":lid", lids[i]);
+        sql.exec();
+    }
+    transaction.exec("commit");
+    emit(notesRestored(lids));
+}
 
 
 
