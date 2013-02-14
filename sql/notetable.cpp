@@ -1114,6 +1114,23 @@ void NoteTable::restoreNote(qint32 lid, bool isDirty=true) {
 }
 
 
+
+
+qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {
+    lids.clear();
+    QSqlQuery query;
+    query.prepare("select lid from DataStore where key=:key and data='false'");
+    query.bindValue(":key", NOTE_ACTIVE);
+    query.exec();
+
+    while (query.next()) {
+        lids.append(query.value(0).toInt());
+    }
+    return lids.size();
+}
+
+
+
 void NoteTable::expunge(qint32 lid) {
     Note note;
     this->get(note, lid, true, false);

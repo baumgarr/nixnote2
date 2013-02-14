@@ -3,6 +3,7 @@
 
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <QMenu>
 
 class NTrashTree : public QTreeWidget
 {
@@ -10,6 +11,9 @@ class NTrashTree : public QTreeWidget
 private:
     int filterPosition;
     QTreeWidgetItem *root;
+    QMenu contextMenu;
+    QAction *restoreAction;
+    QAction *expungeAction;
     virtual void mousePressEvent(QMouseEvent *event);
 
 public:
@@ -21,11 +25,14 @@ signals:
     void updateSelectionRequested();
 
 public slots:
+    void contextMenuEvent(QContextMenuEvent *event);
 
 private slots:
     int calculateHeightRec(QTreeWidgetItem * item);
     void calculateHeight();
     void buildSelection();
+    void restoreAll();
+    void expungeAll();
     
 };
 

@@ -2,7 +2,8 @@
 #include "global.h"
 #include <QHeaderView>
 #include <QMouseEvent>
-
+#include "sql/notetable.h"
+#include <QMessageBox>
 
 extern Global global;
 
@@ -41,6 +42,11 @@ NTrashTree::NTrashTree(QWidget *parent) :
     connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(buildSelection()));
 
+    restoreAction = contextMenu.addAction(tr("Restore Deleted Notes"));
+    connect(restoreAction, SIGNAL(triggered()), SLOT(restoreAll()));
+    contextMenu.addSeparator();
+    expungeAction = contextMenu.addAction(tr("Empty Trash"));
+    connect(expungeAction, SIGNAL(triggered()), this, SLOT(expungeAll()));
 }
 
 
@@ -96,12 +102,16 @@ void NTrashTree::resetSize() {
 // it is deselected.  If it is the root item, we don't permit the selection.
 void NTrashTree::mousePressEvent(QMouseEvent *event)
 {
-    QModelIndex item = indexAt(event->pos());
-    bool selected = selectionModel()->isSelected(indexAt(event->pos()));
-    QTreeView::mousePressEvent(event);
-    if (selected) {
-        selectionModel()->select(item, QItemSelectionModel::Deselect);
+    if (event->button() == Qt::LeftButton) {
+        QModelIndex item = indexAt(event->pos());
+        bool selected = selectionModel()->isSelected(indexAt(event->pos()));
+        QTreeView::mousePressEvent(event);
+        if (selected) {
+            selectionModel()->select(item, QItemSelectionModel::Deselect);
+        }
+        return;
     }
+    QWidget::mousePressEvent(event);
 }
 
 
@@ -166,4 +176,55 @@ void NTrashTree::updateSelection() {
     filterPosition = global.filterPosition;
 
     blockSignals(false);
+}
+
+
+
+
+
+void NTrashTree::contextMenuEvent(QContextMenuEvent *event) {
+    contextMenu.exec(event->globalPos());
+}
+
+
+
+
+//***********************************************
+//* Restore all notes from the trash
+//***********************************************
+void NTrashTree::restoreAll() {
+    NoteTable ntable;
+    QList<qint32> lids;
+    ntable.getAllDeleted(lids);
+    for (int i=0; i<lids.size(); i++) {
+        ntable.restoreNote(lids[i], true);
+        global.cache.remove(lids[i]);
+    }
+
+    emit(updateSelectionRequested());
+}
+
+
+//***********************************************
+//* Permanently delete all notes
+//***********************************************
+void NTrashTree::expungeAll() {
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(tr("Verify Delete"));
+    msgBox.setText(tr("Are you sure you want to permanently delete these notes?"));
+    msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setDefaultButton(QMessageBox::Yes);
+    int rc = msgBox.exec();
+    if (rc != QMessageBox::Yes)
+        return;
+
+    NoteTable ntable;
+    QList<qint32> lids;
+    ntable.getAllDeleted(lids);
+    for (int i=0; i<lids.size(); i++) {
+        ntable.expunge(lids[i]);
+        global.cache.remove(lids[i]);
+    }
+    emit(updateSelectionRequested());
 }

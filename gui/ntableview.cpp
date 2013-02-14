@@ -370,6 +370,7 @@ void NTableView::deleteSelectedNotes() {
             ntable.expunge(lids[i]);
         sql.bindValue(":lid", lids[i]);
         sql.exec();
+        global.cache.remove(lids[i]);
     }
     transaction.exec("commit");
     emit(notesDeleted(lids, expunged));

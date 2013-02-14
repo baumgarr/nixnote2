@@ -135,6 +135,8 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
         if (ntable.isReadOnly(notebookLid))
             readOnly = true;
     }
+    if (note.__isset.active && !note.active)
+        readOnly = true;
     return content;
 }
 
