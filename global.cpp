@@ -53,6 +53,16 @@ void Global::setup(StartupConfig startupConfig) {
     settings->beginGroup("Server");
     server = settings->value("host", "www.evernote.com").toString();
     settings->endGroup();
+
+    // Cleanup any temporary files from the last time
+    QDir myDir(fileManager.getTmpDirPath());
+    QStringList list = myDir.entryList();
+    for (int i=0; i<list.size(); i++) {
+        if (list[i] != "." && list[i] != "..") {
+            QString file = fileManager.getTmpDirPath()+ list[i];
+            myDir.remove(file);
+        }
+    }
 }
 
 

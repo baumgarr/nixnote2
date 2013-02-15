@@ -99,6 +99,16 @@ NixNote::~NixNote()
     while (!syncRunner.isFinished());
     while (!indexRunner.isFinished());
     while(!counterRunner.isFinished());
+
+    // Cleanup any temporary files
+    QDir myDir(global.fileManager.getTmpDirPath());
+    QStringList list = myDir.entryList();
+    for (int i=0; i<list.size(); i++) {
+        if (list[i] != "." && list[i] != "..") {
+            QString file = global.fileManager.getTmpDirPath()+ list[i];
+            myDir.remove(file);
+        }
+    }
 //    delete db;  // Free up memory used by the database connection
 //    delete rightPanelSplitter;
 //    delete leftPanelSplitter;

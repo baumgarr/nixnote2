@@ -40,9 +40,9 @@ int main(int argc, char *argv[])
     const QString sLogPath(a.applicationDirPath());
 
     QsLogging::DestinationPtr fileDestination(
-        QsLogging::DestinationFactory::MakeFileDestination(sLogPath) );
+                QsLogging::DestinationFactory::MakeFileDestination(sLogPath) );
     QsLogging::DestinationPtr debugDestination(
-        QsLogging::DestinationFactory::MakeDebugOutputDestination() );
+                QsLogging::DestinationFactory::MakeDebugOutputDestination() );
     logger.addDestination(debugDestination.get());
     logger.addDestination(fileDestination.get());
 
@@ -105,9 +105,6 @@ int main(int argc, char *argv[])
     NixNote w;
     w.show();
 
-//    try {
-        return a.exec();
-//    } catch (std::exception e) {
-//        QLOG_DEBUG() << e.what();
-//    }
+    return a.exec();
+
 }
