@@ -26,6 +26,7 @@ private:
     QGraphicsPixmapItem *item;
     QImage *image;
     QString mimeType;
+    QLabel *pageLabel;
     QLabel *imageLabel;
     int currentPage;
     int totalPages;

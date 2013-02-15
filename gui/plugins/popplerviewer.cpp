@@ -33,14 +33,18 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
     view->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
+    pageLabel = new QLabel(tr("Page ") +QString::number(currentPage+1) + QString(tr(" of ") +QString::number(totalPages)), this);
     pageLeft = new QPushButton();
     pageRight = new QPushButton();
     pageRight->setMaximumWidth(30);
     pageLeft->setMaximumWidth(30);
     pageLeft->setIcon(QIcon(":left_arrow.png"));
     pageRight->setIcon(QIcon(":right_arrow.png"));
+    buttonLayout->addStretch(100);
     buttonLayout->addWidget(pageLeft);
+    buttonLayout->addWidget(pageLabel);
     buttonLayout->addWidget(pageRight);
+    buttonLayout->addStretch(100);
     QVBoxLayout *layout = new QVBoxLayout(this);
     layout->addLayout(buttonLayout);
     layout->addWidget(view);
@@ -69,6 +73,8 @@ void PopplerViewer::pageRightPressed() {
             pageRight->setEnabled(false);
         if (currentPage>0)
             pageLeft->setEnabled(true);
+        pageLabel->setText(tr("Page ") +QString::number(currentPage+1) + QString(tr(" of ") +QString::number(totalPages)));
+
     }
 
 }
