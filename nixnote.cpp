@@ -96,6 +96,9 @@ NixNote::~NixNote()
     syncRunner.quit();
     indexRunner.quit();
     counterRunner.quit();
+    while (!syncRunner.isFinished());
+    while (!indexRunner.isFinished());
+    while(!counterRunner.isFinished());
 //    delete db;  // Free up memory used by the database connection
 //    delete rightPanelSplitter;
 //    delete leftPanelSplitter;
