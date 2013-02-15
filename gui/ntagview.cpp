@@ -4,6 +4,7 @@
 #include "sql/tagtable.h"
 #include "dialog/tagproperties.h"
 #include "filters/filtercriteria.h"
+#include "gui/ntagviewdelegate.h"
 
 #include <QHeaderView>
 #include <QMouseEvent>
@@ -91,6 +92,8 @@ NTagView::NTagView(QWidget *parent) :
     connect(addShortcut, SIGNAL(activated()), this, SLOT(addRequested()));
     connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
     connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
+
+    this->setItemDelegate(new NTagViewDelegate());
 }
 
 
@@ -570,4 +573,15 @@ void NTagView::tagExpunged(qint32 lid) {
         delete item;
     }
     this->resetSize();
+}
+
+
+
+
+void NTagView::updateTotals(qint32 lid, qint32 total) {
+    if (dataStore.contains(lid)) {
+        NTagViewItem *item = dataStore[lid];
+        item->count = total;
+        repaint();
+    }
 }

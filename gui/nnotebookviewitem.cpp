@@ -1,6 +1,7 @@
 #include "nnotebookviewitem.h"
 
 NNotebookViewItem::NNotebookViewItem(QTreeWidget* parent):QTreeWidgetItem(parent) {
+    count = 0;
 }
 
 
@@ -16,7 +17,10 @@ void NNotebookViewItem::setRootColor(bool val) {
 }
 
 
-  bool NNotebookViewItem::operator<(const QTreeWidgetItem &other)const {
+bool NNotebookViewItem::operator<(const QTreeWidgetItem &other)const {
     int column = treeWidget()->sortColumn();
     return text(column).toLower() < other.text(column).toLower();
-  }
+}
+
+
+

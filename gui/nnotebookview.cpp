@@ -5,12 +5,15 @@
 #include <QHeaderView>
 #include <QMouseEvent>
 #include <QtSql>
+#include <QPainter>
 #include <QMessageBox>
+#include <QTextDocument>
 
 #include "sql/notebooktable.h"
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
 #include "dialog/notebookproperties.h"
+#include "gui/nnotebookviewdelegate.h"
 
 #define NAME_POSITION 0
 
@@ -115,6 +118,8 @@ NNotebookView::NNotebookView(QWidget *parent) :
     connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
     connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
     connect(removeFromStackAction, SIGNAL(triggered()), this, SLOT(removeFromStackRequested()));
+
+    this->setItemDelegate(new NNotebookViewDelegate());
 }
 
 
@@ -159,7 +164,8 @@ int NNotebookView::calculateHeightRec(QTreeWidgetItem * item)
         return rowHeight(index);
     }
 
-    int h = item->sizeHint(0).height() + 2 + rowHeight(index);
+    //int h = item->sizeHint(0).height() + 2 + rowHeight(index);
+    int h = item->sizeHint(0).height() +rowHeight(index);
     int childCount = item->childCount();
     for(int i = 0; i < childCount;i++)
     {
@@ -201,9 +207,11 @@ void NNotebookView::loadData() {
             NNotebookViewItem *newWidget = new NNotebookViewItem();
             newWidget->setData(NAME_POSITION, Qt::DisplayRole, query.value(1).toString());
             newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
+            newWidget->count = 0;
             newWidget->stack = query.value(2).toString();
             this->dataStore.insert(query.value(0).toInt(), newWidget);
             root->addChild(newWidget);
+
             if (newWidget->stack != "" && !stackStore.contains(newWidget->stack)) {
                 NNotebookViewItem *stackWidget = new NNotebookViewItem();
                 stackWidget->setData(NAME_POSITION, Qt::DisplayRole, newWidget->stack);
@@ -215,6 +223,8 @@ void NNotebookView::loadData() {
     }
     this->rebuildTree();
     this->resetSize();
+    //this->resizeColumnToContents(NAME_POSITION);
+    //this->resizeColumnToContents(TOTAL_POSITION);
 }
 
 void NNotebookView::rebuildTree() {
@@ -439,6 +449,7 @@ void NNotebookView::addRequested() {
 
     NotebookTable table;
     NNotebookViewItem *newWidget = new NNotebookViewItem();
+    newWidget->count = 0;
     QString name = dialog.name.text().trimmed();
     qint32 lid = table.findByName(name);
     newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
@@ -716,5 +727,15 @@ void NNotebookView::sortStackMenu() {
 
     for (int i=0; i<keyList.size(); i++) {
         stackMenu->insertAction(stackMenu->actions().at(0), menuData[keyList[i]]);
+    }
+}
+
+
+
+void NNotebookView::updateTotals(qint32 lid, qint32 total) {
+    if (dataStore.contains(lid)) {
+        NNotebookViewItem *item = dataStore[lid];
+        item->count = total;
+        repaint();
     }
 }

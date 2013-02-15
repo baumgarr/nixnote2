@@ -20,12 +20,14 @@ public:
     explicit NTrashTree(QWidget *parent = 0);
     void updateSelection();
     void resetSize();
+    qint32 count;
 
 signals:
     void updateSelectionRequested();
 
 public slots:
     void contextMenuEvent(QContextMenuEvent *event);
+    void updateTotals(qint32 total);
 
 private slots:
     int calculateHeightRec(QTreeWidgetItem * item);

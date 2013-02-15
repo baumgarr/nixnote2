@@ -33,7 +33,6 @@ void IndexRunner::run() {
     textDocument = new QTextDocument();
     exec();
     QLOG_DEBUG() << "Indexrunner exiting.";
-
 }
 
 

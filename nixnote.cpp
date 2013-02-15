@@ -56,6 +56,11 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         this->initializeGlobalSettings();
 
         // Setup the sync thread
+        QLOG_TRACE() << "Setting up counter thread";
+        connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
+        counterRunner.start(QThread::LowestPriority);
+
+        // Setup the counter thread
         QLOG_TRACE() << "Setting up sync thread";
         connect(this,SIGNAL(syncRequested()),&syncRunner,SLOT(synchronize()));
         connect(&syncRunner, SIGNAL(setMessage(QString)), this, SLOT(setMessage(QString)));
@@ -87,6 +92,7 @@ NixNote::~NixNote()
 {
     syncRunner.quit();
     indexRunner.quit();
+    counterRunner.quit();
 //    delete db;  // Free up memory used by the database connection
 //    delete rightPanelSplitter;
 //    delete leftPanelSplitter;
@@ -229,9 +235,11 @@ void NixNote::setupGui() {
 
     // connect so we refresh the note list whenever a note has changed
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), noteTableView, SLOT(refreshData()));
+    connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countNotebooks()));
 
     // connect so we refresh the tag tree when a new tag is added
     connect(tabWindow, SIGNAL(tagCreated(qint32)), tagTreeView, SLOT(addNewTag(qint32)));
+    connect(tabWindow, SIGNAL(tagCreated(qint32)), &counterRunner, SLOT(countTags()));
 
     connect(tabWindow, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(tabWindow->tabBar, SIGNAL(currentChanged(int)), this, SLOT(checkReadOnlyNotebook()));
@@ -320,6 +328,7 @@ void NixNote::setupTagTree() {
     connect(&syncRunner, SIGNAL(tagUpdated(qint32, QString)),tagTreeView, SLOT(tagUpdated(qint32, QString)));
     connect(&syncRunner, SIGNAL(tagExpunged(qint32)), tagTreeView, SLOT(tagExpunged(qint32)));
     connect(&syncRunner, SIGNAL(syncComplete()),tagTreeView, SLOT(rebuildTree()));
+    connect(&counterRunner, SIGNAL(tagTotals(qint32,qint32)), tagTreeView, SLOT(updateTotals(qint32,qint32)));
     QLOG_TRACE() << "Exiting NixNote.setupTagTree()";
 }
 
@@ -352,6 +361,7 @@ void NixNote::setupTrashTree() {
     leftPanel->addWidget(lbl);
     leftPanel->addWidget(trashTree);
     QLOG_TRACE() << "Exiting NixNote.setupTrashTree()";
+    connect(&counterRunner, SIGNAL(trashTotals(qint32)), trashTree, SLOT(updateTotals(qint32)));
 }
 
 
@@ -371,6 +381,8 @@ void NixNote::setupSynchronizedNotebookTree() {
     connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString)),notebookTreeView, SLOT(notebookUpdated(qint32, QString)));
     connect(&syncRunner, SIGNAL(syncComplete()),notebookTreeView, SLOT(rebuildTree()));
     connect(&syncRunner, SIGNAL(notebookExpunged(qint32)), notebookTreeView, SLOT(notebookExpunged(qint32)));
+    connect(&counterRunner, SIGNAL(notebookTotals(qint32,qint32)), notebookTreeView, SLOT(updateTotals(qint32,qint32)));
+
     QLOG_TRACE() << "Exiting NixNote.setupSynchronizedNotebookTree()";
 }
 
@@ -608,6 +620,8 @@ void NixNote::updateSelectionCriteria() {
         newNoteButton->setEnabled(false);
     else
         newNoteButton->setEnabled(true);
+
+    emit updateCounts();
 }
 
 

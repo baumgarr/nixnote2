@@ -10,10 +10,10 @@ public:
     explicit NNotebookViewItem(QTreeWidget* parent);
     QString stack;
     QList<qint32> childrenLids;
+    qint32 count;
 
     bool operator<(const QTreeWidgetItem &other)const;
     void setRootColor(bool val) ;
-
 
 signals:
 

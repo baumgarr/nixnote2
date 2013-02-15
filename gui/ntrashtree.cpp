@@ -3,6 +3,7 @@
 #include <QHeaderView>
 #include <QMouseEvent>
 #include "sql/notetable.h"
+#include "gui/ntrashviewdelegate.h"
 #include <QMessageBox>
 
 extern Global global;
@@ -47,6 +48,8 @@ NTrashTree::NTrashTree(QWidget *parent) :
     contextMenu.addSeparator();
     expungeAction = contextMenu.addAction(tr("Empty Trash"));
     connect(expungeAction, SIGNAL(triggered()), this, SLOT(expungeAll()));
+
+    setItemDelegate(new NTrashViewDelegate());
 }
 
 
@@ -227,4 +230,13 @@ void NTrashTree::expungeAll() {
         global.cache.remove(lids[i]);
     }
     emit(updateSelectionRequested());
+}
+
+
+//**************************************************
+//* Update the trash count
+//**************************************************
+void NTrashTree::updateTotals(qint32 total) {
+    this->count = total;
+    repaint();
 }

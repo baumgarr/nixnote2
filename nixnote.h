@@ -23,6 +23,7 @@
 #include "gui/ntrashtree.h"
 #include "dialog/accountdialog.h"
 #include "gui/findreplace.h"
+#include "threads/counterrunner.h"
 
 
 
@@ -39,6 +40,7 @@ class NMainMenuBar;
 class NixNote;
 class SyncRunner;
 class IndexRunner;
+class CounterRunner;
 class NTabWidget;
 
 // Define the actual class
@@ -102,6 +104,7 @@ public:
     ~NixNote();   //Destructor
     SyncRunner syncRunner;
     IndexRunner indexRunner;
+    CounterRunner counterRunner;
     void closeEvent(QCloseEvent *);
     //bool notify(QObject* receiver, QEvent* event);
     LineEdit *searchText;
@@ -145,6 +148,7 @@ public slots:
 
 signals:
     void syncRequested();
+    void updateCounts();
 
 };
 

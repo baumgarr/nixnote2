@@ -128,7 +128,11 @@ SOURCES += main.cpp\
     sql/linkednotebooktable.cpp \
     application.cpp \
     dialog/databasestatus.cpp \
-    gui/plugins/popplergraphicsview.cpp
+    gui/plugins/popplergraphicsview.cpp \
+    threads/counterrunner.cpp \
+    gui/nnotebookviewdelegate.cpp \
+    gui/ntrashviewdelegate.cpp \
+    gui/ntagviewdelegate.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -274,7 +278,11 @@ HEADERS  += nixnote.h \
     sql/linkednotebooktable.h \
     application.h \
     dialog/databasestatus.h \
-    gui/plugins/popplergraphicsview.h
+    gui/plugins/popplergraphicsview.h \
+    threads/counterrunner.h \
+    gui/nnotebookviewdelegate.h \
+    gui/ntrashviewdelegate.h \
+    gui/ntagviewdelegate.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

@@ -11,8 +11,6 @@ class NNotebookView : public QTreeWidget
     Q_OBJECT
 private:
     NNotebookViewItem *root;
-    QHash<qint32, NNotebookViewItem*> dataStore;
-    QHash<QString, NNotebookViewItem*> stackStore;
     virtual void mousePressEvent(QMouseEvent *event);
     int filterPosition;
     QMenu context;
@@ -44,6 +42,8 @@ public:
     void loadData();
     bool rebuildNotebookTreeNeeded;
     void contextMenuEvent(QContextMenuEvent *event);
+    QHash<qint32, NNotebookViewItem*> dataStore;
+    QHash<QString, NNotebookViewItem*> stackStore;
 
 signals:
     void updateSelectionRequested();
@@ -66,6 +66,7 @@ public slots:
     void moveToNewStackRequested();
     void removeFromStackRequested();
     void notebookExpunged(qint32 lid);
+    void updateTotals(qint32 lid, qint32 total);
 };
 
 #endif // NNOTEBOOKVIEW_H

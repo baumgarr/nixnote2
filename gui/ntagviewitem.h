@@ -11,6 +11,7 @@ public:
     qint32 parentLid;
     QList<qint32> childrenGuids;
     QString parentGuid;
+    qint32 count;
 
     bool operator<(const QTreeWidgetItem &other)const;
     void setRootColor(bool val) ;
