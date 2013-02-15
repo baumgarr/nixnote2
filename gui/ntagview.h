@@ -21,6 +21,7 @@ private:
     QAction *propertiesAction;
     QAction *deleteAction;
     QAction *renameAction;
+    QAction *hideUnassignedAction;
     QShortcut *renameShortcut;
     QShortcut *addShortcut;
     QShortcut *deleteShortcut;
@@ -35,6 +36,7 @@ public:
     explicit NTagView(QWidget *parent = 0);
     ~NTagView();
     void resetSize();
+    bool hideUnassigned;
     void updateSelection();
     void loadData();
     bool rebuildTagTreeNeeded;
@@ -63,6 +65,7 @@ public slots:
     void renameRequested();
     void tagExpunged(qint32 lid);
     void updateTotals(qint32 lid, qint32 total);
+    void hideUnassignedTags();
 
 protected:
     void dragMoveEvent(QDragMoveEvent *event);

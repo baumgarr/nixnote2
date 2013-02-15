@@ -233,9 +233,10 @@ void NixNote::setupGui() {
     // Setup so we refresh whenever the sync is done.
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria()));
 
-    // connect so we refresh the note list whenever a note has changed
+    // connect so we refresh the note list and counts whenever a note has changed
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), noteTableView, SLOT(refreshData()));
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countNotebooks()));
+    connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countTags()));
 
     // connect so we refresh the tag tree when a new tag is added
     connect(tabWindow, SIGNAL(tagCreated(qint32)), tagTreeView, SLOT(addNewTag(qint32)));
@@ -329,6 +330,7 @@ void NixNote::setupTagTree() {
     connect(&syncRunner, SIGNAL(tagExpunged(qint32)), tagTreeView, SLOT(tagExpunged(qint32)));
     connect(&syncRunner, SIGNAL(syncComplete()),tagTreeView, SLOT(rebuildTree()));
     connect(&counterRunner, SIGNAL(tagTotals(qint32,qint32)), tagTreeView, SLOT(updateTotals(qint32,qint32)));
+    connect(&counterRunner, SIGNAL(tagCountComplete()), tagTreeView, SLOT(hideUnassignedTags()));
     QLOG_TRACE() << "Exiting NixNote.setupTagTree()";
 }
 

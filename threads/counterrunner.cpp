@@ -67,7 +67,6 @@ void CounterRunner::countTags() {
     query.prepare("select data, count(lid) from datastore where key=:key and lid in (select lid from filter) group by data;");
     query.bindValue(":key", NOTE_TAG);
     query.exec();
-    QLOG_DEBUG() << query.lastError();
     while(query.next()) {
         emit tagTotals(query.value(0).toInt(), query.value(1).toInt());
         lids.removeAll(query.value(0).toInt());
@@ -76,4 +75,7 @@ void CounterRunner::countTags() {
     // The ones that are left have a zero count, so we reset them
     for (int i=0; i<lids.size(); i++)
         emit(tagTotals(lids[i], 0));
+
+    // Finally, emit that we are done so unassigned tags can be hidden
+    emit(tagCountComplete());
 }

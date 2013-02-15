@@ -57,6 +57,10 @@ NTagView::NTagView(QWidget *parent) :
     setAcceptDrops(true);
     setDragEnabled(true);
 
+    global.settings->beginGroup("SaveState");
+    hideUnassigned = global.settings->value("hideUnassigned", false).toBool();
+    global.settings->endGroup();
+
 
     addAction = context.addAction(tr("Create New Tag"));
     addAction->setShortcut(QKeySequence(Qt::Key_Insert));
@@ -80,6 +84,12 @@ NTagView::NTagView(QWidget *parent) :
     renameShortcut = new QShortcut(this);
     renameShortcut->setKey(QKeySequence(Qt::Key_F2));
     renameShortcut->setContext(Qt::WidgetShortcut);
+
+    context.addSeparator();
+    hideUnassignedAction = context.addAction(tr("Hide Unassigned"));
+    hideUnassignedAction->setCheckable(true);
+    hideUnassignedAction->setChecked(hideUnassigned);
+    connect(hideUnassignedAction, SIGNAL(triggered()), this, SLOT(hideUnassignedTags()));
 
     context.addSeparator();
     propertiesAction = context.addAction(tr("Properties"));
@@ -582,6 +592,53 @@ void NTagView::updateTotals(qint32 lid, qint32 total) {
     if (dataStore.contains(lid)) {
         NTagViewItem *item = dataStore[lid];
         item->count = total;
-        repaint();
     }
+}
+
+
+void NTagView::hideUnassignedTags() {
+    NTagViewItem *item;
+    if (hideUnassignedAction->isChecked())
+        hideUnassigned = true;
+    else
+        hideUnassigned = false;
+
+    // Save this option
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("hideUnassigned", hideUnassigned);
+    global.settings->endGroup();
+
+    // Unhide everything if they don't want items hidden.
+    if (hideUnassigned != true) {
+        for (int i=0; i<dataStore.size(); i++) {
+            item = dataStore[i];
+            if (item != NULL) {
+                item->setHidden(false);
+            }
+        }
+        resetSize();
+        return;
+    }
+
+    // Start hiding unassigned tags
+    for (int i=0; i<dataStore.size(); i++) {
+        item = dataStore[i];
+        if (item != NULL) {
+            if (item->count == 0)
+                item->setHidden(true);
+            else
+                item->setHidden(false);
+        }
+    }
+
+    for (int i=0; i<dataStore.size(); i++) {
+        item = dataStore[i];
+        if (item != NULL && !item->isHidden()) {
+            while(item->parentLid > 0) {
+                item->parent()->setHidden(false);
+                item = (NTagViewItem*)item->parent();
+            }
+        }
+    }
+    resetSize();
 }
