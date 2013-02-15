@@ -24,6 +24,14 @@ void NMainMenuBar::setupFileMenu() {
 
     QFont f;
     f.setPointSize(8);
+
+    printAction = new QAction(tr("Print Note"), this);
+    printAction->setToolTip(tr("Print this note"));
+    printAction->setFont(f);
+    connect(printAction, SIGNAL(triggered()), parent, SLOT(printNote()));
+    setupShortcut(printAction, QString("File_Print"));
+    fileMenu->addAction(printAction);
+
     restoreDatabaseAction = new QAction(tr("Restore Database"), this);
     restoreDatabaseAction->setToolTip(tr("Restore from a backup"));
     restoreDatabaseAction->setFont(f);

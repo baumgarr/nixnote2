@@ -145,6 +145,7 @@ public slots:
     void checkReadOnlyNotebook();
     void heartbeatTimerTriggered();
     void notesRestored(QList<qint32>);
+    void printNote();
 
 signals:
     void syncRequested();

@@ -31,6 +31,7 @@ public:
     QMenu *findReplaceMenu;
 
     QAction *exitAction;
+    QAction *printAction;
     QAction *synchronizeAction;
     QAction *disconnectAction;
     QAction *databaseStatusDialogAction;

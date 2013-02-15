@@ -9,7 +9,10 @@
 #include <QStringList>
 #include <QDesktopServices>
 #include <QClipboard>
+#include <QPrintDialog>
+#include <QPrintPreviewDialog>
 #include <QStatusBar>
+#include <QPrinter>
 
 #include "sql/notetable.h"
 #include "gui/ntabwidget.h"
@@ -996,4 +999,14 @@ void NixNote::heartbeatTimerTriggered() {
 void NixNote::openDatabaseStatus() {
     DatabaseStatus dbstatus;
     dbstatus.exec();
+}
+
+
+
+void NixNote::printNote() {
+    QPrintDialog dialog;
+    if (dialog.exec() ==  QDialog::Accepted) {
+        QPrinter *printer = dialog.printer();
+        tabWindow->currentBrowser()->editor->print(printer);
+    }
 }
