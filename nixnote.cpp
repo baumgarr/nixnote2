@@ -240,6 +240,35 @@ void NixNote::setupGui() {
         }
     }
 
+    // Setup the tray icon
+    closeFlag = false;
+    global.settings->beginGroup("SaveState");
+    minimizeToTray = global.settings->value("minimizeToTray", false).toBool();
+    closeToTray = global.settings->value("closeToTray", false).toBool();
+    global.settings->endGroup();
+    trayIcon = new QSystemTrayIcon(QIcon(":windowIcon.png"), this);
+    trayIconContextMenu = new QMenu(this);
+    trayIconContextMenu->addAction(newNoteButton);
+    showAction = trayIconContextMenu->addAction(tr("Show/Hide"));
+    minimizeToTrayAction = trayIconContextMenu->addAction(tr("Minimize to tray"));
+    minimizeToTrayAction->setCheckable(true);
+    minimizeToTrayAction->setChecked(minimizeToTray);
+    closeToTrayAction = trayIconContextMenu->addAction(tr("Close to tray"));
+    closeToTrayAction->setCheckable(true);
+    closeToTrayAction->setChecked(closeToTray);
+    connect(minimizeToTrayAction, SIGNAL(triggered()), this, SLOT(trayIconBehavior()));
+    connect(closeToTrayAction, SIGNAL(triggered()), this, SLOT(trayIconBehavior()));
+    trayIconContextMenu->addSeparator();
+    closeAction = trayIconContextMenu->addAction(tr("Close"));
+    connect(closeAction, SIGNAL(triggered()), this, SLOT(closeNixNote()));
+    connect(showAction, SIGNAL(triggered()), this, SLOT(toggleVisible()));
+
+    trayIcon->setContextMenu(trayIconContextMenu);
+    trayIcon->show();
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
+
+
+
     // Setup timers
     QLOG_TRACE() << "Setting up timers";
     connect(&syncButtonTimer, SIGNAL(timeout()), this, SLOT(updateSyncButton()));
@@ -450,15 +479,31 @@ void NixNote::setupTabWindow() {
 
 
 
+//****************************************************************************
+//* Close NixNote.   This will force a close.  Even if "close to tray" is set.
+//*****************************************************************************
+void NixNote::closeNixNote() {
+    closeFlag = true;
+    close();
+}
+
 
 //*****************************************************************************
 //* Close the program
 //*****************************************************************************
-void NixNote::closeEvent(QCloseEvent *) {
+void NixNote::closeEvent(QCloseEvent *event) {
+    if (closeToTray && !closeFlag) {
+        event->ignore();
+        hide();
+        return;
+    }
+
+
     saveContents();
 
     syncRunner.quit();
     indexRunner.quit();
+    counterRunner.quit();
 
     ConfigStore config;
     config.saveSetting(CONFIG_STORE_WINDOW_STATE, saveState());
@@ -482,10 +527,6 @@ void NixNote::closeEvent(QCloseEvent *) {
     global.settings->setValue("sortOrder", order);
     global.settings->setValue("sortColumn", col);
     global.settings->endGroup();
-}
-
-void NixNote::closeNixNote() {
-   this->close();
 }
 
 
@@ -997,7 +1038,7 @@ void NixNote::heartbeatTimerTriggered() {
     QByteArray data = QByteArray::fromRawData(buffer, global.sharedMemory->size());
     if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
         QLOG_ERROR() << "Immediate shutdown requested by shared memory segment.";
-        this->close();
+        this->closeNixNote();
         return;
     }
     if (data.startsWith("SHOW_WINDOW")) {
@@ -1008,19 +1049,67 @@ void NixNote::heartbeatTimerTriggered() {
 }
 
 
-
+// Open the dialog status dialog box.
 void NixNote::openDatabaseStatus() {
     DatabaseStatus dbstatus;
     dbstatus.exec();
 }
 
 
-
+// Print the current note
 void NixNote::printNote() {
     QPrintDialog dialog;
     if (dialog.exec() ==  QDialog::Accepted) {
         QPrinter *printer = dialog.printer();
         //tabWindow->currentBrowser()->editor->print(printer);
         tabWindow->currentBrowser()->printNote(printer);
+    }
+}
+
+
+void NixNote::toggleVisible() {
+    if (isMinimized() && minimizeToTray) {
+        setHidden(false);
+        this->show();
+        this->setFocus();
+        unhidingWindow=true;
+        return;
+    }
+
+    if (isVisible())
+        this->hide();
+    else
+        this->show();
+}
+
+// The tray icon was activated.  If it was double clicked we restore the
+// gui.
+void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
+    if (reason == QSystemTrayIcon::DoubleClick) {
+        toggleVisible();
+    }
+}
+
+
+void NixNote::trayIconBehavior()  {
+    closeToTray = closeToTrayAction->isChecked();
+    minimizeToTray = minimizeToTrayAction->isChecked();
+
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("closeToTray", closeToTray);
+    global.settings->setValue("minimizeToTray",  minimizeToTray);
+    global.settings->endGroup();
+
+}
+
+
+void NixNote::changeEvent(QEvent *e) {
+    if (e->type() == QEvent::WindowStateChange && e->type()) {
+        if (isMinimized() && minimizeToTray && !unhidingWindow) {
+            e->accept();
+            unhidingWindow = false;
+            QTimer::singleShot(10, this, SLOT(hide()));
+            return;
+        }
     }
 }

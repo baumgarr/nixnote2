@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include <QSplitter>
 #include <QScrollArea>
+#include <QSystemTrayIcon>
 #include <QToolBar>
 
 #include "gui/ntabwidget.h"
@@ -65,10 +66,12 @@ private:
     QVBoxLayout *topRightLayout;
     NAttributeTree *attributeTree;
     FindReplace *findReplaceWindow;
+    QSystemTrayIcon *trayIcon;
     QString saveLastPath;   // Last path viewed in the restore dialog
 
     // Tool & menu bar
     NMainMenuBar *menuBar;
+    QMenu   *trayIconContextMenu;
     QToolBar *toolBar;
     QAction *leftArrowButton;
     QAction *rightArrowButton;
@@ -78,6 +81,15 @@ private:
     QAction *trunkButton;
     QAction *usageButton;
     QAction *toolsAccountAction;
+
+    QAction *showAction;
+    QAction *minimizeToTrayAction;
+    QAction *closeToTrayAction;
+    QAction *closeAction;
+    bool minimizeToTray;
+    bool closeToTray;
+    bool closeFlag;
+    bool unhidingWindow;
 
     // Sync Button rotate
     QTimer syncButtonTimer;
@@ -105,7 +117,7 @@ public:
     SyncRunner syncRunner;
     IndexRunner indexRunner;
     CounterRunner counterRunner;
-    void closeEvent(QCloseEvent *);
+    void closeEvent(QCloseEvent *event);
     //bool notify(QObject* receiver, QEvent* event);
     LineEdit *searchText;
 
@@ -146,6 +158,10 @@ public slots:
     void heartbeatTimerTriggered();
     void notesRestored(QList<qint32>);
     void printNote();
+    void trayActivated(QSystemTrayIcon::ActivationReason reason);
+    void toggleVisible();
+    void trayIconBehavior();
+    void changeEvent(QEvent *e);
 
 signals:
     void syncRequested();
