@@ -1853,3 +1853,41 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
     resourceTable.add(rlid, r, true);
     return rlid;
 }
+
+
+// Print the contents of a note.  Basically it loops through the
+// note and repaces the <object> tags with <img> tags.  The plugin
+// object should be creating temporary images for the print.
+void NBrowserWindow::printNote(QPrinter *printer) {
+    NWebView *tempEditor = new NWebView(this);
+    QString contents = editor->editorPage->mainFrame()->toHtml();
+
+    // Start removing object tags
+    int pos = contents.indexOf("<object");
+    while (pos>=0) {
+        int endPos = contents.indexOf(">", pos);
+        QString lidString = contents.mid(contents.indexOf("lid=", pos)+5);
+        lidString = lidString.mid(0,lidString.indexOf("\" "));
+        contents = contents.mid(0,pos) + "<img src=\"file://" +
+                global.fileManager.getTmpDirPath() + lidString +
+                QString("-print.png\" width=\"10%\" height=\"10%\"></img>")+contents.mid(endPos+1);
+
+        pos = contents.indexOf("<object", endPos);
+    }
+
+    // Hack to do a synchronous load of a web page.  Basically loop until the
+    // load is finished.  If we don't do this the web page might try to print
+    // before any images are rendered.
+    QEventLoop loop;
+    QObject::connect(tempEditor, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
+
+    tempEditor->setContent(contents.toUtf8());
+    loop.exec();
+
+    // Do the actual print
+    tempEditor->print(printer);
+
+    // Cleanup
+    QObject::disconnect(&loop, SLOT(quit()));
+    delete tempEditor;
+}

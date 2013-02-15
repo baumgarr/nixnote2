@@ -32,6 +32,7 @@ private:
     QPushButton *pageLeft;
     QPushButton *pageRight;
     qint32 lid;
+    QString printImageFile;
 
 public:
     Poppler::Document *doc;

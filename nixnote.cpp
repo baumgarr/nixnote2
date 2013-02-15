@@ -1007,6 +1007,7 @@ void NixNote::printNote() {
     QPrintDialog dialog;
     if (dialog.exec() ==  QDialog::Accepted) {
         QPrinter *printer = dialog.printer();
-        tabWindow->currentBrowser()->editor->print(printer);
+        //tabWindow->currentBrowser()->editor->print(printer);
+        tabWindow->currentBrowser()->printNote(printer);
     }
 }

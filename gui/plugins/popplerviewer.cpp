@@ -15,9 +15,9 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
 {
     this->mimeType = mimeType;
     this->lid = reslid.toInt();
+    printImageFile = global.fileManager.getTmpDirPath() + QString::number(lid) +QString("-print.png");
     QString file = global.fileManager.getDbaDirPath() + reslid +".pdf";
     doc = Poppler::Document::load(file);
-    //doc = Poppler::Document::load("/home/randy/.nixnote/db/dba/11.pdf");
     if (doc == NULL)
         return;
     currentPage = 0;
@@ -28,6 +28,7 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
     view = new PopplerGraphicsView(scene);
     view->filename = file;
     item = new QGraphicsPixmapItem(QPixmap::fromImage(*image));
+    image->save(printImageFile);   // This is in case we want to print a note.  Otherwise it isn't used.
     scene->addItem(item);
     view->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
@@ -59,6 +60,7 @@ void PopplerViewer::pageRightPressed() {
         if (image != NULL)
             delete image;
         image = new QImage(doc->page(currentPage)->renderToImage());
+        image->save(printImageFile);
         if (item != NULL)
             delete item;
         item = new QGraphicsPixmapItem(QPixmap::fromImage(*image));

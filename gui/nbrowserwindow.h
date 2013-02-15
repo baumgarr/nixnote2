@@ -15,6 +15,7 @@
 #include <QToolBar>
 #include <QTextEdit>
 #include <QTimer>
+#include <QPrinter>
 
 #include "gui/nwebview.h"
 
@@ -128,6 +129,7 @@ public:
     void clear();
     void setupShortcut(QShortcut *action, QString text);
     void contentChanged();
+    void printNote(QPrinter *printer);
 
 signals:
     void noteUpdated(qint32);
