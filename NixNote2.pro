@@ -132,7 +132,12 @@ SOURCES += main.cpp\
     threads/counterrunner.cpp \
     gui/nnotebookviewdelegate.cpp \
     gui/ntrashviewdelegate.cpp \
-    gui/ntagviewdelegate.cpp
+    gui/ntagviewdelegate.cpp \
+    watcher/filewatcher.cpp \
+    sql/filewatchertable.cpp \
+    watcher/filewatchermanager.cpp \
+    dialog/watchfolderadd.cpp \
+    dialog/watchfolderdialog.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -282,7 +287,12 @@ HEADERS  += nixnote.h \
     threads/counterrunner.h \
     gui/nnotebookviewdelegate.h \
     gui/ntrashviewdelegate.h \
-    gui/ntagviewdelegate.h
+    gui/ntagviewdelegate.h \
+    watcher/filewatcher.h \
+    sql/filewatchertable.h \
+    watcher/filewatchermanager.h \
+    dialog/watchfolderadd.h \
+    dialog/watchfolderdialog.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

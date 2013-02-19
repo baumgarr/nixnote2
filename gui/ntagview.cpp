@@ -209,7 +209,7 @@ void NTagView::rebuildTree() {
     while (i.hasNext()) {
         i.next();
         NTagViewItem *widget = i.value();
-        if (widget->parentGuid != "") {
+        if (widget != NULL && widget->parentGuid != "") {
             if (widget->parentLid == 0) {
                 widget->parentLid = tagTable.getLid(widget->parentGuid);
             }

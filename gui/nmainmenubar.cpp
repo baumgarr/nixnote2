@@ -236,13 +236,25 @@ void NMainMenuBar::setupToolsMenu() {
   accountDialogAction->setToolTip(tr("Account information"));
   accountDialogAction->setFont(font);
   connect(accountDialogAction, SIGNAL(triggered()), parent, SLOT(openAccount()));
+  setupShortcut(accountDialogAction, QString("Tools_Account_Information"));
   toolsMenu->addAction(accountDialogAction);
 
   databaseStatusDialogAction = new QAction(tr("Database Status"), this);
-  databaseStatusDialogAction->setToolTip(tr("Account information"));
-  accountDialogAction->setFont(font);
+  databaseStatusDialogAction->setToolTip(tr("Database Status"));
+  setupShortcut(databaseStatusDialogAction, QString("Database_Status"));
+  databaseStatusDialogAction->setFont(font);
   connect(databaseStatusDialogAction, SIGNAL(triggered()), parent, SLOT(openDatabaseStatus()));
   toolsMenu->addAction(databaseStatusDialogAction);
+
+  toolsMenu->addSeparator();
+
+  importFoldersDialogAction = new QAction(tr("Import Folders"), this);
+  importFoldersDialogAction->setToolTip(tr("Import Folders"));
+  importFoldersDialogAction->setFont(font);
+  setupShortcut(importFoldersDialogAction, QString("Tools_Import_Folders"));
+  connect(importFoldersDialogAction, SIGNAL(triggered()), parent, SLOT(openImportFolders()));
+  toolsMenu->addAction(importFoldersDialogAction);
+
 
 }
 

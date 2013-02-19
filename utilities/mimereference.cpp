@@ -709,8 +709,13 @@ QString MimeReference::getExtensionFromMime(QString key, QString filename) {
         return extension;
 }
 
-QString MimeReference::getMimeFromExtension(QString value, QString filename) {
-    return table->key(value);
+QString MimeReference::getMimeFromExtension(QString fileExtension) {
+
+    QString retVal =  table->key(fileExtension);
+    if (retVal == "") {
+        return "application/data";
+    }
+    return retVal;
 }
 
 
@@ -719,6 +724,20 @@ QString MimeReference::getExtensionFromMime(string key, string mime) {
 }
 
 
-QString MimeReference::getMimeFromExtension(string key, string filename) {
-    return this->getExtensionFromMime(QString::fromStdString(key), QString::fromStdString(filename));
+QString MimeReference::getMimeFromExtension(string fileExtension) {
+    return this->getMimeFromExtension(QString::fromStdString(fileExtension));
+}
+
+
+
+QString MimeReference::getMimeFromFileName(QString fileName) {
+    int pos = fileName.lastIndexOf(".");
+    if (pos >=0)
+        fileName = fileName.mid(pos);
+    return getMimeFromExtension(fileName);
+}
+
+
+QString MimeReference::getMimeFromFileName(string filename) {
+    return getMimeFromFileName(QString::fromStdString(filename));
 }

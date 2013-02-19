@@ -92,6 +92,7 @@ public:
     QString *Online_Connect;				// Connect to Evernote
     QString *Tools_Account_Information;	// Show account information
     QString *Tools_Database_Status;		// Current database information
+    QString *Tools_Import_Folders;      // setup import folders
 
     QString *About_Release_Notes;			// Current version's release notes
     QString *About_Log;					// Message log

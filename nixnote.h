@@ -9,6 +9,7 @@
 #include <QSystemTrayIcon>
 #include <QToolBar>
 
+#include "watcher/filewatchermanager.h"
 #include "gui/ntabwidget.h"
 #include "gui/lineedit.h"
 #include "sql/databaseconnection.h"
@@ -68,6 +69,7 @@ private:
     FindReplace *findReplaceWindow;
     QSystemTrayIcon *trayIcon;
     QString saveLastPath;   // Last path viewed in the restore dialog
+    FileWatcherManager *importManager;
 
     // Tool & menu bar
     NMainMenuBar *menuBar;
@@ -141,6 +143,7 @@ public slots:
     void openAccount();
     void openDatabaseStatus();
     void openAbout();
+    void openImportFolders();
     void setMessage(QString msg);
     void toggleLeftPanel();
     void toggleNoteList();

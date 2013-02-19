@@ -33,6 +33,7 @@ public:
     QAction *exitAction;
     QAction *printAction;
     QAction *synchronizeAction;
+    QAction *importFoldersDialogAction;
     QAction *disconnectAction;
     QAction *databaseStatusDialogAction;
     QAction *restoreDatabaseAction;

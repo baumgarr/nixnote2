@@ -1,6 +1,7 @@
 #include "nixnote.h"
 #include "threads/syncrunner.h"
 #include "gui/nwebview.h"
+#include "watcher/filewatcher.h"
 
 #include <QThread>
 #include <QLabel>
@@ -22,6 +23,7 @@
 #include "gui/lineedit.h"
 #include "gui/findreplace.h"
 #include "gui/nattributetree.h"
+#include "dialog/watchfolderdialog.h"
 #include "gui/ntrashtree.h"
 #include "filters/filterengine.h"
 #include "global.h"
@@ -54,36 +56,42 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     f.setPointSize(8);
     this->setFont(f);
 
-        db = new DatabaseConnection();  // Startup the database
-        QLOG_TRACE() << "Setting up global settings";
-        this->initializeGlobalSettings();
+    db = new DatabaseConnection();  // Startup the database
+    QLOG_TRACE() << "Setting up global settings";
+    this->initializeGlobalSettings();
 
-        // Setup the sync thread
-        QLOG_TRACE() << "Setting up counter thread";
-        connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
-        counterRunner.start(QThread::LowestPriority);
+    // Setup the sync thread
+    QLOG_TRACE() << "Setting up counter thread";
+    connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
+    counterRunner.start(QThread::LowestPriority);
 
-        // Setup the counter thread
-        QLOG_TRACE() << "Setting up sync thread";
-        connect(this,SIGNAL(syncRequested()),&syncRunner,SLOT(synchronize()));
-        connect(&syncRunner, SIGNAL(setMessage(QString)), this, SLOT(setMessage(QString)));
-        syncRunner.start(QThread::NormalPriority);
+    // Setup the counter thread
+    QLOG_TRACE() << "Setting up sync thread";
+    connect(this,SIGNAL(syncRequested()),&syncRunner,SLOT(synchronize()));
+    connect(&syncRunner, SIGNAL(setMessage(QString)), this, SLOT(setMessage(QString)));
+    syncRunner.start(QThread::NormalPriority);
 
-        indexRunner.start(QThread::LowestPriority);
+    indexRunner.start(QThread::LowestPriority);
 
-        QLOG_TRACE() << "Setting up GUI";
-        this->setupGui();
-        global.filterPosition = 0;
-        this->openNote(false);
+    QLOG_TRACE() << "Setting up GUI";
+    this->setupGui();
 
-        QLOG_TRACE() << "Connecting signals";
-        connect(tagTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-        connect(notebookTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-        connect(searchTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-        connect(attributeTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-        connect(trashTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-        connect(searchText, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-        QLOG_DEBUG() << "Exiting NixNote constructor";
+    global.filterPosition = 0;
+    this->openNote(false);
+
+    QLOG_TRACE() << "Connecting signals";
+    connect(tagTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
+    connect(notebookTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
+    connect(searchTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
+    connect(attributeTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
+    connect(trashTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
+    connect(searchText, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
+    // Setup file watcher
+    importManager = new FileWatcherManager(this);
+    connect(importManager, SIGNAL(fileImported(qint32,qint32)), this, SLOT(updateSelectionCriteria()));
+    importManager->setup();
+
+    QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 
 
@@ -1054,6 +1062,21 @@ void NixNote::openDatabaseStatus() {
     DatabaseStatus dbstatus;
     dbstatus.exec();
 }
+
+
+
+
+// Open the dialog status dialog box.
+void NixNote::openImportFolders() {
+    WatchFolderDialog dialog;
+    dialog.exec();
+    if (dialog.okClicked) {
+        importManager->reset();
+        importManager->setup();
+    }
+}
+
+
 
 
 // Print the current note
