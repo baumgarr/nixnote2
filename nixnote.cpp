@@ -1223,11 +1223,17 @@ void NixNote::setSyncTimer() {
     global.settings->beginGroup("Sync");
     bool automaticSync = global.settings->value("syncAutomatically", false).toBool();
     int interval = global.settings->value("syncInterval", 15).toInt();
+    if (interval < 15)
+        interval = 15;
     global.settings->endGroup();
+    syncTimer.blockSignals(true);
     syncTimer.stop();
+    syncTimer.blockSignals(false);
     if (!automaticSync) {
         return;
     }
     syncTimer.setInterval(60*1000*interval);
-    //syncTimer.start();
+    syncTimer.blockSignals(true);
+    syncTimer.start();
+    syncTimer.blockSignals(false);
 }
