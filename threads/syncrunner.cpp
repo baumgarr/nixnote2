@@ -49,8 +49,10 @@ void SyncRunner::run() {
 
 void SyncRunner::synchronize() {
     QLOG_DEBUG() << "Starting SyncRunner.synchronize()";
+    error = false;
     if (!comm->connect()) {
         QLOG_ERROR() << "Error initializing socket connections";
+        error = true;
         emit syncComplete();
         return;
     }
@@ -133,6 +135,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         rc = comm->getSyncChunk("", chunk, updateSequenceNumber, chunkSize, fullSync);
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
+            error = true;
             return;
         }
         QLOG_DEBUG() << "------>>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;

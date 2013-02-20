@@ -2,6 +2,7 @@
 #include "threads/syncrunner.h"
 #include "gui/nwebview.h"
 #include "watcher/filewatcher.h"
+#include "dialog/preferences/preferencesdialog.h"
 
 #include <QThread>
 #include <QLabel>
@@ -46,6 +47,7 @@ class SyncRunner;
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+    this->setDebugLevel();
 
     heartbeatTimer.setInterval(1000);
     heartbeatTimer.setSingleShot(false);
@@ -264,6 +266,10 @@ void NixNote::setupGui() {
     closeToTrayAction = trayIconContextMenu->addAction(tr("Close to tray"));
     closeToTrayAction->setCheckable(true);
     closeToTrayAction->setChecked(closeToTray);
+    if (!global.showTrayIcon()) {
+        closeToTray = false;
+        minimizeToTray = false;
+    }
     connect(minimizeToTrayAction, SIGNAL(triggered()), this, SLOT(trayIconBehavior()));
     connect(closeToTrayAction, SIGNAL(triggered()), this, SLOT(trayIconBehavior()));
     trayIconContextMenu->addSeparator();
@@ -272,19 +278,24 @@ void NixNote::setupGui() {
     connect(showAction, SIGNAL(triggered()), this, SLOT(toggleVisible()));
 
     trayIcon->setContextMenu(trayIconContextMenu);
-    trayIcon->show();
+    trayIcon->setVisible(global.showTrayIcon());
+    if (trayIcon->isVisible())
+        trayIcon->show();
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
 
 
 
     // Setup timers
     QLOG_TRACE() << "Setting up timers";
+    setSyncTimer();
+    connect(&syncTimer, SIGNAL(timeout()), this, SLOT(syncTimerExpired()));
     connect(&syncButtonTimer, SIGNAL(timeout()), this, SLOT(updateSyncButton()));
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(syncButtonReset()));
 
     QLOG_TRACE() << "Setting up more connections for tab windows & threads";
     // Setup so we refresh whenever the sync is done.
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria()));
+    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(notifySyncComplete()));
 
     // connect so we refresh the note list and counts whenever a note has changed
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), noteTableView, SLOT(refreshData()));
@@ -539,6 +550,17 @@ void NixNote::closeEvent(QCloseEvent *event) {
 
 
 
+
+//*****************************************************************************
+//* The sync timer has expired
+//*****************************************************************************
+void NixNote::syncTimerExpired() {
+    QFile oauthFile(global.fileManager.getHomeDirPath("oauth.txt"));
+    if (!oauthFile.exists()) {
+        return;
+    }
+    emit(syncRequested());
+}
 
 //******************************************************************************
 //* User synchronize was requested
@@ -808,9 +830,23 @@ void NixNote::waitCursor(bool value) {
 
 // Show a message in the status bar
 void NixNote::setMessage(QString text) {
-    statusBar()->showMessage(text);
+    statusBar()->showMessage(text);   
 }
 
+
+
+void NixNote::notifySyncComplete() {
+    bool show;
+    global.settings->beginGroup("Sync");
+    show = global.settings->value("enableNotification", false).toBool();
+    global.settings->endGroup();
+    if (!show)
+        return;
+    if (syncRunner.error) {
+        trayIcon->showMessage(tr("Sync Error"), tr("Sync completed with errors."));
+    } else
+        trayIcon->showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
+}
 
 //*******************************************************
 //* Check for dirty notes and save the contents
@@ -1135,4 +1171,63 @@ void NixNote::changeEvent(QEvent *e) {
             return;
         }
     }
+}
+
+
+
+void NixNote::openPreferences() {
+    PreferencesDialog prefs;
+    prefs.exec();
+    if (prefs.okButtonPressed) {
+        setSyncTimer();
+        bool showTrayIcon = global.showTrayIcon();
+        if (!showTrayIcon) {
+            trayIconBehavior();
+            if (!this->isVisible())
+                this->show();
+            trayIcon->setVisible(false);
+
+        } else {
+            trayIcon->setVisible(true);
+            minimizeToTray = global.minimizeToTray();
+            closeToTray = global.closeToTray();
+            trayIconBehavior();
+        }
+    }
+    setDebugLevel();
+}
+
+
+void NixNote::setDebugLevel() {
+    global.settings->beginGroup("Debugging");
+    int level = global.settings->value("messageLevel", -1).toInt();
+    global.settings->endGroup();
+
+
+    // Setup the QLOG functions for debugging & messages
+    QsLogging::Logger& logger = QsLogging::Logger::instance();
+    if (level == QsLogging::TraceLevel)
+        logger.setLoggingLevel(QsLogging::TraceLevel);
+    if (level == QsLogging::DebugLevel)
+        logger.setLoggingLevel(QsLogging::DebugLevel);
+    if (level == QsLogging::InfoLevel || level == -1)
+        logger.setLoggingLevel(QsLogging::InfoLevel);
+    if (level == QsLogging::ErrorLevel)
+        logger.setLoggingLevel(QsLogging::ErrorLevel);
+    if (level == QsLogging::FatalLevel)
+        logger.setLoggingLevel(QsLogging::FatalLevel);
+}
+
+
+void NixNote::setSyncTimer() {
+    global.settings->beginGroup("Sync");
+    bool automaticSync = global.settings->value("syncAutomatically", false).toBool();
+    int interval = global.settings->value("syncInterval", 15).toInt();
+    global.settings->endGroup();
+    syncTimer.stop();
+    if (!automaticSync) {
+        return;
+    }
+    syncTimer.setInterval(60*1000*interval);
+    //syncTimer.start();
 }

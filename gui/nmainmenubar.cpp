@@ -147,6 +147,13 @@ void NMainMenuBar::setupEditMenu() {
     findReplaceMenu->addAction(searchFindReplaceAction);
     connect(searchFindReplaceAction, SIGNAL(triggered()), parent, SLOT(findReplaceInNote()));
 
+    editMenu->addSeparator();
+
+    preferencesAction = new QAction(tr("Preferences"), this);
+    setupShortcut(preferencesAction, QString("Edit_Preferences"));
+    preferencesAction->setFont(font);
+    editMenu->addAction(preferencesAction);
+    connect(preferencesAction, SIGNAL(triggered()), parent, SLOT(openPreferences()));
 
 
 

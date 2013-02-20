@@ -137,7 +137,11 @@ SOURCES += main.cpp\
     sql/filewatchertable.cpp \
     watcher/filewatchermanager.cpp \
     dialog/watchfolderadd.cpp \
-    dialog/watchfolderdialog.cpp
+    dialog/watchfolderdialog.cpp \
+    dialog/preferences/preferencesdialog.cpp \
+    dialog/preferences/debugpreferences.cpp \
+    dialog/preferences/syncpreferences.cpp \
+    dialog/preferences/appearancepreferences.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -292,7 +296,11 @@ HEADERS  += nixnote.h \
     sql/filewatchertable.h \
     watcher/filewatchermanager.h \
     dialog/watchfolderadd.h \
-    dialog/watchfolderdialog.h
+    dialog/watchfolderdialog.h \
+    dialog/preferences/preferencesdialog.h \
+    dialog/preferences/debugpreferences.h \
+    dialog/preferences/syncpreferences.h \
+    dialog/preferences/appearancepreferences.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

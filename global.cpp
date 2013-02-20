@@ -97,6 +97,47 @@ void Global::appendFilter(FilterCriteria *criteria) {
 }
 
 
+bool Global::showTrayIcon() {
+    bool showTrayIcon;
+    settings->beginGroup("Appearance");
+    showTrayIcon = settings->value("showTrayIcon", false).toBool();
+    settings->endGroup();
+    return showTrayIcon;
+}
+
+
+bool Global::minimizeToTray() {
+    bool showTrayIcon;
+    settings->beginGroup("Appearance");
+    showTrayIcon = settings->value("minimizeToTray", false).toBool();
+    settings->endGroup();
+    return showTrayIcon;
+}
+
+
+bool Global::closeToTray() {
+    bool showTrayIcon;
+    settings->beginGroup("Appearance");
+    showTrayIcon = settings->value("closeToTray", false).toBool();
+    settings->endGroup();
+    return showTrayIcon;
+}
+
+
+void Global::setMinimizeToTray(bool value) {
+    settings->beginGroup("SaveState");
+    settings->setValue("minimizeToTray", value);
+    settings->endGroup();
+}
+
+
+void Global::setCloseToTray(bool value) {
+    settings->beginGroup("SaveState");
+    settings->setValue("closeToTray", value);
+    settings->endGroup();
+}
+
+
 
 // Utility function for case insensitive sorting
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)

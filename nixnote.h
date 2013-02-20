@@ -95,6 +95,7 @@ private:
 
     // Sync Button rotate
     QTimer syncButtonTimer;
+    QTimer syncTimer;
     QList<QPixmap> syncIcons;
     unsigned int synchronizeIconAngle;
 
@@ -122,12 +123,14 @@ public:
     void closeEvent(QCloseEvent *event);
     //bool notify(QObject* receiver, QEvent* event);
     LineEdit *searchText;
+    void setDebugLevel();
 
 
 
 public slots:
     void closeNixNote();
     void synchronize();
+    void syncTimerExpired();
     void disconnect();
     void updateSyncButton();
     void syncButtonReset();
@@ -138,6 +141,7 @@ public slots:
     void databaseRestore();
     void resetView();
     void newNote();
+    void setSyncTimer();
     void notesDeleted(QList<qint32> lid);
     void openTrunk();
     void openAccount();
@@ -165,6 +169,8 @@ public slots:
     void toggleVisible();
     void trayIconBehavior();
     void changeEvent(QEvent *e);
+    void openPreferences();
+    void notifySyncComplete();
 
 signals:
     void syncRequested();

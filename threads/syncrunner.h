@@ -46,7 +46,6 @@ class SyncRunner : public QThread
     Q_OBJECT
 private:
     bool idle;
-    bool error;
     long evernoteUpdateCount;
     CommunicationManager *comm;
     //JavaMachine *jvm;
@@ -114,6 +113,7 @@ public:
     ~SyncRunner();
     void run();
     bool enConnect();
+    bool error;
 
 signals:
     void syncComplete();
