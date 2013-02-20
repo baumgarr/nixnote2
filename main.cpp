@@ -48,19 +48,16 @@ int main(int argc, char *argv[])
 
 
     // Begin setting up the environment
-    QLOG_DEBUG() << "Saving command line parameters";
     global.argc = argc;
     global.argv = argv;
 
     // Show Qt version.  This is useful for debugging
     QLOG_INFO() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
-    QLOG_DEBUG() << "Program starting";
 
 
     StartupConfig startupConfig;
     startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
     startupConfig.name = "NixNote";
-    QLOG_DEBUG() << "Running global setup";
     global.setup(startupConfig);
 
     // Create a shared memory region.  We use this to communicate
@@ -78,10 +75,9 @@ int main(int argc, char *argv[])
             global.sharedMemory->attach();
             global.sharedMemory->lock();
             void *dataptr = global.sharedMemory->data();
-            QLOG_DEBUG() << startup;
             if (startup == "SHOW_OTHER") {
                 memcpy(dataptr, "SHOW_WINDOW", 11);  // Tell the other guy to show himself
-                QLOG_DEBUG() << "Another NixNote was found.  Stopping this instance";
+                QLOG_INFO() << "Another NixNote was found.  Stopping this instance";
                 exit(0);  // Exit this one
             }
             if (startup == "STOP_OTHER") {
