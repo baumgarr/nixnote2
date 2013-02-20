@@ -534,17 +534,12 @@ void NixNote::closeEvent(QCloseEvent *event) {
         lidList = lidList + QString::number(browsers->at(i)->lid) + QString(" ");
     }
 
-    int order = noteTableView->proxy->sortOrder();
-    int col = noteTableView->proxy->sortColumn();
-
     global.settings->beginGroup("SaveState");
     global.settings->setValue("WindowState", saveState());
     global.settings->setValue("WindowGeometry", saveGeometry());
     global.settings->setValue("isMaximized", isMaximized());
     global.settings->setValue("openTabs", lidList);
     global.settings->setValue("lastViewed", tabWindow->currentBrowser()->lid);
-    global.settings->setValue("sortOrder", order);
-    global.settings->setValue("sortColumn", col);
     global.settings->endGroup();
 }
 

@@ -25,7 +25,7 @@ private:
 public:
     explicit NTableView(QWidget *parent = 0);
     ~NTableView();
-    NTableViewHeader *header;
+    NTableViewHeader *tableViewHeader;
     NoteModel *noteModel;
     NoteModel *model();
     NoteSortFilterProxyModel *proxy;
@@ -53,12 +53,12 @@ signals:
 
 public slots:
     void refreshData();
-    void focusOutEvent(QFocusEvent *event);
     void contextMenuEvent(QContextMenuEvent *event);
     void deleteSelectedNotes();
     void restoreSelectedNotes();
     void openNoteContextMenuTriggered();
     void copyNoteLink();
+    void toggleColumnVisible(int position, bool visible);
     void copyNote();
 
 };

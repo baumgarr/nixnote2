@@ -27,9 +27,12 @@ NTableView::NTableView(QWidget *parent) :
 {
     QLOG_TRACE() << "Entering NTableView constructor";
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
-    header = new NTableViewHeader(Qt::Horizontal, this);
     this->verticalHeader()->setVisible(false);
     noteModel = new NoteModel(this);
+
+    tableViewHeader = new NTableViewHeader(Qt::Horizontal, this);
+    this->setHorizontalHeader(tableViewHeader);
+    this->horizontalHeader()->setMovable(true);
 
     QLOG_TRACE() << "Setting up edit triggers";
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
@@ -79,6 +82,44 @@ NTableView::NTableView(QWidget *parent) :
     this->setColumnHidden(NOTE_TABLE_HAS_ENCRYPTION_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_SOURCE_APPLICATION_POSITION, true);
 
+    blockSignals(true);
+    if (!isColumnHidden(NOTE_TABLE_DATE_CREATED_POSITION))
+        tableViewHeader->createdDateAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_DATE_UPDATED_POSITION))
+        tableViewHeader->changedDateAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_TITLE_POSITION))
+        tableViewHeader->titleAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_NOTEBOOK_POSITION))
+        tableViewHeader->notebookAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_AUTHOR_POSITION))
+        tableViewHeader->authorAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_DATE_SUBJECT_POSITION))
+        tableViewHeader->subjectDateAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_SOURCE_POSITION))
+        tableViewHeader->sourceAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_SOURCE_URL_POSITION))
+        tableViewHeader->urlAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_LATITUDE_POSITION))
+        tableViewHeader->latitudeAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_LONGITUDE_POSITION))
+        tableViewHeader->longitudeAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_ALTITUDE_POSITION))
+        tableViewHeader->altitudeAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_HAS_ENCRYPTION_POSITION))
+        tableViewHeader->hasEncryptionAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_HAS_TODO_POSITION))
+        tableViewHeader->hasTodoAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_IS_DIRTY_POSITION))
+        tableViewHeader->synchronizedAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_SIZE_POSITION))
+        tableViewHeader->sizeAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_TAGS_POSITION))
+        tableViewHeader->tagsAction->setChecked(true);
+
+    connect(tableViewHeader, SIGNAL(setColumnVisible(int,bool)), this, SLOT(toggleColumnVisible(int,bool)));
+
+    blockSignals(false);
+
     this->model()->setHeaderData(NOTE_TABLE_TITLE_POSITION, Qt::Horizontal, QObject::tr("Title"));
     this->model()->setHeaderData(NOTE_TABLE_AUTHOR_POSITION, Qt::Horizontal, QObject::tr("Author"));
     this->model()->setHeaderData(NOTE_TABLE_NOTEBOOK_POSITION, Qt::Horizontal, QObject::tr("Notebook"));
@@ -94,7 +135,7 @@ NTableView::NTableView(QWidget *parent) :
     this->model()->setHeaderData(NOTE_TABLE_LATITUDE_POSITION, Qt::Horizontal, QObject::tr("Latitude"));
     this->model()->setHeaderData(NOTE_TABLE_ALTITUDE_POSITION, Qt::Horizontal, QObject::tr("Altitude"));
     this->model()->setHeaderData(NOTE_TABLE_HAS_ENCRYPTION_POSITION, Qt::Horizontal, QObject::tr("Has Encryption"));
-    this->model()->setHeaderData(NOTE_TABLE_HAS_TODO_POSITION, Qt::Horizontal, QObject::tr("Has Todo"));
+    this->model()->setHeaderData(NOTE_TABLE_HAS_TODO_POSITION, Qt::Horizontal, QObject::tr("Has To-do"));
     this->model()->setHeaderData(NOTE_TABLE_IS_DIRTY_POSITION, Qt::Horizontal, QObject::tr("Synchronized"));
     this->model()->setHeaderData(NOTE_TABLE_SIZE_POSITION, Qt::Horizontal, QObject::tr("Size"));
 
@@ -137,21 +178,9 @@ NTableView::~NTableView() {
     delete dateDelegate;
     delete blankNumber;
     delete kbNumber;
-    delete this->header;
+    delete this->tableViewHeader;
     delete this->noteModel;
     delete this->proxy;
-}
-
-
-// On a focus out event, save the sort order.
-void NTableView::focusOutEvent(QFocusEvent *event) {
-    int order = proxy->sortOrder();
-    int col = proxy->sortColumn();
-    global.settings->beginGroup("SaveState");
-    global.settings->setValue("sortOrder", order);
-    global.settings->setValue("sortColumn", col);
-    global.settings->endGroup();
-    QTableView::focusOutEvent(event);
 }
 
 
@@ -424,9 +453,9 @@ qint32 NTableView::selectAnyNoteFromList() {
         if (rowLid > 0) {
             QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
             selectRow(j);
-            this->blockSignals(false);
-            emit openNote(false);
             this->blockSignals(true);
+            emit openNote(false);
+            this->blockSignals(false);
             return rowLid;
         }
     }
@@ -521,4 +550,9 @@ void NTableView::copyNoteLink() {
         msgBox.exec();
     }
     global.clipboard->setText(lidUrl);
+}
+
+
+void NTableView::toggleColumnVisible(int position, bool visible) {
+    setColumnHidden(position, !visible);
 }
