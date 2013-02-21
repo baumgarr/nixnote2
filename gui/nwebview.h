@@ -38,6 +38,7 @@ public:
     QAction *todoAction;
     QAction *encryptAction;
     QAction *downloadAttachmentAction();
+    QAction *downloadImageAction();
     QAction *rotateImageRightAction;
     QAction *rotateImageLeftAction;
     QAction *insertLinkAction;
@@ -81,6 +82,7 @@ public slots:
 private slots:
     void exposeToJavascript();
     void setDefaultTitle();
+    void downloadRequested(QNetworkRequest);
 
 
 };

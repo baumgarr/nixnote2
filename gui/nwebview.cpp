@@ -4,10 +4,12 @@
 #include <QWebFrame>
 #include <QMessageBox>
 #include <QtWebKit>
+#include <QFileDialog>
+
 #include "./libencrypt/encrypt_global.h"
 #include "./libencrypt/encrypt.h"
 #include "../dialog/endecryptdialog.h"
-
+#include "sql/resourcetable.h"
 
 extern Global global;
 
@@ -146,6 +148,14 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     imageMenu = new QMenu(tr("Image"), this);
     contextMenu->addMenu(imageMenu);
+    downloadImageAction()->setText(tr("Save Image"));
+    imageMenu->addAction(downloadImageAction());
+    // Don't connect this signal.  The download attachmen signal will handle it.  Otherwise
+    // the signal fires twice.
+    //connect(editorPage, SIGNAL(downloadRequested(QNetworkRequest)), this, SLOT(downloadRequested(QNetworkRequest)));
+
+    imageMenu->addSeparator();
+
     rotateImageLeftAction = new QAction(tr("Rotate Left"), this);
     imageMenu->addAction(rotateImageLeftAction);
     this->setupShortcut(rotateImageLeftAction, "Edit_Image_Rotate_Left");
@@ -158,6 +168,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     downloadAttachmentAction()->setText(tr("Save Attachment"));
     contextMenu->addAction(downloadAttachmentAction());
+    connect(editorPage, SIGNAL(downloadRequested(QNetworkRequest)), this, SLOT(downloadRequested(QNetworkRequest)));
 
     connect(editorPage, SIGNAL(contentsChanged()), this, SLOT(editAlert()));
     editorPage->setContentEditable(true);
@@ -168,6 +179,11 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
 QAction *NWebView::downloadAttachmentAction() {
     return pageAction(QWebPage::DownloadLinkToDisk);
+}
+
+
+QAction *NWebView::downloadImageAction() {
+    return pageAction(QWebPage::DownloadImageToDisk);
 }
 
 QAction* NWebView::setupColorMenuOption(QString color) {
@@ -287,6 +303,7 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
 
 
 void NWebView::downloadAttachment(QNetworkRequest *req) {
+    QLOG_DEBUG() << req->url().toString();
     emit(downloadAttachmentRequested(req));
 }
 
@@ -329,4 +346,66 @@ void NWebView::setupShortcut(QAction *action, QString text) {
         return;
     QKeySequence key(global.shortcutKeys->getShortcut(&text));
     action->setShortcut(key);
+}
+
+
+void NWebView::downloadRequested(QNetworkRequest req) {
+    QString urlString = req.url().toString();
+    if (urlString.startsWith("nnres:")) {
+        int pos = urlString.indexOf(global.attachmentNameDelimeter);
+        QString extension = "";
+        if (pos > 0) {
+            extension = urlString.mid(pos+global.attachmentNameDelimeter.length());
+            urlString = urlString.mid(0,pos-2);
+        }
+        urlString = urlString.mid(6);
+
+        qint32 lid = urlString.toInt();
+        ResourceTable resTable;
+        Resource r;
+        resTable.get(r, lid);
+        QString filename;
+        if (r.__isset.attributes && r.attributes.__isset.fileName)
+            filename = QString::fromStdString(r.attributes.fileName);
+        else
+            filename = urlString + QString(".") + extension;
+
+        QFileDialog fd;
+        fd.setFileMode(QFileDialog::AnyFile);
+        fd.setWindowTitle(tr("Save File"));
+        fd.setAcceptMode(QFileDialog::AcceptSave);
+        fd.selectFile(filename);
+        fd.setConfirmOverwrite(true);
+        if (fd.exec()) {
+            if (fd.selectedFiles().size() == 0)
+                return;
+            filename = fd.selectedFiles()[0];
+            QFile newFile(filename);
+            newFile.open(QIODevice::WriteOnly);
+            newFile.write(r.data.body.c_str(), r.data.size);
+            newFile.close();
+            return;
+        }
+    }
+    if (urlString.startsWith("file:////")) {
+        if (!req.url().isValid())
+            return;
+        urlString = urlString.mid(8);
+        QFileDialog fd;
+        fd.setFileMode(QFileDialog::AnyFile);
+        fd.setWindowTitle(tr("Save File"));
+        fd.setAcceptMode(QFileDialog::AcceptSave);
+        QString oldname = urlString;
+        fd.selectFile(urlString.replace(global.fileManager.getDbaDirPath(), ""));
+        fd.setConfirmOverwrite(true);
+        if (fd.exec()) {
+            if (fd.selectedFiles().size() == 0)
+                return;
+            QString newname = fd.selectedFiles()[0];
+            QFile::remove(urlString);
+            QFile::copy(oldname, newname);
+            return;
+        }
+
+    }
 }
