@@ -42,11 +42,12 @@ CommunicationManager::~CommunicationManager() {
 
 bool CommunicationManager::connect() {
     // Get the oAuth token
-    QFile oauthFile(global.fileManager.getHomeDirPath("oauth.txt"));
-    oauthFile.open(QIODevice::ReadOnly);
+//    QFile oauthFile(global.fileManager.getHomeDirPath("oauth.txt"));
+//    oauthFile.open(QIODevice::ReadOnly);
     OAuthTokenizer tokenizer;
-    QByteArray data = oauthFile.readAll();
-    oauthFile.close();
+//    QByteArray data = oauthFile.readAll();
+//    oauthFile.close();
+    QString data = global.accountsManager->getOAuthToken();
     tokenizer.tokenize(data);
     authToken = tokenizer.oauth_token.toStdString();
     return init();

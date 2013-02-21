@@ -2,6 +2,7 @@
 #include "threads/syncrunner.h"
 #include "gui/nwebview.h"
 #include "watcher/filewatcher.h"
+#include "dialog/accountdialog.h"
 #include "dialog/preferences/preferencesdialog.h"
 
 #include <QThread>
@@ -32,6 +33,7 @@
 #include "oauth/oauthwindow.h"
 #include "oauth/oauthtokenizer.h"
 #include "dialog/databasestatus.h"
+#include "dialog/adduseraccountdialog.h"
 
 #include "gui/nmainmenubar.h"
 #include "dialog/logindialog.h"
@@ -550,10 +552,8 @@ void NixNote::closeEvent(QCloseEvent *event) {
 //* The sync timer has expired
 //*****************************************************************************
 void NixNote::syncTimerExpired() {
-    QFile oauthFile(global.fileManager.getHomeDirPath("oauth.txt"));
-    if (!oauthFile.exists()) {
+    if (!global.accountsManager->oauthTokenFound())
         return;
-    }
     emit(syncRequested());
 }
 
@@ -561,9 +561,7 @@ void NixNote::syncTimerExpired() {
 //* User synchronize was requested
 //******************************************************************************
 void NixNote::synchronize() {
-
-    QFile oauthFile(global.fileManager.getHomeDirPath("oauth.txt"));
-    if (!oauthFile.exists()) {
+    if (!global.accountsManager->oauthTokenFound()) {
         OAuthWindow window;
         window.exec();
         if (window.error) {
@@ -573,11 +571,7 @@ void NixNote::synchronize() {
         if (window.response == "")
             return;
 
-        oauthFile.open(QIODevice::WriteOnly);
-        QByteArray b;
-        b.append(window.response);
-        oauthFile.write(b);
-        oauthFile.close();
+        global.accountsManager->setOAuthToken(window.response);
     }
     syncButtonTimer.start(3);
     emit syncRequested();
@@ -1231,4 +1225,60 @@ void NixNote::setSyncTimer() {
     syncTimer.blockSignals(true);
     syncTimer.start();
     syncTimer.blockSignals(false);
+}
+
+
+void NixNote::switchUser() {
+    QAction *userSwitch;
+    QList<int> checkedEntries;
+    int currentAcctPos = 0;
+    int newAcctPos = 0;
+    for (int i=0; i<menuBar->userAccountActions.size(); i++) {
+        userSwitch = menuBar->userAccountActions[i];
+        int actionID = userSwitch->data().toInt();
+        if (actionID == global.accountsManager->currentId)
+            currentAcctPos = i;
+        else
+            newAcctPos = i;
+        if (userSwitch->isChecked()) {
+            checkedEntries.append(i);
+        }
+    }
+
+    // If nothing is checked, we recheck the old one or
+    // if more than one is checked, we uncheck the old guy
+    if(checkedEntries.size() == 0) {
+        menuBar->blockSignals(true);
+        menuBar->userAccountActions[currentAcctPos]->setChecked(true);
+        menuBar->blockSignals(false);
+        return;
+    }
+    if(checkedEntries.size() > 1) {
+        menuBar->blockSignals(true);
+        menuBar->userAccountActions[currentAcctPos]->setChecked(false);
+        menuBar->blockSignals(false);
+        global.accountsManager->currentId = menuBar->userAccountActions[newAcctPos]->data().toInt();
+        global.settings->beginGroup("SaveState");
+        global.settings->setValue("lastAccessedAccount", global.accountsManager->currentId);
+        global.settings->endGroup();
+        QMessageBox::information(this, tr("Restart Required"),
+             QString(tr("You must restart NixNote to complete this action.")));
+        closeAction->trigger();
+        return;
+    }
+}
+
+
+void NixNote::addAnotherUser() {
+    AddUserAccountDialog dialog;
+    dialog.exec();
+    if (!dialog.okPushed)
+        return;
+    QString name = dialog.newAccountName->text().trimmed();
+    int newid = global.accountsManager->addId(-1, name);
+    QAction *newAction = new QAction(menuBar);
+    newAction->setText(tr("Switch to ") +name);
+    newAction->setCheckable(true);
+    newAction->setData(newid);
+    menuBar->addUserAccount(newAction);
 }

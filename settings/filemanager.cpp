@@ -14,7 +14,7 @@ using namespace std;
 FileManager::FileManager() {
 }
 
-void FileManager::setup(QString homeDirPath, QString programDirPath) {
+void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
 
     homeDir.setPath(toPlatformPathSeparator(homeDirPath));
     programDir.setPath(toPlatformPathSeparator(programDirPath));
@@ -31,8 +31,8 @@ void FileManager::setup(QString homeDirPath, QString programDirPath) {
     checkExistingReadableDir(spellDir);
     spellDirPath = slashTerminatePath(spellDir.path());
 
-    xmlDir.setPath(programDirPath+"xml");
-    checkExistingReadableDir(xmlDir);
+    //xmlDir.setPath(programDirPath+"xml");
+    //checkExistingReadableDir(xmlDir);
 
     translateDir.setPath(programDirPath+"translations");
     checkExistingReadableDir(translateDir);
@@ -40,6 +40,15 @@ void FileManager::setup(QString homeDirPath, QString programDirPath) {
 
 
     // Read/write directories that only we use
+
+    QString settingsFile = getHomeDirPath("") + "nixnote.conf";
+    QSettings settings(settingsFile, QSettings::IniFormat);
+
+    settings.beginGroup("SaveState");
+    int accountId = settings.value("lastAccessedAccount", 1).toInt();
+    settings.endGroup();
+    id = accountId;
+
     logsDir.setPath(homeDirPath+"logs");
     createDirOrCheckWriteable(logsDir);
 
@@ -47,14 +56,13 @@ void FileManager::setup(QString homeDirPath, QString programDirPath) {
     createDirOrCheckWriteable(tmpDir);
     tmpDirPath = slashTerminatePath(tmpDir.path());
 
-    dbDir.setPath(homeDirPath+"db");
+    dbDir.setPath(homeDirPath+"db-" +QString::number(id));
     createDirOrCheckWriteable(dbDir);
     dbDirPath = slashTerminatePath(dbDir.path());
 
-    dbaDir.setPath(homeDirPath+"db/dba");
+    dbaDir.setPath(dbDirPath+"dba");
     createDirOrCheckWriteable(dbaDir);
     dbaDirPath = slashTerminatePath(dbaDir.path());
-
 }
 
 
@@ -185,12 +193,14 @@ QString FileManager::getImageDirPath(QString relativePath) {
 QDir FileManager::getLogsDirFile(QString relativePath) {
     return QDir(logsDir.dirName() + toPlatformPathSeparator(relativePath));
 }
+/*
 QString FileManager::getQssDirPath(QString relativePath) {
     return qssDirPath + toPlatformPathSeparator(relativePath);
 }
 QString FileManager::getQssDirPathUser(QString relativePath) {
     return qssDirPath + toPlatformPathSeparator(relativePath);
 }
+*/
 QString FileManager::getTmpDirPath() {
     return tmpDirPath;
 }
@@ -209,9 +219,11 @@ QString FileManager::getDbaDirPath(QString relativePath) {
 QString FileManager::getDbaDirPathSpecialChar(QString relativePath) {
     return dbaDirPath + toPlatformPathSeparator(relativePath).replace("#", "%23");
 }
+/*
 QDir FileManager::getXMLDirFile(QString relativePath) {
     return QDir(xmlDir.dirName() + toPlatformPathSeparator(relativePath));
 }
+*/
 QString FileManager::getTranslateFilePath(QString relativePath) {
     return translateDirPath + toPlatformPathSeparator(relativePath);
 }

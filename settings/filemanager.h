@@ -40,11 +40,11 @@ private:
     QString spellDirPathUser;
     QDir spellDirUser;
 
-    QString qssDirPath;
-    QDir qssDir;
+    //QString qssDirPath;
+    //QDir qssDir;
 
-    QString qssDirPathUser;
-    QDir qssDirUser;
+    //QString qssDirPathUser;
+    //QDir qssDirUser;
 
     QString tmpDirPath;
     QDir tmpDir;
@@ -52,7 +52,7 @@ private:
     QString dbaDirPath;
     QDir dbaDir;
 
-    QDir xmlDir;
+    //QDir xmlDir;
 
     QString translateDirPath;
     QDir translateDir;
@@ -67,7 +67,7 @@ private:
 
 public:
     FileManager();
-    void setup(QString homeDirPath, QString programDirPath);
+    void setup(QString homeDirPath, QString programDirPath, int id);
     QDir getProgramDirFile(QString relativePath);
     QString getProgramDirPath(QString relativePath);
     QDir getHomeDirFile(QString relativePath);
@@ -84,12 +84,12 @@ public:
     QDir getImageDirFile(QString relativePath);
     QString getImageDirPath(QString relativePath);
     QDir getLogsDirFile(QString relativePath);
-    QString getQssDirPath(QString relativePath);
+    //QString getQssDirPath(QString relativePath);
     QString getQssDirPathUser(QString relativePath);
     QString getTmpDirPath();
     QString getTmpDirPath(QString relativePath);
     QString getTmpDirPathSpecialChar(QString relativePath);
-    QDir getXMLDirFile(QString relativePath);
+    //QDir getXMLDirFile(QString relativePath);
     QString getTranslateFilePath(QString relativePath);
     void purgeResDirectory(bool exitOnFail);
 

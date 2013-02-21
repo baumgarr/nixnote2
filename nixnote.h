@@ -171,6 +171,8 @@ public slots:
     void changeEvent(QEvent *e);
     void openPreferences();
     void notifySyncComplete();
+    void addAnotherUser();
+    void switchUser();
 
 signals:
     void syncRequested();

@@ -40,9 +40,15 @@ Global::~Global() {
 
 //Initial global settings setup
 void Global::setup(StartupConfig startupConfig) {
-    fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath);
+    fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath, startupConfig.accountId);
     QString settingsFile = fileManager.getHomeDirPath("") + "nixnote.conf";
     settings = new QSettings(settingsFile, QSettings::IniFormat);
+
+    settings->beginGroup("SaveState");
+    int accountId = settings->value("lastAccessedAccount", 1).toInt();
+    settings->endGroup();
+    startupConfig.accountId = accountId;
+    accountsManager = new AccountsManager(startupConfig.accountId);
 
     cryptCounter = 0;
     attachmentNameDelimeter = "------";
@@ -50,9 +56,7 @@ void Global::setup(StartupConfig startupConfig) {
     password = "";
     connected = false;
 
-    settings->beginGroup("Server");
-    server = settings->value("host", "www.evernote.com").toString();
-    settings->endGroup();
+    server = accountsManager->getServer();
 
     // Cleanup any temporary files from the last time
     QDir myDir(fileManager.getTmpDirPath());

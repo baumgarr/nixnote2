@@ -141,7 +141,9 @@ SOURCES += main.cpp\
     dialog/preferences/preferencesdialog.cpp \
     dialog/preferences/debugpreferences.cpp \
     dialog/preferences/syncpreferences.cpp \
-    dialog/preferences/appearancepreferences.cpp
+    dialog/preferences/appearancepreferences.cpp \
+    settings/accountsmanager.cpp \
+    dialog/adduseraccountdialog.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -300,7 +302,9 @@ HEADERS  += nixnote.h \
     dialog/preferences/preferencesdialog.h \
     dialog/preferences/debugpreferences.h \
     dialog/preferences/syncpreferences.h \
-    dialog/preferences/appearancepreferences.h
+    dialog/preferences/appearancepreferences.h \
+    settings/accountsmanager.h \
+    dialog/adduseraccountdialog.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

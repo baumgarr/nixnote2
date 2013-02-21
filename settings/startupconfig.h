@@ -10,6 +10,7 @@ public:
     QString name;
     QString homeDirPath;
     QString programDirPath;
+    int accountId;
 };
 
 #endif // STARTUPCONFIG_H

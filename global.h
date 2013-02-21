@@ -11,6 +11,7 @@
 #include "filters/filtercriteria.h"
 #include "models/notecache.h"
 #include "gui/shortcutkeys.h"
+#include "settings/accountsmanager.h"
 
 //#include "java/javamachine.h"
 
@@ -60,6 +61,7 @@ public:
     int argc;           // Initial argument count from the program start
     char** argv;        // List of arguments from the program start
     FileManager fileManager;
+    AccountsManager *accountsManager;
     unsigned int cryptCounter;
     QString attachmentNameDelimeter;
     string username;

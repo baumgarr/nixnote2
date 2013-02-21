@@ -41,6 +41,30 @@ void NMainMenuBar::setupFileMenu() {
 
 
     fileMenu->addSeparator();
+    // Start adding the user accounts
+    QList<QString> names = global.accountsManager->nameList();
+    QList<int> ids = global.accountsManager->idList();
+    for (int i=0; i<ids.size(); i++) {
+        QAction *accountAction = new QAction(names[i], this);
+        accountAction->setData(ids[i]);
+        accountAction->setCheckable(true);
+        accountAction->setFont(f);
+        if (global.accountsManager->currentId == ids[i])
+            accountAction->setChecked(true);
+        else {
+            accountAction->setText(tr("Switch to ")+names[i]);
+        }
+        fileMenu->addAction(accountAction);
+        connect(accountAction, SIGNAL(triggered()), parent, SLOT(switchUser()));
+        userAccountActions.append(accountAction);
+    }
+
+    addUserAction = new QAction(tr("Add Another User..."), this);
+    addUserAction->setFont(font);
+    fileMenu->addAction(addUserAction);
+    connect(addUserAction, SIGNAL(triggered()), parent, SLOT(addAnotherUser()));
+
+    fileMenu->addSeparator();
 
     exitAction = new QAction(tr("Exit"), this);
     exitAction->setToolTip(tr("Close the program"));
@@ -51,8 +75,14 @@ void NMainMenuBar::setupFileMenu() {
     //exitAction->setIcon(QFileIconProvider().icon(QFileInfo("/home/randy/Dropbox/nixnote.jar")));
     setupShortcut(exitAction, QString("File_Exit"));
     fileMenu->addAction(exitAction);
-
 }
+
+
+void NMainMenuBar::addUserAccount(QAction *action) {
+    fileMenu->insertAction(addUserAction, action);
+    userAccountActions.append(action);
+}
+
 
 void NMainMenuBar::setupEditMenu() {
     editMenu = this->addMenu(tr("&Edit"));

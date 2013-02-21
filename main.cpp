@@ -58,6 +58,7 @@ int main(int argc, char *argv[])
     StartupConfig startupConfig;
     startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
     startupConfig.name = "NixNote";
+    startupConfig.accountId = 1;
     global.setup(startupConfig);
 
     // Create a shared memory region.  We use this to communicate

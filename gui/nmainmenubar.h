@@ -23,6 +23,7 @@ private:
     void setupShortcut(QAction *action, QString text);
 
 public:
+    QList<QAction*> userAccountActions;
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *viewMenu;
@@ -34,6 +35,7 @@ public:
     QAction *printAction;
     QAction *synchronizeAction;
     QAction *importFoldersDialogAction;
+    QAction *addUserAction;
     QAction *disconnectAction;
     QAction *databaseStatusDialogAction;
     QAction *restoreDatabaseAction;
@@ -66,6 +68,8 @@ public:
     QAction *viewStatusbar;
 
     explicit NMainMenuBar(QWidget *parent = 0);
+
+    void addUserAccount(QAction *action);
 
 signals:
 
