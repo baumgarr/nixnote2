@@ -1239,7 +1239,8 @@ void NixNote::switchUser() {
         if (actionID == global.accountsManager->currentId)
             currentAcctPos = i;
         else
-            newAcctPos = i;
+            if (userSwitch->isChecked())
+                newAcctPos = i;
         if (userSwitch->isChecked()) {
             checkedEntries.append(i);
         }
@@ -1262,8 +1263,10 @@ void NixNote::switchUser() {
         global.settings->setValue("lastAccessedAccount", global.accountsManager->currentId);
         global.settings->endGroup();
         QMessageBox::information(this, tr("Restart Required"),
-             QString(tr("You must restart NixNote to complete this action.")));
+             QString(tr("NixNote must be restarted to complete this action.")));
         closeAction->trigger();
+        global.sharedMemory->detach();
+        QProcess::startDetached(global.fileManager.getProgramDirPath("")+"nixnote");
         return;
     }
 }
