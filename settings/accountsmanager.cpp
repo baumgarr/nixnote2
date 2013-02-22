@@ -40,6 +40,11 @@ AccountsManager::AccountsManager(int id, QObject *parent) :
             i=nodes.size();
         }
     }
+    setOAuthToken("hhhhhh");
+    addId(0,"test");
+    setOAuthToken("bbb");
+    removeId(2);
+    removeId(1);
 }
 
 
@@ -180,7 +185,7 @@ bool AccountsManager::removeId(int id) {
         QDomNode idNode = element.firstChildElement("id");
         int value = idNode.toElement().text().toInt();
         if (value == id) {
-            doc.removeChild(nodes.at(i));
+            nodes.at(i).parentNode().removeChild(nodes.at(i));
             save();
             return true;
         }
