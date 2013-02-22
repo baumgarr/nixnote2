@@ -78,6 +78,7 @@ public:
     bool isStacked(qint32 lid);
     void removeFromStack(qint32 lid);
     void getStacks(QStringList &stacks);
+    bool exists(qint32 lid);
     qint32 getLastUpdateSequenceNumber(qint32 lid);
     void setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN);
 

@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTextDocument>
 
 #include "sql/notebooktable.h"
+#include "sql/linkednotebooktable.h"
+#include "sql/sharednotebooktable.h"
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
 #include "dialog/notebookproperties.h"
@@ -57,7 +59,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
     this->setStyleSheet(QString("QTreeWidget { border: none; background-color: transparent; }"));
 
     // Build the root item
-    QIcon icon(":notebook_small.png");
+    QIcon icon(":stack.png");
 //    root = new NNotebookViewItem(this);
 //    root->setIcon(NAME_POSITION,icon);
 //    root->setData(NAME_POSITION, Qt::UserRole, "rootlocal");
@@ -218,6 +220,7 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
 void NNotebookView::loadData() {
     QSqlQuery query;
     NotebookTable notebookTable;
+    LinkedNotebookTable linkedTable;
     dataStore.clear();
     query.exec("Select lid, name, stack from NotebookModel order by name");
     while (query.next()) {
@@ -226,6 +229,10 @@ void NNotebookView::loadData() {
             NNotebookViewItem *newWidget = new NNotebookViewItem();
             newWidget->setData(NAME_POSITION, Qt::DisplayRole, query.value(1).toString());
             newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
+            if (!linkedTable.exists(lid))
+                newWidget->setIcon(NAME_POSITION, QIcon(":notebook_small.png"));
+            else
+                newWidget->setIcon(NAME_POSITION, QIcon(":notebook-linked.png"));
             newWidget->count = 0;
             newWidget->stack = query.value(2).toString();
             this->dataStore.insert(query.value(0).toInt(), newWidget);
@@ -235,6 +242,7 @@ void NNotebookView::loadData() {
                 NNotebookViewItem *stackWidget = new NNotebookViewItem();
                 stackWidget->setData(NAME_POSITION, Qt::DisplayRole, newWidget->stack);
                 stackWidget->setData(NAME_POSITION, Qt::UserRole, "STACK");
+                stackWidget->setIcon(NAME_POSITION, QIcon(":stack.png"));
                 stackStore.insert(newWidget->stack, stackWidget);
                 root->addChild(stackWidget);
             }

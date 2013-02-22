@@ -461,3 +461,17 @@ void LinkedNotebookTable::setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN
     query.bindValue(":data", lastUSN);
     query.exec();
 }
+
+
+bool LinkedNotebookTable::exists(qint32 lid) {
+    QSqlQuery query;
+    query.prepare("select lid from datastore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", LINKEDNOTEBOOK_SHARE_NAME);
+    query.exec();
+    QLOG_DEBUG() << query.lastError();
+    if (query.next())
+        return true;
+    else
+        return false;
+}

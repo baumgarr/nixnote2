@@ -6,12 +6,10 @@
         <file alias="right_arrow.png">images/right_arrow.png</file>
         <file alias="synchronize.png">images/synchronize.png</file>
         <file alias="fileclose.png">images/fileclose.png</file>
-        <file alias="notebook.png">images/notebook.png</file>
-        <file alias="notebook_small.png">images/notebook_small.png</file>
         <file alias="tag.png">images/tag.png</file>
         <file alias="search.png">images/lens.png</file>
         <file alias="trash.png">images/trash.png</file>
-        <file alias="attribute.png">images/attribute.png</file>
+        <file alias="attributes.png">images/attribute.png</file>
         <file alias="up_arrow_small.png">images/up_arrow_small.png</file>
         <file alias="down_arrow_small.png">images/down_arrow_small.png</file>
         <file alias="windowIcon.png">images/window_icon.png</file>
@@ -41,5 +39,12 @@
         <file alias="trunk.png">images/trunk.png</file>
         <file alias="usage.png">images/usage.png</file>
         <file alias="black_dot.png">images/black_dot.png</file>
+        <file alias="notebook_small.png">images/iconza-notebook-green.png</file>
+        <file alias="notebook-local.png">images/local-notebook.png</file>
+        <file alias="notebook-linked.png">images/linked-notebook.png</file>
+        <file alias="notebook-conflict.png">images/notebook-conflict.png</file>
+        <file alias="notebook-shared.png">images/public-notebook.png</file>
+        <file alias="stack.png">images/stack-green.png</file>
+        <file alias="silhouette.png">images/silhouette.png</file>
     </qresource>
 </RCC>
