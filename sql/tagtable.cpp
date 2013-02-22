@@ -16,12 +16,21 @@ TagTable::TagTable()
 
 
 // Given a tag's name as a std::string, we return the lid
-qint32 TagTable::findByName(string &name) {
+qint32 TagTable::findByName(string &name, qint32 account) {
     QSqlQuery query;
-    query.prepare("Select lid from DataStore where key=:key and data=:name");
-    query.bindValue(":key", TAG_NAME);
-    query.bindValue(":name", QString::fromStdString(name));
-    query.exec();
+    if (account == 0) {
+        query.prepare("Select lid from DataStore where key=:key and data=:name");
+        query.bindValue(":key", TAG_NAME);
+        query.bindValue(":name", QString::fromStdString(name));
+        query.exec();
+    } else {
+        query.prepare("Select lid from DataStore where key=:key and data=:name and lid in (select lid from datastore where key=:accountKey and data=:accountData");
+        query.bindValue(":key", TAG_NAME);
+        query.bindValue(":name", QString::fromStdString(name));
+        query.bindValue(":accountKey", TAG_OWNING_ACCOUNT);
+        query.bindValue("accountData", account);
+        query.exec();
+    }
     if (query.next())
         return query.value(0).toInt();
     else
@@ -32,12 +41,34 @@ qint32 TagTable::findByName(string &name) {
 
 
 // Given a tag's name as a QString, we return the lid
-qint32 TagTable::findByName(QString &name) {
+qint32 TagTable::findByName(QString &name, qint32 account) {
     string n = name.toStdString();
-    return findByName(n);
+    return findByName(n, account);
+}
+
+// Determine if a lid belongs to a linked notebook
+bool TagTable::isLinked(qint32 lid) {
+    QSqlQuery query;
+    query.prepare("Select lid from datastore where key=:key and lid=:lid");
+    query.bindValue(":key", TAG_OWNING_ACCOUNT);
+    query.bindValue(":lid", lid);
+    query.exec();
+    if (query.next())
+        return true;
+    return false;
 }
 
 
+// Get the owning account for a lid
+qint32 TagTable::owningAccount(qint32 lid) {
+    QSqlQuery query;
+    query.prepare("Select data from datastore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", TAG_OWNING_ACCOUNT);
+    if (query.next())
+        return query.value(0).toInt();
+    return 0;
+}
 
 // Get a list of all tags
 qint32 TagTable::getAll(QList<qint32> &tags) {
@@ -81,16 +112,16 @@ void TagTable::updateGuid(qint32 lid, Guid &guid) {
 
 // Synchronize a new tag with what is in the database.  We basically
 // just delete the old one & give it a new entry
-void TagTable::sync(Tag &tag) {
-    qint32 lid= findByName(tag.name);
-    sync(lid, tag);
+qint32 TagTable::sync(Tag &tag, qint32 account) {
+    qint32 lid= getLid(tag.guid);
+    return sync(lid, tag, account);
 }
 
 
 
 
 // Update a tag record
-void TagTable::update(Tag &tag, bool dirty=true) {
+void TagTable::update(Tag &tag, bool dirty=true, qint32 account) {
     qint32 lid = getLid(tag.guid);
     if (lid > 0) {
         QSqlQuery query;
@@ -98,8 +129,7 @@ void TagTable::update(Tag &tag, bool dirty=true) {
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
         query.exec();
-
-        add(lid, tag, dirty);
+        add(lid, tag, dirty,account);
 
         // Now update the Note display list
         NoteTable noteTable;
@@ -114,10 +144,10 @@ void TagTable::update(Tag &tag, bool dirty=true) {
 
 // Synchronize a newtag with what is in the database.  We basically
 // just delete the old one & give it a new entry
-void TagTable::sync(qint32 l, Tag &tag) {
+qint32 TagTable::sync(qint32 l, Tag &tag, qint32 account) {
     qint32 lid = l;
     if (lid == 0)
-        lid= findByName(tag.name);
+        lid= getLid(tag.name);
 
     if (lid > 0) {
         QSqlQuery query;
@@ -130,7 +160,7 @@ void TagTable::sync(qint32 l, Tag &tag) {
         lid = cs.incrementLidCounter();
     }
 
-    add(lid, tag, false);
+    add(lid, tag, false, account);
 }
 
 
@@ -160,7 +190,7 @@ qint32 TagTable::getLid(string guid) {
 
 
 // Add a new tag to the database
-void TagTable::add(qint32 l, Tag &t, bool isDirty) {
+qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
     ConfigStore cs;
     qint32 lid = l;
     if (lid == 0)
@@ -195,6 +225,14 @@ void TagTable::add(qint32 l, Tag &t, bool isDirty) {
     query.bindValue(":key", TAG_ISDIRTY);
     query.bindValue(":data", isDirty);
     query.exec();
+
+    if (account >0) {
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", TAG_OWNING_ACCOUNT);
+        query.bindValue(":data", account);
+        query.exec();
+    }
+    return lid;
 }
 
 

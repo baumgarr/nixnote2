@@ -1,4 +1,4 @@
-#ifndef SYNCRUNNER_H
+﻿#ifndef SYNCRUNNER_H
 #define SYNCRUNNER_H
 
 #include <QObject>
@@ -86,11 +86,11 @@ private:
     //bool refreshConnection();
     void syncRemoteExpungedNotes(vector<string> guids);
     void syncRemoteExpungedNotebooks(vector<string> guids);
-    void processSyncChunk(SyncChunk &chunk);
+    void processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook=0);
     void syncRemoteExpungedTags(vector<string> guids);
     void syncRemoteExpungedSavedSearches(vector<string> guid);
 
-    void syncRemoteTags(vector<Tag> tag);
+    void syncRemoteTags(vector<Tag> tag, qint32 account=0);
     void syncRemoteSearches(vector<SavedSearch> searches);
     void syncRemoteNotebooks(vector<Notebook> books);
     void syncRemoteNotes(vector<Note> notes);

@@ -160,7 +160,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
 
 // Deal with the sync chunk returned
-void SyncRunner::processSyncChunk(SyncChunk &chunk) {
+void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
 
     if (chunk.expungedNotes.size() > 0)
         syncRemoteExpungedNotes(chunk.expungedNotes);
@@ -173,7 +173,7 @@ void SyncRunner::processSyncChunk(SyncChunk &chunk) {
     if (chunk.expungedLinkedNotebooks.size() > 0)
         syncRemoteExpungedLinkedNotebooks(chunk.expungedLinkedNotebooks);
     if (chunk.tags.size() > 0)
-        syncRemoteTags(chunk.tags);
+        syncRemoteTags(chunk.tags, linkedNotebook);
     if (chunk.notebooks.size() > 0)
         syncRemoteNotebooks(chunk.notebooks);
     if (chunk.searches.size() > 0)
@@ -268,7 +268,7 @@ void SyncRunner::syncRemoteExpungedSavedSearches(vector<string> guids) {
 
 // Synchronize remote tags with the current database
 // If there is a conflict, the remote wins
-void SyncRunner::syncRemoteTags(vector<Tag> tags) {
+void SyncRunner::syncRemoteTags(vector<Tag> tags, qint32 account) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteTags";
     TagTable tagTable;
 
@@ -281,7 +281,7 @@ void SyncRunner::syncRemoteTags(vector<Tag> tags) {
         // as an unsynced remote.  We then merge them.  We'll find it by guid
         // if a note was synchrozied with this tag before a chunk
         // with this tag was downloaded.
-        qint32 lid = tagTable.findByName(t.name);
+        qint32 lid = tagTable.findByName(t.name, account);
         if (lid == 0)
             lid = tagTable.getLid(t.guid);
 
@@ -290,9 +290,9 @@ void SyncRunner::syncRemoteTags(vector<Tag> tags) {
             tagTable.get(currentTag, lid);
             if (currentTag.name != t.name)
                 changedTags.insert(QString::fromStdString(t.guid), QString::fromStdString(t.name));
-            tagTable.sync(lid, t);
+            lid = tagTable.sync(lid, t, account);
         } else {
-            tagTable.sync(t);
+            tagTable.sync(t, account);
             lid = tagTable.getLid(t.guid);
             changedTags.insert(QString::fromStdString(t.guid), QString::fromStdString(t.name));
         }
@@ -538,7 +538,7 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
             int startingSequenceNumber = usn;
             while (more && keepRunning) {
                 comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, fs);
-                processSyncChunk(chunk);
+                processSyncChunk(chunk, lids[i]);
                 if (chunk.chunkHighUSN >= syncState.updateCount)
                     more = false;
                 ltable.setLastUpdateSequenceNumber(lids[i], chunk.chunkHighUSN);
