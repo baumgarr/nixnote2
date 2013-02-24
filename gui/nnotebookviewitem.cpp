@@ -18,13 +18,22 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "nnotebookviewitem.h"
+#include "sql/sharednotebooktable.h"
+#include "sql/linkednotebooktable.h"
+#include "sql/notebooktable.h"
 
-NNotebookViewItem::NNotebookViewItem(QTreeWidget* parent):QTreeWidgetItem(parent) {
+NNotebookViewItem::NNotebookViewItem(qint32 lid, QTreeWidget* parent):QTreeWidgetItem(parent) {
     count = 0;
+    this->setType(lid);
+    this->lid = lid;
 }
 
 
-NNotebookViewItem::NNotebookViewItem():QTreeWidgetItem(){
+NNotebookViewItem::NNotebookViewItem(qint32 lid):QTreeWidgetItem(){
+    count = 0;
+    this->type = type;
+    this->lid = lid;
+    this->setType(lid);
 }
 
 void NNotebookViewItem::setRootColor(bool val) {
@@ -39,6 +48,52 @@ void NNotebookViewItem::setRootColor(bool val) {
 bool NNotebookViewItem::operator<(const QTreeWidgetItem &other)const {
     int column = treeWidget()->sortColumn();
     return text(column).toLower() < other.text(column).toLower();
+}
+
+
+
+void NNotebookViewItem::setType(NNotebookWidgetType type) {
+    this->type = type;
+    if (type == Linked)
+        setIcon(0, QIcon(":notebook-linked.png"));
+    if (type == Shared)
+        setIcon(0, QIcon(":notebook-shared.png"));
+    if (type == Local)
+        setIcon(0, QIcon(":notebook-local.png"));
+    if (type == Synchronized)
+        setIcon(0, QIcon(":notebook_small.png"));
+    if (type == Stack)
+        setIcon(0, QIcon(":stack.png"));
+    if (type == Conflict)
+        setIcon(0, QIcon(":notebook-conflict.png"));
+}
+
+
+void NNotebookViewItem::setType(qint32 type) {
+    LinkedNotebookTable linkedTable;
+    SharedNotebookTable sharedTable;
+    NotebookTable bookTable;
+
+    if (lid == 0) {
+        this->setType(Stack);
+        return;
+    }
+    if (linkedTable.exists(lid)) {
+        this->setType(Linked);
+        return;
+    }
+
+    if (sharedTable.exists(lid)) {
+        this->setType(Shared);
+        return;
+    }
+
+    if (bookTable.isLocal(lid)) {
+        this->setType(Local);
+        return;
+    }
+    this->setType(Synchronized);
+    return;
 }
 
 

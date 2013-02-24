@@ -192,6 +192,7 @@ public slots:
     void notifySyncComplete();
     void addAnotherUser();
     void switchUser();
+    void userMaintenance();
 
 signals:
     void syncRequested();

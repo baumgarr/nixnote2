@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define GLOBAL_H
 
 #include <QString>
+#include "application.h"
 #include <QSettings>
 
 #include "logger/qslog.h"
@@ -80,7 +81,8 @@ public:
     int argc;           // Initial argument count from the program start
     char** argv;        // List of arguments from the program start
     FileManager fileManager;
-    AccountsManager *accountsManager;
+    AccountsManager *accountsManager;\
+    Application *application;
     unsigned int cryptCounter;
     QString attachmentNameDelimeter;
     string username;

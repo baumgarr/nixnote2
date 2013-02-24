@@ -83,6 +83,11 @@ void NMainMenuBar::setupFileMenu() {
     fileMenu->addAction(addUserAction);
     connect(addUserAction, SIGNAL(triggered()), parent, SLOT(addAnotherUser()));
 
+    userMaintenanceAction = new QAction(tr("User Account Maintenance"),this);
+    userMaintenanceAction->setFont(font);
+    fileMenu->addAction(userMaintenanceAction);
+    connect(userMaintenanceAction, SIGNAL(triggered()), parent, SLOT(userMaintenance()));
+
     fileMenu->addSeparator();
 
     exitAction = new QAction(tr("Exit"), this);

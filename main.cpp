@@ -52,6 +52,7 @@ int main(int argc, char *argv[])
 
     // Setup the QApplication so we can begin
     Application a(argc, argv);
+    global.application = &a;
 
     // Setup the QLOG functions for debugging & messages
     QsLogging::Logger& logger = QsLogging::Logger::instance();

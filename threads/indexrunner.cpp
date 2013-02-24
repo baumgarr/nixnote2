@@ -47,7 +47,7 @@ void IndexRunner::run() {
     QLOG_DEBUG() << "Starting IndexRunner";
     indexTimer = new QTimer();
     indexTimer->setInterval(4000);
-    connect(indexTimer, SIGNAL(timeout()), this, SLOT(index()));
+//    connect(indexTimer, SIGNAL(timeout()), this, SLOT(index()));
     indexTimer->start();
     textDocument = new QTextDocument();
     exec();

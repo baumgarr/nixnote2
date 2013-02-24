@@ -133,6 +133,7 @@ public:
     void run();
     bool enConnect();
     bool error;
+    int retryCount;
 
 signals:
     void syncComplete();
@@ -147,6 +148,7 @@ signals:
 
  public slots:
     void synchronize();
+    void applicationException(QString);
 };
 
 #endif // SYNCRUNNER_H

@@ -94,7 +94,7 @@ public:
     void expunge(QString guid);        // purge a notebook
     bool isDeleted(qint32 lid);            // is this notebook deleted?
     bool update(Notebook &notebook, bool isDirty);
-    bool isLocal();
+    bool isLocal(qint32 lid);
     void renameStack(QString oldName, QString newName);
     void findByStack(QList<qint32> &lids, QString stackName);
     void getStacks(QStringList &stacks);

@@ -53,6 +53,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "oauth/oauthtokenizer.h"
 #include "dialog/databasestatus.h"
 #include "dialog/adduseraccountdialog.h"
+#include "dialog/accountmaintenancedialog.h"
 
 #include "gui/nmainmenubar.h"
 #include "dialog/logindialog.h"
@@ -185,10 +186,10 @@ void NixNote::setupGui() {
     connect(rightArrowButton, SIGNAL(triggered(bool)),this, SLOT(rightButtonTriggered()));
     toolBar->addSeparator();
 
-    homeButton = toolBar->addAction(QIcon(":home.png"), tr("Home"));
-    homeButton->setPriority(QAction::LowPriority);
-    syncButton = toolBar->addAction(QIcon(":synchronize.png"), tr("Synchronize"));
-    syncButton->setPriority(QAction::LowPriority);
+    homeButton = toolBar->addAction(QIcon(":home.png"), tr("All Notes"));
+//    homeButton->setPriority(QAction::LowPriority);   Hide the text by the icon
+    syncButton = toolBar->addAction(QIcon(":synchronize.png"), tr("Sync"));
+//  syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
     toolBar->addSeparator();
     trunkButton = toolBar->addAction(QIcon(":trunk.png"), tr("Trunk"));
     newNoteButton = toolBar->addAction(QIcon(":newNote.png"), tr("New Note"));
@@ -1281,8 +1282,8 @@ void NixNote::switchUser() {
         global.settings->beginGroup("SaveState");
         global.settings->setValue("lastAccessedAccount", global.accountsManager->currentId);
         global.settings->endGroup();
-        QMessageBox::information(this, tr("Restart Required"),
-             QString(tr("NixNote must be restarted to complete this action.")));
+//        QMessageBox::information(this, tr("Restart Required"),
+//             QString(tr("NixNote must be restarted to complete this action.")));
         closeAction->trigger();
         global.sharedMemory->detach();
         QProcess::startDetached(global.fileManager.getProgramDirPath("")+"nixnote");
@@ -1303,4 +1304,11 @@ void NixNote::addAnotherUser() {
     newAction->setCheckable(true);
     newAction->setData(newid);
     menuBar->addUserAccount(newAction);
+}
+
+
+
+void NixNote::userMaintenance() {
+    AccountMaintenanceDialog dialog(menuBar, this);
+    dialog.exec();
 }

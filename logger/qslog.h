@@ -122,13 +122,13 @@ private:
       else QsLogging::Logger::Helper(QsLogging::DebugLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
    #define QLOG_INFO()  \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::InfoLevel ){} \
-      else QsLogging::Logger::Helper(QsLogging::InfoLevel).stream()
+      else QsLogging::Logger::Helper(QsLogging::InfoLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
    #define QLOG_WARN()  \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::WarnLevel ){} \
-      else QsLogging::Logger::Helper(QsLogging::WarnLevel).stream()
+      else QsLogging::Logger::Helper(QsLogging::WarnLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
    #define QLOG_ERROR() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::ErrorLevel ){} \
-      else QsLogging::Logger::Helper(QsLogging::ErrorLevel).stream()
+      else QsLogging::Logger::Helper(QsLogging::ErrorLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
    #define QLOG_FATAL() \
       QsLogging::Logger::Helper(QsLogging::FatalLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
 #endif

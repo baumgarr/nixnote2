@@ -60,6 +60,8 @@ void SyncRunner::run() {
     QLOG_DEBUG() << "SyncRunner starting";
     this->setPriority(QThread::LowPriority);
     comm = new CommunicationManager(this);
+    connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
+    retryCount = 3;
     exec();
     QLOG_DEBUG() << "Syncrunner exiting.";
 }
@@ -67,9 +69,18 @@ void SyncRunner::run() {
 void SyncRunner::synchronize() {
     QLOG_DEBUG() << "Starting SyncRunner.synchronize()";
     error = false;
+
+    // We try up to three times.
+    if (retryCount = 0)
+        retryCount = 3;
+    else
+        retryCount--;
+
     if (!comm->connect()) {
         QLOG_ERROR() << "Error initializing socket connections";
+        emit(setMessage("Error initializing socket connections"));
         error = true;
+        retryCount = 3;
         emit syncComplete();
         return;
     }
@@ -77,6 +88,7 @@ void SyncRunner::synchronize() {
     global.connected = true;
     keepRunning = true;
     evernoteSync();
+    retryCount = 3;
     emit syncComplete();
     comm->disconnect();
     global.connected=false;
@@ -153,6 +165,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
+            retryCount = 3;
             return;
         }
         QLOG_DEBUG() << "------>>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
@@ -578,4 +591,14 @@ void SyncRunner::syncRemoteExpungedLinkedNotebooks(vector<string> guids) {
         btable.expunge(guids[0]);
 }
 
+
+
+void SyncRunner::applicationException(QString s) {
+    QLOG_DEBUG() << "Application Exception!!! : ";
+
+    // Basically, if we were doing a sync & some weird thing happened we try to do the sync again
+    // to catch up.  It is a hack, but it might just work.
+    if (retryCount > 0)
+        synchronize();
+}
 

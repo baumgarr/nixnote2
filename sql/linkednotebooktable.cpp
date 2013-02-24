@@ -469,7 +469,6 @@ bool LinkedNotebookTable::exists(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_SHARE_NAME);
     query.exec();
-    QLOG_DEBUG() << query.lastError();
     if (query.next())
         return true;
     else

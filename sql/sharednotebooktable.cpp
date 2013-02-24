@@ -303,5 +303,3 @@ qint32 SharedNotebookTable::findById(qlonglong id) {
     }
     return 0;
 }
-
-

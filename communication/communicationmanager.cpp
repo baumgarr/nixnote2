@@ -377,6 +377,7 @@ bool CommunicationManager::getUserInfo(User &user) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
         return false;
     }
+
     return true;
 }
 

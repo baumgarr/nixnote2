@@ -30,6 +30,7 @@ public:
     bool notify(QObject *receiver_, QEvent *event_);
     
 signals:
+    void stdException(QString msg);
     
 public slots:
     

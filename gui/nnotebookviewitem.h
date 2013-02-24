@@ -25,11 +25,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class NNotebookViewItem : public QTreeWidgetItem
 {
 public:
-    explicit NNotebookViewItem();
-    explicit NNotebookViewItem(QTreeWidget* parent);
+    enum NNotebookWidgetType {
+        Local = 0,
+        Synchronized = 1,
+        Conflict = 2,
+        Stack = 3,
+        Shared = 4,
+        Linked = 5
+    };
+
+    void setType(qint32 lid);
+    void setType(NNotebookWidgetType type);
+    explicit NNotebookViewItem(qint32 lid);
+    explicit NNotebookViewItem(qint32 lid, QTreeWidget* parent);
     QString stack;
     QList<qint32> childrenLids;
     qint32 count;
+    NNotebookWidgetType type;
+    qint32 lid;
 
     bool operator<(const QTreeWidgetItem &other)const;
     void setRootColor(bool val) ;

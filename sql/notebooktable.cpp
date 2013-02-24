@@ -242,6 +242,13 @@ qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
             query.exec();
         }
     }
+
+    if (t.__isset.sharedNotebooks) {
+        SharedNotebookTable sharedTable;
+        for (int i=0; i<t.sharedNotebooks.size(); i++) {
+            sharedTable.add(lid, t.sharedNotebooks[i], isDirty);
+        }
+    }
     return lid;
 }
 
@@ -516,8 +523,16 @@ void NotebookTable::deleteNotebook(qint32 lid) {
 }
 
 
-bool NotebookTable::isLocal() {
-    return false;
+bool NotebookTable::isLocal(qint32 lid) {
+    QSqlQuery query;
+    query.prepare("Select data from DataStore where key=:key and lid=:lid");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTEBOOK_IS_LOCAL);
+    query.exec();
+    if (query.next())
+        return query.value(0).toBool();
+    else
+        return false;
 }
 
 
@@ -527,8 +542,9 @@ bool NotebookTable::update(Notebook &notebook, bool isDirty) {
     get(oldBook, lid);
     if (lid <= 0)
         return false;
+    bool local = isLocal(lid);
     expunge(lid);
-    add(lid, notebook, isDirty, isLocal());
+    add(lid, notebook, isDirty, local);
     // Rename anything in the note list
     if (notebook.name != oldBook.name) {
         QSqlQuery query;
