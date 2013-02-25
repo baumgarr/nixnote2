@@ -220,6 +220,7 @@ public slots:
     void underlineActive();
     void setInsideList();
     void setInsideTable();
+    void noteSourceUpdated();
     void setInsideLink(QString link);
     QString fixEncryptionPaste(QString data);
 

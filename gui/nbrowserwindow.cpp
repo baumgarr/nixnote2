@@ -131,6 +131,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(&tagEditor, SIGNAL(tagsUpdated()), this, SLOT(sendUpdateSignal()));
     connect(&tagEditor, SIGNAL(newTagCreated(qint32)), this, SLOT(newTagAdded(qint32)));
     connect(editor, SIGNAL(noteChanged()), this, SLOT(noteContentUpdated()));
+    connect(sourceEdit, SIGNAL(textChanged()), this, SLOT(noteSourceUpdated()));
 
     connect(editor->page(), SIGNAL(linkClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
     connect(editor->page(), SIGNAL(microFocusChanged()), this, SLOT(microFocusChanged()));
@@ -1560,8 +1561,8 @@ void NBrowserWindow::setSource() {
     }
     text = text.replace("</body></html>", "");
     sourceEdit->setPlainText(text);
-    sourceEdit->setReadOnly(true);
- //   sourceEdit.setReadOnly(!getBrowser().page().isContentEditable());
+ //   sourceEdit->setReadOnly(true);
+    sourceEdit->setReadOnly(!editor->page()->isContentEditable());
     sourceEdit->blockSignals(false);
 }
 
@@ -1917,4 +1918,17 @@ void NBrowserWindow::printNote(QPrinter *printer) {
     // Cleanup
     QObject::disconnect(&loop, SLOT(quit()));
     delete tempEditor;
+}
+
+
+
+void NBrowserWindow::noteSourceUpdated() {
+    QByteArray ba;
+    QString source = sourceEdit->toPlainText();
+   //source = Qt::escape(source);
+    ba.append(sourceEditHeader);
+    ba.append(source);
+    ba.append("</body></html>");
+    editor->setContent(ba);
+    this->editor->isDirty = true;
 }
