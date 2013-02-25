@@ -23,6 +23,7 @@ NTagViewItem::NTagViewItem(QTreeWidget* parent):QTreeWidgetItem(parent) {
     parentLid = 0;
     childrenGuids.empty();
     parentGuid = "";
+    count = 0;
 }
 
 
@@ -30,6 +31,7 @@ NTagViewItem::NTagViewItem():QTreeWidgetItem(){
     parentLid = 0;
     childrenGuids.empty();
     parentGuid = "";
+    count = 0;
 }
 
 void NTagViewItem::setRootColor(bool val) {
