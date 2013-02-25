@@ -82,6 +82,7 @@ extern Global global;
      filterPosition++;
      FilterCriteria *newFilter = new FilterCriteria();
      global.filterCriteria.push_back(newFilter);
+     FilterCriteria *oldFilter = global.filterCriteria[global.filterPosition];
      global.filterPosition++;
 
      newFilter->setSearchString(text());
@@ -89,6 +90,10 @@ extern Global global;
      newFilter->resetTags = true;
      newFilter->resetAttribute = true;
      newFilter->resetDeletedOnly = true;
+     QList<qint32> oldLids;
+     oldFilter->getSelectedNotes(oldLids);
+     newFilter->setSelectedNotes(oldLids);
+     newFilter->setLid(oldFilter->getLid());
 
      emit updateSelectionRequested();
 

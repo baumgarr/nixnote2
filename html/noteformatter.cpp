@@ -24,10 +24,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/sharednotebooktable.h"
 #include "sql/linkednotebooktable.h"
 #include "global.h"
+#include "filters/filtercriteria.h"
 #include "utilities/mimereference.h"
 
 #include <QFileIconProvider>
 #include <QIcon>
+#include <QList>
 
 //#include "<QPainter>
 
@@ -52,7 +54,7 @@ void NoteFormatter::setNote(Note n, bool pdfPreview) {
     this->pdfPreview = pdfPreview;
     this->note = n;
     content = "";
-    this->enableHighlight = false;
+    this->enableHighlight = true;
     readOnly = false;
     inkNote = false;
     if (note.__isset.attributes && note.attributes.__isset.contentClass && note.attributes.contentClass != "")
@@ -71,14 +73,12 @@ QString NoteFormatter::getPage() {
 
 /* If we have search criteria, then we highlight the text matching
   those results in the note. */
-void NoteFormatter::setHighlight(EnSearch search) {
-    //  If we don't have any criteria, then we don't highlight
-    if (search.hilightWords.size() == 0) {
-        enableHighlight = false;
-    } else {
-        enSearch = search;
+void NoteFormatter::setHighlight() {
+    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    if (criteria->isSearchStringSet())
         enableHighlight = true;
-    }
+    else
+        enableHighlight = false;
 }
 
 /* If we are here because we are viewing note history, then we

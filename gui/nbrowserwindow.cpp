@@ -342,6 +342,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     if (!global.cache.contains(lid)) {
         NoteFormatter formatter;
         formatter.setNote(n, true);
+        formatter.setHighlight();
         content = formatter.rebuildNoteHTML();
         NoteCache *newCache = new NoteCache();
         newCache->isReadOnly = formatter.readOnly;
@@ -383,8 +384,15 @@ void NBrowserWindow::setContent(qint32 lid) {
     else
         urlEditor.setUrl(lid, "");
     setSource();
-}
 
+    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    if (criteria->isSearchStringSet()) {
+        QStringList list = criteria->getSearchString().split(" ");
+        for (int i=0; i<list.size(); i++) {
+            editor->page()->findText(list[i], QWebPage::HighlightAllOccurrences);
+        }
+    }
+}
 
 
 void NBrowserWindow::setReadOnly(bool readOnly) {
