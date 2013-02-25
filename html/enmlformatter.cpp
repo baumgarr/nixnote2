@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QFileIconProvider>
 #include <QIcon>
+#include <QMessageBox>
 
 //#include "<QPainter>
 
@@ -71,6 +72,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
 //    QLOG_DEBUG() << "Tidy Stdout:" << tidyProcess.readAllStandardOutput();
     content = tidyProcess.readAllStandardOutput();
+    if (content == "") {
+        formattingError = true;
+        return "";
+    }
 
 
 //    // If we have search criteria, then do the highlighting

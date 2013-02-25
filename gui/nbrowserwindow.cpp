@@ -567,6 +567,11 @@ void NBrowserWindow::saveNoteContent() {
         EnmlFormatter formatter;
         formatter.setHtml(contents);
         formatter.rebuildNoteEnml();
+        if (formatter.formattingError) {
+            QMessageBox::information(this, tr("Unable to Save"), QString(tr("Unable to save this note.  Either tidy isn't installed or the note is too complex to save.")));
+            return;
+        }
+
 
         // get a list of lids found in the note.
         // Purge anything that is no longer needed.
