@@ -688,3 +688,32 @@ bool NotebookTable::isReadOnly(qint32 notebookLid) {
     }
     return false;
 }
+
+
+
+qint32 NotebookTable::getConflictNotebook() {
+    QSqlQuery query;
+    query.prepare("Select lid from datastore where data like 'Conflict%' and key=:key");
+    query.bindValue(":key", NOTEBOOK_NAME);
+    query.exec();
+    int i=0;
+    while (query.next()) {
+        qint32 lid = query.value(0).toInt();
+        if (isLocal(lid))
+            return lid;
+        i++;
+    }
+
+    // If there is no conflict notebook, we create one
+    qint32 lid;
+    Notebook n;
+    if (i>0)
+        n.name = "Conflict-" +QString::number(i).toStdString();
+    else
+        n.name = "Conflict";
+    n.__isset.name = true;
+    n.updateSequenceNum = 0;
+    n.__isset.updateSequenceNum = true;
+    return add(0,n,true,true);
+
+}

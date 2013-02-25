@@ -103,6 +103,7 @@ public:
     qint32 getDefaultNotebookLid();
     QString getDefaultNotebookGuid();
     bool isReadOnly(qint32 notebookLid);
+    qint32 getConflictNotebook();
 
 };
 
