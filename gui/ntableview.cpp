@@ -23,10 +23,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "numberdelegate.h"
 #include <QApplication>
 #include <QMouseEvent>
+#include <sql/resourcetable.h>
 #include <QSqlQuery>
 #include <QMessageBox>
 #include <sql/notetable.h>
 #include <QClipboard>
+#include <sql/configstore.h>
+#include "filters/filterengine.h"
 #include "sql/usertable.h"
 #include "sql/notetable.h"
 #include "sql/notebooktable.h"
@@ -183,7 +186,7 @@ NTableView::NTableView(QWidget *parent) :
     copyNoteLinkAction->setFont(font);
     connect(copyNoteLinkAction, SIGNAL(triggered()), this, SLOT(copyNoteLink()));
 
-    copyNoteAction = new QAction(tr("Copy Note"), this);
+    copyNoteAction = new QAction(tr("Duplicate Note"), this);
     contextMenu->addAction(copyNoteAction);
     copyNoteAction->setFont(font);
     connect(copyNoteAction, SIGNAL(triggered()), this, SLOT(copyNote()));
@@ -512,7 +515,19 @@ void NTableView::openNoteContextMenuTriggered() {
 
 
 void NTableView::copyNote() {
+    QList<qint32> lids;
+    ConfigStore cs;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
 
+    NoteTable noteTable;
+    for (int i=0; i<lids.size(); i++) {
+        noteTable.duplicateNote(lids[i]);
+    }
+    FilterEngine engine;
+    engine.filter();
+    refreshData();
 }
 
 

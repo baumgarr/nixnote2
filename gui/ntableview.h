@@ -65,6 +65,7 @@ public:
     qint32 selectAnyNoteFromList();
 
 signals:
+    void noteAdded(qint32 newNote);
     void openNote(bool newWindow);
     void notesDeleted(QList<qint32> lid, bool expunged);
     void notesRestored(QList<qint32>);

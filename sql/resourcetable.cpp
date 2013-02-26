@@ -405,6 +405,8 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
     qint32 lid = l;
     if (lid <= 0)
         lid = cs.incrementLidCounter();
+    else
+        expunge(lid);
 
     QSqlQuery query;
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
@@ -822,4 +824,18 @@ qint32 ResourceTable::getUnindexedCount() {
     if (query.next())
         return query.value(0).toInt();
     return 0;
+}
+
+
+qint32 ResourceTable::addStub(qint32 resLid, qint32 noteLid) {
+    QSqlQuery query;
+    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+    query.bindValue(":lid", resLid);
+    query.bindValue(":key", RESOURCE_NOTE_LID);
+    query.bindValue(":data", noteLid);
+    query.exec();
+    query.bindValue(":lid", resLid);
+    query.bindValue(":key", RESOURCE_GUID);
+    query.bindValue(":data", QString::number(resLid));
+    query.exec();
 }

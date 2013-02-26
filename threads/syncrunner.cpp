@@ -399,31 +399,13 @@ void SyncRunner::syncRemoteNotes(vector<Note> notes) {
         if (lid > 0) {
             // Find out if it is a conflicting change
             if (noteTable.isDirty(lid)) {
+                qint32 newLid = noteTable.duplicateNote(lid);
                 qint32 conflictNotebook = bookTable.getConflictNotebook();
-                Guid newGuid = QString::number(lid).toStdString();
-                Note cNote;
-                noteTable.get(cNote, lid, true,true);
-                noteTable.expunge(lid);
-                if (global.cache.contains(lid))
-                    global.cache.remove(lid);
-                Notebook notebook;
-                bookTable.get(notebook, conflictNotebook);
-                cNote.guid = newGuid;
-                if (cNote.__isset.resources) {
-                    for (unsigned int i=0; i<cNote.resources.size(); i++) {
-                        cNote.resources[i].noteGuid = newGuid;
-                    }
-                }
-                cNote.notebookGuid = notebook.guid;
-                qint32 newLid = noteTable.add(0,cNote,true);
-                emit(notebookUpdated(conflictNotebook, QString::fromStdString(notebook.name)));
-                emit noteUpdated(lid);
+                noteTable.updateNotebook(newLid, conflictNotebook, true);
                 emit noteUpdated(newLid);
-                lid = 0;
-            } else
-                noteTable.sync(lid, notes.at(i));
-        }
-        if (lid == 0) {
+             }
+            noteTable.sync(lid, notes.at(i));
+        } else {
             noteTable.sync(t);
             lid = noteTable.getLid(t.guid);
         }

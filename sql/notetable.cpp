@@ -25,8 +25,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 
 #include <QSqlTableModel>
+#include <QtXml>
 #include "html/tagscanner.h"
 
+extern Global global;
 
 // Default constructor
 NoteTable::NoteTable()
@@ -856,7 +858,7 @@ qint32 NoteTable::getIndexNeeded(QList<qint32> &lids) {
 }
 
 
-void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty=false) {
+void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty) {
     Notebook book;
     NotebookTable notebookTable;
     notebookTable.get(book, notebookLid);
@@ -1163,6 +1165,9 @@ void NoteTable::expunge(qint32 lid) {
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
+    query.prepare("delete from NoteTable where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
 }
 
 
@@ -1267,3 +1272,85 @@ qint32 NoteTable::getUnindexedCount() {
     return 0;
 
 }
+
+
+
+qint32 NoteTable::duplicateNote(qint32 oldLid) {
+    ConfigStore cs;
+    qint32 newLid = cs.incrementLidCounter();
+
+    QSqlQuery query;
+    QString tempTableName = "notecopy" + QString::number(oldLid);
+    query.exec("drop temporary table " +tempTableName);
+    query.prepare("create temporary table " +tempTableName +" as select * from datastore where lid=:oldLid");
+    query.bindValue(":oldLid", oldLid);
+    query.exec();
+
+    query.prepare("Update " +tempTableName +" set lid=:newLid");
+    query.bindValue(":newLid", newLid);
+    query.exec();
+
+    query.exec("insert into datastore select lid, key, data from " +tempTableName);
+    query.exec("drop " +tempTableName);
+
+    query.prepare("update datastore set data=:data where lid=:lid and key=:key");
+    query.bindValue(":data", 0);
+    query.bindValue(":lid", newLid);
+    query.bindValue(":key", NOTE_UPDATE_SEQUENCE_NUMBER);
+    query.exec();
+
+    Note n;
+    get(n, newLid, false,false);
+    updateNoteList(newLid, n, true);
+
+    setDirty(newLid, true);
+
+    // Update all the resources
+    ResourceTable resTable;
+    QList<qint32> lids;
+    resTable.getResourceList(lids, oldLid);
+    for (int i=0; i<lids.size(); i++) {
+        qint32 newResLid = cs.incrementLidCounter();
+        query.prepare("create temporary table " +tempTableName +" as select * from datastore where lid=:oldLid");
+        query.bindValue(":oldLid", lids[i]);
+        query.exec();
+
+
+        query.prepare("Update " +tempTableName +" set lid=:newLid");
+        query.bindValue(":newLid", newResLid);
+        query.exec();
+
+        query.exec("insert into datastore select lid, key, data from " +tempTableName);
+        query.exec("drop " +tempTableName);
+
+        query.prepare("update datastore set data=:data where lid=:lid and key=:key");
+        query.bindValue(":data", 0);
+        query.bindValue(":lid", newResLid);
+        query.bindValue(":key", RESOURCE_UPDATE_SEQUENCE_NUMBER);
+        query.exec();
+
+        query.prepare("update datastore set data=:data where lid=:lid and key=:key");
+        query.bindValue(":data", 0);
+        query.bindValue(":lid", newResLid);
+        query.bindValue(":key", RESOURCE_NOTE_LID);
+        query.exec();
+
+        QStringList filter;
+        QDir resDir(global.fileManager.getDbaDirPath());
+        filter << QString::number(lids[i])+".*";
+        QStringList files = resDir.entryList(filter);
+        for (int j=0; j<files.size(); j++) {
+            QFile file(global.fileManager.getDbaDirPath()+files[j]);
+            int pos = files[j].indexOf(".");
+            QString type = files[j].mid(pos);
+            file.open(QIODevice::ReadOnly);
+            file.copy(global.fileManager.getDbaDirPath()+
+                      QString::number(newResLid) +type);
+            file.close();
+        }
+    }
+
+    return newLid;
+}
+
+

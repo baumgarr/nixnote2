@@ -107,6 +107,7 @@ public:
     void updateResourceHash(qint32 lid, QString newhash);
     qint32 getCount();                                     // count of all resources
     qint32 getUnindexedCount();                            // count of unindexed resources
+    qint32 addStub(qint32 resLid, qint32 noteLid);         // Add a basic "stub" record.  Useful when duplicating notes
 };
 
 
