@@ -60,7 +60,7 @@ Global::~Global() {
 //Initial global settings setup
 void Global::setup(StartupConfig startupConfig) {
     fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath, startupConfig.accountId);
-    QString settingsFile = fileManager.getHomeDirPath("") + "nixnote.conf";
+    QString settingsFile = fileManager.getHomeDirPath("") + "nixnote-"+QString::number(startupConfig.accountId)+".conf";
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
     settings->beginGroup("SaveState");
