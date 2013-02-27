@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "models/notemodel.h"
 #include "datedelegate.h"
 #include "numberdelegate.h"
+#include "truefalsedelegate.h"
 #include "filters/notesortfilterproxymodel.h"
 #include <boost/shared_ptr.hpp>
 
@@ -39,6 +40,7 @@ private:
     DateDelegate *dateDelegate;
     NumberDelegate *blankNumber;
     NumberDelegate *kbNumber;
+    TrueFalseDelegate *trueFalseDelegate;
 
 
 public:

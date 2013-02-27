@@ -477,7 +477,7 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
     else
         hasTodo = false;
     query.bindValue(":hasTodo", hasTodo);
-    query.bindValue(":isDirty", !isDirty);
+    query.bindValue(":isDirty", isDirty);
     qlonglong size = t.content.length();
     for (unsigned int i=0; i<t.resources.size(); i++) {
         size+=t.resources[i].data.size;
@@ -1049,7 +1049,7 @@ void NoteTable::rebuildNoteListTags(qint32 lid) {
 void NoteTable::setDirty(qint32 lid, bool dirty) {
     QSqlQuery query;
     query.prepare("Update NoteTable set isDirty=:isDirty where lid=:lid");
-    query.bindValue(":isDirty", !dirty);
+    query.bindValue(":isDirty", dirty);
     query.bindValue(":lid", lid);
     query.exec();
 
@@ -1225,11 +1225,7 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":key", NOTE_CONTENT_LENGTH);
     query.exec();
 
-    query.prepare("update datastore set data=:dirty where lid=:lid and key=:key");
-    query.bindValue(":dirty", isDirty);
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_ISDIRTY);
-    query.exec();
+    setDirty(lid, isDirty);
 
     query.prepare("update datastore set data='true' where lid=:lid and key=:key");
     query.bindValue(":lid", lid);

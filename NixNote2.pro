@@ -144,7 +144,8 @@ SOURCES += main.cpp\
     dialog/preferences/appearancepreferences.cpp \
     settings/accountsmanager.cpp \
     dialog/adduseraccountdialog.cpp \
-    dialog/accountmaintenancedialog.cpp
+    dialog/accountmaintenancedialog.cpp \
+    gui/truefalsedelegate.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -306,7 +307,8 @@ HEADERS  += nixnote.h \
     dialog/preferences/appearancepreferences.h \
     settings/accountsmanager.h \
     dialog/adduseraccountdialog.h \
-    dialog/accountmaintenancedialog.h
+    dialog/accountmaintenancedialog.h \
+    gui/truefalsedelegate.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

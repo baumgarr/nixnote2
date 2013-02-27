@@ -83,6 +83,7 @@ NTableView::NTableView(QWidget *parent) :
     dateDelegate = new DateDelegate();
     blankNumber = new NumberDelegate(NumberDelegate::BlankNumber);
     kbNumber = new NumberDelegate(NumberDelegate::KBNumber);
+    trueFalseDelegate = new TrueFalseDelegate();
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_CREATED_POSITION, dateDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_SUBJECT_POSITION, dateDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_UPDATED_POSITION, dateDelegate);
@@ -91,6 +92,9 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_LONGITUDE_POSITION, blankNumber);
     this->setItemDelegateForColumn(NOTE_TABLE_LATITUDE_POSITION, blankNumber);
     this->setItemDelegateForColumn(NOTE_TABLE_SIZE_POSITION, kbNumber);
+    this->setItemDelegateForColumn(NOTE_TABLE_IS_DIRTY_POSITION, trueFalseDelegate);
+    this->setItemDelegateForColumn(NOTE_TABLE_HAS_ENCRYPTION_POSITION, trueFalseDelegate);
+    this->setItemDelegateForColumn(NOTE_TABLE_HAS_TODO_POSITION, trueFalseDelegate);
 
     QLOG_TRACE() << "Setting up column headers";
     this->setColumnHidden(NOTE_TABLE_LID_POSITION,true);
@@ -158,7 +162,7 @@ NTableView::NTableView(QWidget *parent) :
     this->model()->setHeaderData(NOTE_TABLE_ALTITUDE_POSITION, Qt::Horizontal, QObject::tr("Altitude"));
     this->model()->setHeaderData(NOTE_TABLE_HAS_ENCRYPTION_POSITION, Qt::Horizontal, QObject::tr("Has Encryption"));
     this->model()->setHeaderData(NOTE_TABLE_HAS_TODO_POSITION, Qt::Horizontal, QObject::tr("Has To-do"));
-    this->model()->setHeaderData(NOTE_TABLE_IS_DIRTY_POSITION, Qt::Horizontal, QObject::tr("Synchronized"));
+    this->model()->setHeaderData(NOTE_TABLE_IS_DIRTY_POSITION, Qt::Horizontal, QObject::tr("Sync"));
     this->model()->setHeaderData(NOTE_TABLE_SIZE_POSITION, Qt::Horizontal, QObject::tr("Size"));
 
     contextMenu = new QMenu(this);
