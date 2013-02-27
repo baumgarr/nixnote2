@@ -1281,9 +1281,9 @@ void NixNote::switchUser() {
         menuBar->userAccountActions[currentAcctPos]->setChecked(false);
         menuBar->blockSignals(false);
         global.accountsManager->currentId = menuBar->userAccountActions[newAcctPos]->data().toInt();
-        global.settings->beginGroup("SaveState");
-        global.settings->setValue("lastAccessedAccount", global.accountsManager->currentId);
-        global.settings->endGroup();
+        global.globalSettings->beginGroup("SaveState");
+        global.globalSettings->setValue("lastAccessedAccount", global.accountsManager->currentId);
+        global.globalSettings->endGroup();
 //        QMessageBox::information(this, tr("Restart Required"),
 //             QString(tr("NixNote must be restarted to complete this action.")));
         closeAction->trigger();
@@ -1306,6 +1306,7 @@ void NixNote::addAnotherUser() {
     newAction->setCheckable(true);
     newAction->setData(newid);
     menuBar->addUserAccount(newAction);
+    connect(newAction, SIGNAL(triggered()), this, SLOT(switchUser()));
 }
 
 

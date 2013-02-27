@@ -93,6 +93,7 @@ public:
     QString tagBehavior();
     QString server;
     QSettings *settings;
+    QSettings *globalSettings;
     QClipboard *clipboard;
     ShortcutKeys *shortcutKeys;
     QList<qint32> expungedResources;
