@@ -555,6 +555,7 @@ void NBrowserWindow::noteContentUpdated() {
     if (editor->isDirty) {
         NoteTable noteTable;
         noteTable.setDirty(this->lid, true);
+        emit(noteUpdated(this->lid));
     }
     if (sourceEdit->isVisible()) {
         sourceEditorTimer->stop();
