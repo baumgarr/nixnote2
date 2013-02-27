@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "html/enmlformatter.h"
 #include "sql/usertable.h"
 #include "sql/resourcetable.h"
+#include "sql/linkednotebooktable.h"
 #include "global.h"
 #include "gui/browserWidgets/colormenu.h"
 #include "gui/browserWidgets/toolbarwidgetaction.h"
@@ -377,6 +378,13 @@ void NBrowserWindow::setContent(qint32 lid) {
     }
     tagEditor.setTags(names);
     tagEditor.setCurrentLid(lid);
+    NotebookTable notebookTable;
+    qint32 notebookLid = notebookTable.getLid(n.notebookGuid);
+    LinkedNotebookTable linkedTable;
+    if (linkedTable.exists(notebookLid))
+        tagEditor.setAccount(notebookLid);
+    else
+        tagEditor.setAccount(0);
 
     this->lid = lid;
     notebookMenu.setCurrentNotebook(lid, n);

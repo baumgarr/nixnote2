@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 TagEditorNewTag::TagEditorNewTag(QWidget *parent) :
     QLineEdit(parent)
 {
+    account = 0;
     this->setCursor(Qt::PointingHandCursor);
     // Setup the note title editor
     QPalette pal;
@@ -78,7 +79,8 @@ void TagEditorNewTag::loadCompleter() {
         tagTable.getGuid(guid, tagList[i]);
         tagTable.get(t, guid);
         QString name = QString::fromStdString(t.name);
-        if (!currentTags.contains(name))
+        qint32 tagAccount = tagTable.owningAccount(tagList[i]);
+        if (!currentTags.contains(name) && tagAccount == account)
             tagNames << name;
     }
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
@@ -210,3 +212,8 @@ void TagEditorNewTag::resetText() {
     blockSignals(false);
 }
 
+
+void TagEditorNewTag::notebookSelectionChanged(qint32 notebook) {
+    account = notebook;
+    loadCompleter();
+}

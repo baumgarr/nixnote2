@@ -52,6 +52,7 @@ TagEditor::TagEditor(QWidget *parent) :
     tagNames.empty();
     layout->addWidget(&newTag);
     delete pix;
+    account = 0;
     hide();
 }
 
@@ -113,7 +114,7 @@ void TagEditor::addTag(QString text) {
     TagTable tagTable;
     qint32 tagLid;
     Tag newTag;
-    tagLid = tagTable.findByName(text);
+    tagLid = tagTable.findByName(text, account);
     if (tagLid <=0) {
         QUuid uuid;
         newTag.name = text.toStdString();
@@ -121,7 +122,7 @@ void TagEditor::addTag(QString text) {
         newTag.guid = newGuid.toStdString();
         newTag.__isset.name = true;
         newTag.__isset.guid = true;
-        tagTable.add(0, newTag, true);
+        tagTable.add(0, newTag, true, account);
         tagLid = tagTable.getLid(newTag.guid);
         emit(newTagCreated(tagLid));
     }
@@ -199,9 +200,12 @@ void TagEditor::removeTag(QString text) {
         if (tags[i].text().toLower() == text.toLower()) {
             found = true;
             TagTable tagTable;
-            NoteTable noteTable;
-            qint32 tagLid = tagTable.findByName(text);
-            noteTable.removeTag(currentLid, tagLid, true);
+            QString name = tags[i].text();
+            qint32 lid = tagTable.findByName(name, account);
+            if (lid>0) {
+                NoteTable noteTable;
+                noteTable.removeTag(currentLid, lid, true);
+            }
             j = i;
         }
         if (found && i<tagNames.size()-1) {
@@ -286,3 +290,6 @@ void TagEditor::newTagTabPressed() {
 }
 
 
+void TagEditor::setAccount(qint32 a) {
+    account = a;
+}

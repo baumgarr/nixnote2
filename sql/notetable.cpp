@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "resourcetable.h"
 #include "configstore.h"
 #include "notebooktable.h"
+#include "linkednotebooktable.h"
 #include "tagtable.h"
 #include "global.h"
 
@@ -257,7 +258,7 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
             newTag.__isset.guid = true;
             newTag.__isset.name = true;
             tagLid = cs.incrementLidCounter();
-            tagTable.add(tagLid, newTag, false);
+            tagTable.add(tagLid, newTag, false, 0);
         }
 
         query.bindValue(":lid", lid);
@@ -494,11 +495,17 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
     sortedNames.sort();
 
     TagTable tagTable;
+    LinkedNotebookTable linkedTable;
+    qint32 account = 0;
+    notebookLid = notebookTable.getLid(t.notebookGuid);
+    if (linkedTable.exists(notebookLid))
+        account = notebookLid;
+
     for (int i=0; i<sortedNames.size(); i++) {
         if (i>0)
             tagNames = tagNames+", ";
         Tag currentTag;
-        qint32 tagLid = tagTable.findByName(sortedNames[i]);
+        qint32 tagLid = tagTable.findByName(sortedNames[i], account);
         tagTable.get(currentTag, tagLid);
         tagNames = tagNames + QString::fromStdString(currentTag.name);
     }

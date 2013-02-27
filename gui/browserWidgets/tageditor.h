@@ -39,10 +39,12 @@ public:
     void clear();
     void loadTags();
     void setCurrentLid(qint32 l);
+    void setAccount(qint32 a);
     void tagRenamed(qint32 lid, QString oldName, QString newName);
 
 private:
     qint32 currentLid;
+    qint32 account;
     QLabel tagIcon;
     TagEditorNewTag newTag;
     TagViewer tags[MAX_TAGS];

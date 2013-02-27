@@ -418,6 +418,7 @@ void NixNote::setupTagTree() {
     connect(&syncRunner, SIGNAL(syncComplete()),tagTreeView, SLOT(rebuildTree()));
     connect(&counterRunner, SIGNAL(tagTotals(qint32,qint32)), tagTreeView, SLOT(updateTotals(qint32,qint32)));
     connect(&counterRunner, SIGNAL(tagCountComplete()), tagTreeView, SLOT(hideUnassignedTags()));
+    connect(notebookTreeView, SIGNAL(notebookSelectionChanged(qint32)), tagTreeView, SLOT(notebookSelectionChanged(qint32)));
     QLOG_TRACE() << "Exiting NixNote.setupTagTree()";
 }
 

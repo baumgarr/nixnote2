@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 NTagViewItem::NTagViewItem(QTreeWidget* parent):QTreeWidgetItem(parent) {
     parentLid = 0;
+    account = 0;
     childrenGuids.empty();
     parentGuid = "";
     count = 0;
@@ -32,6 +33,7 @@ NTagViewItem::NTagViewItem():QTreeWidgetItem(){
     childrenGuids.empty();
     parentGuid = "";
     count = 0;
+    account = 0;
 }
 
 void NTagViewItem::setRootColor(bool val) {
@@ -42,8 +44,12 @@ void NTagViewItem::setRootColor(bool val) {
     }
 }
 
-
   bool NTagViewItem::operator<(const QTreeWidgetItem &other)const {
     int column = treeWidget()->sortColumn();
     return text(column).toLower() < other.text(column).toLower();
+  }
+
+
+  void NTagViewItem::setHidden(bool hide) {
+      QTreeWidgetItem::setHidden(hide);
   }

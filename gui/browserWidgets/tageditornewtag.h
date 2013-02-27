@@ -34,6 +34,7 @@ private:
     QCompleter *completer;
     QStringList currentTags;
     void loadCompleter();
+    qint32 account;
 
 public:
     explicit TagEditorNewTag(QWidget *parent = 0);
@@ -46,6 +47,7 @@ public slots:
     void setActiveColor();
     void textModified(QString text);
     void gainedFocus(bool focus);
+    void notebookSelectionChanged(qint32 notebook);
 
 signals:
   void focussed(bool hasFocus);

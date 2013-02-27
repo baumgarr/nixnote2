@@ -349,6 +349,9 @@ void NNotebookView::buildSelection() {
     if (selectedItems.size() > 0) {
         newFilter->setNotebook(*(selectedItems[0]));
     }
+    qint32 notebookLid = 0;
+    if (selectedItems.size() > 0)
+        notebookLid = selectedItems[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     newFilter->resetAttribute = true;
     newFilter->resetDeletedOnly = true;
     newFilter->resetNotebook = true;
@@ -357,6 +360,7 @@ void NNotebookView::buildSelection() {
     newFilter->resetSearchString = true;
 
     emit updateSelectionRequested();
+    emit notebookSelectionChanged(notebookLid);
 
     QLOG_TRACE() << "Leaving NNotebookView::buildSelection()";
 }
