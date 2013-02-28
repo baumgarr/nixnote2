@@ -35,9 +35,6 @@ private:
     NBrowserWindow *browser;
 
 public:
-    explicit ToolbarWidgetAction(QWidget *parent = 0);
-    QWidget *createWidget(QWidget *parent);
-
     enum Button {
         Undo,
         Redo,
@@ -59,6 +56,8 @@ public:
         SpellCheck,
         Todo
     };
+    explicit ToolbarWidgetAction(QWidget *parent);
+    QWidget *createWidget();
 
     Button buttonType;
     void setType(Button type);

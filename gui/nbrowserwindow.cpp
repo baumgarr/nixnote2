@@ -156,105 +156,105 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 void NBrowserWindow::setupToolBar() {
     buttonBar = new EditorButtonBar();
 
-    undoButtonAction = new ToolbarWidgetAction();
+    undoButtonAction = new ToolbarWidgetAction(this);
     undoButtonAction->setType(ToolbarWidgetAction::Undo);
-    undoButtonAction->createWidget(0);
+    undoButtonAction->createWidget();
     buttonBar->addAction(undoButtonAction);
 
-    redoButtonAction = new ToolbarWidgetAction();
+    redoButtonAction = new ToolbarWidgetAction(this);
     redoButtonAction->setType(ToolbarWidgetAction::Redo);
-    redoButtonAction->createWidget(0);
+    redoButtonAction->createWidget();
     buttonBar->addAction(redoButtonAction);
 
 //    buttonBar->addSeparator();
 
-    cutButtonAction = new ToolbarWidgetAction();
+    cutButtonAction = new ToolbarWidgetAction(this);
     cutButtonAction->setType(ToolbarWidgetAction::Cut);
-    cutButtonAction->createWidget(0);
+    cutButtonAction->createWidget();
     buttonBar->addAction(cutButtonAction);
 
-    copyButtonAction = new ToolbarWidgetAction();
+    copyButtonAction = new ToolbarWidgetAction(this);
     copyButtonAction->setType(ToolbarWidgetAction::Copy);
-    copyButtonAction->createWidget(0);
+    copyButtonAction->createWidget();
     buttonBar->addAction(copyButtonAction);
 
-    pasteButtonAction = new ToolbarWidgetAction();
+    pasteButtonAction = new ToolbarWidgetAction(this);
     pasteButtonAction->setType(ToolbarWidgetAction::Paste);
-    pasteButtonAction->createWidget(0);
+    pasteButtonAction->createWidget();
     buttonBar->addAction(pasteButtonAction);
 
 //    buttonBar->addSeparator();
 
-    boldButtonAction = new ToolbarWidgetAction();
+    boldButtonAction = new ToolbarWidgetAction(this);
     boldButtonAction->setType(ToolbarWidgetAction::Bold);
-    boldButtonAction->createWidget(0);
+    boldButtonAction->createWidget();
     buttonBar->addAction(boldButtonAction);
 
 
-    italicsButtonAction = new ToolbarWidgetAction();
+    italicsButtonAction = new ToolbarWidgetAction(this);
     italicsButtonAction->setType(ToolbarWidgetAction::Italics);
-    italicsButtonAction->createWidget(0);
+    italicsButtonAction->createWidget();
     buttonBar->addAction(italicsButtonAction);
 
-    underlineButtonAction = new ToolbarWidgetAction();
+    underlineButtonAction = new ToolbarWidgetAction(this);
     underlineButtonAction->setType(ToolbarWidgetAction::Underline);
-    underlineButtonAction->createWidget(0);
+    underlineButtonAction->createWidget();
     buttonBar->addAction(underlineButtonAction);
 
-    strikethroughButtonAction = new ToolbarWidgetAction();
+    strikethroughButtonAction = new ToolbarWidgetAction(this);
     strikethroughButtonAction->setType(ToolbarWidgetAction::Strikethrough);
-    strikethroughButtonAction->createWidget(0);
+    strikethroughButtonAction->createWidget();
     buttonBar->addAction(strikethroughButtonAction);
 
 //    buttonBar->addSeparator();
 
-    leftAlignButtonAction = new ToolbarWidgetAction();
+    leftAlignButtonAction = new ToolbarWidgetAction(this);
     leftAlignButtonAction->setType(ToolbarWidgetAction::AlignLeft);
-    leftAlignButtonAction->createWidget(0);
+    leftAlignButtonAction->createWidget();
     buttonBar->addAction(leftAlignButtonAction);
 
-    centerAlignButtonAction = new ToolbarWidgetAction();
+    centerAlignButtonAction = new ToolbarWidgetAction(this);
     centerAlignButtonAction->setType(ToolbarWidgetAction::AlignCenter);
-    centerAlignButtonAction->createWidget(0);
+    centerAlignButtonAction->createWidget();
     buttonBar->addAction(centerAlignButtonAction);
 
-    rightAlignButtonAction = new ToolbarWidgetAction();
+    rightAlignButtonAction = new ToolbarWidgetAction(this);
     rightAlignButtonAction->setType(ToolbarWidgetAction::AlignRight);
-    rightAlignButtonAction->createWidget(0);
+    rightAlignButtonAction->createWidget();
     buttonBar->addAction(rightAlignButtonAction);
 
 //    buttonBar->addSeparator();
 
-    hlineButtonAction = new ToolbarWidgetAction();
+    hlineButtonAction = new ToolbarWidgetAction(this);
     hlineButtonAction->setType(ToolbarWidgetAction::HorizontalLine);
-    hlineButtonAction->createWidget(0);
+    hlineButtonAction->createWidget();
     buttonBar->addAction(hlineButtonAction);
 
-    shiftRightButtonAction = new ToolbarWidgetAction();
+    shiftRightButtonAction = new ToolbarWidgetAction(this);
     shiftRightButtonAction->setType(ToolbarWidgetAction::ShiftRight);
-    shiftRightButtonAction->createWidget(0);
+    shiftRightButtonAction->createWidget();
     buttonBar->addAction(shiftRightButtonAction);
 
-    shiftLeftButtonAction = new ToolbarWidgetAction();
+    shiftLeftButtonAction = new ToolbarWidgetAction(this);
     shiftLeftButtonAction->setType(ToolbarWidgetAction::ShiftLeft);
-    shiftLeftButtonAction->createWidget(0);
+    shiftLeftButtonAction->createWidget();
     buttonBar->addAction(shiftLeftButtonAction);
 
-    bulletListButtonAction = new ToolbarWidgetAction();
+    bulletListButtonAction = new ToolbarWidgetAction(this);
     bulletListButtonAction->setType(ToolbarWidgetAction::BulletList);
-    bulletListButtonAction->createWidget(0);
+    bulletListButtonAction->createWidget();
     buttonBar->addAction(bulletListButtonAction);
 
-    numberListButtonAction = new ToolbarWidgetAction();
+    numberListButtonAction = new ToolbarWidgetAction(this);
     numberListButtonAction->setType(ToolbarWidgetAction::NumberList);
-    numberListButtonAction->createWidget(0);
+    numberListButtonAction->createWidget();
     buttonBar->addAction(numberListButtonAction);
 
 //    buttonBar->addSeparator();
     buttonBar->addFontName(fontNames);
     buttonBar->addFontSize(fontSize);
 
-    fontColor = new QToolButton();
+    fontColor = new QToolButton(this);
     fontColor->setIcon(QIcon(":fontColor.png"));
     fontColor->setToolTip(tr("Font Color"));
     fontColor->setPopupMode(QToolButton::MenuButtonPopup);
@@ -262,7 +262,7 @@ void NBrowserWindow::setupToolBar() {
     fontColor->setAutoRaise(false);
     buttonBar->addFontColor(fontColor);
 
-    highlightColor = new QToolButton();
+    highlightColor = new QToolButton(this);
     highlightColor->setIcon(QIcon(":fontHighlight.png"));
     highlightColor->setToolTip(tr("Highlight Color"));
     highlightColor->setPopupMode(QToolButton::MenuButtonPopup);
@@ -279,9 +279,9 @@ void NBrowserWindow::setupToolBar() {
 //    buttonBar.addAction(spellButtonAction);
 //    spellButtonAction->setVisible(false);
 
-    todoButtonAction = new ToolbarWidgetAction();
+    todoButtonAction = new ToolbarWidgetAction(this);
     todoButtonAction->setType(ToolbarWidgetAction::Todo);
-    todoButtonAction->createWidget(0);
+    todoButtonAction->createWidget();
     buttonBar->addAction(todoButtonAction);
 
     // Toolbar action

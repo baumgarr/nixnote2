@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
 #include <QStatusBar>
+#include <QSlider>
 #include <QPrinter>
 
 #include "sql/notetable.h"
@@ -155,7 +156,8 @@ NixNote::~NixNote()
 void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
-    statusBar();
+    //statusBar();
+    //statusBar()->addPermanentWidget(new QSlider(Qt::Horizontal));
     setWindowTitle(tr("NixNote 2"));
     setWindowIcon(QIcon(":windowIcon.png"));
 
