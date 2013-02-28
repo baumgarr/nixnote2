@@ -244,7 +244,7 @@ void NixNote::setupGui() {
     if (global.settings->value("isMaximized", false).toBool())
         this->setWindowState(Qt::WindowMaximized);
     QString lidListString = global.settings->value("openTabs", "").toString().trimmed();
-    QString lastViewedLid = global.settings->value("lastViewed", 0).toString().trimmed();
+    //QString lastViewedLid = global.settings->value("lastViewed", 0).toString().trimmed();
     global.settings->endGroup();
 
     QStringList lidList = lidListString.split(' ');
@@ -565,9 +565,98 @@ void NixNote::closeEvent(QCloseEvent *event) {
     global.settings->setValue("openTabs", lidList);
     global.settings->setValue("lastViewed", tabWindow->currentBrowser()->lid);
     global.settings->endGroup();
+
+    saveNoteColumnWidths();
+    saveNoteColumnPositions();
+    noteTableView->saveColumnsVisible();
 }
 
 
+
+
+void NixNote::saveNoteColumnPositions() {
+    int position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_ALTITUDE_POSITION);
+    global.setColumnPosition("noteTableAltitudePosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_AUTHOR_POSITION);
+    global.setColumnPosition("noteTableAuthorPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_DATE_CREATED_POSITION);
+    global.setColumnPosition("noteTableDateCreatedPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_DATE_DELETED_POSITION);
+    global.setColumnPosition("noteTableDateDeletedPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_DATE_SUBJECT_POSITION);
+    global.setColumnPosition("noteTableDateSubjectPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_DATE_UPDATED_POSITION);
+    global.setColumnPosition("noteTableDateUpdatedosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_HAS_ENCRYPTION_POSITION);
+    global.setColumnPosition("noteTableHasEncryptionPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_HAS_TODO_POSITION);
+    global.setColumnPosition("noteTableHasTodoPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_IS_DIRTY_POSITION);
+    global.setColumnPosition("noteTableIsDirtyPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_LATITUDE_POSITION);
+    global.setColumnPosition("noteTableLatitudePosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_LONGITUDE_POSITION);
+    global.setColumnPosition("noteTableLongitudePosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_NOTEBOOK_LID_POSITION);
+    global.setColumnPosition("noteTableNotebookLidPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_LID_POSITION);
+    global.setColumnPosition("noteTableLidPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_NOTEBOOK_POSITION);
+    global.setColumnPosition("noteTableNotebookPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_SIZE_POSITION);
+    global.setColumnPosition("noteTableSizePosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_SOURCE_APPLICATION_POSITION);
+    global.setColumnPosition("noteTableSourceApplicationPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_SOURCE_POSITION);
+    global.setColumnPosition("noteTableSourcePosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_SOURCE_URL_POSITION);
+    global.setColumnPosition("noteTableSourceUrlPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_TAGS_POSITION);
+    global.setColumnPosition("noteTableTagsPosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_TITLE_POSITION);
+    global.setColumnPosition("noteTableTitlePosition", position);
+}
+
+
+void NixNote::saveNoteColumnWidths() {
+    int width;
+    width = noteTableView->columnWidth(NOTE_TABLE_ALTITUDE_POSITION);
+    global.setColumnWidth("noteTableAltitudePosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_AUTHOR_POSITION);
+    global.setColumnWidth("noteTableAuthorPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_DATE_CREATED_POSITION);
+    global.setColumnWidth("noteTableDateCreatedPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_DATE_DELETED_POSITION);
+    global.setColumnWidth("noteTableDateDeletedPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_DATE_SUBJECT_POSITION);
+    global.setColumnWidth("noteTableDateSubjectPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_DATE_UPDATED_POSITION);
+    global.setColumnWidth("noteTableDateUpdatedPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_HAS_ENCRYPTION_POSITION);
+    global.setColumnWidth("noteTableHasEncryptionPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_HAS_TODO_POSITION);
+    global.setColumnWidth("noteTableHasTodoPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_IS_DIRTY_POSITION);
+    global.setColumnWidth("noteTableIsDirtyPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_LATITUDE_POSITION);
+    global.setColumnWidth("noteTableLatitudePosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_LID_POSITION);
+    global.setColumnWidth("noteTableLidPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_LONGITUDE_POSITION);
+    global.setColumnWidth("noteTableLongitudePosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_NOTEBOOK_LID_POSITION);
+    global.setColumnWidth("noteTableNotebookLidPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_NOTEBOOK_POSITION);
+    global.setColumnWidth("noteTableNotebookPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_SIZE_POSITION);
+    global.setColumnWidth("noteTableSizePosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_SOURCE_APPLICATION_POSITION);
+    global.setColumnWidth("noteTableSourceApplicationPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_TAGS_POSITION);
+    global.setColumnWidth("noteTableTagsPosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_TITLE_POSITION);
+    global.setColumnWidth("noteTableTitlePosition", width);
+}
 
 
 //*****************************************************************************

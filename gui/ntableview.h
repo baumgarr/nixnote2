@@ -65,6 +65,10 @@ public:
     void getSelectedLids(QList<qint32> &lids);
     bool isLidSelected(qint32 lid);
     qint32 selectAnyNoteFromList();
+    void resizeColumns();
+    void repositionColumns();
+    void saveColumnsVisible();
+    void setColumnsVisible();
 
 signals:
     void noteAdded(qint32 newNote);

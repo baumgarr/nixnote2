@@ -78,6 +78,14 @@ class Global
 public:
     Global();           // Generic constructor
     ~Global();          // destructor
+
+    enum ListViewSetup {
+        ListViewWide = 1,
+        listViewNarrow = 2
+    };
+
+    ListViewSetup listView;
+
     int argc;           // Initial argument count from the program start
     char** argv;        // List of arguments from the program start
     FileManager fileManager;
@@ -102,6 +110,10 @@ public:
     bool minimizeToTray();
     void setMinimizeToTray(bool value);
     void setCloseToTray(bool value);
+    void setColumnPosition(QString col, int position);
+    void setColumnWidth(QString col, int width);
+    int getColumnPosition(QString col);
+    int getColumnWidth(QString col);
     //JavaMachine jvm;
 
     // Filter criteria.  Used for things like the back & forward buttons

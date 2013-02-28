@@ -131,6 +131,8 @@ private:
     void initializeGlobalSettings();
     void waitCursor(bool value);
     void saveContents();
+    void saveNoteColumnPositions();
+    void saveNoteColumnWidths();
 
 
 public:

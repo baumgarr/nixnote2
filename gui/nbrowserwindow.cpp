@@ -85,8 +85,8 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     editor = new NWebView(this);
     editor->setTitleEditor(&noteTitle);
-    layout->addWidget(&buttonBar);
     setupToolBar();
+    layout->addWidget(buttonBar);
 
     // setup the source editor
     sourceEdit = new QTextEdit(this);
@@ -145,6 +145,8 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     factory = new PluginFactory(this);
     editor->page()->setPluginFactory(factory);
 
+    buttonBar->setupVisibleButtons();
+
     lid = -1;
 }
 
@@ -152,103 +154,105 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
 // Setup the toolbar window of the editor
 void NBrowserWindow::setupToolBar() {
+    buttonBar = new EditorButtonBar();
+
     undoButtonAction = new ToolbarWidgetAction();
     undoButtonAction->setType(ToolbarWidgetAction::Undo);
     undoButtonAction->createWidget(0);
-    buttonBar.addAction(undoButtonAction);
+    buttonBar->addAction(undoButtonAction);
 
     redoButtonAction = new ToolbarWidgetAction();
     redoButtonAction->setType(ToolbarWidgetAction::Redo);
     redoButtonAction->createWidget(0);
-    buttonBar.addAction(redoButtonAction);
+    buttonBar->addAction(redoButtonAction);
 
-    buttonBar.addSeparator();
+//    buttonBar->addSeparator();
 
     cutButtonAction = new ToolbarWidgetAction();
     cutButtonAction->setType(ToolbarWidgetAction::Cut);
     cutButtonAction->createWidget(0);
-    buttonBar.addAction(cutButtonAction);
+    buttonBar->addAction(cutButtonAction);
 
     copyButtonAction = new ToolbarWidgetAction();
     copyButtonAction->setType(ToolbarWidgetAction::Copy);
     copyButtonAction->createWidget(0);
-    buttonBar.addAction(copyButtonAction);
+    buttonBar->addAction(copyButtonAction);
 
     pasteButtonAction = new ToolbarWidgetAction();
     pasteButtonAction->setType(ToolbarWidgetAction::Paste);
     pasteButtonAction->createWidget(0);
-    buttonBar.addAction(pasteButtonAction);
+    buttonBar->addAction(pasteButtonAction);
 
-    buttonBar.addSeparator();
+//    buttonBar->addSeparator();
 
     boldButtonAction = new ToolbarWidgetAction();
     boldButtonAction->setType(ToolbarWidgetAction::Bold);
     boldButtonAction->createWidget(0);
-    buttonBar.addAction(boldButtonAction);
+    buttonBar->addAction(boldButtonAction);
 
 
     italicsButtonAction = new ToolbarWidgetAction();
     italicsButtonAction->setType(ToolbarWidgetAction::Italics);
     italicsButtonAction->createWidget(0);
-    buttonBar.addAction(italicsButtonAction);
+    buttonBar->addAction(italicsButtonAction);
 
     underlineButtonAction = new ToolbarWidgetAction();
     underlineButtonAction->setType(ToolbarWidgetAction::Underline);
     underlineButtonAction->createWidget(0);
-    buttonBar.addAction(underlineButtonAction);
+    buttonBar->addAction(underlineButtonAction);
 
     strikethroughButtonAction = new ToolbarWidgetAction();
     strikethroughButtonAction->setType(ToolbarWidgetAction::Strikethrough);
     strikethroughButtonAction->createWidget(0);
-    buttonBar.addAction(strikethroughButtonAction);
+    buttonBar->addAction(strikethroughButtonAction);
 
-    buttonBar.addSeparator();
+//    buttonBar->addSeparator();
 
     leftAlignButtonAction = new ToolbarWidgetAction();
     leftAlignButtonAction->setType(ToolbarWidgetAction::AlignLeft);
     leftAlignButtonAction->createWidget(0);
-    buttonBar.addAction(leftAlignButtonAction);
+    buttonBar->addAction(leftAlignButtonAction);
 
     centerAlignButtonAction = new ToolbarWidgetAction();
     centerAlignButtonAction->setType(ToolbarWidgetAction::AlignCenter);
     centerAlignButtonAction->createWidget(0);
-    buttonBar.addAction(centerAlignButtonAction);
+    buttonBar->addAction(centerAlignButtonAction);
 
     rightAlignButtonAction = new ToolbarWidgetAction();
     rightAlignButtonAction->setType(ToolbarWidgetAction::AlignRight);
     rightAlignButtonAction->createWidget(0);
-    buttonBar.addAction(rightAlignButtonAction);
+    buttonBar->addAction(rightAlignButtonAction);
 
-    buttonBar.addSeparator();
+//    buttonBar->addSeparator();
 
     hlineButtonAction = new ToolbarWidgetAction();
     hlineButtonAction->setType(ToolbarWidgetAction::HorizontalLine);
     hlineButtonAction->createWidget(0);
-    buttonBar.addAction(hlineButtonAction);
+    buttonBar->addAction(hlineButtonAction);
 
     shiftRightButtonAction = new ToolbarWidgetAction();
     shiftRightButtonAction->setType(ToolbarWidgetAction::ShiftRight);
     shiftRightButtonAction->createWidget(0);
-    buttonBar.addAction(shiftRightButtonAction);
+    buttonBar->addAction(shiftRightButtonAction);
 
     shiftLeftButtonAction = new ToolbarWidgetAction();
     shiftLeftButtonAction->setType(ToolbarWidgetAction::ShiftLeft);
     shiftLeftButtonAction->createWidget(0);
-    buttonBar.addAction(shiftLeftButtonAction);
+    buttonBar->addAction(shiftLeftButtonAction);
 
     bulletListButtonAction = new ToolbarWidgetAction();
     bulletListButtonAction->setType(ToolbarWidgetAction::BulletList);
     bulletListButtonAction->createWidget(0);
-    buttonBar.addAction(bulletListButtonAction);
+    buttonBar->addAction(bulletListButtonAction);
 
     numberListButtonAction = new ToolbarWidgetAction();
     numberListButtonAction->setType(ToolbarWidgetAction::NumberList);
     numberListButtonAction->createWidget(0);
-    buttonBar.addAction(numberListButtonAction);
+    buttonBar->addAction(numberListButtonAction);
 
-    buttonBar.addSeparator();
-    buttonBar.addWidget(fontNames);
-    buttonBar.addWidget(fontSize);
+//    buttonBar->addSeparator();
+    buttonBar->addFontName(fontNames);
+    buttonBar->addFontSize(fontSize);
 
     fontColor = new QToolButton();
     fontColor->setIcon(QIcon(":fontColor.png"));
@@ -256,7 +260,7 @@ void NBrowserWindow::setupToolBar() {
     fontColor->setPopupMode(QToolButton::MenuButtonPopup);
     fontColor->setMenu(fontColorMenu.getMenu());
     fontColor->setAutoRaise(false);
-    buttonBar.addWidget(fontColor);
+    buttonBar->addFontColor(fontColor);
 
     highlightColor = new QToolButton();
     highlightColor->setIcon(QIcon(":fontHighlight.png"));
@@ -265,9 +269,9 @@ void NBrowserWindow::setupToolBar() {
     highlightColor->setAutoRaise(false);
     highlightColor->setMenu(highlightColorMenu.getMenu());
     highlightColorMenu.setDefault(QColor("yellow"));
-    buttonBar.addWidget(highlightColor);
+    buttonBar->addHighlightColor(highlightColor);
 
-    buttonBar.addSeparator();
+//    buttonBar->addSeparator();
 
 //    spellButtonAction = new ToolbarWidgetAction();
 //    spellButtonAction->setType(ToolbarWidgetAction::SpellCheck);
@@ -278,7 +282,7 @@ void NBrowserWindow::setupToolBar() {
     todoButtonAction = new ToolbarWidgetAction();
     todoButtonAction->setType(ToolbarWidgetAction::Todo);
     todoButtonAction->createWidget(0);
-    buttonBar.addAction(todoButtonAction);
+    buttonBar->addAction(todoButtonAction);
 
     // Toolbar action
     connect(undoButtonAction->button, SIGNAL(clicked()), this, SLOT(undoButtonPressed()));
@@ -576,10 +580,10 @@ void NBrowserWindow::saveNoteContent() {
         EnmlFormatter formatter;
         formatter.setHtml(contents);
         formatter.rebuildNoteEnml();
-        if (formatter.formattingError) {
-            QMessageBox::information(this, tr("Unable to Save"), QString(tr("Unable to save this note.  Either tidy isn't installed or the note is too complex to save.")));
-            return;
-        }
+//        if (formatter.formattingError) {
+//            QMessageBox::information(this, tr("Unable to Save"), QString(tr("Unable to save this note.  Either tidy isn't installed or the note is too complex to save.")));
+//            return;
+//        }
 
 
         // get a list of lids found in the note.

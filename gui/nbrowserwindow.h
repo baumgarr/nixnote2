@@ -49,8 +49,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/browserWidgets/authoreditor.h"
 #include "gui/browserWidgets/dateeditor.h"
 #include "gui/browserWidgets/colormenu.h"
+#include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/nwebview.h"
 #include "xml/xmlhighlighter.h"
+#include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/browserWidgets/toolbarwidgetaction.h"
 #include "gui/nmainmenubar.h"
 
@@ -61,6 +63,7 @@ using namespace evernote::edam  ;
 class NWebView;
 class NBrowserWindow;
 class NMainMenuBar;
+class EditorButtonBar;
 
 class NBrowserWindow : public QWidget
 {
@@ -100,7 +103,7 @@ public:
     void setReadOnly(bool readOnly);
     NMainMenuBar *mainMenuBarHook;
 
-    QToolBar buttonBar;
+    EditorButtonBar *buttonBar;
     ToolbarWidgetAction *undoButtonAction;
     ToolbarWidgetAction *redoButtonAction;
     ToolbarWidgetAction *cutButtonAction;
