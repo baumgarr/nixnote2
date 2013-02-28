@@ -373,7 +373,7 @@ void NixNote::setupNoteList() {
 
     // Setup a generic widget to hold the search & note table
     topRightWidget  = new QWidget(this);
-    topRightLayout = new QVBoxLayout(this);
+    topRightLayout = new QVBoxLayout();
     topRightLayout->addWidget(searchText);
     topRightWidget->setLayout(topRightLayout);
     noteTableView = new NTableView();
@@ -502,7 +502,7 @@ void NixNote::setupTabWindow() {
     tabWindow = new NTabWidget(&syncRunner, notebookTreeView, tagTreeView);
     findReplaceWindow = new FindReplace(this);
     QWidget *tabPanel = new QWidget(this);
-    tabPanel->setLayout(new QVBoxLayout(this));
+    tabPanel->setLayout(new QVBoxLayout());
     tabPanel->layout()->addWidget(tabWindow);
     tabPanel->layout()->addWidget(findReplaceWindow);
     rightPanelSplitter->addWidget(tabPanel);

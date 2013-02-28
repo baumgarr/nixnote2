@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 FindReplace::FindReplace(QWidget *parent) :
     QWidget(parent)
 {
-    QHBoxLayout *layout = new QHBoxLayout(this);
+    QHBoxLayout *layout = new QHBoxLayout();
     this->setLayout(layout);
 
     findLine = new QLineEdit(this);
@@ -54,24 +54,24 @@ FindReplace::FindReplace(QWidget *parent) :
     replaceButton = new QPushButton(tr("Replace"), this);
     replaceAllButton = new QPushButton(tr("Replace all"),this);
 
-    QVBoxLayout *closeLayout = new QVBoxLayout(this);
+    QVBoxLayout *closeLayout = new QVBoxLayout();
     closeLayout->addWidget(closeButton);
     QLabel *closeSpacer = new QLabel(this);
     closeLayout->addWidget(closeSpacer);
 
-    QVBoxLayout *lineLayout = new QVBoxLayout(this);
+    QVBoxLayout *lineLayout = new QVBoxLayout();
     lineLayout->addWidget(findLine);
     lineLayout->addWidget(replaceLine);
 
-    QVBoxLayout *button1Layout = new QVBoxLayout(this);
+    QVBoxLayout *button1Layout = new QVBoxLayout();
     button1Layout->addWidget(nextButton);
     button1Layout->addWidget(replaceButton);
 
-    QVBoxLayout *button2Layout = new QVBoxLayout(this);
+    QVBoxLayout *button2Layout = new QVBoxLayout();
     button2Layout->addWidget(prevButton);
     button2Layout->addWidget(replaceAllButton);
 
-    QVBoxLayout *checkLayout = new QVBoxLayout(this);
+    QVBoxLayout *checkLayout = new QVBoxLayout();
     checkLayout->addWidget(caseSensitive);
     checkLayout->addSpacerItem(spacer);
 
