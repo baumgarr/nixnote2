@@ -195,6 +195,8 @@ public slots:
     void addAnotherUser();
     void switchUser();
     void userMaintenance();
+    void viewNoteListWide();
+    void viewNoteListNarrow();
 
 signals:
     void syncRequested();

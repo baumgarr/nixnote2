@@ -225,7 +225,7 @@ void NixNote::setupGui() {
     leftScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     leftScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-    mainSplitter->addWidget(leftScroll);
+    mainSplitter->insertWidget(0,leftScroll);
     mainSplitter->addWidget(rightPanelSplitter);
     mainSplitter->setStretchFactor(0,1);
     mainSplitter->setStretchFactor(1,3);
@@ -241,11 +241,16 @@ void NixNote::setupGui() {
     global.settings->beginGroup("SaveState");
     restoreState(global.settings->value("WindowState").toByteArray());
     restoreGeometry(global.settings->value("WindowGeometry").toByteArray());
+    mainSplitter->restoreState(global.settings->value("mainSplitter", 0).toByteArray());
+    rightPanelSplitter->restoreState(global.settings->value("rightSplitter", 0).toByteArray());
     if (global.settings->value("isMaximized", false).toBool())
         this->setWindowState(Qt::WindowMaximized);
     QString lidListString = global.settings->value("openTabs", "").toString().trimmed();
-    //QString lastViewedLid = global.settings->value("lastViewed", 0).toString().trimmed();
     global.settings->endGroup();
+    if (rightPanelSplitter->orientation() == Qt::Vertical)
+        viewNoteListWide();
+    else
+        viewNoteListNarrow();
 
     QStringList lidList = lidListString.split(' ');
     // If we have old notes we were viewing the last time
@@ -356,29 +361,40 @@ void NixNote::initializeGlobalSettings() {
 //* view a specific note
 //******************************************************************************
 void NixNote::setupNoteList() {
-   QLOG_TRACE() << "Starting NixNote.setupNoteList()";
+    QLOG_TRACE() << "Starting NixNote.setupNoteList()";
 
-   // Setup a generic widget to hold the search & note table
-   topRightWidget  = new QWidget(this);
-   topRightLayout = new QVBoxLayout(this);
-   topRightLayout->addWidget(searchText);
-   topRightWidget->setLayout(topRightLayout);
-   noteTableView = new NTableView();
-  // rightPanelSplitter->addWidget(noteTableView);
-   topRightLayout->addWidget(noteTableView);
-   topRightLayout->setContentsMargins(QMargins(0,0,0,0));
+    global.settings->beginGroup("SaveState");
+    int value = global.settings->value("listView", 1).toInt();
+    global.settings->endGroup();
+    if (value == 1)
+        global.listView = Global::ListViewWide;
+    else
+        global.listView= Global::listViewNarrow;
 
-   // Add the generic widget
-   rightPanelSplitter->addWidget(topRightWidget);
-   connect(&syncRunner, SIGNAL(syncComplete()), noteTableView, SLOT(refreshData()));
+    // Setup a generic widget to hold the search & note table
+    topRightWidget  = new QWidget(this);
+    topRightLayout = new QVBoxLayout(this);
+    topRightLayout->addWidget(searchText);
+    topRightWidget->setLayout(topRightLayout);
+    noteTableView = new NTableView();
+    // rightPanelSplitter->addWidget(noteTableView);
+    topRightLayout->addWidget(noteTableView);
+    topRightLayout->setContentsMargins(QMargins(0,0,0,0));
 
-   noteTableView->contextMenu->insertAction(noteTableView->deleteNoteAction, newNoteButton);
-   noteTableView->contextMenu->insertSeparator(noteTableView->deleteNoteAction);
-   connect(noteTableView, SIGNAL(notesDeleted(QList<qint32>,bool)), this, SLOT(notesDeleted(QList<qint32>)));
-   connect(noteTableView, SIGNAL(notesRestored(QList<qint32>)), this, SLOT(notesRestored(QList<qint32>)));
-   //connect(noteTableView, SIGNAL(noteAdded(qint32)), this, SLOT(updateSelectionCriteria()));
+    // Add the generic widget
+    if (global.listView == Global::ListViewWide)
+        rightPanelSplitter->addWidget(topRightWidget);
+    else
+        mainSplitter->addWidget(topRightWidget);
 
-   QLOG_TRACE() << "Leaving NixNote.setupNoteList()";
+    noteTableView->contextMenu->insertAction(noteTableView->deleteNoteAction, newNoteButton);
+    noteTableView->contextMenu->insertSeparator(noteTableView->deleteNoteAction);
+
+    connect(noteTableView, SIGNAL(notesDeleted(QList<qint32>,bool)), this, SLOT(notesDeleted(QList<qint32>)));
+    connect(noteTableView, SIGNAL(notesRestored(QList<qint32>)), this, SLOT(notesRestored(QList<qint32>)));
+    connect(&syncRunner, SIGNAL(syncComplete()), noteTableView, SLOT(refreshData()));
+
+    QLOG_TRACE() << "Leaving NixNote.setupNoteList()";
 }
 
 
@@ -564,6 +580,11 @@ void NixNote::closeEvent(QCloseEvent *event) {
     global.settings->setValue("isMaximized", isMaximized());
     global.settings->setValue("openTabs", lidList);
     global.settings->setValue("lastViewed", tabWindow->currentBrowser()->lid);
+    global.settings->setValue("noteListWidth", noteTableView->width());
+    global.settings->setValue("noteListHeight", noteTableView->height());
+    global.settings->setValue("mainSplitter", mainSplitter->saveState());
+    global.settings->setValue("rightSplitter", rightPanelSplitter->saveState());
+
     global.settings->endGroup();
 
     saveNoteColumnWidths();
@@ -1403,4 +1424,42 @@ void NixNote::addAnotherUser() {
 void NixNote::userMaintenance() {
     AccountMaintenanceDialog dialog(menuBar, this);
     dialog.exec();
+}
+
+
+
+void NixNote::viewNoteListWide() {
+    menuBar->blockSignals(true);
+    menuBar->viewNoteListNarrow->setChecked(false);
+    menuBar->viewNoteListWide->setChecked(true);
+    menuBar->blockSignals(false);
+
+    saveNoteColumnPositions();
+    saveNoteColumnWidths();
+    noteTableView->saveColumnsVisible();
+
+    rightPanelSplitter->setOrientation(Qt::Vertical);
+    global.listView = Global::ListViewWide;
+    noteTableView->setColumnsVisible();
+    noteTableView->repositionColumns();
+    noteTableView->resizeColumns();
+
+}
+
+
+void NixNote::viewNoteListNarrow() {
+    menuBar->blockSignals(true);
+    menuBar->viewNoteListWide->setChecked(false);
+    menuBar->viewNoteListNarrow->setChecked(true);
+    menuBar->blockSignals(false);
+
+    saveNoteColumnPositions();
+    saveNoteColumnWidths();
+    noteTableView->saveColumnsVisible();
+
+    rightPanelSplitter->setOrientation(Qt::Horizontal);
+    global.listView = Global::listViewNarrow;
+    noteTableView->setColumnsVisible();
+    noteTableView->repositionColumns();
+    noteTableView->resizeColumns();
 }

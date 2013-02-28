@@ -217,6 +217,19 @@ void NMainMenuBar::setupEditMenu() {
 void NMainMenuBar::setupViewMenu() {
     viewMenu = this->addMenu(tr("&View"));
 
+    viewNoteListWide = new QAction(tr("Wide Note List"), this);
+    setupShortcut(viewNoteListWide, "View_Note_List_Wide");
+    viewNoteListWide->setFont(font);
+    viewMenu->addAction(viewNoteListWide);
+    viewNoteListWide->setCheckable(true);
+
+    viewNoteListNarrow = new QAction(tr("Narrow Note List"), this);
+    setupShortcut(viewNoteListNarrow, "View_Note_List_Narrow");
+    viewNoteListNarrow->setFont(font);
+    viewNoteListNarrow->setCheckable(true);
+    viewMenu->addAction(viewNoteListNarrow);
+    connect(viewNoteListNarrow, SIGNAL(triggered()), parent, SLOT(viewNoteListNarrow()));
+    connect(viewNoteListWide, SIGNAL(triggered()), parent, SLOT(viewNoteListWide()));
 
     viewSourceAction = new QAction(tr("Show Source"), this);
     setupShortcut(viewSourceAction, "View_Source");

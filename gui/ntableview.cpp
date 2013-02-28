@@ -685,7 +685,7 @@ void NTableView::setColumnsVisible() {
     tableViewHeader->createdDateAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_DATE_CREATED_POSITION, value);
 
-    value = global.settings->value("dateChanged", false).toBool();
+    value = global.settings->value("dateUpdated", false).toBool();
     tableViewHeader->changedDateAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_DATE_UPDATED_POSITION, value);
 
