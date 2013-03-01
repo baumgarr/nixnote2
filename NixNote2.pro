@@ -113,7 +113,6 @@ SOURCES += main.cpp\
     communication/communicationmanager.cpp \
     gui/browserWidgets/colormenu.cpp \
     xml/xmlhighlighter.cpp \
-    gui/browserWidgets/toolbarwidgetaction.cpp \
     utilities/mimereference.cpp \
     dialog/accountdialog.cpp \
     gui/shortcutkeys.cpp \
@@ -276,7 +275,6 @@ HEADERS  += nixnote.h \
     communication/communicationmanager.h \
     gui/browserWidgets/colormenu.h \
     xml/xmlhighlighter.h \
-    gui/browserWidgets/toolbarwidgetaction.h \
     utilities/mimereference.h \
     dialog/accountdialog.h \
     gui/shortcutkeys.h \

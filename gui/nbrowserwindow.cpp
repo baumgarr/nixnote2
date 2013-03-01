@@ -29,7 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/linkednotebooktable.h"
 #include "global.h"
 #include "gui/browserWidgets/colormenu.h"
-#include "gui/browserWidgets/toolbarwidgetaction.h"
 #include "gui/plugins/pluginfactory.h"
 #include "dialog/insertlinkdialog.h"
 #include "dialog/tabledialog.h"
@@ -77,11 +76,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     layout->addLayout(&line2Layout);
     line2Layout.addWidget(&urlEditor,1);
     line2Layout.addWidget(&tagEditor, 3);
-
-    // Setup the toolbar button
-    fontNames = new QComboBox();
-    fontSize = new QComboBox();
-    this->loadFontNames();
 
     editor = new NWebView(this);
     editor->setTitleEditor(&noteTitle);
@@ -156,157 +150,31 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 void NBrowserWindow::setupToolBar() {
     buttonBar = new EditorButtonBar();
 
-    undoButtonAction = new ToolbarWidgetAction(this);
-    undoButtonAction->setType(ToolbarWidgetAction::Undo);
-    undoButtonAction->createWidget();
-    buttonBar->addAction(undoButtonAction);
-
-    redoButtonAction = new ToolbarWidgetAction(this);
-    redoButtonAction->setType(ToolbarWidgetAction::Redo);
-    redoButtonAction->createWidget();
-    buttonBar->addAction(redoButtonAction);
-
-//    buttonBar->addSeparator();
-
-    cutButtonAction = new ToolbarWidgetAction(this);
-    cutButtonAction->setType(ToolbarWidgetAction::Cut);
-    cutButtonAction->createWidget();
-    buttonBar->addAction(cutButtonAction);
-
-    copyButtonAction = new ToolbarWidgetAction(this);
-    copyButtonAction->setType(ToolbarWidgetAction::Copy);
-    copyButtonAction->createWidget();
-    buttonBar->addAction(copyButtonAction);
-
-    pasteButtonAction = new ToolbarWidgetAction(this);
-    pasteButtonAction->setType(ToolbarWidgetAction::Paste);
-    pasteButtonAction->createWidget();
-    buttonBar->addAction(pasteButtonAction);
-
-//    buttonBar->addSeparator();
-
-    boldButtonAction = new ToolbarWidgetAction(this);
-    boldButtonAction->setType(ToolbarWidgetAction::Bold);
-    boldButtonAction->createWidget();
-    buttonBar->addAction(boldButtonAction);
-
-
-    italicsButtonAction = new ToolbarWidgetAction(this);
-    italicsButtonAction->setType(ToolbarWidgetAction::Italics);
-    italicsButtonAction->createWidget();
-    buttonBar->addAction(italicsButtonAction);
-
-    underlineButtonAction = new ToolbarWidgetAction(this);
-    underlineButtonAction->setType(ToolbarWidgetAction::Underline);
-    underlineButtonAction->createWidget();
-    buttonBar->addAction(underlineButtonAction);
-
-    strikethroughButtonAction = new ToolbarWidgetAction(this);
-    strikethroughButtonAction->setType(ToolbarWidgetAction::Strikethrough);
-    strikethroughButtonAction->createWidget();
-    buttonBar->addAction(strikethroughButtonAction);
-
-//    buttonBar->addSeparator();
-
-    leftAlignButtonAction = new ToolbarWidgetAction(this);
-    leftAlignButtonAction->setType(ToolbarWidgetAction::AlignLeft);
-    leftAlignButtonAction->createWidget();
-    buttonBar->addAction(leftAlignButtonAction);
-
-    centerAlignButtonAction = new ToolbarWidgetAction(this);
-    centerAlignButtonAction->setType(ToolbarWidgetAction::AlignCenter);
-    centerAlignButtonAction->createWidget();
-    buttonBar->addAction(centerAlignButtonAction);
-
-    rightAlignButtonAction = new ToolbarWidgetAction(this);
-    rightAlignButtonAction->setType(ToolbarWidgetAction::AlignRight);
-    rightAlignButtonAction->createWidget();
-    buttonBar->addAction(rightAlignButtonAction);
-
-//    buttonBar->addSeparator();
-
-    hlineButtonAction = new ToolbarWidgetAction(this);
-    hlineButtonAction->setType(ToolbarWidgetAction::HorizontalLine);
-    hlineButtonAction->createWidget();
-    buttonBar->addAction(hlineButtonAction);
-
-    shiftRightButtonAction = new ToolbarWidgetAction(this);
-    shiftRightButtonAction->setType(ToolbarWidgetAction::ShiftRight);
-    shiftRightButtonAction->createWidget();
-    buttonBar->addAction(shiftRightButtonAction);
-
-    shiftLeftButtonAction = new ToolbarWidgetAction(this);
-    shiftLeftButtonAction->setType(ToolbarWidgetAction::ShiftLeft);
-    shiftLeftButtonAction->createWidget();
-    buttonBar->addAction(shiftLeftButtonAction);
-
-    bulletListButtonAction = new ToolbarWidgetAction(this);
-    bulletListButtonAction->setType(ToolbarWidgetAction::BulletList);
-    bulletListButtonAction->createWidget();
-    buttonBar->addAction(bulletListButtonAction);
-
-    numberListButtonAction = new ToolbarWidgetAction(this);
-    numberListButtonAction->setType(ToolbarWidgetAction::NumberList);
-    numberListButtonAction->createWidget();
-    buttonBar->addAction(numberListButtonAction);
-
-//    buttonBar->addSeparator();
-    buttonBar->addFontName(fontNames);
-    buttonBar->addFontSize(fontSize);
-
-    fontColor = new QToolButton(this);
-    fontColor->setIcon(QIcon(":fontColor.png"));
-    fontColor->setToolTip(tr("Font Color"));
-    fontColor->setPopupMode(QToolButton::MenuButtonPopup);
-    fontColor->setMenu(fontColorMenu.getMenu());
-    fontColor->setAutoRaise(false);
-    buttonBar->addFontColor(fontColor);
-
-    highlightColor = new QToolButton(this);
-    highlightColor->setIcon(QIcon(":fontHighlight.png"));
-    highlightColor->setToolTip(tr("Highlight Color"));
-    highlightColor->setPopupMode(QToolButton::MenuButtonPopup);
-    highlightColor->setAutoRaise(false);
-    highlightColor->setMenu(highlightColorMenu.getMenu());
-    highlightColorMenu.setDefault(QColor("yellow"));
-    buttonBar->addHighlightColor(highlightColor);
-
-//    buttonBar->addSeparator();
-
-//    spellButtonAction = new ToolbarWidgetAction();
-//    spellButtonAction->setType(ToolbarWidgetAction::SpellCheck);
-//    spellButtonAction->createWidget(0);
-//    buttonBar.addAction(spellButtonAction);
-//    spellButtonAction->setVisible(false);
-
-    todoButtonAction = new ToolbarWidgetAction(this);
-    todoButtonAction->setType(ToolbarWidgetAction::Todo);
-    todoButtonAction->createWidget();
-    buttonBar->addAction(todoButtonAction);
-
     // Toolbar action
-    connect(undoButtonAction->button, SIGNAL(clicked()), this, SLOT(undoButtonPressed()));
-    connect(redoButtonAction->button, SIGNAL(clicked()), this, SLOT(redoButtonPressed()));
-    connect(cutButtonAction->button, SIGNAL(clicked()), this, SLOT(cutButtonPressed()));
-    connect(copyButtonAction->button, SIGNAL(clicked()), this, SLOT(copyButtonPressed()));
-    connect(pasteButtonAction->button, SIGNAL(clicked()), this, SLOT(pasteButtonPressed()));
-    connect(boldButtonAction->button, SIGNAL(clicked()), this, SLOT(boldButtonPressed()));
-    connect(italicsButtonAction->button, SIGNAL(clicked()), this, SLOT(italicsButtonPressed()));
-    connect(underlineButtonAction->button, SIGNAL(clicked()), this, SLOT(underlineButtonPressed()));
-    connect(leftAlignButtonAction->button, SIGNAL(clicked()), this, SLOT(alignLeftButtonPressed()));
-    connect(rightAlignButtonAction->button, SIGNAL(clicked()), this, SLOT(alignRightButtonPressed()));
-    connect(centerAlignButtonAction->button, SIGNAL(clicked()), this, SLOT(alignCenterButtonPressed()));
-    connect(strikethroughButtonAction->button, SIGNAL(clicked()), this, SLOT(strikethroughButtonPressed()));
-    connect(hlineButtonAction->button, SIGNAL(clicked()), this, SLOT(horizontalLineButtonPressed()));
-    connect(shiftRightButtonAction->button, SIGNAL(clicked()), this, SLOT(shiftRightButtonPressed()));
-    connect(shiftLeftButtonAction->button, SIGNAL(clicked()), this, SLOT(shiftLeftButtonPressed()));
-    connect(bulletListButtonAction->button, SIGNAL(clicked()), this, SLOT(bulletListButtonPressed()));
-    connect(numberListButtonAction->button, SIGNAL(clicked()), this, SLOT(numberListButtonPressed()));
-    connect(todoButtonAction->button, SIGNAL(clicked()), this, SLOT(todoButtonPressed()));
-    connect(fontSize, SIGNAL(currentIndexChanged(int)), this, SLOT(fontSizeSelected(int)));
-    connect(fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
-    connect(fontColor->menu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
-    connect(highlightColor->menu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHilightClicked()));
+    connect(buttonBar->undoButtonAction, SIGNAL(triggered()), this, SLOT(undoButtonPressed()));
+    connect(buttonBar->redoButtonAction, SIGNAL(triggered()), this, SLOT(redoButtonPressed()));
+    connect(buttonBar->cutButtonAction, SIGNAL(triggered()), this, SLOT(cutButtonPressed()));
+    connect(buttonBar->copyButtonAction, SIGNAL(triggered()), this, SLOT(copyButtonPressed()));
+    connect(buttonBar->pasteButtonAction, SIGNAL(triggered()), this, SLOT(pasteButtonPressed()));
+    connect(buttonBar->boldButtonWidget, SIGNAL(clicked()), this, SLOT(boldButtonPressed()));
+    connect(buttonBar->italicButtonWidget, SIGNAL(clicked()), this, SLOT(italicsButtonPressed()));
+    connect(buttonBar->underlineButtonWidget, SIGNAL(clicked()), this, SLOT(underlineButtonPressed()));
+    connect(buttonBar->leftJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignLeftButtonPressed()));
+    connect(buttonBar->rightJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignRightButtonPressed()));
+    connect(buttonBar->centerJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignCenterButtonPressed()));
+    connect(buttonBar->strikethroughButtonAction, SIGNAL(triggered()), this, SLOT(strikethroughButtonPressed()));
+    connect(buttonBar->hlineButtonAction, SIGNAL(triggered()), this, SLOT(horizontalLineButtonPressed()));
+    connect(buttonBar->shiftRightButtonAction, SIGNAL(triggered()), this, SLOT(shiftRightButtonPressed()));
+    connect(buttonBar->shiftLeftButtonAction, SIGNAL(triggered()), this, SLOT(shiftLeftButtonPressed()));
+    connect(buttonBar->bulletListButtonAction, SIGNAL(triggered()), this, SLOT(bulletListButtonPressed()));
+    connect(buttonBar->numberListButtonAction, SIGNAL(triggered()), this, SLOT(numberListButtonPressed()));
+    connect(buttonBar->todoButtonAction, SIGNAL(triggered()), this, SLOT(todoButtonPressed()));
+    connect(buttonBar->fontSizes, SIGNAL(currentIndexChanged(int)), this, SLOT(fontSizeSelected(int)));
+    connect(buttonBar->fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
+    connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
+    connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
+    connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
+    connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
 }
 
 
@@ -575,15 +443,17 @@ void NBrowserWindow::noteContentUpdated() {
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
     if (this->editor->isDirty) {
+        global.saveInProgress = true;
         NoteTable table;
         QString contents = editor->editorPage->mainFrame()->toHtml();
         EnmlFormatter formatter;
         formatter.setHtml(contents);
         formatter.rebuildNoteEnml();
-//        if (formatter.formattingError) {
-//            QMessageBox::information(this, tr("Unable to Save"), QString(tr("Unable to save this note.  Either tidy isn't installed or the note is too complex to save.")));
-//            return;
-//        }
+        if (formatter.formattingError) {
+            QMessageBox::information(this, tr("Unable to Save"), QString(tr("Unable to save this note.  Either tidy isn't installed or the note is too complex to save.")));
+            global.saveInProgress = false;
+            return;
+        }
 
 
         // get a list of lids found in the note.
@@ -611,34 +481,8 @@ void NBrowserWindow::saveNoteContent() {
             global.cache.remove(lid);
             global.cache.insert(lid, cache);
         }
+        global.saveInProgress = false;
     }
-}
-
-
-
-// Load the list of font names
-void NBrowserWindow::loadFontNames() {
-    QFontDatabase fonts;
-    QStringList fontFamilies = fonts.families();
-    for (int i = 0; i < fontFamilies.size(); i++) {
-        fontNames->addItem(fontFamilies[i], fontFamilies[i]);
-        if (i == 0) {
-            loadFontSizeCombobox(fontFamilies[i]);
-        }
-    }
-}
-
-
-
-// Load the list of font sizes
-void NBrowserWindow::loadFontSizeCombobox(QString name) {
-    QFontDatabase fdb;
-    fontSize->clear();
-    QList<int> sizes = fdb.pointSizes(name);
-    for (int i=0; i<sizes.size(); i++) {
-        fontSize->addItem(QString::number(sizes[i]), sizes[i]);
-    }
-
 }
 
 
@@ -937,7 +781,7 @@ void NBrowserWindow::todoButtonPressed() {
 
 // The font size button was pressed
 void NBrowserWindow::fontSizeSelected(int index) {
-    int size = fontSize->itemData(index).toInt();
+    int size = buttonBar->fontSizes->itemData(index).toInt();
 
     QString text = editor->selectedText();
     if (text.trimmed() == "")
@@ -955,8 +799,8 @@ void NBrowserWindow::fontSizeSelected(int index) {
 
 // The font name list was selected
 void NBrowserWindow::fontNameSelected(int index) {
-    QString font = fontNames->itemData(index).toString();
-    loadFontSizeCombobox(font);
+    QString font = buttonBar->fontNames->itemData(index).toString();
+    buttonBar->loadFontSizeComboBox(font);
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('fontName', false, '"+font+"');");
     editor->setFocus();
@@ -966,8 +810,8 @@ void NBrowserWindow::fontNameSelected(int index) {
 
 
 // The font highlight color was pressed
-void NBrowserWindow::fontHilightClicked() {
-    QColor *color = highlightColorMenu.getColor();
+void NBrowserWindow::fontHighlightClicked() {
+    QColor *color = buttonBar->highlightColorMenuWidget->getColor();
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
                 "document.execCommand('backColor', false, '"+color->name()+"');");
@@ -980,7 +824,7 @@ void NBrowserWindow::fontHilightClicked() {
 
 // The font color was pressed
 void NBrowserWindow::fontColorClicked() {
-    QColor *color = fontColorMenu.getColor();
+    QColor *color = buttonBar->fontColorMenuWidget->getColor();
     if (color->isValid()) {
         this->editor->page()->mainFrame()->evaluateJavaScript(
                 "document.execCommand('foreColor', false, '"+color->name()+"');");
@@ -1323,9 +1167,9 @@ void NBrowserWindow::imageContextMenu(QString l, QString f) {
 //* MicroFocus changed
 //****************************************************************
  void NBrowserWindow::microFocusChanged() {
-     boldButtonAction->button->setDown(false);
-     italicsButtonAction->button->setDown(false);
-     underlineButtonAction->button->setDown(false);
+     buttonBar->boldButtonWidget->setDown(false);
+     buttonBar->italicButtonWidget->setDown(false);
+     buttonBar->underlineButtonWidget->setDown(false);
      editor->openAction->setEnabled(false);
      editor->downloadAttachmentAction()->setEnabled(false);
      editor->rotateImageLeftAction->setEnabled(false);
@@ -1595,14 +1439,14 @@ void NBrowserWindow::exposeToJavascript() {
 
 // If we are within bold text, set the bold button active
 void NBrowserWindow::boldActive() {
-    boldButtonAction->button->setDown(true);
+    buttonBar->boldButtonWidget->setDown(true);
 }
 
 
 
 // If we are within italics text, make the text button active
 void NBrowserWindow::italicsActive() {
-    italicsButtonAction->button->setDown(true);
+   buttonBar->italicButtonWidget->setDown(true);
 }
 
 
@@ -1617,7 +1461,7 @@ void NBrowserWindow::insideEncryptionArea() {
 
 // If we are within underlined text, make the button active
 void NBrowserWindow::underlineActive() {
-    underlineButtonAction->button->setDown(true);
+    buttonBar->underlineButtonWidget->setDown(true);
 }
 
 

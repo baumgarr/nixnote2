@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMenu>
 #include <QContextMenuEvent>
 #include "global.h"
+#include <QFontDatabase>
+#include <QPushButton>
 
 extern Global global;
 
@@ -101,6 +103,70 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 //    connect(highlightVisible, SIGNAL(triggered()), this, SLOT(toggleHlineButtonVisible()));
 //    connect(fontColorVisible, SIGNAL(triggered()), this, SLOT(toggleFontColorVisible()));
 
+
+  undoButtonAction = this->addAction(QIcon(":undo.png"), tr("Undo"));
+  redoButtonAction = this->addAction(QIcon(":redo.png"), tr("Redo"));
+
+  cutButtonAction = this->addAction(QIcon(":cut.png"), tr("Cut"));
+  copyButtonAction = this->addAction(QIcon(":copy.png"), tr("Copy"));
+  pasteButtonAction = this->addAction(QIcon(":paste.png"), tr("Paste"));
+
+  boldButtonWidget = new QToolButton(this);
+  boldButtonWidget->setIcon(QIcon(":bold.png"));
+  boldButtonWidget->setText(tr("Bold"));
+  boldButtonAction = this->addWidget(boldButtonWidget);
+
+  italicButtonWidget = new QToolButton(this);
+  italicButtonWidget->setIcon(QIcon(":italics.png"));
+  italicButtonWidget->setText(tr("Italics"));
+  italicButtonWidget->setToolTip(tr("Italics"));
+  italicButtonAction = this->addWidget(italicButtonWidget);
+
+  underlineButtonWidget = new QToolButton(this);
+  underlineButtonWidget->setIcon(QIcon(":underline.png"));
+  underlineButtonWidget->setText(tr("Underline"));
+  underlineButtonWidget->setToolTip(tr("Underline"));
+  underlineButtonAction = this->addWidget(underlineButtonWidget);
+
+  strikethroughButtonAction = this->addAction(QIcon(":strikethrough.png"), tr("Strikethrough"));
+
+  leftJustifyButtonAction = this->addAction(QIcon(":leftAlign.png"), tr("Left Justify"));
+  centerJustifyButtonAction = this->addAction(QIcon(":centerAlign.png"), tr("Center"));
+  rightJustifyButtonAction = this->addAction(QIcon(":rightAlign.png"), tr("Right Justify"));
+
+  hlineButtonAction = this->addAction(QIcon(":hline.png"), tr("Horizontal Line"));
+
+  shiftRightButtonAction = this->addAction(QIcon(":shiftRight.png"), tr("Shift Right"));
+  shiftLeftButtonAction = this->addAction(QIcon(":shiftLeft.png"), tr("Shift Left"));
+
+  bulletListButtonAction = this->addAction(QIcon(":bulletList.png"), tr("Bullet List"));
+  numberListButtonAction = this->addAction(QIcon(":numberList.png"), tr("Number List"));
+
+
+  fontNames = new QComboBox(this);
+  fontSizes = new QComboBox(this);
+
+  loadFontNames();
+  fontButtonAction = addWidget(fontNames);
+  fontSizeButtonAction = addWidget(fontSizes);
+
+  fontColorMenuWidget = new ColorMenu();
+  fontColorButtonWidget = new QToolButton(this);
+  fontColorButtonWidget->setAutoRaise(false);
+  fontColorButtonWidget->setMenu(fontColorMenuWidget->getMenu());
+  fontColorButtonWidget->setIcon(QIcon(":fontColor.png"));
+  fontColorButtonWidget->setToolTip(tr("Font Color"));
+  fontColorAction = this->addWidget(fontColorButtonWidget);
+
+  highlightColorMenuWidget = new ColorMenu();
+  highlightColorButtonWidget = new QToolButton(this);
+  highlightColorButtonWidget->setAutoRaise(false);
+  highlightColorButtonWidget->setMenu(highlightColorMenuWidget->getMenu());
+  highlightColorButtonWidget->setIcon(QIcon(":fontHighlight.png"));
+  highlightColorButtonWidget->setToolTip(tr("Highlight"));
+  highlightColorAction = this->addWidget(highlightColorButtonWidget);
+
+  todoButtonAction = this->addAction(QIcon(":todo.png"), tr("Todo"));
 }
 
 
@@ -137,70 +203,70 @@ void EditorButtonBar::saveVisibleButtons() {
     global.settings->beginGroup("SaveState");
 
     bool value;
-    value = undoButton->isVisible();
+    value = undoButtonAction->isVisible();
     global.settings->setValue("undoButtonVisible", value);
 
-    value = redoButton->isVisible();
+    value = redoButtonAction->isVisible();
     global.settings->setValue("redoButtonVisible", value);
 
-    value = cutButton->isVisible();
+    value = cutButtonAction->isVisible();
     global.settings->setValue("cutButtonVisible", value);
 
-    value = copyButton->isVisible();
+    value = copyButtonAction->isVisible();
     global.settings->setValue("copyButtonVisible", value);
 
-    value = pasteButton->isVisible();
+    value = pasteButtonAction->isVisible();
     global.settings->setValue("pasteButtonVisible", value);
 
-    value = boldButton->isVisible();
+    value = boldButtonAction->isVisible();
     global.settings->setValue("boldButtonVisible", value);
 
-    value = italicButton->isVisible();
+    value = italicButtonAction->isVisible();
     global.settings->setValue("italicButtonVisible", value);
 
-    value = underlineButton->isVisible();
+    value = underlineButtonAction->isVisible();
     global.settings->setValue("hlineButtonVisible", value);
 
-    value = underlineButton->isVisible();
+    value = underlineButtonAction->isVisible();
     global.settings->setValue("underlineButtonVisible", value);
 
-    value = strikethroughButton->isVisible();
+    value = strikethroughButtonAction->isVisible();
     global.settings->setValue("strikethroughButtonVisible", value);
 
-    value = leftJustifyButton->isVisible();
+    value = leftJustifyButtonAction->isVisible();
     global.settings->setValue("leftJustifyButtonVisible", value);
 
-    value = rightJustifyButton->isVisible();
+    value = rightJustifyButtonAction->isVisible();
     global.settings->setValue("rightJustifyButtonVisible", value);
 
-    value = centerJustifyButton->isVisible();
+    value = centerJustifyButtonAction->isVisible();
     global.settings->setValue("centerJustifyButtonVisible", value);
 
-    value = shiftLeftButton->isVisible();
+    value = shiftLeftButtonAction->isVisible();
     global.settings->setValue("shiftLeftButtonVisible", value);
 
-    value = shiftRightButton->isVisible();
+    value = shiftRightButtonAction->isVisible();
     global.settings->setValue("shiftRightButtonVisible", value);
 
-    value = buttonListButton->isVisible();
+    value = bulletListButtonAction->isVisible();
     global.settings->setValue("bulletListButtonVisible", value);
 
-    value = numberListButton->isVisible();
+    value = numberListButtonAction->isVisible();
     global.settings->setValue("numberListButtonVisible", value);
 
-    value = fontButton->isVisible();
+    value = fontButtonAction->isVisible();
     global.settings->setValue("fontButtonVisible", value);
 
-    value = fontSizeButton->isVisible();
+    value = fontSizeButtonAction->isVisible();
     global.settings->setValue("fontSizeButtonVisible", value);
 
-    value = highlightColor->isVisible();
+    value = highlightColorAction->isVisible();
     global.settings->setValue("highlightButtonVisible", value);
 
-    value = fontColor->isVisible();
+    value = fontColorAction->isVisible();
     global.settings->setValue("fontColorButtonVisible", value);
 
-    value = todoButton->isVisible();
+    value = todoButtonAction->isVisible();
     global.settings->setValue("todoButtonVisible", value);
 
     global.settings->endGroup();
@@ -210,71 +276,71 @@ void EditorButtonBar::saveVisibleButtons() {
 void EditorButtonBar::setupVisibleButtons() {
     global.settings->beginGroup("SaveState");
 
-    undoButton->setVisible(global.settings->value("undoButtonVisible", true).toBool());
-    undoVisible->setChecked(undoButton->isVisible());
+    undoButtonAction->setVisible(global.settings->value("undoButtonVisible", true).toBool());
+    undoVisible->setChecked(undoButtonAction->isVisible());
 
-    redoButton->setVisible(global.settings->value("redoButtonVisible", true).toBool());
-    redoVisible->setChecked(redoButton->isVisible());
+    redoButtonAction->setVisible(global.settings->value("redoButtonVisible", true).toBool());
+    redoVisible->setChecked(redoButtonAction->isVisible());
 
-    cutButton->setVisible(global.settings->value("cutButtonVisible", true).toBool());
-    cutVisible->setChecked(cutButton->isVisible());
+    cutButtonAction->setVisible(global.settings->value("cutButtonVisible", true).toBool());
+    cutVisible->setChecked(cutButtonAction->isVisible());
 
-    copyButton->setVisible(global.settings->value("copyButtonVisible", true).toBool());
-    copyVisible->setChecked(copyButton->isVisible());
+    copyButtonAction->setVisible(global.settings->value("copyButtonVisible", true).toBool());
+    copyVisible->setChecked(copyButtonAction->isVisible());
 
-    pasteButton->setVisible(global.settings->value("pasteButtonVisible", true).toBool());
-    pasteVisible->setChecked(pasteButton->isVisible());
+    pasteButtonAction->setVisible(global.settings->value("pasteButtonVisible", true).toBool());
+    pasteVisible->setChecked(pasteButtonAction->isVisible());
 
-    boldButton->setVisible(global.settings->value("boldButtonVisible", true).toBool());
-    boldVisible->setChecked(boldButton->isVisible());
+    boldButtonAction->setVisible(global.settings->value("boldButtonVisible", true).toBool());
+    boldVisible->setChecked(boldButtonAction->isVisible());
 
-    italicButton->setVisible(global.settings->value("italicButtonVisible", true).toBool());
-    italicVisible->setChecked(italicButton->isVisible());
+    italicButtonAction->setVisible(global.settings->value("italicButtonVisible", true).toBool());
+    italicVisible->setChecked(italicButtonAction->isVisible());
 
-    underlineButton->setVisible(global.settings->value("underlineButtonVisible", true).toBool());
-    underlineVisible->setChecked(underlineButton->isVisible());
+    underlineButtonAction->setVisible(global.settings->value("underlineButtonVisible", true).toBool());
+    underlineVisible->setChecked(underlineButtonAction->isVisible());
 
-    strikethroughButton->setVisible(global.settings->value("strikethroughButtonVisible", true).toBool());
-    strikethroughVisible->setChecked(strikethroughButton->isVisible());
+    strikethroughButtonAction->setVisible(global.settings->value("strikethroughButtonVisible", true).toBool());
+    strikethroughVisible->setChecked(strikethroughButtonAction->isVisible());
 
-    hlineButton->setVisible(global.settings->value("hlineButtonVisible", true).toBool());
-    hlineVisible->setChecked(hlineButton->isVisible());
+    hlineButtonAction->setVisible(global.settings->value("hlineButtonVisible", true).toBool());
+    hlineVisible->setChecked(hlineButtonAction->isVisible());
 
-    leftJustifyButton->setVisible(global.settings->value("leftJustifyButtonVisible", true).toBool());
-    leftJustifyVisible->setChecked(leftJustifyButton->isVisible());
+    leftJustifyButtonAction->setVisible(global.settings->value("leftJustifyButtonVisible", true).toBool());
+    leftJustifyVisible->setChecked(leftJustifyButtonAction->isVisible());
 
-    centerJustifyButton->setVisible(global.settings->value("centerJustifyButtonVisible", true).toBool());
-    centerJustifyVisible->setChecked(centerJustifyButton->isVisible());
+    centerJustifyButtonAction->setVisible(global.settings->value("centerJustifyButtonVisible", true).toBool());
+    centerJustifyVisible->setChecked(centerJustifyButtonAction->isVisible());
 
-    rightJustifyButton->setVisible(global.settings->value("rightJustifyButtonVisible", true).toBool());
-    rightJustifyVisible->setChecked(rightJustifyButton->isVisible());
+    rightJustifyButtonAction->setVisible(global.settings->value("rightJustifyButtonVisible", true).toBool());
+    rightJustifyVisible->setChecked(rightJustifyButtonAction->isVisible());
 
-    shiftLeftButton->setVisible(global.settings->value("shiftLeftButtonVisible", true).toBool());
-    shiftLeftVisible->setChecked(shiftLeftButton->isVisible());
+    shiftLeftButtonAction->setVisible(global.settings->value("shiftLeftButtonVisible", true).toBool());
+    shiftLeftVisible->setChecked(shiftLeftButtonAction->isVisible());
 
-    shiftRightButton->setVisible(global.settings->value("shiftRightButtonVisible", true).toBool());
-    shiftRightVisible->setChecked(shiftRightButton->isVisible());
+    shiftRightButtonAction->setVisible(global.settings->value("shiftRightButtonVisible", true).toBool());
+    shiftRightVisible->setChecked(shiftRightButtonAction->isVisible());
 
-    buttonListButton->setVisible(global.settings->value("bulletListButtonVisible", true).toBool());
-    buttonListVisible->setChecked(buttonListButton->isVisible());
+    bulletListButtonAction->setVisible(global.settings->value("bulletListButtonVisible", true).toBool());
+    buttonListVisible->setChecked(bulletListButtonAction->isVisible());
 
-    numberListButton->setVisible(global.settings->value("numberListButtonVisible", true).toBool());
-    numberListVisible->setChecked(buttonListButton->isVisible());
+    numberListButtonAction->setVisible(global.settings->value("numberListButtonVisible", true).toBool());
+    numberListVisible->setChecked(numberListButtonAction->isVisible());
 
-    fontButton->setVisible(global.settings->value("fontButtonVisible", true).toBool());
-    fontVisible->setChecked(fontButton->isVisible());
+    //fontButtonAction->setVisible(global.settings->value("fontButtonVisible", true).toBool());
+    //fontVisible->setChecked(fontButtonAction->isVisible());
 
-    fontSizeButton->setVisible(global.settings->value("fontSizeButtonVisible", true).toBool());
-    fontSizeVisible->setChecked(fontSizeButton->isVisible());
+    //fontSizeButtonAction->setVisible(global.settings->value("fontSizeButtonVisible", true).toBool());
+    //fontSizeVisible->setChecked(fontSizeButtonAction->isVisible());
 
-    todoButton->setVisible(global.settings->value("todoButtonVisible", true).toBool());
-    todoVisible->setChecked(todoButton->isVisible());
+    todoButtonAction->setVisible(global.settings->value("todoButtonVisible", true).toBool());
+    todoVisible->setChecked(todoButtonAction->isVisible());
 
-    fontColor->setVisible(global.settings->value("fontColorButtonVisible", true).toBool());
-    fontColorVisible->setChecked(fontColor->isVisible());
+    //fontColorAction ->setVisible(global.settings->value("fontColorButtonVisible", true).toBool());
+    //fontColorVisible->setChecked(fontColorAction->isVisible());
 
-    highlightColor->setVisible(global.settings->value("highlightButtonVisible", true).toBool());
-    highlightVisible->setChecked(highlightColor->isVisible());
+    //highlightColorAction->setVisible(global.settings->value("highlightButtonVisible", true).toBool());
+    //highlightVisible->setChecked(highlightColorAction->isVisible());
 
     global.settings->endGroup();
 }
@@ -282,178 +348,118 @@ void EditorButtonBar::setupVisibleButtons() {
 
 
 void EditorButtonBar::toggleUndoButtonVisible() {
-    undoButton->setVisible(undoVisible->isChecked());
+    undoButtonAction->setVisible(undoVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleRedoButtonVisible()  {
-    redoButton->setVisible(redoVisible->isChecked());
+    redoButtonAction->setVisible(redoVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleCutButtonVisible() {
-    cutButton->setVisible(cutVisible->isChecked());
+    cutButtonAction->setVisible(cutVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleCopyButtonVisible() {
-    copyButton->setVisible(copyVisible->isChecked());
+    copyButtonAction->setVisible(copyVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::togglePasteButtonVisible() {
-    pasteButton->setVisible(pasteVisible->isChecked());
+    pasteButtonAction->setVisible(pasteVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleBoldButtonVisible() {
-    boldButton->setVisible(boldVisible->isChecked());
+    boldButtonAction->setVisible(boldVisible->isChecked());
     saveVisibleButtons();
     }
 void EditorButtonBar::toggleItalicButtonVisible() {
-    italicButton->setVisible(italicVisible->isChecked());
+    italicButtonAction->setVisible(italicVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleUnderlineButtonVisible() {
-    underlineButton->setVisible(underlineVisible->isChecked());
+    underlineButtonAction->setVisible(underlineVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleStrikethroughButtonVisible() {
-    strikethroughButton->setVisible(strikethroughVisible->isChecked());
+    strikethroughButtonAction->setVisible(strikethroughVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleLeftJustifyButtonVisible() {
-    leftJustifyButton->setVisible(leftJustifyVisible->isChecked());
+    leftJustifyButtonAction->setVisible(leftJustifyVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleCenterJustifyButtonVisible() {
-    centerJustifyButton->setVisible(centerJustifyVisible->isChecked());
+    centerJustifyButtonAction->setVisible(centerJustifyVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleRightJustifyButtonVisible() {
-    rightJustifyButton->setVisible(rightJustifyVisible->isChecked());
+    rightJustifyButtonAction->setVisible(rightJustifyVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleHlineButtonVisible() {
-    hlineButton->setVisible(hlineVisible->isChecked());
+    hlineButtonAction->setVisible(hlineVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleShiftRightButtonVisible() {
-    shiftRightButton->setVisible(shiftRightVisible->isChecked());
+    shiftRightButtonAction->setVisible(shiftRightVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleShiftLeftButtonVisible() {
-    shiftLeftButton->setVisible(shiftLeftVisible->isChecked());
+    shiftLeftButtonAction->setVisible(shiftLeftVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleButtonListButtonVisible() {
-    buttonListButton->setVisible(buttonListVisible->isChecked());
+    bulletListButtonAction->setVisible(buttonListVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleNumberListButtonVisible() {
-    numberListButton->setVisible(numberListVisible->isChecked());
+    numberListButtonAction->setVisible(numberListVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleFontButtonVisible() {
-    fontButton->setVisible(fontVisible->isChecked());
+    fontButtonAction->setVisible(fontVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleFontSizeButtonVisible() {
-    fontSizeButton->setVisible(fontSizeVisible->isChecked());
+    fontSizeButtonAction->setVisible(fontSizeVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleTodoButtonVisible() {
-    todoButton->setVisible(todoVisible->isChecked());
+    todoButtonAction->setVisible(todoVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleHighlightColorVisible() {
-    highlightColor->setVisible(highlightVisible->isChecked());
+    highlightColorAction->setVisible(highlightVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleFontColorVisible() {
-    fontColor->setVisible(fontColorVisible->isChecked());
+    fontColorAction->setVisible(fontColorVisible->isChecked());
     saveVisibleButtons();
 }
 
 
 
-void EditorButtonBar::addAction(ToolbarWidgetAction *action) {
-    QToolBar::addAction(action);
-    switch(action->buttonType) {
-    case(ToolbarWidgetAction::Undo):
-        undoButton = action;
-        break;
-    case(ToolbarWidgetAction::Redo):
-        redoButton = action;
-        break;
-    case(ToolbarWidgetAction::Cut):
-        cutButton = action;
-        break;
-    case(ToolbarWidgetAction::Copy):
-        copyButton = action;
-        break;
-    case(ToolbarWidgetAction::Paste):
-        pasteButton = action;
-        break;
-    case(ToolbarWidgetAction::Bold):
-        boldButton = action;
-        break;
-    case(ToolbarWidgetAction::Italics):
-        italicButton = action;
-        break;
-    case(ToolbarWidgetAction::Strikethrough):
-        strikethroughButton = action;
-        break;
-    case(ToolbarWidgetAction::Underline):
-        underlineButton = action;
-        break;
-    case(ToolbarWidgetAction::AlignLeft):
-        leftJustifyButton = action;
-        break;
-    case(ToolbarWidgetAction::AlignRight):
-        rightJustifyButton = action;
-        break;
-    case(ToolbarWidgetAction::AlignCenter):
-        centerJustifyButton = action;
-        break;
-    case(ToolbarWidgetAction::HorizontalLine):
-        hlineButton = action;
-        break;
-    case(ToolbarWidgetAction::ShiftRight):
-        shiftRightButton = action;
-        break;
-    case(ToolbarWidgetAction::ShiftLeft):
-        shiftLeftButton = action;
-        break;
-    case(ToolbarWidgetAction::NumberList):
-        numberListButton = action;
-        break;
-    case(ToolbarWidgetAction::BulletList):
-        buttonListButton = action;
-        break;
-    case (ToolbarWidgetAction::Todo):
-        todoButton = action;
-        break;
-    case (ToolbarWidgetAction::SpellCheck) :
-        spellButton = action;
-        break;
+// Load the list of font names
+void EditorButtonBar::loadFontNames() {
+    QFontDatabase fonts;
+    QStringList fontFamilies = fonts.families();
+    for (int i = 0; i < fontFamilies.size(); i++) {
+        fontNames->addItem(fontFamilies[i], fontFamilies[i]);
+        if (i == 0) {
+            loadFontSizeComboBox(fontFamilies[i]);
+        }
     }
 }
 
 
 
-void EditorButtonBar::addFontName(QComboBox *fontList) {
-    fontButton = addWidget(fontList);
-    connect(fontVisible, SIGNAL(triggered()), this, SLOT(toggleFontButtonVisible()));
-}
 
-void EditorButtonBar::addFontSize(QComboBox *fontSize) {
-    fontSizeButton = addWidget(fontSize);
-    connect(fontSizeVisible, SIGNAL(triggered()), this, SLOT(toggleFontSizeButtonVisible()));
+// Load the list of font sizes
+void EditorButtonBar::loadFontSizeComboBox(QString name) {
+    QFontDatabase fdb;
+    fontSizes->clear();
+    QList<int> sizes = fdb.pointSizes(name);
+    for (int i=0; i<sizes.size(); i++) {
+        fontSizes->addItem(QString::number(sizes[i]), sizes[i]);
+    }
 
-}
-
-void EditorButtonBar::addHighlightColor(QToolButton *button) {
-    highlightColor= addWidget(button);
-    connect(highlightVisible, SIGNAL(triggered()), this, SLOT(toggleHighlightColorVisible()));
-}
-
-void EditorButtonBar::addFontColor(QToolButton *button) {
-    fontColor = addWidget(button);
-    connect(fontColorVisible, SIGNAL(triggered()), this, SLOT(toggleFontColorVisible()));
 }

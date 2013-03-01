@@ -22,17 +22,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #ifndef EDITORBUTTONBAR_H
 #define EDITORBUTTONBAR_H
-#include "gui/browserWidgets/toolbarwidgetaction.h"
 #include <QToolBar>
 #include <QMenu>
 #include <QToolButton>
+#include <QComboBox>
 
-class ToolbarWidgetAction;
+#include "gui/browserWidgets/colormenu.h"
 
 class EditorButtonBar : public QToolBar
 {
     Q_OBJECT
-private:
+public:
     QMenu *contextMenu;
     QAction *undoVisible;
     QAction *redoVisible;
@@ -57,42 +57,45 @@ private:
     QAction *highlightVisible;
     QAction *fontColorVisible;
 
-    ToolbarWidgetAction *undoButton;
-    ToolbarWidgetAction *redoButton;
-    ToolbarWidgetAction *cutButton;
-    ToolbarWidgetAction *copyButton;
-    ToolbarWidgetAction *pasteButton;
-    ToolbarWidgetAction *boldButton;
-    ToolbarWidgetAction *italicButton;
-    ToolbarWidgetAction *underlineButton;
-    ToolbarWidgetAction *strikethroughButton;
-    ToolbarWidgetAction *leftJustifyButton;
-    ToolbarWidgetAction *centerJustifyButton;
-    ToolbarWidgetAction *rightJustifyButton;
-    ToolbarWidgetAction *hlineButton;
-    ToolbarWidgetAction *shiftRightButton;
-    ToolbarWidgetAction *shiftLeftButton;
-    ToolbarWidgetAction *buttonListButton;
-    ToolbarWidgetAction *numberListButton;
-    QAction *highlightColor;
-    QAction *fontColor;
-    ToolbarWidgetAction *todoButton;
-    ToolbarWidgetAction *spellButton;
-    QAction *fontButton;
-    QAction *fontSizeButton;
+    QAction *undoButtonAction;
+    QAction *redoButtonAction;
+    QAction *cutButtonAction;
+    QAction *copyButtonAction;
+    QAction *pasteButtonAction;
+    QAction *boldButtonAction;
+    QAction *italicButtonAction;
+    QAction *underlineButtonAction;
+    QAction *strikethroughButtonAction;
+    QAction *leftJustifyButtonAction;
+    QAction *centerJustifyButtonAction;
+    QAction *rightJustifyButtonAction;
+    QAction *hlineButtonAction;
+    QAction *shiftRightButtonAction;
+    QAction *shiftLeftButtonAction;
+    QAction *bulletListButtonAction;
+    QAction *numberListButtonAction;
+    QAction *highlightColorAction;
+    QAction *fontColorAction;
+    QAction *todoButtonAction;
+    QAction *spellButtonAction;
+    QAction *fontButtonAction;
+    QAction *fontSizeButtonAction;
+    QComboBox *fontNames;
+    QComboBox *fontSizes;
 
+    QToolButton *boldButtonWidget;
+    QToolButton *italicButtonWidget;
+    QToolButton *underlineButtonWidget;
+    QToolButton *fontColorButtonWidget;
+    ColorMenu *fontColorMenuWidget;
+    QToolButton *highlightColorButtonWidget;
+    ColorMenu *highlightColorMenuWidget;
 
-
-public:
     explicit EditorButtonBar(QWidget *parent = 0);
     ~EditorButtonBar();
     void contextMenuEvent(QContextMenuEvent *event);
     void saveVisibleButtons();
     void setupVisibleButtons();
-    void addFontName(QComboBox *fontList);
-    void addFontSize(QComboBox *fontSize);
-    void addHighlightColor(QToolButton *button);
-    void addFontColor(QToolButton *button);
 
 signals:
     
@@ -117,9 +120,10 @@ public slots:
     void toggleFontButtonVisible();
     void toggleTodoButtonVisible();
     void toggleFontSizeButtonVisible();
-    void addAction(ToolbarWidgetAction *action);
     void toggleFontColorVisible();
     void toggleHighlightColorVisible();
+    void loadFontSizeComboBox(QString font);
+    void loadFontNames();
     
 };
 

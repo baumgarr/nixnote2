@@ -64,22 +64,21 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 //    // wouldn't be needed, but WebKit doesn't always give back good HTML.
 
     QProcess tidyProcess;
+    QLOG_DEBUG() << "Before:\n"<< content<<"\n\n";
     tidyProcess.start("tidy -raw -q -asxhtml -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
     QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
+    tidyProcess.waitForStarted();
     tidyProcess.write(content);
     tidyProcess.closeWriteChannel();
+    tidyProcess.waitForFinished();
     QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
     QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
-//    QLOG_DEBUG() << "Tidy Stdout:" << tidyProcess.readAllStandardOutput();
-    content = tidyProcess.readAllStandardOutput();
+
+    QLOG_DEBUG() << "\n\nafter\n" << content <<"\n\n";
     if (content == "") {
         formattingError = true;
         return "";
     }
-
-
-//    // If we have search criteria, then do the highlighting
-//    removeHighlight(doc);
 
 //    // Finish up and return the HTML to the user
     qint32 index = content.indexOf("<body");

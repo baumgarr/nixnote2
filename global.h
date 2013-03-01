@@ -76,6 +76,7 @@ using namespace std;
 class Global
 {
 public:
+    bool saveInProgress;
     Global();           // Generic constructor
     ~Global();          // destructor
 

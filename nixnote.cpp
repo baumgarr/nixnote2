@@ -559,6 +559,7 @@ void NixNote::closeEvent(QCloseEvent *event) {
         return;
     }
 
+    while(global.saveInProgress) QLOG_DEBUG() << "Waiting for tidy";
 
     saveContents();
 
