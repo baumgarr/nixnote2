@@ -57,6 +57,7 @@ public:
     qint32 getLid(string guid);             // Given a guid, return the lid
     qint32 findByName(string &name);           // Find a record given a name
     qint32 findByName(QString &name);          // Find a record given a name
+    qint32 getAllDirty(QList<qint32>&lids);          // get all dirty lids
     void updateGuid(qint32 lid, Guid &guid);    // Update a record's guid
     void sync(SavedSearch &search);                    // Sync a record
     void sync(qint32 lid, SavedSearch &search);           // Sync a record
@@ -77,6 +78,8 @@ public:
     void expunge(string guid);
     void setDirty(qint32 lid, bool dirty);
     bool isDeleted(qint32 lid);
+    void setUpdateSequenceNumber(qint32 lid, qint32 usn);
+    string getGuid(qint32 lid);
 };
 
 #endif // SEARCHTABLE_H

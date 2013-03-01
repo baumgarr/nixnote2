@@ -443,7 +443,6 @@ void NBrowserWindow::noteContentUpdated() {
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
     if (this->editor->isDirty) {
-        global.saveInProgress = true;
         NoteTable table;
         //QString contents = editor->editorPage->mainFrame()->toHtml();
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
@@ -452,7 +451,6 @@ void NBrowserWindow::saveNoteContent() {
         formatter.rebuildNoteEnml();
         if (formatter.formattingError) {
             QMessageBox::information(this, tr("Unable to Save"), QString(tr("Unable to save this note.  Either tidy isn't installed or the note is too complex to save.")));
-            global.saveInProgress = false;
             return;
         }
 
@@ -482,7 +480,6 @@ void NBrowserWindow::saveNoteContent() {
             global.cache.remove(lid);
             global.cache.insert(lid, cache);
         }
-        global.saveInProgress = false;
     }
 }
 

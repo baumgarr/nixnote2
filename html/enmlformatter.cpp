@@ -63,7 +63,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 //    // Run it through "tidy".  It is a program which will fix any invalid HTML
 //    // and give us the results back through stdout.  In a perfect world this
 //    // wouldn't be needed, but WebKit doesn't always give back good HTML.
-/*
+
     QProcess tidyProcess;
     tidyProcess.start("tidy -raw -q -asxhtml -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
     QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
@@ -79,7 +79,6 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         formattingError = true;
         return "";
     }
-    */
 
 //    // Finish up and return the HTML to the user
     qint32 index = content.indexOf("<body");

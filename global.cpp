@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //******************************************
 Global::Global()
 {
-    saveInProgress = false;
+    disableUploads = false;
     listView = ListViewWide;
     sharedMemory = new QSharedMemory("1b73cc55-9a2f-441b-877a-ca1d0131cd21");
     FilterCriteria *criteria = new FilterCriteria();

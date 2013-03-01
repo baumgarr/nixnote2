@@ -118,6 +118,9 @@ public:
     QList< QPair<QString, QImage*>* > *inkNoteList;
     bool getSharedNotebookByAuth(SharedNotebook &sharedNotebook);
 
+    qint32 uploadSavedSearch(SavedSearch &search);
+    qint32 expungeSavedSearch(string guid);
+
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);
 };
