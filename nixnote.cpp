@@ -458,7 +458,7 @@ void NixNote::setupTrashTree() {
 //* This function sets up the user's synchronized notebook tree
 //*****************************************************************************
 void NixNote::setupSynchronizedNotebookTree() {
-    QLOG_TRACE() << "Exiting NixNote.setupSynchronizedNotebookTree()";
+    QLOG_TRACE() << "Starting NixNote.setupSynchronizedNotebookTree()";
     QLabel *lbl = new QLabel();
     lbl->setTextFormat(Qt::RichText);
     //lbl->setText("<hr>");
@@ -480,7 +480,7 @@ void NixNote::setupSynchronizedNotebookTree() {
 //* This function sets up the tab window that is used by the browser
 //*****************************************************************************
 void NixNote::setupTabWindow() {
-    QLOG_TRACE() << "Exiting NixNote.setupTabWindow()";
+    QLOG_TRACE() << "Starting NixNote.setupTabWindow()";
     tabWindow = new NTabWidget(&syncRunner, notebookTreeView, tagTreeView);
     findReplaceWindow = new FindReplace(this);
     QWidget *tabPanel = new QWidget(this);
@@ -1082,7 +1082,7 @@ void NixNote::findReplaceAllInNotePressed() {
 
 
 void NixNote::heartbeatTimerTriggered() {
-    char *buffer = (char*)malloc(global.sharedMemory->size());
+    char *buffer = (char*)malloc(global.sharedMemory->size()); //Why not new?
     global.sharedMemory->lock();
     memcpy(buffer, global.sharedMemory->data(), global.sharedMemory->size());
     memset(global.sharedMemory->data(), 0, global.sharedMemory->size());
@@ -1099,6 +1099,8 @@ void NixNote::heartbeatTimerTriggered() {
         this->show();
         return;
     }
+
+    free(buffer); // Fixes memory leak
 }
 
 

@@ -75,7 +75,6 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     Edit_Search_Find_Prev = new QString("Ctrl+Shift+G");
     Edit_Search_Find_Replace = new QString("Ctrl+H");
     Edit_Reset_Search = new QString("Ctrl+Shift+A");
-    Edit_Preferences = new QString();
 
     View_Extended_Information = new QString("F8");	// View details on the current note
     View_Show_Left_Side = new QString("F10");       // Show/hide the left side panel

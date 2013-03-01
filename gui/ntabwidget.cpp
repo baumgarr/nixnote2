@@ -82,6 +82,7 @@ void NTabWidget::addBrowser(NBrowserWindow *v, QString title) {
 }
 
 void NTabWidget::closeTab(int index) {
+    delete browserList->at(index);
     tabBar->removeTab(index);
     stack.removeWidget(browserList->at(index));
     browserList->removeAt(index);

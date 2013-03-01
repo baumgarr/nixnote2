@@ -220,6 +220,7 @@ void NTrashTree::restoreAll() {
     ntable.getAllDeleted(lids);
     for (int i=0; i<lids.size(); i++) {
         ntable.restoreNote(lids[i], true);
+        delete global.cache[lids[i]];
         global.cache.remove(lids[i]);
     }
 
@@ -246,6 +247,7 @@ void NTrashTree::expungeAll() {
     ntable.getAllDeleted(lids);
     for (int i=0; i<lids.size(); i++) {
         ntable.expunge(lids[i]);
+        delete global.cache[lids[i]];
         global.cache.remove(lids[i]);
     }
     emit(updateSelectionRequested());

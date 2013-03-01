@@ -40,18 +40,18 @@ SyncRunner::SyncRunner()
 {
     moveToThread(this);
 
-    consumerKey = "baumgarte";
-    secret = "eb8b5740e17cb55f";
+    consumerKey = "";
+    secret = "";
 
     // Setup the user agent
     userAgent = "NixNote2/Linux";
 
     userStoreUrl = QString("http://" +global.server +"/edam/user").toStdString();
-            updateSequenceNumber = 0;
-        }
+     updateSequenceNumber = 0;
+}
 
-        SyncRunner::~SyncRunner() {
-        }
+SyncRunner::~SyncRunner() {
+}
 
 
 
@@ -403,6 +403,7 @@ void SyncRunner::syncRemoteNotes(vector<Note> notes) {
         }
         // Remove it from the cache (if it exists)
         if (global.cache.contains(lid))
+            delete global.cache[lid];
             global.cache.remove(lid);
         emit noteUpdated(lid);
     }

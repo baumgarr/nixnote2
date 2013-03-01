@@ -69,7 +69,7 @@ void NNotebookViewItem::setType(NNotebookWidgetType type) {
 }
 
 
-void NNotebookViewItem::setType(qint32 type) {
+void NNotebookViewItem::setType(qint32 type) { // Problem: type is not used, and lid may not initialized (see constructor)
     LinkedNotebookTable linkedTable;
     SharedNotebookTable sharedTable;
     NotebookTable bookTable;
