@@ -32,6 +32,13 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     setLayout(mainLayout);
 
+    disableUploads = new QCheckBox(tr("Disable uploads to server"),this);
+    global.settings->beginGroup("Debugging");
+    disableUploads->setChecked(global.disableUploads);
+    global.settings->endGroup();
+
+    mainLayout->addWidget(disableUploads,0,1);
+
     debugLevelLabel = new QLabel(tr("Message Level"), this);
     debugLevelLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     debugLevel = new QComboBox(this);
@@ -47,8 +54,8 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     global.settings->endGroup();
     int index = debugLevel->findData(value);
     debugLevel->setCurrentIndex(index);
-    mainLayout->addWidget(debugLevelLabel,0,0);
-    mainLayout->addWidget(debugLevel,0,1);
+    mainLayout->addWidget(debugLevelLabel,1,0);
+    mainLayout->addWidget(debugLevel,1,1);
 
 }
 
@@ -71,5 +78,7 @@ void DebugPreferences::saveValues() {
 
     global.settings->beginGroup("Debugging");
     global.settings->setValue("messageLevel", value);
+    global.settings->setValue("disableUploads", disableUploads->isChecked());
     global.settings->endGroup();
+    global.disableUploads = disableUploads->isChecked();
 }
