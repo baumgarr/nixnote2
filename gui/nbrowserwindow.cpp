@@ -445,7 +445,8 @@ void NBrowserWindow::saveNoteContent() {
     if (this->editor->isDirty) {
         global.saveInProgress = true;
         NoteTable table;
-        QString contents = editor->editorPage->mainFrame()->toHtml();
+        //QString contents = editor->editorPage->mainFrame()->toHtml();
+        QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
         EnmlFormatter formatter;
         formatter.setHtml(contents);
         formatter.rebuildNoteEnml();
