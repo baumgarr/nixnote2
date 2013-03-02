@@ -152,6 +152,11 @@ void SearchTable::add(qint32 l, SavedSearch &t, bool isDirty) {
         query.bindValue(":key", SEARCH_UPDATE_SEQUENCE_NUMBER);
         query.bindValue(":data", t.updateSequenceNum);
         query.exec();
+    } else {
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", SEARCH_UPDATE_SEQUENCE_NUMBER);
+        query.bindValue(":data", 0);
+        query.exec();
     }
 
     if (t.__isset.format) {
@@ -296,11 +301,16 @@ void SearchTable::deleteSearch(qint32 lid) {
     get(s, lid);
     if (s.__isset.updateSequenceNum && s.updateSequenceNum > 0) {
         QSqlQuery query;
-        query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
+        query.prepare("Delet from DataStore where key=:key and lid=:lid");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", SEARCH_ISDELETED);
+        query.exec();
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":data", true);
         query.bindValue(":lid", lid);
         query.bindValue(":key", SEARCH_ISDELETED);
         query.exec();
+        setDirty(lid,true);
     } else {
         expunge(lid);
     }
@@ -352,7 +362,7 @@ bool SearchTable::update(qint32 lid, SavedSearch &s, bool isDirty=true) {
 // Is this search deleted?
 bool SearchTable::isDeleted(qint32 lid) {
     QSqlQuery query;
-    query.prepare("Select lid from DataStore where key=:key and lid=:lid and data=true");
+    query.prepare("Select lid from DataStore where key=:key and lid=:lid and data='true'");
     query.bindValue(":lid", lid);
     query.bindValue(":key", SEARCH_ISDELETED);
     query.exec();
@@ -360,4 +370,45 @@ bool SearchTable::isDeleted(qint32 lid) {
         return true;
     else
         return false;
+}
+
+
+
+// Get all dirty lids
+qint32 SearchTable::getAllDirty(QList<qint32> &lids) {
+    QSqlQuery query;
+    lids.clear();
+    query.prepare("Select lid from DataStore where key=:key");
+    query.bindValue(":key", SEARCH_ISDIRTY);
+    query.exec();
+    while(query.next()) {
+        lids.append(query.value(0).toInt());
+    }
+    return lids.size();
+}
+
+
+
+// Update the USN
+void SearchTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
+    QSqlQuery query;
+    query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
+    query.bindValue(":data", usn);
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", SEARCH_UPDATE_SEQUENCE_NUMBER);
+    query.exec();
+}
+
+
+// Get all dirty lids
+string SearchTable::getGuid(qint32 lid) {
+    QSqlQuery query;
+    query.prepare("Select data from DataStore where key=:key and lid=:lid");
+    query.bindValue(":key", SEARCH_GUID);
+    query.bindValue(":lid", lid);
+    query.exec();
+    if(query.next()) {
+        return query.value(0).toString().toStdString();
+    }
+    return "";
 }

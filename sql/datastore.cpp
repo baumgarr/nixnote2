@@ -71,7 +71,7 @@ void DataStore::createTable() {
         QLOG_ERROR() << "Creation of SearchModel table failed: " << sql.lastError();
     }
 
-    sql.prepare("Create View TagModel as select a.lid, (select d.data from DataStore d where d.key=1000 and a.lid = d.lid) as guid, (select b.data from DataStore b where b.key=1002 and a.lid = b.lid) as parent_gid, (select c.data from DataStore c where c.key=1001 and a.lid = c.lid) as name from DataStore a where a.key=1000;");
+    sql.prepare("Create View TagModel as select a.lid, (select d.data from DataStore d where d.key=1000 and a.lid = d.lid) as guid, (select b.data from DataStore b where b.key=1002 and a.lid = b.lid) as parent_gid, (select c.data from DataStore c where c.key=1001 and a.lid = c.lid) as name, (select e.data from DataStore e where e.key=1006 and a.lid = e.lid) as account from DataStore a where a.key=1000;");
     if (!sql.exec()) {
         QLOG_ERROR() << "Creation of TagModel table failed: " << sql.lastError();
     }

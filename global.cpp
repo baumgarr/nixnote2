@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //******************************************
 Global::Global()
 {
+
+    listView = ListViewWide;
     sharedMemory = new QSharedMemory("1b73cc55-9a2f-441b-877a-ca1d0131cd21");
     FilterCriteria *criteria = new FilterCriteria();
     shortcutKeys = new ShortcutKeys();
@@ -61,11 +63,16 @@ Global::~Global() {
 void Global::setup(StartupConfig startupConfig) {
     fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath, startupConfig.accountId);
     QString settingsFile = fileManager.getHomeDirPath("") + "nixnote.conf";
+
+    globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
+    globalSettings->beginGroup("SaveState");
+    int accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
+    globalSettings->endGroup();
+
+    settingsFile = fileManager.getHomeDirPath("") + "nixnote-"+QString::number(accountId)+".conf";
+
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
-    settings->beginGroup("SaveState");
-    int accountId = settings->value("lastAccessedAccount", 1).toInt();
-    settings->endGroup();
     startupConfig.accountId = accountId;
     accountsManager = new AccountsManager(startupConfig.accountId);
 
@@ -86,6 +93,10 @@ void Global::setup(StartupConfig startupConfig) {
             myDir.remove(file);
         }
     }
+
+    settings->beginGroup("Debugging");
+    disableUploads = settings->value("disableUploads", true).toBool();
+    settings->endGroup();
 }
 
 
@@ -161,6 +172,52 @@ void Global::setCloseToTray(bool value) {
 }
 
 
+
+
+void Global::setColumnPosition(QString col, int position) {
+    if (listView == ListViewWide)
+        settings->beginGroup("ColumnPosition-Wide");
+    else
+        settings->beginGroup("ColumnPosition-Narrow");
+    settings->setValue(col, position);
+    settings->endGroup();
+}
+
+
+
+
+
+void Global::setColumnWidth(QString col, int width) {
+    if (listView == ListViewWide)
+        settings->beginGroup("ColumnWidth-Wide");
+    else
+        settings->beginGroup("ColumnWidth-Narrow");
+    settings->setValue(col, width);
+    settings->endGroup();
+}
+
+
+int Global::getColumnWidth(QString col) {
+    if (listView == ListViewWide)
+        settings->beginGroup("ColumnWidth-Wide");
+    else
+        settings->beginGroup("ColumnWidth-Narrow");
+    int value = settings->value(col, -1).toInt();
+    settings->endGroup();
+    return value;
+ }
+
+
+
+int Global::getColumnPosition(QString col) {
+    if (listView == ListViewWide)
+        settings->beginGroup("ColumnPosition-Wide");
+    else
+        settings->beginGroup("ColumnPosition-Narrow");
+    int value = settings->value(col, -1).toInt();
+    settings->endGroup();
+    return value;
+ }
 
 // Utility function for case insensitive sorting
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)

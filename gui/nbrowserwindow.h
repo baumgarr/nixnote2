@@ -49,9 +49,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/browserWidgets/authoreditor.h"
 #include "gui/browserWidgets/dateeditor.h"
 #include "gui/browserWidgets/colormenu.h"
+#include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/nwebview.h"
 #include "xml/xmlhighlighter.h"
-#include "gui/browserWidgets/toolbarwidgetaction.h"
+#include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/nmainmenubar.h"
 
 class ToolbarWidgetAction;
@@ -61,13 +62,12 @@ using namespace evernote::edam  ;
 class NWebView;
 class NBrowserWindow;
 class NMainMenuBar;
+class EditorButtonBar;
 
 class NBrowserWindow : public QWidget
 {
     Q_OBJECT
 private:
-    void loadFontSizeCombobox(QString name);
-    void loadFontNames();
     void setupToolBar();
     QTimer *sourceEditorTimer;
     bool insertHyperlink;
@@ -100,39 +100,10 @@ public:
     void setReadOnly(bool readOnly);
     NMainMenuBar *mainMenuBarHook;
 
-    QToolBar buttonBar;
-    ToolbarWidgetAction *undoButtonAction;
-    ToolbarWidgetAction *redoButtonAction;
-    ToolbarWidgetAction *cutButtonAction;
-    ToolbarWidgetAction *pasteButtonAction;
-    ToolbarWidgetAction *copyButtonAction;
-    ToolbarWidgetAction *boldButtonAction;
-    ToolbarWidgetAction *underlineButtonAction;
-    ToolbarWidgetAction *italicsButtonAction;
-    ToolbarWidgetAction *strikethroughButtonAction;
-    ToolbarWidgetAction *leftAlignButtonAction;
-    ToolbarWidgetAction *rightAlignButtonAction;
-    ToolbarWidgetAction *centerAlignButtonAction;
-    ToolbarWidgetAction *hlineButtonAction;
-    ToolbarWidgetAction *shiftRightButtonAction;
-    ToolbarWidgetAction *shiftLeftButtonAction;
-    ToolbarWidgetAction *bulletListButtonAction;
-    ToolbarWidgetAction *numberListButtonAction;
+    EditorButtonBar *buttonBar;
     QShortcut *focusNoteShortcut;
     QShortcut *focusTitleShortcut;
     QShortcut *insertDatetimeShortcut;
-    QAction *fontColorButtonAction;
-    QToolButton *fontColorButton;
-    QAction *highlightButtonAction;
-    QToolButton *highlightButton;
-    ToolbarWidgetAction *spellButtonAction;
-    ToolbarWidgetAction *todoButtonAction;
-    QComboBox *fontSize;
-    QComboBox *fontNames;
-    QToolButton *fontColor;
-    QToolButton *highlightColor;
-    ColorMenu fontColorMenu;
-    ColorMenu highlightColorMenu;
 
     QHBoxLayout line2Layout;
     QHBoxLayout line3Layout;
@@ -193,7 +164,7 @@ public slots:
     void fontSizeSelected(int index);
     void fontNameSelected(int index);
     void fontColorClicked();
-    void fontHilightClicked();
+    void fontHighlightClicked();
     void encryptButtonPressed();
     void insertLinkButtonPressed();
     void insertQuickLinkButtonPressed();
@@ -220,6 +191,7 @@ public slots:
     void underlineActive();
     void setInsideList();
     void setInsideTable();
+    void noteSourceUpdated();
     void setInsideLink(QString link);
     QString fixEncryptionPaste(QString data);
 

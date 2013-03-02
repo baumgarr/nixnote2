@@ -238,3 +238,4 @@ void NTableViewHeader::sizeChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_SIZE_POSITION, checked));
     checkActions();
 }
+

@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QFileIconProvider>
 #include <QIcon>
+#include <QMessageBox>
 
 //#include "<QPainter>
 
@@ -57,6 +58,7 @@ void EnmlFormatter::setHtml(QString h) {
 QByteArray EnmlFormatter::rebuildNoteEnml() {
     resources.clear();
 
+        QLOG_DEBUG() << "Before:\n"<< content<<"\n\n";
 
 //    // Run it through "tidy".  It is a program which will fix any invalid HTML
 //    // and give us the results back through stdout.  In a perfect world this
@@ -65,16 +67,18 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QProcess tidyProcess;
     tidyProcess.start("tidy -raw -q -asxhtml -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
     QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
+    tidyProcess.waitForStarted();
     tidyProcess.write(content);
     tidyProcess.closeWriteChannel();
+    tidyProcess.waitForFinished();
     QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
     QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
-//    QLOG_DEBUG() << "Tidy Stdout:" << tidyProcess.readAllStandardOutput();
-    content = tidyProcess.readAllStandardOutput();
 
-
-//    // If we have search criteria, then do the highlighting
-//    removeHighlight(doc);
+    QLOG_DEBUG() << "\n\nafter\n" << content <<"\n\n";
+    if (content == "") {
+        formattingError = true;
+        return "";
+    }
 
 //    // Finish up and return the HTML to the user
     qint32 index = content.indexOf("<body");

@@ -49,7 +49,7 @@ public:
     explicit NoteFormatter(QObject *parent = 0);
     void setNote(Note n, bool pdfPreview);
     QString getPage();
-    void setHighlight(EnSearch search);
+    void setHighlight();
     void setNoteHistory(bool value);
     QByteArray rebuildNoteHTML();
     QDomDocument addHighlight(QDomDocument &doc);

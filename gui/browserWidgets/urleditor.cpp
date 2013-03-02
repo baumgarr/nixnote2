@@ -42,7 +42,7 @@ UrlEditor::UrlEditor(QWidget *parent) :
 
     defaultText = QString(tr("Click to set source URL..."));
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(textModified(QString)));
-    this->textModified(defaultText);
+    //this->textModified(defaultText);
 
     connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
     hide();

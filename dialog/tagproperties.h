@@ -32,6 +32,7 @@ class TagProperties : public QDialog
 
 private:
     QPushButton ok;
+    qint32 account;
     QLabel nameLabel;
     QPushButton cancel;
     QGridLayout grid;

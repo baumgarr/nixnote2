@@ -145,7 +145,7 @@ QVariant NoteModel::data (const QModelIndex & index, int role) const {
 
 //    QVariant v = QSqlTableModel::data(index, role);
 //    if (v.toBool())
-//        return "false";
+//        return QVariant(QPixmap(":notebook_small.png"));
 //    else
-//        return "";
+//        return QPixmap(":notebook_small.png");
 }

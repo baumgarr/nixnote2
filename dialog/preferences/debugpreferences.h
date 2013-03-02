@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QVBoxLayout>
 #include <QComboBox>
 #include <QLabel>
+#include <QCheckBox>
 
 class DebugPreferences : public QWidget
 {
@@ -31,6 +32,7 @@ class DebugPreferences : public QWidget
 private:
     QGridLayout *mainLayout;
     QComboBox *debugLevel;
+    QCheckBox *disableUploads;
     QLabel *debugLevelLabel;
     int getMessageLevel();
 

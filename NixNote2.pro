@@ -113,7 +113,6 @@ SOURCES += main.cpp\
     communication/communicationmanager.cpp \
     gui/browserWidgets/colormenu.cpp \
     xml/xmlhighlighter.cpp \
-    gui/browserWidgets/toolbarwidgetaction.cpp \
     utilities/mimereference.cpp \
     dialog/accountdialog.cpp \
     gui/shortcutkeys.cpp \
@@ -144,7 +143,9 @@ SOURCES += main.cpp\
     dialog/preferences/appearancepreferences.cpp \
     settings/accountsmanager.cpp \
     dialog/adduseraccountdialog.cpp \
-    dialog/accountmaintenancedialog.cpp
+    dialog/accountmaintenancedialog.cpp \
+    gui/truefalsedelegate.cpp \
+    gui/browserWidgets/editorbuttonbar.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -274,7 +275,6 @@ HEADERS  += nixnote.h \
     communication/communicationmanager.h \
     gui/browserWidgets/colormenu.h \
     xml/xmlhighlighter.h \
-    gui/browserWidgets/toolbarwidgetaction.h \
     utilities/mimereference.h \
     dialog/accountdialog.h \
     gui/shortcutkeys.h \
@@ -306,7 +306,9 @@ HEADERS  += nixnote.h \
     dialog/preferences/appearancepreferences.h \
     settings/accountsmanager.h \
     dialog/adduseraccountdialog.h \
-    dialog/accountmaintenancedialog.h
+    dialog/accountmaintenancedialog.h \
+    gui/truefalsedelegate.h \
+    gui/browserWidgets/editorbuttonbar.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

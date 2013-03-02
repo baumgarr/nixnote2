@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "models/notemodel.h"
 #include "datedelegate.h"
 #include "numberdelegate.h"
+#include "truefalsedelegate.h"
 #include "filters/notesortfilterproxymodel.h"
 #include <boost/shared_ptr.hpp>
 
@@ -39,6 +40,7 @@ private:
     DateDelegate *dateDelegate;
     NumberDelegate *blankNumber;
     NumberDelegate *kbNumber;
+    TrueFalseDelegate *trueFalseDelegate;
 
 
 public:
@@ -63,8 +65,13 @@ public:
     void getSelectedLids(QList<qint32> &lids);
     bool isLidSelected(qint32 lid);
     qint32 selectAnyNoteFromList();
+    void resizeColumns();
+    void repositionColumns();
+    void saveColumnsVisible();
+    void setColumnsVisible();
 
 signals:
+    void noteAdded(qint32 newNote);
     void openNote(bool newWindow);
     void notesDeleted(QList<qint32> lid, bool expunged);
     void notesRestored(QList<qint32>);

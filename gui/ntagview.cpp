@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMouseEvent>
 #include <QByteArray>
 #include <QtSql>
+#include "sql/linkednotebooktable.h"
+#include "sql/notebooktable.h"
 #include <QMessageBox>
 
 
@@ -41,6 +43,7 @@ extern Global global;
 NTagView::NTagView(QWidget *parent) :
     QTreeWidget(parent)
 {
+    accountFilter = 0;
     QFont f = this->font();
     f.setPointSize(8);
     this->setFont(f);
@@ -60,8 +63,11 @@ NTagView::NTagView(QWidget *parent) :
     root = new NTagViewItem(this);
     root->setIcon(NAME_POSITION,icon);
     root->setData(NAME_POSITION, Qt::UserRole, "root");
-    root->setData(NAME_POSITION, Qt::DisplayRole, tr("Tags"));
+    root->setData(NAME_POSITION, Qt::DisplayRole, tr("Tags from Personal"));
     root->setExpanded(true);
+    QFont rootFont = root->font(NAME_POSITION);
+    rootFont.setBold(true);
+    root->setFont(NAME_POSITION, rootFont);
 
     this->setMinimumHeight(1);
     this->addTopLevelItem(root);
@@ -132,6 +138,28 @@ NTagView::~NTagView() {
 }
 
 
+void NTagView::notebookSelectionChanged(qint32 notebookLid) {
+    LinkedNotebookTable table;
+    if (table.exists(notebookLid)) {
+        accountFilter = notebookLid;
+        NotebookTable notebookTable;
+        Notebook notebook;
+        notebookTable.get(notebook, notebookLid);
+        root->setData(NAME_POSITION, Qt::DisplayRole, tr("Tags from ")+QString::fromStdString(notebook.name));
+    } else {
+        root->setData(NAME_POSITION, Qt::DisplayRole, tr("Tags from Personal"));
+        accountFilter = 0;
+    }
+    if (accountFilter > 0) {
+        addAction->setEnabled(false);
+        deleteAction->setEnabled(false);
+    } else {
+        addAction->setEnabled(true);
+        deleteAction->setEnabled(true);
+    }
+}
+
+
 void NTagView::calculateHeight()
 {
     int h = 0;
@@ -199,21 +227,25 @@ void NTagView::mousePressEvent(QMouseEvent *event)
 void NTagView::loadData() {
     QSqlQuery query;
     TagTable tagTable;
-    query.exec("Select lid, name, parent_gid from TagModel order by name");
+    query.exec("Select lid, name, parent_gid, account from TagModel order by name");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
         QString name = query.value(1).toString();
         QString parentGid = query.value(2).toString();
+        qint32 account = query.value(3).toInt();
 
-        if (!tagTable.isDeleted(lid)) {
-            NTagViewItem *newWidget = new NTagViewItem();
-            newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
-            newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
-            this->dataStore.insert(lid, newWidget);
-            newWidget->parentGuid = parentGid;
-            newWidget->parentLid = tagTable.getLid(parentGid);
-            root->addChild(newWidget);
-        }
+        NTagViewItem *newWidget = new NTagViewItem();
+        newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
+        newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
+        newWidget->account = account;
+        if (account != accountFilter)
+            newWidget->setHidden(true);
+        else
+            newWidget->setHidden(false);
+        this->dataStore.insert(lid, newWidget);
+        newWidget->parentGuid = parentGid;
+        newWidget->parentLid = tagTable.getLid(parentGid);
+        root->addChild(newWidget);
     }
     this->rebuildTree();
 }
@@ -248,9 +280,10 @@ void NTagView::rebuildTree() {
 void NTagView::tagUpdated(qint32 lid, QString name) {
     this->rebuildTagTreeNeeded = true;
 
+    TagTable tagTable;
+    qint32 account = tagTable.owningAccount(lid);
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
-        TagTable tagTable;
         Tag tag;
         tagTable.get(tag, lid);
         NTagViewItem *newWidget = dataStore.value(lid);
@@ -258,9 +291,13 @@ void NTagView::tagUpdated(qint32 lid, QString name) {
         newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
         newWidget->parentGuid = QString::fromStdString(tag.parentGuid);
         newWidget->parentLid = tagTable.getLid(tag.parentGuid);
+        newWidget->account = account;
+        if (account != accountFilter)
+            newWidget->setHidden(true);
+        else
+            newWidget->setHidden(false);
         root->addChild(newWidget);
     } else {
-        TagTable tagTable;
         Tag tag;
         tagTable.get(tag, lid);
         NTagViewItem *newWidget = new NTagViewItem();
@@ -268,7 +305,12 @@ void NTagView::tagUpdated(qint32 lid, QString name) {
         newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
         newWidget->parentGuid = QString::fromStdString(tag.parentGuid);
         newWidget->parentLid = tagTable.getLid(tag.parentGuid);
+        newWidget->account = account;
         this->dataStore.insert(lid, newWidget);
+        if (account != accountFilter)
+            newWidget->setHidden(true);
+        else
+            newWidget->setHidden(false);
         root->addChild(newWidget);
         if (this->dataStore.count() == 1) {
             this->expandAll();
@@ -490,7 +532,7 @@ void NTagView::addRequested() {
     TagTable table;
     NTagViewItem *newWidget = new NTagViewItem();
     QString name = dialog.name.text().trimmed();
-    qint32 lid = table.findByName(name);
+    qint32 lid = table.findByName(name, accountFilter);
     newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
     newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
     this->dataStore.insert(lid, newWidget);
@@ -577,7 +619,7 @@ void NTagView::editComplete() {
 
     // Check that this tag doesn't already exist
     // if it exists, we go back to the original name
-    qint32 check = table.findByName(text);
+    qint32 check = table.findByName(text, accountFilter);
     if (check != 0) {
         NTagViewItem *item = dataStore[lid];
         item->setData(NAME_POSITION, Qt::DisplayRole, QString::fromStdString(tag.name));
@@ -610,7 +652,8 @@ void NTagView::tagExpunged(qint32 lid) {
 void NTagView::updateTotals(qint32 lid, qint32 total) {
     if (dataStore.contains(lid)) {
         NTagViewItem *item = dataStore[lid];
-        item->count = total;
+        if (item != NULL)
+            item->count = total;
     }
 }
 
@@ -632,7 +675,10 @@ void NTagView::hideUnassignedTags() {
         for (int i=0; i<dataStore.size(); i++) {
             item = dataStore[i];
             if (item != NULL) {
-                item->setHidden(false);
+                if (item->account == accountFilter)
+                    item->setHidden(false);
+                else
+                    item->setHidden(true);
             }
         }
         resetSize();
@@ -643,7 +689,7 @@ void NTagView::hideUnassignedTags() {
     for (int i=0; i<dataStore.size(); i++) {
         item = dataStore[i];
         if (item != NULL) {
-            if (item->count == 0)
+            if (item->count == 0 || item->account != accountFilter)
                 item->setHidden(true);
             else
                 item->setHidden(false);

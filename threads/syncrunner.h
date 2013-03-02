@@ -123,6 +123,8 @@ private:
 
     void checkForInkNotes(vector<Resource> &resources);
 
+    qint32 uploadSavedSearches();
+
 
 public:
     bool keepRunning;

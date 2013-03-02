@@ -87,13 +87,20 @@ void NNotebookViewItem::setType(qint32 type) { // Problem: type is not used, and
         this->setType(Shared);
         return;
     }
-
-    if (bookTable.isLocal(lid)) {
-        this->setType(Local);
+    if (!bookTable.isLocal(lid)) {
+        this->setType(Synchronized);
         return;
     }
-    this->setType(Synchronized);
+
+    Notebook notebook;
+    bookTable.get(notebook, lid);
+    if (QString::fromStdString(notebook.name).startsWith("Conflict", Qt::CaseInsensitive)) {
+        this->setType(Conflict);
+        return;
+    }
+    this->setType(Local);
     return;
+
 }
 
 

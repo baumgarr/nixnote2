@@ -136,6 +136,12 @@ void SyncRunner::evernoteSync() {
         syncRemoteToLocal(syncState.updateCount);
     }
 
+    if (!global.disableUploads) {
+        qint32 searchUsn = uploadSavedSearches();
+        if (searchUsn > updateSequenceNumber)
+            updateSequenceNumber = searchUsn;
+    }
+
     updateNoteTableTags();
     comm->getUserInfo(user);
     userTable.updateUser(user);
@@ -391,11 +397,19 @@ void SyncRunner::syncRemoteNotebooks(vector<Notebook> books) {
 void SyncRunner::syncRemoteNotes(vector<Note> notes) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteNotes";
     NoteTable noteTable;
+    NotebookTable bookTable;
 
     for (unsigned int i=0; i<notes.size() && keepRunning; i++) {
         Note t = notes[i];
         qint32 lid = noteTable.getLid(t.guid);
         if (lid > 0) {
+            // Find out if it is a conflicting change
+            if (noteTable.isDirty(lid)) {
+                qint32 newLid = noteTable.duplicateNote(lid);
+                qint32 conflictNotebook = bookTable.getConflictNotebook();
+                noteTable.updateNotebook(newLid, conflictNotebook, true);
+                emit noteUpdated(newLid);
+             }
             noteTable.sync(lid, notes.at(i));
         } else {
             noteTable.sync(t);
@@ -603,3 +617,40 @@ void SyncRunner::applicationException(QString s) {
         synchronize();
 }
 
+
+
+
+
+// Upload any saved searchs
+qint32 SyncRunner::uploadSavedSearches() {
+    qint32 usn;
+    qint32 maxUsn = 0;
+    SearchTable stable;
+    QList<qint32> lids;
+    stable.getAllDirty(lids);
+    for (int i=0; i<lids.size(); i++) {
+        SavedSearch search;
+        stable.get(search, lids[i]);
+        if (!stable.isDeleted(lids[i])) {
+            qint32 oldUsn = search.updateSequenceNum;
+            usn = comm->uploadSavedSearch(search);
+            if (usn > 0) {
+                maxUsn = usn;
+                if (oldUsn == 0)
+                    stable.updateGuid(lids[i], search.guid);
+                stable.setUpdateSequenceNumber(lids[i], usn);
+            } else {
+                error = true;
+            }
+        } else {
+            string guid = stable.getGuid(lids[i]);
+            stable.expunge(lids[i]);
+            if (search.updateSequenceNum > 0) {
+                usn = comm->expungeSavedSearch(guid);
+                if (usn>0)
+                    maxUsn = usn;
+            }
+        }
+    }
+    return maxUsn;
+}

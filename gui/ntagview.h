@@ -45,6 +45,7 @@ private:
     QShortcut *addShortcut;
     QShortcut *deleteShortcut;
     TreeWidgetEditor *editor;
+    qint32 accountFilter;
 
 private slots:
     int calculateHeightRec(QTreeWidgetItem * item);
@@ -85,6 +86,7 @@ public slots:
     void tagExpunged(qint32 lid);
     void updateTotals(qint32 lid, qint32 total);
     void hideUnassignedTags();
+    void notebookSelectionChanged(qint32 notebookLid);
 
 protected:
     void dragMoveEvent(QDragMoveEvent *event);

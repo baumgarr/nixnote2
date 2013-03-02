@@ -131,6 +131,8 @@ private:
     void initializeGlobalSettings();
     void waitCursor(bool value);
     void saveContents();
+    void saveNoteColumnPositions();
+    void saveNoteColumnWidths();
 
 
 public:
@@ -193,6 +195,8 @@ public slots:
     void addAnotherUser();
     void switchUser();
     void userMaintenance();
+    void viewNoteListWide();
+    void viewNoteListNarrow();
 
 signals:
     void syncRequested();

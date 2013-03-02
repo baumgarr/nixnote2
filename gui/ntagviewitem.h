@@ -31,14 +31,15 @@ public:
     QList<qint32> childrenGuids;
     QString parentGuid;
     qint32 count;
+    qint32 account;
 
     bool operator<(const QTreeWidgetItem &other)const;
     void setRootColor(bool val) ;
 
 
 signals:
-
 public slots:
+    void setHidden(bool hide);
 
 };
 

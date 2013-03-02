@@ -72,6 +72,7 @@ signals:
     void stackAdded(QString name);
     void stackDeleted(QString name);
     void stackRenamed(QString oldName, QString newName);
+    void notebookSelectionChanged(qint32);
 
 public slots:
     void notebookUpdated(qint32 lid, QString name);

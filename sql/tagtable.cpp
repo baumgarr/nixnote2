@@ -37,23 +37,17 @@ TagTable::TagTable()
 // Given a tag's name as a std::string, we return the lid
 qint32 TagTable::findByName(string &name, qint32 account) {
     QSqlQuery query;
-    if (account == 0) {
-        query.prepare("Select lid from DataStore where key=:key and data=:name");
-        query.bindValue(":key", TAG_NAME);
-        query.bindValue(":name", QString::fromStdString(name));
-        query.exec();
-    } else {
-        query.prepare("Select lid from DataStore where key=:key and data=:name and lid in (select lid from datastore where key=:accountKey and data=:accountData");
-        query.bindValue(":key", TAG_NAME);
-        query.bindValue(":name", QString::fromStdString(name));
-        query.bindValue(":accountKey", TAG_OWNING_ACCOUNT);
-        query.bindValue("accountData", account);
-        query.exec();
+    query.prepare("Select lid from DataStore where key=:key and data=:name");
+    query.bindValue(":key", TAG_NAME);
+    query.bindValue(":name", QString::fromStdString(name));
+    query.exec();
+
+    while (query.next()) {
+        qint32 lid = query.value(0).toInt();
+        if (owningAccount(lid) == account)
+            return lid;
     }
-    if (query.next())
-        return query.value(0).toInt();
-    else
-        return 0;
+    return 0;
 }
 
 
@@ -84,6 +78,7 @@ qint32 TagTable::owningAccount(qint32 lid) {
     query.prepare("Select data from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_OWNING_ACCOUNT);
+    query.exec();
     if (query.next())
         return query.value(0).toInt();
     return 0;
@@ -140,7 +135,7 @@ qint32 TagTable::sync(Tag &tag, qint32 account) {
 
 
 // Update a tag record
-void TagTable::update(Tag &tag, bool dirty=true, qint32 account) {
+void TagTable::update(Tag &tag, bool dirty=true) {
     qint32 lid = getLid(tag.guid);
     if (lid > 0) {
         QSqlQuery query;
@@ -148,6 +143,7 @@ void TagTable::update(Tag &tag, bool dirty=true, qint32 account) {
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
         query.exec();
+        qint32 account = owningAccount(lid);
         add(lid, tag, dirty,account);
 
         // Now update the Note display list
@@ -427,11 +423,12 @@ void TagTable::deleteTag(qint32 lid) {
     list.append(lid);
 
     for (qint32 i=0; i<list.size(); i++) {
+        NoteTable noteTable;
         Tag tag;
         qint32 currentLid = list[i];
+        QSqlQuery query;
         get(tag, currentLid);
         if (tag.__isset.updateSequenceNum && tag.updateSequenceNum > 0) {
-            QSqlQuery query;
             query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
             query.bindValue(":lid", currentLid);
             query.bindValue(":key", TAG_ISDELETED);
@@ -439,6 +436,11 @@ void TagTable::deleteTag(qint32 lid) {
             query.exec();
         } else {
             expunge(currentLid);
+        }
+        QList<qint32> noteLids;
+        noteTable.findNotesByTag(noteLids, currentLid);
+        for (int j=0; j<noteLids.size(); j++) {
+            noteTable.removeTag(noteLids[j], currentLid, true);
         }
     }
 }

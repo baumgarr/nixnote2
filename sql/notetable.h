@@ -111,9 +111,9 @@ public:
     bool updateNotebookGuid(QString oldGuid, QString newGuid, QString name);  // Update a notebook's name/guid
     bool updateNoteList(qint32 lid, Note &t, bool isDirty);  // Update the user viewing list
     bool updateNotebookName(qint32 lid, QString name);  // Update a notebook's name in the user listing
-    void updateNotebook(qint32 noteLid, qint32 notebookLid, bool isDirty);   // Set the current note's notebook
+    void updateNotebook(qint32 noteLid, qint32 notebookLid);   // Set the current note's notebook
     void setDirty(qint32 lid, bool dirty);
-    void updateNotebook(qint32 noteLid, qint32 notebookLid);
+    void updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty=false);
     void updateUrl(qint32 lid, QString text, bool dirty);
     void updateTitle(qint32 noteLid, QString title, bool setAsDirty);
     void updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty);
@@ -132,6 +132,7 @@ public:
     qint32 getCount();                                     // count of all notes
     qint32 getUnindexedCount();                            // count of unindexed notes
     qint32 getAllDeleted(QList<qint32> &lids);
+    qint32 duplicateNote(qint32 oldLid);
 };
 
 

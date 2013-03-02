@@ -139,7 +139,7 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
     if (newWindow && !found) {
         view = new NBrowserWindow();
         addBrowser(view, QString::fromStdString(n.title));
-        connect(view, SIGNAL(noteUpdated(qint32)), this, SLOT(noteTitleUpdateSignaled(qint32)));
+        connect(view, SIGNAL(noteUpdated(qint32)), this, SLOT(noteUpdateSignaled(qint32)));
     } else {
         view = currentBrowser();
         tabBar->setTabText(tabBar->currentIndex(), QString::fromStdString(n.title));

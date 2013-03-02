@@ -454,7 +454,7 @@ void ImportData::processNoteTagList(QStringList &guidList, QStringList &names) {
             newTag.name = "newtag";
             newTag.__isset.name = true;
             newTag.__isset.guid = true;
-            tagTable.add(0, newTag, false);
+            tagTable.add(0, newTag, false, 0);
             names.push_back(QString::fromStdString(newTag.name));
         } else {
             Tag tag;
@@ -861,13 +861,13 @@ void ImportData::processTagNode() {
 
     // Check if we have a tag by this name already.  If we
     // do then we treat this as an update.
-    qint32 lid = tagTable.findByName(name);
+    qint32 lid = tagTable.findByName(name,0);
     if (lid == 0)
         lid = tagTable.getLid(tag.guid);
     if (lid == 0)
-        tagTable.add(0, tag, tagIsDirty);
+        tagTable.add(0, tag,tagIsDirty, 0);
     else {
-        tagTable.sync(lid, tag);
+        tagTable.sync(lid, tag, 0);
         tagTable.setDirty(lid,tagIsDirty);
     }
     return;

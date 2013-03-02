@@ -26,6 +26,7 @@ void FilterEngine::filter() {
     QLOG_DEBUG() << "Resetting filter table";
     sql.exec("Insert into filter (lid) select lid from NoteTable");
     QLOG_DEBUG() << "Reset complete";
+
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
 
     QLOG_DEBUG() << "Filtering notebooks";
@@ -42,7 +43,6 @@ void FilterEngine::filter() {
 
 
     // Remove any selected notes that are not in the filter.
-    QList<qint32> oldLids;
     QSqlQuery query;
     query.exec("select lid from filter");
     QList<qint32> goodLids;

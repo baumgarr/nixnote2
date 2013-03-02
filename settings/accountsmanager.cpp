@@ -109,6 +109,16 @@ void AccountsManager::setOAuthToken(QString token) {
 
     this->removeId(currentId);
     this->addId(currentId, name, token, server);
+    QDomNodeList nodes = doc.elementsByTagName("account");
+    for (int i=0; i<nodes.size(); i++) {
+        QDomElement element = nodes.at(i).toElement();
+        QDomNode idNode = element.firstChildElement("id");
+        int value = idNode.toElement().text().toInt();
+        if (value == currentId) {
+            currentNode = nodes.at(i);
+            i=nodes.size();
+        }
+    }
 }
 
 

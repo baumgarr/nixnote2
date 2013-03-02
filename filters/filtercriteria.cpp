@@ -239,10 +239,6 @@ void FilterCriteria::duplicate(FilterCriteria &newFilter) {
         newFilter.selectedNotes.append(selectedNotes[i]);
     }
 
-    for (int i=0; i<selectedNotes.size(); i++) {
-        newFilter.selectedNotes.append(selectedNotes[i]);
-    }
-
     if (deletedOnlyIsSet)
         newFilter.setDeletedOnly(deletedOnly);
 
@@ -268,6 +264,4 @@ void FilterCriteria::duplicate(FilterCriteria &newFilter) {
     newFilter.resetDeletedOnly = resetDeletedOnly;
     newFilter.resetLid = resetLid;
     newFilter.resetSearchString = resetSearchString;
-
-
 }

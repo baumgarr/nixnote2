@@ -460,3 +460,44 @@ int CommunicationManager::inkNoteReady(QImage *img, QImage *replyImage, int posi
     return -1;
 }
 
+
+
+
+
+qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
+    // Try upload
+    try {
+        if (search.updateSequenceNum > 0)
+            return noteStoreClient->updateSearch(authToken, search);
+        else {
+            noteStoreClient->createSearch(search, authToken, search);
+            return search.updateSequenceNum;
+        }
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return 0;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        return 0;
+    }
+}
+
+
+qint32 CommunicationManager::expungeSavedSearch(string guid) {
+    // Try upload
+    try {
+        return noteStoreClient->expungeSearch(authToken, guid);
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return 0;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        return 0;
+    }
+}

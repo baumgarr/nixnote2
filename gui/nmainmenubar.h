@@ -81,6 +81,8 @@ public:
 
     QAction *viewSourceAction;
     QAction *viewExtendedInformation;
+    QAction *viewNoteListWide;
+    QAction *viewNoteListNarrow;
     QAction *viewLeftPanel;
     QAction *viewNoteList;
     QAction *viewNotePanel;
