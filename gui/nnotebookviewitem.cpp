@@ -22,6 +22,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/linkednotebooktable.h"
 #include "sql/notebooktable.h"
 
+
+/*
+ * These constructors are somewhat confusing
+ * If they are like they should be, a comment about the choices here
+ * would be really helpful
+ */
+
 NNotebookViewItem::NNotebookViewItem(qint32 lid, QTreeWidget* parent):QTreeWidgetItem(parent) {
     count = 0;
     this->setType(lid);
@@ -31,7 +38,7 @@ NNotebookViewItem::NNotebookViewItem(qint32 lid, QTreeWidget* parent):QTreeWidge
 
 NNotebookViewItem::NNotebookViewItem(qint32 lid):QTreeWidgetItem(){
     count = 0;
-    this->type = type;
+    this->type = type; // what?
     this->lid = lid;
     this->setType(lid);
 }

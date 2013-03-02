@@ -1026,7 +1026,7 @@ void NixNote::newNote() {
     n.__isset.title = true;
     n.__isset.active = true;
     n.active = true;
-    QDateTime now;
+    //QDateTime now;
     n.created = QDateTime::currentMSecsSinceEpoch();
     n.updated = n.created;
     n.__isset.created = true;
