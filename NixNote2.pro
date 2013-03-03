@@ -382,3 +382,4 @@ INCLUDEPATH += /usr/local/include/thrift \
 #QMAKE_CXXFLAGS += -isystem=./evernote/
 
 #QMAKE_LFLAGS += -static
+

@@ -538,14 +538,16 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 void NoteFormatter::modifyTodoTags(QDomElement &todo) {
     QLOG_TRACE() << "Entering NeverNote.modifyTodoTags";
     todo.setAttribute("type", "checkbox");
+
+    // Checks the en-to tag wheter or not the todo-item is checked or not
+    // and sets up the HTML to keep storing the information in value
     QString checked = todo.attribute("checked");
-    todo.removeAttribute("checked");
     if (checked.toLower() == "true")
-            todo.setAttribute("checked", "");
+        todo.setAttribute("checked", "checked");
     else
-            todo.setAttribute("unchecked","");
-    todo.setAttribute("value", checked);
-    todo.setAttribute("onClick", "value=checked;window.jambi.contentChanged(); ");
+        todo.removeAttribute("checked");
+
+    todo.setAttribute("onClick", "if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();");
     todo.setAttribute("onMouseOver", "style.cursor='hand'");
     todo.setTagName("input");
     QLOG_TRACE() << "Leaving NeverNote.modifyTodoTags";

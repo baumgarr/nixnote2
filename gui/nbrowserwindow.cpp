@@ -760,15 +760,14 @@ void NBrowserWindow::contentChanged() {
     this->sendUpdateSignal();
 }
 
-
 // The todo button was pressed
 void NBrowserWindow::todoButtonPressed() {
     QString script_start="document.execCommand('insertHtml', false, '";
     QString script_end = "');";
     QString todo =
-            "<input TYPE=\"CHECKBOX\" value=\"false\" " +
+            "<input TYPE=\"CHECKBOX\" " +
             QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
-            QString("onClick=\"value=checked; window.browserWindow.contentChanged(); \" />");
+            QString("onClick=\"if(!checked) removeAttribute(\\'checked\\'); else setAttribute(\\'checked\\', \\'checked\\'); editorWindow.editAlert();\" />");
     editor->page()->mainFrame()->evaluateJavaScript(
             script_start + todo + script_end);
     editor->setFocus();
