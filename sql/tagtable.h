@@ -82,6 +82,9 @@ public:
     bool isDeleted(qint32 lid);                // is this tag deleted?
     bool isLinked(qint32 lid);                 // is this a linked tag?
     qint32 owningAccount(qint32 lid);          // Get the owning account for a tag
+    qint32 getAllDirty(QList<qint32> &lids);   // get all dirty tags
+    void setUpdateSequenceNumber(qint32 lid, qint32 usn);  // set the update sequence number
+    void resetLinkedTagsDirty();                // mark all linked tags as not-dirty
 };
 
 #endif // TAGTABLE_H

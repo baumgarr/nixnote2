@@ -121,6 +121,12 @@ public:
     qint32 uploadSavedSearch(SavedSearch &search);
     qint32 expungeSavedSearch(string guid);
 
+    qint32 uploadTag(Tag &tag);
+    qint32 expungeTag(string guid);
+
+    qint32 uploadNotebook(Notebook &notebook);
+    qint32 expungeNotebook(string guid);
+
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);
 };

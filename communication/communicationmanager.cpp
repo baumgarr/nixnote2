@@ -501,3 +501,82 @@ qint32 CommunicationManager::expungeSavedSearch(string guid) {
         return 0;
     }
 }
+
+
+qint32 CommunicationManager::uploadTag(Tag &tag) {
+    // Try upload
+    try {
+        if (tag.updateSequenceNum > 0)
+            return noteStoreClient->updateTag(authToken, tag);
+        else {
+            noteStoreClient->createTag(tag, authToken, tag);
+            return tag.updateSequenceNum;
+        }
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return 0;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        return 0;
+    }
+}
+
+
+qint32 CommunicationManager::expungeTag(string guid) {
+    // Try upload
+    try {
+        return noteStoreClient->expungeTag(authToken, guid);
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return 0;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        return 0;
+    }
+}
+
+
+
+qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
+    // Try upload
+    try {
+        if (notebook.updateSequenceNum > 0)
+            return noteStoreClient->updateNotebook(authToken, notebook);
+        else {
+            noteStoreClient->createNotebook(notebook, authToken, notebook);
+            return notebook.updateSequenceNum;
+        }
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return 0;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        return 0;
+    }
+}
+
+
+qint32 CommunicationManager::expungeNotebook(string guid) {
+    // Try upload
+    try {
+        return noteStoreClient->expungeNotebook(authToken, guid);
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        return 0;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        return 0;
+    }
+}

@@ -506,3 +506,41 @@ qint32 TagTable::findChildren(QList<qint32> &list, QString parentGuid) {
     return list.size();
 }
 
+
+
+
+
+// Get all dirty lids
+qint32 TagTable::getAllDirty(QList<qint32> &lids) {
+    QSqlQuery query;
+    lids.clear();
+    query.prepare("Select lid from DataStore where key=:key");
+    query.bindValue(":key", TAG_ISDIRTY);
+    query.exec();
+    while(query.next()) {
+        lids.append(query.value(0).toInt());
+    }
+    return lids.size();
+}
+
+
+
+// Update the USN
+void TagTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
+    QSqlQuery query;
+    query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
+    query.bindValue(":data", usn);
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", TAG_UPDATE_SEQUENCE_NUMBER);
+    query.exec();
+}
+
+// Linked tags are not uploaded, so we reset the dirty flags in case
+// they were updated locally
+void TagTable::resetLinkedTagsDirty() {
+    QSqlQuery query;
+    query.prepare("Delete from datastore where key=:key and lid in (select lid from datastore where key=:linkedkey and data > 0)");
+    query.bindValue(":key", TAG_ISDIRTY);
+    query.bindValue(":linkedkey", TAG_OWNING_ACCOUNT);
+    query.exec();
+}

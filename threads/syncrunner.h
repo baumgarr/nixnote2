@@ -124,6 +124,7 @@ private:
     void checkForInkNotes(vector<Resource> &resources);
 
     qint32 uploadSavedSearches();
+    qint32 uploadTags();
 
 
 public:

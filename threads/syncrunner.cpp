@@ -140,6 +140,9 @@ void SyncRunner::evernoteSync() {
         qint32 searchUsn = uploadSavedSearches();
         if (searchUsn > updateSequenceNumber)
             updateSequenceNumber = searchUsn;
+        qint32 tagUsn = uploadTags();
+        if (tagUsn > updateSequenceNumber)
+            updateSequenceNumber = tagUsn;
     }
 
     updateNoteTableTags();
@@ -633,7 +636,7 @@ qint32 SyncRunner::uploadSavedSearches() {
         if (!stable.isDeleted(lids[i])) {
             qint32 oldUsn = search.updateSequenceNum;
             usn = comm->uploadSavedSearch(search);
-            if (usn > 0) {
+            if (usn > maxUsn) {
                 maxUsn = usn;
                 if (oldUsn == 0)
                     stable.updateGuid(lids[i], search.guid);
@@ -646,9 +649,68 @@ qint32 SyncRunner::uploadSavedSearches() {
             stable.expunge(lids[i]);
             if (search.updateSequenceNum > 0) {
                 usn = comm->expungeSavedSearch(guid);
-                if (usn>0)
+                if (usn>maxUsn)
                     maxUsn = usn;
             }
+        }
+    }
+    return maxUsn;
+}
+
+
+// Upload any tags
+qint32 SyncRunner::uploadTags() {
+    qint32 usn;
+    qint32 maxUsn = 0;
+    TagTable table;
+    QList<qint32> lids, deletedLids, updatedLids;
+    table.resetLinkedTagsDirty();
+    table.getAllDirty(lids);
+    // Split the lids into lids to be updated, and lids to be deleted
+    for (int i=0; i<lids.size(); i++) {
+        if (table.isDeleted(lids[i]))
+            deletedLids.append(lids[i]);
+        else
+            updatedLids.append(lids[i]);
+    }
+
+    // Update any lids
+    int i=0;
+    while(updatedLids.size() > 0) {
+        Tag tag;
+        table.get(tag, updatedLids[i]);
+        qint32 parentLid = 0;
+        if (tag.__isset.parentGuid && tag.parentGuid != "")
+            parentLid = table.getLid(tag.parentGuid);
+
+        // If the parent is either not dirty, or there is no parent we can update this lid.
+        if (parentLid <= 0 || !table.isDirty(parentLid)) {
+            qint32 oldUsn = tag.updateSequenceNum;
+            usn = comm->uploadTag(tag);
+            if (usn > 0) {
+                maxUsn = usn;
+                if (oldUsn == 0)
+                    table.updateGuid(lids[i], tag.guid);
+                table.setUpdateSequenceNumber(lids[i], usn);
+                updatedLids.removeAt(i);
+                i=-1;  // Reset for the next time through the loop
+            } else {
+                error = true;
+                updatedLids.clear();
+            }
+        }
+        i++;
+    }
+
+    // delete any lids
+    for (int i=0; i<deletedLids.size(); i++) {
+        Tag tag;
+        table.get(tag, deletedLids[i]);
+        table.expunge(lids[i]);
+        if (tag.updateSequenceNum > 0) {
+            usn = comm->expungeTag(tag.guid);
+            if (usn>maxUsn)
+                maxUsn = usn;
         }
     }
     return maxUsn;
