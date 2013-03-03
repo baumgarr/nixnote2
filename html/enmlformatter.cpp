@@ -58,7 +58,7 @@ void EnmlFormatter::setHtml(QString h) {
 QByteArray EnmlFormatter::rebuildNoteEnml() {
     resources.clear();
 
-        QLOG_DEBUG() << "Before:\n"<< content<<"\n\n";
+        //QLOG_DEBUG() << "Before:\n"<< content<<"\n\n";
 
 //    // Run it through "tidy".  It is a program which will fix any invalid HTML
 //    // and give us the results back through stdout.  In a perfect world this
@@ -74,7 +74,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
     QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
 
-    QLOG_DEBUG() << "\n\nafter\n" << content <<"\n\n";
+    //QLOG_DEBUG() << "\n\nafter\n" << content <<"\n\n";
     if (content == "") {
         formattingError = true;
         return "";
@@ -126,20 +126,18 @@ void EnmlFormatter::parseNodes(const QDomNodeList &nodes) {
 
 // Fix the contents of the node back to ENML.
 void EnmlFormatter::fixNode(const QDomNode &node) {
-    QDomElement scanChecked = node.toElement();
-    if (scanChecked.hasAttribute("checked")) {
-        if (scanChecked.attribute("checked").toLower() != "true")
-            scanChecked.setAttribute("checked", "false");
-    }
     if (node.nodeName().toLower() == "#comment" || node.nodeName().toLower() == "script") {
         node.parentNode().removeChild(node);
     }
     if (node.nodeName().toLower() == "input") {
         QDomElement e = node.toElement();
         e.setTagName("en-todo");
-        QString value = e.attribute("value");
-        if (value.trimmed() == "")
-            value = "false";
+
+        if (e.hasAttribute("checked"))
+            e.setAttribute("checked", "true");
+        else
+            e.removeAttribute("checked");
+
         cleanupElementAttributes(e);
     }
 

@@ -282,7 +282,7 @@ void NMainMenuBar::setupViewMenu() {
     viewStatusbar->setFont(font);
     viewMenu->addAction(viewStatusbar);
     viewStatusbar->setCheckable(true);
-    viewStatusbar->setChecked(true);
+    //viewStatusbar->setChecked(true);
     connect(viewStatusbar, SIGNAL(triggered()), parent, SLOT(toggleStatusbar()));
 
 }
