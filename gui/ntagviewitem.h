@@ -32,6 +32,7 @@ public:
     QString parentGuid;
     qint32 count;
     qint32 account;
+    bool isObsolete;
 
     bool operator<(const QTreeWidgetItem &other)const;
     void setRootColor(bool val) ;

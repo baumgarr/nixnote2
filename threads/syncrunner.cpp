@@ -693,6 +693,7 @@ qint32 SyncRunner::uploadTags() {
                 if (oldUsn == 0)
                     table.updateGuid(lids[i], tag.guid);
                 table.setUpdateSequenceNumber(lids[i], usn);
+                table.setDirty(tag.guid, false);
                 updatedLids.removeAt(i);
                 i=-1;  // Reset for the next time through the loop
             } else {

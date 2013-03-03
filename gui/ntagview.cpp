@@ -138,6 +138,10 @@ NTagView::~NTagView() {
 }
 
 
+
+// Called when the notebook has changed.  If this is a non-linked notebook we
+// display all available tags owned by this user.  If it is a linked notebook
+// we only show the tags that are connected to that notebook
 void NTagView::notebookSelectionChanged(qint32 notebookLid) {
     LinkedNotebookTable table;
     if (table.exists(notebookLid)) {
@@ -250,6 +254,8 @@ void NTagView::loadData() {
     this->rebuildTree();
 }
 
+
+// Rebuild the GUI tree.
 void NTagView::rebuildTree() {
     if (!this->rebuildTagTreeNeeded)
         return;
@@ -277,6 +283,9 @@ void NTagView::rebuildTree() {
     this->resetSize();
 }
 
+
+// A tag has been updated.   Things like a sync can cause this to be called
+// because a tag's name may have changed.
 void NTagView::tagUpdated(qint32 lid, QString name) {
     this->rebuildTagTreeNeeded = true;
 
@@ -321,11 +330,15 @@ void NTagView::tagUpdated(qint32 lid, QString name) {
 }
 
 
+// Force a reset of the size.  Useful when hiding tags so that the display looks
+// correct.
 void NTagView::resetSize() {
     calculateHeight();
 }
 
 
+// A tag was selected so a new FilterCriteria is created and the
+// filtered table will display the results.
 void NTagView::buildSelection() {
     QLOG_TRACE() << "Inside NTagView::buildSelection()";
 
@@ -380,6 +393,8 @@ void NTagView::updateSelection() {
     blockSignals(false);
 }
 
+
+
 // Add a new tag to the table
 void NTagView::addNewTag(qint32 lid) {
     TagTable tagTable;
@@ -427,6 +442,7 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
     QLOG_DEBUG() << "Dropping mime: " << data->formats();
 
 
+    // If this is a tag-to-tag drop then we are modifying the hierarchy
     if (data->hasFormat("application/x-nixnote-tag")) {
 
         QTreeWidgetItem *newChild;
@@ -435,11 +451,13 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
         if (parent == NULL)
             return false;
 
+        // Get the lid we are dropping.
         QByteArray d = data->data("application/x-nixnote-tag");
         qint32 lid = d.toInt();
         if (lid == 0)
             return false;
 
+        // create a new child for this parent
         newChild = new QTreeWidgetItem(parent);
         qint32 parentLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
         Tag tag;
@@ -448,16 +466,21 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
         QString guid;
         tagTable.getGuid(guid, parentLid);
         tag.parentGuid = guid.toStdString();
+        tag.__isset.parentGuid = true;
         tagTable.update(tag, true);
 
         copyTreeItem(currentItem(), newChild);
-        currentItem()->setHidden(true);
+        NTagViewItem *ptr = (NTagViewItem*)currentItem();
+        ptr->isObsolete = true;
+        ptr->setHidden(true);
         this->sortByColumn(NAME_POSITION, Qt::AscendingOrder);
         sortItems(NAME_POSITION, Qt::AscendingOrder);
         return true;
     }
     return false;
 }
+
+
 
 // Implement of dropEvent so dropMimeData gets called
 void NTagView::dropEvent(QDropEvent *event) {
@@ -475,7 +498,9 @@ void NTagView::copyTreeItem(QTreeWidgetItem *source, QTreeWidgetItem *target) {
     for (int i=0; i<source->childCount(); i++) {
         QTreeWidgetItem *newChild = new QTreeWidgetItem(target);
         copyTreeItem(source->child(i), newChild);
-        source->child(i)->setHidden(true);
+        NTagViewItem *ptr = (NTagViewItem*)source->child(i);
+        ptr->isObsolete = true;
+        ptr->setHidden(true);
     }
     return;
 }
@@ -502,7 +527,7 @@ void NTagView::mouseMoveEvent(QMouseEvent *event)
 }
 
 
-
+// Display the popup context menu
 void NTagView::contextMenuEvent(QContextMenuEvent *event) {
     QList<QTreeWidgetItem*> items = selectedItems();
     if (items.size() == 0) {
@@ -518,7 +543,7 @@ void NTagView::contextMenuEvent(QContextMenuEvent *event) {
 }
 
 
-
+// Add a new tag to the tre
 void NTagView::addRequested() {
     TagProperties dialog;
     QList<QTreeWidgetItem*> items = selectedItems();
@@ -546,6 +571,8 @@ void NTagView::addRequested() {
     emit(tagAdded(lid));
 }
 
+
+// Display the properties dialog
 void NTagView::propertiesRequested() {
     TagProperties dialog;
     QList<QTreeWidgetItem*> items = selectedItems();
@@ -569,6 +596,8 @@ void NTagView::propertiesRequested() {
     }
 }
 
+
+// Delete an item from the tree.  We really just hide it.
 void NTagView::deleteRequested() {
     QList<QTreeWidgetItem*> items = selectedItems();
 
@@ -586,13 +615,17 @@ void NTagView::deleteRequested() {
     }
     TagTable table;
     table.deleteTag(lid);
-    items[0]->setHidden(true);
+    NTagViewItem *ptr = (NTagViewItem*)items[0];
+    ptr->setHidden(true);
 
     // Now remove it in the datastore
     dataStore.remove(items[0]->data(NAME_POSITION, Qt::UserRole).toInt());
     emit(tagDeleted(lid, items[0]->data(NAME_POSITION, Qt::DisplayRole).toString()));
 }
 
+
+// Rename the current tag.  This is just the setup for the edit.  When it is
+// complete the editComplete() function is called so the edit can be validated.
 void NTagView::renameRequested() {
     editor = new TreeWidgetEditor(this);
     connect(editor, SIGNAL(editComplete()), this, SLOT(editComplete()));
@@ -609,6 +642,8 @@ void NTagView::renameRequested() {
 }
 
 
+
+// An edit is complete.  Validate it is an acceptable tag
 void NTagView::editComplete() {
     QString text = editor->text().trimmed();
     qint32 lid = editor->lid;
@@ -636,6 +671,7 @@ void NTagView::editComplete() {
 
 
 
+// A tag is purged.
 void NTagView::tagExpunged(qint32 lid) {
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
@@ -648,7 +684,7 @@ void NTagView::tagExpunged(qint32 lid) {
 
 
 
-
+// Update the total counts for the tag.
 void NTagView::updateTotals(qint32 lid, qint32 total) {
     if (dataStore.contains(lid)) {
         NTagViewItem *item = dataStore[lid];
@@ -658,6 +694,10 @@ void NTagView::updateTotals(qint32 lid, qint32 total) {
 }
 
 
+
+// If a tag has a zero count and if we should hide the tags, hide it.
+// Make sure the tag's parents are also visible if the child has a non-zero
+// count.
 void NTagView::hideUnassignedTags() {
     NTagViewItem *item;
     if (hideUnassignedAction->isChecked())
@@ -675,7 +715,7 @@ void NTagView::hideUnassignedTags() {
         for (int i=0; i<dataStore.size(); i++) {
             item = dataStore[i];
             if (item != NULL) {
-                if (item->account == accountFilter)
+                if (item->account == accountFilter && !item->isObsolete)
                     item->setHidden(false);
                 else
                     item->setHidden(true);

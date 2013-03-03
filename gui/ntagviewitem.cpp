@@ -20,22 +20,26 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "ntagviewitem.h"
 
 NTagViewItem::NTagViewItem(QTreeWidget* parent):QTreeWidgetItem(parent) {
-    parentLid = 0;
-    account = 0;
-    childrenGuids.empty();
-    parentGuid = "";
-    count = 0;
+    parentLid = 0;     // The Id of the parent to this tag
+    account = 0;        // The notebook account that owns this tag (non zero if this tag is from a linked notebook).
+    childrenGuids.empty();  // Children of this tag.
+    parentGuid = "";    // GUID of the parent of this tag.
+    count = 0;          // Count of notes matching this tag
+    isObsolete = false;   // Is this tag permanently obsolete (i.e. deleted, expunged, an old move ...)
 }
 
 
 NTagViewItem::NTagViewItem():QTreeWidgetItem(){
-    parentLid = 0;
-    childrenGuids.empty();
-    parentGuid = "";
-    count = 0;
-    account = 0;
+    parentLid = 0;     // The Id of the parent to this tag
+    account = 0;        // The notebook account that owns this tag (non zero if this tag is from a linked notebook).
+    childrenGuids.empty();  // Children of this tag.
+    parentGuid = "";    // GUID of the parent of this tag.
+    count = 0;          // Count of notes matching this tag
+    isObsolete = false;   // Is this tag permanently obsolete (i.e. deleted, expunged, an old move ...)
 }
 
+
+// Setup the root view of the tree
 void NTagViewItem::setRootColor(bool val) {
     if (val) {
         QFont f;
@@ -44,12 +48,20 @@ void NTagViewItem::setRootColor(bool val) {
     }
 }
 
-  bool NTagViewItem::operator<(const QTreeWidgetItem &other)const {
+
+
+// Used when sorting tags.  We want to sort case insensitive
+bool NTagViewItem::operator<(const QTreeWidgetItem &other)const {
     int column = treeWidget()->sortColumn();
     return text(column).toLower() < other.text(column).toLower();
-  }
+}
 
 
-  void NTagViewItem::setHidden(bool hide) {
-      QTreeWidgetItem::setHidden(hide);
-  }
+
+// Hide the tree item
+void NTagViewItem::setHidden(bool hide) {
+    if (!isObsolete)
+        QTreeWidgetItem::setHidden(hide);
+    else
+        QTreeWidgetItem::setHidden(true);
+}
