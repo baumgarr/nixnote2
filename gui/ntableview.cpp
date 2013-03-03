@@ -429,6 +429,7 @@ void NTableView::deleteSelectedNotes() {
             ntable.expunge(lids[i]);
         sql.bindValue(":lid", lids[i]);
         sql.exec();
+        delete global.cache[lids[i]];
         global.cache.remove(lids[i]);
     }
     transaction.exec("commit");

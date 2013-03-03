@@ -357,6 +357,7 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
     }
 
     // No determine some attributes of the note based upon the content
+    // This should probably happen every time a note changes? Or at least something simular:
     QString content;
     if (t.__isset.content)
         content = QString::fromStdString(t.content);
@@ -379,7 +380,7 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
             query.bindValue(":data", true);
             query.exec();
         }
-        position = content.indexOf("en-todo checked=\"false\"");
+        position = qMax(content.indexOf("<en-todo checked=\"false\""), content.indexOf("<en-todo>"));
         if (position > 0) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
