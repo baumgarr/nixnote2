@@ -280,6 +280,8 @@ bool EnmlFormatter::isAttributeValid(QString attribute, QString tag) {
     if (attribute == "data") return false;
     if (attribute == "dynsrc") return false;
     if (attribute == "tabindex") return false;
+    if (attribute == "style") return false;
+    if (attribute == "type") return false;
 
     // These are things that are NixNote specific
     if (attribute == "en-tag") return false;
