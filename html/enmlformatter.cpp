@@ -378,7 +378,6 @@ void EnmlFormatter::fixEnmedia() {
     while (pos > 0) {
         int endPos = content.indexOf(">", pos);
         content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
-        QLOG_DEBUG() << content;
         pos = content.indexOf("<en-media", pos+1);
     }
 }
