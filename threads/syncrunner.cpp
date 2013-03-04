@@ -71,7 +71,7 @@ void SyncRunner::synchronize() {
     error = false;
 
     // We try up to three times.
-    if (retryCount = 0)
+    if (retryCount == 0)
         retryCount = 3;
     else
         retryCount--;
@@ -143,6 +143,9 @@ void SyncRunner::evernoteSync() {
         qint32 tagUsn = uploadTags();
         if (tagUsn > updateSequenceNumber)
             updateSequenceNumber = tagUsn;
+        qint32 notebookUsn = uploadNotebooks();
+        if (notebookUsn > updateSequenceNumber)
+            updateSequenceNumber = notebookUsn;
     }
 
     updateNoteTableTags();
@@ -605,14 +608,14 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
 // Synchronize remote expunged linked notebooks
 void SyncRunner::syncRemoteExpungedLinkedNotebooks(vector<string> guids) {
     LinkedNotebookTable btable;
-    for (int i=0; i<guids.size(); i++)
+    for (unsigned int i=0; i<guids.size(); i++)
         btable.expunge(guids[0]);
 }
 
 
 
 void SyncRunner::applicationException(QString s) {
-    QLOG_DEBUG() << "Application Exception!!! : ";
+    QLOG_DEBUG() << "Application Exception!!! : " << s;
 
     // Basically, if we were doing a sync & some weird thing happened we try to do the sync again
     // to catch up.  It is a hack, but it might just work.
@@ -631,6 +634,9 @@ qint32 SyncRunner::uploadSavedSearches() {
     SearchTable stable;
     QList<qint32> lids;
     stable.getAllDirty(lids);
+    if (lids.size() == 0)
+        return 0;
+
     for (int i=0; i<lids.size(); i++) {
         SavedSearch search;
         stable.get(search, lids[i]);
@@ -667,6 +673,8 @@ qint32 SyncRunner::uploadTags() {
     QList<qint32> lids, deletedLids, updatedLids;
     table.resetLinkedTagsDirty();
     table.getAllDirty(lids);
+    if (lids.size() == 0)
+        return 0;
     // Split the lids into lids to be updated, and lids to be deleted
     for (int i=0; i<lids.size(); i++) {
         if (table.isDeleted(lids[i]))
@@ -713,6 +721,45 @@ qint32 SyncRunner::uploadTags() {
             usn = comm->expungeTag(tag.guid);
             if (usn>maxUsn)
                 maxUsn = usn;
+        }
+    }
+    return maxUsn;
+}
+
+
+
+
+// Upload any saved searchs
+qint32 SyncRunner::uploadNotebooks() {
+    qint32 usn;
+    qint32 maxUsn = 0;
+    NotebookTable table;
+    QList<qint32> lids;
+    table.resetLinkedNotebooksDirty();
+    table.getAllDirty(lids);
+    for (int i=0; i<lids.size(); i++) {
+        Notebook notebook;
+        table.get(notebook, lids[i]);
+        if (!table.isDeleted(lids[i])) {
+            qint32 oldUsn = notebook.updateSequenceNum;
+            usn = comm->uploadNotebook(notebook);
+            if (usn > maxUsn) {
+                maxUsn = usn;
+                if (oldUsn == 0)
+                    table.updateGuid(lids[i], notebook.guid);
+                table.setUpdateSequenceNumber(lids[i], usn);
+            } else {
+                error = true;
+            }
+        } else {
+            QString guid;
+            table.getGuid(guid, lids[i]);
+            table.expunge(lids[i]);
+            if (notebook.updateSequenceNum > 0) {
+                usn = comm->expungeNotebook(guid.toStdString());
+                if (usn>maxUsn)
+                    maxUsn = usn;
+            }
         }
     }
     return maxUsn;

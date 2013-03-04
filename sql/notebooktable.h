@@ -104,7 +104,9 @@ public:
     QString getDefaultNotebookGuid();
     bool isReadOnly(qint32 notebookLid);
     qint32 getConflictNotebook();
-
+    qint32 getAllDirty(QList<qint32> &lids);                // get all dirty notebooks
+    void setUpdateSequenceNumber(qint32 lid, qint32 usn);   // set the update sequence number
+    void resetLinkedNotebooksDirty();                       // mark all linked notebooks as not-dirty
 };
 
 #endif // NOTEBOOKTABLE_H

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/configstore.h"
 #include "sql/notetable.h"
 #include "sql/sharednotebooktable.h"
+#include "sql/linkednotebooktable.h"
 #include "global.h"
 
 #include <iostream>
@@ -716,4 +717,44 @@ qint32 NotebookTable::getConflictNotebook() {
     n.__isset.updateSequenceNum = true;
     return add(0,n,true,true);
 
+}
+
+
+
+
+
+
+// Get all dirty lids
+qint32 NotebookTable::getAllDirty(QList<qint32> &lids) {
+    QSqlQuery query;
+    lids.clear();
+    query.prepare("Select lid from DataStore where key=:key");
+    query.bindValue(":key", NOTEBOOK_ISDIRTY);
+    query.exec();
+    while(query.next()) {
+        lids.append(query.value(0).toInt());
+    }
+    return lids.size();
+}
+
+
+
+// Update the USN
+void NotebookTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
+    QSqlQuery query;
+    query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
+    query.bindValue(":data", usn);
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTEBOOK_UPDATE_SEQUENCE_NUMBER);
+    query.exec();
+}
+
+// Linked notebooks are not uploaded, so we reset the dirty flags in case
+// they were updated locally
+void NotebookTable::resetLinkedNotebooksDirty() {
+    QSqlQuery query;
+    query.prepare("Delete from datastore where key=:key and lid in (select lid from datastore where key=:linkedkey)");
+    query.bindValue(":key", NOTEBOOK_ISDIRTY);
+    query.bindValue(":linkedkey", LINKEDNOTEBOOK_GUID);
+    query.exec();
 }

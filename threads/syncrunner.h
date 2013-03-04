@@ -125,6 +125,7 @@ private:
 
     qint32 uploadSavedSearches();
     qint32 uploadTags();
+    qint32 uploadNotebooks();
 
 
 public:
