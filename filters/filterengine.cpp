@@ -80,278 +80,276 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
     int dom = QDate().currentDate().day();
     dt.setTime(QTime(0,0,0,1));
 
-    if (attribute == CREATED_SINCE_TODAY) {
+    switch (attribute)
+    {
+    case CREATED_SINCE_TODAY:
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_SINCE_YESTERDAY) {
+        break;
+    case CREATED_SINCE_YESTERDAY:
         dt = dt.addDays(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_SINCE_THIS_WEEK) {
+        break;
+    case CREATED_SINCE_THIS_WEEK:
         dt = dt.addDays(-1*dow);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_SINCE_LAST_WEEK) {
+        break;
+    case CREATED_SINCE_LAST_WEEK:
         dt = dt.addDays(-1*dow-7);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_SINCE_THIS_MONTH) {
+        break;
+    case CREATED_SINCE_THIS_MONTH:
         dt = dt.addDays(-1*dom+1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_SINCE_LAST_MONTH) {
+        break;
+    case CREATED_SINCE_LAST_MONTH:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_SINCE_THIS_YEAR) {
+        break;
+    case CREATED_SINCE_THIS_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_SINCE_LAST_YEAR) {
+        break;
+    case CREATED_SINCE_LAST_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         dt = dt.addYears(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-
-
-    if (attribute == CREATED_BEFORE_TODAY) {
+        break;
+    case CREATED_BEFORE_TODAY:
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_BEFORE_YESTERDAY) {
+        break;
+    case CREATED_BEFORE_YESTERDAY:
         dt = dt.addDays(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_BEFORE_THIS_WEEK) {
+        break;
+    case CREATED_BEFORE_THIS_WEEK:
         dt = dt.addDays(-1*dow);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_BEFORE_LAST_WEEK) {
+        break;
+    case CREATED_BEFORE_LAST_WEEK:
         dt = dt.addDays(-1*dow-7);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_BEFORE_THIS_MONTH) {
+        break;
+    case CREATED_BEFORE_THIS_MONTH:
         dt = dt.addDays(-1*dom+1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_BEFORE_LAST_MONTH) {
+        break;
+    case CREATED_BEFORE_LAST_MONTH:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_BEFORE_THIS_YEAR) {
+        break;
+    case CREATED_BEFORE_THIS_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == CREATED_BEFORE_LAST_YEAR) {
+        break;
+    case CREATED_BEFORE_LAST_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         dt = dt.addYears(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_CREATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-
-    if (attribute == MODIFIED_SINCE_TODAY) {
+        break;
+    case MODIFIED_SINCE_TODAY:
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_SINCE_YESTERDAY) {
+        break;
+    case MODIFIED_SINCE_YESTERDAY:
         dt = dt.addDays(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_SINCE_THIS_WEEK) {
+        break;
+    case MODIFIED_SINCE_THIS_WEEK:
         dt = dt.addDays(-1*dow);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_SINCE_LAST_WEEK) {
+        break;
+    case MODIFIED_SINCE_LAST_WEEK:
         dt = dt.addDays(-1*dow-7);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_SINCE_THIS_MONTH) {
+        break;
+    case MODIFIED_SINCE_THIS_MONTH:
         dt = dt.addDays(-1*dom+1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_SINCE_LAST_MONTH) {
+        break;
+    case MODIFIED_SINCE_LAST_MONTH:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_SINCE_THIS_YEAR) {
+        break;
+    case MODIFIED_SINCE_THIS_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_SINCE_LAST_YEAR) {
+        break;
+    case MODIFIED_SINCE_LAST_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         dt = dt.addYears(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-
-
-    if (attribute == MODIFIED_BEFORE_TODAY) {
+        break;
+    case MODIFIED_BEFORE_TODAY:
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_BEFORE_YESTERDAY) {
+        break;
+    case MODIFIED_BEFORE_YESTERDAY:
         dt = dt.addDays(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_BEFORE_THIS_WEEK) {
+        break;
+    case MODIFIED_BEFORE_THIS_WEEK:
         dt = dt.addDays(-1*dow);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_BEFORE_LAST_WEEK) {
+        break;
+    case MODIFIED_BEFORE_LAST_WEEK:
         dt = dt.addDays(-1*dow-7);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_BEFORE_THIS_MONTH) {
+        break;
+    case MODIFIED_BEFORE_THIS_MONTH:
         dt = dt.addDays(-1*dom+1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_BEFORE_LAST_MONTH) {
+        break;
+    case MODIFIED_BEFORE_LAST_MONTH:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_BEFORE_THIS_YEAR) {
+        break;
+    case MODIFIED_BEFORE_THIS_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-    if (attribute == MODIFIED_BEFORE_LAST_YEAR) {
+        break;
+    case MODIFIED_BEFORE_LAST_YEAR:
         dt = dt.addDays(-1*dom+1);
         dt = dt.addMonths(-1*moy+1);
         dt = dt.addYears(-1);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
         sql.bindValue(":key", NOTE_UPDATED_DATE);
         sql.bindValue(":data", dt.toMSecsSinceEpoch());
-    }
-
-    if (attribute == CONTAINS_IMAGES) {
+        break;
+    case CONTAINS_IMAGES:
         sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like 'image/%'))");
         sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
         sql.bindValue(":mimekey", RESOURCE_MIME);
-    }
-    if (attribute == CONTAINS_AUDIO) {
+        break;
+    case CONTAINS_AUDIO:
         sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like 'audio/%'))");
         sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
         sql.bindValue(":mimekey", RESOURCE_MIME);
-    }
-    if (attribute == CONTAINS_INK) {
+        break;
+    case CONTAINS_INK:
         sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data = 'application/vnd.evernote.ink'))");
         sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
         sql.bindValue(":mimekey", RESOURCE_MIME);
-    }
-    if (attribute == CONTAINS_ENCRYPTED_TEXT) {
+        break;
+    case CONTAINS_ENCRYPTED_TEXT:
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:encryptedkey)");
         sql.bindValue(":encryptedkey", NOTE_HAS_ENCRYPT);
-    }
-    if (attribute == CONTAINS_TODO_ITEMS) {
+        break;
+    case CONTAINS_TODO_ITEMS:
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where (key=:comp or key=:uncomp) and data='true')");
         sql.bindValue(":comp", NOTE_HAS_TODO_COMPLETED);
         sql.bindValue(":uncomp", NOTE_HAS_TODO_UNCOMPLETED);
-    }
-    if (attribute == CONTAINS_FINISHED_TODO_ITEMS) {
+        break;
+    case CONTAINS_FINISHED_TODO_ITEMS:
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:comp and data='true')");
         sql.bindValue(":comp", NOTE_HAS_TODO_COMPLETED);
-    }
-    if (attribute == CONTAINS_UNFINISHED_TODO_ITEMS) {
+        break;
+    case CONTAINS_UNFINISHED_TODO_ITEMS:
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:uncomp and data='true')");
         sql.bindValue(":uncomp", NOTE_HAS_TODO_UNCOMPLETED);
-    }
-    if (attribute == CONTAINS_PDF_DOCUMENT) {
+        break;
+    case CONTAINS_PDF_DOCUMENT:
         sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data ='application/pdf'))");
         sql.bindValue(":notelidkey", RESOURCE_NOTE_LID);
         sql.bindValue(":mimekey", RESOURCE_MIME);
-    }
-    if (attribute == CONTAINS_ATTACHMENT) {
+        break;
+    case CONTAINS_ATTACHMENT:
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key)");
         sql.bindValue(":key", NOTE_HAS_ATTACHMENT);
-    }
-    if (attribute == SOURCE_EMAIL) {
+        break;
+    case SOURCE_EMAIL:
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data = 'mail.clip')");
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
-    }
-    if (attribute == SOURCE_EMAILED_TO_EVERNOTE) {
+        break;
+    case SOURCE_EMAILED_TO_EVERNOTE:
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data = 'mail.smtp')");
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
-    }
-    if (attribute == SOURCE_MOBILE) {
+        break;
+    case SOURCE_MOBILE:
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like 'mobile.%')");
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
-    }
-    if (attribute == SOURCE_WEB_PAGE) {
+        break;
+    case SOURCE_WEB_PAGE:
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data = 'web.clip')");
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
-    }
-    if (attribute == SOURCE_ANOTHER_APPLICATION) {
+        break;
+    case SOURCE_ANOTHER_APPLICATION:
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data != 'web.clip' and "
                     "data not like 'mobile.%' and data != 'mail.smtp' and data != 'mail.clip')");
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
+        break;
     }
+
     sql.exec();
 }
 
@@ -555,88 +553,72 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
         QString string = list[i];
         string.remove(QChar('"'));
 
-        bool filterFound = false;
         // If we have a notebook search request
         if (string.startsWith("notebook:", Qt::CaseInsensitive) ||
                 string.startsWith("-notebook:", Qt::CaseInsensitive)) {
             filterSearchStringNotebookAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("todo:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("todo:", Qt::CaseInsensitive) ||
                 string.startsWith("-todo:", Qt::CaseInsensitive)) {
             filterSearchStringTodoAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("tag:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("tag:", Qt::CaseInsensitive) ||
                 string.startsWith("-tag:", Qt::CaseInsensitive)) {
             filterSearchStringTagAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("intitle:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("intitle:", Qt::CaseInsensitive) ||
                 string.startsWith("-intitle:", Qt::CaseInsensitive)) {
             filterSearchStringIntitleAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("resource:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("resource:", Qt::CaseInsensitive) ||
                 string.startsWith("-resource:", Qt::CaseInsensitive)) {
             filterSearchStringResourceAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("longitude:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("longitude:", Qt::CaseInsensitive) ||
                 string.startsWith("-longitude:", Qt::CaseInsensitive)) {
             filterSearchStringCoordinatesAll(string, NOTE_ATTRIBUTE_LONGITUDE);
-            filterFound = true;
         }
-        if (string.startsWith("latitude:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("latitude:", Qt::CaseInsensitive) ||
                 string.startsWith("-latitude:", Qt::CaseInsensitive)) {
             filterSearchStringCoordinatesAll(string, NOTE_ATTRIBUTE_LATITUDE);
-            filterFound = true;
         }
-        if (string.startsWith("altitude:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("altitude:", Qt::CaseInsensitive) ||
                 string.startsWith("-altitude:", Qt::CaseInsensitive)) {
             filterSearchStringCoordinatesAll(string, NOTE_ATTRIBUTE_ALTITUDE);
-            filterFound = true;
         }
-        if (string.startsWith("author:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("author:", Qt::CaseInsensitive) ||
                 string.startsWith("-author:", Qt::CaseInsensitive)) {
             filterSearchStringAuthorAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("source:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("source:", Qt::CaseInsensitive) ||
                 string.startsWith("-source:", Qt::CaseInsensitive)) {
             filterSearchStringSourceAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("sourceapplication:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("sourceapplication:", Qt::CaseInsensitive) ||
                 string.startsWith("-sourceapplication:", Qt::CaseInsensitive)) {
             filterSearchStringSourceApplicationAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("contentclass:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("contentclass:", Qt::CaseInsensitive) ||
                 string.startsWith("-contentclass:", Qt::CaseInsensitive)) {
             filterSearchStringContentClassAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("recotype:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("recotype:", Qt::CaseInsensitive) ||
                 string.startsWith("-recotype:", Qt::CaseInsensitive)) {
             filterSearchStringResourceRecognitionTypeAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("placename:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("placename:", Qt::CaseInsensitive) ||
                 string.startsWith("-placename:", Qt::CaseInsensitive)) {
             filterSearchStringContentClassAll(string);
-            filterFound = true;
         }
-        if (string.startsWith("created:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("created:", Qt::CaseInsensitive) ||
                 string.startsWith("-created:", Qt::CaseInsensitive) ||
                 string.startsWith("updated:", Qt::CaseInsensitive) ||
                 string.startsWith("-updated:", Qt::CaseInsensitive) ||
                 string.startsWith("subjectdate:", Qt::CaseInsensitive) ||
                 string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
             filterSearchStringDateAll(string);
-            filterFound = true;
         }
-        if (!filterFound) {
+        else { // Filter not found
             if (string.startsWith("-")) {
                 string = string.remove(0,1);
                 sqlnegative.bindValue(":word", string.trimmed()+"*");
@@ -1086,11 +1068,11 @@ void FilterEngine::filterSearchStringTodoAll(QString string) {
             sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
             sql.bindValue(":key2", NOTE_HAS_TODO_UNCOMPLETED);
         }
-        if (string.startsWith("true", Qt::CaseInsensitive)) {
+        else if (string.startsWith("true", Qt::CaseInsensitive)) {
             sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key1)");
             sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
         }
-        if (string.startsWith("false", Qt::CaseInsensitive)) {
+        else if (string.startsWith("false", Qt::CaseInsensitive)) {
             sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key1)");
             sql.bindValue(":key1", NOTE_HAS_TODO_UNCOMPLETED);
         }
@@ -1106,11 +1088,11 @@ void FilterEngine::filterSearchStringTodoAll(QString string) {
             sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
             sql.bindValue(":key2", NOTE_HAS_TODO_UNCOMPLETED);
         }
-        if (string.startsWith("true", Qt::CaseInsensitive)) {
+        else if (string.startsWith("true", Qt::CaseInsensitive)) {
             sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key1)");
             sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
         }
-        if (string.startsWith("false", Qt::CaseInsensitive)) {
+        else if (string.startsWith("false", Qt::CaseInsensitive)) {
             sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key1)");
             sql.bindValue(":key1", NOTE_HAS_TODO_UNCOMPLETED);
         }
@@ -1133,23 +1115,23 @@ void FilterEngine::filterSearchStringDateAll(QString string) {
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
         key = NOTE_CREATED_DATE;
     }
-    if (string.startsWith("updated:", Qt::CaseInsensitive)) {
+    else if (string.startsWith("updated:", Qt::CaseInsensitive)) {
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
         key = NOTE_UPDATED_DATE;
     }
-    if (string.startsWith("subjectdate:", Qt::CaseInsensitive)) {
+    else if (string.startsWith("subjectdate:", Qt::CaseInsensitive)) {
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
         key = NOTE_ATTRIBUTE_SUBJECT_DATE;
     }
-    if (string.startsWith("-created:", Qt::CaseInsensitive)) {
+    else if (string.startsWith("-created:", Qt::CaseInsensitive)) {
         sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000)))");;
         key = NOTE_CREATED_DATE;
     }
-    if (string.startsWith("-updated:", Qt::CaseInsensitive)) {
+    else if (string.startsWith("-updated:", Qt::CaseInsensitive)) {
         sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000)))");;
         key = NOTE_UPDATED_DATE;
     }
-    if (string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
+    else if (string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
         sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000)))");;
         key = NOTE_ATTRIBUTE_SUBJECT_DATE;
     }
@@ -1184,7 +1166,7 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
         value = value.addDays(offset);
         return value;
     }
-    if (string.startsWith("month")) {
+    else if (string.startsWith("month")) {
         value = tam;
         value = value.addDays(-1*dom+1);
         string = string.mid(5);
@@ -1195,7 +1177,7 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
         QLOG_DEBUG() << value.toString();
         return value;
     }
-    if (string.startsWith("year")) {
+    else if (string.startsWith("year")) {
         value = tam;
         value = value.addDays(-1*dom+1);
         value = value.addMonths(-1*moy+1);
@@ -1207,7 +1189,7 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
         QLOG_DEBUG() << value.toString();
         return value;
     }
-    if (string.startsWith("week")) {
+    else if (string.startsWith("week")) {
         value = tam;
         value = value.addDays(-1*dow);
         string = string.mid(4);
@@ -1260,89 +1242,73 @@ void FilterEngine::filterSearchStringAny(QStringList list) {
         QString string = list[i];
         string.remove(QChar('"'));
 
-        bool filterFound = false;
         // If we have a notebook search request
         if (string.startsWith("notebook:", Qt::CaseInsensitive) ||
                 string.startsWith("-notebook:", Qt::CaseInsensitive)) {
             filterSearchStringNotebookAny(string);
-            filterFound = true;
         }
-        if (string.startsWith("todo:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("todo:", Qt::CaseInsensitive) ||
                 string.startsWith("-todo:", Qt::CaseInsensitive)) {
             filterSearchStringTodoAny(string);
-            filterFound = true;
         }
-        if (string.startsWith("tag:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("tag:", Qt::CaseInsensitive) ||
                 string.startsWith("-tag:", Qt::CaseInsensitive)) {
             filterSearchStringTagAny(string);
-            filterFound = true;
         }
-        if (string.startsWith("intitle:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("intitle:", Qt::CaseInsensitive) ||
                 string.startsWith("-intitle:", Qt::CaseInsensitive)) {
             filterSearchStringIntitleAny(string);
-            filterFound = true;
         }
-        if (string.startsWith("resource:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("resource:", Qt::CaseInsensitive) ||
                 string.startsWith("-resource:", Qt::CaseInsensitive)) {
             filterSearchStringResourceAny(string);
-            filterFound = true;
         }
-        if (string.startsWith("longitude:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("longitude:", Qt::CaseInsensitive) ||
                 string.startsWith("-longitude:", Qt::CaseInsensitive)) {
             filterSearchStringCoordinatesAny(string, NOTE_ATTRIBUTE_LONGITUDE);
-            filterFound = true;
         }
-        if (string.startsWith("latitude:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("latitude:", Qt::CaseInsensitive) ||
                 string.startsWith("-latitude:", Qt::CaseInsensitive)) {
             filterSearchStringCoordinatesAny(string, NOTE_ATTRIBUTE_LATITUDE);
-            filterFound = true;
         }
-        if (string.startsWith("altitude:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("altitude:", Qt::CaseInsensitive) ||
                 string.startsWith("-altitude:", Qt::CaseInsensitive)) {
             filterSearchStringCoordinatesAny(string, NOTE_ATTRIBUTE_ALTITUDE);
-            filterFound = true;
         }
-        if (string.startsWith("author:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("author:", Qt::CaseInsensitive) ||
                 string.startsWith("-author:", Qt::CaseInsensitive)) {
             filterSearchStringAuthorAny(string);
-            filterFound = true;
         }
-        if (string.startsWith("source:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("source:", Qt::CaseInsensitive) ||
                 string.startsWith("-source:", Qt::CaseInsensitive)) {
             filterSearchStringSourceAny(string);
-            filterFound = true;
         }
-        if (string.startsWith("sourceapplication:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("sourceapplication:", Qt::CaseInsensitive) ||
                 string.startsWith("-sourceapplication:", Qt::CaseInsensitive)) {
             filterSearchStringSourceApplicationAny(string);
-            filterFound = true;
         }
-        if (string.startsWith("contentclass:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("contentclass:", Qt::CaseInsensitive) ||
                 string.startsWith("-contentclass:", Qt::CaseInsensitive)) {
             filterSearchStringContentClassAny(string);
-            filterFound = true;
         }
-        if (string.startsWith("recotype:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("recotype:", Qt::CaseInsensitive) ||
                 string.startsWith("-recotype:", Qt::CaseInsensitive)) {
             filterSearchStringResourceRecognitionTypeAny(string);
-            filterFound = true;
         }
 //        if (string.startsWith("placename:", Qt::CaseInsensitive) ||
 //                string.startsWith("-placename:", Qt::CaseInsensitive)) {
 //            filterSearchStringContentClassAll(string);
 //            filterFound = true;
 //        }
-        if (string.startsWith("created:", Qt::CaseInsensitive) ||
+        else if (string.startsWith("created:", Qt::CaseInsensitive) ||
                 string.startsWith("-created:", Qt::CaseInsensitive) ||
                 string.startsWith("updated:", Qt::CaseInsensitive) ||
                 string.startsWith("-updated:", Qt::CaseInsensitive) ||
                 string.startsWith("subjectDate:", Qt::CaseInsensitive) ||
                 string.startsWith("-subjectdate", Qt::CaseInsensitive)) {
             filterSearchStringDateAny(string);
-            filterFound = true;
         }
-
-        if (!filterFound) {
+        else { // Filter not found
             if (string.startsWith("-")) {
                 string = string.remove(0,1);
                 sqlnegative.bindValue(":word", string.trimmed()+"*");
@@ -1650,23 +1616,23 @@ void FilterEngine::filterSearchStringDateAny(QString string) {
         sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
         key = NOTE_CREATED_DATE;
     }
-    if (string.startsWith("updated:", Qt::CaseInsensitive)) {
+    else if (string.startsWith("updated:", Qt::CaseInsensitive)) {
         sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
         key = NOTE_UPDATED_DATE;
     }
-    if (string.startsWith("subjectdate:", Qt::CaseInsensitive)) {
+    else if (string.startsWith("subjectdate:", Qt::CaseInsensitive)) {
         sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
         key = NOTE_ATTRIBUTE_SUBJECT_DATE;
     }
-    if (string.startsWith("-created:", Qt::CaseInsensitive)) {
+    else if (string.startsWith("-created:", Qt::CaseInsensitive)) {
         sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000))");
         key = NOTE_CREATED_DATE;
     }
-    if (string.startsWith("-updated:", Qt::CaseInsensitive)) {
+    else if (string.startsWith("-updated:", Qt::CaseInsensitive)) {
         sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000))");
         key = NOTE_UPDATED_DATE;
     }
-    if (string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
+    else if (string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
         sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<=(datetime(:data/1000))");
         key = NOTE_ATTRIBUTE_SUBJECT_DATE;
     }
