@@ -155,6 +155,9 @@ void SyncRunner::evernoteSync() {
         qint32 notebookUsn = uploadNotebooks();
         if (notebookUsn > updateSequenceNumber)
             updateSequenceNumber = notebookUsn;
+        qint32 personalNotesUsn = uploadPersonalNotes();
+        if (personalNotesUsn > updateSequenceNumber)
+            updateSequenceNumber = personalNotesUsn;
     }
 
     updateNoteTableTags();
@@ -171,7 +174,8 @@ void SyncRunner::evernoteSync() {
     }
     userTable.updateSyncState(syncState);
 
-    emit setMessage(tr("Sync Complete"));
+    if (!error)
+        emit setMessage(tr("Sync Complete"));
     QLOG_TRACE() << "Leaving SyncRunner::evernoteSync()";
 }
 
@@ -603,7 +607,7 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
                 fs = true;
             SyncChunk chunk;
             int chunkSize = 50;
-            if (comm->authenticateToLinkedNotebookShard(book)) {
+            if (!comm->authenticateToLinkedNotebookShard(book)) {
                 this->communicationErrorHandler();
                 error = true;
                 return;
@@ -812,6 +816,55 @@ qint32 SyncRunner::uploadNotebooks() {
     }
     return maxUsn;
 }
+
+
+
+
+// Upload notes that belong to me
+qint32 SyncRunner::uploadPersonalNotes() {
+    qint32 usn;
+    qint32 maxUsn = 0;
+    NotebookTable notebookTable;
+    LinkedNotebookTable linkedNotebookTable;
+    NoteTable noteTable;
+    QList<qint32> lids, validLids;
+    noteTable.getAllDirty(lids);
+
+    // Get a list of all notes that are both dirty and in an account we own
+    for (int i=0; i<lids.size(); i++) {
+        qint32 notebookLid = noteTable.getNotebookLid(lids[i]);
+        if (!linkedNotebookTable.exists(notebookLid) &&
+                !notebookTable.isLocal(notebookLid)) {
+            validLids.append(lids[i]);
+        }
+    }
+
+    // Start uploading notes
+    for (int i=0; i<validLids.size(); i++) {
+        Note note;
+        noteTable.get(note, validLids[i],true,true);
+        qint32 oldUsn = note.updateSequenceNum;
+        usn = comm->uploadNote(note);
+        if (usn == 0) {
+            this->communicationErrorHandler();
+            error = true;
+            return maxUsn;
+        }
+        if (usn > maxUsn) {
+            maxUsn = usn;
+            if (oldUsn == 0)
+                noteTable.updateGuid(validLids[i], note.guid);
+            noteTable.setUpdateSequenceNumber(validLids[i], usn);
+            noteTable.setDirty(validLids[i], false);
+        } else {
+            error = true;
+        }
+    }
+    return maxUsn;
+}
+
+
+
 
 
 // Return a pointer to the CommunicationManager error class

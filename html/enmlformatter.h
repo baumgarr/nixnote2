@@ -29,7 +29,7 @@ class EnmlFormatter : public QObject
 private:
     QByteArray content;
     QDomDocument doc;
-    bool isAttributeValid(QString attribute);
+    bool isAttributeValid(QString attribute, QString tag);
     bool isElementValid(QString element);
     void cleanupElementAttributes(QDomElement &e);
 
@@ -46,6 +46,7 @@ public:
     void scanTags();
     void fixNode(const QDomNode &node);
     QDomNode fixLinkNode(const QDomNode &node);
+    void fixEnmedia();
 
 signals:
 

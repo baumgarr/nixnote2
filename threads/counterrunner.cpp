@@ -84,7 +84,7 @@ void CounterRunner::countTags() {
 
     QSqlQuery query;
     query.prepare("select data, count(lid) from datastore where key=:key and lid in (select lid from filter) group by data;");
-    query.bindValue(":key", NOTE_TAG);
+    query.bindValue(":key", NOTE_TAG_LID);
     query.exec();
     while(query.next()) {
         emit tagTotals(query.value(0).toInt(), query.value(1).toInt());

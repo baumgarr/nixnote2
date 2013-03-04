@@ -377,11 +377,13 @@ void FilterEngine::filterNotebook(FilterCriteria *criteria) {
 
 // If they only chose one notebook, then delete everything else
 void FilterEngine::filterIndividualNotebook(QString &notebook) {
+    NotebookTable notebookTable;
+    qint32 notebookLid = notebookTable.getLid(notebook);
     // Filter out the records
     QSqlQuery sql;
     sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:type and data=:notebookLid)");
-    sql.bindValue(":type", NOTE_NOTEBOOK);
-    sql.bindValue(":notebookLid", notebook);
+    sql.bindValue(":type", NOTE_NOTEBOOK_LID);
+    sql.bindValue(":notebookLid", notebookLid);
     sql.exec();
 }
 
@@ -394,13 +396,11 @@ void FilterEngine::filterStack(QString &stack) {
 
     QSqlQuery sql;
     sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:type and data=:notebookLid)");
-    sql.bindValue(":type", NOTE_NOTEBOOK);
+    sql.bindValue(":type", NOTE_NOTEBOOK_LID);
 
     for (qint32 i=0; i<books.size(); i++) {
         if (!stackBooks.contains(books[i])) {
-            Notebook n;
-            notebookTable.get(n,books[i]);
-            sql.bindValue(":notebookLid", QString::fromStdString(n.guid));
+            sql.bindValue(":notebookLid", books[i]);
             sql.exec();
         }
     }
@@ -1011,7 +1011,7 @@ void FilterEngine::filterSearchStringTagAll(QString string) {
         }
         tagSql.bindValue(":tagname", string);
         tagSql.bindValue(":tagnamekey", TAG_NAME);
-        tagSql.bindValue(":notetagkey", NOTE_TAG);
+        tagSql.bindValue(":notetagkey", NOTE_TAG_LID);
 
         tagSql.exec();
     } else {
@@ -1028,7 +1028,7 @@ void FilterEngine::filterSearchStringTagAll(QString string) {
         }
         tagSql.bindValue(":tagname", string);
         tagSql.bindValue(":tagnamekey", TAG_NAME);
-        tagSql.bindValue(":notetagkey", NOTE_TAG);
+        tagSql.bindValue(":notetagkey", NOTE_TAG_LID);
         tagSql.exec();
     }
 }
@@ -1050,7 +1050,7 @@ void FilterEngine::filterSearchStringNotebookAll(QString string) {
             notebookSql.prepare("Delete from filter where lid not in (select lid from NoteTable where notebook like :notebook)");
             string.replace("*", "%");
         }
-        notebookSql.bindValue(":type", NOTE_NOTEBOOK);
+//        notebookSql.bindValue(":type", NOTE_NOTEBOOK_LID);
         notebookSql.bindValue(":notebook", string);
         notebookSql.exec();
     } else {
@@ -1065,7 +1065,7 @@ void FilterEngine::filterSearchStringNotebookAll(QString string) {
             notebookSql.prepare("Delete from filter where lid not in (select lid from NoteTable where notebook not like :notebook)");
             string.replace("*", "%");
         }
-        notebookSql.bindValue(":type", NOTE_NOTEBOOK);
+        //notebookSql.bindValue(":type", NOTE_NOTEBOOK);
         notebookSql.bindValue(":notebook", string);
         notebookSql.exec();
     }
@@ -1463,7 +1463,7 @@ void FilterEngine::filterSearchStringTagAny(QString string) {
         }
         tagSql.bindValue(":tagname", string);
         tagSql.bindValue(":tagnamekey", TAG_NAME);
-        tagSql.bindValue(":notetagkey", NOTE_TAG);
+        tagSql.bindValue(":notetagkey", NOTE_TAG_LID);
 
         tagSql.exec();
     } else {
@@ -1480,7 +1480,7 @@ void FilterEngine::filterSearchStringTagAny(QString string) {
         }
         tagSql.bindValue(":tagname", string);
         tagSql.bindValue(":tagnamekey", TAG_NAME);
-        tagSql.bindValue(":notetagkey", NOTE_TAG);
+        tagSql.bindValue(":notetagkey", NOTE_TAG_LID);
         tagSql.exec();
     }
 }

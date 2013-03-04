@@ -286,7 +286,6 @@ HEADERS  += nixnote.h \
     botan/botan_all.h \
     gui/plugins/popplerviewer.h \
     gui/plugins/pluginfactory.h \
-    communication/inknoterequest.h \
     gui/findreplace.h \
     sql/linkednotebooktable.h \
     application.h \

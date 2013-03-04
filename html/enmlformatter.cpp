@@ -99,6 +99,9 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     doc.setContent(content);
     scanTags();
 
+    // Fix potential <en-media>data</en-media> tags.
+    fixEnmedia();
+
     return content;
 }
 
@@ -264,13 +267,12 @@ void EnmlFormatter::cleanupElementAttributes(QDomElement &e) {
     QDomNamedNodeMap attributeMap = e.attributes();
     for (int i=attributeMap.size()-1; i>=0; i--) {
         QString name = attributeMap.item(i).nodeName();
-        if (!isAttributeValid(name))
+        if (!isAttributeValid(name, e.tagName()))
             e.removeAttribute(name);
     }
 }
 
-bool EnmlFormatter::isAttributeValid(QString attribute) {
-    attribute = attribute.toLower().trimmed();
+bool EnmlFormatter::isAttributeValid(QString attribute, QString tag) {
     if (attribute.startsWith("on")) return false;
     if (attribute == "id") return false;
     if (attribute == "class") return false;
@@ -285,6 +287,7 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
     if (attribute == "en-new") return false;
     if (attribute == "guid") return false;
     if (attribute == "lid") return false;
+    if (attribute == "style" && tag == "en-media") return false;
     return true;
 }
 
@@ -362,4 +365,20 @@ bool EnmlFormatter::isElementValid(QString element) {
 
     return false;
 
+}
+
+
+
+// This removes any </en-media> tags and changes the <en-media> to <en-media/>
+// This needs to be done because someone can get inside the <img> tags when
+// editing a note and Evernote hates it when that happens.
+void EnmlFormatter::fixEnmedia() {
+    content = content.replace("</en-media>", "");
+    int pos = content.indexOf("<en-media");
+    while (pos > 0) {
+        int endPos = content.indexOf(">", pos);
+        content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+        QLOG_DEBUG() << content;
+        pos = content.indexOf("<en-media", pos+1);
+    }
 }

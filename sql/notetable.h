@@ -44,8 +44,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTE_UPDATED_DATE            5008
 #define NOTE_DELETED_DATE            5009
 #define NOTE_ACTIVE                  5010
-#define NOTE_NOTEBOOK                5011
-#define NOTE_TAG                     5012
+#define NOTE_NOTEBOOK_LID            5011
+#define NOTE_TAG_LID                 5012
 
 #define NOTE_ATTRIBUTE_SUBJECT_DATE            5014
 #define NOTE_ATTRIBUTE_LATITUDE                5015
@@ -133,6 +133,9 @@ public:
     qint32 getUnindexedCount();                            // count of unindexed notes
     qint32 getAllDeleted(QList<qint32> &lids);
     qint32 duplicateNote(qint32 oldLid);
+    qint32 getAllDirty(QList<qint32> &lids);                // get all dirty notes
+    void setUpdateSequenceNumber(qint32 lid, qint32 usn);   // set the update sequence number
+    qint32 getNotebookLid(qint32 noteLid);                  // Get the notebook for a note
 };
 
 

@@ -130,6 +130,8 @@ public:
     qint32 uploadNotebook(Notebook &notebook);
     qint32 expungeNotebook(string guid);
 
+    qint32 uploadNote(Note &note);
+
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);
 };
