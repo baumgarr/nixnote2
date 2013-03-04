@@ -345,6 +345,7 @@ void NBrowserWindow::addTagName(qint32 lid) {
 
 
 
+
 // Rename a tag in a note.
 void NBrowserWindow::tagRenamed(qint32 lid, QString oldName, QString newName) {
     tagEditor.tagRenamed(lid, oldName, newName);

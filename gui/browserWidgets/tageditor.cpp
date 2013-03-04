@@ -99,7 +99,7 @@ bool TagEditor::checkNewTagEditor() {
 
 
 //*******************************************************
-//* A user has added o new tag
+//* A user has added a new tag
 //*******************************************************
 void TagEditor::addTag(QString text) {
 
@@ -156,7 +156,7 @@ void TagEditor::reloadTags() {
     Note n;
     noteTable.get(n, currentLid, false,false);
     QStringList names;
-    for (int i=0; i<n.tagNames.size(); i++) {
+    for (unsigned int i=0; i<n.tagNames.size(); i++) {
         names << QString::fromStdString(n.tagNames[i]);
     }
     setTags(names);

@@ -543,7 +543,7 @@ void NTagView::contextMenuEvent(QContextMenuEvent *event) {
 }
 
 
-// Add a new tag to the tre
+// Add a new tag to the tree
 void NTagView::addRequested() {
     TagProperties dialog;
     QList<QTreeWidgetItem*> items = selectedItems();

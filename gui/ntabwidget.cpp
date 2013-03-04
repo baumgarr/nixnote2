@@ -197,7 +197,7 @@ void NTabWidget::tagCreationSignaled(qint32 lid) {
 void NTabWidget::setupConnections(NBrowserWindow *newBrowser) {
     connect(tagTreeView, SIGNAL(tagRenamed(qint32,QString,QString)), newBrowser, SLOT(tagRenamed(qint32,QString,QString)));
     connect(tagTreeView, SIGNAL(tagDeleted(qint32, QString)), newBrowser, SLOT(tagDeleted(qint32, QString)));
-    connect(tagTreeView, SIGNAL(tagAdded(qint32)), newBrowser, SLOT(addTagName(qint32)));
+    connect(tagTreeView, SIGNAL(tagAdded(qint32)), &newBrowser->tagEditor.newTag, SLOT(loadCompleter()));
 
     connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), newBrowser, SLOT(notebookRenamed(qint32,QString,QString)));
     connect(notebookTreeView, SIGNAL(notebookDeleted(qint32, QString)), newBrowser, SLOT(notebookDeleted(qint32, QString)));

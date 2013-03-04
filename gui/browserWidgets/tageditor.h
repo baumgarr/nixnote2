@@ -41,12 +41,12 @@ public:
     void setCurrentLid(qint32 l);
     void setAccount(qint32 a);
     void tagRenamed(qint32 lid, QString oldName, QString newName);
+    TagEditorNewTag newTag;
 
 private:
     qint32 currentLid;
     qint32 account;
     QLabel tagIcon;
-    TagEditorNewTag newTag;
     TagViewer tags[MAX_TAGS];
     FlowLayout *layout;
     QStringList tagNames;

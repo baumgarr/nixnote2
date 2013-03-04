@@ -33,7 +33,6 @@ private:
     QString defaultText;
     QCompleter *completer;
     QStringList currentTags;
-    void loadCompleter();
     qint32 account;
 
 public:
@@ -48,6 +47,7 @@ public slots:
     void textModified(QString text);
     void gainedFocus(bool focus);
     void notebookSelectionChanged(qint32 notebook);
+    void loadCompleter();
 
 signals:
   void focussed(bool hasFocus);
