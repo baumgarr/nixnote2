@@ -548,7 +548,8 @@ void NoteFormatter::modifyTodoTags(QDomElement &todo) {
         todo.removeAttribute("checked");
 
     todo.setAttribute("onClick", "if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();");
-    todo.setAttribute("onMouseOver", "style.cursor='hand'");
+    todo.setAttribute("style", "cursor: hand;");
+    //todo.setAttribute("onMouseOver", "style.cursor='hand'");
     todo.setTagName("input");
     QLOG_TRACE() << "Leaving NeverNote.modifyTodoTags";
 }
