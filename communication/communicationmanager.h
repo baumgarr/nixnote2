@@ -58,8 +58,9 @@ using namespace ::apache::thrift::server;
 
 
 //* OAuth key & secret
-#define EDAM_CONSUMER_KEY = "baumgarr"
-#define EDAM_CONSUMER_SECRET = "60d4cdedb074b0ac"
+//#define EDAM_CONSUMER_KEY = "baumgarr"
+#define EDAM_CONSUMER_KEY = "baumgarr-3523"
+#define EDAM_CONSUMER_SECRET = "8d5ee175f8a5d3ec"
 
 
 //#define EVERNOTE_HOST   "www.evernote.com"

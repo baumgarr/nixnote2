@@ -36,8 +36,8 @@ OAuthWindow::OAuthWindow(QWidget *parent) :
     QDialog(parent)
 {
 
-    consumerKey = "baumgarr";
-    consumerSecret = "60d4cdedb074b0ac";
+    consumerKey = "baumgarr-3523";
+    consumerSecret = "8d5ee175f8a5d3ec";
     urlBase = "https://" +global.server;
     requestTokenUrl = urlBase + "/oauth";
     accessTokenUrl = urlBase + "/oauth";

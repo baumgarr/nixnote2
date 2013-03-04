@@ -97,7 +97,7 @@ QStringList AccountsManager::nameList() {
 QString AccountsManager::getOAuthToken() {
     QDomElement element = currentNode.toElement();
     QDomNode consumerNode = element.firstChildElement("consumerKey");
-    if (consumerNode.toElement().text() != "baumgarr")   // Current EDAM_CONSUMER_KEY
+    if (consumerNode.toElement().text() != "baumgarr-3523")   // Current EDAM_CONSUMER_KEY
             return "";
     QDomNode tokenNode = element.firstChildElement("oauth-token");
     return tokenNode.toElement().text();
@@ -171,7 +171,7 @@ int AccountsManager::addId(int id, QString name, QString oauth, QString server) 
 
     if (oauth.trimmed() != "") {
         QDomElement consumerKeyElement = doc.createElement("consumerKey");
-        QDomText consumerKeyText = doc.createTextNode("baumgarr");   // current EDAM_CONSUMER_KEY = "baumgarr"
+        QDomText consumerKeyText = doc.createTextNode("baumgarr-3523");   // current EDAM_CONSUMER_KEY = "baumgarr-3523"
         consumerKeyElement.appendChild(consumerKeyText);
         account.appendChild(consumerKeyElement);
 
