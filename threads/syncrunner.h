@@ -135,9 +135,10 @@ public:
     SyncRunner();
     ~SyncRunner();
     void run();
-    bool enConnect();
     bool error;
     int retryCount;
+    CommunicationError* getError();
+    void communicationErrorHandler();
 
 signals:
     void syncComplete();

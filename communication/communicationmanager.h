@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QString>
 #include <evernote/NoteStore.h>
 #include <evernote/UserStore.h>
+#include "communication/communicationerror.h"
 
 #include <inttypes.h>
 #include <iostream>
@@ -105,6 +106,7 @@ private:
 public:
     CommunicationManager(QObject *parent = 0);
     ~CommunicationManager();
+    CommunicationError error;
     bool connect();
     bool getSyncState(string authToken, SyncState &syncState);
     bool getSyncChunk(string token, SyncChunk &chunk, int start, int chunkSize, bool fullSync=false);

@@ -229,7 +229,7 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
     query.bindValue(":data", t.updateSequenceNum);
     query.exec();
 
-    if (t.__isset.parentGuid) {
+    if (t.__isset.parentGuid && t.parentGuid != "") {
         query.bindValue(":lid", lid);
         query.bindValue(":key", TAG_PARENT);
         query.bindValue(":data", QString::fromStdString(t.parentGuid));
@@ -272,10 +272,13 @@ bool TagTable::get(Tag &tag, qint32 lid) {
                 tag.updateSequenceNum = query.value(1).toInt();
                 tag.__isset.updateSequenceNum = true;
                 break;
-            case (TAG_PARENT):
-                tag.parentGuid = query.value(1).toString().toStdString();
-                tag.__isset.parentGuid =true;
-                break;
+            case (TAG_PARENT): {
+            if (query.value(1).toString() != "") {
+                    tag.parentGuid = query.value(1).toString().toStdString();
+                    tag.__isset.parentGuid =true;
+                    break;
+                }
+            }
             case (TAG_NAME):
                 tag.name = query.value(1).toString().toStdString();
                 tag.__isset.name = true;

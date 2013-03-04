@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "html/thumbnailer.h"
 #include "nixnote.h"
 #include "communication/communicationmanager.h"
+#include "communication/communicationerror.h"
 
 extern Global global;
 
@@ -76,9 +77,9 @@ void SyncRunner::synchronize() {
     else
         retryCount--;
 
+    comm->error.reset();
     if (!comm->connect()) {
-        QLOG_ERROR() << "Error initializing socket connections";
-        emit(setMessage("Error initializing socket connections"));
+        this->communicationErrorHandler();
         error = true;
         retryCount = 3;
         emit syncComplete();
@@ -104,11 +105,19 @@ void SyncRunner::evernoteSync() {
 
     User user;
     UserTable userTable;
-    comm->getUserInfo(user);
+    if (!comm->getUserInfo(user)) {
+        this->communicationErrorHandler();
+        error =true;
+        return;
+    }
     userTable.updateUser(user);
 
     SyncState syncState;
-    comm->getSyncState("", syncState);
+    if (!comm->getSyncState("", syncState)) {
+        this->communicationErrorHandler();
+        error = true;
+        return;
+    }
 
     fullSync = false;
 
@@ -149,9 +158,17 @@ void SyncRunner::evernoteSync() {
     }
 
     updateNoteTableTags();
-    comm->getUserInfo(user);
+    if (!comm->getUserInfo(user)) {
+        this->communicationErrorHandler();
+        error = true;
+        return;
+    }
     userTable.updateUser(user);
-    comm->getSyncState("", syncState);
+    if (!comm->getSyncState("", syncState)) {
+        error =true;
+        this->communicationErrorHandler();
+        return;
+    }
     userTable.updateSyncState(syncState);
 
     emit setMessage(tr("Sync Complete"));
@@ -177,6 +194,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
+            this->communicationErrorHandler();
             retryCount = 3;
             return;
         }
@@ -253,11 +271,6 @@ void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
 }
 
 
-bool SyncRunner::enConnect() {
-    if (global.connected)
-        return true;
-    return comm->connect();
-}
 
 // Expunge deleted notes from the local database
 void SyncRunner::syncRemoteExpungedNotes(vector<string> guids) {
@@ -534,9 +547,17 @@ void SyncRunner::syncRemoteLinkedNotebooks(vector<LinkedNotebook> books) {
     LinkedNotebookTable ltable;
     for (unsigned int i=0; i<books.size(); i++) {
         qint32 lid = ltable.sync(books[i]);
-        comm->authenticateToLinkedNotebookShard(books[i]);
+        if (!comm->authenticateToLinkedNotebookShard(books[i])) {
+            this->communicationErrorHandler();
+            error = true;
+            return;
+        }
         SharedNotebook sharedNotebook;
-        comm->getSharedNotebookByAuth(sharedNotebook);
+        if (!comm->getSharedNotebookByAuth(sharedNotebook)) {
+            this->communicationErrorHandler();
+            error = true;
+            return;
+        }
         SharedNotebookTable stable;
         stable.sync(lid, sharedNotebook);
         NotebookTable ntable;
@@ -582,13 +603,25 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
                 fs = true;
             SyncChunk chunk;
             int chunkSize = 50;
-            comm->authenticateToLinkedNotebookShard(book);
+            if (comm->authenticateToLinkedNotebookShard(book)) {
+                this->communicationErrorHandler();
+                error = true;
+                return;
+            }
             bool more = true;
             SyncState syncState;
-            comm->getLinkedNotebookSyncState(syncState, book);
-            int startingSequenceNumber = usn;
+            if (!comm->getLinkedNotebookSyncState(syncState, book)) {
+                this->communicationErrorHandler();
+                error = true;
+                return;
+            }
+            qint32 startingSequenceNumber = usn;
             while (more && keepRunning) {
-                comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, fs);
+                if (!comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, fs)) {
+                    this->communicationErrorHandler();
+                    error = true;
+                    return;
+                }
                 processSyncChunk(chunk, lids[i]);
                 if (chunk.chunkHighUSN >= syncState.updateCount)
                     more = false;
@@ -643,6 +676,11 @@ qint32 SyncRunner::uploadSavedSearches() {
         if (!stable.isDeleted(lids[i])) {
             qint32 oldUsn = search.updateSequenceNum;
             usn = comm->uploadSavedSearch(search);
+            if (usn == 0) {
+                this->communicationErrorHandler();
+                error = true;
+                return maxUsn;
+            }
             if (usn > maxUsn) {
                 maxUsn = usn;
                 if (oldUsn == 0)
@@ -696,6 +734,11 @@ qint32 SyncRunner::uploadTags() {
         if (parentLid <= 0 || !table.isDirty(parentLid)) {
             qint32 oldUsn = tag.updateSequenceNum;
             usn = comm->uploadTag(tag);
+            if (usn == 0) {
+                this->communicationErrorHandler();
+                error = true;
+                return maxUsn;
+            }
             if (usn > 0) {
                 maxUsn = usn;
                 if (oldUsn == 0)
@@ -743,6 +786,11 @@ qint32 SyncRunner::uploadNotebooks() {
         if (!table.isDeleted(lids[i])) {
             qint32 oldUsn = notebook.updateSequenceNum;
             usn = comm->uploadNotebook(notebook);
+            if (usn == 0) {
+                this->communicationErrorHandler();
+                error = true;
+                return maxUsn;
+            }
             if (usn > maxUsn) {
                 maxUsn = usn;
                 if (oldUsn == 0)
@@ -763,4 +811,104 @@ qint32 SyncRunner::uploadNotebooks() {
         }
     }
     return maxUsn;
+}
+
+
+// Return a pointer to the CommunicationManager error class
+CommunicationError* SyncRunner::getError() {
+    return &comm->error;
+}
+
+
+// If a communication error happened, try to determine what the error is and
+// notify the user
+void SyncRunner::communicationErrorHandler() {
+    QString emitMsg;
+    if (comm->error.type == CommunicationError::TTransportException) {
+        if (comm->error.message != "")
+            emitMsg = comm->error.message;
+        else
+            emitMsg = "Transport error communicating with Evernote";
+        emit(setMessage(emitMsg));
+        return;
+    }
+
+    if (comm->error.type == CommunicationError::EDAMSystemException) {
+        if (comm->error.message != "")
+            emitMsg = comm->error.message;
+        else
+            emitMsg = "EDAMSystem Error communicating with Evernote.";
+        emit(setMessage(emitMsg));
+        return;
+    }
+
+    if (comm->error.type == CommunicationError::EDAMNotFoundException) {
+        if (comm->error.message != "")
+            emitMsg = comm->error.message;
+        else
+            emitMsg = "EDAMNotFound error.";
+        emit(setMessage(emitMsg));
+        return;
+    }
+
+    if (comm->error.type == CommunicationError::EDAMUserException) {
+        CommunicationError *e = &comm->error;
+
+        if (e->code == EDAMErrorCode::UNKNOWN)
+            emitMsg = "An unknown error has occurred : " +e->message;
+
+        if (e->code == EDAMErrorCode::BAD_DATA_FORMAT)
+            emitMsg = "Bad data format : " +e->message;
+
+        if (e->code == EDAMErrorCode::PERMISSION_DENIED)
+            emitMsg = "Permission denied : " +e->message;
+
+        if (e->code == EDAMErrorCode::INTERNAL_ERROR)
+            emitMsg = "Internal Evernote error : " +e->message + " Please try again later.";
+
+        if (e->code == EDAMErrorCode::DATA_REQUIRED)
+            emitMsg = "Communication Error - Data required : " +e->message;
+
+        if (e->code == EDAMErrorCode::INVALID_AUTH)
+            emitMsg = "Invalid authorization : " +e->message;
+
+        if (e->code == EDAMErrorCode::AUTH_EXPIRED) {
+            emitMsg = "Authorization token has expired or been revoked.";
+            global.accountsManager->setOAuthToken("");
+        }
+
+        if (e->code == EDAMErrorCode::DATA_CONFLICT)
+            emitMsg = "Communication Error - Data conflict : " +e->message;
+
+        if (e->code == EDAMErrorCode::ENML_VALIDATION)
+            emitMsg = "Unable to update note.  Invalid note structure : " +e->message;
+
+        if (e->code == EDAMErrorCode::LIMIT_REACHED)
+            emitMsg = "Communication Error - limit reached : " +e->message;
+
+        if (e->code == EDAMErrorCode::QUOTA_REACHED)
+            emitMsg = "Communication Error - User quota exceeded : " +e->message;
+
+        if (e->code == EDAMErrorCode::SHARD_UNAVAILABLE)
+            emitMsg = "Communication Error - Shard unavailable.  Please try again later. " +e->message;
+
+        if (e->code == EDAMErrorCode::LEN_TOO_SHORT)
+            emitMsg = "Communication Error - Length too short : " +e->message;
+
+        if (e->code == EDAMErrorCode::LEN_TOO_LONG)
+            emitMsg = "Communication Error - Length too long : " +e->message;
+
+        if (e->code == EDAMErrorCode::TOO_FEW)
+            emitMsg = "Communication Error - Length \"too few\" error : " +e->message;
+
+        if (e->code == EDAMErrorCode::TOO_MANY)
+            emitMsg = "Communication Error - \"too many\" error : " +e->message;
+
+        if (e->code == EDAMErrorCode::UNSUPPORTED_OPERATION)
+            emitMsg = "Communication Error - Unsupported operation " +e->message;
+
+        emit(setMessage(emitMsg));
+        return;
+    }
+
 }

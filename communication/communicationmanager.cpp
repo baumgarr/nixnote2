@@ -288,12 +288,20 @@ bool CommunicationManager::initUserStore() {
 
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMUserException;
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.message);
+        error.type = CommunicationError::EDAMSystemException;
         return false;
     } catch (TTransportException e) {
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
         return false;
     }
     QLOG_DEBUG() << "Leaving CommunicationManager::initUserStore()";
@@ -331,12 +339,25 @@ bool CommunicationManager::initNoteStore() {
 
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMUserException;
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        error.message = QString::fromStdString(e.message);
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMSystemException;
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMNotFoundException;
         return false;
     } catch (TTransportException e) {
         QLOG_ERROR() << "\n\nTTransportException:" << e.what() << endl;
+        error.message = QString(e.what());
+        error.message = QString::fromStdString(e.what());
         return false;
     }
     QLOG_DEBUG() << "Leaving CommunicationManager::initNoteStore()";
@@ -372,9 +393,20 @@ bool CommunicationManager::getUserInfo(User &user) {
        userStoreClient->getUser(user, authToken);
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMUserException;
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.message);
+        error.type = CommunicationError::EDAMSystemException;
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMNotFoundException;
         return false;
     }
 
@@ -475,12 +507,25 @@ qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
         }
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = "Error uploading saved search " + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        error.code = e.errorCode;
+        error.message = "Error uploading saved search " + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.message);
+        error.type = CommunicationError::EDAMSystemException;
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
+        error.message = "Error uploading saved search " + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        QLOG_ERROR() << "TTransportException:" << QString::fromStdString(e.what()) << endl;
+        error.message = "Error uploading saved search " + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
         return 0;
     }
 }
@@ -492,9 +537,20 @@ qint32 CommunicationManager::expungeSavedSearch(string guid) {
         return noteStoreClient->expungeSearch(authToken, guid);
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.message);
+        error.type = CommunicationError::EDAMSystemException;
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
@@ -513,14 +569,28 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
             return tag.updateSequenceNum;
         }
     } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        QLOG_ERROR() << "EDAMUserException: " << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = "Error uploading tag " + QString::fromStdString(tag.name) + " : " +QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        error.code = e.errorCode;
+        error.message = "Error uploading tag " + QString::fromStdString(tag.name) + " : " +QString::fromStdString(e.message);
+        error.type = CommunicationError::EDAMSystemException;
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
+        error.message = "Error uploading tag " + QString::fromStdString(tag.name) + " : "+ QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        QLOG_ERROR() << "TTransportException:" << QString::fromStdString(e.what()) << endl;
+        error.message = "Error uploading tag " + QString::fromStdString(tag.name) + " : " +QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
         return 0;
+
     }
 }
 
@@ -531,9 +601,20 @@ qint32 CommunicationManager::expungeTag(string guid) {
         return noteStoreClient->expungeTag(authToken, guid);
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.message);
+        error.type = CommunicationError::EDAMSystemException;
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
@@ -554,13 +635,27 @@ qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
         }
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = "Error uploading notebook " + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        error.code = e.errorCode;
+        error.message = "Error uploading notebook " + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.message);
+        error.type = CommunicationError::EDAMSystemException;
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
+        error.message = "Error uploading notebook " + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        QLOG_ERROR() << "TTransportException:" << QString::fromStdString(e.what()) << endl;
+        error.message = "Error uploading notebook " + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
         return 0;
+
     }
 }
 
@@ -571,9 +666,20 @@ qint32 CommunicationManager::expungeNotebook(string guid) {
         return noteStoreClient->expungeNotebook(authToken, guid);
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        error.code = e.errorCode;
+        error.message = QString::fromStdString(e.message);
+        error.type = CommunicationError::EDAMSystemException;
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
