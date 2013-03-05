@@ -65,6 +65,7 @@ class SyncRunner : public QThread
     Q_OBJECT
 private:
     bool idle;
+    int defaultMsgTimeout;
     long evernoteUpdateCount;
     CommunicationManager *comm;
     //JavaMachine *jvm;
@@ -143,7 +144,7 @@ public:
 
 signals:
     void syncComplete();
-    void setMessage(QString message);
+    void setMessage(QString message, int timeout);
     void searchUpdated(qint32 lid, QString name);
     void tagUpdated(qint32 lid, QString name);
     void notebookUpdated(qint32 lid, QString name);

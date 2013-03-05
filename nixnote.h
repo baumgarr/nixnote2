@@ -133,7 +133,7 @@ private:
     void saveContents();
     void saveNoteColumnPositions();
     void saveNoteColumnWidths();
-
+    int defaultMsgTimeout;
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor
@@ -169,7 +169,7 @@ public slots:
     void openDatabaseStatus();
     void openAbout();
     void openImportFolders();
-    void setMessage(QString msg);
+    void setMessage(QString msg, int timeout=0);
     void toggleLeftPanel();
     void toggleNoteList();
     void toggleTabWindow();

@@ -84,6 +84,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     db = new DatabaseConnection();  // Startup the database
     QLOG_TRACE() << "Setting up global settings";
     this->initializeGlobalSettings();
+    defaultMsgTimeout = 3000;  // Default time to leave a message
 
     // Setup the sync thread
     QLOG_TRACE() << "Setting up counter thread";
@@ -93,7 +94,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     // Setup the counter thread
     QLOG_TRACE() << "Setting up sync thread";
     connect(this,SIGNAL(syncRequested()),&syncRunner,SLOT(synchronize()));
-    connect(&syncRunner, SIGNAL(setMessage(QString)), this, SLOT(setMessage(QString)));
+    connect(&syncRunner, SIGNAL(setMessage(QString, int)), this, SLOT(setMessage(QString, int)));
     syncRunner.start(QThread::NormalPriority);
 
     indexRunner.start(QThread::LowestPriority);
@@ -694,6 +695,7 @@ void NixNote::syncTimerExpired() {
 //* User synchronize was requested
 //******************************************************************************
 void NixNote::synchronize() {
+    statusBar()->clearMessage();
     if (!global.accountsManager->oauthTokenFound()) {
         OAuthWindow window;
         window.exec();
@@ -917,12 +919,12 @@ void NixNote::databaseRestore() {
     if (pos > 0)
         saveLastPath.truncate(pos);
 
-    setMessage(tr("Restoring database"));
+    setMessage(tr("Restoring database"), defaultMsgTimeout);
     ImportData noteReader(true);
     noteReader.import(fileNames[0]);
 
     if (noteReader.lastError != 0) {
-        setMessage(noteReader.getErrorMessage());
+        setMessage(noteReader.getErrorMessage(), defaultMsgTimeout);
         QLOG_ERROR() <<  "Restore problem: " << noteReader.lastError;
         waitCursor(false);
         return;
@@ -936,7 +938,7 @@ void NixNote::databaseRestore() {
     notebookTreeView->rebuildNotebookTreeNeeded = true;
     notebookTreeView->loadData();
     searchTreeView->loadData();
-    setMessage(tr("Database has been restored."));
+    setMessage(tr("Database has been restored."), defaultMsgTimeout);
     waitCursor(false);
 }
 
@@ -951,8 +953,8 @@ void NixNote::waitCursor(bool value) {
 
 
 // Show a message in the status bar
-void NixNote::setMessage(QString text) {
-    statusBar()->showMessage(text);   
+void NixNote::setMessage(QString text, int timeout) {
+    statusBar()->showMessage(text, timeout);
 }
 
 

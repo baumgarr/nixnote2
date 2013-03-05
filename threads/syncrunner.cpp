@@ -59,6 +59,7 @@ SyncRunner::~SyncRunner() {
 
 void SyncRunner::run() {
     QLOG_DEBUG() << "SyncRunner starting";
+    defaultMsgTimeout = 3000;
     this->setPriority(QThread::LowPriority);
     comm = new CommunicationManager(this);
     connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
@@ -133,7 +134,7 @@ void SyncRunner::evernoteSync() {
     if (updateSequenceNumber == 0)
         fullSync = true;
 
-    emit setMessage(tr("Beginning Sync"));
+    emit setMessage(tr("Beginning Sync"), defaultMsgTimeout);
     // If there are remote changes
     QLOG_DEBUG() <<  "--->>>  Current Chunk High Sequence Number: " << syncState.updateCount;
     QLOG_DEBUG() <<  "--->>>  Last User High Sequence Number: " <<  updateSequenceNumber;
@@ -141,7 +142,7 @@ void SyncRunner::evernoteSync() {
     if (syncState.updateCount > updateSequenceNumber) {
         QLOG_DEBUG() <<  "Remote changes found";
         QLOG_DEBUG() << "Downloading changes";
-        emit setMessage(tr("Downloading changes"));
+        emit setMessage(tr("Downloading changes"), defaultMsgTimeout);
         syncRemoteToLocal(syncState.updateCount);
     }
 
@@ -175,7 +176,7 @@ void SyncRunner::evernoteSync() {
     userTable.updateSyncState(syncState);
 
     if (!error)
-        emit setMessage(tr("Sync Complete"));
+        emit setMessage(tr("Sync Complete"), defaultMsgTimeout);
     QLOG_TRACE() << "Leaving SyncRunner::evernoteSync()";
 }
 
@@ -204,8 +205,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         }
         QLOG_DEBUG() << "------>>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
         int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
-        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete."));
-
+        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete."), defaultMsgTimeout);
         processSyncChunk(chunk);
 
         if (chunk.chunkHighUSN >= updateCount)
@@ -217,7 +217,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
         query.exec("commit");
     }
-    emit setMessage(tr("Download 100% complete."));
+    emit setMessage(tr("Download 100% complete."), defaultMsgTimeout);
     syncRemoteLinkedNotebooksActual();
 }
 
@@ -632,7 +632,7 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
                 ltable.setLastUpdateSequenceNumber(lids[i], chunk.chunkHighUSN);
                 usn = chunk.chunkHighUSN;
                 int pct = (usn-startingSequenceNumber)*100/(chunk.updateCount-startingSequenceNumber);
-                emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for shared notebook ") +QString::fromStdString(book.shareName) + tr("."));
+                emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for shared notebook ") +QString::fromStdString(book.shareName) + tr("."), defaultMsgTimeout);
             }
             comm->disconnectFromLinkedNotebook();
         }
@@ -882,7 +882,7 @@ void SyncRunner::communicationErrorHandler() {
             emitMsg = comm->error.message;
         else
             emitMsg = "Transport error communicating with Evernote";
-        emit(setMessage(emitMsg));
+        emit(setMessage(emitMsg, 0));
         return;
     }
 
@@ -891,7 +891,7 @@ void SyncRunner::communicationErrorHandler() {
             emitMsg = comm->error.message;
         else
             emitMsg = "EDAMSystem Error communicating with Evernote.";
-        emit(setMessage(emitMsg));
+        emit(setMessage(emitMsg, 0));
         return;
     }
 
@@ -900,7 +900,7 @@ void SyncRunner::communicationErrorHandler() {
             emitMsg = comm->error.message;
         else
             emitMsg = "EDAMNotFound error.";
-        emit(setMessage(emitMsg));
+        emit(setMessage(emitMsg, 0));
         return;
     }
 
@@ -960,7 +960,7 @@ void SyncRunner::communicationErrorHandler() {
         if (e->code == EDAMErrorCode::UNSUPPORTED_OPERATION)
             emitMsg = "Communication Error - Unsupported operation " +e->message;
 
-        emit(setMessage(emitMsg));
+        emit(setMessage(emitMsg, 0));
         return;
     }
 
