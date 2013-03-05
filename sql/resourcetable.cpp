@@ -451,9 +451,6 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
         }
 
         if (t.data.__isset.body) {
-            QByteArray b;
-            b.clear();
-            b.append(t.data.body.data(),t.data.size);
             QString mimetype = QString::fromStdString(t.mime);
             QString filename;
             MimeReference ref;
@@ -462,7 +459,7 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
             QString fileExt = ref.getExtensionFromMime(mimetype, filename);
             QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
             tfile.open(QIODevice::WriteOnly);
-            tfile.write(b,t.data.size);
+            tfile.write(t.data.body.data(),t.data.size);
             tfile.close();
         }
     }

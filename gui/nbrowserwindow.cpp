@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QClipboard>
+#include <QBuffer>
 #include <iostream>
 #include <istream>
 
@@ -1654,21 +1655,27 @@ void NBrowserWindow::insertDatetime() {
 
 // Insert an image into the editor
 void NBrowserWindow::insertImage(const QMimeData *mime) {
+
+    // Get the image from the clipboard and save it into a QByteArray
+    // that can be saved
     QImage img = qvariant_cast<QImage>(mime->imageData());
+    QByteArray imageBa;
+    QBuffer b(&imageBa);
+    b.open(QIODevice::WriteOnly);
+    img.save(&b, "JPG");
+
     QString script_start = "document.execCommand('insertHTML', false, '";
     QString script_end = "');";
 
     Resource newRes;
-    QByteArray imageBa((char *)img.bits(), img.byteCount());
     qint32 rlid = createResource(newRes, 0, imageBa, "image/jpeg", false);
     if (rlid <= 0)
         return;
 
+    // The resource is done, now we need to add it to the
+    // note body
     QString g =  QString::number(rlid)+QString(".jpg");
     QString path = global.fileManager.getDbaDirPath() + g;
-
-    // Open the file & write the data
-    img.save(path);
 
     // do the actual insert into the note
     QString buffer;
@@ -1687,6 +1694,7 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
     buffer.append(QString::number(rlid));
     buffer.append("\">");
 
+    // Insert the actual note
     editor->page()->mainFrame()->evaluateJavaScript(
             script_start + buffer + script_end);
 
@@ -1694,16 +1702,14 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
 }
 
 
-
+// Create  a new resource and add it to the database
 qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data,  QString mime, bool attachment) {
     ConfigStore cs;
     qint32 rlid = cs.incrementLidCounter();
 
-    QCryptographicHash md5hash(QCryptographicHash::Md5);
-    QByteArray hash = md5hash.hash(data, QCryptographicHash::Md5);
+    QByteArray hash = QCryptographicHash::hash(data, QCryptographicHash::Md5);
 
-    QUuid uuid;
-    QString guid =  uuid.createUuid().toString().replace("{","").replace("}","");
+    QString guid =  QString::number(rlid);
     NoteTable noteTable;
     r.guid = guid.toStdString();
     r.__isset.guid = true;
@@ -1726,7 +1732,8 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
 
     Data *d = &r.data;
     r.__isset.data = true;
-    d->body = QString(data).toStdString();
+    d->body.clear();
+    d->body.append(data.data(), data.size());
     d->__isset.body = true;
     d->bodyHash.append(hash.data(), hash.size());
     d->__isset.bodyHash = true;
@@ -1739,6 +1746,7 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
 
     ResourceTable resourceTable;
     resourceTable.add(rlid, r, true);
+
     return rlid;
 }
 

@@ -95,7 +95,7 @@ void FileWatcher::saveFile(QString file) {
     QString enMedia =QString("<en-media hash=\"") +hash.toHex() +QString("\" border=\"0\"")
             +QString(" type=\"" +mime +"\" ")
             +QString("/>");
-    newNoteBody.append(enMedia) + QString("</en-note>");
+    newNoteBody.append(enMedia + QString("</en-note>"));
     newNote.content = newNoteBody.toStdString();
     newNote.__isset.content = true;
     newNote.active = true;

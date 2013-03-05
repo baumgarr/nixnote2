@@ -175,6 +175,8 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
 
     QString text = "";
     Poppler::Document *doc = Poppler::Document::load(file);
+    if (doc == NULL)
+        return;
     for (int i=0; i<doc->numPages(); i++) {
         QRectF rect;
         text = text + doc->page(i)->text(rect) + QString(" ");
