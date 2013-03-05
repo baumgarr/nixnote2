@@ -82,7 +82,7 @@ private:
     void rotateImage(qreal degrees);
     void updateImageHash(QString newhash);
     void insertImage(const QMimeData *mime);
-    qint32 createResource(Resource &r, int sequence, QByteArray data, QString mime, bool attachment);
+    qint32 createResource(Resource &r, int sequence, QByteArray data, QString mime, bool attachment, QString filename);
     PluginFactory *factory;
 
 public:
@@ -183,6 +183,8 @@ public slots:
     void focusNote();
     void imageContextMenu(QString lid, QString filename);
     void insertDatetime();
+    void attachFile();
+    void attachFileSelected(QString filename);
 
     void exposeToJavascript();
     void boldActive();

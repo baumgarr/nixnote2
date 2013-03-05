@@ -36,10 +36,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/encryptdialog.h"
 #include "sql/configstore.h"
 #include "utilities/encrypt.h"
+#include "utilities/mimereference.h"
 
 #include <QVBoxLayout>
 #include <QAction>
 #include <QMenu>
+#include <QFileIconProvider>
 #include <QFontDatabase>
 #include <QSplitter>
 #include <QDesktopServices>
@@ -1141,8 +1143,6 @@ void NBrowserWindow::updateImageHash(QString newhash) {
             oldhash = oldhash.mid(0,oldhash.indexOf("\""));
             section.replace(oldhash, newhash);
             QString newcontent = content.mid(0,pos) +section +content.mid(endPos);
-            QLOG_DEBUG() << "***\n\nOLD\n\n***\n" << content;
-            QLOG_DEBUG() << "***\n\nNEW\n\n***\n" << newcontent;
             editor->page()->mainFrame()->setHtml(newcontent);
             rtable.updateResourceHash(selectedFileLid, newhash);
             return;
@@ -1160,7 +1160,151 @@ void NBrowserWindow::imageContextMenu(QString l, QString f) {
 }
 
 
+void NBrowserWindow::attachFile() {
+    QFileDialog fileDialog;
+//    fileDialog.setDirectory(dir.homePath()+"/");
+    fileDialog.setFileMode(QFileDialog::ExistingFile);
+    connect(&fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(attachFileSelected(QString)));
+    int rc = fileDialog.exec();
+}
 
+
+void NBrowserWindow::attachFileSelected(QString filename) {
+    // Read in the file
+    QFile file(filename);
+    file.open(QIODevice::ReadOnly);
+    QByteArray ba = file.readAll();
+    file.close();
+
+    QString script_start = "document.execCommand('insertHTML', false, '";
+    QString script_end = "');";
+
+    MimeReference mimeRef;
+    QString extension = filename;
+    int endPos = filename.indexOf(".");
+    if (endPos>0)
+        extension = extension.mid(endPos);
+    QString mime =  mimeRef.getMimeFromExtension(extension);
+    Resource newRes;
+    bool attachment = true;
+    if (mime == "application/pdf" || mime.startsWith("image/"))
+        attachment = false;
+    qint32 rlid = createResource(newRes, 0, ba, mime, attachment, QFileInfo(filename).fileName());
+    QByteArray hash;
+    hash.append(newRes.data.bodyHash.data(), newRes.data.bodyHash.size());
+    if (rlid <= 0)
+        return;
+
+    // If we have an image, then insert it.
+    if (mime.startsWith("image", Qt::CaseInsensitive)) {
+
+        // The resource is done, now we need to add it to the
+        // note body
+        QString g =  QString::number(rlid)+extension;
+        QString path = global.fileManager.getDbaDirPath() + g;
+
+        // do the actual insert into the note
+        QString buffer;
+        QByteArray hash(newRes.data.bodyHash.c_str(), newRes.data.bodyHash.size());
+        buffer.append("<img src=\"file://");
+        buffer.append(path);
+        buffer.append("\" type=\"");
+        buffer.append(mime);
+        buffer.append("\" hash=\"");
+        buffer.append(hash.toHex());
+        buffer.append("\" onContextMenu=\"window.browser.imageContextMenu(&apos;");
+        buffer.append(QString::number(rlid));
+        buffer.append("&apos;, &apos;");
+        buffer.append(g);
+        buffer.append("&apos;);\" ");
+        buffer.append(" en-tag=\"en-media\" style=\"cursor: default;\" lid=\"");
+        buffer.append(QString::number(rlid));
+        buffer.append("\">");
+
+        // Insert the actual image
+        editor->page()->mainFrame()->evaluateJavaScript(
+                script_start + buffer + script_end);
+        return;
+    }
+
+
+    // If we have something other than an image
+    // First get the icon for this type of file
+    QIcon icon = QFileIconProvider().icon(QFileInfo(filename));
+
+    // Setup the painter
+    QPainter p;
+
+    // Setup the font
+    QFont font=p.font() ;
+    font.setPointSize ( 8 );
+    font.setFamily("Arial");
+    QFontMetrics fm(font);
+    int width =  fm.width(filename);
+    if (width < 40)  // steup a minimum width
+        width = 40;
+    width=width+50;  // Add 10 px for padding & 40 for the icon
+
+    // Start drawing a new pixmap for  the image in the note
+    QPoint textPoint(40,15);
+    QPoint sizePoint(40,29);
+    QPixmap pixmap(width,37);
+    pixmap.fill();
+
+    p.begin(&pixmap);
+    p.setFont(font);
+    p.drawPixmap(QPoint(3,3), icon.pixmap(QSize(30,40)));
+
+    // Write out the attributes of the file
+    p.drawText(textPoint, QFileInfo(filename).fileName());
+
+    QString unit = QString(tr("Bytes"));
+    qint32 size = QFileInfo(filename).size();
+    if (size > 1024) {
+        size = size/1024;
+        unit = QString(tr("KB"));
+    }
+    if (size > 1024) {
+        size = size/1024;
+        unit= QString("MB");
+    }
+    p.drawText(sizePoint, QString::number(size).trimmed() +" " +unit);
+    p.drawRect(0,0,width-1,37-1);   // Draw a rectangle around the image.
+    p.end();
+
+    // Now that it is drawn, we write it out to a temporary file
+    QString tmpFile = global.fileManager.getTmpDirPath(QString::number(rlid) + QString("_icon.png"));
+    pixmap.save(tmpFile, "png");
+
+    // do the actual insert into the note
+    QString buffer;
+    buffer.append("<a en-tag=\"en-media\" ");
+    buffer.append("lid=\""+QString::number(rlid) +QString("\" "));
+    buffer.append("style=\"cursor: default;\" ");
+    buffer.append("type=\"" +mime +"\" ");
+    buffer.append("hash=\"" +hash.toHex()+"\" ");
+    buffer.append("href=\"nnres:" +QString::number(rlid) +
+                  global.attachmentNameDelimeter+extension+"\" ");
+    buffer.append("oncontextmenu=\"window.browserWindow.resourceContextMenu(&apos");
+    buffer.append(global.fileManager.getTmpDirPath()+QString::number(rlid) +global.attachmentNameDelimeter+
+                 extension +QString("&apos);\" "));
+    buffer.append(">");
+
+    buffer.append("<img en-tag=\"temporary\" title=\""+QFileInfo(filename).fileName() +"\" ");
+    buffer.append("src=\"file://");
+    buffer.append(global.fileManager.getTmpDirPath());
+    buffer.append(QString::number(rlid));
+    buffer.append("_icon.png\"");
+    buffer.append(" />");
+    buffer.append("</a>");
+
+    QLOG_DEBUG() << buffer;
+    // Insert the actual attachment
+    editor->page()->mainFrame()->evaluateJavaScript(
+            script_start + buffer + script_end);
+
+
+}
 
 //****************************************************************
 //* MicroFocus changed
@@ -1668,7 +1812,7 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
     QString script_end = "');";
 
     Resource newRes;
-    qint32 rlid = createResource(newRes, 0, imageBa, "image/jpeg", false);
+    qint32 rlid = createResource(newRes, 0, imageBa, "image/jpeg", false, "");
     if (rlid <= 0)
         return;
 
@@ -1703,7 +1847,7 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
 
 
 // Create  a new resource and add it to the database
-qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data,  QString mime, bool attachment) {
+qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data,  QString mime, bool attachment, QString filename) {
     ConfigStore cs;
     qint32 rlid = cs.incrementLidCounter();
 
@@ -1729,6 +1873,11 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
     r.__isset.height = 0;
     r.duration = 0;
     r.__isset.duration = 0;
+    if (filename != "") {
+        r.attributes.fileName = filename.toStdString();
+        r.__isset.attributes = true;
+        r.attributes.__isset.fileName = true;
+    }
 
     Data *d = &r.data;
     r.__isset.data = true;

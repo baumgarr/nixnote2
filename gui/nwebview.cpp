@@ -134,6 +134,12 @@ NWebView::NWebView(NBrowserWindow *parent) :
     this->setupShortcut(insertQuickLinkAction, "Edit_InsertQuickLink");
     connect(insertQuickLinkAction, SIGNAL(triggered()),parent, SLOT(insertQuickLinkButtonPressed()));
 
+    attachFileAction = new QAction(tr("Attach File"), this);
+    contextMenu->addAction(attachFileAction);
+    this->setupShortcut(attachFileAction, "Edit_Attach_File");
+    connect(attachFileAction, SIGNAL(triggered()),parent, SLOT(attachFile()));
+    contextMenu->addSeparator();
+
     insertLatexAction = new QAction(tr("Insert LaTeX Formula"), this);
     contextMenu->addAction(insertLatexAction);
     this->setupShortcut(insertLatexAction, "Edit_Insert_Latex");
