@@ -1227,8 +1227,27 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         return;
     }
 
+    if (mime == "application/pdf") {
+        // The resource is done, now we need to add it to the
+        // note body
+        QString g =  QString::number(rlid)+extension;
+        QString path = global.fileManager.getDbaDirPath() + g;
 
-    // If we have something other than an image
+        // do the actual insert into the note
+        QString buffer;
+        QByteArray hash(newRes.data.bodyHash.c_str(), newRes.data.bodyHash.size());
+        buffer.append("<object width=\"100%\" height=\"100%\" lid=\"" +QString::number(rlid) +"\" hash=\"");
+        buffer.append(hash.toHex());
+        buffer.append("\" type=\"application/pdf\" />");
+
+        // Insert the actual image
+        editor->page()->mainFrame()->evaluateJavaScript(
+                script_start + buffer + script_end);
+        return;
+
+    }
+
+    // If we have something other than an image or PDF
     // First get the icon for this type of file
     QIcon icon = QFileIconProvider().icon(QFileInfo(filename));
 
