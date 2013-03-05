@@ -32,7 +32,7 @@ private:
     bool isAttributeValid(QString attribute, QString tag);
     bool isElementValid(QString element);
     void cleanupElementAttributes(QDomElement &e);
-
+    void fixHtmlTags();
 
 public:
     bool formattingError;
@@ -46,7 +46,7 @@ public:
     void scanTags();
     void fixNode(const QDomNode &node);
     QDomNode fixLinkNode(const QDomNode &node);
-    void fixEnmedia();
+
 
 signals:
 

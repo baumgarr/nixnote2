@@ -126,7 +126,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
             content = b;
         doc.setContent(content);
     }
-
+    QLOG_DEBUG() << doc.toString();
     // Remove all the temporary file names
     tempFiles.clear();
     modifyTags(doc);

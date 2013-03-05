@@ -58,14 +58,12 @@ void EnmlFormatter::setHtml(QString h) {
 QByteArray EnmlFormatter::rebuildNoteEnml() {
     resources.clear();
 
-        //QLOG_DEBUG() << "Before:\n"<< content<<"\n\n";
-
 //    // Run it through "tidy".  It is a program which will fix any invalid HTML
 //    // and give us the results back through stdout.  In a perfect world this
 //    // wouldn't be needed, but WebKit doesn't always give back good HTML.
 
     QProcess tidyProcess;
-    tidyProcess.start("tidy -raw -q -asxhtml -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
+    tidyProcess.start("tidy -raw -q -ashtml -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
     QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
     tidyProcess.waitForStarted();
     tidyProcess.write(content);
@@ -74,7 +72,6 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
     QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
 
-    //QLOG_DEBUG() << "\n\nafter\n" << content <<"\n\n";
     if (content == "") {
         formattingError = true;
         return "";
@@ -95,13 +92,16 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.clear();
     content = b;
 
+    fixHtmlTags();
+
     // Remove all the temporary file names
-    doc.setContent(content);
+    QString emsg;
+    int line, col;
+    //QLOG_DEBUG() << content;
+    doc.setContent(content, &emsg, &line, &col);
     scanTags();
 
-    // Fix potential <en-media>data</en-media> tags.
-    fixEnmedia();
-
+    //QLOG_DEBUG() << content;
     return content;
 }
 
@@ -111,7 +111,6 @@ void EnmlFormatter::scanTags() {
     if (doc.hasChildNodes()) {
         parseNodes(doc.childNodes());
     }
-    //QLOG_DEBUG() << "Doc:" << doc.toString();
     content = doc.toByteArray();
     return;
 }
@@ -140,8 +139,11 @@ void EnmlFormatter::fixNode(const QDomNode &node) {
             e.setAttribute("checked", "true");
         else
             e.removeAttribute("checked");
+        e.removeAttribute("style");
+        e.removeAttribute("type");
 
         cleanupElementAttributes(e);
+        return;
     }
 
     if (node.nodeName().toLower() == "a") {
@@ -168,9 +170,9 @@ void EnmlFormatter::fixNode(const QDomNode &node) {
             e.removeAttribute("src");
             e.removeAttribute("id");
             e.removeAttribute("onclick");
+            e.removeAttribute("style");
             e.removeAttribute("onmouseover");
             e.setTagName("en-crypt");
-            e.parentNode().removeChild(e);
             return;
         }
 
@@ -255,7 +257,12 @@ QDomNode EnmlFormatter::fixLinkNode(const QDomNode &node) {
         resources.append(e.attribute("lid").toInt());
         e.removeAttribute("href");
         e.removeAttribute("guid");
-        e.setNodeValue("");
+        e.removeAttribute("lid");
+        e.removeAttribute("title");
+        e.removeAttribute("oncontextmenu");
+        e.removeAttribute("style");
+        e.removeAttribute("src");
+//        e.setNodeValue("");
         e.removeChild(e.firstChildElement());
     }
     return e;
@@ -281,7 +288,7 @@ bool EnmlFormatter::isAttributeValid(QString attribute, QString tag) {
     if (attribute == "dynsrc") return false;
     if (attribute == "tabindex") return false;
     if (attribute == "style") return false;
-    if (attribute == "type") return false;
+    if (attribute == "type" && tag != "en-media") return false;
 
     // These are things that are NixNote specific
     if (attribute == "en-tag") return false;
@@ -371,15 +378,60 @@ bool EnmlFormatter::isElementValid(QString element) {
 
 
 
-// This removes any </en-media> tags and changes the <en-media> to <en-media/>
-// This needs to be done because someone can get inside the <img> tags when
-// editing a note and Evernote hates it when that happens.
-void EnmlFormatter::fixEnmedia() {
-    content = content.replace("</en-media>", "");
-    int pos = content.indexOf("<en-media");
+// Fix any tags.  If they don't end with "/>" Qt won't be able to parse
+// them properly.
+void EnmlFormatter::fixHtmlTags() {
+
+    int pos;
+    content = content.replace("<p>", "<p/>");
+    content = content.replace("<hr>", "<hr/>");
+
+    // Fix the <br> tags
+    content = content.replace("<br clear=\"none\">", "<br/>");
+    pos = content.indexOf("<br");
     while (pos > 0) {
         int endPos = content.indexOf(">", pos);
-        content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
-        pos = content.indexOf("<en-media", pos+1);
+        int tagEndPos = content.indexOf("/>", pos);
+
+        // Check the next /> end tag.  If it is beyond the end
+        // of the current tag or if it doesn't exist then we
+        // need to fix the end of the img
+        if (tagEndPos <= 0 || tagEndPos > endPos) {
+            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+        }
+         pos = content.indexOf("<br", pos+1);
+    }
+
+
+    // Fix the <input> tags
+    content = content.replace("</input>", "");
+    pos = content.indexOf("<input");
+    while (pos > 0) {
+        int endPos = content.indexOf(">", pos);
+        int tagEndPos = content.indexOf("/>", pos);
+
+        // Check the next /> end tag.  If it is beyond the end
+        // of the current tag or if it doesn't exist then we
+        // need to fix the end of the img
+        if (tagEndPos <= 0 || tagEndPos > endPos) {
+            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+        }
+         pos = content.indexOf("<input", pos+1);
+    }
+
+    // Fix any <img> tags
+    content = content.replace("</img>", "");
+    pos = content.indexOf("<img");
+    while (pos > 0) {
+        int endPos = content.indexOf(">", pos);
+        int tagEndPos = content.indexOf("/>", pos);
+
+        // Check the next /> end tag.  If it is beyond the end
+        // of the current tag or if it doesn't exist then we
+        // need to fix the end of the img
+        if (tagEndPos <= 0 || tagEndPos > endPos) {
+            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+        }
+        pos = content.indexOf("<img", pos+1);
     }
 }
