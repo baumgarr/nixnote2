@@ -99,6 +99,7 @@ private:
     QAction *homeButton;
     QAction *syncButton;
     QAction *newNoteButton;
+    QAction *screenCaptureButton;
     QAction *trunkButton;
     QAction *usageButton;
     QAction *toolsAccountAction;
@@ -198,6 +199,7 @@ public slots:
     void viewNoteListWide();
     void viewNoteListNarrow();
     void resourceExternallyUpdated(QString resource);
+    void screenCapture();
 
 signals:
     void syncRequested();

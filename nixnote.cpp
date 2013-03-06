@@ -37,8 +37,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QStatusBar>
 #include <QSlider>
 #include <QPrinter>
+#include <QDesktopWidget>
 
 #include "sql/notetable.h"
+#include "dialog/screencapture.h"
 #include "gui/ntabwidget.h"
 #include "sql/notebooktable.h"
 #include "settings/startupconfig.h"
@@ -291,6 +293,12 @@ void NixNote::setupGui() {
     trayIcon = new QSystemTrayIcon(QIcon(":windowIcon.png"), this);
     trayIconContextMenu = new QMenu(this);
     trayIconContextMenu->addAction(newNoteButton);
+
+    screenCaptureButton = new QAction(tr("Screen Capture"), this);
+    trayIconContextMenu->addAction(screenCaptureButton);
+    connect(screenCaptureButton, SIGNAL(triggered()), this, SLOT(screenCapture()));
+
+
     showAction = trayIconContextMenu->addAction(tr("Show/Hide"));
     minimizeToTrayAction = trayIconContextMenu->addAction(tr("Minimize to tray"));
     minimizeToTrayAction->setCheckable(true);
@@ -350,7 +358,6 @@ void NixNote::setupGui() {
     this->updateSelectionCriteria();
     // Set default focuse to the editor window
     tabWindow->currentBrowser()->editor->setFocus();
-
 }
 
 
@@ -1498,3 +1505,94 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
         tabWindow->updateResourceHash(noteLid, oldHash, newHash);
     }
 }
+
+
+
+void NixNote::screenCapture() {
+    sleep(1);
+    ScreenCapture sc;
+    sc.exec();
+    QPixmap pix = sc.getSelection();
+
+    ConfigStore cs;
+    qint32 lid = cs.incrementLidCounter();
+
+    QCryptographicHash md5hash(QCryptographicHash::Md5);
+    QByteArray data;
+    QBuffer buffer(&data);
+    buffer.open(QIODevice::WriteOnly);
+    pix.save(&buffer, "PNG");
+
+    QByteArray hash = md5hash.hash(data, QCryptographicHash::Md5);
+
+    // * Start setting up the new note
+    Note newNote;
+    newNote.guid = QString::number(lid).toStdString();
+    newNote.__isset.guid = true;
+    newNote.title = tr("Screen Capture").toStdString();
+    newNote.__isset.title = true;
+
+    NotebookTable bookTable;
+    QString notebook;
+    notebook = bookTable.getDefaultNotebookGuid();
+    newNote.notebookGuid = notebook.toStdString();
+    newNote.__isset.notebookGuid = true;
+
+    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
+           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
+           QString("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">");
+
+    QString mime = "image/png";
+    QString enMedia =QString("<en-media hash=\"") +hash.toHex() +QString("\" border=\"0\"")
+            +QString(" type=\"" +mime +"\" ")
+            +QString("/>");
+    newNoteBody.append(enMedia + QString("</en-note>"));
+    newNote.content = newNoteBody.toStdString();
+    newNote.__isset.content = true;
+    newNote.active = true;
+    newNote.__isset.active = true;
+    newNote.created = QDateTime::currentMSecsSinceEpoch();;
+    newNote.__isset.created = true;
+    newNote.updated = newNote.created;
+    newNote.__isset.updated = true;
+    newNote.updateSequenceNum = 0;
+    newNote.__isset.updateSequenceNum = true;
+
+    NoteTable ntable;
+    ntable.add(lid, newNote, true);
+    QString noteGuid = ntable.getGuid(lid);
+    lid = cs.incrementLidCounter();
+
+
+    // Start creating the new resource
+    Resource newRes;
+    string bodystring(data.constData(), data.size());
+    newRes.data.body = bodystring;
+    string hashstring(hash.constData(), hash.size());
+    newRes.data.bodyHash = hashstring;
+    newRes.data.size = data.size();
+    newRes.data.__isset.body = true;
+    newRes.data.__isset.bodyHash = true;
+    newRes.data.__isset.size = true;
+    newRes.__isset.data = true;
+    newRes.mime = mime.toStdString();
+    newRes.__isset.mime = true;
+    newRes.__isset.attributes = true;
+    newRes.attributes.attachment = false;
+    newRes.attributes.__isset.attachment = true;
+    newRes.active = true;
+    newRes.__isset.active = true;
+    newRes.guid = QString::number(lid).toStdString();
+    newRes.__isset.guid = true;
+    newRes.noteGuid = noteGuid.toStdString();
+    newRes.__isset.noteGuid = true;
+    newRes.updateSequenceNum = 0;
+    newRes.__isset.updateSequenceNum = 0;
+    ResourceTable restable;
+    restable.add(lid, newRes, true);
+
+    updateSelectionCriteria();
+}
+
+
+

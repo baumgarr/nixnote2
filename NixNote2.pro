@@ -146,7 +146,8 @@ SOURCES += main.cpp\
     dialog/accountmaintenancedialog.cpp \
     gui/truefalsedelegate.cpp \
     gui/browserWidgets/editorbuttonbar.cpp \
-    communication/communicationerror.cpp
+    communication/communicationerror.cpp \
+    dialog/screencapture.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -309,7 +310,8 @@ HEADERS  += nixnote.h \
     dialog/accountmaintenancedialog.h \
     gui/truefalsedelegate.h \
     gui/browserWidgets/editorbuttonbar.h \
-    communication/communicationerror.h
+    communication/communicationerror.h \
+    dialog/screencapture.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \
