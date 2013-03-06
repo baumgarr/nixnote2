@@ -76,6 +76,7 @@ public slots:
     void selectAllButtonPressed();
     void viewExtendedInformation();
     void toggleSource();
+    void updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash);  // Update the hash of a resource in a note
 
 };
 

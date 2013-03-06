@@ -129,6 +129,7 @@ public:
     qint32 findNotesByNotebook(QList<qint32> &notes, QString guid);
     qint32 findNotesByNotebook(QList<qint32> &notes, string guid);
     void updateNoteContent(qint32 lid, QString content, bool isDirty=true);
+    void updateEnmediaHash(qint32 lid, QByteArray oldHash, QByteArray newHash, bool isDirty=true);
     qint32 getCount();                                     // count of all notes
     qint32 getUnindexedCount();                            // count of unindexed notes
     qint32 getAllDeleted(QList<qint32> &lids);

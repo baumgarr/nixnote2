@@ -1410,3 +1410,36 @@ void NoteTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
     query.bindValue(":key", NOTE_UPDATE_SEQUENCE_NUMBER);
     query.exec();
 }
+
+
+
+void NoteTable::updateEnmediaHash(qint32 lid, QByteArray oldHash, QByteArray newHash, bool isDirty) {
+    QString content;
+    QSqlQuery query;
+    query.prepare("Select data from datastore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_CONTENT);
+    query.exec();
+    if (query.next()) {
+        content = query.value(0).toString();
+
+        // Start going through & looking for the old hash
+        int pos = content.indexOf("<en-note");
+        int endPos;
+        int hashPos = -1;
+        QString hashString = "hash=\"" +oldHash.toHex() +"\"";
+        while (pos>0) {
+            endPos = content.indexOf(">", pos);  // Find the matching end of the tag
+            hashPos = content.indexOf(hashString, pos);
+            if (hashPos < endPos && hashPos > 0) {  // If we found the hash, begin the update
+                QString startString = content.mid(0, hashPos);
+                QString endString = content.mid(hashPos+hashString.length());
+                QString newContent = startString + "hash=\"" +newHash.toHex() +"\"" +endString;
+                updateNoteContent(lid, newContent, isDirty);
+                pos = -1;
+            } else {
+                pos = content.indexOf("<", pos+1);
+            }
+        }
+    }
+}

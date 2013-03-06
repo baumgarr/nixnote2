@@ -1122,8 +1122,7 @@ void NBrowserWindow::rotateImage(qreal degrees) {
     QByteArray filedata = f.readAll();
     QCryptographicHash hash(QCryptographicHash::Md5);
     QByteArray b = hash.hash(filedata, QCryptographicHash::Md5);
-    QString newhash =  b.toHex();
-    updateImageHash(newhash);
+    updateImageHash(b);
 
     // Reload the web page
     editor->triggerPageAction(QWebPage::ReloadAndBypassCache);
@@ -1131,7 +1130,7 @@ void NBrowserWindow::rotateImage(qreal degrees) {
 }
 
 
-void NBrowserWindow::updateImageHash(QString newhash) {
+void NBrowserWindow::updateImageHash(QByteArray newhash) {
     QString content = editor->page()->mainFrame()->toHtml();
     int pos = content.indexOf("<img ");
     for (; pos>0; pos=content.indexOf("<img ", pos+1) ) {
@@ -1141,7 +1140,7 @@ void NBrowserWindow::updateImageHash(QString newhash) {
             ResourceTable rtable;
             QString oldhash = section.mid(section.indexOf("hash=\"")+6);
             oldhash = oldhash.mid(0,oldhash.indexOf("\""));
-            section.replace(oldhash, newhash);
+            section.replace(oldhash, newhash.toHex());
             QString newcontent = content.mid(0,pos) +section +content.mid(endPos);
             editor->page()->mainFrame()->setHtml(newcontent);
             rtable.updateResourceHash(selectedFileLid, newhash);
@@ -1525,9 +1524,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
              guid = guid.mid(0,index);
          }
 
-
-         QUrl shortUrl = url.toString().mid(6);
-         QUrl longUrl = QString("file://") +global.fileManager.getTmpDirPath()+url.toString().mid(6);
+         global.resourceWatcher.addPath(global.fileManager.getDbaDirPath() +guid + QString(".") +type);
          QString fileUrl = global.fileManager.getDbaDirPath() +guid + QString(".") +type;
          // If we can't open it, then prompt the user to save it.
          QDesktopServices::openUrl(fileUrl);
@@ -1967,4 +1964,36 @@ void NBrowserWindow::noteSourceUpdated() {
     ba.append("</body></html>");
     editor->setContent(ba);
     this->editor->isDirty = true;
+}
+
+// Update a resource's hash if it was edited somewhere else
+void NBrowserWindow::updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash) {
+    if (noteLid != lid)
+        return;
+
+    QString content = editor->editorPage->mainFrame()->documentElement().toOuterXml();
+
+    // Start going through & looking for the old hash
+    int pos = content.indexOf("<body");
+    int endPos;
+    int hashPos = -1;
+    QString hashString = "hash=\"" +oldHash.toHex() +"\"";
+    while (pos>0) {
+        endPos = content.indexOf(">", pos);  // Find the matching end of the tag
+        hashPos = content.indexOf(hashString, pos);
+        if (hashPos < endPos && hashPos > 0) {  // If we found the hash, begin the update
+            QString startString = content.mid(0, hashPos);
+            QString endString = content.mid(hashPos+hashString.length());
+            QString newContent = startString + "hash=\"" +newHash.toHex() +"\"" +endString;
+            QByteArray byteArray;
+            byteArray.append(newContent);
+            editor->setContent(byteArray);
+            noteUpdated(lid);
+            return;
+        } else {
+            pos = content.indexOf("<", pos+1);
+        }
+    }
+
+
 }

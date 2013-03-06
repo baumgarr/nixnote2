@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "watcher/filewatcher.h"
 #include "dialog/accountdialog.h"
 #include "dialog/preferences/preferencesdialog.h"
+#include "sql/resourcetable.h"
 
 #include <QThread>
 #include <QLabel>
@@ -116,6 +117,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     importManager = new FileWatcherManager(this);
     connect(importManager, SIGNAL(fileImported(qint32,qint32)), this, SLOT(updateSelectionCriteria()));
     importManager->setup();
+    connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
@@ -1467,4 +1469,32 @@ void NixNote::viewNoteListNarrow() {
     noteTableView->setColumnsVisible();
     noteTableView->repositionColumns();
     noteTableView->resizeColumns();
+}
+
+
+// This is called via global.resourceWatcher when a resource
+// has been updated by an external program.  The file name is the
+// resource file which starts with the lid.
+void NixNote::resourceExternallyUpdated(QString resourceFile) {
+    QString shortName = resourceFile;
+    QString dba = global.fileManager.getDbaDirPath();
+    shortName.replace(dba, "");
+    int pos = shortName.indexOf(".");
+    if (pos > 0)
+        shortName = shortName.mid(0,pos);
+    qint32 lid = shortName.toInt();
+    QFile file(resourceFile);
+    file.open(QIODevice::ReadOnly);
+    QByteArray ba = file.readAll();
+    file.close();
+    QByteArray newHash = QCryptographicHash::hash(ba, QCryptographicHash::Md5);
+    ResourceTable resTable;
+    QByteArray oldHash = resTable.getDataHash(lid);
+    if (oldHash != newHash) {
+        qint32 noteLid = resTable.getNoteLid(lid);
+        resTable.updateResourceHash(lid, newHash);
+        NoteTable noteTable;
+        noteTable.updateEnmediaHash(noteLid, oldHash, newHash, true);
+        tabWindow->updateResourceHash(noteLid, oldHash, newHash);
+    }
 }

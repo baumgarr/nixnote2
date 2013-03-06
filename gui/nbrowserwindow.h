@@ -80,7 +80,7 @@ private:
     QString selectedFileName;
     qint32 selectedFileLid;
     void rotateImage(qreal degrees);
-    void updateImageHash(QString newhash);
+    void updateImageHash(QByteArray newhash);
     void insertImage(const QMimeData *mime);
     qint32 createResource(Resource &r, int sequence, QByteArray data, QString mime, bool attachment, QString filename);
     PluginFactory *factory;
@@ -120,6 +120,7 @@ public:
     void setupShortcut(QShortcut *action, QString text);
     void contentChanged();
     void printNote(QPrinter *printer);
+    void updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash);
 
 signals:
     void noteUpdated(qint32);

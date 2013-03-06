@@ -106,6 +106,7 @@ public:
     QClipboard *clipboard;
     ShortcutKeys *shortcutKeys;
     QList<qint32> expungedResources;
+    QFileSystemWatcher resourceWatcher;
     bool showTrayIcon();
     bool closeToTray();
     bool minimizeToTray();

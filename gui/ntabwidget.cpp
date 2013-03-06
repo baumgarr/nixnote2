@@ -274,3 +274,11 @@ void NTabWidget::viewExtendedInformation() {
 void NTabWidget::toggleSource() {
     currentBrowser()->toggleSource();
 }
+
+
+void NTabWidget::updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash) {
+    for (int i=0; i<browserList->size(); i++) {
+        NBrowserWindow *browser = browserList->at(i);
+        browser->updateResourceHash(noteLid, oldHash, newHash);
+    }
+}

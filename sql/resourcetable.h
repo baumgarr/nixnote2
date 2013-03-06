@@ -104,10 +104,12 @@ public:
     void expunge(string guid);                            // erase a resource
     qint32 getIndexNeeded(QList<qint32> &lids);           // Get a list of all resources needing indexing
     bool getResourceList(QList<qint32> &resourceList, qint32 noteLid);  // Get resources for a note
-    void updateResourceHash(qint32 lid, QString newhash);
+    void updateResourceHash(qint32 lid, QByteArray newhash);
     qint32 getCount();                                     // count of all resources
     qint32 getUnindexedCount();                            // count of unindexed resources
     qint32 addStub(qint32 resLid, qint32 noteLid);         // Add a basic "stub" record.  Useful when duplicating notes
+    qint32 getNoteLid(qint32 resLid);                      // Get the owning note for this resource
+    QByteArray getDataHash(qint32 lid);                    // Get the hash value for the data in a resource
 };
 
 

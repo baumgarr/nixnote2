@@ -197,6 +197,7 @@ public slots:
     void userMaintenance();
     void viewNoteListWide();
     void viewNoteListNarrow();
+    void resourceExternallyUpdated(QString resource);
 
 signals:
     void syncRequested();
