@@ -32,7 +32,8 @@ private:
     bool isAttributeValid(QString attribute, QString tag);
     bool isElementValid(QString element);
     void cleanupElementAttributes(QDomElement &e);
-    void fixHtmlTags();
+    void preXMLFix();
+    void postXMLFix();
 
 public:
     bool formattingError;

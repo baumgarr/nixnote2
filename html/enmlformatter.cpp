@@ -92,7 +92,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.clear();
     content = b;
 
-    fixHtmlTags();
+    preXMLFix();
 
     // Remove all the temporary file names
     QString emsg;
@@ -100,6 +100,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     //QLOG_DEBUG() << content;
     doc.setContent(content, &emsg, &line, &col);
     scanTags();
+    postXMLFix();
 
     //QLOG_DEBUG() << content;
     return content;
@@ -378,9 +379,8 @@ bool EnmlFormatter::isElementValid(QString element) {
 
 
 
-// Fix any tags.  If they don't end with "/>" Qt won't be able to parse
-// them properly.
-void EnmlFormatter::fixHtmlTags() {
+// Fix any tags.  This is done so the QtXML doesn't die on malformed things.
+void EnmlFormatter::preXMLFix() {
 
     int pos;
     content = content.replace("<p>", "<p/>");
@@ -433,5 +433,51 @@ void EnmlFormatter::fixHtmlTags() {
             content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
         }
         pos = content.indexOf("<img", pos+1);
+    }
+
+    // Fix the <span> tags
+    /*
+    pos = content.indexOf("<span");
+    while (pos > 0) {
+        int endPos = content.indexOf(">", pos);
+
+        // Check the next /> end tag.  If it is beyond the end
+        // of the current tag or if it doesn't exist then we
+        // need to fix the end of the img
+        if (pos > 0) {
+            content = content.mid(0, endPos) + QByteArray(">") +content.mid(endPos+1);
+            QLOG_DEBUG() << content;
+        }
+         pos = content.indexOf("<span", pos+1);
+    }
+    */
+}
+
+
+
+// Fix things after we've done the QtXML cleanup.
+void EnmlFormatter::postXMLFix() {
+
+    int pos;
+
+    // Remove any empty <span> elements
+    content = content.replace("<span/>", "");
+
+    // Remove any </en-media> tags because they are invalid
+    content = content.replace("</en-media>", "");
+
+    // Fix the <en-media> tags and make sure they are terminated
+    pos = content.indexOf("<en-media");
+    while (pos > 0) {
+        int endPos = content.indexOf(">", pos);
+        int tagEndPos = content.indexOf("/>", pos);
+
+        // Check the next /> end tag.  If it is beyond the end
+        // of the current tag or if it doesn't exist then we
+        // need to fix the end of the en-media
+        if (tagEndPos <= 0 || tagEndPos > endPos) {
+            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+        }
+         pos = content.indexOf("<en-media", pos+1);
     }
 }
