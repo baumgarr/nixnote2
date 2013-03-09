@@ -4,6 +4,8 @@
 #include <QtWebKit>
 #include <QObject>
 
+#include "html/noteformatter.h"
+
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
 
@@ -21,18 +23,19 @@ class Thumbnailer : public QObject
 
 public:
     QWebPage page;
-
+    QString contents;
     Thumbnailer();
-    void setNote(qint32 lid, Note n);
+    void setNote(Note n);
+    NoteFormatter formatter;
+    void render(qint32 lid, QString contents);
 
 signals:
-    void finished();
 
 private slots:
-    void render();
+
 
 private:
-    qint32 noteLid;
+    QProcess imgProcess;
 
 };
 

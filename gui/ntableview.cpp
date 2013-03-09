@@ -84,6 +84,7 @@ NTableView::NTableView(QWidget *parent) :
     blankNumber = new NumberDelegate(NumberDelegate::BlankNumber);
     kbNumber = new NumberDelegate(NumberDelegate::KBNumber);
     trueFalseDelegate = new TrueFalseDelegate();
+    thumbnailDelegate = new ImageDelegate();
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_CREATED_POSITION, dateDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_SUBJECT_POSITION, dateDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_UPDATED_POSITION, dateDelegate);
@@ -95,6 +96,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_IS_DIRTY_POSITION, trueFalseDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_HAS_ENCRYPTION_POSITION, trueFalseDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_HAS_TODO_POSITION, trueFalseDelegate);
+    this->setItemDelegateForColumn(NOTE_TABLE_THUMBNAIL_POSITION, thumbnailDelegate);
 
     QLOG_TRACE() << "Setting up column headers";
     this->setColumnHidden(NOTE_TABLE_LID_POSITION,true);
@@ -139,6 +141,8 @@ NTableView::NTableView(QWidget *parent) :
         tableViewHeader->synchronizedAction->setChecked(true);
     if (!isColumnHidden(NOTE_TABLE_SIZE_POSITION))
         tableViewHeader->sizeAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION))
+        tableViewHeader->thumbnailAction->setChecked(true);
     if (!isColumnHidden(NOTE_TABLE_TAGS_POSITION))
         tableViewHeader->tagsAction->setChecked(true);
 
@@ -164,6 +168,7 @@ NTableView::NTableView(QWidget *parent) :
     this->model()->setHeaderData(NOTE_TABLE_HAS_TODO_POSITION, Qt::Horizontal, QObject::tr("Has To-do"));
     this->model()->setHeaderData(NOTE_TABLE_IS_DIRTY_POSITION, Qt::Horizontal, QObject::tr("Sync"));
     this->model()->setHeaderData(NOTE_TABLE_SIZE_POSITION, Qt::Horizontal, QObject::tr("Size"));
+    this->model()->setHeaderData(NOTE_TABLE_THUMBNAIL_POSITION, Qt::Horizontal, QObject::tr("Thumbnail"));
 
     contextMenu = new QMenu(this);
     QFont font;
@@ -198,6 +203,10 @@ NTableView::NTableView(QWidget *parent) :
     repositionColumns();
     resizeColumns();
     setColumnsVisible();
+    if (!isColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION) && global.listView == Global::ListViewWide)
+        verticalHeader()->setDefaultSectionSize(100);
+    if (!isColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION) && global.listView == Global::listViewNarrow)
+        verticalHeader()->setDefaultSectionSize(100);
     QLOG_TRACE() << "Exiting NTableView constructor";
 
 }
@@ -265,6 +274,10 @@ void NTableView::refreshData() {
     while(model()->canFetchMore())
         model()->fetchMore();
     refreshSelection();
+    if (this->tableViewHeader->isThumbnailVisible())
+        verticalHeader()->setDefaultSectionSize(100);
+    else
+        verticalHeader()->setDefaultSectionSize(QApplication::fontMetrics().height());
 }
 
 
@@ -599,6 +612,10 @@ void NTableView::copyNoteLink() {
 
 void NTableView::toggleColumnVisible(int position, bool visible) {
     setColumnHidden(position, !visible);
+    if (this->tableViewHeader->isThumbnailVisible())
+        verticalHeader()->setDefaultSectionSize(100);
+    else
+        verticalHeader()->setDefaultSectionSize(QApplication::fontMetrics().height());
 }
 
 
@@ -656,6 +673,9 @@ void NTableView::saveColumnsVisible() {
 
     value = isColumnHidden(NOTE_TABLE_SIZE_POSITION);
     global.settings->setValue("size", value);
+
+    value = isColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION);
+    global.settings->setValue("thumbnail", value);
 
     value = isColumnHidden(NOTE_TABLE_SOURCE_APPLICATION_POSITION);
     global.settings->setValue("sourceApplication", value);
@@ -746,6 +766,10 @@ void NTableView::setColumnsVisible() {
     tableViewHeader->sizeAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_SIZE_POSITION, value);
 
+    value = global.settings->value("thumbnail", false).toBool();
+    tableViewHeader->thumbnailAction->setChecked(!value);
+    setColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION, value);
+
     global.settings->endGroup();
 }
 
@@ -810,6 +834,10 @@ void NTableView::repositionColumns() {
     to = global.getColumnPosition("noteTableSizePosition");
     if (to>=0) horizontalHeader()->moveSection(from, to);
 
+    from = horizontalHeader()->visualIndex(NOTE_TABLE_THUMBNAIL_POSITION);
+    to = global.getColumnPosition("noteTableThumbnailPosition");
+    if (to>=0) horizontalHeader()->moveSection(from, to);
+
     from = horizontalHeader()->visualIndex(NOTE_TABLE_SOURCE_APPLICATION_POSITION);
     to = global.getColumnPosition("noteTableSourceApplicationPosition");
     if (to>=0) horizontalHeader()->moveSection(from, to);
@@ -872,5 +900,7 @@ void NTableView::resizeColumns() {
     if (width>0) setColumnWidth(NOTE_TABLE_TAGS_POSITION, width);
     width = global.getColumnWidth("noteTableTitlePosition");
     if (width>0) setColumnWidth(NOTE_TABLE_TITLE_POSITION, width);
+    width = global.getColumnWidth("noteTableThumbnailPosition");
+    if (width>0) setColumnWidth(NOTE_TABLE_THUMBNAIL_POSITION, width);
 }
 

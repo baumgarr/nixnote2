@@ -313,12 +313,21 @@ void NMainMenuBar::setupToolsMenu() {
   setupShortcut(accountDialogAction, QString("Tools_Account_Information"));
   toolsMenu->addAction(accountDialogAction);
 
+  toolsMenu->addSeparator();
+
   databaseStatusDialogAction = new QAction(tr("Database Status"), this);
   databaseStatusDialogAction->setToolTip(tr("Database Status"));
-  setupShortcut(databaseStatusDialogAction, QString("Database_Status"));
+  setupShortcut(databaseStatusDialogAction, QString("Tools_Database_Status"));
   databaseStatusDialogAction->setFont(font);
   connect(databaseStatusDialogAction, SIGNAL(triggered()), parent, SLOT(openDatabaseStatus()));
   toolsMenu->addAction(databaseStatusDialogAction);
+
+  reindexDatabaseAction = new QAction(tr("Reindex Database"), this);
+  reindexDatabaseAction->setToolTip(tr("Reindex all notes"));
+  setupShortcut(reindexDatabaseAction, QString("Tools_Database_Reindex"));
+  reindexDatabaseAction->setFont(font);
+  connect(reindexDatabaseAction, SIGNAL(triggered()), parent, SLOT(reindexDatabase()));
+  toolsMenu->addAction(reindexDatabaseAction);
 
   toolsMenu->addSeparator();
 

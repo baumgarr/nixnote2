@@ -64,3 +64,4 @@ bool NoteSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
 
     return true;
 }
+

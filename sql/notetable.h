@@ -137,6 +137,8 @@ public:
     qint32 getAllDirty(QList<qint32> &lids);                // get all dirty notes
     void setUpdateSequenceNumber(qint32 lid, qint32 usn);   // set the update sequence number
     qint32 getNotebookLid(qint32 noteLid);                  // Get the notebook for a note
+    void setThumbnail(qint32 lid, QString filename);        // File containing the thumbnail
+    void reindexAllNotes();                                 // Reindex all notes
 };
 
 

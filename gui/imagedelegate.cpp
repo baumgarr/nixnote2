@@ -18,29 +18,47 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#include "truefalsedelegate.h"
-#include "global.h"
-#include "sql/notetable.h"
+#include "imagedelegate.h"
+#include <QPixmap>
+#include <QPainter>
 
-TrueFalseDelegate::TrueFalseDelegate()
+ImageDelegate::ImageDelegate()
 {
 }
 
 
-void TrueFalseDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+
+void ImageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    bool value = index.data().toBool();
     QModelIndex ix;  // Dummy model index so we don't put the actual value in the column
     QStyledItemDelegate::paint(painter,option, ix);
-    if(value)
+
+    QString filename = index.data().toString();
+
+    if(filename != "")
     {
+        QStyleOptionViewItemV4 options = option;
+        initStyleOption(&options, index);
+
+        QImage image(filename);
+        if (image.isNull())
+            return;
+
         painter->save();
-        QPixmap dot(":black_dot.png");
-        int centerDot = dot.width()/2;
-        int len = (option.rect.right() - option.rect.left())/2;
-        len = len-centerDot;
-        painter->drawPixmap(option.rect.x()+len,option.rect.y()+2,dot);
+        QSize imageSize = options.icon.actualSize(options.rect.size());
+        imageSize.scale(imageSize.width(), imageSize.height(), Qt::KeepAspectRatioByExpanding);
+
+        painter->translate(options.rect.left() + imageSize.width(), options.rect.top());
+
+        QPixmap pix = QPixmap::fromImage(image);
+        pix = pix.scaledToHeight(options.rect.height(), Qt::SmoothTransformation);
+        if (pix.width() > options.rect.width())
+            pix = pix.scaledToWidth(options.rect.width(), Qt::SmoothTransformation);
+
+        painter->drawPixmap(0,0,pix);
+
         painter->restore();
     }
 
 }
+

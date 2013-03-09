@@ -71,6 +71,9 @@ private:
     QString dbaDirPath;
     QDir dbaDir;
 
+    QString thumbnailDirPath;
+    QDir thumbnailDir;
+
     //QDir xmlDir;
 
     QString translateDirPath;
@@ -100,6 +103,9 @@ public:
     QString getDbaDirPath();
     QString getDbaDirPath(QString relativePath);
     QString getDbaDirPathSpecialChar(QString relativePath);
+    QString getThumbnailDirPath();
+    QString getThumbnailDirPath(QString relativePath);
+    QString getThumbnailDirPathSpecialChar(QString relativePath);
     QDir getImageDirFile(QString relativePath);
     QString getImageDirPath(QString relativePath);
     QDir getLogsDirFile(QString relativePath);

@@ -377,12 +377,16 @@ void NWebView::setupShortcut(QAction *action, QString text) {
 
 void NWebView::downloadRequested(QNetworkRequest req) {
     QString urlString = req.url().toString();
+    if (urlString == "")  {
+        downloadImageAction()->trigger();
+        return;
+    }
     if (urlString.startsWith("nnres:")) {
         int pos = urlString.indexOf(global.attachmentNameDelimeter);
         QString extension = "";
         if (pos > 0) {
             extension = urlString.mid(pos+global.attachmentNameDelimeter.length());
-            urlString = urlString.mid(0,pos-2);
+            urlString = urlString.mid(0,pos);
         }
         urlString = urlString.mid(6);
 

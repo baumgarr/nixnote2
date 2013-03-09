@@ -21,53 +21,54 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtWebKit>
 #include <QtSql>
 #include "global.h"
-#include "html/noteformatter.h"
+#include "sql/notetable.h"
 
+extern Global global;
 
 /* Generic constructor. */
 Thumbnailer::Thumbnailer()
 {
-    connect(&page, SIGNAL(loadFinished(bool)),
-        this, SLOT(render()));
 }
 
 
 /* Set the note we should generate the thumbnail for */
-void Thumbnailer::setNote(qint32 lid, Note n) {
-    noteLid = lid;
-    NoteFormatter formatter;
-    formatter.setNote(n, false);
+void Thumbnailer::setNote(Note n) {
+    formatter.setNote(n, true);
+    formatter.thumbnail = true;
     formatter.rebuildNoteHTML();
-    page.mainFrame()->setHtml(formatter.getPage());
+    contents = formatter.getPage();
 }
 
 
-/* Do the actual thumbnail once the load has finished */
-void Thumbnailer::render()
-{
-    // Remove the encrypted tags
-    QWebElement e = page.mainFrame()->documentElement();
-    QWebElementCollection collection = e.findAll("en-crypt");
-    foreach (QWebElement paraElement, collection) {
-        paraElement.removeFromDocument();
-    }
 
-    QString text = page.mainFrame()->toPlainText();
-    QSqlQuery sql;
-    sql.prepare("Insert into SearchIndex (lid, weight, content) values (:lid, :weight, :content)");
-    sql.bindValue(":lid", noteLid);
-    sql.bindValue(":weight", 100);
-    sql.bindValue(":content", text);
-    sql.exec();
-    page.setViewportSize(page.mainFrame()->contentsSize());
-    //QImage image(page.viewportSize(), QImage::Format_ARGB32);
-    //QPainter painter(&image);
+void Thumbnailer::render(qint32 lid, QString contents) {
 
-    //page.mainFrame()->render(&painter);
-    //painter.end();
+    QFile f(global.fileManager.getTmpDirPath()+QString::number(lid)+QString(".html"));
+    f.open(QIODevice::WriteOnly);
+    QByteArray ba;
+    ba.append(contents);
+    f.write(ba);
+    f.close();
 
-    //QImage thumbnail = image.scaled(400, 400);
-    //thumbnail.save("thumbnail.png");
+    page.mainFrame()->setContent(ba);
+    int textLen = page.mainFrame()->toPlainText().length();
 
-    emit finished();
+    int minWidth = 600;
+    if (contents.indexOf("<img") > 0)
+        minWidth = 10;
+    if (textLen < 600)
+        minWidth = textLen;
+
+    QString args;
+    QString outfile = global.fileManager.getThumbnailDirPath() +QString::number(lid) +QString(".png");
+    args = QString(" --out=") +outfile+
+            QString(" --url=file://") +global.fileManager.getTmpDirPath() +QString::number(lid) +QString(".html ") +
+            QString("--min-height=10 --min-width=")   +QString::number(minWidth);
+    imgProcess.start(QString("cutycapt")+ args, QIODevice::ReadWrite|QIODevice::Unbuffered);
+    imgProcess.waitForStarted();
+    imgProcess.waitForFinished();
+
+    NoteTable noteTable;
+    noteTable.setThumbnail(lid, outfile);
+
 }

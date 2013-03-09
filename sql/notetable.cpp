@@ -1443,3 +1443,26 @@ void NoteTable::updateEnmediaHash(qint32 lid, QByteArray oldHash, QByteArray new
         }
     }
 }
+
+
+
+void NoteTable::setThumbnail(qint32 lid, QString filename) {
+    QSqlQuery query;
+    query.prepare("Update notetable set thumbnail=:thumbnail where lid=:lid");
+    query.bindValue(":thumbnail", filename);
+    query.bindValue(":lid", lid);
+    query.exec();
+}
+
+
+void NoteTable::reindexAllNotes() {
+    QSqlQuery query;
+    query.prepare("delete from datastore where key=:indexKey");
+    query.bindValue(":indexKey", NOTE_INDEX_NEEDED);
+    query.exec();
+
+    query.prepare("insert into datastore (lid, key, data) select lid, :indexKey, 'true' from datastore where key=:key;");
+    query.bindValue(":indexKey", NOTE_INDEX_NEEDED);
+    query.bindValue(":key", NOTE_GUID);
+    query.exec();
+}

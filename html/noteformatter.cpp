@@ -27,7 +27,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filtercriteria.h"
 #include "utilities/mimereference.h"
 
+#include <QFileSystemModel>
 #include <QFileIconProvider>
+#include <poppler-qt4.h>
 #include <QIcon>
 #include <QList>
 
@@ -42,6 +44,8 @@ extern Global global;
 NoteFormatter::NoteFormatter(QObject *parent) :
     QObject(parent)
 {
+    thumbnail = false;
+    this->setNoteHistory(false);
 }
 
 
@@ -126,14 +130,9 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
             content = b;
         doc.setContent(content);
     }
-    QLOG_DEBUG() << doc.toString();
     // Remove all the temporary file names
     tempFiles.clear();
     modifyTags(doc);
-
-    // If we have search criteria, then do the highlighting
-    if (enableHighlight)
-        doc = addHighlight(doc);
 
     // Finish up and return the HTML to the user
     QDomElement docElem = doc.documentElement();
@@ -241,14 +240,6 @@ void NoteFormatter::modifyTags(QDomDocument &doc) {
 }
 
 
-/* Add the highlight to the document.  This currently isn't supported */
-QDomDocument NoteFormatter::addHighlight(QDomDocument &doc) {
-    QLOG_DEBUG() << "*** UNSUPPORTED *** NoteFormatter.addHighlight()";
-    //if (enSearch.hilightWords == null || enSearch.hilightWords.size() == 0)
-        return doc;
-    //XMLInsertHilight hilight(doc, enSearch.hilightWords);
-    //    return hilight.getDoc();
-}
 
 
 
@@ -402,8 +393,26 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
     if (!r.__isset.data)
         resourceError = true;
     else {
-        if (r.mime == "application/pdf" && pdfPreview) {
+        if (r.mime == "application/pdf" && pdfPreview && !thumbnail) {
             modifyPdfTags(resLid, enmedia);
+            return;
+        }
+        if (r.mime == "application/pdf" && pdfPreview && thumbnail) {
+            QString printImageFile = global.fileManager.getTmpDirPath() + QString::number(resLid) +QString("-print.jpg");
+            QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) +".pdf";
+            Poppler::Document *doc;
+            doc = Poppler::Document::load(file);
+            if (doc == NULL)
+                return;
+
+            QImage *image = new QImage(doc->page(0)->renderToImage());
+            image->save(printImageFile,"jpg");
+            delete image;
+
+            enmedia.setAttribute("src", printImageFile);
+            enmedia.removeAttribute("hash");
+            enmedia.removeAttribute("type");
+            enmedia.setTagName("img");
             return;
         }
         QString fileDetails = "";
@@ -417,25 +426,25 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
             if (!noteHistory) {
                 enmedia.setAttribute("href", QString("nnres:") +QString::number(resLid)
                                      +global.attachmentNameDelimeter +fileDetails);
-                contextFileName = global.fileManager.getTmpDirPath(QString::number(resLid) +global.attachmentNameDelimeter + fileDetails);
+                contextFileName = global.fileManager.getTmpDirPath("")+QString::number(resLid) +global.attachmentNameDelimeter + fileDetails;
             } else {
                 enmedia.setAttribute("href", QString("nnres:") +QString::number(resLid) +QString("-")+ QString::number(note.updateSequenceNum)
                                      +global.attachmentNameDelimeter +fileDetails);
-                contextFileName = global.fileManager.getTmpDirPath(QString::number(resLid) +QString("-")+ QString(note.updateSequenceNum)
-                                                                   +global.attachmentNameDelimeter + fileDetails);
+                contextFileName = global.fileManager.getTmpDirPath("")+QString::number(resLid) +QString("-")+ QString(note.updateSequenceNum)
+                                                                   +global.attachmentNameDelimeter + fileDetails;
             }
         } else {
             if (!noteHistory) {
                 enmedia.setAttribute("href", "nnres:" +QString::number(resLid) +QString("-") +QString(note.updateSequenceNum)
                                      +global.attachmentNameDelimeter +appl);
-                contextFileName = global.fileManager.getTmpDirPath(QString::number(resLid) +QString("-")
+                contextFileName = global.fileManager.getTmpDirPath("") +QString::number(resLid) +QString("-")
                                                                    +QString(note.updateSequenceNum)
-                                                                   +global.attachmentNameDelimeter + appl);
+                                                                   +global.attachmentNameDelimeter + appl;
             } else {
                 enmedia.setAttribute("href", "nnres:" +QString::number(resLid)
                                      +global.attachmentNameDelimeter +appl);
-                contextFileName = global.fileManager.getTmpDirPath(QString::number(resLid)
-                                                                   +global.attachmentNameDelimeter + appl);
+                contextFileName = global.fileManager.getTmpDirPath("") +QString::number(resLid)
+                                                                   +global.attachmentNameDelimeter + appl;
             }
         }
 
@@ -447,9 +456,9 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
         enmedia.setTagName("a");
 
         QDomElement newText = doc.createElement("img");
-        QFile tfile(contextFileName);
-        tfile.open(QIODevice::WriteOnly);
-        tfile.close();
+//        QFile tfile(contextFileName);
+//        tfile.open(QIODevice::WriteOnly);
+//        tfile.close();
 
         // Build an icon of the image
         QString fileExt;
@@ -476,7 +485,10 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 
     // First get the icon for this type of file
     QString fileName = global.fileManager.getDbaDirPath(QString::number(lid) +appl);
-    QIcon icon = QFileIconProvider().icon(QFileInfo(fileName));
+    QIcon icon;
+    QFileInfo info(fileName);
+    QFileIconProvider provider;
+    icon = provider.icon(info);
 
     // Build a string name for the display
     QString displayName;
@@ -489,7 +501,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     QPainter p;
 
     // Setup the font
-    QFont font=p.font() ;
+    QFont font; // =p.font() ;
     font.setPointSize ( 8 );
     font.setFamily("Arial");
     QFontMetrics fm(font);

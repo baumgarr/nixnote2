@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "numberdelegate.h"
 #include "truefalsedelegate.h"
 #include "filters/notesortfilterproxymodel.h"
+#include "gui/imagedelegate.h"
 #include <boost/shared_ptr.hpp>
 
 class NTableViewHeader;
@@ -41,6 +42,7 @@ private:
     NumberDelegate *blankNumber;
     NumberDelegate *kbNumber;
     TrueFalseDelegate *trueFalseDelegate;
+    ImageDelegate *thumbnailDelegate;
 
 
 public:

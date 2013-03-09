@@ -883,3 +883,16 @@ QByteArray ResourceTable::getDataHash(qint32 lid) {
         return QByteArray();
 
 }
+
+
+void ResourceTable::reindexAllResources() {
+    QSqlQuery query;
+    query.prepare("delete from datastore where key=:indexKey");
+    query.bindValue(":indexKey", RESOURCE_INDEX_NEEDED);
+    query.exec();
+
+    query.prepare("insert into datastore (lid, key, data) select lid, :indexKey, 'true' from datastore where key=:key;");
+    query.bindValue(":indexKey", RESOURCE_INDEX_NEEDED);
+    query.bindValue(":key", RESOURCE_GUID);
+    query.exec();
+}

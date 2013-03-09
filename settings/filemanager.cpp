@@ -82,6 +82,10 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
     dbaDir.setPath(dbDirPath+"dba");
     createDirOrCheckWriteable(dbaDir);
     dbaDirPath = slashTerminatePath(dbaDir.path());
+
+    thumbnailDir.setPath(dbDirPath+"tdba");
+    createDirOrCheckWriteable(thumbnailDir);
+    thumbnailDirPath = slashTerminatePath(thumbnailDir.path());
 }
 
 
@@ -237,6 +241,15 @@ QString FileManager::getDbaDirPath(QString relativePath) {
 }
 QString FileManager::getDbaDirPathSpecialChar(QString relativePath) {
     return dbaDirPath + toPlatformPathSeparator(relativePath).replace("#", "%23");
+}
+QString FileManager::getThumbnailDirPath() {
+    return thumbnailDirPath;
+}
+QString FileManager::getThumbnailDirPath(QString relativePath) {
+    return thumbnailDirPath + toPlatformPathSeparator(relativePath);
+}
+QString FileManager::getThumbnailDirPathSpecialChar(QString relativePath) {
+    return thumbnailDirPath + toPlatformPathSeparator(relativePath).replace("#", "%23");
 }
 /*
 QDir FileManager::getXMLDirFile(QString relativePath) {

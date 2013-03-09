@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 using namespace Poppler;
 
+
+// Generic constructor
 IndexRunner::IndexRunner()
 {
     moveToThread(this);
@@ -36,49 +38,64 @@ IndexRunner::IndexRunner()
     pauseIndexing = false;
 }
 
+
+// Destructor
 IndexRunner::~IndexRunner() {
 }
 
 
 
-
+// Main thread runner.  This just basically starts up the event queue.  Everything else
+// is done via events signaled from the main thread.
 void IndexRunner::run() {
-//    hammer = new Thumbnailer();
+    moveToThread(this);
     QLOG_DEBUG() << "Starting IndexRunner";
     indexTimer = new QTimer();
     indexTimer->setInterval(4000);
     connect(indexTimer, SIGNAL(timeout()), this, SLOT(index()));
     indexTimer->start();
     textDocument = new QTextDocument();
+    hammer = new Thumbnailer();
     exec();
     QLOG_DEBUG() << "Indexrunner exiting.";
 }
 
 
+
+// The index timer has expired.  Look for any unindexed notes or resources
 void IndexRunner::index() {
 
-    indexTimer->stop();
+    indexTimer->stop();   // Stop the timer because we are already working
 
     QList<qint32> lids;
     NoteTable noteTable;
     ResourceTable resourceTable;
 
+    // Get any unindexed notes
     if (keepRunning && noteTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
         QLOG_DEBUG() << "Unindexed Notes found: " << lids.size();
 
 
+        // Index any undindexed note content.
         for (qint32 i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
             Note n;
-            noteTable.get(n, lids.at(i), false, false);
-            indexNote(lids.at(i),n);
-            //hammer->setNote(lids.at(i), n);
-            noteTable.setIndexNeeded(lids.at(i), false);
+            noteTable.get(n, lids[i], false, false);
+            indexNote(lids[i],n);
+//            Thumbnailer hammer;
+//            hammer.setNote(lids[i], n);
+            emit(thumbnailNeeded(lids[i]));
+            //noteTable.setIndexNeeded(lids.at(i), false);
         }
     }
 
-    lids.empty();
+
+    lids.empty();  // Clear out the list so we can start on resources
+
+    // Start indexing resources
     if (keepRunning && resourceTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
         QLOG_DEBUG() << "Unindexed Resources found: " << lids.size();
+
+        // Index each resource that is needed.
         for (qint32 i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
             Resource r;
             resourceTable.get(r, lids.at(i));
@@ -94,9 +111,13 @@ void IndexRunner::index() {
 }
 
 
+
+// This indexes the actual note.
 void IndexRunner::indexNote(qint32 lid, Note &n) {
     QString content = QString::fromStdString(n.content); //.replace(QString("\n"), QString(" "));
 
+
+    // Start looking through the note
     qint32 startPos =content.indexOf(QChar('<'));
     qint32 endPos = content.indexOf(QChar('>'),startPos)+1;
     content.remove(startPos,endPos-startPos);
@@ -115,13 +136,17 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
         content.remove(startPos,endPos-startPos);
     };
 
+    // Get the content as an HTML doc.
     textDocument->setHtml(content);
     content = textDocument->toPlainText() + " " + QString::fromStdString(n.title);
 
+    // Delete any old content
     QSqlQuery sql;
     sql.prepare("Delete from SearchIndex where lid=:lid and source='text'");
     sql.bindValue(":lid", lid);
     sql.exec();
+
+    // Add the new content.  it is basically a text version of the note with a weight of 100.
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'text', :content)");
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
@@ -131,7 +156,11 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
 }
 
 
+
+// Index any resources
 void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
+
+    // Make sure we have something to look through.
     if (!r.__isset.recognition || !r.recognition.__isset.body)
         return;
 
@@ -141,11 +170,14 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 
     // look for text tags
     QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
+
+    // Delete the old resource index information
     QSqlQuery sql;
     sql.prepare("Delete from SearchIndex where lid=:lid and source='recognition'");
     sql.bindValue(":lid", lid);
     sql.exec();
 
+    // Start adding words to the index.
     QSqlQuery trans;
     trans.exec("begin");
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
@@ -165,7 +197,8 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 }
 
 
-
+// Index any PDFs that are attached.  Basically it turns the PDF into text and adds it the same
+// way as a note's body
 void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     ResourceTable rtable;
     qint32 reslid = rtable.getLid(r.guid);
@@ -188,4 +221,15 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     sql.bindValue(":content", text);
     sql.exec();
 
+}
+
+
+// Save the thumbnail to disk and mark the index as complete
+void IndexRunner::renderThumbnail(qint32 lid, QString contents) {
+    if (!keepRunning)
+        quit();
+
+    hammer->render(lid, contents);
+    NoteTable noteTable;
+    noteTable.setIndexNeeded(lid, false);
 }

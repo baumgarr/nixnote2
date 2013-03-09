@@ -44,19 +44,21 @@ public:
     bool resourceError;
     bool readOnly;
     bool inkNote;
+    bool thumbnail;
     bool enableHighlight;
 
     explicit NoteFormatter(QObject *parent = 0);
     void setNote(Note n, bool pdfPreview);
+    QEventLoop eventLoop;
     QString getPage();
     void setHighlight();
     void setNoteHistory(bool value);
     QByteArray rebuildNoteHTML();
-    QDomDocument addHighlight(QDomDocument &doc);
     bool  buildInkNote(QDomElement &docElem, QDomAttr &hash);
 
 
 signals:
+    void fileIconProviderRequested(QString fileName);
 
 public slots:
 

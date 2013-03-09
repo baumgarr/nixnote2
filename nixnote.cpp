@@ -38,6 +38,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSlider>
 #include <QPrinter>
 #include <QDesktopWidget>
+#include <QFileIconProvider>
 
 #include "sql/notetable.h"
 #include "dialog/screencapture.h"
@@ -99,8 +100,9 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(this,SIGNAL(syncRequested()),&syncRunner,SLOT(synchronize()));
     connect(&syncRunner, SIGNAL(setMessage(QString, int)), this, SLOT(setMessage(QString, int)));
     syncRunner.start(QThread::NormalPriority);
-
     indexRunner.start(QThread::LowestPriority);
+    connect(&indexRunner, SIGNAL(thumbnailNeeded(qint32)), this, SLOT(generateThumbnailHtml(qint32)));
+    connect(this, SIGNAL(thumbnailReady(qint32,QString)), &indexRunner, SLOT(renderThumbnail(qint32,QString)));
 
     QLOG_TRACE() << "Setting up GUI";
     this->setupGui();
@@ -211,7 +213,7 @@ void NixNote::setupGui() {
     mainSplitter = new QSplitter(Qt::Horizontal);
     setCentralWidget(mainSplitter);
 
-    rightPanelSplitter = new QSplitter(Qt::Vertical);
+    rightPanelSplitter = new QSplitter(Qt::Horizontal);
     leftPanelSplitter = new QSplitter(Qt::Vertical);
     leftPanel = new WidgetPanel();
 
@@ -389,7 +391,6 @@ void NixNote::setupNoteList() {
     topRightLayout->addWidget(searchText);
     topRightWidget->setLayout(topRightLayout);
     noteTableView = new NTableView();
-    // rightPanelSplitter->addWidget(noteTableView);
     topRightLayout->addWidget(noteTableView);
     topRightLayout->setContentsMargins(QMargins(0,0,0,0));
 
@@ -595,6 +596,7 @@ void NixNote::closeEvent(QCloseEvent *event) {
     global.settings->setValue("noteListHeight", noteTableView->height());
     global.settings->setValue("mainSplitter", mainSplitter->saveState());
     global.settings->setValue("rightSplitter", rightPanelSplitter->saveState());
+    global.settings->setValue("listView", global.listView);
 
     global.settings->endGroup();
 
@@ -705,6 +707,7 @@ void NixNote::syncTimerExpired() {
 //******************************************************************************
 void NixNote::synchronize() {
     statusBar()->clearMessage();
+    indexRunner.pauseIndexing = true;
     if (!global.accountsManager->oauthTokenFound()) {
         OAuthWindow window;
         window.exec();
@@ -729,6 +732,7 @@ void NixNote::disconnect() {
     global.connected = false;
     menuBar->disconnectAction->setEnabled(false);
     syncButtonTimer.stop();
+    indexRunner.pauseIndexing = false;
 }
 
 
@@ -1452,16 +1456,16 @@ void NixNote::viewNoteListWide() {
     saveNoteColumnWidths();
     noteTableView->saveColumnsVisible();
 
-    rightPanelSplitter->setOrientation(Qt::Vertical);
+    rightPanelSplitter->setOrientation(Qt::Horizontal);
     global.listView = Global::ListViewWide;
     noteTableView->setColumnsVisible();
     noteTableView->repositionColumns();
     noteTableView->resizeColumns();
-
 }
 
 
 void NixNote::viewNoteListNarrow() {
+
     menuBar->blockSignals(true);
     menuBar->viewNoteListWide->setChecked(false);
     menuBar->viewNoteListNarrow->setChecked(true);
@@ -1596,3 +1600,33 @@ void NixNote::screenCapture() {
 
 
 
+
+// This is done via a signal from the IndexRunner thread.  It rebuilds the note's
+// HTML and sends the formatted HTML back to the IndexRunner thread.  The IndexRunner
+// thread will start another process to generate the thumbnail.  The rebuild
+// needs to be done in the main gui thread because of Qt restrictions on QPixmap
+// in a separate non-gui thread.
+void NixNote::generateThumbnailHtml(qint32 lid) {
+    NoteTable table;
+    Note n;
+    table.get(n, lid,false,false);
+    Thumbnailer hammer;
+    hammer.setNote(n);
+    emit(thumbnailReady(lid, hammer.contents));
+}
+
+
+// Reindex all notes & resources
+void NixNote::reindexDatabase() {
+
+    int response = QMessageBox::question ( this, tr("Reindex Database"), tr("Reindex the entire database?"), QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+    if (response != QMessageBox::Yes)
+        return;
+
+    NoteTable ntable;
+    ResourceTable rtable;
+    rtable.reindexAllResources();
+    ntable.reindexAllNotes();
+
+    setMessage(tr("Notes will be reindexed."));
+}

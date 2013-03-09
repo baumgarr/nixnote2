@@ -17,56 +17,17 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#ifndef INDEXRUNNER_H
-#define INDEXRUNNER_H
 
-#include <QObject>
-#include <QThread>
-#include <QString>
-#include <QMap>
-#include <QHash>
-#include <QVector>
+#ifndef IMAGEDELEGATE_H
+#define IMAGEDELEGATE_H
 
+#include <QStyledItemDelegate>
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
-
-#include <html/thumbnailer.h>
-
-#include <iostream>
-#include <string>
-#include <stdio.h>
-#include <QFileInfo>
-#include <QTimer>
-
-using namespace evernote::edam;
-using namespace std;
-
-class IndexRunner : public QThread
+class ImageDelegate : public QStyledItemDelegate
 {
-    Q_OBJECT
-private:
-    QTimer *indexTimer;
-    void indexRecognition(qint32 lid, Resource &r);
-    void indexNote(qint32 lid, Note &n);
-    void indexPdf(qint32 lid, Resource &r);
-    QTextDocument *textDocument;
-    Thumbnailer *hammer;
-
 public:
-    bool keepRunning;
-    bool pauseIndexing;
-    IndexRunner();
-    ~IndexRunner();
-    void run();
-
-signals:
-    void thumbnailNeeded(qint32);
-
- public slots:
-    void index();
-    void renderThumbnail(qint32 lid, QString contents);
-
+    ImageDelegate();
+    void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
-#endif // INDEXRUNNER_H
+#endif // IMAGEDELEGATE_H

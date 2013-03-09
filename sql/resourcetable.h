@@ -110,6 +110,7 @@ public:
     qint32 addStub(qint32 resLid, qint32 noteLid);         // Add a basic "stub" record.  Useful when duplicating notes
     qint32 getNoteLid(qint32 resLid);                      // Get the owning note for this resource
     QByteArray getDataHash(qint32 lid);                    // Get the hash value for the data in a resource
+    void reindexAllResources();                             // Reindex all relources
 };
 
 

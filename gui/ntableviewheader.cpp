@@ -114,6 +114,12 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
     sizeAction->setCheckable(true);
     addAction(sizeAction);
 
+    thumbnailAction = new QAction(this);
+    thumbnailAction->setText(tr("Thumbnail"));
+    thumbnailAction->setCheckable(true);
+    addAction(thumbnailAction);
+
+
     this->setMouseTracking(true);
 
    connect(this, SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(saveSort(int, Qt::SortOrder)));
@@ -130,6 +136,7 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
    connect(hasTodoAction, SIGNAL(toggled(bool)), this, SLOT(hasTodoChecked(bool)));
    connect(hasEncryptionAction, SIGNAL(toggled(bool)), this, SLOT(hasEncryptionChecked(bool)));
    connect(sizeAction, SIGNAL(toggled(bool)), this, SLOT(sizeChecked(bool)));
+   connect(thumbnailAction, SIGNAL(toggled(bool)), this, SLOT(thumbnailChecked(bool)));
    connect(latitudeAction, SIGNAL(toggled(bool)), this, SLOT(latitudeChecked(bool)));
    connect(longitudeAction, SIGNAL(toggled(bool)), this, SLOT(longitudeChecked(bool)));
    connect(altitudeAction, SIGNAL(toggled(bool)), this, SLOT(altitudeChecked(bool)));
@@ -238,4 +245,12 @@ void NTableViewHeader::sizeChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_SIZE_POSITION, checked));
     checkActions();
 }
+void NTableViewHeader::thumbnailChecked(bool checked) {
+    emit (setColumnVisible(NOTE_TABLE_THUMBNAIL_POSITION, checked));
+    checkActions();
+}
 
+
+bool NTableViewHeader::isThumbnailVisible() {
+    return thumbnailAction->isChecked();
+}

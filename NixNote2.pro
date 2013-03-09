@@ -147,7 +147,8 @@ SOURCES += main.cpp\
     gui/truefalsedelegate.cpp \
     gui/browserWidgets/editorbuttonbar.cpp \
     communication/communicationerror.cpp \
-    dialog/screencapture.cpp
+    dialog/screencapture.cpp \
+    gui/imagedelegate.cpp
 #    thrift/TApplicationException.cpp  \
 #    thrift/Thrift.cpp  \
 #    thrift/VirtualProfiling.cpp \
@@ -311,7 +312,8 @@ HEADERS  += nixnote.h \
     gui/truefalsedelegate.h \
     gui/browserWidgets/editorbuttonbar.h \
     communication/communicationerror.h \
-    dialog/screencapture.h
+    dialog/screencapture.h \
+    gui/imagedelegate.h
 #    thrift/TApplicationException.h  \
 #    thrift/Thrift.h \
 #    thrift/TLogging.h  \

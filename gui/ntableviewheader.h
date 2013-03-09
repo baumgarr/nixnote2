@@ -47,7 +47,9 @@ public:
     QAction *hasTodoAction;
     QAction *hasEncryptionAction;
     QAction *sizeAction;
+    QAction *thumbnailAction;
     void checkActions();
+    bool isThumbnailVisible();
 
 
 signals:
@@ -73,6 +75,7 @@ public slots:
     void hasTodoChecked(bool);
     void hasEncryptionChecked(bool);
     void sizeChecked(bool);
+    void thumbnailChecked(bool);
 };
 
 #endif // NTABLEVIEWHEADER_H

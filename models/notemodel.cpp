@@ -81,7 +81,8 @@ void NoteModel::createTable() {
                   QString("hasEncryption integer default null,") +
                   QString("hasTodo integer default null,") +
                   QString("isDirty integer default null,") +
-                  QString("size integer default null") +
+                  QString("size integer default null,") +
+                  QString("thumbnail default null") +
                   QString(")"));
     if (!sql.exec(command) ||
             !sql.exec("CREATE INDEX NoteTable_Title_Index on NoteTable (lid)") ||
