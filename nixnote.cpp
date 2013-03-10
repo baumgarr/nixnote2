@@ -1,4 +1,4 @@
-/*********************************************************************************
+﻿/*********************************************************************************
 NixNote - An open-source client for the Evernote service.
 Copyright (C) 2013 Randy Baumgarte
 
@@ -213,7 +213,7 @@ void NixNote::setupGui() {
     mainSplitter = new QSplitter(Qt::Horizontal);
     setCentralWidget(mainSplitter);
 
-    rightPanelSplitter = new QSplitter(Qt::Horizontal);
+    rightPanelSplitter = new QSplitter(Qt::Vertical);
     leftPanelSplitter = new QSplitter(Qt::Vertical);
     leftPanel = new WidgetPanel();
 
@@ -256,10 +256,10 @@ void NixNote::setupGui() {
         this->setWindowState(Qt::WindowMaximized);
     QString lidListString = global.settings->value("openTabs", "").toString().trimmed();
     global.settings->endGroup();
-    if (rightPanelSplitter->orientation() == Qt::Vertical)
+//    if (rightPanelSplitter->orientation() == Qt::Vertical)
         viewNoteListWide();
-    else
-        viewNoteListNarrow();
+//    else
+//        viewNoteListNarrow();
 
     QStringList lidList = lidListString.split(' ');
     // If we have old notes we were viewing the last time
@@ -1456,7 +1456,7 @@ void NixNote::viewNoteListWide() {
     saveNoteColumnWidths();
     noteTableView->saveColumnsVisible();
 
-    rightPanelSplitter->setOrientation(Qt::Horizontal);
+    rightPanelSplitter->setOrientation(Qt::Vertical);
     global.listView = Global::ListViewWide;
     noteTableView->setColumnsVisible();
     noteTableView->repositionColumns();
