@@ -256,10 +256,10 @@ void NixNote::setupGui() {
         this->setWindowState(Qt::WindowMaximized);
     QString lidListString = global.settings->value("openTabs", "").toString().trimmed();
     global.settings->endGroup();
-//    if (rightPanelSplitter->orientation() == Qt::Vertical)
+    if (rightPanelSplitter->orientation() == Qt::Vertical)
         viewNoteListWide();
-//    else
-//        viewNoteListNarrow();
+    else
+        viewNoteListNarrow();
 
     QStringList lidList = lidListString.split(' ');
     // If we have old notes we were viewing the last time
@@ -377,13 +377,13 @@ void NixNote::initializeGlobalSettings() {
 void NixNote::setupNoteList() {
     QLOG_TRACE() << "Starting NixNote.setupNoteList()";
 
-    global.settings->beginGroup("SaveState");
-    int value = global.settings->value("listView", 1).toInt();
-    global.settings->endGroup();
-    if (value == 1)
-        global.listView = Global::ListViewWide;
-    else
-        global.listView= Global::listViewNarrow;
+//    global.settings->beginGroup("SaveState");
+//    int value = global.settings->value("listView", 1).toInt();
+//    global.settings->endGroup();
+//    if (value == 1)
+//        global.listView = Global::ListViewWide;
+//    else
+//        global.listView= Global::listViewNarrow;
 
     // Setup a generic widget to hold the search & note table
     topRightWidget  = new QWidget(this);
