@@ -443,8 +443,9 @@ qint32 LinkedNotebookTable::getLastUpdateSequenceNumber(qint32 lid) {
     QSqlQuery query;
     query.prepare("select data from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
-    query.bindValue(":key", LINKEDNOTEBOOK_LAST_SEQUENCE_NUMBER);
+    query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
     query.exec();
+    QLOG_DEBUG() << query.lastError();
     if (query.next()) {
         return query.value(0).toInt();
     }
@@ -455,11 +456,17 @@ qint32 LinkedNotebookTable::getLastUpdateSequenceNumber(qint32 lid) {
 
 void LinkedNotebookTable::setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN) {
     QSqlQuery query;
-    query.prepare("insert into from datastore (lid, key, data) values (:lid, :key, :data)");
+    query.prepare("delete from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
-    query.bindValue(":key", LINKEDNOTEBOOK_LAST_SEQUENCE_NUMBER);
+    query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
+    query.exec();
+
+    query.prepare("insert into datastore (lid, key, data) values (:lid, :key, :data)");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
     query.bindValue(":data", lastUSN);
     query.exec();
+    QLOG_DEBUG() << query.lastError();
 }
 
 

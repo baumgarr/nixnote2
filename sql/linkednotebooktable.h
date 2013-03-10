@@ -31,7 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define LINKEDNOTEBOOK_WEB_API_URL_PREFIX      3208
 #define LINKEDNOTEBOOK_STACK                   3209
 #define LINKEDNOTEBOOK_BUSINESS_ID             3210
-#define LINKEDNOTEBOOK_LAST_SEQUENCE_NUMBER    3211
+#define LINKEDNOTEBOOK_LAST_USN                3211
 
 #include <QObject>
 #include <iostream>

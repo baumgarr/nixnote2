@@ -145,6 +145,8 @@ void SyncRunner::evernoteSync() {
         emit setMessage(tr("Downloading changes"), defaultMsgTimeout);
         syncRemoteToLocal(syncState.updateCount);
     }
+    syncRemoteLinkedNotebooksActual();
+
 
     if (!global.disableUploads) {
         qint32 searchUsn = uploadSavedSearches();
@@ -218,7 +220,6 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         query.exec("commit");
     }
     emit setMessage(tr("Download 100% complete."), defaultMsgTimeout);
-    syncRemoteLinkedNotebooksActual();
 }
 
 

@@ -141,7 +141,6 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
     ConfigStore cs;
     QSqlQuery query;
     qint32 position;
-    TagScanner scanner;
     qint32 lid = l;
     qint32 notebookLid;
 
@@ -1007,6 +1006,12 @@ void NoteTable::removeTag(qint32 lid, qint32 tag, bool isDirty = false) {
 
 void NoteTable::addTag(qint32 lid, qint32 tag, bool isDirty = false) {
     QSqlQuery query;
+    query.prepare("delete from DataStore where lid=:lid and key=:key and data=:tag");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key",NOTE_TAG_LID);
+    query.bindValue(":tag:", tag);
+    query.exec();
+
     query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :tag)");
     query.bindValue(":lid", lid);
     query.bindValue(":key",NOTE_TAG_LID);
