@@ -229,6 +229,14 @@ void NTagView::mousePressEvent(QMouseEvent *event)
 
 // Load up the data from the database
 void NTagView::loadData() {
+
+    // Empty out the old data store
+    QList<qint32> keys = dataStore.keys();
+    for (int i=0; i<keys.size(); i++) {
+        NTagViewItem *ptr = dataStore.take(keys[i]);
+        delete ptr;
+    }
+
     QSqlQuery query;
     TagTable tagTable;
     query.exec("Select lid, name, parent_gid, account from TagModel order by name");
@@ -273,7 +281,7 @@ void NTagView::rebuildTree() {
             NTagViewItem *parent = dataStore[widget->parentLid];
             widget->parent()->removeChild(widget);
             if (parent != NULL) {
-                parent->childrenGuids.append(i.key());
+                parent->childrenLids.append(i.key());
                 parent->addChild(widget);
             }
         }
@@ -435,48 +443,67 @@ void NTagView::dragEnterEvent(QDragEnterEvent *event) {
 
 // Handle what happens when something is dropped onto a tag item
 bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action) {
-    /* suppress unused */
-    action=action;
-    index=index;
-
-    QLOG_DEBUG() << "Dropping mime: " << data->formats();
-
 
     // If this is a tag-to-tag drop then we are modifying the hierarchy
     if (data->hasFormat("application/x-nixnote-tag")) {
-
-        QTreeWidgetItem *newChild;
 
         // If there is no parent, then they are trying to drop to the top level, which isn't permitted
         if (parent == NULL)
             return false;
 
-        // Get the lid we are dropping.
+//        // Get the lid we are dropping.
         QByteArray d = data->data("application/x-nixnote-tag");
         qint32 lid = d.toInt();
         if (lid == 0)
             return false;
 
-        // create a new child for this parent
-        newChild = new QTreeWidgetItem(parent);
-        qint32 parentLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
+        qint32 newParentLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
+        qint32 oldParentLid = dataStore[lid]->parentLid;
+        NTagViewItem *item = dataStore[lid];
+
+        // If we had an old parent, remove the child from it.
+        if (oldParentLid > 0)  {
+            NTagViewItem *parent_ptr = dataStore[oldParentLid];
+            for (int i=0; i<parent_ptr->childrenLids.size(); i++) {
+                if (parent_ptr->childrenLids[i] == lid) {
+                    parent_ptr->childrenLids.removeAt(i);
+                    i=parent_ptr->childrenLids.size();
+                }
+            }
+            parent_ptr->removeChild(item);
+        } else {
+            root->removeChild(item);
+        }
+
+        // Update the actual database
         Tag tag;
         TagTable tagTable;
         tagTable.get(tag, lid);
         QString guid;
-        tagTable.getGuid(guid, parentLid);
+        tagTable.getGuid(guid, newParentLid);
         tag.parentGuid = guid.toStdString();
         tag.__isset.parentGuid = true;
         tagTable.update(tag, true);
 
-        copyTreeItem(currentItem(), newChild);
-        NTagViewItem *ptr = (NTagViewItem*)currentItem();
-        ptr->isObsolete = true;
-        ptr->setHidden(true);
+        if (newParentLid>0) {
+            NTagViewItem *parent_ptr = dataStore[newParentLid];
+            parent_ptr->addChild(item);
+            parent_ptr->childrenLids.append(lid);
+            item->parentLid = newParentLid;
+            item->parentGuid = QString::fromStdString(tag.guid);
+        } else {
+            item->parentLid = 0;
+            item->parentGuid = "";
+            root->addChild(item);
+        }
+
+        // Resort the data
         this->sortByColumn(NAME_POSITION, Qt::AscendingOrder);
         sortItems(NAME_POSITION, Qt::AscendingOrder);
-        return true;
+        return QTreeWidget::dropMimeData(parent, index, data, action);
     }
+
+
     return false;
 }
 
@@ -488,34 +515,13 @@ void NTagView::dropEvent(QDropEvent *event) {
 }
 
 
-// Copy an individual item within the tree.  I need to do this because
-// Qt doesn't call the dropMimeData on a move, just a copy.
-void NTagView::copyTreeItem(QTreeWidgetItem *source, QTreeWidgetItem *target) {
-    QLOG_DEBUG() << "In copytreeitem";
-    target->setData(NAME_POSITION, Qt::DisplayRole, source->data(NAME_POSITION, Qt::DisplayRole));
-    target->setData(NAME_POSITION, Qt::UserRole, source->data(NAME_POSITION, Qt::UserRole));
-
-    for (int i=0; i<source->childCount(); i++) {
-        QTreeWidgetItem *newChild = new QTreeWidgetItem(target);
-        copyTreeItem(source->child(i), newChild);
-        NTagViewItem *ptr = (NTagViewItem*)source->child(i);
-        ptr->isObsolete = true;
-        ptr->setHidden(true);
-    }
-    return;
-}
-
-
 void NTagView::mouseMoveEvent(QMouseEvent *event)
 {
     if (currentItem() == NULL)
         return;
 
-    QLOG_DEBUG() << "Mouse Move 1";
     if (!(event->buttons() & Qt::LeftButton))
         return;
-
-    QLOG_DEBUG() << "Mouse Move 2";
 
     QDrag *drag = new QDrag(this);
     QMimeData *mimeData = new QMimeData;
@@ -523,7 +529,7 @@ void NTagView::mouseMoveEvent(QMouseEvent *event)
     mimeData->setData("application/x-nixnote-tag", currentItem()->data(NAME_POSITION, Qt::UserRole).toByteArray());
     drag->setMimeData(mimeData);
 
-    drag->exec(Qt::CopyAction | Qt::MoveAction);
+    drag->exec(Qt::MoveAction);
 }
 
 
@@ -560,7 +566,6 @@ void NTagView::addRequested() {
     qint32 lid = table.findByName(name, accountFilter);
     newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
     newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
-    this->dataStore.insert(lid, newWidget);
     root->addChild(newWidget);
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);
     resetSize();
@@ -615,12 +620,13 @@ void NTagView::deleteRequested() {
     }
     TagTable table;
     table.deleteTag(lid);
-    NTagViewItem *ptr = (NTagViewItem*)items[0];
-    ptr->setHidden(true);
+//    NTagViewItem *ptr = (NTagViewItem*)items[0];
+//    ptr->setHidden(true);
 
     // Now remove it in the datastore
-    dataStore.remove(items[0]->data(NAME_POSITION, Qt::UserRole).toInt());
-    emit(tagDeleted(lid, items[0]->data(NAME_POSITION, Qt::DisplayRole).toString()));
+    NTagViewItem *ptr = dataStore.take(items[0]->data(NAME_POSITION, Qt::UserRole).toInt());
+    emit(tagDeleted(lid, ptr->data(NAME_POSITION, Qt::DisplayRole).toString()));
+    delete ptr;
 }
 
 
@@ -709,13 +715,14 @@ void NTagView::hideUnassignedTags() {
     global.settings->beginGroup("SaveState");
     global.settings->setValue("hideUnassigned", hideUnassigned);
     global.settings->endGroup();
+    QList<qint32> keys = dataStore.keys();
 
     // Unhide everything if they don't want items hidden.
     if (hideUnassigned != true) {
-        for (int i=0; i<dataStore.size(); i++) {
-            item = dataStore[i];
+        for (int i=0; i<keys.size(); i++) {
+            item = dataStore[keys[i]];
             if (item != NULL) {
-                if (item->account == accountFilter && !item->isObsolete)
+                if (item->account == accountFilter)
                     item->setHidden(false);
                 else
                     item->setHidden(true);
@@ -726,8 +733,8 @@ void NTagView::hideUnassignedTags() {
     }
 
     // Start hiding unassigned tags
-    for (int i=0; i<dataStore.size(); i++) {
-        item = dataStore[i];
+    for (int i=0; i<keys.size(); i++) {
+        item = dataStore[keys[i]];
         if (item != NULL) {
             if (item->count == 0 || item->account != accountFilter)
                 item->setHidden(true);
@@ -736,8 +743,8 @@ void NTagView::hideUnassignedTags() {
         }
     }
 
-    for (int i=0; i<dataStore.size(); i++) {
-        item = dataStore[i];
+    for (int i=0; i<keys.size(); i++) {
+        item = dataStore[keys[i]];
         if (item != NULL && !item->isHidden()) {
             while(item->parentLid > 0) {
                 item->parent()->setHidden(false);
@@ -746,4 +753,11 @@ void NTagView::hideUnassignedTags() {
         }
     }
     resetSize();
+}
+
+
+
+// Return a pointer to the tag item
+NTagViewItem* NTagView::getItem(qint32 lid) {
+    return dataStore[lid];
 }

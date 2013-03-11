@@ -113,12 +113,6 @@ void TagTable::updateGuid(qint32 lid, Guid &guid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_GUID);
     query.exec();
-
-    query.prepare("Update DataStore set data=:data where key=:key and data=:oldGuid");
-    query.bindValue(":data", QString::fromStdString(guid));
-    query.bindValue(":key", TAG_PARENT);
-    query.bindValue(":oldGuid", oldGuid);
-    query.exec();
 }
 
 
@@ -176,6 +170,7 @@ qint32 TagTable::sync(qint32 l, Tag &tag, qint32 account) {
     }
 
     add(lid, tag, false, account);
+    return lid;
 }
 
 
@@ -230,9 +225,21 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
     query.exec();
 
     if (t.__isset.parentGuid && t.parentGuid != "") {
+        qint32 parentLid = getLid(t.parentGuid);
+        if (parentLid == 0) {
+            Tag tempTag;
+            parentLid = cs.incrementLidCounter();
+            tempTag.guid = t.parentGuid;
+            tempTag.name=QString::number(parentLid).toStdString();
+            tempTag.updateSequenceNum = 0;
+            tempTag.__isset.name =true;
+            tempTag.__isset.updateSequenceNum = true;
+            tempTag.__isset.guid = true;
+            add(parentLid, tempTag, false, account);
+        }
         query.bindValue(":lid", lid);
-        query.bindValue(":key", TAG_PARENT);
-        query.bindValue(":data", QString::fromStdString(t.parentGuid));
+        query.bindValue(":key", TAG_PARENT_LID);
+        query.bindValue(":data", parentLid);
         query.exec();
     }
 
@@ -272,13 +279,15 @@ bool TagTable::get(Tag &tag, qint32 lid) {
                 tag.updateSequenceNum = query.value(1).toInt();
                 tag.__isset.updateSequenceNum = true;
                 break;
-            case (TAG_PARENT): {
-            if (query.value(1).toString() != "") {
-                    tag.parentGuid = query.value(1).toString().toStdString();
-                    tag.__isset.parentGuid =true;
-                    break;
+            case (TAG_PARENT_LID): {
+                if (query.value(1).toInt() > 0) {
+                        QString parentGuid;
+                        getGuid(parentGuid, query.value(1).toInt());
+                        tag.parentGuid = parentGuid.toStdString();
+                        tag.__isset.parentGuid =true;
+                        break;
+                    }
                 }
-            }
             case (TAG_NAME):
                 tag.name = query.value(1).toString().toStdString();
                 tag.__isset.name = true;
@@ -492,10 +501,11 @@ bool TagTable::isDeleted(qint32 lid) {
 
 
 qint32 TagTable::findChildren(QList<qint32> &list, QString parentGuid) {
+    qint32 parentLid = getLid(parentGuid);
     QSqlQuery query;
     query.prepare("Select lid from DataStore where key=:key and data=:parent");
-    query.bindValue(":key", TAG_PARENT);
-    query.bindValue(":parent", parentGuid);
+    query.bindValue(":key", TAG_PARENT_LID);
+    query.bindValue(":parent", parentLid);
     query.exec();
 
     // Now find all the children for each found tag

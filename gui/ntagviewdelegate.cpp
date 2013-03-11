@@ -42,7 +42,7 @@ void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     if (lid > 0) {
 
         NTagView  *tree = (NTagView*)options.widget;
-        NTagViewItem *item = tree->dataStore[lid];
+        NTagViewItem *item = tree->getItem(lid);
         qint32 count = item->count;
         QString countString = QString("(")+QString::number(count) + QString(")");
 

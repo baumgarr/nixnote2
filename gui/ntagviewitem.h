@@ -28,19 +28,19 @@ public:
     explicit NTagViewItem();
     explicit NTagViewItem(QTreeWidget* parent);
     qint32 parentLid;
-    QList<qint32> childrenGuids;
+    QList<qint32> childrenLids;
     QString parentGuid;
     qint32 count;
     qint32 account;
-    bool isObsolete;
 
     bool operator<(const QTreeWidgetItem &other)const;
     void setRootColor(bool val) ;
 
 
 signals:
+
 public slots:
-    void setHidden(bool hide);
+
 
 };
 

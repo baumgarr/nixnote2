@@ -34,7 +34,6 @@ private:
     NTagViewItem *root;
     virtual void mousePressEvent(QMouseEvent *event);
     int filterPosition;
-    void copyTreeItem(QTreeWidgetItem *source, QTreeWidgetItem *target);
     QMenu context;
     QAction *addAction;
     QAction *propertiesAction;
@@ -46,6 +45,7 @@ private:
     QShortcut *deleteShortcut;
     TreeWidgetEditor *editor;
     qint32 accountFilter;
+    QHash<qint32, NTagViewItem*> dataStore;
 
 private slots:
     int calculateHeightRec(QTreeWidgetItem * item);
@@ -65,7 +65,8 @@ public:
     void mouseMoveEvent(QMouseEvent *event);
     void dropEvent(QDropEvent *event);
     void contextMenuEvent(QContextMenuEvent *event);
-    QHash<qint32, NTagViewItem*> dataStore;
+    NTagViewItem* getItem(qint32 lid);
+
 
 
 signals:
