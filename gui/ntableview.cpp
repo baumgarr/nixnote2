@@ -200,6 +200,11 @@ NTableView::NTableView(QWidget *parent) :
     copyNoteAction->setFont(font);
     connect(copyNoteAction, SIGNAL(triggered()), this, SLOT(copyNote()));
 
+    mergeNotesAction = new QAction(tr("Merge Notes"), this);
+    contextMenu->addAction(mergeNotesAction);
+    mergeNotesAction->setFont(font);
+    connect(mergeNotesAction, SIGNAL(triggered()), this, SLOT(mergeNotes()));
+
     repositionColumns();
     resizeColumns();
     setColumnsVisible();
@@ -233,6 +238,23 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
     deleteNoteAction->setEnabled(false);
     QList<qint32> lids;
     getSelectedLids(lids);
+    mergeNotesAction->setVisible(false);
+
+    // Deterimne if the merge notes menu option is visible.
+    // If it is a read-only notebook or if the number of selected notes
+    // is < 1 then we can't merge.
+    if (lids.size() > 1) {
+        mergeNotesAction->setVisible(true);
+        NoteTable nTable;
+        NotebookTable bookTable;
+        for (int i=0; i<lids.size(); i++) {
+            qint32 notebookLid = nTable.getNotebookLid(lids[i]);
+            if (bookTable.isReadOnly(notebookLid)) {
+                mergeNotesAction->setVisible(false);
+                i=lids.size();
+            }
+        }
+    }
     if (lids.size() > 0) {
         bool readOnlySelected =  false;
         for (int i=0; i<lids.size(); i++) {
@@ -535,7 +557,7 @@ void NTableView::openNoteContextMenuTriggered() {
 }
 
 
-
+// Copy (duplicate) a note
 void NTableView::copyNote() {
     QList<qint32> lids;
     ConfigStore cs;
@@ -610,6 +632,7 @@ void NTableView::copyNoteLink() {
 
 
 
+// Toggle columns hidden or visible
 void NTableView::toggleColumnVisible(int position, bool visible) {
     setColumnHidden(position, !visible);
     if (this->tableViewHeader->isThumbnailVisible())
@@ -620,6 +643,7 @@ void NTableView::toggleColumnVisible(int position, bool visible) {
 
 
 
+// Save which columns are visible so it can be restored on the next stat
 void NTableView::saveColumnsVisible() {
     if (global.listView == Global::ListViewWide)
         global.settings->beginGroup("ColumnHidden-Wide");
@@ -696,6 +720,8 @@ void NTableView::saveColumnsVisible() {
 }
 
 
+
+// Set which columns are visible (used after restarting)
 void NTableView::setColumnsVisible() {
     if (global.listView == Global::ListViewWide)
         global.settings->beginGroup("ColumnHidden-Wide");
@@ -773,6 +799,8 @@ void NTableView::setColumnsVisible() {
     global.settings->endGroup();
 }
 
+
+// Change the order of the columns (used after restarting)
 void NTableView::repositionColumns() {
     int from = horizontalHeader()->visualIndex(NOTE_TABLE_AUTHOR_POSITION);
     int to = global.getColumnPosition("noteTableAuthorPosition");
@@ -859,6 +887,8 @@ void NTableView::repositionColumns() {
     if (to>=0) horizontalHeader()->moveSection(from, to);
 }
 
+
+// Change the size of the columns (used after restarting)
 void NTableView::resizeColumns() {
     int width = global.getColumnWidth("noteTableAltitudePosition");
     if (width>0) setColumnWidth(NOTE_TABLE_ALTITUDE_POSITION, width);
@@ -904,3 +934,52 @@ void NTableView::resizeColumns() {
     if (width>0) setColumnWidth(NOTE_TABLE_THUMBNAIL_POSITION, width);
 }
 
+
+// Combine multiple notes
+void NTableView::mergeNotes() {
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    NoteTable nTable;
+    ResourceTable rTable;
+
+    Note note;
+    qint32 lid = lids[0];
+    nTable.get(note, lid, false,false);
+    QString content = QString::fromStdString(note.content);
+    content = content.replace("</en-note>","<p/>");
+
+    // Duplicate the source notes so we can undelete them later if something
+    // goes horribly wrong
+    for (int i=1; i<lids.size(); i++) {
+        qint32 newLid = nTable.duplicateNote(lids[i]);
+        QList<qint32> resLids;
+        rTable.getResourceList(resLids, newLid);
+        for (int j=0; j<resLids.size(); j++) {
+            rTable.updateNoteLid(resLids[j], lid);
+        }
+
+        Note oldNote;
+        nTable.get(oldNote, lids[i], false,false);
+        QString oldContent = QString::fromStdString(oldNote.content);
+        oldContent = oldContent.replace("</en-note>", "<p/>");
+        int startPos = oldContent.indexOf("<en-note");
+        startPos = oldContent.indexOf(">", startPos)+1;
+        content = content+oldContent.mid(startPos);
+        QLOG_DEBUG() << content;
+
+        nTable.deleteNote(lids[i], true);
+        nTable.expunge(newLid);
+    }
+    content = content+QString("</en-note>");
+    QLOG_DEBUG() << content;
+    nTable.updateNoteContent(lid, content, true);
+    global.cache.remove(lid);
+
+    FilterEngine engine;
+    engine.filter();
+    refreshData();
+    emit(refreshNoteContent(lid));
+}

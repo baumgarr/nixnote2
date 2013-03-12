@@ -63,6 +63,7 @@ public:
     QAction *openNoteAction;
     QAction *copyNoteLinkAction;
     QAction *copyNoteAction;
+    QAction *mergeNotesAction;
 
     void getSelectedLids(QList<qint32> &lids);
     bool isLidSelected(qint32 lid);
@@ -77,6 +78,7 @@ signals:
     void openNote(bool newWindow);
     void notesDeleted(QList<qint32> lid, bool expunged);
     void notesRestored(QList<qint32>);
+    void refreshNoteContent(qint32 lid);
 
 
 public slots:
@@ -88,6 +90,7 @@ public slots:
     void copyNoteLink();
     void toggleColumnVisible(int position, bool visible);
     void copyNote();
+    void mergeNotes();
 
 };
 

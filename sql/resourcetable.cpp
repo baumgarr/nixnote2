@@ -885,6 +885,7 @@ QByteArray ResourceTable::getDataHash(qint32 lid) {
 }
 
 
+// Mark all note resource as needing reindexed
 void ResourceTable::reindexAllResources() {
     QSqlQuery query;
     query.prepare("delete from datastore where key=:indexKey");
@@ -894,5 +895,17 @@ void ResourceTable::reindexAllResources() {
     query.prepare("insert into datastore (lid, key, data) select lid, :indexKey, 'true' from datastore where key=:key;");
     query.bindValue(":indexKey", RESOURCE_INDEX_NEEDED);
     query.bindValue(":key", RESOURCE_GUID);
+    query.exec();
+}
+
+
+
+// Update a resource's owning note.  This is done when merging notes
+void ResourceTable::updateNoteLid(qint32 resourceLid, qint32 newNoteLid) {
+    QSqlQuery query;
+    query.prepare("Update datastore set data=:newNoteLid where lid=:resourceLid and key=:key");
+    query.bindValue(":newNoteLid", newNoteLid);
+    query.bindValue(":lid", resourceLid);
+    query.bindValue(":key", RESOURCE_NOTE_LID);
     query.exec();
 }

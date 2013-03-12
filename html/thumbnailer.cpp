@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "thumbnailer.h"
 #include <QtWebKit>
 #include <QtSql>
+#include <QTextDocument>
 #include "global.h"
 #include "sql/notetable.h"
 
@@ -44,14 +45,15 @@ void Thumbnailer::setNote(Note n) {
 void Thumbnailer::render(qint32 lid, QString contents) {
 
     QFile f(global.fileManager.getTmpDirPath()+QString::number(lid)+QString(".html"));
+    QTextStream outstream(&f);
     f.open(QIODevice::WriteOnly);
-    QByteArray ba;
-    ba.append(contents);
-    f.write(ba);
+    outstream << contents;
     f.close();
 
-    page.mainFrame()->setContent(ba);
-    int textLen = page.mainFrame()->toPlainText().length();
+    QTextDocument textDocument;
+    textDocument.setHtml(contents);
+    int textLen = textDocument.toPlainText().length();
+
 
     int minWidth = 600;
     if (contents.indexOf("<img") > 0)

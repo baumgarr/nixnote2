@@ -81,10 +81,7 @@ void IndexRunner::index() {
             Note n;
             noteTable.get(n, lids[i], false, false);
             indexNote(lids[i],n);
-//            Thumbnailer hammer;
-//            hammer.setNote(lids[i], n);
             emit(thumbnailNeeded(lids[i]));
-            //noteTable.setIndexNeeded(lids.at(i), false);
         }
     }
 

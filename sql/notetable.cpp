@@ -1061,11 +1061,18 @@ void NoteTable::setDirty(qint32 lid, bool dirty) {
     query.bindValue(":lid", lid);
     query.exec();
 
-    query.prepare("Update DataStore set data=:dirty where lid=:lid and key=:key");
-    query.bindValue(":data", dirty);
+    query.prepare("Delete from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_ISDIRTY);
-    query.exec();
+
+    if (dirty) {
+        query.prepare("Insert into DataStore (key, lid, data) values (:lid, :key, :data)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_ISDIRTY);
+        query.bindValue(":data", dirty);
+        query.exec();
+        setIndexNeeded(lid, true);
+    }
 }
 
 
@@ -1294,18 +1301,16 @@ qint32 NoteTable::duplicateNote(qint32 oldLid) {
     qint32 newLid = cs.incrementLidCounter();
 
     QSqlQuery query;
-    QString tempTableName = "notecopy" + QString::number(oldLid);
-    query.exec("drop temporary table " +tempTableName);
-    query.prepare("create temporary table " +tempTableName +" as select * from datastore where lid=:oldLid");
+    query.prepare("insert into datastore (lid, key, data) select :newLid, key, data from datastore where lid=:oldLid");
+    query.bindValue(":newLid", newLid);
     query.bindValue(":oldLid", oldLid);
     query.exec();
 
-    query.prepare("Update " +tempTableName +" set lid=:newLid");
-    query.bindValue(":newLid", newLid);
+    query.prepare("update datastore set data=:data where lid=:lid and key=:key");
+    query.bindValue(":data", QString::number(newLid));
+    query.bindValue(":lid", newLid);
+    query.bindValue(":key", NOTE_GUID);
     query.exec();
-
-    query.exec("insert into datastore select lid, key, data from " +tempTableName);
-    query.exec("drop " +tempTableName);
 
     query.prepare("update datastore set data=:data where lid=:lid and key=:key");
     query.bindValue(":data", 0);
@@ -1318,6 +1323,7 @@ qint32 NoteTable::duplicateNote(qint32 oldLid) {
     updateNoteList(newLid, n, true);
 
     setDirty(newLid, true);
+    setIndexNeeded(newLid, true);
 
     // Update all the resources
     ResourceTable resTable;
@@ -1325,17 +1331,17 @@ qint32 NoteTable::duplicateNote(qint32 oldLid) {
     resTable.getResourceList(lids, oldLid);
     for (int i=0; i<lids.size(); i++) {
         qint32 newResLid = cs.incrementLidCounter();
-        query.prepare("create temporary table " +tempTableName +" as select * from datastore where lid=:oldLid");
+
+        query.prepare("insert into datastore (lid, key,data) select :newLid, key, data from datastore where lid=:oldLid");
+        query.bindValue(":newLid", newResLid);
         query.bindValue(":oldLid", lids[i]);
         query.exec();
 
-
-        query.prepare("Update " +tempTableName +" set lid=:newLid");
-        query.bindValue(":newLid", newResLid);
+        query.prepare("update datastore set data=:data where lid=:lid and key=:key");
+        query.bindValue(":data", QString::number(newResLid));
+        query.bindValue(":lid", newResLid);
+        query.bindValue(":key", RESOURCE_GUID);
         query.exec();
-
-        query.exec("insert into datastore select lid, key, data from " +tempTableName);
-        query.exec("drop " +tempTableName);
 
         query.prepare("update datastore set data=:data where lid=:lid and key=:key");
         query.bindValue(":data", 0);
@@ -1344,7 +1350,7 @@ qint32 NoteTable::duplicateNote(qint32 oldLid) {
         query.exec();
 
         query.prepare("update datastore set data=:data where lid=:lid and key=:key");
-        query.bindValue(":data", 0);
+        query.bindValue(":data", newLid);
         query.bindValue(":lid", newResLid);
         query.bindValue(":key", RESOURCE_NOTE_LID);
         query.exec();

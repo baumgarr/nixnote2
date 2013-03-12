@@ -77,6 +77,7 @@ public slots:
     void viewExtendedInformation();
     void toggleSource();
     void updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash);  // Update the hash of a resource in a note
+    void refreshNoteContent(qint32 lid);  // refresh a note's contents
 
 };
 

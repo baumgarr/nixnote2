@@ -200,23 +200,6 @@ void EnmlFormatter::fixNode(const QDomNode &node) {
         cleanupElementAttributes(e);
     }
 
-    if (node.nodeName().toLower() == "en-hilight") {
-        QDomElement e = node.toElement();
-        QDomText newText = doc.createTextNode(e.text());
-        e.parentNode().replaceChild(newText,e);
-    }
-
-    if (node.nodeName().toLower() == "span") {
-        QDomElement e = node.toElement();
-        if (e.attribute("class").toLower() == "en-hilight" || e.attribute("class").toLower() == "en-spell") {
-            QDomText newText = doc.createTextNode(e.text());
-            e.parentNode().replaceChild(newText,e);
-        }
-        if (e.attribute("pdfnavigationtable") == "true") {
-            node.parentNode().removeChild(node);
-        }
-    }
-
     // Fix up encryption tag
     if (node.nodeName().toLower() == "en-crypt-temp") {
         QDomElement e = node.toElement();

@@ -196,7 +196,8 @@ void NBrowserWindow::setupShortcut(QShortcut *action, QString text) {
 void NBrowserWindow::setContent(qint32 lid) {
 
     // First, make sure we have a valid lid
-    if (lid == -1) {
+    if (lid == -1) {       
+        editor->page()->setContentEditable(false);
         clear();
         return;
     }
@@ -234,6 +235,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         readOnly = c->isReadOnly;
         inkNote = c->isInkNote;
     }
+    QLOG_DEBUG() << content;
 
     setReadOnly(readOnly);
 

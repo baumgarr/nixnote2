@@ -140,9 +140,8 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     content = doc.toByteArray(3);
         qint32 index = content.indexOf("<body");
     content.remove(0,index);
-    content.prepend("<style type=\"text/css\">.en-crypt-temp { border-collapse:collapse; border-style:solid; border-color:blue; padding:0.0mm 0.0mm 0.0mm 0.0mm; }</style>");
-    content.prepend("<style type=\"text/css\">en-hilight { background-color: rgb(255,255,0) }</style>");
-    content.prepend("<style> img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
+//    content.prepend("<style type=\"text/css\">.en-crypt-temp { border-collapse:collapse; border-style:solid; border-color:blue; padding:0.0mm 0.0mm 0.0mm 0.0mm; }</style>");
+//    content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
     content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
     content.prepend("<html>");
     content.append("</html>");

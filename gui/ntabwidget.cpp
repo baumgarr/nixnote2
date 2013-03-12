@@ -107,6 +107,8 @@ NBrowserWindow* NTabWidget::currentBrowser() {
 }
 
 
+
+// Open up a note.  If it is already open in a tab we raise that tab.
 void NTabWidget::openNote(qint32 lid, bool newWindow) {
 
     // If the lid < 0, then we just clear it & get out
@@ -149,15 +151,19 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
 }
 
 
+// Set the title of the current tab based on the note's title
 void NTabWidget::setTitle(QString t) {
     this->setTitle(tabBar->currentIndex(), t);
 }
 
+
+// Set the title of a particular tab based on the note's title
 void NTabWidget::setTitle(int index, QString t) {
     tabBar->setTabText(index, t);
 }
 
 
+// A signal that a note has been updated.
 void NTabWidget::noteUpdateSignaled(qint32 lid) {
     emit(this->noteUpdated(lid));
 
@@ -173,7 +179,7 @@ void NTabWidget::noteUpdateSignaled(qint32 lid) {
 }
 
 
-
+// A note has been synchronized
 void NTabWidget::noteSyncSignaled(qint32 lid) {
     emit(this->noteUpdated(lid));
 
@@ -280,5 +286,17 @@ void NTabWidget::updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArr
     for (int i=0; i<browserList->size(); i++) {
         NBrowserWindow *browser = browserList->at(i);
         browser->updateResourceHash(noteLid, oldHash, newHash);
+    }
+}
+
+
+
+// Refresh a note's content
+void NTabWidget::refreshNoteContent(qint32 lid) {
+    for (int i=0;i<browserList->size(); i++) {
+        if (browserList->at(i)->lid == lid) {
+            browserList->at(i)->setContent(lid);
+            return;
+        }
     }
 }
