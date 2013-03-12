@@ -59,7 +59,7 @@ void Thumbnailer::render(qint32 lid, QString contents) {
     if (contents.indexOf("<img") > 0)
         minWidth = 10;
     if (textLen < 600)
-        minWidth = textLen;
+        minWidth = textLen*10;
 
     QString args;
     QString outfile = global.fileManager.getThumbnailDirPath() +QString::number(lid) +QString(".png");
