@@ -105,42 +105,60 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
 
   undoButtonAction = this->addAction(QIcon(":undo.png"), tr("Undo"));
+  this->setupShortcut(undoButtonAction, "Edit_Undo");
   redoButtonAction = this->addAction(QIcon(":redo.png"), tr("Redo"));
+  this->setupShortcut(redoButtonAction, "Edit_Redo");
 
   cutButtonAction = this->addAction(QIcon(":cut.png"), tr("Cut"));
+  this->setupShortcut(cutButtonAction, "Edit_Cut");
   copyButtonAction = this->addAction(QIcon(":copy.png"), tr("Copy"));
+  this->setupShortcut(copyButtonAction, "Edit_Copy");
   pasteButtonAction = this->addAction(QIcon(":paste.png"), tr("Paste"));
+  this->setupShortcut(pasteButtonAction, "Edit_Paste");
 
   boldButtonWidget = new QToolButton(this);
   boldButtonWidget->setIcon(QIcon(":bold.png"));
   boldButtonWidget->setText(tr("Bold"));
+  this->setupShortcut(boldButtonWidget, "Format_Bold");
   boldButtonAction = this->addWidget(boldButtonWidget);
+
 
   italicButtonWidget = new QToolButton(this);
   italicButtonWidget->setIcon(QIcon(":italics.png"));
   italicButtonWidget->setText(tr("Italics"));
   italicButtonWidget->setToolTip(tr("Italics"));
   italicButtonAction = this->addWidget(italicButtonWidget);
+  this->setupShortcut(italicButtonWidget, "Format_Italic");
 
   underlineButtonWidget = new QToolButton(this);
   underlineButtonWidget->setIcon(QIcon(":underline.png"));
   underlineButtonWidget->setText(tr("Underline"));
   underlineButtonWidget->setToolTip(tr("Underline"));
   underlineButtonAction = this->addWidget(underlineButtonWidget);
+  this->setupShortcut(underlineButtonWidget, "Format_Underline");
 
   strikethroughButtonAction = this->addAction(QIcon(":strikethrough.png"), tr("Strikethrough"));
+  this->setupShortcut(strikethroughButtonAction, "Format_Strikethrough");
 
   leftJustifyButtonAction = this->addAction(QIcon(":leftAlign.png"), tr("Left Justify"));
+  this->setupShortcut(leftJustifyButtonAction, "Format_Alignment_Left");
   centerJustifyButtonAction = this->addAction(QIcon(":centerAlign.png"), tr("Center"));
+  this->setupShortcut(centerJustifyButtonAction, "Format_Alignment_Center");
   rightJustifyButtonAction = this->addAction(QIcon(":rightAlign.png"), tr("Right Justify"));
+  this->setupShortcut(rightJustifyButtonAction, "Format_Alignment_Right");
 
   hlineButtonAction = this->addAction(QIcon(":hline.png"), tr("Horizontal Line"));
+  this->setupShortcut(hlineButtonAction, "Format_Horizontal_Line");
 
   shiftRightButtonAction = this->addAction(QIcon(":shiftRight.png"), tr("Shift Right"));
+  this->setupShortcut(shiftRightButtonAction, "Format_Indent_Increase");
   shiftLeftButtonAction = this->addAction(QIcon(":shiftLeft.png"), tr("Shift Left"));
+  this->setupShortcut(shiftLeftButtonAction, "Format_Indent_Decrease");
 
   bulletListButtonAction = this->addAction(QIcon(":bulletList.png"), tr("Bullet List"));
+  this->setupShortcut(bulletListButtonAction, "Format_List_Bullet");
   numberListButtonAction = this->addAction(QIcon(":numberList.png"), tr("Number List"));
+  this->setupShortcut(numberListButtonAction, "Format_List_Numbered");
 
 
   fontNames = new QComboBox(this);
@@ -167,6 +185,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   highlightColorAction = this->addWidget(highlightColorButtonWidget);
 
   todoButtonAction = this->addAction(QIcon(":todo.png"), tr("Todo"));
+  this->setupShortcut(todoButtonAction, "Edit_Insert_Todo");
 }
 
 
@@ -462,4 +481,22 @@ void EditorButtonBar::loadFontSizeComboBox(QString name) {
         fontSizes->addItem(QString::number(sizes[i]), sizes[i]);
     }
 
+}
+
+
+void EditorButtonBar::setupShortcut(QAction *action, QString text) {
+    if (!global.shortcutKeys->containsAction(&text))
+        return;
+    QKeySequence key(global.shortcutKeys->getShortcut(&text));
+    action->setShortcut(key);
+}
+
+
+
+
+void EditorButtonBar::setupShortcut(QToolButton *action, QString text) {
+    if (!global.shortcutKeys->containsAction(&text))
+        return;
+    QKeySequence key(global.shortcutKeys->getShortcut(&text));
+    action->setShortcut(key);
 }

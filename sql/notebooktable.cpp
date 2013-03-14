@@ -721,6 +721,18 @@ qint32 NotebookTable::getConflictNotebook() {
 
 
 
+// Get a count of all new unsequenced notebooks
+int NotebookTable::getNewUnsequencedCount() {
+    QSqlQuery query;
+    query.prepare("Select count(lid) from DataStore where key=:key and data=0 and lid not in (select lid from datastore where key=:localkey and data='true')");
+    query.bindValue(":key", NOTEBOOK_UPDATE_SEQUENCE_NUMBER);
+    query.bindValue(":localKey", NOTEBOOK_IS_LOCAL);
+    query.exec();
+    while(query.next()) {
+        return query.value(0).toInt();
+    }
+    return 0;
+}
 
 
 

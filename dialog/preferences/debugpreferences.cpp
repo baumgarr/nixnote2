@@ -78,7 +78,11 @@ void DebugPreferences::saveValues() {
 
     global.settings->beginGroup("Debugging");
     global.settings->setValue("messageLevel", value);
-    global.settings->setValue("disableUploads", disableUploads->isChecked());
+
+    // If the disable uploads is different than the defaults or if it has changed, we save it.
+    if (!disableUploads->isChecked() || disableUploads->isChecked() != global.disableUploads)
+        global.settings->setValue("disableUploads", disableUploads->isChecked());
+
     global.settings->endGroup();
     global.disableUploads = disableUploads->isChecked();
 }

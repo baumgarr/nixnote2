@@ -51,6 +51,7 @@ public:
 public slots:
     void setActiveColor();
     void titleChanged(QString text);
+    void checkNoteTitleChange();
 
 signals:
   void focussed(bool hasFocus);

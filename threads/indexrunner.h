@@ -65,7 +65,6 @@ signals:
 
  public slots:
     void index();
-    void renderThumbnail(qint32 lid, QString contents);
 
 };
 

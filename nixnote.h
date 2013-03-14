@@ -200,14 +200,11 @@ public slots:
     void viewNoteListNarrow();
     void resourceExternallyUpdated(QString resource);
     void screenCapture();
-    void generateThumbnailHtml(qint32);
     void reindexDatabase();
 
 signals:
     void syncRequested();
     void updateCounts();
-    void thumbnailReady(qint32, QString);
-
 };
 
 #endif // NIXNOTE_H

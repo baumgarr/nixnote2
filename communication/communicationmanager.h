@@ -93,6 +93,7 @@ private:
     AuthenticationResult linkedAuthToken;
 
     void downloadInkNoteImage(QString guid, Resource *r);
+    void downloadThumbnail(QString guid, string authToken, string shard);
 
     shared_ptr<TSocket> sslSocketUserStore;
     shared_ptr<TTransport> userStoreHttpClient;
@@ -119,6 +120,7 @@ public:
     bool authenticateToLinkedNotebook(AuthenticationResult &authResult, LinkedNotebook book);
     bool getUserInfo(User &user);
     QList< QPair<QString, QImage*>* > *inkNoteList;
+    QList< QPair<QString, QImage*>* > *thumbnailList;
     bool getSharedNotebookByAuth(SharedNotebook &sharedNotebook);
 
     qint32 uploadSavedSearch(SavedSearch &search);
@@ -132,8 +134,12 @@ public:
 
     qint32 uploadNote(Note &note);
 
+    bool getNotebookList(vector<Notebook> &list);
+    bool getTagList(vector<Tag> &list);
+
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);
+    int thumbnailReady(QImage *newImage, QImage *replyImage, int position);
 };
 
 #endif // COMMUNICATIONMANAGER_H

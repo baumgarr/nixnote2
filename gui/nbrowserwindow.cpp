@@ -235,7 +235,6 @@ void NBrowserWindow::setContent(qint32 lid) {
         readOnly = c->isReadOnly;
         inkNote = c->isInkNote;
     }
-    QLOG_DEBUG() << content;
 
     setReadOnly(readOnly);
 
@@ -452,6 +451,8 @@ void NBrowserWindow::saveNoteContent() {
         NoteTable table;
         //QString contents = editor->editorPage->mainFrame()->toHtml();
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
+        Thumbnailer thumbnailer;
+        thumbnailer.render(lid, contents);
         EnmlFormatter formatter;
         formatter.setHtml(contents);
         formatter.rebuildNoteEnml();

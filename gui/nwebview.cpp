@@ -46,7 +46,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     QWebView(parent)
 {
     this->parent = parent;
-    editorPage = new NWebPage();
+    editorPage = new NWebPage(this);
     setPage(editorPage);
     isDirty = false;
 
@@ -219,11 +219,17 @@ QAction* NWebView::setupColorMenuOption(QString color) {
     return backgroundColor;
 }
 
+
+void NWebView::focusOutEvent(QFocusEvent *e) {
+    QWebView::focusOutEvent(e);
+    titleEditor->checkNoteTitleChange();
+}
+
 void NWebView::editAlert() {
-    //if (!isDirty) {
+    if (!isDirty) {
+        emit(noteChanged());
+    }
     isDirty = true;
-    emit(noteChanged());
-    //}
 }
 
 

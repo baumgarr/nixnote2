@@ -23,19 +23,16 @@ class Thumbnailer : public QObject
 
 public:
     QWebPage page;
-    QString contents;
     Thumbnailer();
-    void setNote(Note n);
-    NoteFormatter formatter;
     void render(qint32 lid, QString contents);
+    qint32 lid;
 
 signals:
 
 private slots:
 
-
-private:
-    QProcess imgProcess;
+public slots:
+    void pageReady(bool ok);
 
 };
 

@@ -85,6 +85,7 @@ public:
     qint32 getAllDirty(QList<qint32> &lids);   // get all dirty tags
     void setUpdateSequenceNumber(qint32 lid, qint32 usn);  // set the update sequence number
     void resetLinkedTagsDirty();                // mark all linked tags as not-dirty
+    int getNewUnsequencedCount();
 };
 
 #endif // TAGTABLE_H

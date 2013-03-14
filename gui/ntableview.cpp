@@ -792,7 +792,7 @@ void NTableView::setColumnsVisible() {
     tableViewHeader->sizeAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_SIZE_POSITION, value);
 
-    value = global.settings->value("thumbnail", false).toBool();
+    value = global.settings->value("thumbnail", true).toBool();
     tableViewHeader->thumbnailAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION, value);
 

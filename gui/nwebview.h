@@ -76,6 +76,7 @@ public:
     bool event(QEvent *event);
     void keyPressEvent(QKeyEvent *);
     void downloadAttachment(QNetworkRequest *req);
+    void focusLostNotify(QString text);
 
 signals:
     void noteChanged();
@@ -98,6 +99,7 @@ public slots:
     void setBackgroundPowderBlue();
     void printNodeName(QString s);
     void setTitleEditor(NTitleEditor *editor);
+    void focusOutEvent(QFocusEvent *e);
 
 private slots:
     void exposeToJavascript();

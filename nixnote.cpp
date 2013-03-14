@@ -101,8 +101,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(&syncRunner, SIGNAL(setMessage(QString, int)), this, SLOT(setMessage(QString, int)));
     syncRunner.start(QThread::NormalPriority);
     indexRunner.start(QThread::LowestPriority);
-    connect(&indexRunner, SIGNAL(thumbnailNeeded(qint32)), this, SLOT(generateThumbnailHtml(qint32)));
-    connect(this, SIGNAL(thumbnailReady(qint32,QString)), &indexRunner, SLOT(renderThumbnail(qint32,QString)));
 
     QLOG_TRACE() << "Setting up GUI";
     this->setupGui();
@@ -521,7 +519,7 @@ void NixNote::setupTabWindow() {
     tabPanel->layout()->addWidget(findReplaceWindow);
     rightPanelSplitter->addWidget(tabPanel);
 
-    NBrowserWindow *newBrowser = new NBrowserWindow();
+    NBrowserWindow *newBrowser = new NBrowserWindow(this);
     connect(&syncRunner, SIGNAL(syncComplete()), &newBrowser->notebookMenu, SLOT(reloadData()));
     connect(&syncRunner, SIGNAL(syncComplete()), &newBrowser->tagEditor, SLOT(reloadTags()));
     connect(&syncRunner, SIGNAL(noteUpdated(qint32)), newBrowser, SLOT(noteSyncUpdate(qint32)));
@@ -573,6 +571,9 @@ void NixNote::closeEvent(QCloseEvent *event) {
 
     saveContents();
 
+    indexRunner.keepRunning = false;
+    counterRunner.keepRunning = false;
+    syncRunner.keepRunning = false;
     syncRunner.quit();
     indexRunner.quit();
     counterRunner.quit();
@@ -1049,9 +1050,16 @@ void NixNote::newNote() {
     n.__isset.updated = true;
     n.updateSequenceNum = 0;
     n.__isset.updateSequenceNum = true;
-    NoteTable table;
-    n.notebookGuid = notebookTable.getDefaultNotebookGuid().toStdString();
+    if (notebookTreeView->selectedItems().size() == 0) {
+        n.notebookGuid = notebookTable.getDefaultNotebookGuid().toStdString();
+    } else {
+        NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
+        QString notebookGuid;
+        notebookTable.getGuid(notebookGuid, item->lid);
+        n.notebookGuid = notebookGuid.toStdString();
+    }
     n.__isset.notebookGuid = true;
+    NoteTable table;
     qint32 lid = table.add(0,n,true);
 
     FilterCriteria *criteria = new FilterCriteria();
@@ -1599,22 +1607,6 @@ void NixNote::screenCapture() {
     updateSelectionCriteria();
 }
 
-
-
-
-// This is done via a signal from the IndexRunner thread.  It rebuilds the note's
-// HTML and sends the formatted HTML back to the IndexRunner thread.  The IndexRunner
-// thread will start another process to generate the thumbnail.  The rebuild
-// needs to be done in the main gui thread because of Qt restrictions on QPixmap
-// in a separate non-gui thread.
-void NixNote::generateThumbnailHtml(qint32 lid) {
-    NoteTable table;
-    Note n;
-    table.get(n, lid,false,false);
-    Thumbnailer hammer;
-    hammer.setNote(n);
-    emit(thumbnailReady(lid, hammer.contents));
-}
 
 
 // Reindex all notes & resources

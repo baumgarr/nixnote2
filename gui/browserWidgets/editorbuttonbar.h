@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMenu>
 #include <QToolButton>
 #include <QComboBox>
+#include <QShortcut>
 
 #include "gui/browserWidgets/colormenu.h"
 
@@ -90,6 +91,9 @@ public:
     ColorMenu *fontColorMenuWidget;
     QToolButton *highlightColorButtonWidget;
     ColorMenu *highlightColorMenuWidget;
+
+    void setupShortcut(QToolButton *action, QString text);
+    void setupShortcut(QAction *action, QString text);
 
     explicit EditorButtonBar(QWidget *parent = 0);
     ~EditorButtonBar();

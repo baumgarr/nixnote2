@@ -107,6 +107,7 @@ public:
     qint32 getAllDirty(QList<qint32> &lids);                // get all dirty notebooks
     void setUpdateSequenceNumber(qint32 lid, qint32 usn);   // set the update sequence number
     void resetLinkedNotebooksDirty();                       // mark all linked notebooks as not-dirty
+    int getNewUnsequencedCount();                           // Get a count of all notebooks with USN=0
 };
 
 #endif // NOTEBOOKTABLE_H

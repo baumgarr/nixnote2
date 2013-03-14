@@ -58,7 +58,7 @@ void NTitleEditor::focusOutEvent(QFocusEvent *e)
 {
   QLineEdit::focusOutEvent(e);
   setStyleSheet(inactiveColor);
-  titleChanged(text());
+  titleChanged(cleanupTitle(text()));
   emit(focussed(false));
 }
 
@@ -85,6 +85,7 @@ void NTitleEditor::titleChanged(QString text) {
     // Check that we have some type of title.  If not we go with
     // the default
     text = cleanupTitle(text);
+    this->setText(text);
     this->blockSignals(false);
 
     // Now check that the text has actually changed.  We need to do this because
@@ -96,10 +97,9 @@ void NTitleEditor::titleChanged(QString text) {
             emit(titleChanged());
             setText(text);
             priorTitle = text;
+            initialTitle = text;
         }
     }
-    blockSignals(false);
-    //priorTitle = text;
 }
 
 
@@ -119,8 +119,10 @@ QString NTitleEditor::cleanupTitle(QString text) {
 
 
 void NTitleEditor::setTitleFromContent(QString s) {
-    if (priorTitle.toLower() != tr("untitled note"))
+    if (initialTitle.toLower() != tr("untitled note"))
         return;
+    if (s.trimmed() == "")
+        s = tr("Untitled note");
     int newline = s.indexOf("\n");
     if (newline >= 0)
         s = s.mid(0,newline);
@@ -128,4 +130,14 @@ void NTitleEditor::setTitleFromContent(QString s) {
     blockSignals(true);
     this->setText(s);
     blockSignals(false);
+}
+
+
+void NTitleEditor::checkNoteTitleChange() {
+    if (this->text() != initialTitle) {
+        NoteTable noteTable;
+        noteTable.updateTitle(currentLid, text(), true);
+        emit(titleChanged());
+        priorTitle = text();
+    }
 }

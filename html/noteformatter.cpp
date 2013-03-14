@@ -97,8 +97,8 @@ void NoteFormatter::setNoteHistory(bool value) {
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
 
-    QLOG_DEBUG() << "Rebuilding Note: " << QString::fromStdString(note.guid) << " : " <<
-                    QString::fromStdString(note.title);
+//    QLOG_DEBUG() << "Rebuilding Note: " << QString::fromStdString(note.guid) << " : " <<
+//                    QString::fromStdString(note.title);
 
     formatError = false;
     readOnly = false;
@@ -164,7 +164,6 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
   HTML values, so we turn them into HTML.
   */
 void NoteFormatter::modifyTags(QDomDocument &doc) {
-    QLOG_TRACE() << "Entering NeverNote.modifyTags";
     tempFiles.clear();
     QDomElement docElem = doc.documentElement();
 
@@ -180,9 +179,9 @@ void NoteFormatter::modifyTags(QDomDocument &doc) {
                     if (type.size() >= 2) {
                         QString appl = type[1];
                         if (type[0] == "image")
-                            modifyImageTags(doc, docElem, enmedia, hash);
+                            modifyImageTags(doc, enmedia, hash);
                         else
-                            modifyApplicationTags(doc, docElem, enmedia, hash, appl);
+                            modifyApplicationTags(doc, enmedia, hash, appl);
                     }
             }
     }
@@ -234,8 +233,6 @@ void NoteFormatter::modifyTags(QDomDocument &doc) {
                     element.setAttribute("title", element.attribute("title").toLower().replace("http://latex.codecogs.com/gif.latex?",""));
             }
     }
-
-    QLOG_TRACE() << "Leaving NeverNote.modifyTags";
 }
 
 
@@ -327,8 +324,7 @@ void NoteFormatter::addImageHighlight(qint32 resLid, QFile &f) {
 
 /* Modify an image tag.  Basically we turn it back into a picture, write out the file, and
   modify the ENML */
-void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &docElement, QDomElement &enMedia, QDomAttr &hash) {
-    QLOG_DEBUG() << "Entering NoteFormatter::modifyImageTags";
+void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &enMedia, QDomAttr &hash) {
     QString mimetype = enMedia.attribute("type");
     ResourceTable resourceTable;
     qint32 resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
@@ -375,8 +371,7 @@ void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &docElement, 
 
 
 // Modify the en-media tag into an attachment
-void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docElem, QDomElement &enmedia, QDomAttr &hash, QString appl) {
-    QLOG_TRACE() <<  "Entering NeverNote.modifyApplicationTags";
+void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &enmedia, QDomAttr &hash, QString appl) {
     if (appl.toLower() == "vnd.evernote.ink") {
             inkNote = true;
             readOnly = true;
@@ -473,7 +468,6 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &docEle
         newText.setAttribute("en-tag", "temporary");
         enmedia.removeChild(enmedia.firstChild());
         enmedia.appendChild(newText);
-        QLOG_TRACE() << "Leaving NeverNote.modifyApplicationTags";
     }
 }
 
@@ -547,7 +541,6 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 
 // Modify the en-to tag into an input field
 void NoteFormatter::modifyTodoTags(QDomElement &todo) {
-    QLOG_TRACE() << "Entering NeverNote.modifyTodoTags";
     todo.setAttribute("type", "checkbox");
 
     // Checks the en-to tag wheter or not the todo-item is checked or not
@@ -562,7 +555,6 @@ void NoteFormatter::modifyTodoTags(QDomElement &todo) {
     todo.setAttribute("style", "cursor: hand;");
     //todo.setAttribute("onMouseOver", "style.cursor='hand'");
     todo.setTagName("input");
-    QLOG_TRACE() << "Leaving NeverNote.modifyTodoTags";
 }
 
 

@@ -557,3 +557,20 @@ void TagTable::resetLinkedTagsDirty() {
     query.bindValue(":linkedkey", TAG_OWNING_ACCOUNT);
     query.exec();
 }
+
+
+
+
+// Get a count of all new unsequenced notebooks
+// Get all dirty lids
+int TagTable::getNewUnsequencedCount() {
+    QSqlQuery query;
+    query.prepare("Select count(lid) from DataStore where key=:key and data=0");
+    query.bindValue(":key", TAG_UPDATE_SEQUENCE_NUMBER);
+    query.exec();
+    while(query.next()) {
+        return query.value(0).toInt();
+    }
+    return 0;
+}
+

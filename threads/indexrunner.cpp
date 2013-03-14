@@ -51,7 +51,7 @@ void IndexRunner::run() {
     moveToThread(this);
     QLOG_DEBUG() << "Starting IndexRunner";
     indexTimer = new QTimer();
-    indexTimer->setInterval(4000);
+    indexTimer->setInterval(30000);
     connect(indexTimer, SIGNAL(timeout()), this, SLOT(index()));
     indexTimer->start();
     textDocument = new QTextDocument();
@@ -77,11 +77,12 @@ void IndexRunner::index() {
 
 
         // Index any undindexed note content.
-        for (qint32 i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
+        for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
             Note n;
             noteTable.get(n, lids[i], false, false);
             indexNote(lids[i],n);
-            emit(thumbnailNeeded(lids[i]));
+            noteTable.setIndexNeeded(lids[i], false);
+            //emit(thumbnailNeeded(lids[i]));
         }
     }
 
@@ -93,7 +94,7 @@ void IndexRunner::index() {
         QLOG_DEBUG() << "Unindexed Resources found: " << lids.size();
 
         // Index each resource that is needed.
-        for (qint32 i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
+        for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
             Resource r;
             resourceTable.get(r, lids.at(i));
             qint32 noteLid = noteTable.getLid(r.noteGuid);
@@ -178,7 +179,7 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     QSqlQuery trans;
     trans.exec("begin");
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
-    for (unsigned int i; i<anchors.length() && keepRunning && !pauseIndexing; i++) {
+    for (unsigned int i=0; i<anchors.length() && keepRunning && !pauseIndexing; i++) {
         QDomElement enmedia = anchors.at(i).toElement();
         QString weight = enmedia.attribute("w");
         QString text = enmedia.text();
@@ -199,7 +200,7 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     ResourceTable rtable;
     qint32 reslid = rtable.getLid(r.guid);
-    if (lid <= 0)
+    if (lid <= 0 || !keepRunning || pauseIndexing)
         return;
     QString file = global.fileManager.getDbaDirPath() + QString::number(reslid) +".pdf";
 
@@ -207,7 +208,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     Poppler::Document *doc = Poppler::Document::load(file);
     if (doc == NULL)
         return;
-    for (int i=0; i<doc->numPages(); i++) {
+    for (int i=0; i<doc->numPages() && keepRunning && !pauseIndexing; i++) {
         QRectF rect;
         text = text + doc->page(i)->text(rect) + QString(" ");
     }
@@ -218,15 +219,4 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     sql.bindValue(":content", text);
     sql.exec();
 
-}
-
-
-// Save the thumbnail to disk and mark the index as complete
-void IndexRunner::renderThumbnail(qint32 lid, QString contents) {
-    if (!keepRunning)
-        quit();
-
-    hammer->render(lid, contents);
-    NoteTable noteTable;
-    noteTable.setIndexNeeded(lid, false);
 }

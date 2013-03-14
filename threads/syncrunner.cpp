@@ -163,6 +163,9 @@ void SyncRunner::evernoteSync() {
             updateSequenceNumber = personalNotesUsn;
     }
 
+
+    /*  This is commented out because for some reason it causes a "could not refill buffer error after
+     * a successfull sync.
     updateNoteTableTags();
     if (!comm->getUserInfo(user)) {
         this->communicationErrorHandler();
@@ -175,7 +178,8 @@ void SyncRunner::evernoteSync() {
         this->communicationErrorHandler();
         return;
     }
-    userTable.updateSyncState(syncState);
+    userTable.updateSyncState(syncState);   
+    */
 
     if (!error)
         emit setMessage(tr("Sync Complete"), defaultMsgTimeout);
@@ -186,6 +190,36 @@ void SyncRunner::evernoteSync() {
 
 void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     QLOG_TRACE() << "Entering SyncRunner::SyncRemoteToLocal()";
+
+    // The first thing we do is to see if any new tags or notebooks (ones with update sequence number = 0) have
+    // been created.  If so, we get a list of notebooks & tags to try and find matching names on Evernote.
+    // This avoids problems with duplicate or missing names later
+    NotebookTable ntable;
+    TagTable ttable;
+    if (ntable.getNewUnsequencedCount() > 0) {
+        vector<Notebook> books;
+        if (comm->getNotebookList(books))
+            syncRemoteNotebooks(books);
+        else {
+            QLOG_ERROR() << "Error retrieving notebook list";
+            error = true;
+            this->communicationErrorHandler();
+            return;
+        }
+
+    }
+    if (ttable.getNewUnsequencedCount() > 0) {
+        vector<Tag> tags;
+        if (comm->getTagList(tags))
+            syncRemoteTags(tags);
+        else {
+            QLOG_ERROR() << "Error retrieving tag list";
+            error = true;
+            this->communicationErrorHandler();
+            return;
+        }
+
+    }
 
     int chunkSize = 50;
     bool more = true;
@@ -260,6 +294,20 @@ void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
     chunk.tags.clear();
     chunk.linkedNotebooks.clear();
     chunk.searches.clear();
+
+    // Save any thumbnails notes
+    while (comm->thumbnailList->size() > 0) {
+        QPair<QString, QImage *> *pair = comm->thumbnailList->takeFirst();
+        NoteTable nTable;
+        qint32 lid = nTable.getLid(pair->first);
+        if (lid > 0) {
+            QString filename = global.fileManager.getThumbnailDirPath() + QString::number(lid) + QString(".png");
+            pair->second->save(filename);
+            nTable.setThumbnail(lid, filename);
+        }
+        delete pair->second;
+        delete pair;
+    }
 
     // Save any ink notes
     while (comm->inkNoteList->size() > 0) {

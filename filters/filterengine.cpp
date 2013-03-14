@@ -1166,6 +1166,15 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
         value = value.addDays(offset);
         return value;
     }
+    if (string.startsWith("day")) {
+        value = tam;
+        string = string.mid(3);
+        offset = 0;
+        if (string != "")
+            offset = string.toInt();
+        value = value.addDays(offset);
+        return value;
+    }
     else if (string.startsWith("month")) {
         value = tam;
         value = value.addDays(-1*dom+1);
