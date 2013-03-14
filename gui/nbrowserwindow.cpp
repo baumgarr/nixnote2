@@ -419,7 +419,7 @@ void NBrowserWindow::notebookAdded(qint32 lid) {
 
 // A note was synchronized with Evernote's servers
 void NBrowserWindow::noteSyncUpdate(qint32 lid) {
-    if (lid != this->lid)
+    if (lid != this->lid || editor->isDirty)
         return;
     setContent(lid);
 }
