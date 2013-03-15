@@ -54,7 +54,9 @@ void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         painter->setClipRect(clip);
         QFontMetrics fm = options.fontMetrics;
         painter->setPen(Qt::darkGray);
-        painter->drawText(fm.width(index.data().toString()+QString("  ")),fm.height()-fm.descent()-1,countString);
+//        painter->drawText(fm.width(index.data().toString()+QString("  ")),fm.height()-fm.descent(),countString);
+//        painter->drawText(fm.width(index.data().toString()+QString("  ")),fm.size(0, countString).height()-fm.descent(), countString);
+        painter->drawText(fm.width(index.data().toString()+QString("  ")),fm.ascent(), countString);
 
     }
     painter->restore();

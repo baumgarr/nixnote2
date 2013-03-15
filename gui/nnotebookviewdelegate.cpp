@@ -53,7 +53,8 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         painter->setClipRect(clip);
         QFontMetrics fm = options.fontMetrics;
         painter->setPen(Qt::darkGray);
-        painter->drawText(fm.width(index.data().toString()+QString("    ")),fm.height()-fm.descent()-1,countString);
+//        painter->drawText(fm.width(index.data().toString()+QString("    ")),fm.height()-fm.descent()-1,countString);
+        painter->drawText(fm.width(index.data().toString()+QString("    ")),fm.ascent(),countString);
 
     }
     painter->restore();

@@ -50,7 +50,8 @@ void NTrashViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     options.font.setBold(true);
     QFontMetrics fm = options.fontMetrics;
     painter->setPen(Qt::darkGray);
-    painter->drawText(fm.width(index.data().toString()+QString("   ")),fm.height()-fm.descent()-1,countString);
+//    painter->drawText(fm.width(index.data().toString()+QString("   ")),fm.height()-fm.descent()-1,countString);
+    painter->drawText(fm.width(index.data().toString()+QString("   ")),fm.ascent(),countString);
     \
     painter->restore();
 }
