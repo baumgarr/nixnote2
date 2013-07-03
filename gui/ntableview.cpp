@@ -282,6 +282,21 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
 
 
 
+// Update a specific table row/column.
+void NTableView::refreshCell(int lid, int cell, QVariant data) {
+
+    // Check the highlighted LIDs from the history selection.
+    if (proxy->lidMap->contains(lid)) {
+        int rowLocation = proxy->lidMap->value(lid);
+        if (rowLocation > 0) {
+            QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
+            QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
+            model()->setData(proxyIndex, data);
+        }
+    }
+}
+
+
 // Update the list of notes.
 void NTableView::refreshData() {
     QLOG_TRACE() << "Getting valid lids in filter";

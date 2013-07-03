@@ -126,6 +126,7 @@ signals:
     void noteUpdated(qint32);
     qint32 tagAdded(qint32);
     void evernoteLinkClicked(qint32 lid, bool newWindow);
+    void updateNoteList(qint32 lid, int column, QVariant data);
 
 public slots:
     void changeExpandState(int value);

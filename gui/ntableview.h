@@ -91,6 +91,7 @@ public slots:
     void toggleColumnVisible(int position, bool visible);
     void copyNote();
     void mergeNotes();
+    void refreshCell(int lid, int cell, QVariant data);
 
 };
 

@@ -920,6 +920,7 @@ qint32 SyncRunner::uploadPersonalNotes() {
                 noteTable.updateGuid(validLids[i], note.guid);
             noteTable.setUpdateSequenceNumber(validLids[i], usn);
             noteTable.setDirty(validLids[i], false);
+            emit(noteSynchronized(validLids[i], false));
         } else {
             error = true;
         }
@@ -932,8 +933,9 @@ qint32 SyncRunner::uploadPersonalNotes() {
         usn = comm->deleteNote(guid.toStdString());
         if (usn > maxUsn) {
             maxUsn = usn;
-            noteTable.setUpdateSequenceNumber(validLids[i], usn);
-            noteTable.setDirty(validLids[i], false);
+            noteTable.setUpdateSequenceNumber(deletedLids[i], usn);
+            noteTable.setDirty(deletedLids[i], false);
+            emit(noteSynchronized(deletedLids[i], false));
         }
     }
     return maxUsn;

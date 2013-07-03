@@ -201,6 +201,7 @@ public slots:
     void resourceExternallyUpdated(QString resource);
     void screenCapture();
     void reindexDatabase();
+    void noteSynchronized(qint32 lid, bool value);
 
 signals:
     void syncRequested();

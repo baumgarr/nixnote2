@@ -331,6 +331,7 @@ void NBrowserWindow::changeExpandState(int value) {
 // Send a signal that the note has been updated
 void NBrowserWindow::sendUpdateSignal() {
     emit(this->noteUpdated(lid));
+    emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, this->noteTitle.text()));
 }
 
 

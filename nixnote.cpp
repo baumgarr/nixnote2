@@ -341,6 +341,7 @@ void NixNote::setupGui() {
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), noteTableView, SLOT(refreshData()));
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countNotebooks()));
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countTags()));
+    connect(tabWindow, SIGNAL(updateNoteList(qint32, int, QVariant)), noteTableView, SLOT(refreshCell(qint32, int, QVariant)));
     connect(noteTableView, SIGNAL(refreshNoteContent(qint32)), tabWindow, SLOT(refreshNoteContent(qint32)));
 
     // connect so we refresh the tag tree when a new tag is added
@@ -405,11 +406,15 @@ void NixNote::setupNoteList() {
     connect(noteTableView, SIGNAL(notesDeleted(QList<qint32>,bool)), this, SLOT(notesDeleted(QList<qint32>)));
     connect(noteTableView, SIGNAL(notesRestored(QList<qint32>)), this, SLOT(notesRestored(QList<qint32>)));
     connect(&syncRunner, SIGNAL(syncComplete()), noteTableView, SLOT(refreshData()));
+    connect(&syncRunner, SIGNAL(noteSynchronized(qint32, bool)), this, SLOT(noteSynchronized(qint32, bool)));
 
     QLOG_TRACE() << "Leaving NixNote.setupNoteList()";
 }
 
 
+void NixNote::noteSynchronized(qint32 lid, bool value) {
+    noteTableView->refreshCell(lid, NOTE_TABLE_IS_DIRTY_POSITION, value);
+}
 
 
 //*****************************************************************************
@@ -992,10 +997,11 @@ void NixNote::notifySyncComplete() {
 //*******************************************************
 void NixNote::saveContents() {
     for (int i=0; i<tabWindow->browserList->size(); i++) {
-
+        qint32 lid = tabWindow->browserList->at(i)->lid;
         // Check if the note is dirty
         if (tabWindow->browserList->at(i)->editor->isDirty) {
             tabWindow->browserList->at(i)->saveNoteContent();
+            noteTableView->refreshCell(lid, NOTE_TABLE_IS_DIRTY_POSITION, true);
         }
 
     }

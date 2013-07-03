@@ -151,6 +151,7 @@ signals:
     void tagExpunged(qint32 lid);
     void notebookExpunged(qint32 lid);
     void searchExpunged(qint32 lid);
+    void noteSynchronized(qint32, bool);
 
  public slots:
     void synchronize();

@@ -142,6 +142,7 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
         view = new NBrowserWindow();
         addBrowser(view, QString::fromStdString(n.title));
         connect(view, SIGNAL(noteUpdated(qint32)), this, SLOT(noteUpdateSignaled(qint32)));
+        connect(view, SIGNAL(updateNoteList(qint32,int,QVariant)), this, SLOT(updateNoteListSignaled(qint32,int,QVariant)));
     } else {
         view = currentBrowser();
         tabBar->setTabText(tabBar->currentIndex(), QString::fromStdString(n.title));
@@ -177,6 +178,13 @@ void NTabWidget::noteUpdateSignaled(qint32 lid) {
         }
     }
 }
+
+
+// A signal that a note has been updated.
+void NTabWidget::updateNoteListSignaled(qint32 lid, int column, QVariant data) {
+    emit(this->updateNoteList(lid, column, data));
+}
+
 
 
 // A note has been synchronized
