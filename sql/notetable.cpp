@@ -193,10 +193,12 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
     query.bindValue(":data", t.updateSequenceNum);
     query.exec();
 
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_ISDIRTY);
-    query.bindValue(":data", isDirty);
-    query.exec();
+    if (isDirty) {
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_ISDIRTY);
+        query.bindValue(":data", isDirty);
+        query.exec();
+    }
 
     if (t.__isset.created) {
         query.bindValue(":lid", lid);
@@ -1053,12 +1055,13 @@ void NoteTable::setDirty(qint32 lid, bool dirty) {
     query.bindValue(":lid", lid);
     query.exec();
 
-    query.prepare("Delete from datastore where lid=:lid and key=:key");
+    query.prepare("Delete from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_ISDIRTY);
+    query.exec();
 
     if (dirty) {
-        query.prepare("Insert into DataStore (key, lid, data) values (:lid, :key, :data)");
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_ISDIRTY);
         query.bindValue(":data", dirty);
@@ -1244,8 +1247,6 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_CONTENT);
     query.exec();
-
-    QLOG_DEBUG() << query.lastError();
 
     query.prepare("update datastore set data=:content where lid=:lid and key=:key");
     query.bindValue(":content", content.length());
