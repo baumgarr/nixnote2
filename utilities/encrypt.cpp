@@ -25,88 +25,57 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "botan/botan_all.h"
 #include "global.h"
 #include <boost/crc.hpp>
+#include "crypto++/rc2.h"
 
 extern Global global;
 
 
 
-#define MY_CIPHER_MODE EVP_rc2_cbc()    // RC2 CBC mode
+//#define MY_CIPHER_MODE EVP_rc2_cbc()    // RC2 CBC mode
 
 using namespace std;
 using namespace Botan;
 
 EnCrypt::EnCrypt()
 {
-
-    QString d = "asd1jkl12345";
-    QString k = "asd1jkl";
-    QString enc = encrypt(d, k);
-    QString dec = decrypt(enc, k);
-
 }
 
-
-
-QString EnCrypt::encrypt(QString text, QString passphrase) {
-    QByteArray xkey2(passphrase.toUtf8());
-    SymmetricKey key((const byte*)xkey2.data(), xkey2.length()); // encoded string
-
-    // Pad the key & passphrase
-    QByteArray textArray = text.toUtf8();
-
-    int align8 = (textArray.length()+4)%8;
-    int paddingNeeded = 8-align8;
-    int size = textArray.length();
-    textArray.resize(paddingNeeded+size);
-    for (int i=0; i<paddingNeeded; i++)
-        textArray[size+i] = 0;
-
-
-    // now calcualate the CRC
-    QByteArray crc;
-    crc = CRC32(textArray);
-    if (crc.length()!=4) {
-        QLOG_ERROR() << "Invalid CRC returned";
-        return "";
-    }
-    QByteArray total = crc+textArray;
-
-
-    // The algorithm we want is specified by a string
-    Pipe pipe(get_cipher("RC2/ECB/NoPadding", key, ENCRYPTION));
-
-    pipe.process_msg((const byte*)total.data(), total.size());
-
-    string c1 = pipe.read_all_as_string();
-    QByteArray result;
-    result.append(QString::fromStdString(c1));
-    result = result.toBase64();
-    return QString(result);
-}
 
 
 QString EnCrypt::decrypt(QString text, QString passphrase) {
-    QByteArray xkey2;
-    xkey2.append(passphrase.toUtf8());
 
+    QCryptographicHash md5hash(QCryptographicHash::Md5);
+    qDebug() << passphrase.toUtf8();
+    md5hash.hash(passphrase.toUtf8(), QCryptographicHash::Md5);
+    QByteArray hashResult = md5hash.result();
 
-    SymmetricKey key((const byte*)xkey2.data(), xkey2.length()); // encoded string
-
+    SymmetricKey key((const byte*)hashResult.constData(), hashResult.size()); // encoded string
     // Turn the hex string back into cypher gibberish
-    QByteArray ba64;
-    ba64.append(text);
-    QByteArray ba = QByteArray::fromBase64(ba64);
+//    QByteArray ba64;
+//    ba64.append(text);
+//    QByteArray ba = QByteArray::fromBase64(ba64);
 
-    ba = QByteArray::fromBase64("OI9WcCRoSLwSr6z4i2pvu9XsgMx0k8zxg1Tzk2bn5yXelooq/CVXJxywqgA9aKw2MERlFK2mXu9dHr1oJQ+YWflGVc58NeNWiE/JP8qlo6rzSs0RXFgGbDdOfSdlzgcS");
+    QByteArray ba = QByteArray::fromBase64("OI9WcCRoSLwSr6z4i2pvu9XsgMx0k8zxg1Tzk2bn5yXelooq/CVXJxywqgA9aKw2MERlFK2mXu9dHr1oJQ+YWflGVc58NeNWiE/JP8qlo6rzSs0RXFgGbDdOfSdlzgcS");
 
     // Separate out the CRC & the text
     try {
         // The algorithm we want is specified by a string
         Pipe pipe(get_cipher("RC2/ECB/NoPadding", key, DECRYPTION));
-        string stringMsg;
-        stringMsg.append(ba.data(), ba.length());
-        pipe.process_msg(stringMsg);
-        QString c1 = QString::fromStdString(pipe.read_all_as_string());
+        byte* x;
+        x = (byte*)malloc(ba.length());
+        memcpy(x, ba.constData(), ba.length());
+        pipe.process_msg(x,ba.length());
+        SecureVector<byte> v = pipe.read_all();
+        free(x);
+
+        byte* x1;
+        x1 = (byte*)malloc(v.size());
+        memcpy(x1,v.begin(), v.size());
+        QByteArray ba1;
+        ba1.append((const char*)x1, v.size());
+        free(x1);
+
+        QString c1(ba1);
         QString msgCrc = c1.mid(0,4);
         QString msg = c1.mid(4);
         ba.clear();
@@ -135,13 +104,15 @@ QString EnCrypt::decrypt(QString text, QString passphrase) {
 }
 
 
-
-
 QByteArray EnCrypt::CRC32(QByteArray ba) {
     boost::crc_32_type result;
-    result.process_bytes(ba.data(), ba.size());
+    result.process_bytes(ba.constData(), ba.size());
     qulonglong  crc = result.checksum();
     QByteArray rc;
     rc.setNum(crc,16);
     return rc.mid(0,4).toUpper();
 }
+
+
+
+

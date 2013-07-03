@@ -33,7 +33,9 @@ public:
         EDAMSystemException = 2,
         EDAMUserException = 3,
         TTransportException = 4,
-        EDAMNotFoundException = 5
+        EDAMNotFoundException = 5,
+        StdException = 6,
+        TSSLException = 7
     };
 
     CommunicationErrorType type;

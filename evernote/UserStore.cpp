@@ -403,6 +403,14 @@ uint32_t UserStore_authenticate_args::read(::apache::thrift::protocol::TProtocol
           xfer += iprot->skip(ftype);
         }
         break;
+      case 5:
+        if (ftype == ::apache::thrift::protocol::T_BOOL) {
+          xfer += iprot->readBool(this->supportsTwoFactor);
+          this->__isset.supportsTwoFactor = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -430,6 +438,9 @@ uint32_t UserStore_authenticate_args::write(::apache::thrift::protocol::TProtoco
   xfer += oprot->writeFieldBegin("consumerSecret", ::apache::thrift::protocol::T_STRING, 4);
   xfer += oprot->writeString(this->consumerSecret);
   xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("supportsTwoFactor", ::apache::thrift::protocol::T_BOOL, 5);
+  xfer += oprot->writeBool(this->supportsTwoFactor);
+  xfer += oprot->writeFieldEnd();
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -449,6 +460,9 @@ uint32_t UserStore_authenticate_pargs::write(::apache::thrift::protocol::TProtoc
   xfer += oprot->writeFieldEnd();
   xfer += oprot->writeFieldBegin("consumerSecret", ::apache::thrift::protocol::T_STRING, 4);
   xfer += oprot->writeString((*(this->consumerSecret)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("supportsTwoFactor", ::apache::thrift::protocol::T_BOOL, 5);
+  xfer += oprot->writeBool((*(this->supportsTwoFactor)));
   xfer += oprot->writeFieldEnd();
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -659,6 +673,14 @@ uint32_t UserStore_authenticateLongSession_args::read(::apache::thrift::protocol
           xfer += iprot->skip(ftype);
         }
         break;
+      case 7:
+        if (ftype == ::apache::thrift::protocol::T_BOOL) {
+          xfer += iprot->readBool(this->supportsTwoFactor);
+          this->__isset.supportsTwoFactor = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -692,6 +714,9 @@ uint32_t UserStore_authenticateLongSession_args::write(::apache::thrift::protoco
   xfer += oprot->writeFieldBegin("deviceDescription", ::apache::thrift::protocol::T_STRING, 6);
   xfer += oprot->writeString(this->deviceDescription);
   xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("supportsTwoFactor", ::apache::thrift::protocol::T_BOOL, 7);
+  xfer += oprot->writeBool(this->supportsTwoFactor);
+  xfer += oprot->writeFieldEnd();
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -717,6 +742,9 @@ uint32_t UserStore_authenticateLongSession_pargs::write(::apache::thrift::protoc
   xfer += oprot->writeFieldEnd();
   xfer += oprot->writeFieldBegin("deviceDescription", ::apache::thrift::protocol::T_STRING, 6);
   xfer += oprot->writeString((*(this->deviceDescription)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("supportsTwoFactor", ::apache::thrift::protocol::T_BOOL, 7);
+  xfer += oprot->writeBool((*(this->supportsTwoFactor)));
   xfer += oprot->writeFieldEnd();
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -831,6 +859,424 @@ uint32_t UserStore_authenticateLongSession_presult::read(::apache::thrift::proto
           xfer += iprot->skip(ftype);
         }
         break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->userException.read(iprot);
+          this->__isset.userException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t UserStore_completeTwoFactorAuthentication_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->authenticationToken);
+          this->__isset.authenticationToken = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->oneTimeCode);
+          this->__isset.oneTimeCode = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->deviceIdentifier);
+          this->__isset.deviceIdentifier = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 4:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->deviceDescription);
+          this->__isset.deviceDescription = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t UserStore_completeTwoFactorAuthentication_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("UserStore_completeTwoFactorAuthentication_args");
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->authenticationToken);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("oneTimeCode", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString(this->oneTimeCode);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("deviceIdentifier", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString(this->deviceIdentifier);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("deviceDescription", ::apache::thrift::protocol::T_STRING, 4);
+  xfer += oprot->writeString(this->deviceDescription);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t UserStore_completeTwoFactorAuthentication_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("UserStore_completeTwoFactorAuthentication_pargs");
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->authenticationToken)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("oneTimeCode", ::apache::thrift::protocol::T_STRING, 2);
+  xfer += oprot->writeString((*(this->oneTimeCode)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("deviceIdentifier", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString((*(this->deviceIdentifier)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("deviceDescription", ::apache::thrift::protocol::T_STRING, 4);
+  xfer += oprot->writeString((*(this->deviceDescription)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t UserStore_completeTwoFactorAuthentication_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->success.read(iprot);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->userException.read(iprot);
+          this->__isset.userException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t UserStore_completeTwoFactorAuthentication_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+
+  uint32_t xfer = 0;
+
+  xfer += oprot->writeStructBegin("UserStore_completeTwoFactorAuthentication_result");
+
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_STRUCT, 0);
+    xfer += this->success.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.userException) {
+    xfer += oprot->writeFieldBegin("userException", ::apache::thrift::protocol::T_STRUCT, 1);
+    xfer += this->userException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.systemException) {
+    xfer += oprot->writeFieldBegin("systemException", ::apache::thrift::protocol::T_STRUCT, 2);
+    xfer += this->systemException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t UserStore_completeTwoFactorAuthentication_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += (*(this->success)).read(iprot);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->userException.read(iprot);
+          this->__isset.userException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t UserStore_revokeLongSession_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->authenticationToken);
+          this->__isset.authenticationToken = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t UserStore_revokeLongSession_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("UserStore_revokeLongSession_args");
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->authenticationToken);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t UserStore_revokeLongSession_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("UserStore_revokeLongSession_pargs");
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->authenticationToken)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t UserStore_revokeLongSession_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->userException.read(iprot);
+          this->__isset.userException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t UserStore_revokeLongSession_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+
+  uint32_t xfer = 0;
+
+  xfer += oprot->writeStructBegin("UserStore_revokeLongSession_result");
+
+  if (this->__isset.userException) {
+    xfer += oprot->writeFieldBegin("userException", ::apache::thrift::protocol::T_STRUCT, 1);
+    xfer += this->userException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.systemException) {
+    xfer += oprot->writeFieldBegin("systemException", ::apache::thrift::protocol::T_STRUCT, 2);
+    xfer += this->systemException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t UserStore_revokeLongSession_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
       case 1:
         if (ftype == ::apache::thrift::protocol::T_STRUCT) {
           xfer += this->userException.read(iprot);
@@ -2189,13 +2635,13 @@ void UserStoreClient::recv_getBootstrapInfo(BootstrapInfo& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "getBootstrapInfo failed: unknown result");
 }
 
-void UserStoreClient::authenticate(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret)
+void UserStoreClient::authenticate(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const bool supportsTwoFactor)
 {
-  send_authenticate(username, password, consumerKey, consumerSecret);
+  send_authenticate(username, password, consumerKey, consumerSecret, supportsTwoFactor);
   recv_authenticate(_return);
 }
 
-void UserStoreClient::send_authenticate(const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret)
+void UserStoreClient::send_authenticate(const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const bool supportsTwoFactor)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("authenticate", ::apache::thrift::protocol::T_CALL, cseqid);
@@ -2205,6 +2651,7 @@ void UserStoreClient::send_authenticate(const std::string& username, const std::
   args.password = &password;
   args.consumerKey = &consumerKey;
   args.consumerSecret = &consumerSecret;
+  args.supportsTwoFactor = &supportsTwoFactor;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -2258,13 +2705,13 @@ void UserStoreClient::recv_authenticate(AuthenticationResult& _return)
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "authenticate failed: unknown result");
 }
 
-void UserStoreClient::authenticateLongSession(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription)
+void UserStoreClient::authenticateLongSession(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription, const bool supportsTwoFactor)
 {
-  send_authenticateLongSession(username, password, consumerKey, consumerSecret, deviceIdentifier, deviceDescription);
+  send_authenticateLongSession(username, password, consumerKey, consumerSecret, deviceIdentifier, deviceDescription, supportsTwoFactor);
   recv_authenticateLongSession(_return);
 }
 
-void UserStoreClient::send_authenticateLongSession(const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription)
+void UserStoreClient::send_authenticateLongSession(const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription, const bool supportsTwoFactor)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("authenticateLongSession", ::apache::thrift::protocol::T_CALL, cseqid);
@@ -2276,6 +2723,7 @@ void UserStoreClient::send_authenticateLongSession(const std::string& username, 
   args.consumerSecret = &consumerSecret;
   args.deviceIdentifier = &deviceIdentifier;
   args.deviceDescription = &deviceDescription;
+  args.supportsTwoFactor = &supportsTwoFactor;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -2327,6 +2775,136 @@ void UserStoreClient::recv_authenticateLongSession(AuthenticationResult& _return
     throw result.systemException;
   }
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "authenticateLongSession failed: unknown result");
+}
+
+void UserStoreClient::completeTwoFactorAuthentication(AuthenticationResult& _return, const std::string& authenticationToken, const std::string& oneTimeCode, const std::string& deviceIdentifier, const std::string& deviceDescription)
+{
+  send_completeTwoFactorAuthentication(authenticationToken, oneTimeCode, deviceIdentifier, deviceDescription);
+  recv_completeTwoFactorAuthentication(_return);
+}
+
+void UserStoreClient::send_completeTwoFactorAuthentication(const std::string& authenticationToken, const std::string& oneTimeCode, const std::string& deviceIdentifier, const std::string& deviceDescription)
+{
+  int32_t cseqid = 0;
+  oprot_->writeMessageBegin("completeTwoFactorAuthentication", ::apache::thrift::protocol::T_CALL, cseqid);
+
+  UserStore_completeTwoFactorAuthentication_pargs args;
+  args.authenticationToken = &authenticationToken;
+  args.oneTimeCode = &oneTimeCode;
+  args.deviceIdentifier = &deviceIdentifier;
+  args.deviceDescription = &deviceDescription;
+  args.write(oprot_);
+
+  oprot_->writeMessageEnd();
+  oprot_->getTransport()->flush();
+  oprot_->getTransport()->writeEnd();
+}
+
+void UserStoreClient::recv_completeTwoFactorAuthentication(AuthenticationResult& _return)
+{
+
+  int32_t rseqid = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TMessageType mtype;
+
+  iprot_->readMessageBegin(fname, mtype, rseqid);
+  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
+    ::apache::thrift::TApplicationException x;
+    x.read(iprot_);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw x;
+  }
+  if (mtype != ::apache::thrift::protocol::T_REPLY) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::INVALID_MESSAGE_TYPE);
+  }
+  if (fname.compare("completeTwoFactorAuthentication") != 0) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::WRONG_METHOD_NAME);
+  }
+  UserStore_completeTwoFactorAuthentication_presult result;
+  result.success = &_return;
+  result.read(iprot_);
+  iprot_->readMessageEnd();
+  iprot_->getTransport()->readEnd();
+
+  if (result.__isset.success) {
+    // _return pointer has now been filled
+    return;
+  }
+  if (result.__isset.userException) {
+    throw result.userException;
+  }
+  if (result.__isset.systemException) {
+    throw result.systemException;
+  }
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "completeTwoFactorAuthentication failed: unknown result");
+}
+
+void UserStoreClient::revokeLongSession(const std::string& authenticationToken)
+{
+  send_revokeLongSession(authenticationToken);
+  recv_revokeLongSession();
+}
+
+void UserStoreClient::send_revokeLongSession(const std::string& authenticationToken)
+{
+  int32_t cseqid = 0;
+  oprot_->writeMessageBegin("revokeLongSession", ::apache::thrift::protocol::T_CALL, cseqid);
+
+  UserStore_revokeLongSession_pargs args;
+  args.authenticationToken = &authenticationToken;
+  args.write(oprot_);
+
+  oprot_->writeMessageEnd();
+  oprot_->getTransport()->flush();
+  oprot_->getTransport()->writeEnd();
+}
+
+void UserStoreClient::recv_revokeLongSession()
+{
+
+  int32_t rseqid = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TMessageType mtype;
+
+  iprot_->readMessageBegin(fname, mtype, rseqid);
+  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
+    ::apache::thrift::TApplicationException x;
+    x.read(iprot_);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw x;
+  }
+  if (mtype != ::apache::thrift::protocol::T_REPLY) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::INVALID_MESSAGE_TYPE);
+  }
+  if (fname.compare("revokeLongSession") != 0) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::WRONG_METHOD_NAME);
+  }
+  UserStore_revokeLongSession_presult result;
+  result.read(iprot_);
+  iprot_->readMessageEnd();
+  iprot_->getTransport()->readEnd();
+
+  if (result.__isset.userException) {
+    throw result.userException;
+  }
+  if (result.__isset.systemException) {
+    throw result.systemException;
+  }
+  return;
 }
 
 void UserStoreClient::authenticateToBusiness(AuthenticationResult& _return, const std::string& authenticationToken)
@@ -2838,7 +3416,7 @@ void UserStoreProcessor::process_authenticate(int32_t seqid, ::apache::thrift::p
 
   UserStore_authenticate_result result;
   try {
-    iface_->authenticate(result.success, args.username, args.password, args.consumerKey, args.consumerSecret);
+    iface_->authenticate(result.success, args.username, args.password, args.consumerKey, args.consumerSecret, args.supportsTwoFactor);
     result.__isset.success = true;
   } catch (evernote::edam::EDAMUserException &userException) {
     result.userException = userException;
@@ -2872,7 +3450,7 @@ void UserStoreProcessor::process_authenticateLongSession(int32_t seqid, ::apache
 
   UserStore_authenticateLongSession_result result;
   try {
-    iface_->authenticateLongSession(result.success, args.username, args.password, args.consumerKey, args.consumerSecret, args.deviceIdentifier, args.deviceDescription);
+    iface_->authenticateLongSession(result.success, args.username, args.password, args.consumerKey, args.consumerSecret, args.deviceIdentifier, args.deviceDescription, args.supportsTwoFactor);
     result.__isset.success = true;
   } catch (evernote::edam::EDAMUserException &userException) {
     result.userException = userException;
@@ -2891,6 +3469,73 @@ void UserStoreProcessor::process_authenticateLongSession(int32_t seqid, ::apache
   }
 
   oprot->writeMessageBegin("authenticateLongSession", ::apache::thrift::protocol::T_REPLY, seqid);
+  result.write(oprot);
+  oprot->writeMessageEnd();
+  oprot->getTransport()->flush();
+  oprot->getTransport()->writeEnd();
+}
+
+void UserStoreProcessor::process_completeTwoFactorAuthentication(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot)
+{
+  UserStore_completeTwoFactorAuthentication_args args;
+  args.read(iprot);
+  iprot->readMessageEnd();
+  iprot->getTransport()->readEnd();
+
+  UserStore_completeTwoFactorAuthentication_result result;
+  try {
+    iface_->completeTwoFactorAuthentication(result.success, args.authenticationToken, args.oneTimeCode, args.deviceIdentifier, args.deviceDescription);
+    result.__isset.success = true;
+  } catch (evernote::edam::EDAMUserException &userException) {
+    result.userException = userException;
+    result.__isset.userException = true;
+  } catch (evernote::edam::EDAMSystemException &systemException) {
+    result.systemException = systemException;
+    result.__isset.systemException = true;
+  } catch (const std::exception& e) {
+    ::apache::thrift::TApplicationException x(e.what());
+    oprot->writeMessageBegin("completeTwoFactorAuthentication", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    x.write(oprot);
+    oprot->writeMessageEnd();
+    oprot->getTransport()->flush();
+    oprot->getTransport()->writeEnd();
+    return;
+  }
+
+  oprot->writeMessageBegin("completeTwoFactorAuthentication", ::apache::thrift::protocol::T_REPLY, seqid);
+  result.write(oprot);
+  oprot->writeMessageEnd();
+  oprot->getTransport()->flush();
+  oprot->getTransport()->writeEnd();
+}
+
+void UserStoreProcessor::process_revokeLongSession(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot)
+{
+  UserStore_revokeLongSession_args args;
+  args.read(iprot);
+  iprot->readMessageEnd();
+  iprot->getTransport()->readEnd();
+
+  UserStore_revokeLongSession_result result;
+  try {
+    iface_->revokeLongSession(args.authenticationToken);
+  } catch (evernote::edam::EDAMUserException &userException) {
+    result.userException = userException;
+    result.__isset.userException = true;
+  } catch (evernote::edam::EDAMSystemException &systemException) {
+    result.systemException = systemException;
+    result.__isset.systemException = true;
+  } catch (const std::exception& e) {
+    ::apache::thrift::TApplicationException x(e.what());
+    oprot->writeMessageBegin("revokeLongSession", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    x.write(oprot);
+    oprot->writeMessageEnd();
+    oprot->getTransport()->flush();
+    oprot->getTransport()->writeEnd();
+    return;
+  }
+
+  oprot->writeMessageBegin("revokeLongSession", ::apache::thrift::protocol::T_REPLY, seqid);
   result.write(oprot);
   oprot->writeMessageEnd();
   oprot->getTransport()->flush();

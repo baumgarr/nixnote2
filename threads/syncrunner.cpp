@@ -63,7 +63,6 @@ void SyncRunner::run() {
     this->setPriority(QThread::LowPriority);
     comm = new CommunicationManager(this);
     connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
-    retryCount = 3;
     exec();
     QLOG_DEBUG() << "Syncrunner exiting.";
 }
@@ -72,17 +71,10 @@ void SyncRunner::synchronize() {
     QLOG_DEBUG() << "Starting SyncRunner.synchronize()";
     error = false;
 
-    // We try up to three times.
-    if (retryCount == 0)
-        retryCount = 3;
-    else
-        retryCount--;
-
     comm->error.reset();
     if (!comm->connect()) {
         this->communicationErrorHandler();
         error = true;
-        retryCount = 3;
         emit syncComplete();
         return;
     }
@@ -90,7 +82,6 @@ void SyncRunner::synchronize() {
     global.connected = true;
     keepRunning = true;
     evernoteSync();
-    retryCount = 3;
     emit syncComplete();
     comm->disconnect();
     global.connected=false;
@@ -162,11 +153,11 @@ void SyncRunner::evernoteSync() {
         if (personalNotesUsn > updateSequenceNumber)
             updateSequenceNumber = personalNotesUsn;
     }
-
+    updateNoteTableTags();
 
     /*  This is commented out because for some reason it causes a "could not refill buffer error after
      * a successfull sync.
-    updateNoteTableTags();
+     */
     if (!comm->getUserInfo(user)) {
         this->communicationErrorHandler();
         error = true;
@@ -179,7 +170,7 @@ void SyncRunner::evernoteSync() {
         return;
     }
     userTable.updateSyncState(syncState);   
-    */
+    /**/
 
     if (!error)
         emit setMessage(tr("Sync Complete"), defaultMsgTimeout);
@@ -236,7 +227,6 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
             this->communicationErrorHandler();
-            retryCount = 3;
             return;
         }
         QLOG_DEBUG() << "------>>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
@@ -261,6 +251,20 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 // Deal with the sync chunk returned
 void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
 
+    // For public linked notebooks, we change any note's GUID to the
+    // linked notebook guid.  This saves headaches later
+    if (linkedNotebook > 0) {
+        LinkedNotebookTable ltable;
+        LinkedNotebook book;
+        ltable.get(book, linkedNotebook);
+        if (book.shareKey == "") {
+            for (unsigned int i=0; i<chunk.notes.size(); i++) {
+                chunk.notes[i].notebookGuid =  book.guid;
+            }
+        }
+    }
+
+    // Now start processing the chunk
     if (chunk.expungedNotes.size() > 0)
         syncRemoteExpungedNotes(chunk.expungedNotes);
     if (chunk.expungedTags.size() > 0)
@@ -302,7 +306,7 @@ void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
         qint32 lid = nTable.getLid(pair->first);
         if (lid > 0) {
             QString filename = global.fileManager.getThumbnailDirPath() + QString::number(lid) + QString(".png");
-            pair->second->save(filename);
+            pair->second->save(filename, "png");
             nTable.setThumbnail(lid, filename);
         }
         delete pair->second;
@@ -605,26 +609,36 @@ void SyncRunner::syncRemoteLinkedNotebooks(vector<LinkedNotebook> books) {
             error = true;
             return;
         }
-        SharedNotebook sharedNotebook;
-        if (!comm->getSharedNotebookByAuth(sharedNotebook)) {
-            this->communicationErrorHandler();
-            error = true;
-            return;
+        if (books[i].shareKey != "") {
+            SharedNotebook sharedNotebook;
+            if (!comm->getSharedNotebookByAuth(sharedNotebook)) {
+                this->communicationErrorHandler();
+                error = true;
+                return;
+            }
+            SharedNotebookTable stable;
+            stable.sync(lid, sharedNotebook);
         }
-        SharedNotebookTable stable;
-        stable.sync(lid, sharedNotebook);
         NotebookTable ntable;
 
         // Build the dummy notebook entry
         Notebook book;
-        book.guid = sharedNotebook.notebookGuid;
+        book.guid = books[i].guid;
         book.__isset.guid = true;
 
         book.name = books[i].shareName;
         book.__isset.name = true;
 
-        book.updateSequenceNum = 0;
+        book.updateSequenceNum = books[i].updateSequenceNum;
         book.__isset.updateSequenceNum = true;
+
+        book.published = true;
+        book.published = true;
+
+        book.publishing.uri = books[i].uri;
+        book.publishing.__isset.uri = true;
+        book.__isset.published = true;
+        book.__isset.publishing = true;
 
         if (books[i].__isset.stack) {
             book.__isset.stack = true;
@@ -648,43 +662,47 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
     ltable.getAll(lids);
     for (int i=0; i<lids.size(); i++) {
         LinkedNotebook book;
-        ltable.get(book, lids[i]);
+        bool fs;
         qint32 usn = ltable.getLastUpdateSequenceNumber(lids[i]);
-        if (usn < book.updateSequenceNum) {
-            bool fs = false;
-            if (usn == 0)
-                fs = true;
-            SyncChunk chunk;
-            int chunkSize = 50;
-            if (!comm->authenticateToLinkedNotebookShard(book)) {
+        ltable.get(book, lids[i]);
+        SyncChunk chunk;
+        int chunkSize = 50;
+        if (!comm->authenticateToLinkedNotebookShard(book)) {
+            this->communicationErrorHandler();
+            error = true;
+            return;
+        }
+        bool more = true;
+        SyncState syncState;
+        if (!comm->getLinkedNotebookSyncState(syncState, book)) {
+            this->communicationErrorHandler();
+            error = true;
+            return;
+        }
+        if (syncState.updateCount <= usn)
+            more=false;
+        qint32 startingSequenceNumber = usn;
+        if (usn == 0)
+            fs = true;
+        else
+            fs = false;
+        while (more && keepRunning) {
+            if (!comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, fs)) {
                 this->communicationErrorHandler();
                 error = true;
                 return;
             }
-            bool more = true;
-            SyncState syncState;
-            if (!comm->getLinkedNotebookSyncState(syncState, book)) {
-                this->communicationErrorHandler();
-                error = true;
-                return;
-            }
-            qint32 startingSequenceNumber = usn;
-            while (more && keepRunning) {
-                if (!comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, fs)) {
-                    this->communicationErrorHandler();
-                    error = true;
-                    return;
-                }
-                processSyncChunk(chunk, lids[i]);
-                if (chunk.chunkHighUSN >= syncState.updateCount)
-                    more = false;
-                ltable.setLastUpdateSequenceNumber(lids[i], chunk.chunkHighUSN);
-                usn = chunk.chunkHighUSN;
+            processSyncChunk(chunk, lids[i]);
+            if (chunk.chunkHighUSN >= syncState.updateCount)
+                more = false;
+            ltable.setLastUpdateSequenceNumber(lids[i], chunk.chunkHighUSN);
+            usn = chunk.chunkHighUSN;
+            if (chunk.updateCount > startingSequenceNumber) {
                 int pct = (usn-startingSequenceNumber)*100/(chunk.updateCount-startingSequenceNumber);
                 emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for shared notebook ") +QString::fromStdString(book.shareName) + tr("."), defaultMsgTimeout);
             }
-            comm->disconnectFromLinkedNotebook();
         }
+        comm->disconnectFromLinkedNotebook();
     }
 }
 
@@ -702,11 +720,6 @@ void SyncRunner::syncRemoteExpungedLinkedNotebooks(vector<string> guids) {
 
 void SyncRunner::applicationException(QString s) {
     QLOG_DEBUG() << "Application Exception!!! : " << s;
-
-    // Basically, if we were doing a sync & some weird thing happened we try to do the sync again
-    // to catch up.  It is a hack, but it might just work.
-    if (retryCount > 0)
-        synchronize();
 }
 
 
@@ -876,15 +889,17 @@ qint32 SyncRunner::uploadPersonalNotes() {
     NotebookTable notebookTable;
     LinkedNotebookTable linkedNotebookTable;
     NoteTable noteTable;
-    QList<qint32> lids, validLids;
+    QList<qint32> lids, validLids, deletedLids;
     noteTable.getAllDirty(lids);
 
-    // Get a list of all notes that are both dirty and in an account we own
+    // Get a list of all notes that are both dirty and in an account we own and isn't deleted
     for (int i=0; i<lids.size(); i++) {
         qint32 notebookLid = noteTable.getNotebookLid(lids[i]);
-        if (!linkedNotebookTable.exists(notebookLid) &&
-                !notebookTable.isLocal(notebookLid)) {
-            validLids.append(lids[i]);
+        if (!linkedNotebookTable.exists(notebookLid) && !notebookTable.isLocal(notebookLid)) {
+            if (noteTable.isDeleted(lids[i]))
+                deletedLids.append(lids[i]);
+            else
+                validLids.append(lids[i]);
         }
     }
 
@@ -909,6 +924,18 @@ qint32 SyncRunner::uploadPersonalNotes() {
             error = true;
         }
     }
+
+    // Start deleting notes
+    for (int i=0; i<deletedLids.size(); i++) {
+        QString guid = noteTable.getGuid(deletedLids[i]);
+        noteTable.setDirty(lids[i], false);
+        usn = comm->deleteNote(guid.toStdString());
+        if (usn > maxUsn) {
+            maxUsn = usn;
+            noteTable.setUpdateSequenceNumber(validLids[i], usn);
+            noteTable.setDirty(validLids[i], false);
+        }
+    }
     return maxUsn;
 }
 
@@ -928,18 +955,18 @@ void SyncRunner::communicationErrorHandler() {
     QString emitMsg;
     if (comm->error.type == CommunicationError::TTransportException) {
         if (comm->error.message != "")
-            emitMsg = comm->error.message;
+            emitMsg = "Network Transport error: " +comm->error.message;
         else
-            emitMsg = "Transport error communicating with Evernote";
+            emitMsg = "Network Transport error communicating with Evernote";
         emit(setMessage(emitMsg, 0));
         return;
     }
 
     if (comm->error.type == CommunicationError::EDAMSystemException) {
         if (comm->error.message != "")
-            emitMsg = comm->error.message;
+            emitMsg = "Evernote System Error: " +comm->error.message;
         else
-            emitMsg = "EDAMSystem Error communicating with Evernote.";
+            emitMsg = "Evernote System Error communicating with Evernote.";
         emit(setMessage(emitMsg, 0));
         return;
     }
@@ -948,7 +975,7 @@ void SyncRunner::communicationErrorHandler() {
         if (comm->error.message != "")
             emitMsg = comm->error.message;
         else
-            emitMsg = "EDAMNotFound error.";
+            emitMsg = "Evernote \"Not Found\" error.";
         emit(setMessage(emitMsg, 0));
         return;
     }
@@ -1009,6 +1036,20 @@ void SyncRunner::communicationErrorHandler() {
         if (e->code == EDAMErrorCode::UNSUPPORTED_OPERATION)
             emitMsg = "Communication Error - Unsupported operation " +e->message;
 
+        emit(setMessage(emitMsg, 0));
+        return;
+    }
+
+    if (comm->error.type == CommunicationError::TSSLException) {
+        CommunicationError *e = &comm->error;
+        emitMsg = "Communication Error - SSL Exception: " +e->message;
+        emit(setMessage(emitMsg, 0));
+        return;
+    }
+
+    if (comm->error.type == CommunicationError::StdException) {
+        CommunicationError *e = &comm->error;
+        emitMsg = "Internal Error: " +e->message;
         emit(setMessage(emitMsg, 0));
         return;
     }

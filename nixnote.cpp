@@ -88,7 +88,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     db = new DatabaseConnection();  // Startup the database
     QLOG_TRACE() << "Setting up global settings";
     this->initializeGlobalSettings();
-    defaultMsgTimeout = 3000;  // Default time to leave a message
+    defaultMsgTimeout = 10000;  // Default time to leave a message
 
     // Setup the sync thread
     QLOG_TRACE() << "Setting up counter thread";

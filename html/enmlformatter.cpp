@@ -57,13 +57,31 @@ void EnmlFormatter::setHtml(QString h) {
   not complain about */
 QByteArray EnmlFormatter::rebuildNoteEnml() {
     resources.clear();
+    QByteArray b;
+    qint32 index;
 
-//    // Run it through "tidy".  It is a program which will fix any invalid HTML
-//    // and give us the results back through stdout.  In a perfect world this
-//    // wouldn't be needed, but WebKit doesn't always give back good HTML.
+    content.replace("</input>","");
 
+    // Strip off HTML header
+    index = content.indexOf("<body");
+    index = content.indexOf(">", index)+1;
+    content.remove(0,index);
+    index = content.indexOf("</body");
+    content.truncate(index);
+    b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>\n");
+    b.append("<html><head><title></title></head>");
+    b.append("<body style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
+    b.append(content);
+    b.append("</body></html>");
+    content.clear();
+    content = b;
+
+    // Run it through "tidy".  It is a program which will fix any invalid HTML
+    // and give us the results back through stdout.  In a perfect world this
+    // wouldn't be needed, but WebKit doesn't always give back good HTML.
     QProcess tidyProcess;
-    tidyProcess.start("tidy -raw -q -ashtml -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
+    tidyProcess.start("tidy -raw -asxhtml -q -m -u -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
     QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
     tidyProcess.waitForStarted();
     tidyProcess.write(content);
@@ -71,19 +89,59 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     tidyProcess.waitForFinished();
     QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
     QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
-
+    content.clear();
+    content.append(tidyProcess.readAllStandardOutput());
     if (content == "") {
         formattingError = true;
         return "";
     }
 
-//    // Finish up and return the HTML to the user
-    qint32 index = content.indexOf("<body");
+    // Tidy puts this in place, but we don't really need it.
+    content.replace("<form>", "");
+    content.replace("</form>", "");
+
+    index = content.indexOf("<body");
+    content.remove(0,index);
+    content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
+    content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
+    content.prepend("<html>");
+    content.append("</html>");
+
+    QWebPage page;
+    QEventLoop loop;
+    page.mainFrame()->setContent(content);
+    QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
+
+
+    QWebElement element = page.mainFrame()->documentElement();
+    QStringList tags = findAllTags(element);
+
+    for (int i=0; i<tags.size(); i++) {
+        QString tag = tags[i];
+        QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
+        foreach (QWebElement element, anchors) {
+            if (element.tagName().toLower() == "input") {
+                processTodo(element);
+            } else if (element.tagName().toLower() == "a") {
+                fixLinkNode(element);
+            } else if (element.tagName().toLower() == "object") {
+                fixObjectNode(element);
+            } else if (element.tagName().toLower() == "img") {
+                fixImgNode(element);
+            } else if (!isElementValid(element.tagName()))
+                element.removeFromDocument();
+        }
+    }
+    content.clear();
+    content.append(element.toOuterXml());
+
+    // Strip off HTML header
+    index = content.indexOf("<body");
     index = content.indexOf(">", index)+1;
     content.remove(0,index);
     index = content.indexOf("</body");
     content.truncate(index);
-    QByteArray b;
+    b.clear();
     b.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
     b.append("<!DOCTYPE en-note SYSTEM 'http://xml.evernote.com/pub/enml2.dtd'>");
     b.append("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\" >");
@@ -92,178 +150,142 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.clear();
     content = b;
 
-    preXMLFix();
-
-    // Remove all the temporary file names
-    QString emsg;
-    int line, col;
-    //QLOG_DEBUG() << content;
-    doc.setContent(content, &emsg, &line, &col);
-    scanTags();
-    postXMLFix();
-
-    //QLOG_DEBUG() << content;
+    postXmlFix();
     return content;
 }
 
 
-// Start looking through the tree.
-void EnmlFormatter::scanTags() {
-    if (doc.hasChildNodes()) {
-        parseNodes(doc.childNodes());
+
+
+QStringList EnmlFormatter::findAllTags(QWebElement &element) {
+    QStringList tags;
+    QString body = element.toOuterXml();
+    body = body.replace("</","<").replace("/>"," ").replace(">", " ");
+    int i = body.indexOf("<body")+1
+            ;
+    // Look throug and get a list of all possible tags
+    i = body.indexOf("<", i);
+
+    while (i>0) {
+        int eot = body.indexOf(" ",i);
+        QString tag = body.mid(i+1, eot-i-1);
+        if (!tags.contains(tag) && tag != "body")
+            tags.append(tag);
+        i=body.indexOf("<", eot);
+        if (tag == "body")
+            i=-1;
     }
-    content = doc.toByteArray();
-    return;
+    return tags;
 }
 
 
-// Parse the children
-void EnmlFormatter::parseNodes(const QDomNodeList &nodes) {
-    for (qint32 i=0; i<nodes.size(); i++) {
-        if (nodes.at(i).hasChildNodes())
-            parseNodes(nodes.at(i).childNodes());
-        fixNode(nodes.at(i));
-    }
+void EnmlFormatter::processTodo(QWebElement &node) {
+    bool checked=false;
+    if (node.hasAttribute("checked"))
+        checked = true;
+    node.removeAttribute("style");
+    node.removeAttribute("type");
+    removeInvalidAttributes(node);
+    if (checked)
+        node.setAttribute("checked", "true");
+    node.setOuterXml(node.toOuterXml().replace("<input", "<en-todo").replace("</input", "</en-todo"));
 }
 
 
-// Fix the contents of the node back to ENML.
-void EnmlFormatter::fixNode(const QDomNode &node) {
-    if (node.nodeName().toLower() == "#comment" || node.nodeName().toLower() == "script") {
-        node.parentNode().removeChild(node);
-    }
-    if (node.nodeName().toLower() == "input") {
-        QDomElement e = node.toElement();
-        e.setTagName("en-todo");
 
-        if (e.hasAttribute("checked"))
-            e.setAttribute("checked", "true");
-        else
-            e.removeAttribute("checked");
+
+void EnmlFormatter::fixObjectNode(QWebElement &e) {
+    QString type = e.attribute("type", "");
+    if (type == "application/pdf") {
+        qint32 lid = e.attribute("lid", "0").toInt();
+        e.removeAttribute("width");
+        e.removeAttribute("height");
+        e.removeAttribute("lid");
+        if (lid>0) {
+            resources.append(lid);
+             e.setOuterXml(e.toOuterXml().replace("<object", "<en-media").replace("</object", "</en-media"));
+        }
+        removeInvalidAttributes(e);
+    } else {
+        e.removeFromDocument();
+    }
+
+}
+
+
+
+void EnmlFormatter::fixEnCryptNode(QWebElement &e) {
+    QString crypt = e.attribute("value");
+    e.removeAttribute("value");
+    QDomText cryptValue = doc.createTextNode(crypt);
+    //e.appendChild(cryptValue);
+}
+
+
+void EnmlFormatter::fixImgNode(QWebElement &e) {
+    QString enType = e.attribute("en-tag", "");
+
+    // Check if we have an en-crypt tag.  Change it from an img to en-crypt
+    if (enType.toLower() == "en-crypt") {
+        QString encrypted = e.attribute("alt");
+        e.removeAttribute("onmouseover");
+        e.removeAttribute("name");
+        e.removeAttribute("alt");
+        e.removeAttribute("en-tag");
+        e.removeAttribute("contenteditable");
         e.removeAttribute("style");
-        e.removeAttribute("type");
-
-        cleanupElementAttributes(e);
+        removeInvalidAttributes(e);
+        e.setInnerXml(encrypted);
+        e.setOuterXml("<en-crypt>"+encrypted+"</en-crypt>");
         return;
     }
 
-    if (node.nodeName().toLower() == "a") {
-        fixLinkNode(node);
+    // Check if we have a temporary image.  If so, remove it
+    if (enType.toLower() ==  "temporary") {;
+        e.removeFromDocument();
+        return;
     }
 
-    // Restore image resources
-    if (node.nodeName().toLower() == "img") {
-        QDomElement e = node.toElement();
-        QString enType = e.attribute("en-tag");
 
-        // Check if we have an en-crypt tag.  Change it from an img to en-crypt
-        if (enType.toLower() == "en-crypt") {
-
-            QString encrypted = e.attribute("alt");
-
-            QDomText crypt = doc.createTextNode(encrypted);
-            e.appendChild(crypt);
-
-            e.removeAttribute("v:shapes");
-            e.removeAttribute("en-tag");
-            e.removeAttribute("contenteditable");
-            e.removeAttribute("alt");
-            e.removeAttribute("src");
-            e.removeAttribute("id");
-            e.removeAttribute("onclick");
-            e.removeAttribute("style");
-            e.removeAttribute("onmouseover");
-            e.setTagName("en-crypt");
-            return;
-        }
-
-        // Check if we have a temporary image.  If so, remove it
-        if (enType.toLower() ==  "temporary") {;
-            QDomNode parent = e.parentNode();
-            parent.removeChild(e);
-            return;
-        }
-
-        // Check if we have a LaTeX image.  Remove the parent link tag
-        if (enType.toLower() ==  "en-latex") {
-            enType = "en-media";
-            QDomNode parent = e.parentNode();
-            parent.removeChild(e);
-            parent.parentNode().replaceChild(e, parent);
-        }
+    // Latex images are really just img tags, so we now handle them later
+    // Check if we have a LaTeX image.  Remove the parent link tag
+//    if (enType.toLower() ==  "en-latex") {
+//        enType = "en-media";
+//        parent.parentNode().replaceChild(e, parent);
+//    }
 
 
-        // If we've gotten this far, we have an en-media tag
-        e.setTagName(enType);
-        resources.append(e.attribute("lid").toInt());
-
-        cleanupElementAttributes(e);
-    }
-
-    // Fix up encryption tag
-    if (node.nodeName().toLower() == "en-crypt-temp") {
-        QDomElement e = node.toElement();
-        e.setTagName("en-crypt");
-        QString crypt = e.attribute("value");
-        e.removeAttribute("value");
-        QDomText cryptValue = doc.createTextNode(crypt);
-        e.appendChild(cryptValue);
-    }
-
-    // we may have a good plugin
-    if (node.nodeName().toLower() == "object") {
-        QDomElement e = node.toElement();
-        QString type = e.attribute("type", "");
-        if (type == "application/pdf") {
-            qint32 lid = e.attribute("lid", "0").toInt();
-            if (lid>0)
-                resources.append(lid);
-
-            e.setTagName("en-media");
-            e.removeAttribute("lid");
-            e.removeAttribute("height");
-            e.removeAttribute("width");
-        }
-
-    }
+    // If we've gotten this far, we have an en-media tag
+    e.removeAttribute("en-tag");
+    int lid = e.attribute("lid").toInt();
+    resources.append(lid);
+    removeInvalidAttributes(e);
+    e.setOuterXml(e.toOuterXml().replace("<img", "<en-media").replace("</img", "</en-media"));
 }
 
 
 
-QDomNode EnmlFormatter::fixLinkNode(const QDomNode &node) {
-    QDomElement e = node.toElement();
-    QString enTag = e.attribute("en-tag");
+void EnmlFormatter::fixLinkNode(QWebElement e) {
+    QString enTag = e.attribute("en-tag", "");
     if (enTag.toLower() == "en-media") {
-        e.setTagName("en-media");
-        e.removeAttribute("en-type");
-        e.removeAttribute("en-tag");
-        e.removeAttribute("en-new");
         resources.append(e.attribute("lid").toInt());
-        e.removeAttribute("href");
-        e.removeAttribute("guid");
-        e.removeAttribute("lid");
+        e.removeAllChildren();
+    }
+    QString latex = e.attribute("href", "");
+    if (latex.toLower().startsWith("latex://")) {
         e.removeAttribute("title");
-        e.removeAttribute("oncontextmenu");
-        e.removeAttribute("style");
-        e.removeAttribute("src");
-//        e.setNodeValue("");
-        e.removeChild(e.firstChildElement());
+        e.removeAttribute("href");
+        e.setOuterXml(e.toInnerXml());
     }
-    return e;
+    removeInvalidAttributes(e);
 }
 
 
 
-void EnmlFormatter::cleanupElementAttributes(QDomElement &e) {
-    QDomNamedNodeMap attributeMap = e.attributes();
-    for (int i=attributeMap.size()-1; i>=0; i--) {
-        QString name = attributeMap.item(i).nodeName();
-        if (!isAttributeValid(name, e.tagName()))
-            e.removeAttribute(name);
-    }
-}
 
-bool EnmlFormatter::isAttributeValid(QString attribute, QString tag) {
+
+
+bool EnmlFormatter::isAttributeValid(QString attribute) {
     if (attribute.startsWith("on")) return false;
     if (attribute == "id") return false;
     if (attribute == "class") return false;
@@ -271,8 +293,6 @@ bool EnmlFormatter::isAttributeValid(QString attribute, QString tag) {
     if (attribute == "data") return false;
     if (attribute == "dynsrc") return false;
     if (attribute == "tabindex") return false;
-    if (attribute == "style") return false;
-    if (attribute == "type" && tag != "en-media") return false;
 
     // These are things that are NixNote specific
     if (attribute == "en-tag") return false;
@@ -280,13 +300,14 @@ bool EnmlFormatter::isAttributeValid(QString attribute, QString tag) {
     if (attribute == "en-new") return false;
     if (attribute == "guid") return false;
     if (attribute == "lid") return false;
-    if (attribute == "style" && tag == "en-media") return false;
+
     return true;
 }
 
 
 bool EnmlFormatter::isElementValid(QString element) {
     element = element.trimmed().toLower();
+    QLOG_DEBUG() << "Checking tag " << element;
     if (element == "a") return true;
     if (element == "abbr") return true;
     if (element == "acronym") return true;
@@ -356,14 +377,29 @@ bool EnmlFormatter::isElementValid(QString element) {
     if (element == "var") return true;
     if (element == "xmp") return true;
 
+    QLOG_DEBUG() << element << " is invalid";
+
     return false;
 
 }
 
 
 
-// Fix any tags.  This is done so the QtXML doesn't die on malformed things.
-void EnmlFormatter::preXMLFix() {
+void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
+    // Remove any invalid attributes
+    QStringList attributes = node.attributeNames();
+    for (int i=0; i<attributes.size(); i++) {
+        if (!isAttributeValid(attributes[i])) {
+            node.removeAttribute(attributes[i]);
+        }
+    }
+}
+
+
+
+
+
+void EnmlFormatter::postXmlFix() {
 
     int pos;
     content = content.replace("<p>", "<p/>");
@@ -386,9 +422,9 @@ void EnmlFormatter::preXMLFix() {
     }
 
 
-    // Fix the <input> tags
-    content = content.replace("</input>", "");
-    pos = content.indexOf("<input");
+    // Fix the <en-todo> tags
+    content = content.replace("</en-todo>", "");
+    pos = content.indexOf("<en-todo");
     while (pos > 0) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
@@ -399,57 +435,11 @@ void EnmlFormatter::preXMLFix() {
         if (tagEndPos <= 0 || tagEndPos > endPos) {
             content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
         }
-         pos = content.indexOf("<input", pos+1);
+         pos = content.indexOf("<en-todo", pos+1);
     }
 
     // Fix any <img> tags
-    content = content.replace("</img>", "");
-    pos = content.indexOf("<img");
-    while (pos > 0) {
-        int endPos = content.indexOf(">", pos);
-        int tagEndPos = content.indexOf("/>", pos);
-
-        // Check the next /> end tag.  If it is beyond the end
-        // of the current tag or if it doesn't exist then we
-        // need to fix the end of the img
-        if (tagEndPos <= 0 || tagEndPos > endPos) {
-            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
-        }
-        pos = content.indexOf("<img", pos+1);
-    }
-
-    // Fix the <span> tags
-    /*
-    pos = content.indexOf("<span");
-    while (pos > 0) {
-        int endPos = content.indexOf(">", pos);
-
-        // Check the next /> end tag.  If it is beyond the end
-        // of the current tag or if it doesn't exist then we
-        // need to fix the end of the img
-        if (pos > 0) {
-            content = content.mid(0, endPos) + QByteArray(">") +content.mid(endPos+1);
-            QLOG_DEBUG() << content;
-        }
-         pos = content.indexOf("<span", pos+1);
-    }
-    */
-}
-
-
-
-// Fix things after we've done the QtXML cleanup.
-void EnmlFormatter::postXMLFix() {
-
-    int pos;
-
-    // Remove any empty <span> elements
-    content = content.replace("<span/>", "");
-
-    // Remove any </en-media> tags because they are invalid
     content = content.replace("</en-media>", "");
-
-    // Fix the <en-media> tags and make sure they are terminated
     pos = content.indexOf("<en-media");
     while (pos > 0) {
         int endPos = content.indexOf(">", pos);
@@ -457,10 +447,11 @@ void EnmlFormatter::postXMLFix() {
 
         // Check the next /> end tag.  If it is beyond the end
         // of the current tag or if it doesn't exist then we
-        // need to fix the end of the en-media
+        // need to fix the end of the img
         if (tagEndPos <= 0 || tagEndPos > endPos) {
             content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
         }
-         pos = content.indexOf("<en-media", pos+1);
+        pos = content.indexOf("<en-media", pos+1);
     }
+
 }

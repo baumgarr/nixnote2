@@ -29,11 +29,19 @@ class EnmlFormatter : public QObject
 private:
     QByteArray content;
     QDomDocument doc;
-    bool isAttributeValid(QString attribute, QString tag);
+    bool isAttributeValid(QString attribute);
     bool isElementValid(QString element);
-    void cleanupElementAttributes(QDomElement &e);
-    void preXMLFix();
-    void postXMLFix();
+    void scanTags(QWebElement &element);
+    void fixImgNode(QWebElement &element);
+    void fixEnCryptNode(QWebElement &element);
+    void processTodo(QWebElement &element);
+    QStringList findAllTags(QWebElement &element);
+    void removeInvalidAttributes(QWebElement &node);
+    void fixLinkNode(QWebElement e);
+    void fixObjectNode(QWebElement &e);
+    void scanTags();
+    void fixNode(const QDomNode &node);
+    void postXmlFix();
 
 public:
     bool formattingError;
@@ -43,10 +51,6 @@ public:
     void setHtml(QString html);
     QString getEnml();
     QByteArray rebuildNoteEnml();
-    void parseNodes(const QDomNodeList &nodes);
-    void scanTags();
-    void fixNode(const QDomNode &node);
-    QDomNode fixLinkNode(const QDomNode &node);
 
 
 signals:

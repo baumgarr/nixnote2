@@ -273,6 +273,8 @@ HEADERS  += nixnote.h \
 
 
 
-LIBS +=    -Wl,-rpath,./lib32:./lib64 -L./lib -L./liba -lthrift -lpthread  -L/usr/lib -lpoppler-qt4
+#LIBS +=    -Wl,-rpath,./lib32:./lib64 -L./lib -L./liba -lthrift -lpthread  -L/usr/lib -lpoppler-qt4 -g -rdynamic
+
+LIBS +=    -Wl,-L./lib -lthrift -L/usr/lib/x86_64-linux-gnu/ -lssl -lpthread  -L/usr/lib -lpoppler-qt4 -g -rdynamic
 INCLUDEPATH += /usr/local/include/thrift \
             /usr/include/poppler/qt4

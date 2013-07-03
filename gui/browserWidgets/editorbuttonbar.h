@@ -40,6 +40,7 @@ public:
     QAction *cutVisible;
     QAction *copyVisible;
     QAction *pasteVisible;
+    QAction *removeFormatVisible;
     QAction *boldVisible;
     QAction *italicVisible;
     QAction *underlineVisible;
@@ -57,7 +58,9 @@ public:
     QAction *todoVisible;
     QAction *highlightVisible;
     QAction *fontColorVisible;
+    QAction *insertTableButtonVisible;
 
+    QAction *removeFormatButtonAction;
     QAction *undoButtonAction;
     QAction *redoButtonAction;
     QAction *cutButtonAction;
@@ -81,6 +84,7 @@ public:
     QAction *spellButtonAction;
     QAction *fontButtonAction;
     QAction *fontSizeButtonAction;
+    QAction *insertTableButtonAction;
     QComboBox *fontNames;
     QComboBox *fontSizes;
 
@@ -125,7 +129,9 @@ public slots:
     void toggleTodoButtonVisible();
     void toggleFontSizeButtonVisible();
     void toggleFontColorVisible();
+    void toggleRemoveFormatVisible();
     void toggleHighlightColorVisible();
+    void toggleInsertTableButtonVisible();
     void loadFontSizeComboBox(QString font);
     void loadFontNames();
     

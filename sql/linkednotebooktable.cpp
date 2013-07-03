@@ -113,7 +113,6 @@ qint32 LinkedNotebookTable::getLid(string guid) {
 qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
     QSqlQuery query;
     ConfigStore cs;
-    qint32 lastUSN = 0;
 
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     qint32 lid = l;
@@ -445,7 +444,6 @@ qint32 LinkedNotebookTable::getLastUpdateSequenceNumber(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
     query.exec();
-    QLOG_DEBUG() << query.lastError();
     if (query.next()) {
         return query.value(0).toInt();
     }
@@ -466,7 +464,6 @@ void LinkedNotebookTable::setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN
     query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
     query.bindValue(":data", lastUSN);
     query.exec();
-    QLOG_DEBUG() << query.lastError();
 }
 
 

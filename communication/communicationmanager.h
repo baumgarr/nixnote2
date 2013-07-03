@@ -77,32 +77,35 @@ private:
     bool initComplete;
     bool initNoteStore();
     bool initUserStore();
+    void disconnectUserStore();
 
     string userStorePath;
     string noteStorePath;
     string clientName;
     string evernoteHost;
-    shared_ptr<TSocket> sslSocketNoteStore;
+    shared_ptr<TSSLSocketFactory> sslSocketFactory;
+    shared_ptr<TSSLSocket> sslSocketNoteStore;
     shared_ptr<TTransport> noteStoreHttpClient;
     shared_ptr<NoteStoreClient> noteStoreClient;
 
     string linkedNoteStorePath;
-    shared_ptr<TSocket> linkedSslSocketNoteStore;
+    shared_ptr<TSSLSocket> linkedSslSocketNoteStore;
     shared_ptr<TTransport> linkedNoteStoreHttpClient;
     shared_ptr<NoteStoreClient> linkedNoteStoreClient;
     AuthenticationResult linkedAuthToken;
 
-    void downloadInkNoteImage(QString guid, Resource *r);
+    void downloadInkNoteImage(QString guid, Resource *r, QString shard);
     void downloadThumbnail(QString guid, string authToken, string shard);
+    void setSocketOptions(SOCKET s);
 
-    shared_ptr<TSocket> sslSocketUserStore;
+    shared_ptr<TSSLSocket> sslSocketUserStore;
     shared_ptr<TTransport> userStoreHttpClient;
     shared_ptr<UserStoreClient> userStoreClient;
     //shared_ptr<AuthenticationResult> authenticationResult;
     string authToken;
     bool init();
     QNetworkAccessManager *networkAccessManager;
-    void checkForInkNotes(vector<Resource> &resources);
+    void checkForInkNotes(vector<Resource> &resources, QString shard);
 
 public:
     CommunicationManager(QObject *parent = 0);
@@ -133,6 +136,7 @@ public:
     qint32 expungeNotebook(string guid);
 
     qint32 uploadNote(Note &note);
+    qint32 deleteNote(string guid);
 
     bool getNotebookList(vector<Notebook> &list);
     bool getTagList(vector<Tag> &list);

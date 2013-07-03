@@ -69,6 +69,7 @@ public:
     QAction *copyAction;
     QAction *pasteAction;
     QAction *pasteAsTextAction;
+    QAction *removeFormattingAction;
     QAction *deleteNoteAction;
     QAction *selectAllAction;
     QAction *preferencesAction;

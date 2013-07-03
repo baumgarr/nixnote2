@@ -231,7 +231,6 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
         query.bindValue(":key", NOTE_NOTEBOOK_LID);
         NotebookTable notebookTable;
         notebookLid = notebookTable.getLid(QString::fromStdString(t.notebookGuid));
-
         // If not found, we insert one to avoid problems.  We'll probably get the real data later
         if (notebookLid == 0) {
             notebookLid = cs.incrementLidCounter();
@@ -268,6 +267,7 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
 
     for (unsigned int i=0; t.__isset.resources && i<t.resources.size(); i++) {
         qint32 resLid;
+        resLid = 0;
         Resource *r;
         r = &t.resources[i];
         resLid = resTable.getLid(t.guid,t.resources[i].guid);
@@ -783,15 +783,7 @@ qint32 NoteTable::findNotesByTag(QList<qint32> &values, qint32 tagLid) {
 qint32 NoteTable::findNotesByTag(QList<qint32> &values, QString data) {
     TagTable tagTable;
     qint32 tagLid = tagTable.getLid(data);
-    QSqlQuery query;
-    query.prepare("Select lid from DataStore where key=:key and data=:tagLid");
-    query.bindValue(":key", NOTE_TAG_LID);
-    query.bindValue(":tagLid", tagLid);
-    query.exec();
-    while (query.next()) {
-        values.append(query.value(0).toInt());
-    }
-    return values.size();
+    return findNotesByTag(values, tagLid);
 }
 
 
@@ -1076,6 +1068,22 @@ void NoteTable::setDirty(qint32 lid, bool dirty) {
 }
 
 
+
+bool NoteTable::isDeleted(qint32 lid) {
+    QSqlQuery query;
+    query.prepare("select data from DataStore where key=:key and lid=:lid");
+    query.bindValue(":key", NOTE_ACTIVE);
+    query.bindValue(":lid", lid);
+    query.exec();
+    if (query.next()) {
+        bool active = query.value(0).toBool();
+        return !active;
+    }
+    return false;
+}
+
+
+
 void NoteTable::deleteNote(qint32 lid, bool isDirty=true) {
     QSqlQuery query;
     query.prepare("delete from DataStore where key=:key and lid=:lid");
@@ -1236,6 +1244,8 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_CONTENT);
     query.exec();
+
+    QLOG_DEBUG() << query.lastError();
 
     query.prepare("update datastore set data=:content where lid=:lid and key=:key");
     query.bindValue(":content", content.length());

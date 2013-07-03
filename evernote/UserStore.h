@@ -16,8 +16,10 @@ class UserStoreIf {
   virtual ~UserStoreIf() {}
   virtual bool checkVersion(const std::string& clientName, const int16_t edamVersionMajor, const int16_t edamVersionMinor) = 0;
   virtual void getBootstrapInfo(BootstrapInfo& _return, const std::string& locale) = 0;
-  virtual void authenticate(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret) = 0;
-  virtual void authenticateLongSession(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription) = 0;
+  virtual void authenticate(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const bool supportsTwoFactor) = 0;
+  virtual void authenticateLongSession(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription, const bool supportsTwoFactor) = 0;
+  virtual void completeTwoFactorAuthentication(AuthenticationResult& _return, const std::string& authenticationToken, const std::string& oneTimeCode, const std::string& deviceIdentifier, const std::string& deviceDescription) = 0;
+  virtual void revokeLongSession(const std::string& authenticationToken) = 0;
   virtual void authenticateToBusiness(AuthenticationResult& _return, const std::string& authenticationToken) = 0;
   virtual void refreshAuthentication(AuthenticationResult& _return, const std::string& authenticationToken) = 0;
   virtual void getUser(evernote::edam::User& _return, const std::string& authenticationToken) = 0;
@@ -36,10 +38,16 @@ class UserStoreNull : virtual public UserStoreIf {
   void getBootstrapInfo(BootstrapInfo& /* _return */, const std::string& /* locale */) {
     return;
   }
-  void authenticate(AuthenticationResult& /* _return */, const std::string& /* username */, const std::string& /* password */, const std::string& /* consumerKey */, const std::string& /* consumerSecret */) {
+  void authenticate(AuthenticationResult& /* _return */, const std::string& /* username */, const std::string& /* password */, const std::string& /* consumerKey */, const std::string& /* consumerSecret */, const bool /* supportsTwoFactor */) {
     return;
   }
-  void authenticateLongSession(AuthenticationResult& /* _return */, const std::string& /* username */, const std::string& /* password */, const std::string& /* consumerKey */, const std::string& /* consumerSecret */, const std::string& /* deviceIdentifier */, const std::string& /* deviceDescription */) {
+  void authenticateLongSession(AuthenticationResult& /* _return */, const std::string& /* username */, const std::string& /* password */, const std::string& /* consumerKey */, const std::string& /* consumerSecret */, const std::string& /* deviceIdentifier */, const std::string& /* deviceDescription */, const bool /* supportsTwoFactor */) {
+    return;
+  }
+  void completeTwoFactorAuthentication(AuthenticationResult& /* _return */, const std::string& /* authenticationToken */, const std::string& /* oneTimeCode */, const std::string& /* deviceIdentifier */, const std::string& /* deviceDescription */) {
+    return;
+  }
+  void revokeLongSession(const std::string& /* authenticationToken */) {
     return;
   }
   void authenticateToBusiness(AuthenticationResult& /* _return */, const std::string& /* authenticationToken */) {
@@ -72,7 +80,7 @@ typedef struct _UserStore_checkVersion_args__isset {
 class UserStore_checkVersion_args {
  public:
 
-  UserStore_checkVersion_args() : clientName(""), edamVersionMajor(1), edamVersionMinor(23) {
+  UserStore_checkVersion_args() : clientName(""), edamVersionMajor(1), edamVersionMinor(25) {
   }
 
   virtual ~UserStore_checkVersion_args() throw() {}
@@ -273,17 +281,18 @@ class UserStore_getBootstrapInfo_presult {
 };
 
 typedef struct _UserStore_authenticate_args__isset {
-  _UserStore_authenticate_args__isset() : username(false), password(false), consumerKey(false), consumerSecret(false) {}
+  _UserStore_authenticate_args__isset() : username(false), password(false), consumerKey(false), consumerSecret(false), supportsTwoFactor(false) {}
   bool username;
   bool password;
   bool consumerKey;
   bool consumerSecret;
+  bool supportsTwoFactor;
 } _UserStore_authenticate_args__isset;
 
 class UserStore_authenticate_args {
  public:
 
-  UserStore_authenticate_args() : username(""), password(""), consumerKey(""), consumerSecret("") {
+  UserStore_authenticate_args() : username(""), password(""), consumerKey(""), consumerSecret(""), supportsTwoFactor(0) {
   }
 
   virtual ~UserStore_authenticate_args() throw() {}
@@ -292,6 +301,7 @@ class UserStore_authenticate_args {
   std::string password;
   std::string consumerKey;
   std::string consumerSecret;
+  bool supportsTwoFactor;
 
   _UserStore_authenticate_args__isset __isset;
 
@@ -304,6 +314,8 @@ class UserStore_authenticate_args {
     if (!(consumerKey == rhs.consumerKey))
       return false;
     if (!(consumerSecret == rhs.consumerSecret))
+      return false;
+    if (!(supportsTwoFactor == rhs.supportsTwoFactor))
       return false;
     return true;
   }
@@ -329,6 +341,7 @@ class UserStore_authenticate_pargs {
   const std::string* password;
   const std::string* consumerKey;
   const std::string* consumerSecret;
+  const bool* supportsTwoFactor;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -400,19 +413,20 @@ class UserStore_authenticate_presult {
 };
 
 typedef struct _UserStore_authenticateLongSession_args__isset {
-  _UserStore_authenticateLongSession_args__isset() : username(false), password(false), consumerKey(false), consumerSecret(false), deviceIdentifier(false), deviceDescription(false) {}
+  _UserStore_authenticateLongSession_args__isset() : username(false), password(false), consumerKey(false), consumerSecret(false), deviceIdentifier(false), deviceDescription(false), supportsTwoFactor(false) {}
   bool username;
   bool password;
   bool consumerKey;
   bool consumerSecret;
   bool deviceIdentifier;
   bool deviceDescription;
+  bool supportsTwoFactor;
 } _UserStore_authenticateLongSession_args__isset;
 
 class UserStore_authenticateLongSession_args {
  public:
 
-  UserStore_authenticateLongSession_args() : username(""), password(""), consumerKey(""), consumerSecret(""), deviceIdentifier(""), deviceDescription("") {
+  UserStore_authenticateLongSession_args() : username(""), password(""), consumerKey(""), consumerSecret(""), deviceIdentifier(""), deviceDescription(""), supportsTwoFactor(0) {
   }
 
   virtual ~UserStore_authenticateLongSession_args() throw() {}
@@ -423,6 +437,7 @@ class UserStore_authenticateLongSession_args {
   std::string consumerSecret;
   std::string deviceIdentifier;
   std::string deviceDescription;
+  bool supportsTwoFactor;
 
   _UserStore_authenticateLongSession_args__isset __isset;
 
@@ -439,6 +454,8 @@ class UserStore_authenticateLongSession_args {
     if (!(deviceIdentifier == rhs.deviceIdentifier))
       return false;
     if (!(deviceDescription == rhs.deviceDescription))
+      return false;
+    if (!(supportsTwoFactor == rhs.supportsTwoFactor))
       return false;
     return true;
   }
@@ -466,6 +483,7 @@ class UserStore_authenticateLongSession_pargs {
   const std::string* consumerSecret;
   const std::string* deviceIdentifier;
   const std::string* deviceDescription;
+  const bool* supportsTwoFactor;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -531,6 +549,239 @@ class UserStore_authenticateLongSession_presult {
   evernote::edam::EDAMSystemException systemException;
 
   _UserStore_authenticateLongSession_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
+typedef struct _UserStore_completeTwoFactorAuthentication_args__isset {
+  _UserStore_completeTwoFactorAuthentication_args__isset() : authenticationToken(false), oneTimeCode(false), deviceIdentifier(false), deviceDescription(false) {}
+  bool authenticationToken;
+  bool oneTimeCode;
+  bool deviceIdentifier;
+  bool deviceDescription;
+} _UserStore_completeTwoFactorAuthentication_args__isset;
+
+class UserStore_completeTwoFactorAuthentication_args {
+ public:
+
+  UserStore_completeTwoFactorAuthentication_args() : authenticationToken(""), oneTimeCode(""), deviceIdentifier(""), deviceDescription("") {
+  }
+
+  virtual ~UserStore_completeTwoFactorAuthentication_args() throw() {}
+
+  std::string authenticationToken;
+  std::string oneTimeCode;
+  std::string deviceIdentifier;
+  std::string deviceDescription;
+
+  _UserStore_completeTwoFactorAuthentication_args__isset __isset;
+
+  bool operator == (const UserStore_completeTwoFactorAuthentication_args & rhs) const
+  {
+    if (!(authenticationToken == rhs.authenticationToken))
+      return false;
+    if (!(oneTimeCode == rhs.oneTimeCode))
+      return false;
+    if (!(deviceIdentifier == rhs.deviceIdentifier))
+      return false;
+    if (!(deviceDescription == rhs.deviceDescription))
+      return false;
+    return true;
+  }
+  bool operator != (const UserStore_completeTwoFactorAuthentication_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const UserStore_completeTwoFactorAuthentication_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class UserStore_completeTwoFactorAuthentication_pargs {
+ public:
+
+
+  virtual ~UserStore_completeTwoFactorAuthentication_pargs() throw() {}
+
+  const std::string* authenticationToken;
+  const std::string* oneTimeCode;
+  const std::string* deviceIdentifier;
+  const std::string* deviceDescription;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _UserStore_completeTwoFactorAuthentication_result__isset {
+  _UserStore_completeTwoFactorAuthentication_result__isset() : success(false), userException(false), systemException(false) {}
+  bool success;
+  bool userException;
+  bool systemException;
+} _UserStore_completeTwoFactorAuthentication_result__isset;
+
+class UserStore_completeTwoFactorAuthentication_result {
+ public:
+
+  UserStore_completeTwoFactorAuthentication_result() {
+  }
+
+  virtual ~UserStore_completeTwoFactorAuthentication_result() throw() {}
+
+  AuthenticationResult success;
+  evernote::edam::EDAMUserException userException;
+  evernote::edam::EDAMSystemException systemException;
+
+  _UserStore_completeTwoFactorAuthentication_result__isset __isset;
+
+  bool operator == (const UserStore_completeTwoFactorAuthentication_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(userException == rhs.userException))
+      return false;
+    if (!(systemException == rhs.systemException))
+      return false;
+    return true;
+  }
+  bool operator != (const UserStore_completeTwoFactorAuthentication_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const UserStore_completeTwoFactorAuthentication_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _UserStore_completeTwoFactorAuthentication_presult__isset {
+  _UserStore_completeTwoFactorAuthentication_presult__isset() : success(false), userException(false), systemException(false) {}
+  bool success;
+  bool userException;
+  bool systemException;
+} _UserStore_completeTwoFactorAuthentication_presult__isset;
+
+class UserStore_completeTwoFactorAuthentication_presult {
+ public:
+
+
+  virtual ~UserStore_completeTwoFactorAuthentication_presult() throw() {}
+
+  AuthenticationResult* success;
+  evernote::edam::EDAMUserException userException;
+  evernote::edam::EDAMSystemException systemException;
+
+  _UserStore_completeTwoFactorAuthentication_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
+typedef struct _UserStore_revokeLongSession_args__isset {
+  _UserStore_revokeLongSession_args__isset() : authenticationToken(false) {}
+  bool authenticationToken;
+} _UserStore_revokeLongSession_args__isset;
+
+class UserStore_revokeLongSession_args {
+ public:
+
+  UserStore_revokeLongSession_args() : authenticationToken("") {
+  }
+
+  virtual ~UserStore_revokeLongSession_args() throw() {}
+
+  std::string authenticationToken;
+
+  _UserStore_revokeLongSession_args__isset __isset;
+
+  bool operator == (const UserStore_revokeLongSession_args & rhs) const
+  {
+    if (!(authenticationToken == rhs.authenticationToken))
+      return false;
+    return true;
+  }
+  bool operator != (const UserStore_revokeLongSession_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const UserStore_revokeLongSession_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class UserStore_revokeLongSession_pargs {
+ public:
+
+
+  virtual ~UserStore_revokeLongSession_pargs() throw() {}
+
+  const std::string* authenticationToken;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _UserStore_revokeLongSession_result__isset {
+  _UserStore_revokeLongSession_result__isset() : userException(false), systemException(false) {}
+  bool userException;
+  bool systemException;
+} _UserStore_revokeLongSession_result__isset;
+
+class UserStore_revokeLongSession_result {
+ public:
+
+  UserStore_revokeLongSession_result() {
+  }
+
+  virtual ~UserStore_revokeLongSession_result() throw() {}
+
+  evernote::edam::EDAMUserException userException;
+  evernote::edam::EDAMSystemException systemException;
+
+  _UserStore_revokeLongSession_result__isset __isset;
+
+  bool operator == (const UserStore_revokeLongSession_result & rhs) const
+  {
+    if (!(userException == rhs.userException))
+      return false;
+    if (!(systemException == rhs.systemException))
+      return false;
+    return true;
+  }
+  bool operator != (const UserStore_revokeLongSession_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const UserStore_revokeLongSession_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _UserStore_revokeLongSession_presult__isset {
+  _UserStore_revokeLongSession_presult__isset() : userException(false), systemException(false) {}
+  bool userException;
+  bool systemException;
+} _UserStore_revokeLongSession_presult__isset;
+
+class UserStore_revokeLongSession_presult {
+ public:
+
+
+  virtual ~UserStore_revokeLongSession_presult() throw() {}
+
+  evernote::edam::EDAMUserException userException;
+  evernote::edam::EDAMSystemException systemException;
+
+  _UserStore_revokeLongSession_presult__isset __isset;
 
   uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
 
@@ -1240,12 +1491,18 @@ class UserStoreClient : virtual public UserStoreIf {
   void getBootstrapInfo(BootstrapInfo& _return, const std::string& locale);
   void send_getBootstrapInfo(const std::string& locale);
   void recv_getBootstrapInfo(BootstrapInfo& _return);
-  void authenticate(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret);
-  void send_authenticate(const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret);
+  void authenticate(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const bool supportsTwoFactor);
+  void send_authenticate(const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const bool supportsTwoFactor);
   void recv_authenticate(AuthenticationResult& _return);
-  void authenticateLongSession(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription);
-  void send_authenticateLongSession(const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription);
+  void authenticateLongSession(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription, const bool supportsTwoFactor);
+  void send_authenticateLongSession(const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription, const bool supportsTwoFactor);
   void recv_authenticateLongSession(AuthenticationResult& _return);
+  void completeTwoFactorAuthentication(AuthenticationResult& _return, const std::string& authenticationToken, const std::string& oneTimeCode, const std::string& deviceIdentifier, const std::string& deviceDescription);
+  void send_completeTwoFactorAuthentication(const std::string& authenticationToken, const std::string& oneTimeCode, const std::string& deviceIdentifier, const std::string& deviceDescription);
+  void recv_completeTwoFactorAuthentication(AuthenticationResult& _return);
+  void revokeLongSession(const std::string& authenticationToken);
+  void send_revokeLongSession(const std::string& authenticationToken);
+  void recv_revokeLongSession();
   void authenticateToBusiness(AuthenticationResult& _return, const std::string& authenticationToken);
   void send_authenticateToBusiness(const std::string& authenticationToken);
   void recv_authenticateToBusiness(AuthenticationResult& _return);
@@ -1281,6 +1538,8 @@ class UserStoreProcessor : virtual public ::apache::thrift::TProcessor {
   void process_getBootstrapInfo(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
   void process_authenticate(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
   void process_authenticateLongSession(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
+  void process_completeTwoFactorAuthentication(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
+  void process_revokeLongSession(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
   void process_authenticateToBusiness(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
   void process_refreshAuthentication(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
   void process_getUser(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
@@ -1294,6 +1553,8 @@ class UserStoreProcessor : virtual public ::apache::thrift::TProcessor {
     processMap_["getBootstrapInfo"] = &UserStoreProcessor::process_getBootstrapInfo;
     processMap_["authenticate"] = &UserStoreProcessor::process_authenticate;
     processMap_["authenticateLongSession"] = &UserStoreProcessor::process_authenticateLongSession;
+    processMap_["completeTwoFactorAuthentication"] = &UserStoreProcessor::process_completeTwoFactorAuthentication;
+    processMap_["revokeLongSession"] = &UserStoreProcessor::process_revokeLongSession;
     processMap_["authenticateToBusiness"] = &UserStoreProcessor::process_authenticateToBusiness;
     processMap_["refreshAuthentication"] = &UserStoreProcessor::process_refreshAuthentication;
     processMap_["getUser"] = &UserStoreProcessor::process_getUser;
@@ -1341,27 +1602,46 @@ class UserStoreMultiface : virtual public UserStoreIf {
     }
   }
 
-  void authenticate(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret) {
+  void authenticate(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const bool supportsTwoFactor) {
     uint32_t sz = ifaces_.size();
     for (uint32_t i = 0; i < sz; ++i) {
       if (i == sz - 1) {
-        ifaces_[i]->authenticate(_return, username, password, consumerKey, consumerSecret);
+        ifaces_[i]->authenticate(_return, username, password, consumerKey, consumerSecret, supportsTwoFactor);
         return;
       } else {
-        ifaces_[i]->authenticate(_return, username, password, consumerKey, consumerSecret);
+        ifaces_[i]->authenticate(_return, username, password, consumerKey, consumerSecret, supportsTwoFactor);
       }
     }
   }
 
-  void authenticateLongSession(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription) {
+  void authenticateLongSession(AuthenticationResult& _return, const std::string& username, const std::string& password, const std::string& consumerKey, const std::string& consumerSecret, const std::string& deviceIdentifier, const std::string& deviceDescription, const bool supportsTwoFactor) {
     uint32_t sz = ifaces_.size();
     for (uint32_t i = 0; i < sz; ++i) {
       if (i == sz - 1) {
-        ifaces_[i]->authenticateLongSession(_return, username, password, consumerKey, consumerSecret, deviceIdentifier, deviceDescription);
+        ifaces_[i]->authenticateLongSession(_return, username, password, consumerKey, consumerSecret, deviceIdentifier, deviceDescription, supportsTwoFactor);
         return;
       } else {
-        ifaces_[i]->authenticateLongSession(_return, username, password, consumerKey, consumerSecret, deviceIdentifier, deviceDescription);
+        ifaces_[i]->authenticateLongSession(_return, username, password, consumerKey, consumerSecret, deviceIdentifier, deviceDescription, supportsTwoFactor);
       }
+    }
+  }
+
+  void completeTwoFactorAuthentication(AuthenticationResult& _return, const std::string& authenticationToken, const std::string& oneTimeCode, const std::string& deviceIdentifier, const std::string& deviceDescription) {
+    uint32_t sz = ifaces_.size();
+    for (uint32_t i = 0; i < sz; ++i) {
+      if (i == sz - 1) {
+        ifaces_[i]->completeTwoFactorAuthentication(_return, authenticationToken, oneTimeCode, deviceIdentifier, deviceDescription);
+        return;
+      } else {
+        ifaces_[i]->completeTwoFactorAuthentication(_return, authenticationToken, oneTimeCode, deviceIdentifier, deviceDescription);
+      }
+    }
+  }
+
+  void revokeLongSession(const std::string& authenticationToken) {
+    uint32_t sz = ifaces_.size();
+    for (uint32_t i = 0; i < sz; ++i) {
+      ifaces_[i]->revokeLongSession(authenticationToken);
     }
   }
 

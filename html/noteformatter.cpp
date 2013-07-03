@@ -31,9 +31,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFileIconProvider>
 #include <poppler-qt4.h>
 #include <QIcon>
+#include <boost/property_tree/xml_parser.hpp>
+#include <boost/property_tree/ptree.hpp>
 #include <QList>
 
-//#include "<QPainter>
 
 #include <iostream>
 using namespace std;
@@ -63,7 +64,6 @@ void NoteFormatter::setNote(Note n, bool pdfPreview) {
     inkNote = false;
     if (note.__isset.attributes && note.attributes.__isset.contentClass && note.attributes.contentClass != "")
         readOnly = true;
-
 }
 
 
@@ -97,50 +97,33 @@ void NoteFormatter::setNoteHistory(bool value) {
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
 
-//    QLOG_DEBUG() << "Rebuilding Note: " << QString::fromStdString(note.guid) << " : " <<
-//                    QString::fromStdString(note.title);
-
     formatError = false;
     readOnly = false;
 
-    // First try to read the document.  If it fails we need to clean it up
-    content.append(QString::fromStdString(note.content));
-    QDomDocument doc;
-    QString emsg;
-    bool goodReturn = doc.setContent(content, &emsg);
+    QWebPage page;
+    QEventLoop loop;
+    QString html = preHtmlFormat(QString::fromStdString(note.content));
+    html.replace("<en-note", "<body");
+    html.replace("</en-note>", "</body>");
+    //html.prepend("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /></head>");
+    QByteArray htmlPage;
+    htmlPage.append(html);
+    page.mainFrame()->setContent(htmlPage);
+//    page.mainFrame()->setContent(htmlPage, "application/xhtml+xml");
+    QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
 
-    if (!goodReturn) {
-        QLOG_DEBUG() << "Error with initial document: " << emsg << " running through tidy";
-        // Run it through "tidy".  It is a program which will fix any invalid XML
-        // and give us the results back through stdout.  In a perfect world this
-        // wouldn't be needed, but I've seen times where the ENML is bad for some reason.
-        QProcess tidyProcess;
-        tidyProcess.start("tidy -xml -raw -q -e", QIODevice::ReadWrite|QIODevice::Unbuffered);
-        QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
-        QByteArray b;
-        b.append(QString::fromStdString(note.content));
-        tidyProcess.write(b);
-        tidyProcess.closeWriteChannel();
-        QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
-        QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
-        content = tidyProcess.readAllStandardOutput();
-
-        // If the content is null, then we had a problem.  Just risk going forward without tidy cleanup
-        if (content.size() == 0)
-            content = b;
-        doc.setContent(content);
-    }
-    // Remove all the temporary file names
-    tempFiles.clear();
-    modifyTags(doc);
+    modifyTags(page);
 
     // Finish up and return the HTML to the user
-    QDomElement docElem = doc.documentElement();
-    docElem.setTagName("body");
-    content = doc.toByteArray(3);
-        qint32 index = content.indexOf("<body");
+    //QDomElement docElem = doc.documentElement();
+    //docElem.setTagName("body");
+
+    note.content = page.mainFrame()->toHtml().toStdString();
+    content.clear();
+    content.append(QString::fromStdString(note.content));
+
+    qint32 index = content.indexOf("<body");
     content.remove(0,index);
-//    content.prepend("<style type=\"text/css\">.en-crypt-temp { border-collapse:collapse; border-style:solid; border-color:blue; padding:0.0mm 0.0mm 0.0mm 0.0mm; }</style>");
     content.prepend("<style>img { height:auto; width:auto; max-height:auto; max-width:100%; }</style>");
     content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
     content.prepend("<html>");
@@ -154,8 +137,58 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     }
     if (note.__isset.active && !note.active)
         readOnly = true;
+
+
+
+    // Run it through "tidy".  It is a program which will fix any invalid HTML
+    // and give us the results back through stdout.  In a perfect world this
+    // wouldn't be needed, but WebKit doesn't always give back good HTML.
+//    QProcess tidyProcess;
+//    content.clear();
+//    content.append(QString::fromStdString(note.content));
+//    tidyProcess.start("tidy -raw -asxhtml -m -u -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
+//    QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
+//    tidyProcess.waitForStarted();
+//    tidyProcess.write(content);
+//    tidyProcess.closeWriteChannel();
+//    tidyProcess.waitForFinished();
+//    QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
+//    QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
+//    content.clear();
+//    content.append(tidyProcess.readAllStandardOutput());
+
+//    QDomDocument doc;
+//    doc.setContent(content);
+//    content = doc.toByteArray(-1);
+
+    QLOG_DEBUG() << content;
     return content;
 }
+
+
+
+// This is to turn the <en-media/> tags into <en-media></en-media> tags because
+// QWebPage tends to miss the /> tag and it can cause some text to be missed
+QString NoteFormatter::preHtmlFormat(QString note) {
+    int pos;
+    QString content = note;
+    pos = content.indexOf("<en-media");
+    while (pos > 0) {
+        int endPos = content.indexOf(">", pos);
+        int tagEndPos = content.indexOf("/>", pos);
+
+        // Check the next /> end tag.  If it is before the end
+        // of the current tag or if it doesn't exist then we
+        // need to fix the end of the img
+        if (tagEndPos <= 0 || tagEndPos < endPos) {
+            content = content.mid(0, endPos) + QByteArray("></en-media>") +content.mid(endPos+1);
+        }
+        pos = content.indexOf("<en-media", pos+1);
+    }
+    return content;
+}
+
+
 
 
 /*
@@ -163,76 +196,77 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
   them into HTML tags.  Things like en-media & en-crypt have no
   HTML values, so we turn them into HTML.
   */
-void NoteFormatter::modifyTags(QDomDocument &doc) {
+void NoteFormatter::modifyTags(QWebPage &doc) {
     tempFiles.clear();
-    QDomElement docElem = doc.documentElement();
 
     // Modify en-media tags
-    QDomNodeList anchors = docElem.elementsByTagName("en-media");
-    qint32 enMediaCount = anchors.length();
-    for (qint32 i=enMediaCount-1; i>=0; --i) {
-            QDomElement enmedia = anchors.at(i).toElement();
-            if (enmedia.hasAttribute("type")) {
-                    QDomAttr attr = enmedia.attributeNode("type");
-                    QDomAttr hash = enmedia.attributeNode("hash");
-                    QStringList type = attr.nodeValue().split("/");
-                    if (type.size() >= 2) {
-                        QString appl = type[1];
-                        if (type[0] == "image")
-                            modifyImageTags(doc, enmedia, hash);
-                        else
-                            modifyApplicationTags(doc, enmedia, hash, appl);
-                    }
+    QWebElementCollection anchors = doc.mainFrame()->findAllElements("en-media");
+    foreach (QWebElement enmedia, anchors) {
+        if (enmedia.hasAttribute("type")) {
+            QString attr = enmedia.attribute("type");
+            QString hash = enmedia.attribute("hash");
+            QStringList type = attr.split("/");
+            if (type.size() >= 2) {
+                QString appl = type[1];
+                if (type[0] == "image")
+                    modifyImageTags(enmedia, hash);
+                else
+                    modifyApplicationTags(enmedia, hash, appl);
             }
+        }
     }
 
     // Modify todo tags
-    anchors = docElem.elementsByTagName("en-todo");
-    qint32 enTodoCount = anchors.length();
+    anchors = doc.mainFrame()->findAllElements("en-todo");
+    qint32 enTodoCount = anchors.count();
     for (qint32 i=enTodoCount-1; i>=0; i--) {
-            QDomElement enmedia = anchors.at(i).toElement();
+            QWebElement enmedia = anchors.at(i);
             modifyTodoTags(enmedia);
     }
 
-    anchors = docElem.elementsByTagName("en-crypt");
-    qint32 enCryptLen = anchors.length();
+    anchors = doc.mainFrame()->findAllElements("en-crypt");
+    qint32 enCryptLen = anchors.count();
     for (qint32 i=enCryptLen-1; i>=0; i--) {
-            QDomElement enmedia(anchors.at(i).toElement());
-            enmedia.setAttribute("contentEditable","false");
-            enmedia.setAttribute("src", QString("file://")+global.fileManager.getImageDirPath("encrypt.png"));
-            enmedia.setAttribute("en-tag","en-crypt");
-            enmedia.setAttribute("alt", enmedia.text());
-            global.cryptCounter++;
-            enmedia.setAttribute("id", "crypt"+QString().number(global.cryptCounter));
-            QString encryptedText = enmedia.text();
+        QWebElement enmedia = anchors.at(i);
+        enmedia.setAttribute("contentEditable","false");
+        enmedia.setAttribute("src", QString("file://")+global.fileManager.getImageDirPath("encrypt.png"));
+        enmedia.setAttribute("en-tag","en-crypt");
+        enmedia.setAttribute("alt", enmedia.toInnerXml());
+        global.cryptCounter++;
+        enmedia.setAttribute("id", "crypt"+QString().number(global.cryptCounter));
+        QString encryptedText = enmedia.toInnerXml();
 
-            // If the encryption string contains crlf at the end, remove them because they mess up the javascript.
-            if (encryptedText.endsWith("\n"))
-                    encryptedText.truncate(encryptedText.length()-1);
-            if (encryptedText.endsWith("\r"))
-                    encryptedText.truncate(encryptedText.length()-1);
+        // If the encryption string contains crlf at the end, remove them because they mess up the javascript.
+        if (encryptedText.endsWith("\n"))
+                encryptedText.truncate(encryptedText.length()-1);
+        if (encryptedText.endsWith("\r"))
+                encryptedText.truncate(encryptedText.length()-1);
 
-            // Add the commands
-            QString hint = enmedia.attribute("hint");
-            hint = hint.replace("'","&apos;");
-            enmedia.setAttribute("onClick", "window.jsbridge.decryptText('crypt"+QString().number(global.cryptCounter)+"', '"+encryptedText+"', '"+hint+"');");
-            enmedia.setAttribute("onMouseOver", "style.cursor='hand'");
-            enmedia.setTagName("img");
-            enmedia.removeChild(enmedia.firstChild());   // Remove the actual encrypted text
+        // Add the commands
+        QString hint = enmedia.attribute("hint");
+        hint = hint.replace("'","&apos;");
+        enmedia.setAttribute("onClick", "window.jsbridge.decryptText('crypt"+QString().number(global.cryptCounter)+"', '"+encryptedText+"', '"+hint+"');");
+        enmedia.setAttribute("onMouseOver", "style.cursor='hand'");
+        enmedia.setInnerXml("");
+        QString k = enmedia.toOuterXml();
+        k.replace("<en-crypt", "<img");
+        k.replace("img>", "<en-crypt");
+        enmedia.setOuterXml(k);
     }
 
 
     // Modify link tags
-    anchors = docElem.elementsByTagName("a");
-    enCryptLen = anchors.length();
-    for (unsigned int i=0; i<anchors.length(); i++) {
-            QDomElement element = anchors.at(i).toElement();
-            if (!element.attribute("href").toLower().startsWith("latex://"))
-                    element.setAttribute("title", element.attribute("href"));
-            else {
-                    element.setAttribute("title", element.attribute("title").toLower().replace("http://latex.codecogs.com/gif.latex?",""));
-            }
+    anchors = doc.mainFrame()->findAllElements("a");
+    enCryptLen = anchors.count();
+    for (qint32 i=0; i<anchors.count(); i++) {
+        QWebElement element = anchors.at(i);
+        if (!element.attribute("href").toLower().startsWith("latex://"))
+            element.setAttribute("title", element.attribute("href"));
+        else {
+            element.setAttribute("title", element.attribute("title").toLower().replace("http://latex.codecogs.com/gif.latex?",""));
+        }
     }
+
 }
 
 
@@ -324,14 +358,15 @@ void NoteFormatter::addImageHighlight(qint32 resLid, QFile &f) {
 
 /* Modify an image tag.  Basically we turn it back into a picture, write out the file, and
   modify the ENML */
-void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &enMedia, QDomAttr &hash) {
+void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     QString mimetype = enMedia.attribute("type");
+    QLOG_DEBUG() << enMedia.toOuterXml();
     ResourceTable resourceTable;
-    qint32 resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
+    qint32 resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
     Resource r;
     if (resLid>0) {
-        //QFile tfile(global.fileManager.getResDirPath(QString::number(resLid)+type));
         resourceTable.get(r, resLid);
+            QLOG_DEBUG() << enMedia.toOuterXml();
         MimeReference ref;
         QString filename;
         if (r.__isset.attributes && r.attributes.__isset.fileName)
@@ -343,13 +378,13 @@ void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &enMedia, QDo
             // Check if this is a LaTeX image
             if (r.__isset.attributes && r.attributes.__isset.sourceURL &&
                 QString::fromStdString(r.attributes.sourceURL).toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
-                QDomElement newText(doc.createElement("a"));
+                enMedia.appendInside("<img/>");
+                QWebElement newText = enMedia.lastChild();
                 enMedia.setAttribute("en-tag", "en-latex");
                 newText.setAttribute("onMouseOver", "style.cursor='pointer'");
                 newText.setAttribute("title", QString::fromStdString(r.attributes.sourceURL));
                 newText.setAttribute("href", "latex://"+QString::number(resLid));
-                enMedia.parentNode().replaceChild(newText, enMedia);
-                newText.appendChild(enMedia);
+                //enMedia.replace(newText);
             }
             enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
                                  +QString::number(resLid) +"', '"
@@ -363,34 +398,42 @@ void NoteFormatter::modifyImageTags(QDomDocument &doc, QDomElement &enMedia, QDo
 
     // Reset the tags to something that WebKit will understand
     enMedia.setAttribute("en-tag", "en-media");
-    enMedia.setNodeValue("");
-    enMedia.setAttribute("lid", resLid);
-    enMedia.setTagName("img");
+    enMedia.setPlainText("");
+    enMedia.setAttribute("lid", QString::number(resLid));
+    // rename the <enmedia> tag to <img>
+    QLOG_DEBUG() << enMedia.toOuterXml();
+
+    enMedia.setOuterXml(enMedia.toOuterXml().replace("<en-media","<img"));
+    enMedia.setOuterXml(enMedia.toOuterXml().replace("</en-media>","</img>"));
+    QLOG_DEBUG() << enMedia.toOuterXml();
 }
 
 
 
 // Modify the en-media tag into an attachment
-void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &enmedia, QDomAttr &hash, QString appl) {
+void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, QString appl) {
     if (appl.toLower() == "vnd.evernote.ink") {
             inkNote = true;
             readOnly = true;
             buildInkNote(enmedia, hash);
-            QLOG_DEBUG() << doc.toString();
             return;
     }
     ResourceTable resTable;
     QString contextFileName;
-    qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
+    qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
     Resource r;
     resTable.get(r, resLid);
     if (!r.__isset.data)
         resourceError = true;
     else {
+
+        // If we are running the formatter and we are not generating a thumbnail
         if (r.mime == "application/pdf" && pdfPreview && !thumbnail) {
-            modifyPdfTags(resLid, enmedia);
-            return;
+           modifyPdfTags(resLid, enmedia);
+           return;
         }
+
+        // If we are running the formatter so we can generate a thumbnail and it is a PDF
         if (r.mime == "application/pdf" && pdfPreview && thumbnail) {
             QString printImageFile = global.fileManager.getTmpDirPath() + QString::number(resLid) +QString("-print.jpg");
             QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) +".pdf";
@@ -406,7 +449,8 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &enmedi
             enmedia.setAttribute("src", printImageFile);
             enmedia.removeAttribute("hash");
             enmedia.removeAttribute("type");
-            enmedia.setTagName("img");
+            enmedia.setOuterXml(enmedia.toOuterXml().replace("<en-media","<img"));
+            enmedia.setOuterXml(enmedia.toOuterXml().replace("</en-media>","</img>"));
             return;
         }
         QString fileDetails = "";
@@ -447,12 +491,9 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &enmedi
         enmedia.setAttribute("onContextMenu", "window.browserWindow.resourceContextMenu('" +contextFileName +"');");
         enmedia.setAttribute("en-tag", "en-media");
         enmedia.setAttribute("lid", QString::number(resLid));
-        enmedia.setTagName("a");
 
-        QDomElement newText = doc.createElement("img");
-//        QFile tfile(contextFileName);
-//        tfile.open(QIODevice::WriteOnly);
-//        tfile.close();
+        enmedia.appendInside("<img/>");
+        QWebElement newText = enmedia.lastChild();
 
         // Build an icon of the image
         QString fileExt;
@@ -466,8 +507,9 @@ void NoteFormatter::modifyApplicationTags(QDomDocument &doc, QDomElement &enmedi
         if (r.__isset.attributes && r.attributes.__isset.fileName)
             newText.setAttribute("title",QString::fromStdString(r.attributes.fileName));
         newText.setAttribute("en-tag", "temporary");
-        enmedia.removeChild(enmedia.firstChild());
-        enmedia.appendChild(newText);
+        //Rename the tag to a <a> link
+        enmedia.setOuterXml(enmedia.toOuterXml().replace("<en-media","<a"));
+        enmedia.setOuterXml(enmedia.toOuterXml().replace("</en-media>","</a>"));
     }
 }
 
@@ -540,7 +582,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 
 
 // Modify the en-to tag into an input field
-void NoteFormatter::modifyTodoTags(QDomElement &todo) {
+void NoteFormatter::modifyTodoTags(QWebElement &todo) {
     todo.setAttribute("type", "checkbox");
 
     // Checks the en-to tag wheter or not the todo-item is checked or not
@@ -553,8 +595,7 @@ void NoteFormatter::modifyTodoTags(QDomElement &todo) {
 
     todo.setAttribute("onClick", "if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();");
     todo.setAttribute("style", "cursor: hand;");
-    //todo.setAttribute("onMouseOver", "style.cursor='hand'");
-    todo.setTagName("input");
+    todo.setOuterXml(todo.toOuterXml().replace("en-todo","input"));
 }
 
 
@@ -562,10 +603,10 @@ void NoteFormatter::modifyTodoTags(QDomElement &todo) {
 
 
 /* If we have an ink note, then we need to pull the image and display it */
-bool NoteFormatter::buildInkNote(QDomElement &docElem, QDomAttr &hash) {
+bool NoteFormatter::buildInkNote(QWebElement &docElem, QString &hash) {
 
     ResourceTable resTable;
-    qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash.value());
+    qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
     if (resLid <= 0)
         return false;
     docElem.setAttribute("en-tag", "en-media");
@@ -573,17 +614,23 @@ bool NoteFormatter::buildInkNote(QDomElement &docElem, QDomAttr &hash) {
     docElem.setAttribute("type", "application/vnd.evernote.ink");
     QString filename = QString("file:///") +global.fileManager.getDbaDirPath()+QString::number(resLid)+QString(".png");
     docElem.setAttribute("src", filename);
-    docElem.setTagName("img");
+    QString k  = docElem.toOuterXml();
+    k.replace("<en-media", "<img");
+    k.replace("enmedia>", "img>");;
+    docElem.setOuterXml(k);
 
     return true;
 }
 
 
 
-void NoteFormatter::modifyPdfTags(qint32 resLid, QDomElement &enmedia) {
-    enmedia.setTagName("object");
-    //enmedia.setAttribute("type", "nixnote/pdf");
+void NoteFormatter::modifyPdfTags(qint32 resLid, QWebElement &enmedia) {
     enmedia.setAttribute("width", "100%");
     enmedia.setAttribute("height", "100%");
-    enmedia.setAttribute("lid", resLid);
+    enmedia.setAttribute("lid", QString::number(resLid));
+    QString x = enmedia.toOuterXml();
+    x.replace("en-media", "object");
+    enmedia.setOuterXml(x);
+    x = enmedia.toOuterXml();
+    QLOG_DEBUG() << x;
 }

@@ -70,10 +70,16 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addAction(pasteAction);
     connect(pasteAction, SIGNAL(triggered()), parent, SLOT(pasteButtonPressed()));
 
-    pasteWithoutFormatAction = new QAction(tr("Paste as Text"), this);
+    pasteWithoutFormatAction = new QAction(tr("Paste as Unformatted Text"), this);
     this->setupShortcut(pasteWithoutFormatAction, "Edit_Paste_Without_Formatting");
     contextMenu->addAction(pasteWithoutFormatAction);
     connect(pasteWithoutFormatAction, SIGNAL(triggered()), parent, SLOT(pasteWithoutFormatButtonPressed()));
+
+    removeFormattingAction = new QAction(tr("Remove Formatting"), this);
+    this->setupShortcut(removeFormattingAction, "Edit_Remove_Formatting");
+    contextMenu->addAction(removeFormattingAction);
+    connect(removeFormattingAction, SIGNAL(triggered()), parent, SLOT(removeFormatButtonPressed()));
+
     contextMenu->addSeparator();
 
     QMenu *colorMenu = new QMenu(tr("Background Color"), this);

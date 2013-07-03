@@ -74,6 +74,7 @@ class NoteStoreIf {
   virtual void getPublicNotebook(evernote::edam::Notebook& _return, const evernote::edam::UserID userId, const std::string& publicUri) = 0;
   virtual void createSharedNotebook(evernote::edam::SharedNotebook& _return, const std::string& authenticationToken, const evernote::edam::SharedNotebook& sharedNotebook) = 0;
   virtual int32_t updateSharedNotebook(const std::string& authenticationToken, const evernote::edam::SharedNotebook& sharedNotebook) = 0;
+  virtual int32_t setSharedNotebookRecipientSettings(const std::string& authenticationToken, const int64_t sharedNotebookId, const evernote::edam::SharedNotebookRecipientSettings& recipientSettings) = 0;
   virtual int32_t sendMessageToSharedNotebookMembers(const std::string& authenticationToken, const evernote::edam::Guid& notebookGuid, const std::string& messageText, const std::vector<std::string> & recipients) = 0;
   virtual void listSharedNotebooks(std::vector<evernote::edam::SharedNotebook> & _return, const std::string& authenticationToken) = 0;
   virtual int32_t expungeSharedNotebooks(const std::string& authenticationToken, const std::vector<int64_t> & sharedNotebookIds) = 0;
@@ -86,7 +87,7 @@ class NoteStoreIf {
   virtual void emailNote(const std::string& authenticationToken, const NoteEmailParameters& parameters) = 0;
   virtual void shareNote(std::string& _return, const std::string& authenticationToken, const evernote::edam::Guid& guid) = 0;
   virtual void stopSharingNote(const std::string& authenticationToken, const evernote::edam::Guid& guid) = 0;
-  virtual void authenticateToSharedNote(evernote::edam::AuthenticationResult& _return, const std::string& guid, const std::string& noteKey) = 0;
+  virtual void authenticateToSharedNote(evernote::edam::AuthenticationResult& _return, const std::string& guid, const std::string& noteKey, const std::string& authenticationToken) = 0;
   virtual void findRelated(RelatedResult& _return, const std::string& authenticationToken, const RelatedQuery& query, const RelatedResultSpec& resultSpec) = 0;
 };
 
@@ -290,6 +291,10 @@ class NoteStoreNull : virtual public NoteStoreIf {
     int32_t _return = 0;
     return _return;
   }
+  int32_t setSharedNotebookRecipientSettings(const std::string& /* authenticationToken */, const int64_t /* sharedNotebookId */, const evernote::edam::SharedNotebookRecipientSettings& /* recipientSettings */) {
+    int32_t _return = 0;
+    return _return;
+  }
   int32_t sendMessageToSharedNotebookMembers(const std::string& /* authenticationToken */, const evernote::edam::Guid& /* notebookGuid */, const std::string& /* messageText */, const std::vector<std::string> & /* recipients */) {
     int32_t _return = 0;
     return _return;
@@ -330,7 +335,7 @@ class NoteStoreNull : virtual public NoteStoreIf {
   void stopSharingNote(const std::string& /* authenticationToken */, const evernote::edam::Guid& /* guid */) {
     return;
   }
-  void authenticateToSharedNote(evernote::edam::AuthenticationResult& /* _return */, const std::string& /* guid */, const std::string& /* noteKey */) {
+  void authenticateToSharedNote(evernote::edam::AuthenticationResult& /* _return */, const std::string& /* guid */, const std::string& /* noteKey */, const std::string& /* authenticationToken */) {
     return;
   }
   void findRelated(RelatedResult& /* _return */, const std::string& /* authenticationToken */, const RelatedQuery& /* query */, const RelatedResultSpec& /* resultSpec */) {
@@ -7815,6 +7820,134 @@ class NoteStore_updateSharedNotebook_presult {
 
 };
 
+typedef struct _NoteStore_setSharedNotebookRecipientSettings_args__isset {
+  _NoteStore_setSharedNotebookRecipientSettings_args__isset() : authenticationToken(false), sharedNotebookId(false), recipientSettings(false) {}
+  bool authenticationToken;
+  bool sharedNotebookId;
+  bool recipientSettings;
+} _NoteStore_setSharedNotebookRecipientSettings_args__isset;
+
+class NoteStore_setSharedNotebookRecipientSettings_args {
+ public:
+
+  NoteStore_setSharedNotebookRecipientSettings_args() : authenticationToken(""), sharedNotebookId(0) {
+  }
+
+  virtual ~NoteStore_setSharedNotebookRecipientSettings_args() throw() {}
+
+  std::string authenticationToken;
+  int64_t sharedNotebookId;
+  evernote::edam::SharedNotebookRecipientSettings recipientSettings;
+
+  _NoteStore_setSharedNotebookRecipientSettings_args__isset __isset;
+
+  bool operator == (const NoteStore_setSharedNotebookRecipientSettings_args & rhs) const
+  {
+    if (!(authenticationToken == rhs.authenticationToken))
+      return false;
+    if (!(sharedNotebookId == rhs.sharedNotebookId))
+      return false;
+    if (!(recipientSettings == rhs.recipientSettings))
+      return false;
+    return true;
+  }
+  bool operator != (const NoteStore_setSharedNotebookRecipientSettings_args &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const NoteStore_setSharedNotebookRecipientSettings_args & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+
+class NoteStore_setSharedNotebookRecipientSettings_pargs {
+ public:
+
+
+  virtual ~NoteStore_setSharedNotebookRecipientSettings_pargs() throw() {}
+
+  const std::string* authenticationToken;
+  const int64_t* sharedNotebookId;
+  const evernote::edam::SharedNotebookRecipientSettings* recipientSettings;
+
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _NoteStore_setSharedNotebookRecipientSettings_result__isset {
+  _NoteStore_setSharedNotebookRecipientSettings_result__isset() : success(false), userException(false), notFoundException(false), systemException(false) {}
+  bool success;
+  bool userException;
+  bool notFoundException;
+  bool systemException;
+} _NoteStore_setSharedNotebookRecipientSettings_result__isset;
+
+class NoteStore_setSharedNotebookRecipientSettings_result {
+ public:
+
+  NoteStore_setSharedNotebookRecipientSettings_result() : success(0) {
+  }
+
+  virtual ~NoteStore_setSharedNotebookRecipientSettings_result() throw() {}
+
+  int32_t success;
+  evernote::edam::EDAMUserException userException;
+  evernote::edam::EDAMNotFoundException notFoundException;
+  evernote::edam::EDAMSystemException systemException;
+
+  _NoteStore_setSharedNotebookRecipientSettings_result__isset __isset;
+
+  bool operator == (const NoteStore_setSharedNotebookRecipientSettings_result & rhs) const
+  {
+    if (!(success == rhs.success))
+      return false;
+    if (!(userException == rhs.userException))
+      return false;
+    if (!(notFoundException == rhs.notFoundException))
+      return false;
+    if (!(systemException == rhs.systemException))
+      return false;
+    return true;
+  }
+  bool operator != (const NoteStore_setSharedNotebookRecipientSettings_result &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const NoteStore_setSharedNotebookRecipientSettings_result & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
+typedef struct _NoteStore_setSharedNotebookRecipientSettings_presult__isset {
+  _NoteStore_setSharedNotebookRecipientSettings_presult__isset() : success(false), userException(false), notFoundException(false), systemException(false) {}
+  bool success;
+  bool userException;
+  bool notFoundException;
+  bool systemException;
+} _NoteStore_setSharedNotebookRecipientSettings_presult__isset;
+
+class NoteStore_setSharedNotebookRecipientSettings_presult {
+ public:
+
+
+  virtual ~NoteStore_setSharedNotebookRecipientSettings_presult() throw() {}
+
+  int32_t* success;
+  evernote::edam::EDAMUserException userException;
+  evernote::edam::EDAMNotFoundException notFoundException;
+  evernote::edam::EDAMSystemException systemException;
+
+  _NoteStore_setSharedNotebookRecipientSettings_presult__isset __isset;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+
+};
+
 typedef struct _NoteStore_sendMessageToSharedNotebookMembers_args__isset {
   _NoteStore_sendMessageToSharedNotebookMembers_args__isset() : authenticationToken(false), notebookGuid(false), messageText(false), recipients(false) {}
   bool authenticationToken;
@@ -9275,21 +9408,23 @@ class NoteStore_stopSharingNote_presult {
 };
 
 typedef struct _NoteStore_authenticateToSharedNote_args__isset {
-  _NoteStore_authenticateToSharedNote_args__isset() : guid(false), noteKey(false) {}
+  _NoteStore_authenticateToSharedNote_args__isset() : guid(false), noteKey(false), authenticationToken(false) {}
   bool guid;
   bool noteKey;
+  bool authenticationToken;
 } _NoteStore_authenticateToSharedNote_args__isset;
 
 class NoteStore_authenticateToSharedNote_args {
  public:
 
-  NoteStore_authenticateToSharedNote_args() : guid(""), noteKey("") {
+  NoteStore_authenticateToSharedNote_args() : guid(""), noteKey(""), authenticationToken("") {
   }
 
   virtual ~NoteStore_authenticateToSharedNote_args() throw() {}
 
   std::string guid;
   std::string noteKey;
+  std::string authenticationToken;
 
   _NoteStore_authenticateToSharedNote_args__isset __isset;
 
@@ -9298,6 +9433,8 @@ class NoteStore_authenticateToSharedNote_args {
     if (!(guid == rhs.guid))
       return false;
     if (!(noteKey == rhs.noteKey))
+      return false;
+    if (!(authenticationToken == rhs.authenticationToken))
       return false;
     return true;
   }
@@ -9321,6 +9458,7 @@ class NoteStore_authenticateToSharedNote_pargs {
 
   const std::string* guid;
   const std::string* noteKey;
+  const std::string* authenticationToken;
 
   uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
 
@@ -9725,6 +9863,9 @@ class NoteStoreClient : virtual public NoteStoreIf {
   int32_t updateSharedNotebook(const std::string& authenticationToken, const evernote::edam::SharedNotebook& sharedNotebook);
   void send_updateSharedNotebook(const std::string& authenticationToken, const evernote::edam::SharedNotebook& sharedNotebook);
   int32_t recv_updateSharedNotebook();
+  int32_t setSharedNotebookRecipientSettings(const std::string& authenticationToken, const int64_t sharedNotebookId, const evernote::edam::SharedNotebookRecipientSettings& recipientSettings);
+  void send_setSharedNotebookRecipientSettings(const std::string& authenticationToken, const int64_t sharedNotebookId, const evernote::edam::SharedNotebookRecipientSettings& recipientSettings);
+  int32_t recv_setSharedNotebookRecipientSettings();
   int32_t sendMessageToSharedNotebookMembers(const std::string& authenticationToken, const evernote::edam::Guid& notebookGuid, const std::string& messageText, const std::vector<std::string> & recipients);
   void send_sendMessageToSharedNotebookMembers(const std::string& authenticationToken, const evernote::edam::Guid& notebookGuid, const std::string& messageText, const std::vector<std::string> & recipients);
   int32_t recv_sendMessageToSharedNotebookMembers();
@@ -9761,8 +9902,8 @@ class NoteStoreClient : virtual public NoteStoreIf {
   void stopSharingNote(const std::string& authenticationToken, const evernote::edam::Guid& guid);
   void send_stopSharingNote(const std::string& authenticationToken, const evernote::edam::Guid& guid);
   void recv_stopSharingNote();
-  void authenticateToSharedNote(evernote::edam::AuthenticationResult& _return, const std::string& guid, const std::string& noteKey);
-  void send_authenticateToSharedNote(const std::string& guid, const std::string& noteKey);
+  void authenticateToSharedNote(evernote::edam::AuthenticationResult& _return, const std::string& guid, const std::string& noteKey, const std::string& authenticationToken);
+  void send_authenticateToSharedNote(const std::string& guid, const std::string& noteKey, const std::string& authenticationToken);
   void recv_authenticateToSharedNote(evernote::edam::AuthenticationResult& _return);
   void findRelated(RelatedResult& _return, const std::string& authenticationToken, const RelatedQuery& query, const RelatedResultSpec& resultSpec);
   void send_findRelated(const std::string& authenticationToken, const RelatedQuery& query, const RelatedResultSpec& resultSpec);
@@ -9840,6 +9981,7 @@ class NoteStoreProcessor : virtual public ::apache::thrift::TProcessor {
   void process_getPublicNotebook(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
   void process_createSharedNotebook(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
   void process_updateSharedNotebook(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
+  void process_setSharedNotebookRecipientSettings(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
   void process_sendMessageToSharedNotebookMembers(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
   void process_listSharedNotebooks(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
   void process_expungeSharedNotebooks(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot);
@@ -9917,6 +10059,7 @@ class NoteStoreProcessor : virtual public ::apache::thrift::TProcessor {
     processMap_["getPublicNotebook"] = &NoteStoreProcessor::process_getPublicNotebook;
     processMap_["createSharedNotebook"] = &NoteStoreProcessor::process_createSharedNotebook;
     processMap_["updateSharedNotebook"] = &NoteStoreProcessor::process_updateSharedNotebook;
+    processMap_["setSharedNotebookRecipientSettings"] = &NoteStoreProcessor::process_setSharedNotebookRecipientSettings;
     processMap_["sendMessageToSharedNotebookMembers"] = &NoteStoreProcessor::process_sendMessageToSharedNotebookMembers;
     processMap_["listSharedNotebooks"] = &NoteStoreProcessor::process_listSharedNotebooks;
     processMap_["expungeSharedNotebooks"] = &NoteStoreProcessor::process_expungeSharedNotebooks;
@@ -10647,6 +10790,17 @@ class NoteStoreMultiface : virtual public NoteStoreIf {
     }
   }
 
+  int32_t setSharedNotebookRecipientSettings(const std::string& authenticationToken, const int64_t sharedNotebookId, const evernote::edam::SharedNotebookRecipientSettings& recipientSettings) {
+    uint32_t sz = ifaces_.size();
+    for (uint32_t i = 0; i < sz; ++i) {
+      if (i == sz - 1) {
+        return ifaces_[i]->setSharedNotebookRecipientSettings(authenticationToken, sharedNotebookId, recipientSettings);
+      } else {
+        ifaces_[i]->setSharedNotebookRecipientSettings(authenticationToken, sharedNotebookId, recipientSettings);
+      }
+    }
+  }
+
   int32_t sendMessageToSharedNotebookMembers(const std::string& authenticationToken, const evernote::edam::Guid& notebookGuid, const std::string& messageText, const std::vector<std::string> & recipients) {
     uint32_t sz = ifaces_.size();
     for (uint32_t i = 0; i < sz; ++i) {
@@ -10777,14 +10931,14 @@ class NoteStoreMultiface : virtual public NoteStoreIf {
     }
   }
 
-  void authenticateToSharedNote(evernote::edam::AuthenticationResult& _return, const std::string& guid, const std::string& noteKey) {
+  void authenticateToSharedNote(evernote::edam::AuthenticationResult& _return, const std::string& guid, const std::string& noteKey, const std::string& authenticationToken) {
     uint32_t sz = ifaces_.size();
     for (uint32_t i = 0; i < sz; ++i) {
       if (i == sz - 1) {
-        ifaces_[i]->authenticateToSharedNote(_return, guid, noteKey);
+        ifaces_[i]->authenticateToSharedNote(_return, guid, noteKey, authenticationToken);
         return;
       } else {
-        ifaces_[i]->authenticateToSharedNote(_return, guid, noteKey);
+        ifaces_[i]->authenticateToSharedNote(_return, guid, noteKey, authenticationToken);
       }
     }
   }

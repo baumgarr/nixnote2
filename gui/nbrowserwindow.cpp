@@ -159,6 +159,7 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->cutButtonAction, SIGNAL(triggered()), this, SLOT(cutButtonPressed()));
     connect(buttonBar->copyButtonAction, SIGNAL(triggered()), this, SLOT(copyButtonPressed()));
     connect(buttonBar->pasteButtonAction, SIGNAL(triggered()), this, SLOT(pasteButtonPressed()));
+    connect(buttonBar->removeFormatButtonAction, SIGNAL(triggered()), this, SLOT(removeFormatButtonPressed()));
     connect(buttonBar->boldButtonWidget, SIGNAL(clicked()), this, SLOT(boldButtonPressed()));
     connect(buttonBar->italicButtonWidget, SIGNAL(clicked()), this, SLOT(italicsButtonPressed()));
     connect(buttonBar->underlineButtonWidget, SIGNAL(clicked()), this, SLOT(underlineButtonPressed()));
@@ -178,6 +179,7 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
+    connect(buttonBar->insertTableButtonAction, SIGNAL(triggered()), this, SLOT(insertTableButtonPressed()));
 }
 
 
@@ -240,8 +242,9 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     noteTitle.setTitle(lid, QString::fromStdString(n.title), QString::fromStdString(n.title));
     dateEditor.setNote(lid, n);
+    QLOG_DEBUG() << content;
+    //editor->setContent(content,  "application/xhtml+xml");
     editor->setContent(content);
-
     // is this an ink note?
     if (inkNote)
         editor->page()->setContentEditable(false);
@@ -666,6 +669,15 @@ void NBrowserWindow::italicsButtonPressed() {
 // The underline button was toggled
 void NBrowserWindow::underlineButtonPressed() {
     this->editor->triggerPageAction(QWebPage::ToggleUnderline);
+    this->editor->setFocus();
+    microFocusChanged();
+}
+
+
+
+// The underline button was toggled
+void NBrowserWindow::removeFormatButtonPressed() {
+    this->editor->triggerPageAction(QWebPage::RemoveFormat);
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -1145,7 +1157,10 @@ void NBrowserWindow::updateImageHash(QByteArray newhash) {
             oldhash = oldhash.mid(0,oldhash.indexOf("\""));
             section.replace(oldhash, newhash.toHex());
             QString newcontent = content.mid(0,pos) +section +content.mid(endPos);
-            editor->page()->mainFrame()->setHtml(newcontent);
+            QByteArray c;
+            c.append(newcontent);
+            //editor->page()->mainFrame()->setContent(c,  "application/xhtml+xml");
+            editor->page()->mainFrame()->setContent(c);
             rtable.updateResourceHash(selectedFileLid, newhash);
             return;
         }
@@ -1661,6 +1676,7 @@ void NBrowserWindow::setInsideLink(QString link) {
 // Edit a latex formula
 void NBrowserWindow::editLatex(QString guid) {
     QString text = editor->selectedText();
+    QString oldFormula = "";
     if (text.trimmed() == "\n" || text.trimmed() == "") {
         InsertLatexDialog dialog;
         if (guid.trimmed() != "") {
@@ -1670,6 +1686,7 @@ void NBrowserWindow::editLatex(QString guid) {
             if (r.__isset.attributes && r.attributes.__isset.sourceURL) {
                 QString formula = QString::fromStdString(r.attributes.sourceURL);
                 formula = formula.replace("http://latex.codecogs.com/gif.latex?", "");
+                oldFormula = formula;
                 dialog.setFormula(formula);
             }
         }
@@ -1763,6 +1780,7 @@ void NBrowserWindow::editLatex(QString guid) {
     rtable.add(newlid, r, true);
 
     // do the actual insert into the note
+
     QString buffer;
     buffer.append("<a onmouseover=\"cursor:&apos;hand&apos; title=\"");
     buffer.append(text);
@@ -1778,16 +1796,34 @@ void NBrowserWindow::editLatex(QString guid) {
     buffer.append("&apos;, &apos;");
     buffer.append(outfile);
     buffer.append("&apos;);\" ");
-    buffer.append(" en-tag=\"en-media\" lid=\"");
+    buffer.append(" en-tag=\"en-latex\" lid=\"");
     buffer.append(QString::number(newlid));
     buffer.append("\"></a>");
-    QLOG_DEBUG() << buffer;
 
-    QString script_start = "document.execCommand('insertHTML', false, '";
-    QString script_end = "');";
+    // If this is a new formula, we insert it, otherwise we replace the old one.
+    if (oldFormula == "") {
+        QString script_start = "document.execCommand('insertHTML', false, '";
+        QString script_end = "');";
 
-    editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + buffer + script_end);
+        editor->page()->mainFrame()->evaluateJavaScript(
+                script_start + buffer + script_end);
+    } else {
+        QString oldHtml = editor->page()->mainFrame()->toHtml();
+        int startPos = oldHtml.indexOf("<a");
+        int endPos = oldHtml.indexOf("</a>", startPos);
+        while (startPos > 0) {
+            if (endPos > 0) {
+                QString slice = oldHtml.mid(startPos, endPos-startPos+4);
+                if (slice.indexOf("lid=\""+guid+"\"") && slice.indexOf("en-latex")) {
+                    oldHtml.replace(slice, buffer);
+                }
+                startPos = oldHtml.indexOf("<a", endPos);
+                editor->page()->mainFrame()->setHtml(oldHtml);
+                editor->reload();
+                contentChanged();
+            }
+        }
+    }
 }
 
 
@@ -1945,6 +1981,7 @@ void NBrowserWindow::printNote(QPrinter *printer) {
     QEventLoop loop;
     QObject::connect(tempEditor, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
 
+//    tempEditor->setContent(contents.toUtf8(),  "application/xhtml+xml");
     tempEditor->setContent(contents.toUtf8());
     loop.exec();
 
@@ -1965,6 +2002,7 @@ void NBrowserWindow::noteSourceUpdated() {
     ba.append(sourceEditHeader);
     ba.append(source);
     ba.append("</body></html>");
+//    editor->setContent(ba,  "application/xhtml+xml");
     editor->setContent(ba);
     this->editor->isDirty = true;
 }

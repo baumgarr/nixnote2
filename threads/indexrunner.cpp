@@ -101,6 +101,10 @@ void IndexRunner::index() {
             indexRecognition(noteLid, r);
             if (r.__isset.mime && r.mime == "application/pdf")
                 indexPdf(noteLid, r);
+            else {
+                if (r.__isset.mime && QString::fromStdString(r.mime).startsWith("application", Qt::CaseInsensitive))
+                    indexAttachment(noteLid, r);
+            }
             resourceTable.setIndexNeeded(lids.at(i), false);
         }
     }
@@ -217,6 +221,50 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
     sql.bindValue(":content", text);
+    sql.exec();
+
+}
+
+
+
+// Index any PDFs that are attached.  Basically it turns the PDF into text and adds it the same
+// way as a note's body
+void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
+    return;
+    ResourceTable rtable;
+    qint32 reslid = rtable.getLid(r.guid);
+    if (lid <= 0 || !keepRunning || pauseIndexing)
+        return;
+    QString extension = "";
+    if (r.__isset.attributes && r.attributes.__isset.fileName) {
+        extension = QString::fromStdString(r.attributes.fileName);
+        int i = extension.indexOf(".");
+        extension = extension.mid(i);
+    }
+    if (extension == ".exe" || extension == ".dlL" || extension == ".zip" ||
+            extension == ".bz" || extension == ".tar.gz" || extension == ".tar")
+        return;
+
+    QString file = global.fileManager.getDbaDirPath() + QString::number(reslid) +extension;
+    QString outFile = global.fileManager.getDbaDirPath() + QString::number(reslid) + "-index.txt";
+
+    QProcess sofficeProcess;
+    sofficeProcess.start("soffice --headless --convert-to txt:\"text\" "+file,
+                         QIODevice::ReadWrite|QIODevice::Unbuffered);
+
+    QLOG_DEBUG() << "Starting soffice " << sofficeProcess.waitForStarted();
+    QLOG_DEBUG() << "Stopping soffice " << sofficeProcess.waitForFinished() << " Return Code: " << sofficeProcess.state();
+    QLOG_DEBUG() << "soffice Errors:" << sofficeProcess.readAllStandardError();
+    QLOG_DEBUG() << "soffice Output:" << sofficeProcess.readAllStandardOutput();
+
+    return;
+
+
+    QSqlQuery sql;
+    sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
+    sql.bindValue(":lid", lid);
+    sql.bindValue(":weight", 100);
+    //sql.bindValue(":content", text);
     sql.exec();
 
 }

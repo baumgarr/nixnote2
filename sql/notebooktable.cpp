@@ -498,13 +498,15 @@ void NotebookTable::deleteNotebook(qint32 lid) {
     if (!exists(lid))
         return;
 
-    // First delete all the notes for this notebook
+    // First delete all the notes for this notebook and
+    // move them to the default notebook
     QList<qint32> notes;
     NoteTable noteTable;
     QString guid;
     getGuid(guid, lid);
     noteTable.findNotesByNotebook(notes, guid);
     for (qint32 i=0; i<notes.size(); i++) {
+        noteTable.updateNotebook(notes[i], lid, true);
         noteTable.deleteNote(notes[i], true);
     }
 
@@ -513,11 +515,18 @@ void NotebookTable::deleteNotebook(qint32 lid) {
     get(notebook, lid);
     if (notebook.__isset.updateSequenceNum && notebook.updateSequenceNum > 0) {
         QSqlQuery query;
+        query.prepare("delete from datastore where lid=:lid and key=:key");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTEBOOK_IS_DELETED);
+        query.exec();
+
         query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTEBOOK_IS_DELETED);
         query.bindValue(":data", true);
         query.exec();
+
+        setDirty(lid, true);
     } else {
         expunge(lid);
     }
@@ -740,7 +749,7 @@ int NotebookTable::getNewUnsequencedCount() {
 qint32 NotebookTable::getAllDirty(QList<qint32> &lids) {
     QSqlQuery query;
     lids.clear();
-    query.prepare("Select lid from DataStore where key=:key");
+    query.prepare("Select lid from DataStore where key=:key and data='true'");
     query.bindValue(":key", NOTEBOOK_ISDIRTY);
     query.exec();
     while(query.next()) {

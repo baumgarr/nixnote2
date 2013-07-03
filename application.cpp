@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "application.h"
 #include "global.h"
 #include <QDebug>
+#include <execinfo.h>
 
 extern Global global;
 
@@ -36,7 +37,7 @@ bool Application::notify(QObject *receiver_, QEvent *event_)
     return QApplication::notify(receiver_, event_);
   }
   catch (std::exception &ex)
-  {
+  {     
         QLOG_ERROR() << "**********************************************************";
         QLOG_ERROR() << "**********************************************************";
         QLOG_ERROR() << "**********************************************************";
@@ -45,6 +46,16 @@ bool Application::notify(QObject *receiver_, QEvent *event_)
         QLOG_ERROR() << "**********************************************************";
         QLOG_ERROR() << "**********************************************************";
         QLOG_ERROR() << "std::exception was caught: " << ex.what();
+
+        void *array[30];
+        size_t size;
+
+        // get void*'s for all entries on the stack
+        size = backtrace(array, 30);
+
+        // print out all the frames to stderr
+        backtrace_symbols_fd(array, size, 2);
+
         emit (stdException(QString::fromStdString(ex.what())));
   }
 

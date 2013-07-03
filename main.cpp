@@ -29,13 +29,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 #include <QMessageBox>
 #include <QSharedMemory>
+#include <execinfo.h>
+#include <signal.h>
 
 //#include "utilities/encrypt.h"
 #include "application.h"
 
 
 //using namespace std;
-//using namespace Botan;
+using namespace Botan;
 //#include <QString>
 //#include <QByteArray>
 
@@ -45,10 +47,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //*********************************************
 extern Global global;
 
+
+void fault_handler(int sig) {
+  void *array[30];
+  size_t size;
+
+  // get void*'s for all entries on the stack
+  size = backtrace(array, 30);
+
+  // print out all the frames to stderr
+  fprintf(stderr, "Error: signal %d:\n", sig);
+  backtrace_symbols_fd(array, size, 2);
+  exit(1);
+}
+
+
 int main(int argc, char *argv[])
 {
 
     Botan::LibraryInitializer botanInit;
+
+    signal(SIGSEGV, fault_handler);   // install our handler
 
     // Setup the QApplication so we can begin
     Application a(argc, argv);

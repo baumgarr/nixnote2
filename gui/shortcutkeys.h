@@ -66,6 +66,7 @@ public:
     QString *Edit_Cut;						// Cut current selection to the clipboard
     QString *Edit_Copy;					// Copy the current selection to the clipboard
     QString *Edit_Paste;					// Paste
+    QString *Edit_Remove_Format;             // Remove formatting
     QString *Edit_Paste_Without_Formatting; // Paste as plain text
     QString *Edit_Preferences;				// Settings dialog box
     QString *Edit_Insert_Hyperlink;		// Encrypt selected text

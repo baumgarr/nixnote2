@@ -13,6 +13,14 @@
 #include <QObject>
 #include <QPainter>
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+
 extern Global global;
 
 
@@ -27,7 +35,13 @@ CommunicationManager::CommunicationManager(QObject *parent) :
     networkAccessManager = new QNetworkAccessManager();
     inkNoteList = new QList< QPair<QString, QImage*>* >();
     thumbnailList = new QList< QPair<QString, QImage*>* >();
-    //networkAccessManager->connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteReady(QNetworkReply*)));
+
+    sslSocketFactory = shared_ptr<TSSLSocketFactory>(new TSSLSocketFactory());
+    QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
+    sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
+    pgmDir = global.getProgramDirPath() + "/certs/thawte.pem";
+    sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
+    sslSocketFactory->authenticate(true);
 }
 
 
@@ -99,9 +113,9 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
             noteStoreClient->getNote(n, token, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
             chunk.notes[i] = n;
             if (n.__isset.resources && n.resources.size() > 0) {
-                checkForInkNotes(n.resources);
+                checkForInkNotes(n.resources, "");
             }
-            downloadThumbnail(QString::fromStdString(n.guid), authToken, "");
+            downloadThumbnail(QString::fromStdString(n.guid), authToken,"");
         }
         for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
             QLOG_DEBUG() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
@@ -110,7 +124,7 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
             chunk.resources[i] = r;
         }
         if (chunk.__isset.resources && chunk.resources.size()>0)
-            checkForInkNotes(chunk.resources);
+            checkForInkNotes(chunk.resources,"");
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         return false;
@@ -152,24 +166,47 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook book
 
     disconnectFromLinkedNotebook();
 
+    // This is a bit of a workaround.  If the notebook is a privately shared notebook, then
+    // we can use https to connect.  If it is a public notebook then we use unencrypted
+    // http.
+    //
+    // For public notebooks we don't need to call the authenticateToSharedNotebook function.
+    //
+    // If I try to use an https connection for a public notebook, the function
+    // getLinkedNotebookSyncState will fail with some bizzaro SSL error.  I have no
+    // idea why.  This same connection works using http.  Since this is a "public"
+    // notebook we should be o.k. with an unencrypted connection.
+
     try {
+        if (book.shareKey != "") {
+//            shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
+//            QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
+//            sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
+//            sslSocketFactory->authenticate(true);
 
-        shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
-        QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
-        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-        sslSocketFactory->authenticate(true);
+            linkedSslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
+            shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(linkedSslSocketNoteStore));
 
-        linkedSslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
-        shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(linkedSslSocketNoteStore));
+            linkedNoteStorePath = "/edam/note/" +book.shardId;
+            linkedNoteStoreHttpClient = shared_ptr<TTransport>(new THttpClient(bufferedTransport, evernoteHost, linkedNoteStorePath));
 
-        linkedNoteStorePath = "/edam/note/" +book.shardId;
-        linkedNoteStoreHttpClient = shared_ptr<TTransport>(new THttpClient(bufferedTransport, evernoteHost, linkedNoteStorePath));
+            linkedNoteStoreHttpClient->open();
 
-        linkedNoteStoreHttpClient->open();
-        shared_ptr<TProtocol> noteStoreProtocol(new TBinaryProtocol(linkedNoteStoreHttpClient));
-        linkedNoteStoreClient = shared_ptr<NoteStoreClient>(new NoteStoreClient(noteStoreProtocol));
+            shared_ptr<TProtocol> noteStoreProtocol(new TBinaryProtocol(linkedNoteStoreHttpClient));
+            linkedNoteStoreClient = shared_ptr<NoteStoreClient>(new NoteStoreClient(noteStoreProtocol));
 
-        linkedNoteStoreClient->authenticateToSharedNotebook(linkedAuthToken, book.shareKey, authToken);
+            if (book.shareKey != "")
+                linkedNoteStoreClient->authenticateToSharedNotebook(linkedAuthToken, book.shareKey, authToken);
+        } else {
+            // This is a workaround to force an http connection for public notebooks to avoid errors
+            // getting the sync state.
+            string path = linkedNoteStorePath = "/edam/note/" +book.shardId;
+            shared_ptr<THttpClient> client(new THttpClient(evernoteHost, 80, path));
+            client->open();
+
+            shared_ptr<TProtocol> noteStoreProtocol(new TBinaryProtocol(client));
+            linkedNoteStoreClient = shared_ptr<NoteStoreClient>(new NoteStoreClient(noteStoreProtocol));
+        }
 
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.what() << endl;
@@ -225,10 +262,9 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
             QLOG_DEBUG() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
             Note n;
             linkedNoteStoreClient->getNote(n, authToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
-            //n.notebookGuid = linkedNotebook.guid;
             chunk.notes[i] = n;
             if (n.__isset.resources && n.resources.size() > 0) {
-                checkForInkNotes(n.resources);
+                checkForInkNotes(n.resources, QString::fromStdString(linkedNotebook.shardId));
             }
             downloadThumbnail(QString::fromStdString(n.guid), authToken, linkedNotebook.shardId);
         }
@@ -239,7 +275,7 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
             chunk.resources[i] = r;
         }
         if (chunk.__isset.resources && chunk.resources.size()>0)
-            checkForInkNotes(chunk.resources);
+            checkForInkNotes(chunk.resources, QString::fromStdString(linkedNotebook.shardId));
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         return false;
@@ -260,8 +296,6 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
 bool CommunicationManager::init() {
     if (initComplete)
         return true;
-    if (!initUserStore())
-        return false;
     if (!initNoteStore())
         return false;
     initComplete = true;
@@ -282,12 +316,13 @@ string CommunicationManager::getToken() {
 bool CommunicationManager::initUserStore() {
     QLOG_DEBUG() << "Inside CommunicationManager::initUserStore()";
     try {
-        shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
-        QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
-        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-        sslSocketFactory->authenticate(true);
+//        shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
+//        QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
+//        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
+//        sslSocketFactory->authenticate(true);
 
         sslSocketUserStore = sslSocketFactory->createSocket(evernoteHost, 443);
+        sslSocketUserStore->setNoDelay(true);
         shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(sslSocketUserStore));
         userStoreHttpClient = shared_ptr<TTransport>(new THttpClient(bufferedTransport, evernoteHost, userStorePath));
 
@@ -299,6 +334,10 @@ bool CommunicationManager::initUserStore() {
                 QLOG_ERROR() << "Incompatible Evernote API version";
                 return false;
         }
+
+        SOCKET s = sslSocketUserStore->getSocketFD();
+        this->setSocketOptions(s);
+
 
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -323,6 +362,40 @@ bool CommunicationManager::initUserStore() {
 }
 
 
+
+void CommunicationManager::setSocketOptions(SOCKET s) {
+    int optval;
+
+    socklen_t optlen = sizeof(optval);
+    getsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
+    QLOG_DEBUG() << "SO_KEEPALIVE was " << optval;
+    optval = 1;
+    setsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, optlen);
+    getsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
+    QLOG_DEBUG() << "SO_KEEPALIVE is now " << optval;
+
+    getsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, &optlen);
+    QLOG_DEBUG() << "TCP_KEEPCNT was " << optval;
+    optval=9;
+    setsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, optlen);
+    getsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, &optlen);
+    QLOG_DEBUG() << "TCP_KEEPCNT is now " << optval;
+
+    getsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, &optlen);
+    QLOG_DEBUG() << "TCP_KEEPIDLE was " << optval;
+    optval=1200;
+    setsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, optlen);
+    getsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, &optlen);
+    QLOG_DEBUG() << "TCP_KEEPIDLE is now " << optval;
+
+    getsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, &optlen);
+    QLOG_DEBUG() << "TCP_KEEPINTVL was " << optval;
+    optval=60;
+    setsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, optlen);
+    getsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, &optlen);
+    QLOG_DEBUG() << "TCP_KEEPINTVL is now " << optval;
+}
+
 // Initialize the note store
 bool CommunicationManager::initNoteStore() {
 
@@ -333,14 +406,18 @@ bool CommunicationManager::initNoteStore() {
 
 
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
-        QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
+        QString pgmDir = global.getProgramDirPath() + "/certs/thawte.pem";
+        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
+        pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
         sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
         sslSocketFactory->authenticate(true);
 
         sslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
+        sslSocketNoteStore->setNoDelay(true);
         shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(sslSocketNoteStore));
         User user;
-        userStoreClient->getUser(user, authToken);
+        if (!getUserInfo(user))
+            return false;
         noteStorePath = "/edam/note/" +user.shardId;
         noteStoreHttpClient = shared_ptr<TTransport>(new THttpClient(bufferedTransport, evernoteHost, noteStorePath));
 
@@ -350,6 +427,10 @@ bool CommunicationManager::initNoteStore() {
 
         SyncState syncState;
         noteStoreClient->getSyncState(syncState, authToken);
+
+
+        SOCKET s = sslSocketNoteStore->getSocketFD();
+        this->setSocketOptions(s);
 
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -380,23 +461,30 @@ bool CommunicationManager::initNoteStore() {
 
 // Disconnect from Evernote's servers (for private notebooks)
 void CommunicationManager::disconnect() {
+
     if (noteStoreHttpClient != NULL && noteStoreHttpClient->isOpen()) {
-        noteStoreHttpClient->flush();
+//        if (noteStoreHttpClient->peek())
+            noteStoreHttpClient->flush();
         noteStoreHttpClient->close();
-    }
-    if (userStoreHttpClient != NULL && userStoreHttpClient->isOpen()) {
-        userStoreHttpClient->flush();
-        userStoreHttpClient->close();
     }
     disconnectFromLinkedNotebook();
     initComplete=false;
 }
 
 
+void CommunicationManager::disconnectUserStore() {
+    if (userStoreHttpClient != NULL && userStoreHttpClient->isOpen()) {
+//        if (userStoreHttpClient->peek())
+            userStoreHttpClient->flush();
+        userStoreHttpClient->close();
+    }
+}
+
 // Disconnect from Evernote's servers (for linked notebooks)
 void  CommunicationManager::disconnectFromLinkedNotebook() {
-    if (linkedNoteStoreClient != NULL && linkedNoteStoreHttpClient->isOpen()) {
-        linkedNoteStoreHttpClient->flush();
+    if (linkedNoteStoreHttpClient != NULL && linkedNoteStoreHttpClient->isOpen()) {
+        if (linkedNoteStoreHttpClient->peek())
+            linkedNoteStoreHttpClient->flush();
         linkedNoteStoreHttpClient->close();
     }
 }
@@ -406,36 +494,56 @@ void  CommunicationManager::disconnectFromLinkedNotebook() {
 bool CommunicationManager::getUserInfo(User &user) {
     QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo";
     try {
+       //this->refreshConnection();
+        if (!initUserStore())
+            return false;
        userStoreClient->getUser(user, authToken);
+       disconnectUserStore();
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.message = QString::fromStdString(e.what());
         error.type = CommunicationError::EDAMUserException;
+        disconnectUserStore();
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
         error.code = e.errorCode;
         error.message = QString::fromStdString(e.message);
         error.type = CommunicationError::EDAMSystemException;
+        disconnectUserStore();
         return false;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
         error.message = QString::fromStdString(e.what());
         error.type = CommunicationError::EDAMNotFoundException;
+        disconnectUserStore();
         return false;
-    }
-
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException :" << QString::fromStdString(e.what()) << endl;
+        error.message = QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
+        disconnectUserStore();
+        return false;
+    } catch (exception e) {
+            QLOG_ERROR() << "StdException :" << QString::fromStdString(e.what()) << endl;
+            error.message = QString::fromStdString(e.what());
+            error.type = CommunicationError::StdException;
+            disconnectUserStore();
+            return false;
+        }
     return true;
 }
 
 
+
+
 // See if there are any ink notes in this list of resources
-void CommunicationManager::checkForInkNotes(vector<Resource> &resources) {
+void CommunicationManager::checkForInkNotes(vector<Resource> &resources, QString shard) {
     for (unsigned int i=0; i<resources.size(); i++) {
         Resource *r = &resources[i];
         if (r->__isset.mime && r->mime == "application/vnd.evernote.ink") {
-            downloadInkNoteImage(QString::fromStdString(r->guid), r);
+            downloadInkNoteImage(QString::fromStdString(r->guid), r, shard);
         }
     }
 }
@@ -443,13 +551,15 @@ void CommunicationManager::checkForInkNotes(vector<Resource> &resources) {
 
 
 // Download an ink note image
-void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r) {
+void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QString shard) {
     UserTable userTable;
     User u;
     userTable.getUser(u);
+    if (shard == "")
+        shard = QString::fromStdString(u.shardId);
     QString urlBase = QString::fromStdString("https://")+QString::fromStdString(evernoteHost)
             +QString("/shard/")
-            +QString::fromStdString(u.shardId)
+            +shard
             +QString("/res/")
             +guid +QString(".ink?slice=");
     int sliceCount = 1+((r->height-1)/600);
@@ -737,7 +847,7 @@ qint32 CommunicationManager::uploadNote(Note &note) {
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading note " + QString::fromStdString(note.title) + "\" : " +QString::fromStdString(e.what());
+        error.message = "Error uploading note \"" + QString::fromStdString(note.title) + "\". Note not found";
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
@@ -746,6 +856,40 @@ qint32 CommunicationManager::uploadNote(Note &note) {
         error.type = CommunicationError::TTransportException;
         return 0;
 
+    }
+}
+
+
+
+
+// delete a note in Evernote
+qint32 CommunicationManager::deleteNote(string note) {
+    // Try upload
+    try {
+        qint32 usn = noteStoreClient->deleteNote(authToken, note);
+        return usn;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = "Error deleting note \"" + QString::fromStdString(note) + "\"";
+        error.type = CommunicationError::EDAMUserException;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        error.code = e.errorCode;
+        error.message = "Error deleting note \"" + QString::fromStdString(note) + "\" : " +QString::fromStdString(e.message);
+        error.type = CommunicationError::EDAMSystemException;
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
+        error.message = "Error deleting note \"" + QString::fromStdString(note) + "\". Note not found";
+        error.type = CommunicationError::EDAMNotFoundException;
+        return 0;
+    } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransportException:" << QString::fromStdString(e.what()) << endl;
+        error.message = "Error deleting note \"" + QString::fromStdString(note) + "\" : " +QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
+        return 0;
     }
 }
 
@@ -785,9 +929,10 @@ void CommunicationManager::downloadThumbnail(QString guid, string authToken, str
     // Execute the event loop here, now we will wait here until readyRead() signal is emitted
     // which in turn will trigger event loop quit.
     loop.exec();
-    QImage replyImage;
+    QImage replyImage(size, QImage::Format_ARGB32);
     replyImage.loadFromData(reply->readAll());
-    newImage= new QImage(size, replyImage.format());
+    newImage= new QImage(size, QImage::Format_ARGB32);
+    newImage->fill(Qt::transparent);
     position = thumbnailReady(newImage, &replyImage, position);
     if (position == -1) {
         QLOG_ERROR() << "Error fetching thumbnail " << reply->errorString();
@@ -810,6 +955,10 @@ int CommunicationManager::thumbnailReady(QImage *img, QImage *replyImage, int po
     position = position+replyImage->height();
     if (!replyImage->isNull()) {
         QPainter p(img);
+        p.setCompositionMode(QPainter::CompositionMode_Clear);
+        p.fillRect(0,0,img->width(),img->height(), Qt::transparent);
+        img->fill(Qt::transparent);
+        p.setCompositionMode(QPainter::CompositionMode_SourceOver);
         p.drawImage(QRect(0,priorPosition, replyImage->width(), position), *replyImage);
         p.end();
         return position;

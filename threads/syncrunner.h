@@ -138,7 +138,6 @@ public:
     ~SyncRunner();
     void run();
     bool error;
-    int retryCount;
     CommunicationError* getError();
     void communicationErrorHandler();
 

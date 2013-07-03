@@ -14377,6 +14377,252 @@ uint32_t NoteStore_updateSharedNotebook_presult::read(::apache::thrift::protocol
   return xfer;
 }
 
+uint32_t NoteStore_setSharedNotebookRecipientSettings_args::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->authenticationToken);
+          this->__isset.authenticationToken = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_I64) {
+          xfer += iprot->readI64(this->sharedNotebookId);
+          this->__isset.sharedNotebookId = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->recipientSettings.read(iprot);
+          this->__isset.recipientSettings = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t NoteStore_setSharedNotebookRecipientSettings_args::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("NoteStore_setSharedNotebookRecipientSettings_args");
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString(this->authenticationToken);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("sharedNotebookId", ::apache::thrift::protocol::T_I64, 2);
+  xfer += oprot->writeI64(this->sharedNotebookId);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("recipientSettings", ::apache::thrift::protocol::T_STRUCT, 3);
+  xfer += this->recipientSettings.write(oprot);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t NoteStore_setSharedNotebookRecipientSettings_pargs::write(::apache::thrift::protocol::TProtocol* oprot) const {
+  uint32_t xfer = 0;
+  xfer += oprot->writeStructBegin("NoteStore_setSharedNotebookRecipientSettings_pargs");
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 1);
+  xfer += oprot->writeString((*(this->authenticationToken)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("sharedNotebookId", ::apache::thrift::protocol::T_I64, 2);
+  xfer += oprot->writeI64((*(this->sharedNotebookId)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("recipientSettings", ::apache::thrift::protocol::T_STRUCT, 3);
+  xfer += (*(this->recipientSettings)).write(oprot);
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t NoteStore_setSharedNotebookRecipientSettings_result::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->success);
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->userException.read(iprot);
+          this->__isset.userException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->notFoundException.read(iprot);
+          this->__isset.notFoundException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
+uint32_t NoteStore_setSharedNotebookRecipientSettings_result::write(::apache::thrift::protocol::TProtocol* oprot) const {
+
+  uint32_t xfer = 0;
+
+  xfer += oprot->writeStructBegin("NoteStore_setSharedNotebookRecipientSettings_result");
+
+  if (this->__isset.success) {
+    xfer += oprot->writeFieldBegin("success", ::apache::thrift::protocol::T_I32, 0);
+    xfer += oprot->writeI32(this->success);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.userException) {
+    xfer += oprot->writeFieldBegin("userException", ::apache::thrift::protocol::T_STRUCT, 1);
+    xfer += this->userException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.notFoundException) {
+    xfer += oprot->writeFieldBegin("notFoundException", ::apache::thrift::protocol::T_STRUCT, 2);
+    xfer += this->notFoundException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  } else if (this->__isset.systemException) {
+    xfer += oprot->writeFieldBegin("systemException", ::apache::thrift::protocol::T_STRUCT, 3);
+    xfer += this->systemException.write(oprot);
+    xfer += oprot->writeFieldEnd();
+  }
+  xfer += oprot->writeFieldStop();
+  xfer += oprot->writeStructEnd();
+  return xfer;
+}
+
+uint32_t NoteStore_setSharedNotebookRecipientSettings_presult::read(::apache::thrift::protocol::TProtocol* iprot) {
+
+  uint32_t xfer = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TType ftype;
+  int16_t fid;
+
+  xfer += iprot->readStructBegin(fname);
+
+  using ::apache::thrift::protocol::TProtocolException;
+
+
+  while (true)
+  {
+    xfer += iprot->readFieldBegin(fname, ftype, fid);
+    if (ftype == ::apache::thrift::protocol::T_STOP) {
+      break;
+    }
+    switch (fid)
+    {
+      case 0:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32((*(this->success)));
+          this->__isset.success = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 1:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->userException.read(iprot);
+          this->__isset.userException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 2:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->notFoundException.read(iprot);
+          this->__isset.notFoundException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRUCT) {
+          xfer += this->systemException.read(iprot);
+          this->__isset.systemException = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
+      default:
+        xfer += iprot->skip(ftype);
+        break;
+    }
+    xfer += iprot->readFieldEnd();
+  }
+
+  xfer += iprot->readStructEnd();
+
+  return xfer;
+}
+
 uint32_t NoteStore_sendMessageToSharedNotebookMembers_args::read(::apache::thrift::protocol::TProtocol* iprot) {
 
   uint32_t xfer = 0;
@@ -17263,6 +17509,14 @@ uint32_t NoteStore_authenticateToSharedNote_args::read(::apache::thrift::protoco
           xfer += iprot->skip(ftype);
         }
         break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_STRING) {
+          xfer += iprot->readString(this->authenticationToken);
+          this->__isset.authenticationToken = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -17284,6 +17538,9 @@ uint32_t NoteStore_authenticateToSharedNote_args::write(::apache::thrift::protoc
   xfer += oprot->writeFieldBegin("noteKey", ::apache::thrift::protocol::T_STRING, 2);
   xfer += oprot->writeString(this->noteKey);
   xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString(this->authenticationToken);
+  xfer += oprot->writeFieldEnd();
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
   return xfer;
@@ -17297,6 +17554,9 @@ uint32_t NoteStore_authenticateToSharedNote_pargs::write(::apache::thrift::proto
   xfer += oprot->writeFieldEnd();
   xfer += oprot->writeFieldBegin("noteKey", ::apache::thrift::protocol::T_STRING, 2);
   xfer += oprot->writeString((*(this->noteKey)));
+  xfer += oprot->writeFieldEnd();
+  xfer += oprot->writeFieldBegin("authenticationToken", ::apache::thrift::protocol::T_STRING, 3);
+  xfer += oprot->writeString((*(this->authenticationToken)));
   xfer += oprot->writeFieldEnd();
   xfer += oprot->writeFieldStop();
   xfer += oprot->writeStructEnd();
@@ -21899,6 +22159,77 @@ int32_t NoteStoreClient::recv_updateSharedNotebook()
   throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "updateSharedNotebook failed: unknown result");
 }
 
+int32_t NoteStoreClient::setSharedNotebookRecipientSettings(const std::string& authenticationToken, const int64_t sharedNotebookId, const evernote::edam::SharedNotebookRecipientSettings& recipientSettings)
+{
+  send_setSharedNotebookRecipientSettings(authenticationToken, sharedNotebookId, recipientSettings);
+  return recv_setSharedNotebookRecipientSettings();
+}
+
+void NoteStoreClient::send_setSharedNotebookRecipientSettings(const std::string& authenticationToken, const int64_t sharedNotebookId, const evernote::edam::SharedNotebookRecipientSettings& recipientSettings)
+{
+  int32_t cseqid = 0;
+  oprot_->writeMessageBegin("setSharedNotebookRecipientSettings", ::apache::thrift::protocol::T_CALL, cseqid);
+
+  NoteStore_setSharedNotebookRecipientSettings_pargs args;
+  args.authenticationToken = &authenticationToken;
+  args.sharedNotebookId = &sharedNotebookId;
+  args.recipientSettings = &recipientSettings;
+  args.write(oprot_);
+
+  oprot_->writeMessageEnd();
+  oprot_->getTransport()->flush();
+  oprot_->getTransport()->writeEnd();
+}
+
+int32_t NoteStoreClient::recv_setSharedNotebookRecipientSettings()
+{
+
+  int32_t rseqid = 0;
+  std::string fname;
+  ::apache::thrift::protocol::TMessageType mtype;
+
+  iprot_->readMessageBegin(fname, mtype, rseqid);
+  if (mtype == ::apache::thrift::protocol::T_EXCEPTION) {
+    ::apache::thrift::TApplicationException x;
+    x.read(iprot_);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw x;
+  }
+  if (mtype != ::apache::thrift::protocol::T_REPLY) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::INVALID_MESSAGE_TYPE);
+  }
+  if (fname.compare("setSharedNotebookRecipientSettings") != 0) {
+    iprot_->skip(::apache::thrift::protocol::T_STRUCT);
+    iprot_->readMessageEnd();
+    iprot_->getTransport()->readEnd();
+    throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::WRONG_METHOD_NAME);
+  }
+  int32_t _return;
+  NoteStore_setSharedNotebookRecipientSettings_presult result;
+  result.success = &_return;
+  result.read(iprot_);
+  iprot_->readMessageEnd();
+  iprot_->getTransport()->readEnd();
+
+  if (result.__isset.success) {
+    return _return;
+  }
+  if (result.__isset.userException) {
+    throw result.userException;
+  }
+  if (result.__isset.notFoundException) {
+    throw result.notFoundException;
+  }
+  if (result.__isset.systemException) {
+    throw result.systemException;
+  }
+  throw ::apache::thrift::TApplicationException(::apache::thrift::TApplicationException::MISSING_RESULT, "setSharedNotebookRecipientSettings failed: unknown result");
+}
+
 int32_t NoteStoreClient::sendMessageToSharedNotebookMembers(const std::string& authenticationToken, const evernote::edam::Guid& notebookGuid, const std::string& messageText, const std::vector<std::string> & recipients)
 {
   send_sendMessageToSharedNotebookMembers(authenticationToken, notebookGuid, messageText, recipients);
@@ -22728,13 +23059,13 @@ void NoteStoreClient::recv_stopSharingNote()
   return;
 }
 
-void NoteStoreClient::authenticateToSharedNote(evernote::edam::AuthenticationResult& _return, const std::string& guid, const std::string& noteKey)
+void NoteStoreClient::authenticateToSharedNote(evernote::edam::AuthenticationResult& _return, const std::string& guid, const std::string& noteKey, const std::string& authenticationToken)
 {
-  send_authenticateToSharedNote(guid, noteKey);
+  send_authenticateToSharedNote(guid, noteKey, authenticationToken);
   recv_authenticateToSharedNote(_return);
 }
 
-void NoteStoreClient::send_authenticateToSharedNote(const std::string& guid, const std::string& noteKey)
+void NoteStoreClient::send_authenticateToSharedNote(const std::string& guid, const std::string& noteKey, const std::string& authenticationToken)
 {
   int32_t cseqid = 0;
   oprot_->writeMessageBegin("authenticateToSharedNote", ::apache::thrift::protocol::T_CALL, cseqid);
@@ -22742,6 +23073,7 @@ void NoteStoreClient::send_authenticateToSharedNote(const std::string& guid, con
   NoteStore_authenticateToSharedNote_pargs args;
   args.guid = &guid;
   args.noteKey = &noteKey;
+  args.authenticationToken = &authenticationToken;
   args.write(oprot_);
 
   oprot_->writeMessageEnd();
@@ -25097,6 +25429,43 @@ void NoteStoreProcessor::process_updateSharedNotebook(int32_t seqid, ::apache::t
   oprot->getTransport()->writeEnd();
 }
 
+void NoteStoreProcessor::process_setSharedNotebookRecipientSettings(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot)
+{
+  NoteStore_setSharedNotebookRecipientSettings_args args;
+  args.read(iprot);
+  iprot->readMessageEnd();
+  iprot->getTransport()->readEnd();
+
+  NoteStore_setSharedNotebookRecipientSettings_result result;
+  try {
+    result.success = iface_->setSharedNotebookRecipientSettings(args.authenticationToken, args.sharedNotebookId, args.recipientSettings);
+    result.__isset.success = true;
+  } catch (evernote::edam::EDAMUserException &userException) {
+    result.userException = userException;
+    result.__isset.userException = true;
+  } catch (evernote::edam::EDAMNotFoundException &notFoundException) {
+    result.notFoundException = notFoundException;
+    result.__isset.notFoundException = true;
+  } catch (evernote::edam::EDAMSystemException &systemException) {
+    result.systemException = systemException;
+    result.__isset.systemException = true;
+  } catch (const std::exception& e) {
+    ::apache::thrift::TApplicationException x(e.what());
+    oprot->writeMessageBegin("setSharedNotebookRecipientSettings", ::apache::thrift::protocol::T_EXCEPTION, seqid);
+    x.write(oprot);
+    oprot->writeMessageEnd();
+    oprot->getTransport()->flush();
+    oprot->getTransport()->writeEnd();
+    return;
+  }
+
+  oprot->writeMessageBegin("setSharedNotebookRecipientSettings", ::apache::thrift::protocol::T_REPLY, seqid);
+  result.write(oprot);
+  oprot->writeMessageEnd();
+  oprot->getTransport()->flush();
+  oprot->getTransport()->writeEnd();
+}
+
 void NoteStoreProcessor::process_sendMessageToSharedNotebookMembers(int32_t seqid, ::apache::thrift::protocol::TProtocol* iprot, ::apache::thrift::protocol::TProtocol* oprot)
 {
   NoteStore_sendMessageToSharedNotebookMembers_args args;
@@ -25548,7 +25917,7 @@ void NoteStoreProcessor::process_authenticateToSharedNote(int32_t seqid, ::apach
 
   NoteStore_authenticateToSharedNote_result result;
   try {
-    iface_->authenticateToSharedNote(result.success, args.guid, args.noteKey);
+    iface_->authenticateToSharedNote(result.success, args.guid, args.noteKey, args.authenticationToken);
     result.__isset.success = true;
   } catch (evernote::edam::EDAMUserException &userException) {
     result.userException = userException;

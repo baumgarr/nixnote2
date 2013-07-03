@@ -33,7 +33,9 @@ struct EDAMErrorCode {
     LEN_TOO_LONG = 14,
     TOO_FEW = 15,
     TOO_MANY = 16,
-    UNSUPPORTED_OPERATION = 17
+    UNSUPPORTED_OPERATION = 17,
+    TAKEN_DOWN = 18,
+    RATE_LIMIT_REACHED = 19
   };
 };
 
@@ -80,23 +82,25 @@ class EDAMUserException : public ::apache::thrift::TException {
 };
 
 typedef struct _EDAMSystemException__isset {
-  _EDAMSystemException__isset() : message(false) {}
+  _EDAMSystemException__isset() : message(false), rateLimitDuration(false) {}
   bool message;
+  bool rateLimitDuration;
 } _EDAMSystemException__isset;
 
 class EDAMSystemException : public ::apache::thrift::TException {
  public:
 
-  static const char* ascii_fingerprint; // = "24652790C81ECE22B629CB60A19F1E93";
-  static const uint8_t binary_fingerprint[16]; // = {0x24,0x65,0x27,0x90,0xC8,0x1E,0xCE,0x22,0xB6,0x29,0xCB,0x60,0xA1,0x9F,0x1E,0x93};
+  static const char* ascii_fingerprint; // = "106D9EB644563D065C091D0BD32D7D44";
+  static const uint8_t binary_fingerprint[16]; // = {0x10,0x6D,0x9E,0xB6,0x44,0x56,0x3D,0x06,0x5C,0x09,0x1D,0x0B,0xD3,0x2D,0x7D,0x44};
 
-  EDAMSystemException() : message("") {
+  EDAMSystemException() : message(""), rateLimitDuration(0) {
   }
 
   virtual ~EDAMSystemException() throw() {}
 
   EDAMErrorCode::type errorCode;
   std::string message;
+  int32_t rateLimitDuration;
 
   _EDAMSystemException__isset __isset;
 
@@ -107,6 +111,10 @@ class EDAMSystemException : public ::apache::thrift::TException {
     if (__isset.message != rhs.__isset.message)
       return false;
     else if (__isset.message && !(message == rhs.message))
+      return false;
+    if (__isset.rateLimitDuration != rhs.__isset.rateLimitDuration)
+      return false;
+    else if (__isset.rateLimitDuration && !(rateLimitDuration == rhs.rateLimitDuration))
       return false;
     return true;
   }

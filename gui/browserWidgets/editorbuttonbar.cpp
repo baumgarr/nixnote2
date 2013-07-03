@@ -38,6 +38,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     cutVisible  = contextMenu->addAction(tr("Cut"));
     copyVisible = contextMenu->addAction(tr("Copy"));
     pasteVisible = contextMenu->addAction(tr("Paste"));
+    removeFormatVisible = contextMenu->addAction(tr("Remove Formatting"));
     boldVisible = contextMenu->addAction(tr("Bold"));
     italicVisible = contextMenu->addAction(tr("Italics"));
     underlineVisible = contextMenu->addAction(tr("Underline"));
@@ -55,12 +56,14 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     fontColorVisible = contextMenu->addAction(tr("Font Color"));
     highlightVisible = contextMenu->addAction(tr("Highlight"));
     todoVisible = contextMenu->addAction(tr("Todo"));
+    insertTableButtonVisible = contextMenu->addAction(tr("Insert Table"));
 
     undoVisible->setCheckable(true);
     redoVisible->setCheckable(true);
     cutVisible->setCheckable(true);
     copyVisible->setCheckable(true);
     pasteVisible->setCheckable(true);
+    removeFormatVisible->setCheckable(true);
     boldVisible->setCheckable(true);
     italicVisible->setCheckable(true);
     underlineVisible->setCheckable(true);
@@ -79,12 +82,14 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     fontColorVisible->setCheckable(true);
     fontSizeVisible->setCheckable(true);
     fontVisible->setCheckable(true);
+    insertTableButtonVisible->setCheckable(true);
 
     connect(undoVisible, SIGNAL(triggered()), this, SLOT(toggleUndoButtonVisible()));
     connect(redoVisible, SIGNAL(triggered()), this, SLOT(toggleRedoButtonVisible()));
     connect(cutVisible, SIGNAL(triggered()), this, SLOT(toggleCutButtonVisible()));
     connect(copyVisible, SIGNAL(triggered()), this, SLOT(toggleCopyButtonVisible()));
     connect(pasteVisible, SIGNAL(triggered()), this, SLOT(togglePasteButtonVisible()));
+    connect(removeFormatVisible, SIGNAL(triggered()), this, SLOT(toggleRemoveFormatVisible()));
     connect(boldVisible, SIGNAL(triggered()), this, SLOT(toggleBoldButtonVisible()));
     connect(italicVisible, SIGNAL(triggered()), this, SLOT(toggleItalicButtonVisible()));
     connect(underlineVisible, SIGNAL(triggered()), this, SLOT(toggleUnderlineButtonVisible()));
@@ -102,6 +107,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   connect(todoVisible, SIGNAL(triggered()), this, SLOT(toggleTodoButtonVisible()));
 //    connect(highlightVisible, SIGNAL(triggered()), this, SLOT(toggleHlineButtonVisible()));
 //    connect(fontColorVisible, SIGNAL(triggered()), this, SLOT(toggleFontColorVisible()));
+  connect(insertTableButtonVisible, SIGNAL(triggered()), this, SLOT(toggleInsertTableButtonVisible()));
 
 
   undoButtonAction = this->addAction(QIcon(":undo.png"), tr("Undo"));
@@ -115,6 +121,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   this->setupShortcut(copyButtonAction, "Edit_Copy");
   pasteButtonAction = this->addAction(QIcon(":paste.png"), tr("Paste"));
   this->setupShortcut(pasteButtonAction, "Edit_Paste");
+  removeFormatButtonAction = this->addAction(QIcon(":eraser.png"), tr("Remove Formatting"));
+  this->setupShortcut(removeFormatButtonAction, "Edit_Remove_Formatting");
 
   boldButtonWidget = new QToolButton(this);
   boldButtonWidget->setIcon(QIcon(":bold.png"));
@@ -186,6 +194,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
   todoButtonAction = this->addAction(QIcon(":todo.png"), tr("Todo"));
   this->setupShortcut(todoButtonAction, "Edit_Insert_Todo");
+  insertTableButtonAction = this->addAction(QIcon(":grid.png"), tr("Insert Table"));
+  this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
 }
 
 
@@ -236,6 +246,9 @@ void EditorButtonBar::saveVisibleButtons() {
 
     value = pasteButtonAction->isVisible();
     global.settings->setValue("pasteButtonVisible", value);
+
+    value = removeFormatButtonAction->isVisible();
+    global.settings->setValue("removeFormatButtonVisible", value);
 
     value = boldButtonAction->isVisible();
     global.settings->setValue("boldButtonVisible", value);
@@ -288,6 +301,9 @@ void EditorButtonBar::saveVisibleButtons() {
     value = todoButtonAction->isVisible();
     global.settings->setValue("todoButtonVisible", value);
 
+    value = insertTableButtonAction->isVisible();
+    global.settings->setValue("insertTableButtonVisible", value);
+
     global.settings->endGroup();
 }
 
@@ -309,6 +325,9 @@ void EditorButtonBar::setupVisibleButtons() {
 
     pasteButtonAction->setVisible(global.settings->value("pasteButtonVisible", true).toBool());
     pasteVisible->setChecked(pasteButtonAction->isVisible());
+
+    removeFormatButtonAction->setVisible(global.settings->value("removeFormatButtonVisible", true).toBool());
+    removeFormatVisible->setChecked(removeFormatButtonAction->isVisible());
 
     boldButtonAction->setVisible(global.settings->value("boldButtonVisible", true).toBool());
     boldVisible->setChecked(boldButtonAction->isVisible());
@@ -355,6 +374,9 @@ void EditorButtonBar::setupVisibleButtons() {
     todoButtonAction->setVisible(global.settings->value("todoButtonVisible", true).toBool());
     todoVisible->setChecked(todoButtonAction->isVisible());
 
+    insertTableButtonAction->setVisible(global.settings->value("insertTableButtonVisible", true).toBool());
+    insertTableButtonVisible->setChecked(insertTableButtonAction->isVisible());
+
     //fontColorAction ->setVisible(global.settings->value("fontColorButtonVisible", true).toBool());
     //fontColorVisible->setChecked(fontColorAction->isVisible());
 
@@ -384,6 +406,10 @@ void EditorButtonBar::toggleCopyButtonVisible() {
 }
 void EditorButtonBar::togglePasteButtonVisible() {
     pasteButtonAction->setVisible(pasteVisible->isChecked());
+    saveVisibleButtons();
+}
+void EditorButtonBar::toggleRemoveFormatVisible() {
+    removeFormatButtonAction->setVisible(removeFormatVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleBoldButtonVisible() {
@@ -454,7 +480,10 @@ void EditorButtonBar::toggleFontColorVisible() {
     fontColorAction->setVisible(fontColorVisible->isChecked());
     saveVisibleButtons();
 }
-
+void EditorButtonBar::toggleInsertTableButtonVisible() {
+    insertTableButtonAction->setVisible(insertTableButtonVisible->isChecked());
+    saveVisibleButtons();
+}
 
 
 // Load the list of font names

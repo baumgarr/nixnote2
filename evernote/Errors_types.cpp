@@ -79,8 +79,8 @@ uint32_t EDAMUserException::write(::apache::thrift::protocol::TProtocol* oprot) 
   return xfer;
 }
 
-const char* EDAMSystemException::ascii_fingerprint = "24652790C81ECE22B629CB60A19F1E93";
-const uint8_t EDAMSystemException::binary_fingerprint[16] = {0x24,0x65,0x27,0x90,0xC8,0x1E,0xCE,0x22,0xB6,0x29,0xCB,0x60,0xA1,0x9F,0x1E,0x93};
+const char* EDAMSystemException::ascii_fingerprint = "106D9EB644563D065C091D0BD32D7D44";
+const uint8_t EDAMSystemException::binary_fingerprint[16] = {0x10,0x6D,0x9E,0xB6,0x44,0x56,0x3D,0x06,0x5C,0x09,0x1D,0x0B,0xD3,0x2D,0x7D,0x44};
 
 uint32_t EDAMSystemException::read(::apache::thrift::protocol::TProtocol* iprot) {
 
@@ -121,6 +121,14 @@ uint32_t EDAMSystemException::read(::apache::thrift::protocol::TProtocol* iprot)
           xfer += iprot->skip(ftype);
         }
         break;
+      case 3:
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->rateLimitDuration);
+          this->__isset.rateLimitDuration = true;
+        } else {
+          xfer += iprot->skip(ftype);
+        }
+        break;
       default:
         xfer += iprot->skip(ftype);
         break;
@@ -144,6 +152,11 @@ uint32_t EDAMSystemException::write(::apache::thrift::protocol::TProtocol* oprot
   if (this->__isset.message) {
     xfer += oprot->writeFieldBegin("message", ::apache::thrift::protocol::T_STRING, 2);
     xfer += oprot->writeString(this->message);
+    xfer += oprot->writeFieldEnd();
+  }
+  if (this->__isset.rateLimitDuration) {
+    xfer += oprot->writeFieldBegin("rateLimitDuration", ::apache::thrift::protocol::T_I32, 3);
+    xfer += oprot->writeI32(this->rateLimitDuration);
     xfer += oprot->writeFieldEnd();
   }
   xfer += oprot->writeFieldStop();

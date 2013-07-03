@@ -81,20 +81,22 @@ class PublicUserInfo {
 };
 
 typedef struct _AuthenticationResult__isset {
-  _AuthenticationResult__isset() : user(false), publicUserInfo(false), noteStoreUrl(false), webApiUrlPrefix(false) {}
+  _AuthenticationResult__isset() : user(false), publicUserInfo(false), noteStoreUrl(false), webApiUrlPrefix(false), secondFactorRequired(false), secondFactorDeliveryHint(false) {}
   bool user;
   bool publicUserInfo;
   bool noteStoreUrl;
   bool webApiUrlPrefix;
+  bool secondFactorRequired;
+  bool secondFactorDeliveryHint;
 } _AuthenticationResult__isset;
 
 class AuthenticationResult {
  public:
 
-  static const char* ascii_fingerprint; // = "B833D34A0783BF79414A90DA9ABDB79E";
-  static const uint8_t binary_fingerprint[16]; // = {0xB8,0x33,0xD3,0x4A,0x07,0x83,0xBF,0x79,0x41,0x4A,0x90,0xDA,0x9A,0xBD,0xB7,0x9E};
+  static const char* ascii_fingerprint; // = "AC3ACA1F66892F38A3B6A141A932B007";
+  static const uint8_t binary_fingerprint[16]; // = {0xAC,0x3A,0xCA,0x1F,0x66,0x89,0x2F,0x38,0xA3,0xB6,0xA1,0x41,0xA9,0x32,0xB0,0x07};
 
-  AuthenticationResult() : currentTime(0), authenticationToken(""), expiration(0), noteStoreUrl(""), webApiUrlPrefix("") {
+  AuthenticationResult() : currentTime(0), authenticationToken(""), expiration(0), noteStoreUrl(""), webApiUrlPrefix(""), secondFactorRequired(0), secondFactorDeliveryHint("") {
   }
 
   virtual ~AuthenticationResult() throw() {}
@@ -106,6 +108,8 @@ class AuthenticationResult {
   PublicUserInfo publicUserInfo;
   std::string noteStoreUrl;
   std::string webApiUrlPrefix;
+  bool secondFactorRequired;
+  std::string secondFactorDeliveryHint;
 
   _AuthenticationResult__isset __isset;
 
@@ -132,6 +136,14 @@ class AuthenticationResult {
     if (__isset.webApiUrlPrefix != rhs.__isset.webApiUrlPrefix)
       return false;
     else if (__isset.webApiUrlPrefix && !(webApiUrlPrefix == rhs.webApiUrlPrefix))
+      return false;
+    if (__isset.secondFactorRequired != rhs.__isset.secondFactorRequired)
+      return false;
+    else if (__isset.secondFactorRequired && !(secondFactorRequired == rhs.secondFactorRequired))
+      return false;
+    if (__isset.secondFactorDeliveryHint != rhs.__isset.secondFactorDeliveryHint)
+      return false;
+    else if (__isset.secondFactorDeliveryHint && !(secondFactorDeliveryHint == rhs.secondFactorDeliveryHint))
       return false;
     return true;
   }

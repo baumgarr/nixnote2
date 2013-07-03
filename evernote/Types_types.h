@@ -20,6 +20,7 @@ struct PrivilegeLevel {
   enum type {
     NORMAL = 1,
     PREMIUM = 3,
+    VIP = 5,
     MANAGER = 7,
     SUPPORT = 8,
     ADMIN = 9
@@ -87,6 +88,13 @@ struct SharedNotebookInstanceRestrictions {
   };
 };
 
+struct ReminderEmailConfig {
+  enum type {
+    DO_NOT_SEND = 1,
+    SEND_DAILY_EMAIL = 2
+  };
+};
+
 typedef int32_t UserID;
 
 typedef std::string Guid;
@@ -145,7 +153,7 @@ class Data {
 };
 
 typedef struct _UserAttributes__isset {
-  _UserAttributes__isset() : defaultLocationName(false), defaultLatitude(false), defaultLongitude(false), preactivation(false), viewedPromotions(false), incomingEmailAddress(false), recentMailedAddresses(false), comments(false), dateAgreedToTermsOfService(false), maxReferrals(false), referralCount(false), refererCode(false), sentEmailDate(false), sentEmailCount(false), dailyEmailLimit(false), emailOptOutDate(false), partnerEmailOptInDate(false), preferredLanguage(false), preferredCountry(false), clipFullPage(false), twitterUserName(false), twitterId(false), groupName(false), recognitionLanguage(false), customerProfileId(false), referralProof(false), educationalDiscount(false), businessAddress(false), hideSponsorBilling(false), taxExempt(false) {}
+  _UserAttributes__isset() : defaultLocationName(false), defaultLatitude(false), defaultLongitude(false), preactivation(false), viewedPromotions(false), incomingEmailAddress(false), recentMailedAddresses(false), comments(false), dateAgreedToTermsOfService(false), maxReferrals(false), referralCount(false), refererCode(false), sentEmailDate(false), sentEmailCount(false), dailyEmailLimit(false), emailOptOutDate(false), partnerEmailOptInDate(false), preferredLanguage(false), preferredCountry(false), clipFullPage(false), twitterUserName(false), twitterId(false), groupName(false), recognitionLanguage(false), referralProof(false), educationalDiscount(false), businessAddress(false), hideSponsorBilling(false), taxExempt(false), useEmailAutoFiling(false), reminderEmailConfig(false) {}
   bool defaultLocationName;
   bool defaultLatitude;
   bool defaultLongitude;
@@ -170,21 +178,22 @@ typedef struct _UserAttributes__isset {
   bool twitterId;
   bool groupName;
   bool recognitionLanguage;
-  bool customerProfileId;
   bool referralProof;
   bool educationalDiscount;
   bool businessAddress;
   bool hideSponsorBilling;
   bool taxExempt;
+  bool useEmailAutoFiling;
+  bool reminderEmailConfig;
 } _UserAttributes__isset;
 
 class UserAttributes {
  public:
 
-  static const char* ascii_fingerprint; // = "56CD7D04A061F8C882583E1E94128707";
-  static const uint8_t binary_fingerprint[16]; // = {0x56,0xCD,0x7D,0x04,0xA0,0x61,0xF8,0xC8,0x82,0x58,0x3E,0x1E,0x94,0x12,0x87,0x07};
+  static const char* ascii_fingerprint; // = "93F29143B9EFCD4FBA381A30A4AF2684";
+  static const uint8_t binary_fingerprint[16]; // = {0x93,0xF2,0x91,0x43,0xB9,0xEF,0xCD,0x4F,0xBA,0x38,0x1A,0x30,0xA4,0xAF,0x26,0x84};
 
-  UserAttributes() : defaultLocationName(""), defaultLatitude(0), defaultLongitude(0), preactivation(0), incomingEmailAddress(""), comments(""), dateAgreedToTermsOfService(0), maxReferrals(0), referralCount(0), refererCode(""), sentEmailDate(0), sentEmailCount(0), dailyEmailLimit(0), emailOptOutDate(0), partnerEmailOptInDate(0), preferredLanguage(""), preferredCountry(""), clipFullPage(0), twitterUserName(""), twitterId(""), groupName(""), recognitionLanguage(""), customerProfileId(0), referralProof(""), educationalDiscount(0), businessAddress(""), hideSponsorBilling(0), taxExempt(0) {
+  UserAttributes() : defaultLocationName(""), defaultLatitude(0), defaultLongitude(0), preactivation(0), incomingEmailAddress(""), comments(""), dateAgreedToTermsOfService(0), maxReferrals(0), referralCount(0), refererCode(""), sentEmailDate(0), sentEmailCount(0), dailyEmailLimit(0), emailOptOutDate(0), partnerEmailOptInDate(0), preferredLanguage(""), preferredCountry(""), clipFullPage(0), twitterUserName(""), twitterId(""), groupName(""), recognitionLanguage(""), referralProof(""), educationalDiscount(0), businessAddress(""), hideSponsorBilling(0), taxExempt(0), useEmailAutoFiling(0) {
   }
 
   virtual ~UserAttributes() throw() {}
@@ -213,12 +222,13 @@ class UserAttributes {
   std::string twitterId;
   std::string groupName;
   std::string recognitionLanguage;
-  int64_t customerProfileId;
   std::string referralProof;
   bool educationalDiscount;
   std::string businessAddress;
   bool hideSponsorBilling;
   bool taxExempt;
+  bool useEmailAutoFiling;
+  ReminderEmailConfig::type reminderEmailConfig;
 
   _UserAttributes__isset __isset;
 
@@ -320,10 +330,6 @@ class UserAttributes {
       return false;
     else if (__isset.recognitionLanguage && !(recognitionLanguage == rhs.recognitionLanguage))
       return false;
-    if (__isset.customerProfileId != rhs.__isset.customerProfileId)
-      return false;
-    else if (__isset.customerProfileId && !(customerProfileId == rhs.customerProfileId))
-      return false;
     if (__isset.referralProof != rhs.__isset.referralProof)
       return false;
     else if (__isset.referralProof && !(referralProof == rhs.referralProof))
@@ -344,6 +350,14 @@ class UserAttributes {
       return false;
     else if (__isset.taxExempt && !(taxExempt == rhs.taxExempt))
       return false;
+    if (__isset.useEmailAutoFiling != rhs.__isset.useEmailAutoFiling)
+      return false;
+    else if (__isset.useEmailAutoFiling && !(useEmailAutoFiling == rhs.useEmailAutoFiling))
+      return false;
+    if (__isset.reminderEmailConfig != rhs.__isset.reminderEmailConfig)
+      return false;
+    else if (__isset.reminderEmailConfig && !(reminderEmailConfig == rhs.reminderEmailConfig))
+      return false;
     return true;
   }
   bool operator != (const UserAttributes &rhs) const {
@@ -358,7 +372,7 @@ class UserAttributes {
 };
 
 typedef struct _Accounting__isset {
-  _Accounting__isset() : uploadLimit(false), uploadLimitEnd(false), uploadLimitNextMonth(false), premiumServiceStatus(false), premiumOrderNumber(false), premiumCommerceService(false), premiumServiceStart(false), premiumServiceSKU(false), lastSuccessfulCharge(false), lastFailedCharge(false), lastFailedChargeReason(false), nextPaymentDue(false), premiumLockUntil(false), updated(false), premiumSubscriptionNumber(false), lastRequestedCharge(false), currency(false), unitPrice(false), businessId(false), businessName(false), businessRole(false) {}
+  _Accounting__isset() : uploadLimit(false), uploadLimitEnd(false), uploadLimitNextMonth(false), premiumServiceStatus(false), premiumOrderNumber(false), premiumCommerceService(false), premiumServiceStart(false), premiumServiceSKU(false), lastSuccessfulCharge(false), lastFailedCharge(false), lastFailedChargeReason(false), nextPaymentDue(false), premiumLockUntil(false), updated(false), premiumSubscriptionNumber(false), lastRequestedCharge(false), currency(false), unitPrice(false), businessId(false), businessName(false), businessRole(false), unitDiscount(false), nextChargeDate(false) {}
   bool uploadLimit;
   bool uploadLimitEnd;
   bool uploadLimitNextMonth;
@@ -380,15 +394,17 @@ typedef struct _Accounting__isset {
   bool businessId;
   bool businessName;
   bool businessRole;
+  bool unitDiscount;
+  bool nextChargeDate;
 } _Accounting__isset;
 
 class Accounting {
  public:
 
-  static const char* ascii_fingerprint; // = "90BE739176B61E8E85A75627C80583E5";
-  static const uint8_t binary_fingerprint[16]; // = {0x90,0xBE,0x73,0x91,0x76,0xB6,0x1E,0x8E,0x85,0xA7,0x56,0x27,0xC8,0x05,0x83,0xE5};
+  static const char* ascii_fingerprint; // = "294DFAA0B15E429F7D5E31FEB816BD37";
+  static const uint8_t binary_fingerprint[16]; // = {0x29,0x4D,0xFA,0xA0,0xB1,0x5E,0x42,0x9F,0x7D,0x5E,0x31,0xFE,0xB8,0x16,0xBD,0x37};
 
-  Accounting() : uploadLimit(0), uploadLimitEnd(0), uploadLimitNextMonth(0), premiumOrderNumber(""), premiumCommerceService(""), premiumServiceStart(0), premiumServiceSKU(""), lastSuccessfulCharge(0), lastFailedCharge(0), lastFailedChargeReason(""), nextPaymentDue(0), premiumLockUntil(0), updated(0), premiumSubscriptionNumber(""), lastRequestedCharge(0), currency(""), unitPrice(0), businessId(0), businessName("") {
+  Accounting() : uploadLimit(0), uploadLimitEnd(0), uploadLimitNextMonth(0), premiumOrderNumber(""), premiumCommerceService(""), premiumServiceStart(0), premiumServiceSKU(""), lastSuccessfulCharge(0), lastFailedCharge(0), lastFailedChargeReason(""), nextPaymentDue(0), premiumLockUntil(0), updated(0), premiumSubscriptionNumber(""), lastRequestedCharge(0), currency(""), unitPrice(0), businessId(0), businessName(""), unitDiscount(0), nextChargeDate(0) {
   }
 
   virtual ~Accounting() throw() {}
@@ -414,6 +430,8 @@ class Accounting {
   int32_t businessId;
   std::string businessName;
   BusinessUserRole::type businessRole;
+  int32_t unitDiscount;
+  Timestamp nextChargeDate;
 
   _Accounting__isset __isset;
 
@@ -503,6 +521,14 @@ class Accounting {
       return false;
     else if (__isset.businessRole && !(businessRole == rhs.businessRole))
       return false;
+    if (__isset.unitDiscount != rhs.__isset.unitDiscount)
+      return false;
+    else if (__isset.unitDiscount && !(unitDiscount == rhs.unitDiscount))
+      return false;
+    if (__isset.nextChargeDate != rhs.__isset.nextChargeDate)
+      return false;
+    else if (__isset.nextChargeDate && !(nextChargeDate == rhs.nextChargeDate))
+      return false;
     return true;
   }
   bool operator != (const Accounting &rhs) const {
@@ -516,20 +542,78 @@ class Accounting {
 
 };
 
+typedef struct _BusinessUserInfo__isset {
+  _BusinessUserInfo__isset() : businessId(false), businessName(false), role(false), email(false) {}
+  bool businessId;
+  bool businessName;
+  bool role;
+  bool email;
+} _BusinessUserInfo__isset;
+
+class BusinessUserInfo {
+ public:
+
+  static const char* ascii_fingerprint; // = "F41110BF1C14BFD0DCB9D5A09F339E2D";
+  static const uint8_t binary_fingerprint[16]; // = {0xF4,0x11,0x10,0xBF,0x1C,0x14,0xBF,0xD0,0xDC,0xB9,0xD5,0xA0,0x9F,0x33,0x9E,0x2D};
+
+  BusinessUserInfo() : businessId(0), businessName(""), email("") {
+  }
+
+  virtual ~BusinessUserInfo() throw() {}
+
+  int32_t businessId;
+  std::string businessName;
+  BusinessUserRole::type role;
+  std::string email;
+
+  _BusinessUserInfo__isset __isset;
+
+  bool operator == (const BusinessUserInfo & rhs) const
+  {
+    if (__isset.businessId != rhs.__isset.businessId)
+      return false;
+    else if (__isset.businessId && !(businessId == rhs.businessId))
+      return false;
+    if (__isset.businessName != rhs.__isset.businessName)
+      return false;
+    else if (__isset.businessName && !(businessName == rhs.businessName))
+      return false;
+    if (__isset.role != rhs.__isset.role)
+      return false;
+    else if (__isset.role && !(role == rhs.role))
+      return false;
+    if (__isset.email != rhs.__isset.email)
+      return false;
+    else if (__isset.email && !(email == rhs.email))
+      return false;
+    return true;
+  }
+  bool operator != (const BusinessUserInfo &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const BusinessUserInfo & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
 typedef struct _PremiumInfo__isset {
-  _PremiumInfo__isset() : premiumExpirationDate(false), sponsoredGroupName(false), sponsoredGroupRole(false) {}
+  _PremiumInfo__isset() : premiumExpirationDate(false), sponsoredGroupName(false), sponsoredGroupRole(false), premiumUpgradable(false) {}
   bool premiumExpirationDate;
   bool sponsoredGroupName;
   bool sponsoredGroupRole;
+  bool premiumUpgradable;
 } _PremiumInfo__isset;
 
 class PremiumInfo {
  public:
 
-  static const char* ascii_fingerprint; // = "1C3FEBFCC34CFA6368AF9D1447D203CA";
-  static const uint8_t binary_fingerprint[16]; // = {0x1C,0x3F,0xEB,0xFC,0xC3,0x4C,0xFA,0x63,0x68,0xAF,0x9D,0x14,0x47,0xD2,0x03,0xCA};
+  static const char* ascii_fingerprint; // = "0119FDD440C3B0E05C301B1B626B09F1";
+  static const uint8_t binary_fingerprint[16]; // = {0x01,0x19,0xFD,0xD4,0x40,0xC3,0xB0,0xE0,0x5C,0x30,0x1B,0x1B,0x62,0x6B,0x09,0xF1};
 
-  PremiumInfo() : currentTime(0), premium(0), premiumRecurring(0), premiumExpirationDate(0), premiumExtendable(0), premiumPending(0), premiumCancellationPending(0), canPurchaseUploadAllowance(0), sponsoredGroupName("") {
+  PremiumInfo() : currentTime(0), premium(0), premiumRecurring(0), premiumExpirationDate(0), premiumExtendable(0), premiumPending(0), premiumCancellationPending(0), canPurchaseUploadAllowance(0), sponsoredGroupName(""), premiumUpgradable(0) {
   }
 
   virtual ~PremiumInfo() throw() {}
@@ -544,6 +628,7 @@ class PremiumInfo {
   bool canPurchaseUploadAllowance;
   std::string sponsoredGroupName;
   SponsoredGroupRole::type sponsoredGroupRole;
+  bool premiumUpgradable;
 
   _PremiumInfo__isset __isset;
 
@@ -575,6 +660,10 @@ class PremiumInfo {
       return false;
     else if (__isset.sponsoredGroupRole && !(sponsoredGroupRole == rhs.sponsoredGroupRole))
       return false;
+    if (__isset.premiumUpgradable != rhs.__isset.premiumUpgradable)
+      return false;
+    else if (__isset.premiumUpgradable && !(premiumUpgradable == rhs.premiumUpgradable))
+      return false;
     return true;
   }
   bool operator != (const PremiumInfo &rhs) const {
@@ -589,7 +678,7 @@ class PremiumInfo {
 };
 
 typedef struct _User__isset {
-  _User__isset() : id(false), username(false), email(false), name(false), timezone(false), privilege(false), created(false), updated(false), deleted(false), active(false), shardId(false), attributes(false), accounting(false), premiumInfo(false) {}
+  _User__isset() : id(false), username(false), email(false), name(false), timezone(false), privilege(false), created(false), updated(false), deleted(false), active(false), shardId(false), attributes(false), accounting(false), premiumInfo(false), businessUserInfo(false) {}
   bool id;
   bool username;
   bool email;
@@ -604,13 +693,14 @@ typedef struct _User__isset {
   bool attributes;
   bool accounting;
   bool premiumInfo;
+  bool businessUserInfo;
 } _User__isset;
 
 class User {
  public:
 
-  static const char* ascii_fingerprint; // = "1F3FDAAFFE6360D4E039B08F59F0C47C";
-  static const uint8_t binary_fingerprint[16]; // = {0x1F,0x3F,0xDA,0xAF,0xFE,0x63,0x60,0xD4,0xE0,0x39,0xB0,0x8F,0x59,0xF0,0xC4,0x7C};
+  static const char* ascii_fingerprint; // = "28005E28FBEBD399E3B2C130DE25F380";
+  static const uint8_t binary_fingerprint[16]; // = {0x28,0x00,0x5E,0x28,0xFB,0xEB,0xD3,0x99,0xE3,0xB2,0xC1,0x30,0xDE,0x25,0xF3,0x80};
 
   User() : id(0), username(""), email(""), name(""), timezone(""), created(0), updated(0), deleted(0), active(0), shardId("") {
   }
@@ -631,6 +721,7 @@ class User {
   UserAttributes attributes;
   Accounting accounting;
   PremiumInfo premiumInfo;
+  BusinessUserInfo businessUserInfo;
 
   _User__isset __isset;
 
@@ -691,6 +782,10 @@ class User {
     if (__isset.premiumInfo != rhs.__isset.premiumInfo)
       return false;
     else if (__isset.premiumInfo && !(premiumInfo == rhs.premiumInfo))
+      return false;
+    if (__isset.businessUserInfo != rhs.__isset.businessUserInfo)
+      return false;
+    else if (__isset.businessUserInfo && !(businessUserInfo == rhs.businessUserInfo))
       return false;
     return true;
   }
@@ -1018,7 +1113,7 @@ class Resource {
 };
 
 typedef struct _NoteAttributes__isset {
-  _NoteAttributes__isset() : subjectDate(false), latitude(false), longitude(false), altitude(false), author(false), source(false), sourceURL(false), sourceApplication(false), shareDate(false), placeName(false), contentClass(false), applicationData(false), lastEditedBy(false), classifications(false) {}
+  _NoteAttributes__isset() : subjectDate(false), latitude(false), longitude(false), altitude(false), author(false), source(false), sourceURL(false), sourceApplication(false), shareDate(false), reminderOrder(false), reminderDoneTime(false), reminderTime(false), placeName(false), contentClass(false), applicationData(false), lastEditedBy(false), classifications(false), creatorId(false), lastEditorId(false) {}
   bool subjectDate;
   bool latitude;
   bool longitude;
@@ -1028,20 +1123,25 @@ typedef struct _NoteAttributes__isset {
   bool sourceURL;
   bool sourceApplication;
   bool shareDate;
+  bool reminderOrder;
+  bool reminderDoneTime;
+  bool reminderTime;
   bool placeName;
   bool contentClass;
   bool applicationData;
   bool lastEditedBy;
   bool classifications;
+  bool creatorId;
+  bool lastEditorId;
 } _NoteAttributes__isset;
 
 class NoteAttributes {
  public:
 
-  static const char* ascii_fingerprint; // = "64A556515DA663FB8DCF33EA2E006F34";
-  static const uint8_t binary_fingerprint[16]; // = {0x64,0xA5,0x56,0x51,0x5D,0xA6,0x63,0xFB,0x8D,0xCF,0x33,0xEA,0x2E,0x00,0x6F,0x34};
+  static const char* ascii_fingerprint; // = "05191C2C3618087A364FEEB9B4854C4C";
+  static const uint8_t binary_fingerprint[16]; // = {0x05,0x19,0x1C,0x2C,0x36,0x18,0x08,0x7A,0x36,0x4F,0xEE,0xB9,0xB4,0x85,0x4C,0x4C};
 
-  NoteAttributes() : subjectDate(0), latitude(0), longitude(0), altitude(0), author(""), source(""), sourceURL(""), sourceApplication(""), shareDate(0), placeName(""), contentClass(""), lastEditedBy("") {
+  NoteAttributes() : subjectDate(0), latitude(0), longitude(0), altitude(0), author(""), source(""), sourceURL(""), sourceApplication(""), shareDate(0), reminderOrder(0), reminderDoneTime(0), reminderTime(0), placeName(""), contentClass(""), lastEditedBy(""), creatorId(0), lastEditorId(0) {
   }
 
   virtual ~NoteAttributes() throw() {}
@@ -1055,11 +1155,16 @@ class NoteAttributes {
   std::string sourceURL;
   std::string sourceApplication;
   Timestamp shareDate;
+  int64_t reminderOrder;
+  Timestamp reminderDoneTime;
+  Timestamp reminderTime;
   std::string placeName;
   std::string contentClass;
   LazyMap applicationData;
   std::string lastEditedBy;
   std::map<std::string, std::string>  classifications;
+  UserID creatorId;
+  UserID lastEditorId;
 
   _NoteAttributes__isset __isset;
 
@@ -1101,6 +1206,18 @@ class NoteAttributes {
       return false;
     else if (__isset.shareDate && !(shareDate == rhs.shareDate))
       return false;
+    if (__isset.reminderOrder != rhs.__isset.reminderOrder)
+      return false;
+    else if (__isset.reminderOrder && !(reminderOrder == rhs.reminderOrder))
+      return false;
+    if (__isset.reminderDoneTime != rhs.__isset.reminderDoneTime)
+      return false;
+    else if (__isset.reminderDoneTime && !(reminderDoneTime == rhs.reminderDoneTime))
+      return false;
+    if (__isset.reminderTime != rhs.__isset.reminderTime)
+      return false;
+    else if (__isset.reminderTime && !(reminderTime == rhs.reminderTime))
+      return false;
     if (__isset.placeName != rhs.__isset.placeName)
       return false;
     else if (__isset.placeName && !(placeName == rhs.placeName))
@@ -1120,6 +1237,14 @@ class NoteAttributes {
     if (__isset.classifications != rhs.__isset.classifications)
       return false;
     else if (__isset.classifications && !(classifications == rhs.classifications))
+      return false;
+    if (__isset.creatorId != rhs.__isset.creatorId)
+      return false;
+    else if (__isset.creatorId && !(creatorId == rhs.creatorId))
+      return false;
+    if (__isset.lastEditorId != rhs.__isset.lastEditorId)
+      return false;
+    else if (__isset.lastEditorId && !(lastEditorId == rhs.lastEditorId))
       return false;
     return true;
   }
@@ -1156,8 +1281,8 @@ typedef struct _Note__isset {
 class Note {
  public:
 
-  static const char* ascii_fingerprint; // = "32938BE14CEDE761FF195A9B8C770212";
-  static const uint8_t binary_fingerprint[16]; // = {0x32,0x93,0x8B,0xE1,0x4C,0xED,0xE7,0x61,0xFF,0x19,0x5A,0x9B,0x8C,0x77,0x02,0x12};
+  static const char* ascii_fingerprint; // = "7353B8F6A0836D0275C7D15623BC4B42";
+  static const uint8_t binary_fingerprint[16]; // = {0x73,0x53,0xB8,0xF6,0xA0,0x83,0x6D,0x02,0x75,0xC7,0xD1,0x56,0x23,0xBC,0x4B,0x42};
 
   Note() : guid(""), title(""), content(""), contentHash(""), contentLength(0), created(0), updated(0), deleted(0), active(0), updateSequenceNum(0), notebookGuid("") {
   }
@@ -1365,20 +1490,72 @@ class BusinessNotebook {
 
 };
 
+typedef struct _SavedSearchScope__isset {
+  _SavedSearchScope__isset() : includeAccount(false), includePersonalLinkedNotebooks(false), includeBusinessLinkedNotebooks(false) {}
+  bool includeAccount;
+  bool includePersonalLinkedNotebooks;
+  bool includeBusinessLinkedNotebooks;
+} _SavedSearchScope__isset;
+
+class SavedSearchScope {
+ public:
+
+  static const char* ascii_fingerprint; // = "81247BEACCBFEAACC0A7927FEC373161";
+  static const uint8_t binary_fingerprint[16]; // = {0x81,0x24,0x7B,0xEA,0xCC,0xBF,0xEA,0xAC,0xC0,0xA7,0x92,0x7F,0xEC,0x37,0x31,0x61};
+
+  SavedSearchScope() : includeAccount(0), includePersonalLinkedNotebooks(0), includeBusinessLinkedNotebooks(0) {
+  }
+
+  virtual ~SavedSearchScope() throw() {}
+
+  bool includeAccount;
+  bool includePersonalLinkedNotebooks;
+  bool includeBusinessLinkedNotebooks;
+
+  _SavedSearchScope__isset __isset;
+
+  bool operator == (const SavedSearchScope & rhs) const
+  {
+    if (__isset.includeAccount != rhs.__isset.includeAccount)
+      return false;
+    else if (__isset.includeAccount && !(includeAccount == rhs.includeAccount))
+      return false;
+    if (__isset.includePersonalLinkedNotebooks != rhs.__isset.includePersonalLinkedNotebooks)
+      return false;
+    else if (__isset.includePersonalLinkedNotebooks && !(includePersonalLinkedNotebooks == rhs.includePersonalLinkedNotebooks))
+      return false;
+    if (__isset.includeBusinessLinkedNotebooks != rhs.__isset.includeBusinessLinkedNotebooks)
+      return false;
+    else if (__isset.includeBusinessLinkedNotebooks && !(includeBusinessLinkedNotebooks == rhs.includeBusinessLinkedNotebooks))
+      return false;
+    return true;
+  }
+  bool operator != (const SavedSearchScope &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const SavedSearchScope & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
 typedef struct _SavedSearch__isset {
-  _SavedSearch__isset() : guid(false), name(false), query(false), format(false), updateSequenceNum(false) {}
+  _SavedSearch__isset() : guid(false), name(false), query(false), format(false), updateSequenceNum(false), scope(false) {}
   bool guid;
   bool name;
   bool query;
   bool format;
   bool updateSequenceNum;
+  bool scope;
 } _SavedSearch__isset;
 
 class SavedSearch {
  public:
 
-  static const char* ascii_fingerprint; // = "F8123D2B1DD5C24610D0B2386CFF86D2";
-  static const uint8_t binary_fingerprint[16]; // = {0xF8,0x12,0x3D,0x2B,0x1D,0xD5,0xC2,0x46,0x10,0xD0,0xB2,0x38,0x6C,0xFF,0x86,0xD2};
+  static const char* ascii_fingerprint; // = "559518531C75490BE1B22653A81FD670";
+  static const uint8_t binary_fingerprint[16]; // = {0x55,0x95,0x18,0x53,0x1C,0x75,0x49,0x0B,0xE1,0xB2,0x26,0x53,0xA8,0x1F,0xD6,0x70};
 
   SavedSearch() : guid(""), name(""), query(""), updateSequenceNum(0) {
   }
@@ -1390,6 +1567,7 @@ class SavedSearch {
   std::string query;
   QueryFormat::type format;
   int32_t updateSequenceNum;
+  SavedSearchScope scope;
 
   _SavedSearch__isset __isset;
 
@@ -1415,6 +1593,10 @@ class SavedSearch {
       return false;
     else if (__isset.updateSequenceNum && !(updateSequenceNum == rhs.updateSequenceNum))
       return false;
+    if (__isset.scope != rhs.__isset.scope)
+      return false;
+    else if (__isset.scope && !(scope == rhs.scope))
+      return false;
     return true;
   }
   bool operator != (const SavedSearch &rhs) const {
@@ -1428,8 +1610,53 @@ class SavedSearch {
 
 };
 
+typedef struct _SharedNotebookRecipientSettings__isset {
+  _SharedNotebookRecipientSettings__isset() : reminderNotifyEmail(false), reminderNotifyInApp(false) {}
+  bool reminderNotifyEmail;
+  bool reminderNotifyInApp;
+} _SharedNotebookRecipientSettings__isset;
+
+class SharedNotebookRecipientSettings {
+ public:
+
+  static const char* ascii_fingerprint; // = "1959DF646639D95C0F1375CF60F71F5B";
+  static const uint8_t binary_fingerprint[16]; // = {0x19,0x59,0xDF,0x64,0x66,0x39,0xD9,0x5C,0x0F,0x13,0x75,0xCF,0x60,0xF7,0x1F,0x5B};
+
+  SharedNotebookRecipientSettings() : reminderNotifyEmail(0), reminderNotifyInApp(0) {
+  }
+
+  virtual ~SharedNotebookRecipientSettings() throw() {}
+
+  bool reminderNotifyEmail;
+  bool reminderNotifyInApp;
+
+  _SharedNotebookRecipientSettings__isset __isset;
+
+  bool operator == (const SharedNotebookRecipientSettings & rhs) const
+  {
+    if (__isset.reminderNotifyEmail != rhs.__isset.reminderNotifyEmail)
+      return false;
+    else if (__isset.reminderNotifyEmail && !(reminderNotifyEmail == rhs.reminderNotifyEmail))
+      return false;
+    if (__isset.reminderNotifyInApp != rhs.__isset.reminderNotifyInApp)
+      return false;
+    else if (__isset.reminderNotifyInApp && !(reminderNotifyInApp == rhs.reminderNotifyInApp))
+      return false;
+    return true;
+  }
+  bool operator != (const SharedNotebookRecipientSettings &rhs) const {
+    return !(*this == rhs);
+  }
+
+  bool operator < (const SharedNotebookRecipientSettings & ) const;
+
+  uint32_t read(::apache::thrift::protocol::TProtocol* iprot);
+  uint32_t write(::apache::thrift::protocol::TProtocol* oprot) const;
+
+};
+
 typedef struct _SharedNotebook__isset {
-  _SharedNotebook__isset() : id(false), userId(false), notebookGuid(false), email(false), notebookModifiable(false), requireLogin(false), serviceCreated(false), serviceUpdated(false), shareKey(false), username(false), privilege(false), allowPreview(false) {}
+  _SharedNotebook__isset() : id(false), userId(false), notebookGuid(false), email(false), notebookModifiable(false), requireLogin(false), serviceCreated(false), serviceUpdated(false), shareKey(false), username(false), privilege(false), allowPreview(false), recipientSettings(false) {}
   bool id;
   bool userId;
   bool notebookGuid;
@@ -1442,13 +1669,14 @@ typedef struct _SharedNotebook__isset {
   bool username;
   bool privilege;
   bool allowPreview;
+  bool recipientSettings;
 } _SharedNotebook__isset;
 
 class SharedNotebook {
  public:
 
-  static const char* ascii_fingerprint; // = "76B3B96355CD4C54BDB337E59754EACE";
-  static const uint8_t binary_fingerprint[16]; // = {0x76,0xB3,0xB9,0x63,0x55,0xCD,0x4C,0x54,0xBD,0xB3,0x37,0xE5,0x97,0x54,0xEA,0xCE};
+  static const char* ascii_fingerprint; // = "ADE8562808728688B25423E5F39AA8F5";
+  static const uint8_t binary_fingerprint[16]; // = {0xAD,0xE8,0x56,0x28,0x08,0x72,0x86,0x88,0xB2,0x54,0x23,0xE5,0xF3,0x9A,0xA8,0xF5};
 
   SharedNotebook() : id(0), userId(0), notebookGuid(""), email(""), notebookModifiable(0), requireLogin(0), serviceCreated(0), serviceUpdated(0), shareKey(""), username(""), allowPreview(0) {
   }
@@ -1467,6 +1695,7 @@ class SharedNotebook {
   std::string username;
   SharedNotebookPrivilegeLevel::type privilege;
   bool allowPreview;
+  SharedNotebookRecipientSettings recipientSettings;
 
   _SharedNotebook__isset __isset;
 
@@ -1519,6 +1748,10 @@ class SharedNotebook {
     if (__isset.allowPreview != rhs.__isset.allowPreview)
       return false;
     else if (__isset.allowPreview && !(allowPreview == rhs.allowPreview))
+      return false;
+    if (__isset.recipientSettings != rhs.__isset.recipientSettings)
+      return false;
+    else if (__isset.recipientSettings && !(recipientSettings == rhs.recipientSettings))
       return false;
     return true;
   }
@@ -1707,8 +1940,8 @@ typedef struct _Notebook__isset {
 class Notebook {
  public:
 
-  static const char* ascii_fingerprint; // = "DAFC8A653255B66BE2EAB3DF3AD55EB1";
-  static const uint8_t binary_fingerprint[16]; // = {0xDA,0xFC,0x8A,0x65,0x32,0x55,0xB6,0x6B,0xE2,0xEA,0xB3,0xDF,0x3A,0xD5,0x5E,0xB1};
+  static const char* ascii_fingerprint; // = "1C897B74029D7B8562961FC4E1C828E3";
+  static const uint8_t binary_fingerprint[16]; // = {0x1C,0x89,0x7B,0x74,0x02,0x9D,0x7B,0x85,0x62,0x96,0x1F,0xC4,0xE1,0xC8,0x28,0xE3};
 
   Notebook() : guid(""), name(""), updateSequenceNum(0), defaultNotebook(0), serviceCreated(0), serviceUpdated(0), published(0), stack("") {
   }

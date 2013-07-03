@@ -139,6 +139,7 @@ public:
     qint32 getNotebookLid(qint32 noteLid);                  // Get the notebook for a note
     void setThumbnail(qint32 lid, QString filename);        // File containing the thumbnail
     void reindexAllNotes();                                 // Reindex all notes
+    bool isDeleted(qint32 lid);                             // Is this note deleted?
 };
 
 

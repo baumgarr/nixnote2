@@ -177,6 +177,7 @@ public slots:
     void deleteTableColumnButtonPressed();
     void rotateImageLeftButtonPressed();
     void rotateImageRightButtonPressed();
+    void removeFormatButtonPressed();
     void linkClicked(const QUrl url);
     void toggleSource();
     void setSource();

@@ -138,10 +138,15 @@ void NMainMenuBar::setupEditMenu() {
     pasteAction->setFont(font);
     editMenu->addAction(pasteAction);
 
-    pasteAsTextAction = new QAction(tr("Paste as Text"), this);
+    pasteAsTextAction = new QAction(tr("Paste as Unformatted Text"), this);
     setupShortcut(pasteAsTextAction, QString("Edit_Paste_Without_Formatting"));
     pasteAsTextAction->setFont(font);
     editMenu->addAction(pasteAsTextAction);
+
+    removeFormattingAction = new QAction(tr("Paste as Unformatted Text"), this);
+    setupShortcut(removeFormattingAction, QString("Edit_Remove_Formatting"));
+    removeFormattingAction->setFont(font);
+    editMenu->addAction(removeFormattingAction);
 
     editMenu->addSeparator();
 

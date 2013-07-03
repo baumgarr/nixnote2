@@ -33,12 +33,13 @@ private:
     bool noteHistory;
     bool formatError;
     void addImageHighlight(qint32 resLid, QFile &f);
-    void modifyImageTags(QDomDocument &doc, QDomElement &enMedia, QDomAttr &hash);
-    void modifyApplicationTags(QDomDocument &doc, QDomElement &enmedia, QDomAttr &hash, QString appl);
-    void modifyPdfTags(qint32 resLid, QDomElement &enmedia);
-    void modifyTodoTags(QDomElement &todo);
-    void modifyTags(QDomDocument &doc);
+    void modifyImageTags(QWebElement &enMedia, QString &hash);
+    void modifyApplicationTags(QWebElement &enmedia, QString &hash, QString appl);
+    void modifyPdfTags(qint32 resLid, QWebElement &enmedia);
+    void modifyTodoTags(QWebElement &todo);
+    void modifyTags(QWebPage &doc);
     QString findIcon(qint32 lid, Resource r, QString appl);
+    QString preHtmlFormat(QString content);
 
 public:
     bool resourceError;
@@ -54,7 +55,7 @@ public:
     void setHighlight();
     void setNoteHistory(bool value);
     QByteArray rebuildNoteHTML();
-    bool  buildInkNote(QDomElement &docElem, QDomAttr &hash);
+    bool  buildInkNote(QWebElement &docElem, QString &hash);
 
 
 signals:

@@ -58,6 +58,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     Edit_Copy = new QString("Ctrl+C");			// Copy the current selection to the clipboard
     Edit_Paste = new QString("Ctrl+V");			// Paste
     Edit_Paste_Without_Formatting = new QString("Ctrl+Shift+P"); // Paste as plain text
+    Edit_Remove_Format = new QString();  // Remove formatting
     Edit_Preferences = new QString();			// Settings dialog box
     Edit_Select_All = new QString("Ctrl+A");
 
@@ -140,6 +141,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     loadkey(QString("Edit_Copy"), Edit_Copy);
     loadkey(QString("Edit_Paste"), Edit_Paste);
     loadkey(QString("Edit_Paste_Without_Formatting"), Edit_Paste_Without_Formatting);
+    loadkey(QString("Edit_Remove_Formatting"), Edit_Remove_Format);
     loadkey(QString("Edit_Insert_Hyperlink"), Edit_Insert_Hyperlink);
     loadkey(QString("Edit_Insert_Table_Row"), Edit_Insert_Table_Row);
     loadkey(QString("Edit_Delete_Table_Row"), Edit_Delete_Table_Row);

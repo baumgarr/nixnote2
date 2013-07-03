@@ -248,10 +248,10 @@ void UserTable::updateUser(User &user) {
         query.bindValue(":data", user.attributes.clipFullPage);
         query.exec();
 
-        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
-        query.bindValue(":key", USER_ATTR_CUSTOMER_PROFILE_ID);
-        query.bindValue(":data", QString::number(user.attributes.customerProfileId));
-        query.exec();
+//        query.prepare("Insert into UserTable (key, data) values (:key, :data);");
+//        query.bindValue(":key", USER_ATTR_CUSTOMER_PROFILE_ID);
+//        query.bindValue(":data", QString::number(user.attributes.customerProfileId));
+//        query.exec();
 
         query.prepare("Insert into UserTable (key, data) values (:key, :data);");
         query.bindValue(":key", USER_ATTR_COMMENTS);
