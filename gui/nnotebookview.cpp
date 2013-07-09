@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notebooktable.h"
 #include "sql/linkednotebooktable.h"
 #include "sql/sharednotebooktable.h"
+#include "sql/notetable.h"
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
 #include "dialog/notebookproperties.h"
@@ -140,6 +141,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
     connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
     connect(removeFromStackAction, SIGNAL(triggered()), this, SLOT(removeFromStackRequested()));
 
+    this->setAcceptDrops(true);
     this->setItemDelegate(new NNotebookViewDelegate());
 }
 
@@ -763,5 +765,74 @@ void NNotebookView::updateTotals(qint32 lid, qint32 total) {
         NNotebookViewItem *item = dataStore[lid];
         item->count = total;
         repaint();
+    }
+}
+
+
+// Handle what happens when something is dropped onto a tag item
+bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action) {
+
+    // If this is a note-to-tag drop we are assigning tags to a note
+    if (data->hasFormat("application/x-nixnote-note")) {
+        QByteArray d = data->data("application/x-nixnote-note");
+        QString data(d);
+
+        // Find the tag lid we dropped onto
+        qint32 bookLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
+        NotebookTable bookTable;
+        Notebook notebook;
+        bookTable.get(notebook, bookLid);
+
+        // The string has a long list of note lids.  We parse them out & update the note
+        QStringList stringLids = data.split(" ");
+        for (int i=0; i<stringLids.size(); i++) {
+            if (stringLids[i].trimmed() != "") {
+                qint32 noteLid = stringLids.at(i).toInt();
+                if (noteLid > 0) {
+                    NoteTable noteTable;
+                    qint32 currentNotebook = noteTable.getNotebookLid(noteLid);
+                    if (currentNotebook != bookLid) {
+                        noteTable.updateNotebook(noteLid, bookLid, true);
+                        emit(updateNoteList(noteLid, NOTE_TABLE_NOTEBOOK_POSITION, QString::fromStdString(notebook.name)));
+                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
+                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
+                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+                    }
+                }
+            }
+        }
+        if (stringLids.size() > 0) {
+            emit(updateCounts());
+        }
+        return true;
+    }
+
+
+    return false;
+}
+
+
+// Implement of dropEvent so dropMimeData gets called
+void NNotebookView::dropEvent(QDropEvent *event) {
+    QTreeView::dropEvent(event);
+}
+
+
+// Drag tag event.  Determine if dragging is even possible
+void NNotebookView::dragEnterEvent(QDragEnterEvent *event) {
+    if (event->mimeData()->hasFormat("application/x-nixnote-note")) {
+        event->accept();
+        return;
+    }
+    event->ignore();
+}
+
+
+// Accept the drag move event if possible
+void NNotebookView::dragMoveEvent(QDragMoveEvent *event) {
+    if (event->mimeData()->hasFormat("application/x-nixnote-note")) {
+        if (event->answerRect().intersects(childrenRect()))
+            event->acceptProposedAction();
+        return;
     }
 }

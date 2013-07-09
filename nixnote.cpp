@@ -452,6 +452,8 @@ void NixNote::setupTagTree() {
     connect(&counterRunner, SIGNAL(tagTotals(qint32,qint32)), tagTreeView, SLOT(updateTotals(qint32,qint32)));
     connect(&counterRunner, SIGNAL(tagCountComplete()), tagTreeView, SLOT(hideUnassignedTags()));
     connect(notebookTreeView, SIGNAL(notebookSelectionChanged(qint32)), tagTreeView, SLOT(notebookSelectionChanged(qint32)));
+    connect(tagTreeView, SIGNAL(updateNoteList(qint32,int,QVariant)), noteTableView, SLOT(refreshCell(qint32,int,QVariant)));
+    connect(tagTreeView, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
     QLOG_TRACE() << "Exiting NixNote.setupTagTree()";
 }
 
@@ -505,7 +507,8 @@ void NixNote::setupSynchronizedNotebookTree() {
     connect(&syncRunner, SIGNAL(syncComplete()),notebookTreeView, SLOT(rebuildTree()));
     connect(&syncRunner, SIGNAL(notebookExpunged(qint32)), notebookTreeView, SLOT(notebookExpunged(qint32)));
     connect(&counterRunner, SIGNAL(notebookTotals(qint32,qint32)), notebookTreeView, SLOT(updateTotals(qint32,qint32)));
-
+    connect(notebookTreeView, SIGNAL(updateNoteList(qint32,int,QVariant)), noteTableView, SLOT(refreshCell(qint32,int,QVariant)));
+    connect(notebookTreeView, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
     QLOG_TRACE() << "Exiting NixNote.setupSynchronizedNotebookTree()";
 }
 

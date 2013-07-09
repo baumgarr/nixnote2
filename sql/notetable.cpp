@@ -1019,6 +1019,19 @@ void NoteTable::addTag(qint32 lid, qint32 tag, bool isDirty = false) {
 }
 
 
+bool NoteTable::hasTag(qint32 noteLid, qint32 tagLid) {
+    QSqlQuery query;
+    query.prepare("select lid from DataStore where lid=:lid and key=:key and data=:tag");
+    query.bindValue(":lid", noteLid);
+    query.bindValue(":key",NOTE_TAG_LID);
+    query.bindValue(":tag:", tagLid);
+    query.exec();
+    if (query.next())
+        return true;
+    return false;
+}
+
+
 void NoteTable::rebuildNoteListTags(qint32 lid) {
     // update the note list
     QStringList tagNames;
@@ -1045,6 +1058,20 @@ void NoteTable::rebuildNoteListTags(qint32 lid) {
     query.bindValue(":tags", tagCol);
     query.bindValue(":lid", lid);
     query.exec();
+}
+
+
+
+QString NoteTable::getNoteListTags(qint32 lid) {
+
+    QSqlQuery query;
+    query.prepare("select tags from NoteTable where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+    if (query.next()) {
+        return query.value(0).toString();
+    }
+    return "";
 }
 
 

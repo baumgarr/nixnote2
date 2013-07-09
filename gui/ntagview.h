@@ -74,6 +74,8 @@ signals:
     void tagRenamed(qint32 lid, QString oldName, QString newName);
     void tagDeleted(qint32 lid, QString name);
     void tagAdded(qint32 lid);
+    void updateNoteList(qint32 noteLid, int column, QVariant tags);
+    void updateCounts();
 
 public slots:
     void tagUpdated(qint32 lid, QString name);

@@ -73,6 +73,8 @@ signals:
     void stackDeleted(QString name);
     void stackRenamed(QString oldName, QString newName);
     void notebookSelectionChanged(qint32);
+    void updateNoteList(qint32 noteLid, int column, QVariant tags);
+    void updateCounts();
 
 public slots:
     void notebookUpdated(qint32 lid, QString name);
@@ -87,6 +89,10 @@ public slots:
     void removeFromStackRequested();
     void notebookExpunged(qint32 lid);
     void updateTotals(qint32 lid, qint32 total);
+    bool dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action);
+    void dropEvent(QDropEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
 };
 
 #endif // NNOTEBOOKVIEW_H

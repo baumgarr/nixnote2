@@ -80,7 +80,6 @@ signals:
     void notesRestored(QList<qint32>);
     void refreshNoteContent(qint32 lid);
 
-
 public slots:
     void refreshData();
     void contextMenuEvent(QContextMenuEvent *event);
@@ -91,8 +90,10 @@ public slots:
     void toggleColumnVisible(int position, bool visible);
     void copyNote();
     void mergeNotes();
-    void refreshCell(int lid, int cell, QVariant data);
-
+    void refreshCell(qint32 lid, int cell, QVariant data);
+    void dragMoveEvent(QDragMoveEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 };
 
 #endif // NTABLEVIEW_H

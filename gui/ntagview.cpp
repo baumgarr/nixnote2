@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtSql>
 #include "sql/linkednotebooktable.h"
 #include "sql/notebooktable.h"
+#include "sql/notetable.h"
 #include <QMessageBox>
 
 
@@ -444,6 +445,36 @@ void NTagView::dragEnterEvent(QDragEnterEvent *event) {
 // Handle what happens when something is dropped onto a tag item
 bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action) {
 
+    // If this is a note-to-tag drop we are assigning tags to a note
+    if (data->hasFormat("application/x-nixnote-note")) {
+        QByteArray d = data->data("application/x-nixnote-note");
+        QString data(d);
+
+        // Find the tag lid we dropped onto
+        qint32 tagLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
+
+        // The string has a long list of note lids.  We parse them out & update the note
+        QStringList stringLids = data.split(" ");
+        for (int i=0; i<stringLids.size(); i++) {
+            if (stringLids[i].trimmed() != "") {
+                qint32 noteLid = stringLids.at(i).toInt();
+                if (noteLid > 0) {
+                    NoteTable noteTable;
+                    if (!noteTable.hasTag(noteLid, tagLid)) {
+                        noteTable.addTag(noteLid, tagLid, true);
+                        QString tagString = noteTable.getNoteListTags(noteLid);
+                        emit(updateNoteList(noteLid, NOTE_TABLE_TAGS_POSITION, tagString));
+                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
+                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
+                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+                    }
+                }
+            }
+        }
+        if (stringLids.size() > 0)
+            emit updateCounts();
+        return true;
+    }
     // If this is a tag-to-tag drop then we are modifying the hierarchy
     if (data->hasFormat("application/x-nixnote-tag")) {
 

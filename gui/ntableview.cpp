@@ -212,6 +212,8 @@ NTableView::NTableView(QWidget *parent) :
         verticalHeader()->setDefaultSectionSize(100);
     if (!isColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION) && global.listView == Global::listViewNarrow)
         verticalHeader()->setDefaultSectionSize(100);
+
+    setDragEnabled(true);
     QLOG_TRACE() << "Exiting NTableView constructor";
 
 }
@@ -283,17 +285,35 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
 
 
 // Update a specific table row/column.
-void NTableView::refreshCell(int lid, int cell, QVariant data) {
+void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
 
+    QList<qint32> selectedLids;
+    getSelectedLids(selectedLids);
     // Check the highlighted LIDs from the history selection.
     if (proxy->lidMap->contains(lid)) {
         int rowLocation = proxy->lidMap->value(lid);
         if (rowLocation > 0) {
-            QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
+            QModelIndex modelIndex = model()->index(rowLocation,cell);
             QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
             model()->setData(proxyIndex, data);
         }
     }
+
+    // We need to re-select all the rows.  The selection model is
+    // temporarily set to multiselection so it allows multiple rows.
+    this->blockSignals(true);
+    proxy->blockSignals(true);
+    model()->blockSignals(true);
+    SelectionMode mode = selectionMode();
+    setSelectionMode(QAbstractItemView::MultiSelection);
+    for (int i=0; i<selectedLids.size(); i++) {
+        int rowLocation = proxy->lidMap->value(selectedLids[i]);
+        selectRow(rowLocation);
+    }
+    setSelectionMode(mode);
+    this->blockSignals(false);
+    proxy->blockSignals(false);
+    model()->blockSignals(false);
 }
 
 
@@ -322,7 +342,6 @@ void NTableView::refreshData() {
 void NTableView::refreshSelection() {
 
     this->blockSignals(true);
-
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     QList<qint32> historyList;
     criteria->getSelectedNotes(historyList);
@@ -366,7 +385,6 @@ void NTableView::mouseReleaseEvent(QMouseEvent *e) {
     } else if ( e->button() == Qt::MidButton ) {
             this->openSelectedLids(true);
     }
-    //QTableView::mouseReleaseEvent(e);
 }
 
 
@@ -998,4 +1016,57 @@ void NTableView::mergeNotes() {
     engine.filter();
     refreshData();
     emit(refreshNoteContent(lid));
+}
+
+
+
+
+// Drag a note event.  Determine if dragging is even possible
+void NTableView::dragEnterEvent(QDragEnterEvent *event) {
+    if (event->source() == this) {
+        event->ignore();
+        return;
+    }
+    if (event->mimeData()->hasFormat("application/x-nixnote-note")) {
+        event->accept();
+        return;
+    }
+    event->ignore();
+}
+
+
+
+
+// Accept the drag move event if possible
+void NTableView::dragMoveEvent(QDragMoveEvent *event) {
+//    if (event->mimeData()->hasFormat("application/x-nixnote-note")) {
+//        //if (event->answerRect().intersects(childrenRect()))
+//        event->acceptProposedAction();
+//        return;
+//    }
+}
+
+
+
+// Procees mouse move events
+void NTableView::mouseMoveEvent(QMouseEvent *event)
+{
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    if (!(event->buttons() & Qt::LeftButton))
+        return;
+
+    QDrag *drag = new QDrag(this);
+    QMimeData *mimeData = new QMimeData;
+
+    QByteArray ba;
+    for (int i=0; i<lids.size(); i++) {
+        ba.append(QString().number(lids[i])+ " ");
+    }
+    mimeData->setData("application/x-nixnote-note", ba);
+    drag->setMimeData(mimeData);
+    drag->exec(Qt::MoveAction);
 }

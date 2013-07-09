@@ -140,6 +140,8 @@ public:
     void setThumbnail(qint32 lid, QString filename);        // File containing the thumbnail
     void reindexAllNotes();                                 // Reindex all notes
     bool isDeleted(qint32 lid);                             // Is this note deleted?
+    bool hasTag(qint32 noteLid, qint32 tagLid);             // Does this note have the specified tag?
+    QString getNoteListTags(qint32 lid);                       // Get the string of tags from the notetable list
 };
 
 
