@@ -107,6 +107,8 @@ NTagView::NTagView(QWidget *parent) :
     renameAction = context.addAction(tr("Rename"));
     renameAction->setShortcutContext(Qt::WidgetShortcut);
 
+    mergeAction = context.addAction(tr("Merge"));
+
     renameShortcut = new QShortcut(this);
     renameShortcut->setKey(QKeySequence(Qt::Key_F2));
     renameShortcut->setContext(Qt::WidgetShortcut);
@@ -124,7 +126,7 @@ NTagView::NTagView(QWidget *parent) :
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteRequested()));
     connect(renameAction, SIGNAL(triggered()), this, SLOT(renameRequested()));
     connect(propertiesAction, SIGNAL(triggered()), this, SLOT(propertiesRequested()));
-
+    connect(mergeAction, SIGNAL(triggered()), this, SLOT(mergeRequested()));
     connect(addShortcut, SIGNAL(activated()), this, SLOT(addRequested()));
     connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
     connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
@@ -215,6 +217,8 @@ void NTagView::mousePressEvent(QMouseEvent *event)
 {
     QModelIndex item = indexAt(event->pos());
     bool selected = selectionModel()->isSelected(indexAt(event->pos()));
+    if (!(event->buttons() & Qt::LeftButton))
+            return;
     QTreeView::mousePressEvent(event);
     if (selected)
         selectionModel()->select(item, QItemSelectionModel::Deselect);
@@ -490,6 +494,10 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
 
         qint32 newParentLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
         qint32 oldParentLid = dataStore[lid]->parentLid;
+        if (newParentLid == oldParentLid)
+            return false;
+        if (newParentLid == lid)
+            return false;
         NTagViewItem *item = dataStore[lid];
 
         // If we had an old parent, remove the child from it.
@@ -567,6 +575,9 @@ void NTagView::mouseMoveEvent(QMouseEvent *event)
 // Display the popup context menu
 void NTagView::contextMenuEvent(QContextMenuEvent *event) {
     QList<QTreeWidgetItem*> items = selectedItems();
+    mergeAction->setEnabled(true);
+    if (items.size() <=1)
+        mergeAction->setEnabled(false);
     if (items.size() == 0) {
         propertiesAction->setEnabled(false);
         deleteAction->setEnabled(false);
@@ -629,6 +640,52 @@ void NTagView::propertiesRequested() {
         resetSize();
         this->sortByColumn(NAME_POSITION);
         emit(tagRenamed(lid, oldName, newName));
+    }
+}
+
+
+
+// Delete an item from the tree.  We really just hide it.
+void NTagView::mergeRequested() {
+    QList<QTreeWidgetItem*> items = selectedItems();
+
+    QMessageBox msgBox;
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setText(tr("Are you sure you want to merge these tags?"));
+    msgBox.setWindowTitle(tr("Verify Merge"));
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    int ret = msgBox.exec();
+    if (ret == QMessageBox::No)
+        return;
+
+    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
+    NoteTable ntable;
+    QList<qint32> notes;
+    for (int j=1; j<items.size(); j++) {
+        ntable.findNotesByTag(notes, items[j]->data(NAME_POSITION, Qt::UserRole).toInt());
+        for (int i=0; i<notes.size(); i++) {
+            if (!ntable.hasTag(notes[i], lid)) {
+                ntable.addTag(notes[i], lid, true);
+                QString tagString = ntable.getNoteListTags(notes[i]);
+                emit(updateNoteList(notes[i], NOTE_TABLE_TAGS_POSITION, tagString));
+                qint64 dt = QDateTime::currentMSecsSinceEpoch();
+                ntable.updateDate(notes[i],  dt, NOTE_UPDATED_DATE, true);
+                emit(updateNoteList(notes[i], NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+            }
+        }
+    }
+
+    // Now delete the old tags.
+    for (int i=1; i<items.size(); i++) {
+        qint32 lid = items[i]->data(NAME_POSITION, Qt::UserRole).toInt();
+        TagTable table;
+        table.deleteTag(lid);
+
+        // Now remove it in the datastore
+        NTagViewItem *ptr = dataStore.take(items[i]->data(NAME_POSITION, Qt::UserRole).toInt());
+        emit(tagDeleted(lid, ptr->data(NAME_POSITION, Qt::DisplayRole).toString()));
+        delete ptr;
     }
 }
 

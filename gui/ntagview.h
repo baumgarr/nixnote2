@@ -40,6 +40,7 @@ private:
     QAction *deleteAction;
     QAction *renameAction;
     QAction *hideUnassignedAction;
+    QAction *mergeAction;
     QShortcut *renameShortcut;
     QShortcut *addShortcut;
     QShortcut *deleteShortcut;
@@ -86,6 +87,7 @@ public slots:
     void propertiesRequested();
     void deleteRequested();
     void renameRequested();
+    void mergeRequested();
     void tagExpunged(qint32 lid);
     void updateTotals(qint32 lid, qint32 total);
     void hideUnassignedTags();

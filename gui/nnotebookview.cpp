@@ -433,6 +433,7 @@ void NNotebookView::contextMenuEvent(QContextMenuEvent *event) {
     QList<QTreeWidgetItem*> items = selectedItems();
     QAction *stackAction = stackMenu->menuAction();
     context.removeAction(stackAction);
+
     if (items.size() == 0) {
         propertiesAction->setEnabled(false);
         deleteAction->setEnabled(false);
