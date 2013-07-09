@@ -780,6 +780,8 @@ bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMime
 
         // Find the tag lid we dropped onto
         qint32 bookLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
+        if (bookLid <=0)
+            return false;
         NotebookTable bookTable;
         Notebook notebook;
         bookTable.get(notebook, bookLid);
