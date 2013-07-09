@@ -359,13 +359,14 @@ void NTableView::refreshSelection() {
 // Listen for mouse press events.  This helps determine if we should
 // open a note in a new window or the existing window
 void NTableView::mouseReleaseEvent(QMouseEvent *e) {
+    QTableView::mouseReleaseEvent(e);
     if ( e->button() == Qt::RightButton ) {
     } else if ( e->button() == Qt::LeftButton ) {
             this->openSelectedLids(false);
     } else if ( e->button() == Qt::MidButton ) {
             this->openSelectedLids(true);
     }
-    QTableView::mouseReleaseEvent(e);
+    //QTableView::mouseReleaseEvent(e);
 }
 
 
@@ -490,7 +491,7 @@ void NTableView::deleteSelectedNotes() {
 // Get a list of selected lids from the table
 void NTableView::getSelectedLids(QList<qint32> &lids) {
 
-    lids.empty();
+    lids.clear();
 
     // This is a bit of a hack.  Basically we loop through
     // everything selected.  For each item selected we look at
