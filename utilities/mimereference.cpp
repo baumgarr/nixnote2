@@ -719,8 +719,17 @@ QString MimeReference::getExtensionFromMime(QString key, QString filename) {
             else
                 filename = key;
             int pos = filename.lastIndexOf(".");
-            filename = filename.mid(pos);
-            return "";
+            if (pos>0) {
+                filename = filename.mid(pos);
+                return filename;
+            } else {
+                int pos = filename.lastIndexOf("/");
+                if (pos>0) {
+                    pos++;
+                    filename = filename.mid(pos);
+                    return "."+filename;
+                }
+            }
         }
         QString extension = table->value(key);
         if (filename.endsWith(".zip", Qt::CaseInsensitive))
