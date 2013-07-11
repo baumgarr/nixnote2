@@ -219,12 +219,30 @@ int Global::getColumnPosition(QString col) {
     return value;
  }
 
+
+int Global::getMinimumRecognitionWeight() {
+    settings->beginGroup("Search");
+    int value = settings->value("minimumRecognitionWeight", 20).toInt();
+    settings->endGroup();
+    return value;
+}
+
+
+
+void Global::setMinimumRecognitionWeight(int weight) {
+    settings->beginGroup("Search");
+    settings->setValue("minimumRecognitionWeight", weight);
+    settings->endGroup();
+}
+
+
+
+
 // Utility function for case insensitive sorting
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
  {
      return s1.toLower() < s2.toLower();
  }
-
 
 
 Global global;

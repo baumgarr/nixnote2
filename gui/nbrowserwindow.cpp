@@ -219,16 +219,27 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     bool inkNote;
     bool readOnly;
+
+    // If we are searching, we never pull from the cache since the search string may
+    // have changed since the last time.
+    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    if (criteria->isSearchStringSet() && criteria->getSearchString().trimmed() != "")
+        global.cache.remove(lid);
+
     if (!global.cache.contains(lid)) {
         NoteFormatter formatter;
+        if (criteria->isSearchStringSet())
+            formatter.setHighlightText(criteria->getSearchString());
         formatter.setNote(n, true);
         formatter.setHighlight();
         content = formatter.rebuildNoteHTML();
-        NoteCache *newCache = new NoteCache();
-        newCache->isReadOnly = formatter.readOnly;
-        newCache->isInkNote = formatter.inkNote;
-        newCache->noteContent = content;
-        global.cache.insert(lid, newCache);
+        if (!criteria->isSearchStringSet()) {
+            NoteCache *newCache = new NoteCache();
+            newCache->isReadOnly = formatter.readOnly;
+            newCache->isInkNote = formatter.inkNote;
+            newCache->noteContent = content;
+            global.cache.insert(lid, newCache);
+        }
         readOnly = formatter.readOnly;
         inkNote = formatter.inkNote;
     } else {
@@ -244,6 +255,8 @@ void NBrowserWindow::setContent(qint32 lid) {
     dateEditor.setNote(lid, n);
     QLOG_DEBUG() << content;
     //editor->setContent(content,  "application/xhtml+xml");
+    QWebSettings::setMaximumPagesInCache(0);
+    QWebSettings::setObjectCacheCapacities(0, 0, 0);
     editor->setContent(content);
     // is this an ink note?
     if (inkNote)
@@ -273,7 +286,6 @@ void NBrowserWindow::setContent(qint32 lid) {
         urlEditor.setUrl(lid, "");
     setSource();
 
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     if (criteria->isSearchStringSet()) {
         QStringList list = criteria->getSearchString().split(" ");
         for (int i=0; i<list.size(); i++) {
@@ -1160,7 +1172,6 @@ void NBrowserWindow::updateImageHash(QByteArray newhash) {
             QString newcontent = content.mid(0,pos) +section +content.mid(endPos);
             QByteArray c;
             c.append(newcontent);
-            //editor->page()->mainFrame()->setContent(c,  "application/xhtml+xml");
             editor->page()->mainFrame()->setContent(c);
             rtable.updateResourceHash(selectedFileLid, newhash);
             return;
@@ -1335,7 +1346,6 @@ void NBrowserWindow::attachFileSelected(QString filename) {
     buffer.append(" />");
     buffer.append("</a>");
 
-    QLOG_DEBUG() << buffer;
     // Insert the actual attachment
     editor->page()->mainFrame()->evaluateJavaScript(
             script_start + buffer + script_end);

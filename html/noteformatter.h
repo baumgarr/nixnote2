@@ -14,7 +14,6 @@
 
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
-#include "filters/ensearch.h"
 
 using namespace apache::thrift;
 using namespace evernote::edam;
@@ -29,10 +28,10 @@ private:
     QByteArray content;
     bool pdfPreview;
     QList< QTemporaryFile* > tempFiles;
-    EnSearch enSearch;
+    QStringList highlightWords;
     bool noteHistory;
     bool formatError;
-    void addImageHighlight(qint32 resLid, QFile &f);
+    QString addImageHighlight(qint32 resLid, QString imgfile);
     void modifyImageTags(QWebElement &enMedia, QString &hash);
     void modifyApplicationTags(QWebElement &enmedia, QString &hash, QString appl);
     void modifyPdfTags(qint32 resLid, QWebElement &enmedia);
@@ -56,6 +55,7 @@ public:
     void setNoteHistory(bool value);
     QByteArray rebuildNoteHTML();
     bool  buildInkNote(QWebElement &docElem, QString &hash);
+    void setHighlightText(QString text);
 
 
 signals:

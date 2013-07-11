@@ -18,8 +18,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "enmlformatter.h"
-
-#include "filters/ensearch.h"
 #include "sql/resourcetable.h"
 #include "global.h"
 
@@ -194,6 +192,8 @@ void EnmlFormatter::processTodo(QWebElement &node) {
 
 
 
+
+
 void EnmlFormatter::fixObjectNode(QWebElement &e) {
     QString type = e.attribute("type", "");
     if (type == "application/pdf") {
@@ -209,7 +209,6 @@ void EnmlFormatter::fixObjectNode(QWebElement &e) {
     } else {
         e.removeFromDocument();
     }
-
 }
 
 

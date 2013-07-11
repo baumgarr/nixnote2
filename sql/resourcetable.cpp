@@ -663,9 +663,9 @@ bool ResourceTable::getResourceRecognition(Resource &resource, qint32 lid) {
             resource.recognition.__isset.bodyHash = true;
         }
         if (query.value(0).toInt() == RESOURCE_RECOGNITION_SIZE) {
-            resource.recognition.bodyHash = query.value(1).toLongLong();
+            resource.recognition.size = query.value(1).toLongLong();
             resource.__isset.recognition = true;
-            resource.recognition.__isset.bodyHash = true;
+            resource.recognition.__isset.size = true;
         }
         if (query.value(0).toInt() == RESOURCE_RECOGNITION_BODY) {
             resource.recognition.body = query.value(1).toString().toStdString();

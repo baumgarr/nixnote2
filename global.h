@@ -70,7 +70,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTE_TABLE_COLUMN_COUNT 21
 
 
-#define MINIMUM_RECOGNITION_WEIGHT 40
+//#define MINIMUM_RECOGNITION_WEIGHT 10
 
 using namespace std;
 
@@ -117,7 +117,8 @@ public:
     void setColumnWidth(QString col, int width);
     int getColumnPosition(QString col);
     int getColumnWidth(QString col);
-    //JavaMachine jvm;
+    int getMinimumRecognitionWeight();
+    void setMinimumRecognitionWeight(int weight);
 
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;

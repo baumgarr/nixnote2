@@ -547,8 +547,9 @@ void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
 void FilterEngine::filterSearchStringAll(QStringList list) {
     // Filter out the records
     QSqlQuery sql, sqlnegative;
-    sql.prepare("Delete from filter where lid not in (select lid from SearchIndex where content match :word)");
-    sqlnegative.prepare("Delete from filter where lid in (select lid from SearchIndex where content match :word)");
+    sql.prepare("Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content match :word)");
+    sqlnegative.prepare("Delete from filter where lid in (select lid from SearchIndex where weight>=:weight and content match :word)");
+    sql.bindValue(":weight", global.getMinimumRecognitionWeight());
     for (qint32 i=0; i<list.size(); i++) {
         QString string = list[i];
         string.remove(QChar('"'));
@@ -1243,8 +1244,10 @@ void FilterEngine::filterSearchStringAny(QStringList list) {
     sql.exec("create temporary table if not exists anylidsfilter (lid int);");
     sql.exec("delete from anylidsfilter");
 
-    sql.prepare("insert into anylidsfilter (lid) select lid from SearchIndex where content match :word");
-    sqlnegative.prepare("insert into anylidsfilter (lid) select lid from SearchIndex where lid not in (select lid from searchindex where content match :word)");
+    sql.prepare("insert into anylidsfilter (lid) select lid from SearchIndex where weight>=:weight and content match :word");
+    sqlnegative.prepare("insert into anylidsfilter (lid) select lid from SearchIndex where lid not in (select lid from searchindex where weight>=:weight and content match :word)");
+    sql.bindValue(":weight", global.getMinimumRecognitionWeight());
+    sqlnegative.bindValue(":weight", global.getMinimumRecognitionWeight());
 
     // We start at the second entry because the first is "any:"
     for (qint32 i=1; i<list.size(); i++) {
@@ -1304,11 +1307,6 @@ void FilterEngine::filterSearchStringAny(QStringList list) {
                 string.startsWith("-recotype:", Qt::CaseInsensitive)) {
             filterSearchStringResourceRecognitionTypeAny(string);
         }
-//        if (string.startsWith("placename:", Qt::CaseInsensitive) ||
-//                string.startsWith("-placename:", Qt::CaseInsensitive)) {
-//            filterSearchStringContentClassAll(string);
-//            filterFound = true;
-//        }
         else if (string.startsWith("created:", Qt::CaseInsensitive) ||
                 string.startsWith("-created:", Qt::CaseInsensitive) ||
                 string.startsWith("updated:", Qt::CaseInsensitive) ||
@@ -1325,6 +1323,7 @@ void FilterEngine::filterSearchStringAny(QStringList list) {
             } else {
                 sql.bindValue(":word", string.trimmed()+"*");
                 sql.exec();
+                QLOG_DEBUG() << sql.lastError();
             }
         }
     }

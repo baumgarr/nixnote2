@@ -71,7 +71,6 @@ SOURCES += main.cpp\
     filters/notesortfilterproxymodel.cpp \
     html/thumbnailer.cpp \
     html/noteformatter.cpp \
-    filters/ensearch.cpp \
     settings/startupconfig.cpp \
     dialog/logindialog.cpp \
     gui/lineedit.cpp \
@@ -144,7 +143,8 @@ SOURCES += main.cpp\
     gui/browserWidgets/editorbuttonbar.cpp \
     communication/communicationerror.cpp \
     dialog/screencapture.cpp \
-    gui/imagedelegate.cpp
+    gui/imagedelegate.cpp \
+    dialog/preferences/searchpreferences.cpp
 
 
 
@@ -196,7 +196,6 @@ HEADERS  += nixnote.h \
     filters/notesortfilterproxymodel.h \
     html/thumbnailer.h \
     html/noteformatter.h \
-    filters/ensearch.h \
     settings/startupconfig.h \
     dialog/logindialog.h \
     gui/lineedit.h \
@@ -269,7 +268,8 @@ HEADERS  += nixnote.h \
     gui/browserWidgets/editorbuttonbar.h \
     communication/communicationerror.h \
     dialog/screencapture.h \
-    gui/imagedelegate.h
+    gui/imagedelegate.h \
+    dialog/preferences/searchpreferences.h
 
 
 

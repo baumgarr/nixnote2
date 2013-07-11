@@ -33,6 +33,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 
     this->setupAppearancePanel();
     this->setupSyncPanel();
+    this->setupSearchPanel();
     this->setupDebugPanel();
 
     cancelButton = new QPushButton(tr("Cancel"), this);
@@ -79,6 +80,12 @@ void PreferencesDialog::setupAppearancePanel() {
     tabs->addTab(appearancePanel, tr("Appearance"));
 }
 
+void PreferencesDialog::setupSearchPanel() {
+    searchPanel = new SearchPreferences();
+    tabs->addTab(searchPanel, tr("Search"));
+}
+
+
 void PreferencesDialog::setupSyncPanel() {
     syncPanel = new SyncPreferences(this);
     tabs->addTab(syncPanel, tr("Sync"));
@@ -100,5 +107,6 @@ void PreferencesDialog::okButtonClicked() {
     appearancePanel->saveValues();
     debugPanel->saveValues();
     syncPanel->saveValues();
+    searchPanel->saveValues();
     this->close();
 }

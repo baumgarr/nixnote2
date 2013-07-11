@@ -18,7 +18,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "noteformatter.h"
-#include "filters/ensearch.h"
 #include "sql/resourcetable.h"
 #include "sql/notebooktable.h"
 #include "sql/sharednotebooktable.h"
@@ -105,18 +104,12 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QString html = preHtmlFormat(QString::fromStdString(note.content));
     html.replace("<en-note", "<body");
     html.replace("</en-note>", "</body>");
-    //html.prepend("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n<head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" /></head>");
     QByteArray htmlPage;
     htmlPage.append(html);
     page.mainFrame()->setContent(htmlPage);
-//    page.mainFrame()->setContent(htmlPage, "application/xhtml+xml");
     QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
 
     modifyTags(page);
-
-    // Finish up and return the HTML to the user
-    //QDomElement docElem = doc.documentElement();
-    //docElem.setTagName("body");
 
     note.content = page.mainFrame()->toHtml().toStdString();
     content.clear();
@@ -137,29 +130,6 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     }
     if (note.__isset.active && !note.active)
         readOnly = true;
-
-
-
-    // Run it through "tidy".  It is a program which will fix any invalid HTML
-    // and give us the results back through stdout.  In a perfect world this
-    // wouldn't be needed, but WebKit doesn't always give back good HTML.
-//    QProcess tidyProcess;
-//    content.clear();
-//    content.append(QString::fromStdString(note.content));
-//    tidyProcess.start("tidy -raw -asxhtml -m -u -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
-//    QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
-//    tidyProcess.waitForStarted();
-//    tidyProcess.write(content);
-//    tidyProcess.closeWriteChannel();
-//    tidyProcess.waitForFinished();
-//    QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
-//    QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
-//    content.clear();
-//    content.append(tidyProcess.readAllStandardOutput());
-
-//    QDomDocument doc;
-//    doc.setContent(content);
-//    content = doc.toByteArray(-1);
 
     QLOG_DEBUG() << content;
     return content;
@@ -275,34 +245,30 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
 
 /* This function works the same as the addHighlight, but instead of highlighting
   text in a note, it highlights the text in an image. */
-void NoteFormatter::addImageHighlight(qint32 resLid, QFile &f) {
-    if (enSearch.hilightWords.size() == 0)
-        return;
+QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
+    if (highlightWords.size() == 0)
+        return "";
 
     // Get the image resource recognition data.  This tells where to highlight the image
     ResourceTable resTable;
     Resource recoResource;
     resTable.getResourceRecognition(recoResource, resLid);
-    if (!recoResource.__isset.recognition || !recoResource.data.__isset.size || !recoResource.data.__isset.body ||
-            recoResource.data.size == 0) {
-        return;
+    if (!recoResource.__isset.recognition || !recoResource.recognition.__isset.size || !recoResource.recognition.__isset.body ||
+            recoResource.recognition.size == 0) {
+        return "";
     }
 
+    QString filename = global.fileManager.getTmpDirPath() + QString::number(resLid) + ".png";
     // Now we have the recognition data.  We need to go through it
     QByteArray recoData;
     recoData.append(QString::fromStdString(recoResource.recognition.body));
     QString xml(recoData);
 
-    // Get a painter for the image.  This the background for what we are painting on (in other words,
-    // the initial image
-    QPixmap pix(f.fileName());
-    QPixmap highlightedPix(pix.size());
-    QPainter p(&highlightedPix);
-    p.drawPixmap(0,0,pix);
-
     // Create a transparent pixmap.  The only non transparent piece is teh
     // highlight that will be overlaid on the old image
-    QPixmap overlayPix(pix.size());
+    imgfile = imgfile.replace("file:///", "");
+    QPixmap originalFile(imgfile);
+    QPixmap overlayPix(originalFile.size());
     overlayPix.fill(Qt::transparent);
     QPainter p2(&overlayPix);
     p2.setBackgroundMode(Qt::TransparentMode);
@@ -331,27 +297,41 @@ void NoteFormatter::addImageHighlight(qint32 resLid, QFile &f) {
             if (child.nodeName().toLower() == "t") {
                 QString text = child.text();
                 int weight = child.attribute("w").toInt(); // Image weight
-                if (weight > MINIMUM_RECOGNITION_WEIGHT) {
+                if (weight >= global.getMinimumRecognitionWeight()) {
 
                     // Check to see if this word matches something we're looking for
-                    for (int k=0; k<enSearch.hilightWords.size(); k++) {
-                        QString searchWord = enSearch.hilightWords[k].toLower();
+                    for (int k=0; k<highlightWords.size(); k++) {
+                        QString searchWord = highlightWords[k].toLower();
                         if (searchWord.endsWith("*"))
                             searchWord.chop(1);
-                        if (text.toLower().contains(searchWord))
+                        if (text.toLower().contains(searchWord)) {
                             p2.drawRect(x,y,w,h);
+                        }
                     }
                 }
             }
         }
     }
-    p2.end();
 
     // Paint the highlight onto the background & save over the original
     p2.setOpacity(0.4);
     p2.drawPixmap(0,0,overlayPix);
-    p.end();
-    highlightedPix.save(f.fileName());
+    p2.end();
+
+    // Create the actual overlay.  We do this in two steps to avoid
+    // constantly painting the same area
+    QPixmap finalPix(originalFile.size());
+    finalPix.fill(Qt::transparent);
+    QPainter p3(&finalPix);
+    p3.setBackgroundMode(Qt::TransparentMode);
+    p3.setRenderHint(QPainter::Antialiasing,true);
+    p3.drawPixmap(0,0,originalFile);
+    p3.setOpacity(0.4);
+    p3.drawPixmap(0,0,overlayPix);
+    p3.end();
+    finalPix.save(filename);
+
+    return "this.src='file://"+filename+"';";
 }
 
 
@@ -360,13 +340,12 @@ void NoteFormatter::addImageHighlight(qint32 resLid, QFile &f) {
   modify the ENML */
 void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     QString mimetype = enMedia.attribute("type");
-    QLOG_DEBUG() << enMedia.toOuterXml();
     ResourceTable resourceTable;
     qint32 resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
     Resource r;
+    QString highlightString = "";
     if (resLid>0) {
         resourceTable.get(r, resLid);
-            QLOG_DEBUG() << enMedia.toOuterXml();
         MimeReference ref;
         QString filename;
         if (r.__isset.attributes && r.attributes.__isset.fileName)
@@ -374,7 +353,8 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
         QString type = ref.getExtensionFromMime(mimetype, filename);
 
         if (r.__isset.data && r.data.__isset.body && r.data.body.length() > 0) {
-            enMedia.setAttribute("src", "file:///"+global.fileManager.getDbDirPath(QString("dba/") +QString::number(resLid) +type));
+            QString imgfile = "file:///"+global.fileManager.getDbDirPath(QString("dba/") +QString::number(resLid) +type);
+            enMedia.setAttribute("src", imgfile);
             // Check if this is a LaTeX image
             if (r.__isset.attributes && r.attributes.__isset.sourceURL &&
                 QString::fromStdString(r.attributes.sourceURL).toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
@@ -384,11 +364,13 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
                 newText.setAttribute("onMouseOver", "style.cursor='pointer'");
                 newText.setAttribute("title", QString::fromStdString(r.attributes.sourceURL));
                 newText.setAttribute("href", "latex://"+QString::number(resLid));
-                //enMedia.replace(newText);
             }
             enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
                                  +QString::number(resLid) +"', '"
                                  +QString::number(resLid) +type  +"');");
+            highlightString = addImageHighlight(resLid, imgfile);
+            if (highlightString != "")
+                enMedia.setAttribute("onload", highlightString);
 
         }
     } else {
@@ -400,12 +382,10 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     enMedia.setAttribute("en-tag", "en-media");
     enMedia.setPlainText("");
     enMedia.setAttribute("lid", QString::number(resLid));
-    // rename the <enmedia> tag to <img>
-    QLOG_DEBUG() << enMedia.toOuterXml();
 
+    // rename the <enmedia> tag to <img>
     enMedia.setOuterXml(enMedia.toOuterXml().replace("<en-media","<img"));
     enMedia.setOuterXml(enMedia.toOuterXml().replace("</en-media>","</img>"));
-    QLOG_DEBUG() << enMedia.toOuterXml();
 }
 
 
@@ -632,5 +612,13 @@ void NoteFormatter::modifyPdfTags(qint32 resLid, QWebElement &enmedia) {
     x.replace("en-media", "object");
     enmedia.setOuterXml(x);
     x = enmedia.toOuterXml();
-    QLOG_DEBUG() << x;
+}
+
+
+void NoteFormatter::setHighlightText(QString text) {
+    QStringList temp = text.split(" ");
+    for (int i=0; i<temp.size(); i++) {
+        if (temp[i].trimmed() != "")
+            highlightWords.append(temp[i]);
+    }
 }
