@@ -68,10 +68,10 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
     globalSettings.endGroup();
     id = accountId;
 
-    logsDir.setPath(homeDirPath+"logs");
+    logsDir.setPath(homeDirPath+"logs-" +QString::number(id));
     createDirOrCheckWriteable(logsDir);
 
-    tmpDir.setPath(homeDirPath+"tmp");
+    tmpDir.setPath(homeDirPath+"tmp-" +QString::number(id));
     createDirOrCheckWriteable(tmpDir);
     tmpDirPath = slashTerminatePath(tmpDir.path());
 
