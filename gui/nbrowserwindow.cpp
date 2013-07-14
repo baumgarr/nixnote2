@@ -1545,17 +1545,11 @@ void NBrowserWindow::attachFileSelected(QString filename) {
          QString guid = "";
          QString type = "";
          if (index >-1) {
-             type = fullName.mid(index+1);
-             guid = fullName.mid(0,index);
+             type = fullName.mid(index);
+             guid = fullName.mid(0,index-1).replace(global.fileManager.getDbaDirPath(),"");
          }
-         index = guid.indexOf(global.attachmentNameDelimeter);
-         if (index > -1) {
-             guid = guid.mid(0,index);
-         }
-
          global.resourceWatcher.addPath(global.fileManager.getDbaDirPath() +guid + QString(".") +type);
-         QString fileUrl = global.fileManager.getDbaDirPath() +guid + QString(".") +type;
-         // If we can't open it, then prompt the user to save it.
+         QString fileUrl = global.fileManager.getDbaDirPath()+guid +type;
          QDesktopServices::openUrl(fileUrl);
          return;
      }

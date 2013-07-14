@@ -439,32 +439,9 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
             fileDetails = QString::fromStdString(r.attributes.fileName);
         fileDetails = ref.getExtensionFromMime(QString::fromStdString(r.mime), fileDetails);
 
-
-        if (fileDetails != "") {
-            if (!noteHistory) {
-                enmedia.setAttribute("href", QString("nnres:") +QString::number(resLid)
-                                     +global.attachmentNameDelimeter +fileDetails);
-                contextFileName = global.fileManager.getTmpDirPath("")+QString::number(resLid) +global.attachmentNameDelimeter + fileDetails;
-            } else {
-                enmedia.setAttribute("href", QString("nnres:") +QString::number(resLid) +QString("-")+ QString::number(note.updateSequenceNum)
-                                     +global.attachmentNameDelimeter +fileDetails);
-                contextFileName = global.fileManager.getTmpDirPath("")+QString::number(resLid) +QString("-")+ QString(note.updateSequenceNum)
-                                                                   +global.attachmentNameDelimeter + fileDetails;
-            }
-        } else {
-            if (!noteHistory) {
-                enmedia.setAttribute("href", "nnres:" +QString::number(resLid) +QString("-") +QString(note.updateSequenceNum)
-                                     +global.attachmentNameDelimeter +appl);
-                contextFileName = global.fileManager.getTmpDirPath("") +QString::number(resLid) +QString("-")
-                                                                   +QString(note.updateSequenceNum)
-                                                                   +global.attachmentNameDelimeter + appl;
-            } else {
-                enmedia.setAttribute("href", "nnres:" +QString::number(resLid)
-                                     +global.attachmentNameDelimeter +appl);
-                contextFileName = global.fileManager.getTmpDirPath("") +QString::number(resLid)
-                                                                   +global.attachmentNameDelimeter + appl;
-            }
-        }
+        enmedia.setAttribute("href", QString("nnres:") +global.fileManager.getDbaDirPath()+QString::number(resLid)
+                             +"."+fileDetails);
+        contextFileName = global.fileManager.getTmpDirPath("")+QString::number(resLid) +global.attachmentNameDelimeter + fileDetails;
 
         // Setup the context menu.  This is useful if we want to do a "save as" or such
         contextFileName = contextFileName.replace("\\", "/");
@@ -539,7 +516,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     p.drawText(textPoint, displayName);
 
     QString unit = QString(tr("Bytes"));
-    qint32 size = QFileInfo(fileName).size();
+    qint64 size = QFileInfo(fileName).size();
     if (size > 1024) {
         size = size/1024;
         unit = QString(tr("KB"));
