@@ -144,7 +144,8 @@ SOURCES += main.cpp\
     communication/communicationerror.cpp \
     dialog/screencapture.cpp \
     gui/imagedelegate.cpp \
-    dialog/preferences/searchpreferences.cpp
+    dialog/preferences/searchpreferences.cpp \
+    html/attachmenticonbuilder.cpp
 
 
 
@@ -269,7 +270,8 @@ HEADERS  += nixnote.h \
     communication/communicationerror.h \
     dialog/screencapture.h \
     gui/imagedelegate.h \
-    dialog/preferences/searchpreferences.h
+    dialog/preferences/searchpreferences.h \
+    html/attachmenticonbuilder.h
 
 
 

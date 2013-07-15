@@ -440,7 +440,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
         fileDetails = ref.getExtensionFromMime(QString::fromStdString(r.mime), fileDetails);
 
         enmedia.setAttribute("href", QString("nnres:") +global.fileManager.getDbaDirPath()+QString::number(resLid)
-                             +"."+fileDetails);
+                             +fileDetails);
         contextFileName = global.fileManager.getTmpDirPath("")+QString::number(resLid) +global.attachmentNameDelimeter + fileDetails;
 
         // Setup the context menu.  This is useful if we want to do a "save as" or such

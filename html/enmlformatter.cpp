@@ -269,6 +269,10 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
     if (enTag.toLower() == "en-media") {
         resources.append(e.attribute("lid").toInt());
         e.removeAllChildren();
+        QString newXml = e.toOuterXml();
+        newXml.replace("<a", "<en-media");
+        newXml.replace("</a>", "</en-media>");
+        e.setOuterXml(newXml);
     }
     QString latex = e.attribute("href", "");
     if (latex.toLower().startsWith("latex://")) {
