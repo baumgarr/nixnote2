@@ -301,6 +301,7 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
         noteTitle.setFocusPolicy(Qt::NoFocus);
         tagEditor.setEnabled(false);
         authorEditor.setFocusPolicy(Qt::NoFocus);
+        locationEditor.setFocusPolicy(Qt::NoFocus);
         urlEditor.setFocusPolicy(Qt::NoFocus);
         notebookMenu.setEnabled(false);
         dateEditor.setEnabled(false);
@@ -310,6 +311,7 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
     noteTitle.setFocusPolicy(Qt::StrongFocus);
     tagEditor.setEnabled(true);
     authorEditor.setFocusPolicy(Qt::StrongFocus);
+    locationEditor.setFocusPolicy(Qt::StrongFocus);
     urlEditor.setFocusPolicy(Qt::StrongFocus);
     notebookMenu.setEnabled(true);
     dateEditor.setEnabled(true);

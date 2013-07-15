@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/browserWidgets/urleditor.h"
 #include "gui/browserWidgets/tageditor.h"
 #include "gui/browserWidgets/authoreditor.h"
+#include "gui/browserWidgets/locationeditor.h"
 #include "gui/browserWidgets/dateeditor.h"
 #include "gui/browserWidgets/colormenu.h"
 #include "gui/browserWidgets/editorbuttonbar.h"
@@ -97,6 +98,7 @@ public:
     TagEditor tagEditor;
     DateEditor dateEditor;
     AuthorEditor authorEditor;
+    LocationEditor locationEditor;
     void setReadOnly(bool readOnly);
     NMainMenuBar *mainMenuBarHook;
 

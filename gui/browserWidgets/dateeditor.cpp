@@ -30,7 +30,10 @@ DateEditor::DateEditor(QWidget *parent) :
     QVBoxLayout *layout = new QVBoxLayout();
     QHBoxLayout *vLayout = new QHBoxLayout();
     vLayout->setMargin(4);
+    QHBoxLayout *v2Layout = new QHBoxLayout();
+    v2Layout->setMargin(4);
     layout->setMargin(0);
+
 
     vLayout->addWidget(new QLabel(tr("Created:")));
     vLayout->addWidget(&createdDate);
@@ -45,7 +48,9 @@ DateEditor::DateEditor(QWidget *parent) :
     vLayout->addStretch(10);
 
     layout->addLayout(vLayout);
-    layout->addWidget(&authorEditor);
+    v2Layout->addWidget(&authorEditor);
+    v2Layout->addWidget(&locationEditor);
+    layout->addLayout(v2Layout);
 
     connect(&createdDate, SIGNAL(dateChanged(QDate)), this, SLOT(emitChangedSignal()));
     connect(&updatedDate, SIGNAL(dateChanged(QDate)), this, SLOT(emitChangedSignal()));
@@ -54,7 +59,7 @@ DateEditor::DateEditor(QWidget *parent) :
     connect(&updatedDate, SIGNAL(timeChanged(QTime)), this, SLOT(emitChangedSignal()));
     connect(&subjectDate, SIGNAL(timeChanged(QTime)), this, SLOT(emitChangedSignal()));
     connect(&authorEditor, SIGNAL(textUpdated()), this, SLOT(emitChangedSignal()));
-
+    connect(&locationEditor, SIGNAL(textUpdated()), this, SLOT(emitChangedSignal()));
     setLayout(layout);
     hide();
 }
@@ -71,6 +76,13 @@ void DateEditor::setNote(qint32 lid, Note n) {
         authorEditor.setAuthor(lid, QString::fromStdString(n.attributes.author));
     else
         authorEditor.setAuthor(lid, "");
+
+    if (n.__isset.attributes && n.attributes.__isset.longitude) {
+        locationEditor.setGeography(lid, n.attributes.longitude,
+        n.attributes.latitude,n.attributes.altitude);
+    } else {
+        locationEditor.setGeography(lid, 0,0,0);
+    }
 }
 
 void DateEditor::hideEvent(QHideEvent* event) {
@@ -79,6 +91,7 @@ void DateEditor::hideEvent(QHideEvent* event) {
     subjectDate.hide();
     updatedDate.hide();
     authorEditor.hide();
+    locationEditor.hide();
 }
 
 void DateEditor::showEvent(QShowEvent* event) {
@@ -87,6 +100,7 @@ void DateEditor::showEvent(QShowEvent* event) {
     subjectDate.show();
     updatedDate.show();
     authorEditor.show();
+    locationEditor.show();
 }
 
 void DateEditor::emitChangedSignal() {

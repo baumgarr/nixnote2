@@ -145,7 +145,9 @@ SOURCES += main.cpp\
     dialog/screencapture.cpp \
     gui/imagedelegate.cpp \
     dialog/preferences/searchpreferences.cpp \
-    html/attachmenticonbuilder.cpp
+    html/attachmenticonbuilder.cpp \
+    dialog/locationdialog.cpp \
+    gui/browserWidgets/locationeditor.cpp
 
 
 
@@ -271,7 +273,9 @@ HEADERS  += nixnote.h \
     dialog/screencapture.h \
     gui/imagedelegate.h \
     dialog/preferences/searchpreferences.h \
-    html/attachmenticonbuilder.h
+    html/attachmenticonbuilder.h \
+    dialog/locationdialog.h \
+    gui/browserWidgets/locationeditor.h
 
 
 

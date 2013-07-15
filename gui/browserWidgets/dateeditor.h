@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDateTimeEdit>
 #include "gui/browserWidgets/authoreditor.h"
 #include "gui/browserWidgets/datetimeeditor.h"
+#include "gui/browserWidgets/locationeditor.h"
 
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
@@ -37,6 +38,7 @@ class DateEditor : public QWidget
     Q_OBJECT
 private:
     AuthorEditor authorEditor;
+    LocationEditor locationEditor;
     DateTimeEditor subjectDate;
     DateTimeEditor createdDate;
     DateTimeEditor updatedDate;

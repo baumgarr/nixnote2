@@ -142,6 +142,8 @@ public:
     bool isDeleted(qint32 lid);                             // Is this note deleted?
     bool hasTag(qint32 noteLid, qint32 tagLid);             // Does this note have the specified tag?
     QString getNoteListTags(qint32 lid);                       // Get the string of tags from the notetable list
+    void resetGeography(qint32 lid, bool isDirty);
+    void setGeography(qint32 lid, double longitude, double latitude, double altitude, bool isDirty);
 };
 
 

@@ -1515,3 +1515,55 @@ void NoteTable::reindexAllNotes() {
     query.bindValue(":key", NOTE_GUID);
     query.exec();
 }
+
+
+void NoteTable::resetGeography(qint32 lid, bool isDirty) {
+    QSqlQuery query;
+    query.prepare("delete from datastore where lid=:lid and key=:key");
+
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ATTRIBUTE_LONGITUDE);
+    query.exec();
+
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ATTRIBUTE_LATITUDE);
+    query.exec();
+
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ATTRIBUTE_ALTITUDE);
+    query.exec();
+
+    if (isDirty)
+        this->setDirty(lid, isDirty);
+}
+
+
+
+
+void NoteTable::setGeography(qint32 lid, double longitude, double latitude, double altitude, bool isDirty) {
+    this->resetGeography(lid, isDirty);
+
+     QSqlQuery query;
+    query.prepare("insert into datastore (lid,key,data) values(:lid, :key, :data)");
+
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ATTRIBUTE_LONGITUDE);
+    query.bindValue(":data", longitude);
+    query.exec();
+    QLOG_DEBUG() << query.lastError();
+
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ATTRIBUTE_LATITUDE);
+    query.bindValue(":data", latitude);
+    query.exec();
+
+    if (altitude>0.0) {
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_ATTRIBUTE_ALTITUDE);
+        query.bindValue(":data", altitude);
+        query.exec();
+    }
+
+    if (isDirty)
+        this->setDirty(lid, isDirty);
+}
