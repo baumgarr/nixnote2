@@ -105,8 +105,7 @@ void NTitleEditor::titleChanged(QString text) {
 
 
 QString NTitleEditor::cleanupTitle(QString text) {
-    text = text.trimmed();
-    if (text == "" && !hasFocus()) {
+    if (text.trimmed() == "" && !hasFocus()) {
         text = tr("Untitled note");
     }
 
