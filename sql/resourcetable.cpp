@@ -95,7 +95,7 @@ qint32 ResourceTable::getLid(QString noteGuid, QString guid) {
     QSqlQuery query;
     NoteTable n;
     qint32 noteLid = n.getLid(noteGuid);
-    query.prepare("Select a.lid from DataStore a where a.key=:key and a.lid = (select b.lid from DataStore b where b.key=:key2 and b.data=:noteLid)");
+    query.prepare("Select a.lid from DataStore a where a.data=:data and a.key=:key and a.lid = (select distinct b.lid from DataStore b where b.key=:key2 and b.data=:noteLid)");
     query.bindValue(":data", guid);
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":key2", RESOURCE_NOTE_LID);

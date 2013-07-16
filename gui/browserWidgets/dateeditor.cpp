@@ -59,7 +59,7 @@ DateEditor::DateEditor(QWidget *parent) :
     connect(&updatedDate, SIGNAL(timeChanged(QTime)), this, SLOT(emitChangedSignal()));
     connect(&subjectDate, SIGNAL(timeChanged(QTime)), this, SLOT(emitChangedSignal()));
     connect(&authorEditor, SIGNAL(textUpdated()), this, SLOT(emitChangedSignal()));
-    connect(&locationEditor, SIGNAL(textUpdated()), this, SLOT(emitChangedSignal()));
+    connect(&locationEditor, SIGNAL(clicked()), this, SLOT(emitChangedSignal()));
     setLayout(layout);
     hide();
 }

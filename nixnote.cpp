@@ -88,7 +88,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     db = new DatabaseConnection();  // Startup the database
     QLOG_TRACE() << "Setting up global settings";
     this->initializeGlobalSettings();
-    defaultMsgTimeout = 10000;  // Default time to leave a message
+//    defaultMsgTimeout = 30000;  // Default time to leave a message
 
     // Setup the sync thread
     QLOG_TRACE() << "Setting up counter thread";
@@ -942,12 +942,12 @@ void NixNote::databaseRestore() {
     if (pos > 0)
         saveLastPath.truncate(pos);
 
-    setMessage(tr("Restoring database"), defaultMsgTimeout);
+    setMessage(tr("Restoring database"));
     ImportData noteReader(true);
     noteReader.import(fileNames[0]);
 
     if (noteReader.lastError != 0) {
-        setMessage(noteReader.getErrorMessage(), defaultMsgTimeout);
+        setMessage(noteReader.getErrorMessage());
         QLOG_ERROR() <<  "Restore problem: " << noteReader.lastError;
         waitCursor(false);
         return;
@@ -961,7 +961,7 @@ void NixNote::databaseRestore() {
     notebookTreeView->rebuildNotebookTreeNeeded = true;
     notebookTreeView->loadData();
     searchTreeView->loadData();
-    setMessage(tr("Database has been restored."), defaultMsgTimeout);
+    setMessage(tr("Database has been restored."));
     waitCursor(false);
 }
 

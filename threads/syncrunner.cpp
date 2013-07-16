@@ -59,7 +59,7 @@ SyncRunner::~SyncRunner() {
 
 void SyncRunner::run() {
     QLOG_DEBUG() << "SyncRunner starting";
-    defaultMsgTimeout = 3000;
+    defaultMsgTimeout = 30000;
     this->setPriority(QThread::LowPriority);
     comm = new CommunicationManager(this);
     connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
