@@ -1,9 +1,10 @@
 #include "locationeditor.h"
 #include "dialog/locationdialog.h"
 #include "sql/notetable.h"
+#include <QDesktopServices>
 
 LocationEditor::LocationEditor(QWidget *parent) :
-    QPushButton(parent)
+    QToolButton(parent)
 {
     QPalette pal;
     pal.setColor(backgroundRole(), QPalette::Base);
@@ -13,15 +14,23 @@ LocationEditor::LocationEditor(QWidget *parent) :
     f.setPointSize(8);
     setFont(f);
 
-    inactiveColor = "QPushButton {background-color: transparent; border-radius: 0px; border:none; margin 0px; padding: 0px} ";
+    inactiveColor = "QToolButton {background-color: transparent; border-radius: 0px; border:none; margin 0px; padding: 4px} ";
     this->setCursor(Qt::PointingHandCursor);
     this->setStyleSheet(inactiveColor);
 
     defaultText = QString(tr("Click to set location..."));
-//    connect(this, SIGNAL(textChanged(QString)), this, SLOT(textModified(QString)));
     this->setText(defaultText);
+    actionMenu = new QMenu();
+    editAction = actionMenu->addAction(tr("Edit..."));
+    clearAction = actionMenu->addAction(tr("Clear"));
+    viewAction = actionMenu->addAction(tr("View on map"));
+    connect(editAction, SIGNAL(triggered()), this, SLOT(buttonClicked()));
+    connect(viewAction, SIGNAL(triggered()), this, SLOT(viewClicked()));
+    connect(clearAction, SIGNAL(triggered()), this, SLOT(clearClicked()));
+    setAutoRaise(false);
+    setMenu(actionMenu);
+
     connect(this, SIGNAL(clicked()), this, SLOT(buttonClicked()));
-    this->setFlat(true);
 
     hide();
 }
@@ -65,9 +74,28 @@ void LocationEditor::setGeography(qint32 lid, double longitude, double latitude,
     this->startAltitude = altitude;
     currentLid = lid;
 
+    Note n;
+    NoteTable ntable;
+    ntable.get(n, lid, false,false);
+    if (!n.__isset.attributes || !n.attributes.__isset.latitude || !n.attributes.__isset.longitude)
+        return;
+
     LocationDialog dialog;
     dialog.setLongitude(this->startLongitude);
     dialog.setLatitude(this->startLatitude);
     dialog.setAltitude(this->startAltitude);
     this->setText(dialog.locationText());
+}
+
+
+void LocationEditor::clearClicked() {
+    NoteTable ntable;
+    ntable.resetGeography(currentLid, true);
+}
+
+void LocationEditor::viewClicked() {
+    if (this->text().toLower() == defaultText.toLower())
+        return;
+    QDesktopServices::openUrl(QUrl("http://maps.google.com/maps?z=6&q=" +QString::number(startLatitude) +","
+                                       +QString::number(startLongitude)));
 }

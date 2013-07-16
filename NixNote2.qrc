@@ -48,5 +48,6 @@
         <file alias="silhouette.png">images/silhouette.png</file>
         <file alias="eraser.png">images/eraser.png</file>
         <file alias="grid.png">images/grid.png</file>
+        <file alias="navigation.png">images/navigation.png</file>
     </qresource>
 </RCC>

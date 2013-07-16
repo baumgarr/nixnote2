@@ -2,8 +2,10 @@
 #define LOCATIONEDITOR_H
 
 #include <QPushButton>
+#include <QToolButton>
+#include <QMenu>
 
-class LocationEditor : public QPushButton
+class LocationEditor : public QToolButton
 {
     Q_OBJECT
 private:
@@ -13,6 +15,10 @@ private:
     double startAltitude;
     double startLongitude;
     double startLatitude;
+    QMenu *actionMenu;
+    QAction *clearAction;
+    QAction *editAction;
+    QAction *viewAction;
     qint32 currentLid;
 
 public:
@@ -24,6 +30,8 @@ signals:
 public slots:
     void setActiveColor();
     void buttonClicked();
+    void clearClicked();
+    void viewClicked();
 
     
 };
