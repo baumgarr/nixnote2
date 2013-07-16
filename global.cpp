@@ -97,6 +97,10 @@ void Global::setup(StartupConfig startupConfig) {
     settings->beginGroup("Debugging");
     disableUploads = settings->value("disableUploads", true).toBool();
     settings->endGroup();
+
+    setupDateTimeFormat();
+
+
 }
 
 
@@ -238,11 +242,121 @@ void Global::setMinimumRecognitionWeight(int weight) {
 
 
 
+// Setup the default date & time formatting
+void Global::setupDateTimeFormat() {
+    QString datefmt;
+    QString timefmt;
+
+    enum DateFormat {
+        MMddyy = 1,
+        MMddyyyy = 2,
+        Mddyyyy = 3,
+        Mdyyyy = 4,
+        ddMMyy = 5,
+        dMyy = 6,
+        ddMMyyyy = 7,
+        dMyyyy = 8,
+        yyyyMMdd = 9,
+        yyMMdd = 10
+    };
+    enum TimeFormat {
+        HHmmss = 1,
+        HHMMSSa = 2,
+        HHmm = 3,
+        HHmma = 4,
+        hhmmss = 5,
+        hhmmssa = 6,
+        hmmssa = 7,
+        hhmm = 8,
+        hhmma = 9,
+        hmma = 10
+    };
+
+    settings->beginGroup("Locale");
+    int date = settings->value("dateFormat", MMddyy).toInt();
+    int time = settings->value("timeFormat", HHmmss).toInt();
+    settings->endGroup();
+
+    datefmt = "MM/dd/yy";
+    switch (date) {
+    case MMddyy:
+        datefmt = "MM/dd/yy";
+        break;
+    case MMddyyyy:
+        datefmt = "MM/dd/yyyy";
+        break;
+    case Mddyyyy:
+        datefmt = "M/dd/yyyy";
+        break;
+    case Mdyyyy:
+        datefmt = "M/d/yyyy";
+        break;
+    case ddMMyy:
+        datefmt = "dd/MM/yy";
+        break;
+    case dMyy:
+        datefmt = "d/M/yy";
+        break;
+    case ddMMyyyy:
+        datefmt = "dd/MM/yyyy";
+        break;
+    case dMyyyy:
+        datefmt = "d/M/yyyy";
+        break;
+    case yyyyMMdd:
+        datefmt = "yyyy-MM-dd";
+        break;
+    case yyMMdd:
+        datefmt = "yy-MM-dd";
+        break;
+    }
+
+    timefmt = "HH:mm:ss";
+    switch (time) {
+    case HHmmss:
+        timefmt = "HH:mm:ss";
+        break;
+    case HHMMSSa:
+        timefmt = "HH:MM:SS a";
+        break;
+    case HHmm:
+        timefmt = "HH:mm";
+        break;
+    case HHmma:
+        timefmt = "HH:mm a";
+        break;
+    case hhmmss:
+        timefmt = "hh:mm:ss";
+        break;
+    case hhmmssa:
+        timefmt = "hh:mm:ss a";
+        break;
+    case hmmssa:
+        timefmt = "h:mm:ss a";
+        break;
+    case hhmm:
+        timefmt = "hh:mm";
+        break;
+    case hhmma:
+        timefmt = "hh:mm a";
+        break;
+    case hmma:
+        timefmt = "h:mm a";
+        break;
+    }
+
+    this->dateFormat = datefmt;
+    this->timeFormat = timefmt;
+}
+
+
+
 // Utility function for case insensitive sorting
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
  {
      return s1.toLower() < s2.toLower();
  }
+
 
 
 Global global;

@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/preferences/syncpreferences.h"
 #include "dialog/preferences/appearancepreferences.h"
 #include "dialog/preferences/searchpreferences.h"
+#include "dialog/preferences/localepreferences.h"
 
 class PreferencesDialog : public QDialog
 {
@@ -43,10 +44,12 @@ private:
     void setupDebugPanel();
     void setupSyncPanel();
     void setupAppearancePanel();
+    void setupLocalePanel();
     void setupSearchPanel();
     DebugPreferences *debugPanel;
     SyncPreferences *syncPanel;
     SearchPreferences *searchPanel;
+    LocalePreferences *localePanel;
     AppearancePreferences *appearancePanel;
     QPushButton *okButton;
     QPushButton *cancelButton;

@@ -19,6 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "datedelegate.h"
 #include <QDateTime>
+#include "global.h"
+
+extern Global global;
 
 DateDelegate::DateDelegate()
 {
@@ -31,8 +34,9 @@ QString DateDelegate::displayText(const QVariant &value, const QLocale &locale) 
     QDateTime timestamp;
     timestamp.setTime_t(value.toLongLong()/1000);
 
+    QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedKingdom));
     if (timestamp.date() == QDate::currentDate())
             return "Today " + timestamp.time().toString(Qt::SystemLocaleShortDate);
-
-    return timestamp.toString(Qt::SystemLocaleShortDate);
+    return timestamp.toString(global.dateFormat + " " +global.timeFormat);
+//    return timestamp.toString(Qt::SystemLocaleShortDate);
 }

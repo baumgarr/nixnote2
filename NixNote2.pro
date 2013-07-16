@@ -147,7 +147,8 @@ SOURCES += main.cpp\
     dialog/preferences/searchpreferences.cpp \
     html/attachmenticonbuilder.cpp \
     dialog/locationdialog.cpp \
-    gui/browserWidgets/locationeditor.cpp
+    gui/browserWidgets/locationeditor.cpp \
+    dialog/preferences/localepreferences.cpp
 
 
 
@@ -275,7 +276,8 @@ HEADERS  += nixnote.h \
     dialog/preferences/searchpreferences.h \
     html/attachmenticonbuilder.h \
     dialog/locationdialog.h \
-    gui/browserWidgets/locationeditor.h
+    gui/browserWidgets/locationeditor.h \
+    dialog/preferences/localepreferences.h
 
 
 

@@ -32,6 +32,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     mainLayout->addWidget(tabs);
 
     this->setupAppearancePanel();
+    this->setupLocalePanel();
     this->setupSyncPanel();
     this->setupSearchPanel();
     this->setupDebugPanel();
@@ -80,6 +81,13 @@ void PreferencesDialog::setupAppearancePanel() {
     tabs->addTab(appearancePanel, tr("Appearance"));
 }
 
+
+void PreferencesDialog::setupLocalePanel() {
+    localePanel = new LocalePreferences(this);
+    tabs->addTab(localePanel, tr("Locale"));
+}
+
+
 void PreferencesDialog::setupSearchPanel() {
     searchPanel = new SearchPreferences();
     tabs->addTab(searchPanel, tr("Search"));
@@ -105,8 +113,10 @@ void PreferencesDialog::cancelButtonClicked() {
 void PreferencesDialog::okButtonClicked() {
     okButtonPressed = true;
     appearancePanel->saveValues();
+    localePanel->saveValues();
     debugPanel->saveValues();
     syncPanel->saveValues();
     searchPanel->saveValues();
     this->close();
 }
+

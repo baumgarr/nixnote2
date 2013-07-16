@@ -17,7 +17,6 @@ SearchPreferences::SearchPreferences(QWidget *parent) :
     weight->setMinimum(1);
     weight->setMaximum(100);
     weight->setValue(global.getMinimumRecognitionWeight());
-    global.settings->endGroup();
 }
 
 

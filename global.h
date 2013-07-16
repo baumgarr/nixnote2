@@ -119,6 +119,8 @@ public:
     int getColumnWidth(QString col);
     int getMinimumRecognitionWeight();
     void setMinimumRecognitionWeight(int weight);
+    QString dateFormat;
+    QString timeFormat;
 
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;
@@ -131,6 +133,7 @@ public:
     QString getProgramDirPath();      // Get the path the program is executing from
     QList< QPair<int, QString> > passwordRemember;   // Cache of passwords
     void appendFilter(FilterCriteria *criteria);
+    void setupDateTimeFormat();
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);
