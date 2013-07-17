@@ -156,7 +156,7 @@ public slots:
     void disconnect();
     void updateSyncButton();
     void syncButtonReset();
-    void updateSelectionCriteria();
+    void updateSelectionCriteria(bool afterSync=false);
     void leftButtonTriggered();
     void rightButtonTriggered();
     void openNote(bool newWindow);

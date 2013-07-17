@@ -225,14 +225,18 @@ void NNotebookView::loadData() {
     LinkedNotebookTable linkedTable;
     SharedNotebookTable sharedTable;
     dataStore.clear();
-    query.exec("Select lid, name, stack from NotebookModel order by name");
+    query.exec("Select lid, name, stack, username from NotebookModel order by username, name");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
         if (!notebookTable.isDeleted(query.value(0).toInt())) {
             NNotebookViewItem *newWidget = new NNotebookViewItem(lid);
             newWidget->setData(NAME_POSITION, Qt::DisplayRole, query.value(1).toString());
             newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
-            newWidget->stack = query.value(2).toString();
+            QString username = query.value(3).toString();
+            if (username.trimmed() != "")
+                newWidget->stack = username;
+            else
+                newWidget->stack = query.value(2).toString();
             this->dataStore.insert(query.value(0).toInt(), newWidget);
             root->addChild(newWidget);
 
@@ -240,6 +244,8 @@ void NNotebookView::loadData() {
                 NNotebookViewItem *stackWidget = new NNotebookViewItem(0);
                 stackWidget->setData(NAME_POSITION, Qt::DisplayRole, newWidget->stack);
                 stackWidget->setData(NAME_POSITION, Qt::UserRole, "STACK");
+                if (username != "")
+                    stackWidget->setType(NNotebookViewItem::LinkedStack);
                 stackStore.insert(newWidget->stack, stackWidget);
                 root->addChild(stackWidget);
             }
@@ -273,37 +279,48 @@ void NNotebookView::rebuildTree() {
 
 void NNotebookView::notebookUpdated(qint32 lid, QString name) {
     this->rebuildNotebookTreeNeeded = true;
+    LinkedNotebookTable linkedTable;
+    LinkedNotebook linkedbook;
+    NotebookTable notebookTable;
+    Notebook notebook;
+    notebookTable.get(notebook, lid);
+
+    bool isLinked = false;
+    QString stackName = QString::fromStdString(notebook.stack);
+    if (linkedTable.exists(lid)) {
+        linkedTable.get(linkedbook, lid);
+        isLinked = true;
+        stackName = QString::fromStdString(linkedbook.username);
+    }
 
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
-        NotebookTable notebookTable;
-        Notebook notebook;
-        notebookTable.get(notebook, lid);
         NNotebookViewItem *newWidget = dataStore.value(lid);
         newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
         newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
-        newWidget->stack = QString::fromStdString(notebook.stack);
-        if (notebook.stack != "" && !this->stackStore.contains(newWidget->stack)) {
+        newWidget->stack = stackName;
+        if (stackName != "" && !this->stackStore.contains(newWidget->stack)) {
             NNotebookViewItem *stackWidget = new NNotebookViewItem(0);
             stackWidget->setData(NAME_POSITION, Qt::DisplayRole, newWidget->stack);
             stackWidget->setData(NAME_POSITION, Qt::UserRole, "STACK");
+            if (isLinked)
+                stackWidget->setType(NNotebookViewItem::LinkedStack);
             stackStore.insert(newWidget->stack, stackWidget);
             root->addChild(stackWidget);
         }
         root->addChild(newWidget);
     } else {
-        NotebookTable notebookTable;
-        Notebook notebook;
-        notebookTable.get(notebook, lid);
         NNotebookViewItem *newWidget = new NNotebookViewItem(lid);
         newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
         newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
-        newWidget->stack = QString::fromStdString(notebook.stack);
+        newWidget->stack = stackName;
         this->dataStore.insert(lid, newWidget);
-        if (notebook.stack != "" && !this->stackStore.contains(newWidget->stack)) {
+        if (stackName !="" && !this->stackStore.contains(newWidget->stack)) {
             NNotebookViewItem *stackWidget = new NNotebookViewItem(0);
             stackWidget->setData(NAME_POSITION, Qt::DisplayRole, newWidget->stack);
             stackWidget->setData(NAME_POSITION, Qt::UserRole, "STACK");
+            if (isLinked)
+                stackWidget->setType(NNotebookViewItem::LinkedStack);
             stackStore.insert(newWidget->stack, stackWidget);
             root->addChild(stackWidget);
         }

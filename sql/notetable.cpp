@@ -142,7 +142,7 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
     QSqlQuery query;
     qint32 position;
     qint32 lid = l;
-    qint32 notebookLid;
+    qint32 notebookLid, linkedNobebookLid;
 
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     if (lid <= 0)
@@ -232,7 +232,12 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_NOTEBOOK_LID);
         NotebookTable notebookTable;
+        LinkedNotebookTable linkedTable;
         notebookLid = notebookTable.getLid(QString::fromStdString(t.notebookGuid));
+        if (notebookLid == 0) {
+            notebookLid = linkedTable.getLid(QString::fromStdString(t.notebookGuid));
+        }
+
         // If not found, we insert one to avoid problems.  We'll probably get the real data later
         if (notebookLid == 0) {
             notebookLid = cs.incrementLidCounter();
@@ -398,7 +403,12 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
 bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
 
     NotebookTable notebookTable;
+    LinkedNotebookTable linkedNotebookTable;
+
     qint32 notebookLid = notebookTable.getLid(t.notebookGuid);
+    if (notebookLid <=0) {
+        notebookLid = linkedNotebookTable.getLid(t.notebookGuid);
+    }
     Notebook notebook;
     notebookTable.get(notebook, notebookLid);
     // Now let's update the user table

@@ -76,7 +76,7 @@ void DataStore::createTable() {
         QLOG_ERROR() << "Creation of TagModel table failed: " << sql.lastError();
     }
 
-    sql.prepare("Create View NotebookModel as select a.lid, (select b.data from DataStore b where b.key=3002 and a.lid = b.lid) as stack, (select c.data from DataStore c where c.key=3001 and a.lid = c.lid) as name from DataStore a where a.key=3000;");
+    sql.prepare("Create View NotebookModel as select a.lid, (select b.data from DataStore b where b.key=3002 and a.lid = b.lid) as stack, (select c.data from DataStore c where c.key=3001 and a.lid = c.lid) as name, (select d.data from DataStore d where d.key=3201 and a.lid = d.lid) as username from DataStore a where a.key=3000;");
     if (!sql.exec()) {
         QLOG_ERROR() << "Creation of NotebookModel table failed: " << sql.lastError();
     }

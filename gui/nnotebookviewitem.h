@@ -31,10 +31,11 @@ public:
         Conflict = 2,
         Stack = 3,
         Shared = 4,
-        Linked = 5
+        Linked = 5,
+        LinkedStack = 6
     };
 
-    void setType(qint32 lid);
+    void setIconType(qint32 lid);
     void setType(NNotebookWidgetType type);
     explicit NNotebookViewItem(qint32 lid);
     explicit NNotebookViewItem(qint32 lid, QTreeWidget* parent);

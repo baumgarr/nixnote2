@@ -334,7 +334,7 @@ void NixNote::setupGui() {
 
     QLOG_TRACE() << "Setting up more connections for tab windows & threads";
     // Setup so we refresh whenever the sync is done.
-//    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria()));
+    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria()));
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(notifySyncComplete()));
 
     // connect so we refresh the note list and counts whenever a note has changed
@@ -815,7 +815,7 @@ void NixNote::openNote(bool newWindow) {
 //* Called when a user changes the selection criteria
 //* (i.e. they select a notebook, tag, saved search...
 //*****************************************************
-void NixNote::updateSelectionCriteria() {
+void NixNote::updateSelectionCriteria(bool afterSync) {
     QLOG_TRACE() << "starting NixNote.updateSelectionCriteria()";
 
     FilterEngine filterEngine;
@@ -848,7 +848,7 @@ void NixNote::updateSelectionCriteria() {
     if (selectedNotes.size() == 0) {
         tabWindow->currentBrowser()->clear();
     }
-    if (selectedNotes.size() > 0) {
+    if (selectedNotes.size() > 0 && !afterSync) {
         tabWindow->currentBrowser()->setContent(selectedNotes.at(0));
         openNote(false);
     }

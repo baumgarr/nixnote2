@@ -31,16 +31,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 NNotebookViewItem::NNotebookViewItem(qint32 lid, QTreeWidget* parent):QTreeWidgetItem(parent) {
     count = 0;
-    this->setType(lid);
+    this->setIconType(lid);
     this->lid = lid;
 }
 
 
 NNotebookViewItem::NNotebookViewItem(qint32 lid):QTreeWidgetItem(){
     count = 0;
-    this->type = type; // what?
+    //this->type = type; // what?
     this->lid = lid;
-    this->setType(lid);
+    this->setIconType(lid);
 }
 
 void NNotebookViewItem::setRootColor(bool val) {
@@ -52,8 +52,18 @@ void NNotebookViewItem::setRootColor(bool val) {
 }
 
 
+// Custom sort
 bool NNotebookViewItem::operator<(const QTreeWidgetItem &other)const {
+
+    // We sort two ways.  First we see if the type is a stack for a linked notebook
+    // If one is a linked stack and the other is not, the one that is not wins.  This
+    // makes the linked stack appear at the bottom of the list.
     int column = treeWidget()->sortColumn();
+    NNotebookViewItem *ptr = (NNotebookViewItem*)&other;
+    if (this->type == LinkedStack && ptr->type != LinkedStack)
+        return false;
+
+    // Otherwise we just sort by name.
     return text(column).toLower() < other.text(column).toLower();
 }
 
@@ -71,12 +81,14 @@ void NNotebookViewItem::setType(NNotebookWidgetType type) {
         setIcon(0, QIcon(":notebook_small.png"));
     if (type == Stack)
         setIcon(0, QIcon(":stack.png"));
+    if (type == LinkedStack)
+        setIcon(0, QIcon(":silhouette.png"));
     if (type == Conflict)
         setIcon(0, QIcon(":notebook-conflict.png"));
 }
 
 
-void NNotebookViewItem::setType(qint32 type) { // Problem: type is not used, and lid may not initialized (see constructor)
+void NNotebookViewItem::setIconType(qint32 type) {
     LinkedNotebookTable linkedTable;
     SharedNotebookTable sharedTable;
     NotebookTable bookTable;
