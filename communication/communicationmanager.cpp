@@ -368,32 +368,24 @@ void CommunicationManager::setSocketOptions(SOCKET s) {
 
     socklen_t optlen = sizeof(optval);
     getsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
-    QLOG_DEBUG() << "SO_KEEPALIVE was " << optval;
     optval = 1;
     setsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, optlen);
     getsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
-    QLOG_DEBUG() << "SO_KEEPALIVE is now " << optval;
 
     getsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, &optlen);
-    QLOG_DEBUG() << "TCP_KEEPCNT was " << optval;
     optval=9;
     setsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, optlen);
     getsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, &optlen);
-    QLOG_DEBUG() << "TCP_KEEPCNT is now " << optval;
 
     getsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, &optlen);
-    QLOG_DEBUG() << "TCP_KEEPIDLE was " << optval;
     optval=1200;
     setsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, optlen);
     getsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, &optlen);
-    QLOG_DEBUG() << "TCP_KEEPIDLE is now " << optval;
 
     getsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, &optlen);
-    QLOG_DEBUG() << "TCP_KEEPINTVL was " << optval;
     optval=60;
     setsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, optlen);
     getsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, &optlen);
-    QLOG_DEBUG() << "TCP_KEEPINTVL is now " << optval;
 }
 
 // Initialize the note store

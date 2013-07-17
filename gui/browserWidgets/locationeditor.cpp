@@ -29,6 +29,8 @@ LocationEditor::LocationEditor(QWidget *parent) :
     connect(clearAction, SIGNAL(triggered()), this, SLOT(clearClicked()));
     setAutoRaise(false);
     setMenu(actionMenu);
+    this->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    this->setIcon(QIcon(":navigation.png"));
 
     connect(this, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 
