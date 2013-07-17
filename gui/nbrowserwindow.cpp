@@ -205,6 +205,13 @@ void NBrowserWindow::setContent(qint32 lid) {
         return;
     }
 
+    // If we are already updating this note, we don't do anything
+    if (lid == this->lid)
+        return;
+
+//    if (this->editor->isDirty)
+//        this->saveNoteContent();
+
     // let's load the new note
     this->lid = lid;
     this->editor->isDirty = false;
@@ -1212,7 +1219,7 @@ void NBrowserWindow::imageContextMenu(QString l, QString f) {
 
 void NBrowserWindow::attachFile() {
     QFileDialog fileDialog;
-//    fileDialog.setDirectory(dir.homePath()+"/");
+    fileDialog.setDirectory(QDir::homePath());
     fileDialog.setFileMode(QFileDialog::ExistingFile);
     connect(&fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(attachFileSelected(QString)));
     int rc = fileDialog.exec();
@@ -1416,8 +1423,8 @@ void NBrowserWindow::attachFile() {
              guid = fullName.mid(0,index).replace(global.fileManager.getDbaDirPath(),"");
          } else
              return;
-         global.resourceWatcher.addPath(global.fileManager.getDbaDirPath() +guid + QString(".") +type);
          QString fileUrl = global.fileManager.getDbaDirPath()+guid +type;
+         global.resourceWatcher.addPath(fileUrl);
          QDesktopServices::openUrl(fileUrl);
          return;
      }

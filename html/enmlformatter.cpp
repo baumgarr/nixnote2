@@ -201,6 +201,7 @@ void EnmlFormatter::fixObjectNode(QWebElement &e) {
         e.removeAttribute("width");
         e.removeAttribute("height");
         e.removeAttribute("lid");
+        e.removeAttribute("border");
         if (lid>0) {
             resources.append(lid);
              e.setOuterXml(e.toOuterXml().replace("<object", "<en-media").replace("</object", "</en-media"));
@@ -268,6 +269,10 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
     QString enTag = e.attribute("en-tag", "");
     if (enTag.toLower() == "en-media") {
         resources.append(e.attribute("lid").toInt());
+        e.removeAttribute("style");
+        e.removeAttribute("href");
+        e.removeAttribute("title");
+        removeInvalidAttributes(e);
         e.removeAllChildren();
         QString newXml = e.toOuterXml();
         newXml.replace("<a", "<en-media");
@@ -276,6 +281,7 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
     }
     QString latex = e.attribute("href", "");
     if (latex.toLower().startsWith("latex://")) {
+        removeInvalidAttributes(e);
         e.removeAttribute("title");
         e.removeAttribute("href");
         e.setOuterXml(e.toInnerXml());

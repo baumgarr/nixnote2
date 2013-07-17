@@ -334,7 +334,7 @@ void NixNote::setupGui() {
 
     QLOG_TRACE() << "Setting up more connections for tab windows & threads";
     // Setup so we refresh whenever the sync is done.
-    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria()));
+//    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria()));
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(notifySyncComplete()));
 
     // connect so we refresh the note list and counts whenever a note has changed
@@ -716,6 +716,7 @@ void NixNote::syncTimerExpired() {
 //* User synchronize was requested
 //******************************************************************************
 void NixNote::synchronize() {
+    this->saveContents();
     statusBar()->clearMessage();
     indexRunner.pauseIndexing = true;
     if (!global.accountsManager->oauthTokenFound()) {
