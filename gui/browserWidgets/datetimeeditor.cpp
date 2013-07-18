@@ -23,11 +23,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
+#include "global.h"
 
 #include "sql/notetable.h"
 
 using namespace evernote::edam  ;
 using namespace std;
+
+extern Global global;
 
 DateTimeEditor::DateTimeEditor(QWidget *parent) :
     QDateTimeEdit(parent)
@@ -53,6 +56,7 @@ DateTimeEditor::DateTimeEditor(QWidget *parent) :
 
     connect(this, SIGNAL(dateChanged(QDate)), this, SLOT(valueChanged()));
     connect(this, SIGNAL(timeChanged(QTime)), this, SLOT(valueChanged()));
+    this->setDisplayFormat(global.dateFormat + " " +global.timeFormat);
 
     hide();
 }
