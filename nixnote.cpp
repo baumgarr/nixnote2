@@ -121,6 +121,12 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     importManager->setup();
     connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
+    global.settings->beginGroup("Sync");
+    bool syncOnStartup = global.settings->value("syncOnStartup", false).toBool();
+    global.settings->endGroup();
+    if (syncOnStartup)
+        synchronize();
+    finalSync = false;
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 
@@ -581,10 +587,26 @@ void NixNote::closeEvent(QCloseEvent *event) {
 
     indexRunner.keepRunning = false;
     counterRunner.keepRunning = false;
-    syncRunner.keepRunning = false;
-    syncRunner.quit();
     indexRunner.quit();
     counterRunner.quit();
+
+    global.settings->beginGroup("Sync");
+    bool syncOnShutdown = global.settings->value("syncOnShutdown", false).toBool();
+    global.settings->endGroup();
+    if (syncOnShutdown && !finalSync && global.accountsManager->oauthTokenFound()) {
+        finalSync = true;
+        hide();
+        connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(close()));
+        synchronize();
+        event->ignore();
+        return;
+    }
+
+    syncRunner.keepRunning = false;
+    syncRunner.quit();
+
+
+
 
     ConfigStore config;
     config.saveSetting(CONFIG_STORE_WINDOW_STATE, saveState());

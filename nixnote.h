@@ -86,6 +86,7 @@ private:
     QVBoxLayout *topRightLayout;
     NAttributeTree *attributeTree;
     FindReplace *findReplaceWindow;
+    bool finalSync;
     QSystemTrayIcon *trayIcon;
     QString saveLastPath;   // Last path viewed in the restore dialog
     FileWatcherManager *importManager;

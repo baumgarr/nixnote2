@@ -39,9 +39,9 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     syncInterval->addItem(tr("Every day"), 1440);
 
     syncOnStartup = new QCheckBox(tr("Sync on startup"), this);
-    syncOnStartup->setEnabled(false);
+    //syncOnStartup->setEnabled(false);
     syncOnShutdown = new QCheckBox(tr("Sync on shutdown"),this);
-    syncOnShutdown->setEnabled(false);
+    //syncOnShutdown->setEnabled(false);
     enableSyncNotifications = new QCheckBox(tr("Enable sync notifications"), this);
 
     mainLayout->addWidget(enableSyncNotifications,0,0);
