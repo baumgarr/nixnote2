@@ -681,6 +681,10 @@ void NixNote::saveNoteColumnPositions() {
     global.setColumnPosition("noteTableTagsPosition", position);
     position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_TITLE_POSITION);
     global.setColumnPosition("noteTableTitlePosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_REMINDER_TIME_POSITION);
+    global.setColumnPosition("noteTableReminderTimePosition", position);
+    position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_REMINDER_TIME_DONE_POSITION);
+    global.setColumnPosition("noteTableReminderTimeDonePosition", position);
 }
 
 
@@ -722,6 +726,10 @@ void NixNote::saveNoteColumnWidths() {
     global.setColumnWidth("noteTableTagsPosition", width);
     width = noteTableView->columnWidth(NOTE_TABLE_TITLE_POSITION);
     global.setColumnWidth("noteTableTitlePosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_REMINDER_TIME_POSITION);
+    global.setColumnWidth("noteTableReminderTimePosition", width);
+    width = noteTableView->columnWidth(NOTE_TABLE_REMINDER_TIME_DONE_POSITION);
+    global.setColumnWidth("noteTableReminderTimeDonePosition", width);
 }
 
 

@@ -70,7 +70,7 @@ void LocationEditor::buttonClicked() {
 }
 
 
-void LocationEditor::setGeography(qint32 lid, double longitude, double latitude, double altitude) {
+void LocationEditor::setGeography(qint32 lid, double longitude, double latitude, double altitude, QString placeName) {
     this->startLongitude = longitude;
     this->startLatitude = latitude;
     this->startAltitude = altitude;
@@ -82,11 +82,14 @@ void LocationEditor::setGeography(qint32 lid, double longitude, double latitude,
     if (!n.__isset.attributes || !n.attributes.__isset.latitude || !n.attributes.__isset.longitude)
         return;
 
-    LocationDialog dialog;
-    dialog.setLongitude(this->startLongitude);
-    dialog.setLatitude(this->startLatitude);
-    dialog.setAltitude(this->startAltitude);
-    this->setText(dialog.locationText());
+    if (placeName == "") {
+        LocationDialog dialog;
+        dialog.setLongitude(this->startLongitude);
+        dialog.setLatitude(this->startLatitude);
+        dialog.setAltitude(this->startAltitude);
+        this->setText(dialog.locationText());
+    } else
+        this->setText(placeName);
 }
 
 

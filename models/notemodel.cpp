@@ -82,26 +82,32 @@ void NoteModel::createTable() {
                   QString("hasTodo integer default null,") +
                   QString("isDirty integer default null,") +
                   QString("size integer default null,") +
-                  QString("thumbnail default null") +
+                  QString("thumbnail default null,") +
+                  QString("reminderOrder real default null,") +
+                  QString("reminderTime real default null,") +
+                  QString("reminderDoneTime real default null") +
                   QString(")"));
     if (!sql.exec(command) ||
-            !sql.exec("CREATE INDEX NoteTable_Title_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Author_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Notebook_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Notebook_Lid_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_DateCreated_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_DateUpdated_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Date_Subject_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Date_Deleted_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Source_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Source_Url_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Source_Application_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Latitude_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Longitude_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Altitude_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Has_Encryption_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Has_Todo_Index on NoteTable (lid)") ||
-            !sql.exec("CREATE INDEX NoteTable_Is_Dirty_Index on NoteTable (lid)")
+            !sql.exec("CREATE INDEX NoteTable_Title_Index on NoteTable (title)") ||
+            !sql.exec("CREATE INDEX NoteTable_Author_Index on NoteTable (author)") ||
+            !sql.exec("CREATE INDEX NoteTable_Notebook_Index on NoteTable (notebook)") ||
+            !sql.exec("CREATE INDEX NoteTable_Notebook_Lid_Index on NoteTable (notebookLid)") ||
+            !sql.exec("CREATE INDEX NoteTable_DateCreated_Index on NoteTable (dateCreated)") ||
+            !sql.exec("CREATE INDEX NoteTable_DateUpdated_Index on NoteTable (dateUpdated)") ||
+            !sql.exec("CREATE INDEX NoteTable_Date_Subject_Index on NoteTable (dateSubject)") ||
+            !sql.exec("CREATE INDEX NoteTable_Date_Deleted_Index on NoteTable (dateDeleted)") ||
+            !sql.exec("CREATE INDEX NoteTable_Source_Index on NoteTable (source)") ||
+            !sql.exec("CREATE INDEX NoteTable_Source_Url_Index on NoteTable (sourceUrl)") ||
+            !sql.exec("CREATE INDEX NoteTable_Source_Application_Index on NoteTable (sourceApplication)") ||
+            !sql.exec("CREATE INDEX NoteTable_Latitude_Index on NoteTable (latitude)") ||
+            !sql.exec("CREATE INDEX NoteTable_Longitude_Index on NoteTable (longitude)") ||
+            !sql.exec("CREATE INDEX NoteTable_Altitude_Index on NoteTable (altitude)") ||
+            !sql.exec("CREATE INDEX NoteTable_Has_Encryption_Index on NoteTable (hasEncryption)") ||
+            !sql.exec("CREATE INDEX NoteTable_Has_Todo_Index on NoteTable (hasTodo)") ||
+            !sql.exec("CREATE INDEX NoteTable_Is_Dirty_Index on NoteTable (isDirty)") ||
+            !sql.exec("CREATE INDEX NoteTable_Reminder_Order_Index on NoteTable (reminderOrder)") ||
+            !sql.exec("CREATE INDEX NoteTable_Reminder_Time_Index on NoteTable (reminderTime)") ||
+            !sql.exec("CREATE INDEX NoteTable_Reminder_Done_Time_Index on NoteTable (reminderDoneTime)")
        ) {
         QLOG_ERROR() << "Creation of NoteTable table failed: " << sql.lastError();
     }

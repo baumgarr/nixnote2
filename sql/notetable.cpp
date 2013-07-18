@@ -360,6 +360,24 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
             query.bindValue(":data", QString::fromStdString(t.attributes.contentClass));
             query.exec();
         }
+        if (t.attributes.__isset.reminderTime) {
+            query.bindValue(":lid", lid);
+            query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
+            query.bindValue(":data",QVariant::fromValue(t.attributes.shareDate));
+            query.exec();
+        }
+        if (t.attributes.__isset.reminderDoneTime) {
+            query.bindValue(":lid", lid);
+            query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
+            query.bindValue(":data",QVariant::fromValue(t.attributes.shareDate));
+            query.exec();
+        }
+        if (t.attributes.__isset.reminderOrder) {
+            query.bindValue(":lid", lid);
+            query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_ORDER);
+            query.bindValue(":data",QVariant::fromValue(t.attributes.shareDate));
+            query.exec();
+        }
     }
 
     // No determine some attributes of the note based upon the content
@@ -420,10 +438,10 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
 
     query.prepare(QString("Insert into NoteTable (lid, title, author, ") +
                   QString("dateCreated, dateUpdated, dateSubject, dateDeleted, source, sourceUrl, sourceApplication, ") +
-                  QString("latitude, longitude, altitude, hasEncryption, hasTodo, isDirty, size, notebook, notebookLid, tags) ") +
+                  QString("latitude, longitude, altitude, reminderOrder, reminderTime, reminderDoneTime, hasEncryption, hasTodo, isDirty, size, notebook, notebookLid, tags) ") +
                   QString("Values (:lid, :title, :author, ") +
                   QString(":dateCreated, :dateUpdated, :dateSubject, :dateDeleted, :source, :sourceUrl, :sourceApplication, ") +
-                  QString(":latitude, :longitude, :altitude, :hasEncryption, :hasTodo, :isDirty, :size, :notebook, :notebookLid, :tags) ")) ;
+                  QString(":latitude, :longitude, :altitude, :reminderOrder, :reminderTime, :reminderDoneTime, :hasEncryption, :hasTodo, :isDirty, :size, :notebook, :notebookLid, :tags) ")) ;
 
     query.bindValue(":lid", lid);
 
@@ -475,6 +493,18 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
         query.bindValue(":altitude", QVariant::fromValue(t.attributes.altitude));
     else
         query.bindValue(":altitude", 0);
+    if (t.__isset.attributes && t.attributes.__isset.reminderOrder)
+        query.bindValue(":reminderOrder", QVariant::fromValue(t.attributes.reminderOrder));
+    else
+        query.bindValue(":reminderOrder", 0);
+    if (t.__isset.attributes && t.attributes.__isset.reminderTime)
+        query.bindValue(":reminderTime", QVariant::fromValue(t.attributes.reminderTime));
+    else
+        query.bindValue(":reminderTime", 0);
+    if (t.__isset.attributes && t.attributes.__isset.reminderDoneTime)
+        query.bindValue(":reminderDoneTime", QVariant::fromValue(t.attributes.reminderDoneTime));
+    else
+        query.bindValue(":reminderDoneTime", 0);
 
 
     bool hasEncryption;
@@ -659,6 +689,21 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadResource
             note.attributes.contentClass = query.value(1).toString().toStdString();
             note.__isset.attributes = true;
             note.attributes.__isset.contentClass = true;
+            break;
+        case (NOTE_ATTRIBUTE_REMINDER_ORDER) :
+            note.attributes.reminderOrder = query.value(1).toLongLong();
+            note.__isset.attributes = true;
+            note.attributes.__isset.reminderOrder = true;
+            break;
+        case (NOTE_ATTRIBUTE_REMINDER_DONE_TIME) :
+            note.attributes.reminderDoneTime = query.value(1).toLongLong();
+            note.__isset.attributes = true;
+            note.attributes.__isset.reminderDoneTime = true;
+            break;
+        case (NOTE_ATTRIBUTE_REMINDER_TIME) :
+            note.attributes.reminderTime = query.value(1).toLongLong();
+            note.__isset.attributes = true;
+            note.attributes.__isset.reminderTime = true;
             break;
         case (NOTE_TAG_LID) :
             TagTable tagTable;

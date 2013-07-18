@@ -78,10 +78,13 @@ void DateEditor::setNote(qint32 lid, Note n) {
         authorEditor.setAuthor(lid, "");
 
     if (n.__isset.attributes && n.attributes.__isset.longitude) {
+        QString placeName;
+        if (n.attributes.__isset.placeName)
+                placeName = QString::fromStdString(n.attributes.placeName);
         locationEditor.setGeography(lid, n.attributes.longitude,
-        n.attributes.latitude,n.attributes.altitude);
+            n.attributes.latitude,n.attributes.altitude, placeName);
     } else {
-        locationEditor.setGeography(lid, 0,0,0);
+        locationEditor.setGeography(lid, 0,0,0,"");
     }
 }
 

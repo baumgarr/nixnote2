@@ -89,6 +89,8 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_SUBJECT_POSITION, dateDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_UPDATED_POSITION, dateDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_DATE_DELETED_POSITION, dateDelegate);
+    this->setItemDelegateForColumn(NOTE_TABLE_REMINDER_TIME_DONE_POSITION, dateDelegate);
+    this->setItemDelegateForColumn(NOTE_TABLE_REMINDER_TIME_POSITION, dateDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_ALTITUDE_POSITION, blankNumber);
     this->setItemDelegateForColumn(NOTE_TABLE_LONGITUDE_POSITION, blankNumber);
     this->setItemDelegateForColumn(NOTE_TABLE_LATITUDE_POSITION, blankNumber);
@@ -109,6 +111,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setColumnHidden(NOTE_TABLE_HAS_TODO_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_HAS_ENCRYPTION_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_SOURCE_APPLICATION_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, true);
 
     blockSignals(true);
     if (!isColumnHidden(NOTE_TABLE_DATE_CREATED_POSITION))
@@ -145,6 +148,10 @@ NTableView::NTableView(QWidget *parent) :
         tableViewHeader->thumbnailAction->setChecked(true);
     if (!isColumnHidden(NOTE_TABLE_TAGS_POSITION))
         tableViewHeader->tagsAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_REMINDER_TIME_POSITION))
+        tableViewHeader->reminderTimeAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_REMINDER_TIME_DONE_POSITION))
+        tableViewHeader->reminderTimeDoneAction->setChecked(true);
 
     connect(tableViewHeader, SIGNAL(setColumnVisible(int,bool)), this, SLOT(toggleColumnVisible(int,bool)));
 
@@ -158,6 +165,8 @@ NTableView::NTableView(QWidget *parent) :
     this->model()->setHeaderData(NOTE_TABLE_DATE_UPDATED_POSITION, Qt::Horizontal, QObject::tr("Date Updated"));
     this->model()->setHeaderData(NOTE_TABLE_DATE_SUBJECT_POSITION, Qt::Horizontal, QObject::tr("Subject Date"));
     this->model()->setHeaderData(NOTE_TABLE_DATE_DELETED_POSITION, Qt::Horizontal, QObject::tr("Deletion Date"));
+    this->model()->setHeaderData(NOTE_TABLE_REMINDER_TIME_POSITION, Qt::Horizontal, QObject::tr("Reminder"));
+    this->model()->setHeaderData(NOTE_TABLE_REMINDER_TIME_DONE_POSITION, Qt::Horizontal, QObject::tr("Reminder Completed"));
     this->model()->setHeaderData(NOTE_TABLE_SOURCE_POSITION, Qt::Horizontal, QObject::tr("Source"));
     this->model()->setHeaderData(NOTE_TABLE_SOURCE_URL_POSITION, Qt::Horizontal, QObject::tr("Source Url"));
     this->model()->setHeaderData(NOTE_TABLE_SOURCE_APPLICATION_POSITION, Qt::Horizontal, QObject::tr("Source Application"));
@@ -750,6 +759,12 @@ void NTableView::saveColumnsVisible() {
     value = isColumnHidden(NOTE_TABLE_TITLE_POSITION);
     global.settings->setValue("title", value);
 
+    value = isColumnHidden(NOTE_TABLE_REMINDER_TIME_POSITION);
+    global.settings->setValue("reminderTime", value);
+
+    value = isColumnHidden(NOTE_TABLE_REMINDER_TIME_DONE_POSITION);
+    global.settings->setValue("reminderTimeDone", value);
+
     global.settings->endGroup();
 }
 
@@ -829,6 +844,14 @@ void NTableView::setColumnsVisible() {
     value = global.settings->value("thumbnail", true).toBool();
     tableViewHeader->thumbnailAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION, value);
+
+    value = global.settings->value("reminderTime", false).toBool();
+    tableViewHeader->reminderTimeAction->setChecked(!value);
+    setColumnHidden(NOTE_TABLE_REMINDER_TIME_POSITION, value);
+
+    value = global.settings->value("reminderTimeDone", false).toBool();
+    tableViewHeader->reminderTimeDoneAction->setChecked(!value);
+    setColumnHidden(NOTE_TABLE_REMINDER_TIME_DONE_POSITION, value);
 
     global.settings->endGroup();
 }
@@ -919,6 +942,15 @@ void NTableView::repositionColumns() {
     from = horizontalHeader()->visualIndex(NOTE_TABLE_TITLE_POSITION);
     to = global.getColumnPosition("noteTableTitlePosition");
     if (to>=0) horizontalHeader()->moveSection(from, to);
+
+    from = horizontalHeader()->visualIndex(NOTE_TABLE_REMINDER_TIME_POSITION);
+    to = global.getColumnPosition("noteTableReminderTimePosition");
+    if (to>=0) horizontalHeader()->moveSection(from, to);
+
+    from = horizontalHeader()->visualIndex(NOTE_TABLE_REMINDER_TIME_DONE_POSITION);
+    to = global.getColumnPosition("noteTableReminderTimeDonePosition");
+    if (to>=0) horizontalHeader()->moveSection(from, to);
+
 }
 
 
@@ -966,6 +998,10 @@ void NTableView::resizeColumns() {
     if (width>0) setColumnWidth(NOTE_TABLE_TITLE_POSITION, width);
     width = global.getColumnWidth("noteTableThumbnailPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_THUMBNAIL_POSITION, width);
+    width = global.getColumnWidth("noteTableReminderTimePosition");
+    if (width>0) setColumnWidth(NOTE_TABLE_REMINDER_TIME_POSITION, width);
+    width = global.getColumnWidth("noteTableReminderTimeDonePosition");
+    if (width>0) setColumnWidth(NOTE_TABLE_REMINDER_TIME_DONE_POSITION, width);
 }
 
 

@@ -48,6 +48,8 @@ public:
     QAction *hasEncryptionAction;
     QAction *sizeAction;
     QAction *thumbnailAction;
+    QAction *reminderTimeAction;
+    QAction *reminderTimeDoneAction;
     void checkActions();
     bool isThumbnailVisible();
 
@@ -76,6 +78,8 @@ public slots:
     void hasEncryptionChecked(bool);
     void sizeChecked(bool);
     void thumbnailChecked(bool);
+    void reminderTimeChecked(bool);
+    void reminderTimeDoneChecked(bool);
 };
 
 #endif // NTABLEVIEWHEADER_H

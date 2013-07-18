@@ -23,7 +23,7 @@ private:
 
 public:
     explicit LocationEditor(QWidget *parent = 0);
-    void setGeography(qint32 lid, double longitude, double latitude, double altitude) ;
+    void setGeography(qint32 lid, double longitude, double latitude, double altitude, QString placeName) ;
 
 signals:
 

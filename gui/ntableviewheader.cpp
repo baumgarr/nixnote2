@@ -119,11 +119,20 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
     thumbnailAction->setCheckable(true);
     addAction(thumbnailAction);
 
+    reminderTimeAction = new QAction(this);
+    reminderTimeAction->setText(tr("Reminder"));
+    reminderTimeAction->setCheckable(true);
+    addAction(reminderTimeAction);
+
+    reminderTimeDoneAction = new QAction(this);
+    reminderTimeDoneAction->setText(tr("Reminder Completed"));
+    reminderTimeDoneAction->setCheckable(true);
+    addAction(reminderTimeDoneAction);
+
 
     this->setMouseTracking(true);
 
    connect(this, SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(saveSort(int, Qt::SortOrder)));
-//   connect(this, SIGNAL(geometriesChanged()), this, SLOT(saveHeader()));
 
    connect(createdDateAction, SIGNAL(toggled(bool)), this, SLOT(createdDateChecked(bool)));
    connect(titleAction, SIGNAL(toggled(bool)), this, SLOT(titleChecked(bool)));
@@ -142,6 +151,9 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
    connect(altitudeAction, SIGNAL(toggled(bool)), this, SLOT(altitudeChecked(bool)));
    connect(synchronizedAction, SIGNAL(toggled(bool)), this, SLOT(synchronizedChecked(bool)));
    connect(sourceAction, SIGNAL(toggled(bool)), this, SLOT(sourceChecked(bool)));
+   connect(reminderTimeAction, SIGNAL(toggled(bool)), this, SLOT(reminderTimeChecked(bool)));
+   connect(reminderTimeDoneAction, SIGNAL(toggled(bool)), this, SLOT(reminderTimeDoneChecked(bool)));
+
 }
 
 
@@ -247,6 +259,14 @@ void NTableViewHeader::sizeChecked(bool checked) {
 }
 void NTableViewHeader::thumbnailChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_THUMBNAIL_POSITION, checked));
+    checkActions();
+}
+void NTableViewHeader::reminderTimeChecked(bool checked) {
+    emit (setColumnVisible(NOTE_TABLE_REMINDER_TIME_POSITION, checked));
+    checkActions();
+}
+void NTableViewHeader::reminderTimeDoneChecked(bool checked) {
+    emit (setColumnVisible(NOTE_TABLE_REMINDER_TIME_DONE_POSITION, checked));
     checkActions();
 }
 
