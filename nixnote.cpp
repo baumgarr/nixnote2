@@ -802,12 +802,12 @@ void NixNote::updateSyncButton() {
         for (qint32 i=0; i<=360; i++) {
             QPixmap rotatedPix(pix.size());
             QPainter p(&rotatedPix);
-            rotatedPix.fill(toolBar->palette().color(QPalette::Button));
+            rotatedPix.fill(toolBar->palette().color(QPalette::Background));
             QSize size = pix.size();
             p.translate(size.width()/2, size.height()/2);
             angle = angle+1.0;
             p.rotate(angle);
-            p.setBackgroundMode( Qt::OpaqueMode );
+            p.setBackgroundMode( Qt::OpaqueMode);
             p.translate(-size.width()/2, -size.height()/2);
             p.drawPixmap(0,0, pix);
             p.end();
