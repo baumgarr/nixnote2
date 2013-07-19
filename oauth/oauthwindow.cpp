@@ -27,15 +27,20 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QWebFrame>
 #include <QNetworkReply>
 #include <QSslConfiguration>
+#include <QMainWindow>
+
 
 #include "global.h"
 
 extern Global global;
 
-OAuthWindow::OAuthWindow(QWidget *parent) :
-    QDialog(parent)
+OAuthWindow::OAuthWindow(QMainWindow *parent) :
+    QMainWindow(parent)
 {
 
+    tempAuthPage = new QWebView();
+    userLoginPage = new QWebView();
+    authRequestPage = new QWebView();
     consumerKey = "baumgarr-3523";
     consumerSecret = "8d5ee175f8a5d3ec";
     urlBase = "https://" +global.server;
@@ -64,8 +69,9 @@ OAuthWindow::OAuthWindow(QWidget *parent) :
     // Build the window
     setWindowTitle(tr("Please Grant NixNote Access"));
     setWindowIcon(QIcon(":password.png"));
-    setLayout(&grid);
-    grid.addWidget(&userLoginPage);
+    //setLayout(&grid);
+    //grid.addWidget(userLoginPage);
+    setCentralWidget(userLoginPage);
 
     error = false;
     errorMessage = "";
@@ -94,11 +100,11 @@ OAuthWindow::OAuthWindow(QWidget *parent) :
     // finished, this QWebView will contain the URL to start the
     // authentication process.
     QUrl tu(temporaryCredUrl);
-    connect(&tempAuthPage, SIGNAL(loadFinished(bool)), this, SLOT(tempAuthPageLoaded(bool)));
-    connect(tempAuthPage.page()->networkAccessManager(),SIGNAL(finished(QNetworkReply*)), this, SLOT(tempAuthPageReply(QNetworkReply*)));
+    connect(tempAuthPage, SIGNAL(loadFinished(bool)), this, SLOT(tempAuthPageLoaded(bool)));
+    connect(tempAuthPage->page()->networkAccessManager(),SIGNAL(finished(QNetworkReply*)), this, SLOT(tempAuthPageReply(QNetworkReply*)));
 
     QLOG_DEBUG() << "Temporary URL:" << tu.toString();
-    tempAuthPage.load(tu);
+    tempAuthPage->load(tu);
 }
 
 
@@ -107,23 +113,24 @@ void OAuthWindow::tempAuthPageLoaded(bool rc) {
     if (!rc) {
         errorMessage = tr("Error receiving temporary credentials");
         error = true;
-        QWebFrame *mainFrame = tempAuthPage.page()->mainFrame();
+        QWebFrame *mainFrame = tempAuthPage->page()->mainFrame();
         QString contents = mainFrame->toHtml();
         QLOG_DEBUG() << "Reply contents:" << contents;
+        emit closed();
         close();
         return;
     }
 
-    QWebFrame *mainFrame = tempAuthPage.page()->mainFrame();
+    QWebFrame *mainFrame = tempAuthPage->page()->mainFrame();
     QString contents = mainFrame->toPlainText();
     QLOG_DEBUG() << "Temporary Cred Contents: " << contents;
     int index = contents.indexOf("&oauth_token_secret");
     contents = contents.left(index);
     QUrl accessUrl(urlBase+"/OAuth.action?" +contents);
 
-    connect(userLoginPage.page()->networkAccessManager(),SIGNAL(finished(QNetworkReply*)),this,SLOT(userLoginReply(QNetworkReply*)));
-    userLoginPage.load(accessUrl);
-    grid.addWidget(&userLoginPage);
+    connect(userLoginPage->page()->networkAccessManager(),SIGNAL(finished(QNetworkReply*)),this,SLOT(userLoginReply(QNetworkReply*)));
+    userLoginPage->load(accessUrl);
+    //grid.addWidget(userLoginPage);
 }
 
 
@@ -143,7 +150,7 @@ void OAuthWindow::permanentCredentialsReceived(bool rc) {
     if (authTokenReceived)
         return;
     QWebFrame *mainFrame;
-    mainFrame = authRequestPage.page()->mainFrame();
+    mainFrame = authRequestPage->page()->mainFrame();
     QString contents = mainFrame->toPlainText();
 
 
@@ -151,7 +158,7 @@ void OAuthWindow::permanentCredentialsReceived(bool rc) {
         errorMessage = tr("Error receiving permanent credentials");
         QLOG_DEBUG() << "Bad return code while receiveng permanent credentials";
         error = true;
-        return;
+        emit closed();
         close();
     }
 
@@ -165,11 +172,12 @@ void OAuthWindow::permanentCredentialsReceived(bool rc) {
         enc.append(contents);
         decoded = QUrl::fromEncoded(enc).toString();
         response = decoded;
-        userLoginPage.disconnect(this);
-        tempAuthPage.disconnect(this);
-        authRequestPage.disconnect(this);
+        userLoginPage->disconnect(this);
+        tempAuthPage->disconnect(this);
+        authRequestPage->disconnect(this);
         error = false;
         errorMessage = "";
+        emit closed();
         close();
     }
 }
@@ -192,7 +200,6 @@ void OAuthWindow::userLoginReply(QNetworkReply *reply) {
         if (token.indexOf("auth_verifier") <= 0) {
             errorMessage = tr("Error receiving authorization");
             error = true;
-            //close();
             return;
         }
 
@@ -200,8 +207,8 @@ void OAuthWindow::userLoginReply(QNetworkReply *reply) {
             QLOG_DEBUG() << "Loading URL";
             QLOG_DEBUG() << "Permanent URL: " << permanentCredUrl;
             QLOG_DEBUG() << "Token: " << token;
-            connect(&authRequestPage, SIGNAL(loadFinished(bool)), this, SLOT(permanentCredentialsReceived(bool)));
-            authRequestPage.load(QUrl(permanentCredUrl+token));
+            connect(authRequestPage, SIGNAL(loadFinished(bool)), this, SLOT(permanentCredentialsReceived(bool)));
+            authRequestPage->load(QUrl(permanentCredUrl+token));
             userLoginPageLoaded = true;
         }
     }

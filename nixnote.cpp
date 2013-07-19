@@ -750,16 +750,17 @@ void NixNote::synchronize() {
     statusBar()->clearMessage();
     indexRunner.pauseIndexing = true;
     if (!global.accountsManager->oauthTokenFound()) {
-        OAuthWindow window;
-        window.exec();
-        if (window.error) {
-            setMessage(window.errorMessage);
+        oauthWindow.setWindowFlags(Qt::Dialog);
+        connect(&oauthWindow, SIGNAL(closed()), this, SLOT(synchronize()));
+        oauthWindow.showNormal();
+        if (oauthWindow.error) {
+            setMessage(oauthWindow.errorMessage);
             return;
         }
-        if (window.response == "")
+        if (oauthWindow.response == "")
             return;
 
-        global.accountsManager->setOAuthToken(window.response);
+        global.accountsManager->setOAuthToken(oauthWindow.response);
     }
     syncButtonTimer.start(3);
     emit syncRequested();

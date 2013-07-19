@@ -24,15 +24,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QWebView>
 #include <QGridLayout>
 #include <QNetworkRequest>
+#include <QMainWindow>
 
-class OAuthWindow : public QDialog
+class OAuthWindow : public QMainWindow
 {
     Q_OBJECT
 private:
     QString iconPath;
-    QWebView tempAuthPage;
-    QWebView userLoginPage;
-    QWebView authRequestPage;
     QGridLayout grid;
     QString consumerKey;
     QString consumerSecret;
@@ -45,16 +43,20 @@ private:
     QString callbackUrl;
     bool authTokenReceived;
     bool userLoginPageLoaded;
+    QWebView *tempAuthPage;
+    QWebView *userLoginPage;
+    QWebView *authRequestPage;
 
 public:
-    explicit OAuthWindow(QWidget *parent = 0);
+    explicit OAuthWindow(QMainWindow *parent = 0);
     QString response;
     bool error;
     QString errorMessage;
     
 signals:
     void permanentTokenFound(QString token);
-    
+    void closed();
+
 public slots:
     void tempAuthPageLoaded(bool rc);
     void permanentCredentialsReceived(bool rc);
