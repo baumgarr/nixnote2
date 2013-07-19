@@ -114,13 +114,13 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
     sizeAction->setCheckable(true);
     addAction(sizeAction);
 
-    thumbnailAction = new QAction(this);
-    thumbnailAction->setText(tr("Thumbnail"));
-    thumbnailAction->setCheckable(true);
-    addAction(thumbnailAction);
+    reminderOrderAction = new QAction(this);
+    reminderOrderAction->setText(tr("Reminder"));
+    reminderOrderAction->setCheckable(true);
+    addAction(reminderOrderAction);
 
     reminderTimeAction = new QAction(this);
-    reminderTimeAction->setText(tr("Reminder"));
+    reminderTimeAction->setText(tr("Reminder Due"));
     reminderTimeAction->setCheckable(true);
     addAction(reminderTimeAction);
 
@@ -128,6 +128,11 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
     reminderTimeDoneAction->setText(tr("Reminder Completed"));
     reminderTimeDoneAction->setCheckable(true);
     addAction(reminderTimeDoneAction);
+
+    thumbnailAction = new QAction(this);
+    thumbnailAction->setText(tr("Thumbnail"));
+    thumbnailAction->setCheckable(true);
+    addAction(thumbnailAction);
 
 
     this->setMouseTracking(true);
@@ -153,6 +158,7 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
    connect(sourceAction, SIGNAL(toggled(bool)), this, SLOT(sourceChecked(bool)));
    connect(reminderTimeAction, SIGNAL(toggled(bool)), this, SLOT(reminderTimeChecked(bool)));
    connect(reminderTimeDoneAction, SIGNAL(toggled(bool)), this, SLOT(reminderTimeDoneChecked(bool)));
+   connect(reminderOrderAction, SIGNAL(toggled(bool)), this, SLOT(reminderOrderChecked(bool)));
 
 }
 
@@ -267,6 +273,10 @@ void NTableViewHeader::reminderTimeChecked(bool checked) {
 }
 void NTableViewHeader::reminderTimeDoneChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_REMINDER_TIME_DONE_POSITION, checked));
+    checkActions();
+}
+void NTableViewHeader::reminderOrderChecked(bool checked) {
+    emit (setColumnVisible(NOTE_TABLE_REMINDER_ORDER_POSITION, checked));
     checkActions();
 }
 

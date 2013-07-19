@@ -363,19 +363,19 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
         if (t.attributes.__isset.reminderTime) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
-            query.bindValue(":data",QVariant::fromValue(t.attributes.shareDate));
+            query.bindValue(":data",QVariant::fromValue(t.attributes.reminderTime));
             query.exec();
         }
         if (t.attributes.__isset.reminderDoneTime) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
-            query.bindValue(":data",QVariant::fromValue(t.attributes.shareDate));
+            query.bindValue(":data",QVariant::fromValue(t.attributes.reminderDoneTime));
             query.exec();
         }
         if (t.attributes.__isset.reminderOrder) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_ORDER);
-            query.bindValue(":data",QVariant::fromValue(t.attributes.shareDate));
+            query.bindValue(":data",QVariant::fromValue(t.attributes.reminderOrder));
             query.exec();
         }
     }

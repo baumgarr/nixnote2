@@ -148,7 +148,8 @@ SOURCES += main.cpp\
     html/attachmenticonbuilder.cpp \
     dialog/locationdialog.cpp \
     gui/browserWidgets/locationeditor.cpp \
-    dialog/preferences/localepreferences.cpp
+    dialog/preferences/localepreferences.cpp \
+    gui/reminderorderdelegate.cpp
 
 
 
@@ -277,7 +278,8 @@ HEADERS  += nixnote.h \
     html/attachmenticonbuilder.h \
     dialog/locationdialog.h \
     gui/browserWidgets/locationeditor.h \
-    dialog/preferences/localepreferences.h
+    dialog/preferences/localepreferences.h \
+    gui/reminderorderdelegate.h
 
 
 

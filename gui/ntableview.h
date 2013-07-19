@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "models/notemodel.h"
 #include "datedelegate.h"
 #include "numberdelegate.h"
+#include "reminderorderdelegate.h"
 #include "truefalsedelegate.h"
 #include "filters/notesortfilterproxymodel.h"
 #include "gui/imagedelegate.h"
@@ -43,6 +44,7 @@ private:
     NumberDelegate *kbNumber;
     TrueFalseDelegate *trueFalseDelegate;
     ImageDelegate *thumbnailDelegate;
+    ReminderOrderDelegate *reminderOrderDelegate;
 
 
 public:

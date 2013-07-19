@@ -49,6 +49,7 @@ public:
     QAction *sizeAction;
     QAction *thumbnailAction;
     QAction *reminderTimeAction;
+    QAction *reminderOrderAction;
     QAction *reminderTimeDoneAction;
     void checkActions();
     bool isThumbnailVisible();
@@ -80,6 +81,7 @@ public slots:
     void thumbnailChecked(bool);
     void reminderTimeChecked(bool);
     void reminderTimeDoneChecked(bool);
+    void reminderOrderChecked(bool);
 };
 
 #endif // NTABLEVIEWHEADER_H
