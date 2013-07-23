@@ -66,7 +66,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
 //    root->setData(NAME_POSITION, Qt::DisplayRole, tr("Local  Notebooks"));
 //    root->setRootColor(true);
 //    root->setExpanded(true);
-    root = new NNotebookViewItem(0, this);
+    root = new NNotebookViewItem(0);
     root->setType(NNotebookViewItem::Stack);
     //root->setIcon(NAME_POSITION,QIcon(":stack.png"));
     root->setData(NAME_POSITION, Qt::UserRole, "rootsynchronized");

@@ -6,7 +6,7 @@ FilterCriteria::FilterCriteria(QObject *parent) :
     valueSet = false;
     notebook = NULL;
     notebookIsSet = false;
-    tags.empty();
+    tags.clear();
     tagsIsSet = false;
     savedSearch = NULL;
     savedSearchIsSet = false;

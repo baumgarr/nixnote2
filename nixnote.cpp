@@ -75,7 +75,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     this->setDebugLevel();
-
     heartbeatTimer.setInterval(1000);
     heartbeatTimer.setSingleShot(false);
     connect(&heartbeatTimer, SIGNAL(timeout()), this, SLOT(heartbeatTimerTriggered()));

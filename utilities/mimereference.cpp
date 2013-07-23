@@ -709,6 +709,10 @@ MimeReference::MimeReference(QObject *parent) :
 }
 
 
+MimeReference::~MimeReference() {
+    delete table;
+}
+
 
 
 QString MimeReference::getExtensionFromMime(QString key, QString filename) {

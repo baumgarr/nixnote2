@@ -42,6 +42,7 @@ CommunicationManager::CommunicationManager(QObject *parent) :
     pgmDir = global.getProgramDirPath() + "/certs/thawte.pem";
     sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
     sslSocketFactory->authenticate(true);
+    postData = new QUrl();
 }
 
 
@@ -56,6 +57,7 @@ CommunicationManager::~CommunicationManager() {
         sslSocketNoteStore->setRecvTimeout(10);
         sslSocketNoteStore->close();
     }
+    delete postData;
 }
 
 
@@ -558,7 +560,7 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
     QSize size;
     size.setHeight(r->height);
     size.setWidth(r->width);
-    QUrl *postData = new QUrl();
+    postData->clear();
     postData->addQueryItem("auth", QString::fromStdString(authToken));
 
     QEventLoop loop;
@@ -902,7 +904,7 @@ void CommunicationManager::downloadThumbnail(QString guid, string authToken, str
             +QString::fromStdString(shard)
             +QString("/thm/note/")
             +guid;
-    QUrl *postData = new QUrl();
+    postData->clear();
     postData->addQueryItem("auth", QString::fromStdString(authToken));
 
     QSize size(300,300);
@@ -936,7 +938,6 @@ void CommunicationManager::downloadThumbnail(QString guid, string authToken, str
     thumbnailList->append(newPair);
 
     QObject::disconnect(&loop, SLOT(quit()));
-
 }
 
 

@@ -87,7 +87,7 @@ void IndexRunner::index() {
     }
 
 
-    lids.empty();  // Clear out the list so we can start on resources
+    lids.clear();  // Clear out the list so we can start on resources
 
     // Start indexing resources
     if (keepRunning && resourceTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {

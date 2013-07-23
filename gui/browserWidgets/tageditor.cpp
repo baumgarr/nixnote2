@@ -49,7 +49,7 @@ TagEditor::TagEditor(QWidget *parent) :
 
     connect(&newTag, SIGNAL(focussed(bool)), this, SLOT(newTagFocusLost(bool)));
     connect(&newTag, SIGNAL(tabPressed()), this, SLOT(newTagTabPressed()));
-    tagNames.empty();
+    tagNames.clear();
     layout->addWidget(&newTag);
     delete pix;
     account = 0;

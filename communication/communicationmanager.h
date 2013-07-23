@@ -78,6 +78,7 @@ private:
     bool initNoteStore();
     bool initUserStore();
     void disconnectUserStore();
+    QUrl *postData;
 
     string userStorePath;
     string noteStorePath;

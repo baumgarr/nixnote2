@@ -212,7 +212,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
     }
 
-    int chunkSize = 50;
+    int chunkSize = 20;
     bool more = true;
     SyncChunk chunk;
 

@@ -739,7 +739,7 @@ void ResourceTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
 // Get a list of all resources that need indexing
 qint32 ResourceTable::getIndexNeeded(QList<qint32> &lids) {
     QSqlQuery query;
-    lids.empty();
+    lids.clear();
     query.prepare("Select lid from DataStore where key=:key and data='true'");
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
     query.exec();
@@ -754,6 +754,7 @@ qint32 ResourceTable::getIndexNeeded(QList<qint32> &lids) {
 // Get a list of all resource LIDs for a given note
 bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid) {
 
+    resourceList.clear();
     QSqlQuery query;
     query.prepare("Select lid from DataStore where key=:key and data=:notelid");
     query.bindValue(":key", RESOURCE_NOTE_LID);

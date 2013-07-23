@@ -31,6 +31,7 @@ extern Global global;
 NTrashTree::NTrashTree(QWidget *parent) :
     QTreeWidget(parent)
 {
+    this->count = 0;
     QFont f = this->font();
     f.setPointSize(8);
     this->setFont(f);

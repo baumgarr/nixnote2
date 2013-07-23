@@ -905,7 +905,7 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
 
 qint32 NoteTable::getIndexNeeded(QList<qint32> &lids) {
     QSqlQuery query;
-    lids.empty();
+    lids.clear();
     query.prepare("Select lid from DataStore where key=:key and data='true'");
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
@@ -1348,7 +1348,7 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
 
 qint32 NoteTable::findNotesByTitle(QList<qint32> &lids, QString title) {
     QSqlQuery query;
-    lids.empty();
+    lids.clear();
 
     query.prepare("select lid from notetable where title like :title order by datecreated;");
     query.bindValue(":title", title);

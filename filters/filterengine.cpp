@@ -488,7 +488,7 @@ void FilterEngine::filterSearchString(FilterCriteria *criteria) {
 
 // Split the search term into specific tokens.
 void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
-    words.empty();
+    words.clear();
 
 
     // First go through the string and put null characters between

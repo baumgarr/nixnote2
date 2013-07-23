@@ -63,7 +63,7 @@ void TagScanner::setData(QString data) {
 }
 
 qint32 TagScanner::findAll(QList<TagScannerRecord> &recs, QString tagName) {
-    recs.empty();
+    recs.clear();
     qint32 position = content.indexOf(QString("<")+tagName, Qt::CaseInsensitive);
     if (position > 0)
         return 0;

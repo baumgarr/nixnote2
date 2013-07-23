@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 NTagViewItem::NTagViewItem(QTreeWidget* parent):QTreeWidgetItem(parent) {
     parentLid = 0;     // The Id of the parent to this tag
     account = 0;        // The notebook account that owns this tag (non zero if this tag is from a linked notebook).
-    childrenLids.empty();  // Children of this tag.
+    childrenLids.clear();  // Children of this tag.
     parentGuid = "";    // GUID of the parent of this tag.
     count = 0;          // Count of notes matching this tag
 }
@@ -31,7 +31,7 @@ NTagViewItem::NTagViewItem(QTreeWidget* parent):QTreeWidgetItem(parent) {
 NTagViewItem::NTagViewItem():QTreeWidgetItem(){
     parentLid = 0;     // The Id of the parent to this tag
     account = 0;        // The notebook account that owns this tag (non zero if this tag is from a linked notebook).
-    childrenLids.empty();  // Children of this tag.
+    childrenLids.clear();  // Children of this tag.
     parentGuid = "";    // GUID of the parent of this tag.
     count = 0;          // Count of notes matching this tag
 }

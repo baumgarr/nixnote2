@@ -31,6 +31,7 @@ class MimeReference : public QObject
     Q_OBJECT
 public:
     explicit MimeReference(QObject *parent = 0);
+    ~MimeReference();
     QHash<QString,QString> *table;
     QString getExtensionFromMime(QString mime, QString filename);
     QString getMimeFromExtension(QString fileExtension);

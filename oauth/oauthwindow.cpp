@@ -102,8 +102,6 @@ OAuthWindow::OAuthWindow(QMainWindow *parent) :
     QUrl tu(temporaryCredUrl);
     connect(tempAuthPage, SIGNAL(loadFinished(bool)), this, SLOT(tempAuthPageLoaded(bool)));
     connect(tempAuthPage->page()->networkAccessManager(),SIGNAL(finished(QNetworkReply*)), this, SLOT(tempAuthPageReply(QNetworkReply*)));
-
-    QLOG_DEBUG() << "Temporary URL:" << tu.toString();
     tempAuthPage->load(tu);
 }
 

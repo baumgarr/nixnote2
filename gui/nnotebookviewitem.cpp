@@ -31,8 +31,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 NNotebookViewItem::NNotebookViewItem(qint32 lid, QTreeWidget* parent):QTreeWidgetItem(parent) {
     count = 0;
-    this->setIconType(lid);
+    this->lid = 0;
     this->lid = lid;
+    this->setIconType(this->lid);
 }
 
 
