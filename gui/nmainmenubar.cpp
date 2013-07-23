@@ -143,7 +143,7 @@ void NMainMenuBar::setupEditMenu() {
     pasteAsTextAction->setFont(font);
     editMenu->addAction(pasteAsTextAction);
 
-    removeFormattingAction = new QAction(tr("Paste as Unformatted Text"), this);
+    removeFormattingAction = new QAction(tr("Remove Formatting"), this);
     setupShortcut(removeFormattingAction, QString("Edit_Remove_Formatting"));
     removeFormattingAction->setFont(font);
     editMenu->addAction(removeFormattingAction);
