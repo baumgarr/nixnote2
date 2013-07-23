@@ -205,6 +205,13 @@ NWebView::NWebView(NBrowserWindow *parent) :
     connect(editorPage, SIGNAL(contentsChanged()), this, SLOT(editAlert()));
     editorPage->setContentEditable(true);
 
+    // Set some of the menus as disabled until a user selects an image or attachment
+    downloadAttachmentAction()->setEnabled(false);
+    rotateImageRightAction->setEnabled(false);
+    rotateImageLeftAction->setEnabled(false);
+    openAction->setEnabled(false);
+    downloadImageAction()->setEnabled(false);
+
     connect(this->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(exposeToJavascript()));
 }
 
@@ -302,7 +309,11 @@ void NWebView::decryptText(QString id, QString text, QString hint) {
 void NWebView::contextMenuEvent(QContextMenuEvent *event) {
     if (event != NULL)
         contextMenu->exec(event->globalPos());
-}
+    downloadAttachmentAction()->setEnabled(false);
+    rotateImageRightAction->setEnabled(false);
+    rotateImageLeftAction->setEnabled(false);
+    openAction->setEnabled(false);
+    downloadImageAction()->setEnabled(false);}
 
 
 bool NWebView::event(QEvent *event)

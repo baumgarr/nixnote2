@@ -1212,6 +1212,7 @@ void NBrowserWindow::imageContextMenu(QString l, QString f) {
     editor->rotateImageRightAction->setEnabled(true);
     editor->rotateImageLeftAction->setEnabled(true);
     editor->openAction->setEnabled(true);
+    editor->downloadImageAction()->setEnabled(true);
     selectedFileName = f;
     selectedFileLid = l.toInt();
 }
