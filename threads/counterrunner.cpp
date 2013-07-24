@@ -35,6 +35,7 @@ CounterRunner::CounterRunner(QObject *parent) :
 void CounterRunner::run() {
 //    hammer = new Thumbnailer();
     QLOG_DEBUG() << "Starting CounterRunner";
+    db = new DatabaseConnection("counterrunner");
     exec();
     QLOG_DEBUG() << "CounterRunner exiting.";
 }
@@ -48,7 +49,7 @@ void CounterRunner::countAll() {
 
 
 void CounterRunner::countTrash() {
-    NoteTable ntable;
+    NoteTable ntable(&db->conn);
     QList<qint32> lids;
     emit trashTotals(ntable.getAllDeleted(lids));
 }
@@ -57,12 +58,12 @@ void CounterRunner::countTrash() {
 void CounterRunner::countNotebooks() {
 
     // First get every possible tag
-    NotebookTable nTable;
+    NotebookTable nTable(&db->conn);
     QList<qint32> lids;
     nTable.getAll(lids);
 
 
-    QSqlQuery query;
+    QSqlQuery query(db->conn);
     query.exec("select notebooklid, count(notebooklid) from notetable where lid in (select lid from filter) group by notebooklid;");
 
     while(query.next()) {
@@ -78,11 +79,11 @@ void CounterRunner::countNotebooks() {
 
 void CounterRunner::countTags() {
     // First get every possible tag
-    TagTable tTable;
+    TagTable tTable(&db->conn);
     QList<qint32> lids;
     tTable.getAll(lids);
 
-    QSqlQuery query;
+    QSqlQuery query(db->conn);
     query.prepare("select data, count(lid) from datastore where key=:key and lid in (select lid from filter) group by data;");
     query.bindValue(":key", NOTE_TAG_LID);
     query.exec();

@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <transport/THttpClient.h>
 //#include "java/javamachine.h"
 #include "communication/communicationmanager.h"
+#include "sql/databaseconnection.h"
 
 #include <protocol/TBinaryProtocol.h>
 
@@ -67,12 +68,13 @@ private:
     bool idle;
     int defaultMsgTimeout;
     long evernoteUpdateCount;
+    DatabaseConnection *db;
     CommunicationManager *comm;
     //JavaMachine *jvm;
 
 
     QVector<QString> errorSharedNotebooks;
-    QMap<QString,QString> errorShoredNotebooksIgnored;
+    QMap<QString,QString> errorSharedNotebooksIgnored;
 
 
     string consumerKey;

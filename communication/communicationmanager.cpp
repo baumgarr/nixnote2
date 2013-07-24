@@ -113,20 +113,27 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
             QLOG_DEBUG() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
             Note n;
             noteStoreClient->getNote(n, token, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
+            QLOG_DEBUG() << "Note Retrieved";
             chunk.notes[i] = n;
             if (n.__isset.resources && n.resources.size() > 0) {
+                QLOG_DEBUG() << "Checking for ink note";
                 checkForInkNotes(n.resources, "");
             }
+            QLOG_DEBUG() << "Downloading thumbnail";
             downloadThumbnail(QString::fromStdString(n.guid), authToken,"");
         }
+        QLOG_DEBUG() << "All notes retrieved.  Getting resources";
         for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
             QLOG_DEBUG() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
             Resource r;
             noteStoreClient->getResource(r, token, chunk.resources[i].guid, true, true, true, true);
+            QLOG_DEBUG() << "Resource retrieved";
             chunk.resources[i] = r;
         }
-        if (chunk.__isset.resources && chunk.resources.size()>0)
+        if (chunk.__isset.resources && chunk.resources.size()>0) {
+            QLOG_DEBUG() << "Checking for ink notes";
             checkForInkNotes(chunk.resources,"");
+        }
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         return false;

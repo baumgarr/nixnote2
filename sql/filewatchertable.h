@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QObject>
 #include "watcher/filewatcher.h"
+#include "global.h"
+
+extern Global global;
 
 //*************************************
 //* This table is used to store
@@ -39,12 +42,13 @@ class FileWatcherTable : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileWatcherTable(QObject *parent = 0);
+    explicit FileWatcherTable(QObject *parent = 0, QSqlDatabase *db=NULL);
     qint32 addEntry(qint32 lid, QString baseDir, FileWatcher::ScanType type, qint32 notebookLid, bool includeSubdirs);
     void get(qint32 lid, QString &baseDir, FileWatcher::ScanType &type, qint32 &notebookLid, bool &includeSubdirs);
     qint32 findLidByDir(QString baseDir);
     qint32 getAll(QList<qint32> &lids);
     void expunge(qint32 lid);
+    QSqlDatabase *db;
     
 signals:
     

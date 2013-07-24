@@ -50,6 +50,7 @@ IndexRunner::~IndexRunner() {
 void IndexRunner::run() {
     moveToThread(this);
     QLOG_DEBUG() << "Starting IndexRunner";
+    db = new DatabaseConnection("indexrunner");
     indexTimer = new QTimer();
     indexTimer->setInterval(30000);
     connect(indexTimer, SIGNAL(timeout()), this, SLOT(index()));
@@ -68,8 +69,8 @@ void IndexRunner::index() {
     indexTimer->stop();   // Stop the timer because we are already working
 
     QList<qint32> lids;
-    NoteTable noteTable;
-    ResourceTable resourceTable;
+    NoteTable noteTable(&db->conn);
+    ResourceTable resourceTable(&db->conn);
 
     // Get any unindexed notes
     if (keepRunning && noteTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
@@ -143,7 +144,7 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     content = textDocument->toPlainText() + " " + QString::fromStdString(n.title);
 
     // Delete any old content
-    QSqlQuery sql;
+    QSqlQuery sql(db->conn);
     sql.prepare("Delete from SearchIndex where lid=:lid and source='text'");
     sql.bindValue(":lid", lid);
     sql.exec();
@@ -174,14 +175,14 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
 
     // Delete the old resource index information
-    QSqlQuery sql;
+    QSqlQuery sql(db->conn);
     sql.prepare("Delete from SearchIndex where lid=:lid and source='recognition'");
     sql.bindValue(":lid", lid);
     sql.exec();
 
     // Start adding words to the index.
-    QSqlQuery trans;
-    trans.exec("begin");
+    QSqlQuery trans(db->conn);
+    //trans.exec("begin");
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
     for (unsigned int i=0; i<anchors.length() && keepRunning && !pauseIndexing; i++) {
         QDomElement enmedia = anchors.at(i).toElement();
@@ -195,14 +196,14 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
             sql.exec();
         }
     }
-    trans.exec("commit");
+    //trans.exec("commit");
 }
 
 
 // Index any PDFs that are attached.  Basically it turns the PDF into text and adds it the same
 // way as a note's body
 void IndexRunner::indexPdf(qint32 lid, Resource &r) {
-    ResourceTable rtable;
+    ResourceTable rtable(&db->conn);
     qint32 reslid = rtable.getLid(r.guid);
     if (lid <= 0 || !keepRunning || pauseIndexing)
         return;
@@ -216,7 +217,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
         QRectF rect;
         text = text + doc->page(i)->text(rect) + QString(" ");
     }
-    QSqlQuery sql;
+    QSqlQuery sql(db->conn);
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
@@ -231,7 +232,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
 // way as a note's body
 void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     return;
-    ResourceTable rtable;
+    ResourceTable rtable(&db->conn);
     qint32 reslid = rtable.getLid(r.guid);
     if (lid <= 0 || !keepRunning || pauseIndexing)
         return;
@@ -260,7 +261,7 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     return;
 
 
-    QSqlQuery sql;
+    QSqlQuery sql(db->conn);
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);

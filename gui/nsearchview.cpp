@@ -139,7 +139,7 @@ void NSearchView::mousePressEvent(QMouseEvent *event)
 
 // Load up the data from the database
 void NSearchView::loadData() {
-    QSqlQuery query;
+    QSqlQuery query(*global.db);
     query.exec("Select lid, name from SearchModel order by name");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();

@@ -21,9 +21,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/configstore.h"
 #include <QSqlQuery>
 
-FileWatcherTable::FileWatcherTable(QObject *parent) :
+FileWatcherTable::FileWatcherTable(QObject *parent, QSqlDatabase *db) :
     QObject(parent)
 {
+    if (db != NULL)
+        this->db = db;
+    else
+        this->db = global.db;
 }
 
 
@@ -32,7 +36,7 @@ qint32 FileWatcherTable::addEntry(qint32 lid, QString baseDir, FileWatcher::Scan
         ConfigStore cs;
         lid = cs.incrementLidCounter();
     }
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     sql.prepare("Insert Into DataStore (lid, key, data) values (:lid, :key, :data)");
     sql.bindValue(":lid", lid);
     sql.bindValue(":key", FILE_WATCHER_DIR);
@@ -59,7 +63,7 @@ qint32 FileWatcherTable::addEntry(qint32 lid, QString baseDir, FileWatcher::Scan
 }
 
 void FileWatcherTable::get(qint32 lid, QString &baseDir, FileWatcher::ScanType &type, qint32 &notebookLid, bool &includeSubdirs) {
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     sql.prepare("Select key, data from DataStore where lid=:lid");
     sql.bindValue(":lid", lid);
     sql.exec();
@@ -90,7 +94,7 @@ void FileWatcherTable::get(qint32 lid, QString &baseDir, FileWatcher::ScanType &
 }
 
 qint32 FileWatcherTable::findLidByDir(QString baseDir) {
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     sql.prepare("Select lid from DataStore where key=:key and data=:data");
     sql.bindValue(":key", FILE_WATCHER_DIR);
     sql.bindValue(":data", baseDir);
@@ -103,7 +107,7 @@ qint32 FileWatcherTable::findLidByDir(QString baseDir) {
 
 
 qint32 FileWatcherTable::getAll(QList<qint32> &lids) {
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     sql.prepare("Select lid from DataStore where key=:key");
     sql.bindValue(":key", FILE_WATCHER_DIR);
     sql.exec();
@@ -114,7 +118,7 @@ qint32 FileWatcherTable::getAll(QList<qint32> &lids) {
 }
 
 void FileWatcherTable::expunge(qint32 lid) {
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     sql.prepare("Delete from datastore where lid=:lid");
     sql.bindValue(":lid", lid);
     sql.exec();

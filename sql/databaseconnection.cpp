@@ -28,22 +28,26 @@ extern Global global;
 //* This class is used to connect to the
 //* database.
 //*****************************************
-DatabaseConnection::DatabaseConnection()
+DatabaseConnection::DatabaseConnection(QString connection)
 {
     QLOG_DEBUG() << "SQL drivers available: " << QSqlDatabase::drivers();
     QLOG_TRACE() << "Adding database SQLITE";
-    conn = QSqlDatabase::addDatabase("QSQLITE");
+    conn = QSqlDatabase::addDatabase("QSQLITE", connection);
     QLOG_TRACE() << "Setting DB name";
     conn.setDatabaseName(global.fileManager.getDbDirPath("nixnote.db"));
     QLOG_TRACE() << "Opening database";
-    conn.open();
+    if (!conn.open()) {
+        QLOG_ERROR() << "Error opening database: " << conn.lastError();
+        exit(16);
+    }
 
     QLOG_TRACE() << "Preparing tables";
     // Start preparing the tables
+    global.db = &conn;
     configStore = new ConfigStore();
     dataStore = new DataStore(0);
 
-    QSqlQuery tempTable;
+    QSqlQuery tempTable(this->conn);
 //    tempTable.exec("pragma cache_size=8096");
 //    tempTable.exec("pragma page_size=8096");
     QLOG_TRACE() << "Creating filter table";

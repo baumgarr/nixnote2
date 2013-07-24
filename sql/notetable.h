@@ -83,9 +83,10 @@ class NoteTable
 {
 
 private:
+    QSqlDatabase *db;
 
 public:
-    NoteTable();                             // Constructor
+    NoteTable(QSqlDatabase *db=NULL);                             // Constructor
     qint32 getLid(QString guid);            // given a guid, return the lid
     qint32 getLid(string guid);             // Given a guid, return the lid
     QString getGuid(int lid);               // given a lid, get the guid

@@ -84,7 +84,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     f.setPointSize(8);
     this->setFont(f);
 
-    db = new DatabaseConnection();  // Startup the database
+    db = new DatabaseConnection("nixnote");  // Startup the database
     QLOG_TRACE() << "Setting up global settings";
     this->initializeGlobalSettings();
 //    defaultMsgTimeout = 30000;  // Default time to leave a message
@@ -850,12 +850,12 @@ void NixNote::openNote(bool newWindow) {
 //* (i.e. they select a notebook, tag, saved search...
 //*****************************************************
 void NixNote::updateSelectionCriteria(bool afterSync) {
-    QLOG_TRACE() << "starting NixNote.updateSelectionCriteria()";
+    QLOG_DEBUG() << "starting NixNote.updateSelectionCriteria()";
 
     FilterEngine filterEngine;
     filterEngine.filter();
 
-    QLOG_TRACE() << "Refreshing data";
+    QLOG_DEBUG() << "Refreshing data";
 
     noteTableView->refreshData();
 

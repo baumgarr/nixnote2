@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMap>
 #include <QHash>
 #include <QVector>
+#include "sql/databaseconnection.h"
 
 
 #include <evernote/UserStore.h>
@@ -53,6 +54,7 @@ private:
     void indexAttachment(qint32 lid, Resource &r);
     QTextDocument *textDocument;
     Thumbnailer *hammer;
+    DatabaseConnection *db;
 
 public:
     bool keepRunning;

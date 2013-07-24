@@ -32,13 +32,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //* a user sees in the table listing in the GUI.
 //****************************************************
 
+extern Global global;
 
 // Generic constructor
 NoteModel::NoteModel(QObject *parent)
-    :QSqlTableModel(parent)
+    :QSqlTableModel(parent, *global.db)
 {
     // Check if the table exists.  If not, create it.
-    QSqlQuery sql;
+    QSqlQuery sql(*global.db);
     sql.exec("Select *  from sqlite_master where type='table' and name='NoteTable';");
     if (!sql.next())
         this->createTable();
@@ -58,7 +59,7 @@ void NoteModel::createTable() {
     QLOG_TRACE() << "Entering NoteModel::createTable()";
 
     QLOG_DEBUG() << "Creating table NoteTable";
-    QSqlQuery sql;
+    QSqlQuery sql(*global.db);
     QString command("Create table if not exists NoteTable (" +
                   QString("lid integer primary key,") +
                   QString("dateCreated real default null,") +

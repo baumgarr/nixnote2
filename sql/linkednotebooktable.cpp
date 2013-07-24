@@ -23,9 +23,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notebooktable.h"
 #include "global.h"
 
-LinkedNotebookTable::LinkedNotebookTable(QObject *parent) :
+LinkedNotebookTable::LinkedNotebookTable(QObject *parent, QSqlDatabase *db) :
     QObject(parent)
 {
+    if (db != NULL)
+        this->db = db;
+    else
+        this->db = global.db;
 }
 
 
@@ -66,7 +70,7 @@ qint32 LinkedNotebookTable::sync(qint32 lid, LinkedNotebook &notebook) {
         lastUSN = getLastUpdateSequenceNumber(lid);
 
         // Delete the old record
-        QSqlQuery query;
+        QSqlQuery query(*db);
         query.prepare("Delete from DataStore where lid=:lid and key>=3200 and key<3300");
         query.bindValue(":lid", lid);
         query.exec();
@@ -89,7 +93,7 @@ qint32 LinkedNotebookTable::sync(qint32 lid, LinkedNotebook &notebook) {
 // Given a notebook's GUID, we return the LID
 qint32 LinkedNotebookTable::getLid(QString guid) {
 
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":data", guid);
     query.bindValue(":key", LINKEDNOTEBOOK_GUID);
@@ -111,7 +115,7 @@ qint32 LinkedNotebookTable::getLid(string guid) {
 
 // Add a new notebook to the database
 qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     ConfigStore cs;
 
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
@@ -201,7 +205,7 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
 
 // Return a notebook structure given the LID
 bool LinkedNotebookTable::get(LinkedNotebook &notebook, qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -280,7 +284,7 @@ bool LinkedNotebookTable::get(LinkedNotebook &notebook, string guid) {
 
 // Get a list of all notebooks
 qint32 LinkedNotebookTable::getAll(QList<qint32> &books) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("select distinct lid from DataStore where key=:key");
     query.bindValue(":key", LINKEDNOTEBOOK_GUID);
     query.exec();
@@ -294,7 +298,7 @@ qint32 LinkedNotebookTable::getAll(QList<qint32> &books) {
 
 // Get all notebooks for a particular stack
 qint32 LinkedNotebookTable::getStack(QList<qint32> &retval, QString &stack){
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("select distinct lid from DataStore where key=:key and data=:stack");
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.bindValue(":stack", stack);
@@ -311,7 +315,7 @@ qint32 LinkedNotebookTable::getStack(QList<qint32> &retval, QString &stack){
 
 // Get the guid for a particular lid
 bool LinkedNotebookTable::getGuid(QString &retval, qint32 lid){
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", LINKEDNOTEBOOK_GUID);
     query.bindValue(":lid", lid);
@@ -343,7 +347,7 @@ bool LinkedNotebookTable::update(LinkedNotebook &notebook, bool isDirty) {
     add(lid, notebook, isDirty);
     // Rename anything in the note list
     if (notebook.shareName != oldBook.shareName) {
-        QSqlQuery query;
+        QSqlQuery query(*db);
         query.prepare("Update notetable set notebook=:name where notebooklid=:lid");
         query.bindValue(":name", QString::fromStdString(notebook.shareName));
         query.bindValue(":lid", lid);
@@ -353,7 +357,7 @@ bool LinkedNotebookTable::update(LinkedNotebook &notebook, bool isDirty) {
 }
 
 void LinkedNotebookTable::expunge(qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("delete from DataStore where lid=:lid and key>=3200 and key<3300");
     query.bindValue(":lid", lid);
     query.exec();
@@ -374,7 +378,7 @@ void LinkedNotebookTable::expunge(QString guid) {
 void LinkedNotebookTable::renameStack(QString oldName, QString newName) {
     QList<qint32> lids;
     findByStack(lids, oldName);
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Update Datastore set data=:newname where key=:key and data=:oldname");
     query.bindValue(":newname", newName);
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
@@ -387,7 +391,7 @@ void LinkedNotebookTable::renameStack(QString oldName, QString newName) {
 
 
 void LinkedNotebookTable::findByStack(QList<qint32> &lids, QString stackName) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select lid from DataStore where key=:key and data=:name");
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.bindValue(":name", stackName);
@@ -405,7 +409,7 @@ bool LinkedNotebookTable::isDeleted(qint32 lid) {
 
 
 void LinkedNotebookTable::getStacks(QStringList &stacks) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select distinct data from DataStore where key=:key");
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.exec();
@@ -416,7 +420,7 @@ void LinkedNotebookTable::getStacks(QStringList &stacks) {
 
 
 bool LinkedNotebookTable::isStacked(qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select data from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
@@ -429,7 +433,7 @@ bool LinkedNotebookTable::isStacked(qint32 lid) {
 
 
 void LinkedNotebookTable::removeFromStack(qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("delete from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
@@ -439,7 +443,7 @@ void LinkedNotebookTable::removeFromStack(qint32 lid) {
 
 
 qint32 LinkedNotebookTable::getLastUpdateSequenceNumber(qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("select data from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
@@ -453,7 +457,7 @@ qint32 LinkedNotebookTable::getLastUpdateSequenceNumber(qint32 lid) {
 
 
 void LinkedNotebookTable::setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("delete from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
@@ -468,7 +472,7 @@ void LinkedNotebookTable::setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN
 
 
 bool LinkedNotebookTable::exists(qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("select lid from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_SHARE_NAME);

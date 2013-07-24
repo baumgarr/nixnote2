@@ -61,9 +61,10 @@ class NotebookTable
 {
 
 private:
+    QSqlDatabase *db;
 
 public:
-    NotebookTable();                             // Constructor
+    NotebookTable(QSqlDatabase *db = NULL);                             // Constructor
     qint32 getLid(QString guid);            // given a guid, return the lid
     qint32 getLid(string guid);             // Given a guid, return the lid
     qint32 findByName(string &name);           // Find a notebook given a name

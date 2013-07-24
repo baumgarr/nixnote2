@@ -48,9 +48,9 @@ class TagTable
 {
 
 private:
-
+    QSqlDatabase *db;
 public:
-    TagTable();                             // Constructor
+    TagTable(QSqlDatabase *db=NULL);                             // Constructor
     qint32 getLid(QString guid);               // given a guid, return the lid
     qint32 getLid(string guid);                // Given a guid, return the lid
     qint32 findByName(string &name, qint32 account);           // Find a tag given a name

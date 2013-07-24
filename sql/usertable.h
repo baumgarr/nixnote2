@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <Q_LONG>
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
+#include <QSqlDatabase>
 
 using namespace evernote::edam;
 
@@ -29,9 +30,10 @@ class UserTable
 {
 private:
     void createTable();
+    QSqlDatabase *db;
 
 public:
-    UserTable();
+    UserTable(QSqlDatabase *db=NULL);
     void updateUser(User &user);
     void updateSyncState(SyncState s);
     qlonglong getLastSyncDate();

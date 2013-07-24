@@ -333,7 +333,7 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
 // Update the list of notes.
 void NTableView::refreshData() {
     QLOG_TRACE() << "Getting valid lids in filter";
-    QSqlQuery sql;
+    QSqlQuery sql(*global.db);
     sql.exec("select lid from filter");
     proxy->lidMap->clear();
     while(sql.next()) {
@@ -451,16 +451,16 @@ void NTableView::restoreSelectedNotes() {
         return;
 
     NoteTable ntable;
-    QSqlQuery sql;
-    QSqlQuery transaction;
-    transaction.exec("begin");
+    QSqlQuery sql(*global.db);
+    QSqlQuery transaction(*global.db);
+    //transaction.exec("begin");
     sql.prepare("Delete from filter where lid=:lid");
     for (int i=0; i<lids.size(); i++) {
         ntable.restoreNote(lids[i], true);
         sql.bindValue(":lid", lids[i]);
         sql.exec();
     }
-    transaction.exec("commit");
+    //transaction.exec("commit");
     emit(notesRestored(lids));
 }
 
@@ -501,9 +501,9 @@ void NTableView::deleteSelectedNotes() {
         return;
 
     NoteTable ntable;
-    QSqlQuery sql;
-    QSqlQuery transaction;
-    transaction.exec("begin");
+    QSqlQuery sql(*global.db);
+    QSqlQuery transaction(*global.db);
+    //transaction.exec("begin");
     sql.prepare("Delete from filter where lid=:lid");
     for (int i=0; i<lids.size(); i++) {
         ntable.deleteNote(lids[i], true);
@@ -514,7 +514,7 @@ void NTableView::deleteSelectedNotes() {
         delete global.cache[lids[i]];
         global.cache.remove(lids[i]);
     }
-    transaction.exec("commit");
+    //transaction.exec("commit");
     emit(notesDeleted(lids, expunged));
 }
 

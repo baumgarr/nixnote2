@@ -40,9 +40,10 @@ class DataStore : public QSqlTableModel
     Q_OBJECT
 private:
     void createTable();
+    QSqlDatabase *db;
 
 public:
-    explicit DataStore(QObject *parent = 0);
+    explicit DataStore(QObject *parent = 0, QSqlDatabase *db=NULL);
     qint32 getDirtyNoteGuids(QList<QString> &retVal);
 
 signals:

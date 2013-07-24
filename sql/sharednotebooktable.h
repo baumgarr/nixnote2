@@ -52,9 +52,9 @@ class SharedNotebookTable
 {
 
 private:
-
+    QSqlDatabase *db;
 public:
-    SharedNotebookTable();                  // Constructor
+    SharedNotebookTable(QSqlDatabase *db=NULL);                  // Constructor
     qint32 getLid(qlonglong id);               // given a guid, return the lid
     void sync(SharedNotebook &sharedNotebook); // Sync a notebook with a new record
     void sync(qint32 lid, SharedNotebook sharedNotebook); // Sync a notebook with a new record

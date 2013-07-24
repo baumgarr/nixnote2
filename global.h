@@ -37,6 +37,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <string>
 #include <QSharedMemory>
+#include <QSqlDatabase>
 
 //*******************************
 //* This class is used to store
@@ -123,6 +124,7 @@ public:
     void setMinimumRecognitionWeight(int weight);
     QString dateFormat;
     QString timeFormat;
+    QSqlDatabase *db;
 
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;

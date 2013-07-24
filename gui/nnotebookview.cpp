@@ -220,7 +220,7 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
 
 // Load up the data from the database
 void NNotebookView::loadData() {
-    QSqlQuery query;
+    QSqlQuery query(*global.db);
     NotebookTable notebookTable;
     LinkedNotebookTable linkedTable;
     SharedNotebookTable sharedTable;

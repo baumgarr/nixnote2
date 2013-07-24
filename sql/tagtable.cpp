@@ -24,19 +24,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlTableModel>
 #include <QList>
 
+#include "global.h"
 
+extern Global global;
 
 
 // Default constructor
-TagTable::TagTable()
+TagTable::TagTable(QSqlDatabase *db)
 {
+    if (db != NULL)
+        this->db = db;
+    else
+        this->db = global.db;
 }
 
 
 
 // Given a tag's name as a std::string, we return the lid
 qint32 TagTable::findByName(string &name, qint32 account) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select lid from DataStore where key=:key and data=:name");
     query.bindValue(":key", TAG_NAME);
     query.bindValue(":name", QString::fromStdString(name));
@@ -61,7 +67,7 @@ qint32 TagTable::findByName(QString &name, qint32 account) {
 
 // Determine if a lid belongs to a linked notebook
 bool TagTable::isLinked(qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select lid from datastore where key=:key and lid=:lid");
     query.bindValue(":key", TAG_OWNING_ACCOUNT);
     query.bindValue(":lid", lid);
@@ -74,7 +80,7 @@ bool TagTable::isLinked(qint32 lid) {
 
 // Get the owning account for a lid
 qint32 TagTable::owningAccount(qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select data from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_OWNING_ACCOUNT);
@@ -86,7 +92,7 @@ qint32 TagTable::owningAccount(qint32 lid) {
 
 // Get a list of all tags
 qint32 TagTable::getAll(QList<qint32> &tags) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("select distinct lid from DataStore where key=:key");
     query.bindValue(":key", TAG_GUID);
     query.exec();
@@ -107,7 +113,7 @@ void TagTable::updateGuid(qint32 lid, Guid &guid) {
     QString oldGuid;
     getGuid(oldGuid, lid);
 
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", QString::fromStdString(guid));
     query.bindValue(":lid", lid);
@@ -132,7 +138,7 @@ qint32 TagTable::sync(Tag &tag, qint32 account) {
 void TagTable::update(Tag &tag, bool dirty=true) {
     qint32 lid = getLid(tag.guid);
     if (lid > 0) {
-        QSqlQuery query;
+        QSqlQuery query(*db);
         // Delete the old record
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
@@ -159,7 +165,7 @@ qint32 TagTable::sync(qint32 l, Tag &tag, qint32 account) {
         lid= getLid(tag.name);
 
     if (lid > 0) {
-        QSqlQuery query;
+        QSqlQuery query(*db);
         // Delete the old record
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
@@ -179,7 +185,7 @@ qint32 TagTable::sync(qint32 l, Tag &tag, qint32 account) {
 // Given a tag's GUID, we return the LID
 qint32 TagTable::getLid(QString guid) {
 
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":data", guid);
     query.bindValue(":key", TAG_GUID);
@@ -206,7 +212,7 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
     if (lid == 0)
         lid = cs.incrementLidCounter();
 
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
 
     query.bindValue(":lid", lid);
@@ -262,7 +268,7 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
 // Return a tag structure given the LID
 bool TagTable::get(Tag &tag, qint32 lid) {
 
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -318,7 +324,7 @@ bool TagTable::get(Tag &tag, string guid) {
 
 // Return if a tag is dirty given its lid
 bool TagTable::isDirty(qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_ISDIRTY);
@@ -360,7 +366,7 @@ bool TagTable::setDirty(QString guid, bool dirty) {
 
 // Return if a tag is dirty given its lid
 bool TagTable::setDirty(qint32 lid, bool dirty) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Update DataStore set data=:dirty where key=:key and lid=:lid");
     query.bindValue(":dirty", dirty);
     query.bindValue(":key", TAG_ISDIRTY);
@@ -375,7 +381,7 @@ bool TagTable::setDirty(qint32 lid, bool dirty) {
 
 // Does this tag exist?
 bool TagTable::exists(qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select lid from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_GUID);
@@ -404,7 +410,7 @@ bool TagTable::exists(string guid) {
 // Return a tag guid given the LID
 bool TagTable::getGuid(QString &guid, qint32 lid) {
 
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select data, data from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_GUID);
@@ -438,7 +444,7 @@ void TagTable::deleteTag(qint32 lid) {
         NoteTable noteTable;
         Tag tag;
         qint32 currentLid = list[i];
-        QSqlQuery query;
+        QSqlQuery query(*db);
         get(tag, currentLid);
         if (tag.__isset.updateSequenceNum && tag.updateSequenceNum > 0) {
             query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
@@ -461,7 +467,7 @@ void TagTable::deleteTag(qint32 lid) {
 void TagTable::expunge(qint32 lid) {
     QString tagGuid;
     this->getGuid(tagGuid, lid);
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -487,7 +493,7 @@ void TagTable::expunge(QString guid) {
 
 // Is this search deleted?
 bool TagTable::isDeleted(qint32 lid) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select lid from DataStore where lid=:lid and key=:key and data=:data");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_ISDELETED);
@@ -502,7 +508,7 @@ bool TagTable::isDeleted(qint32 lid) {
 
 qint32 TagTable::findChildren(QList<qint32> &list, QString parentGuid) {
     qint32 parentLid = getLid(parentGuid);
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select lid from DataStore where key=:key and data=:parent");
     query.bindValue(":key", TAG_PARENT_LID);
     query.bindValue(":parent", parentLid);
@@ -525,7 +531,7 @@ qint32 TagTable::findChildren(QList<qint32> &list, QString parentGuid) {
 
 // Get all dirty lids
 qint32 TagTable::getAllDirty(QList<qint32> &lids) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     lids.clear();
     query.prepare("Select lid from DataStore where key=:key");
     query.bindValue(":key", TAG_ISDIRTY);
@@ -540,7 +546,7 @@ qint32 TagTable::getAllDirty(QList<qint32> &lids) {
 
 // Update the USN
 void TagTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", usn);
     query.bindValue(":lid", lid);
@@ -551,7 +557,7 @@ void TagTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
 // Linked tags are not uploaded, so we reset the dirty flags in case
 // they were updated locally
 void TagTable::resetLinkedTagsDirty() {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Delete from datastore where key=:key and lid in (select lid from datastore where key=:linkedkey and data > 0)");
     query.bindValue(":key", TAG_ISDIRTY);
     query.bindValue(":linkedkey", TAG_OWNING_ACCOUNT);
@@ -564,7 +570,7 @@ void TagTable::resetLinkedTagsDirty() {
 // Get a count of all new unsequenced notebooks
 // Get all dirty lids
 int TagTable::getNewUnsequencedCount() {
-    QSqlQuery query;
+    QSqlQuery query(*db);
     query.prepare("Select count(lid) from DataStore where key=:key and data=0");
     query.bindValue(":key", TAG_UPDATE_SEQUENCE_NUMBER);
     query.exec();

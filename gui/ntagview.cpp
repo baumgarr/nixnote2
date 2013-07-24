@@ -242,7 +242,7 @@ void NTagView::loadData() {
         delete ptr;
     }
 
-    QSqlQuery query;
+    QSqlQuery query(*global.db);
     TagTable tagTable;
     query.exec("Select lid, name, parent_gid, account from TagModel order by name");
     while (query.next()) {

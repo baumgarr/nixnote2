@@ -44,7 +44,7 @@ public:
     ConfigStore *configStore;       // Table used to store program settings
     DataStore *dataStore;      // Table that contains the note data
 
-    DatabaseConnection();           // Generic constructor
+    DatabaseConnection(QString connection);           // Generic constructor
     ~DatabaseConnection();          // Destructor
 };
 

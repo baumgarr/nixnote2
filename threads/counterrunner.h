@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include <QPair>
 #include <QList>
+#include "sql/databaseconnection.h"
 
 extern Global global;
 
@@ -34,6 +35,7 @@ private:
     QList<QPair<qint32, qint32>*> *notebookCounts;
     QList<QPair<qint32, qint32>*> *tagCounts;
     qint32 trashCounts;
+    DatabaseConnection *db;
 
 public:
     explicit CounterRunner(QObject *parent = 0);

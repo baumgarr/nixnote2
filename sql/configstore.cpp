@@ -22,14 +22,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QVariant>
 
+extern Global global;
 
 //**********************
 // Generic constructor.
 //**********************
-ConfigStore::ConfigStore()
+ConfigStore::ConfigStore(QSqlDatabase *conn)
 {
+    if (conn == NULL)
+        db = global.db;
+
     // Check if the database exists.  If not, create it.
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     sql.exec("Select * from sqlite_master where type='table' and name='ConfigStore';");
     if (!sql.next())
         this->createTable();
@@ -43,7 +47,7 @@ void ConfigStore::createTable() {
     QLOG_TRACE() << "Entering ConfigStore::createTable()";
 
     QLOG_DEBUG() << "Creating table ConfigStore";
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
 
     // build the SQL command & cretae the table
     QString command("Create table if not exists ConfigStore (" +
@@ -66,7 +70,7 @@ void ConfigStore::initTable() {
     QLOG_TRACE() << "Entering ConfigStore::initTable()";
 
     QLOG_DEBUG() << "Initializing table ConfigStore";
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     sql.prepare("Insert into ConfigStore (key, value) values (:key, :value);");
     sql.bindValue(":key", CONFIG_STORE_LID);
     sql.bindValue(":value", 0);
@@ -81,7 +85,7 @@ void ConfigStore::initTable() {
 // local ID.  This number never changes
 //*******************************************************************
 qint32 ConfigStore::incrementLidCounter() {
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     // Prepare the SQL statement & fetch the row
     sql.prepare("Select value from ConfigStore where key=:key");
     sql.bindValue(":key", CONFIG_STORE_LID);
@@ -107,7 +111,7 @@ qint32 ConfigStore::incrementLidCounter() {
 }
 
 void ConfigStore::saveSetting(int key, QByteArray value) {
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     // Prepare the SQL statement & fetch the row
     sql.prepare("Delete from ConfigStore where key=:key");
     sql.bindValue(":key", key);
@@ -121,7 +125,7 @@ void ConfigStore::saveSetting(int key, QByteArray value) {
 
 
 bool ConfigStore::getSetting(QByteArray &value, int key) {
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     sql.prepare("select value from ConfigStore where key=:key");
     sql.bindValue(":key", key);
     sql.exec();

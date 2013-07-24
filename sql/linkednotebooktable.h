@@ -44,6 +44,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "evernote/UserStore.h"
 #include "evernote/NoteStore.h"
+#include "global.h"
+
+extern Global global;
 
 using namespace evernote::edam  ;
 using namespace std;
@@ -52,7 +55,7 @@ class LinkedNotebookTable : public QObject
 {
     Q_OBJECT
 public:
-    explicit LinkedNotebookTable(QObject *parent = 0);
+    explicit LinkedNotebookTable(QObject *parent = 0, QSqlDatabase *db=NULL);
     qint32 getLid(QString guid);            // given a guid, return the lid
     qint32 getLid(string guid);             // Given a guid, return the lid
     qint32 findByName(string &name);           // Find a notebook given a name
@@ -81,6 +84,7 @@ public:
     bool exists(qint32 lid);
     qint32 getLastUpdateSequenceNumber(qint32 lid);
     void setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN);
+    QSqlDatabase *db;
 
 signals:
     

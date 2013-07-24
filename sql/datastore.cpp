@@ -28,18 +28,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "searchtable.h"
 #include "tagtable.h"
 #include "notebooktable.h"
+#include "global.h"
 
+extern Global global;
 
 #define GUID 1;
 #define DIRTY_RECORD 2;
 #define ORIGINAL_GID 3;
 #define UPDATE_SEQUENCE_NUMBER 4;
 
-DataStore::DataStore(QObject *parent) :
+DataStore::DataStore(QObject *parent, QSqlDatabase *db) :
     QSqlTableModel(parent)
 {
+    if (db != NULL)
+        this->db = db;
+    else
+        this->db = global.db;
   // Check if the table exists.  If not, create it.
-  QSqlQuery sql;
+    QSqlQuery sql(*this->db);
   sql.exec("Select * from sqlite_master where type='table' and name='DataStore';");
   if (!sql.next())
       this->createTable();
@@ -54,7 +60,7 @@ void DataStore::createTable() {
     QLOG_TRACE() << "Entering DataStore::createTable()";
 
     QLOG_DEBUG() << "Creating table DataStore";
-    QSqlQuery sql;
+    QSqlQuery sql(*db);
     QString command("Create table DataStore (" +
                   QString("lid integer,") +
                   QString("key integer,") +

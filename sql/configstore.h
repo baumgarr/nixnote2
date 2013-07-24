@@ -38,9 +38,10 @@ class ConfigStore
 {
 private:
     void initTable();           // Initialize a new table
+    QSqlDatabase *db;           // DB connection
 
 public:
-    ConfigStore();              // Generic constructor
+    ConfigStore(QSqlDatabase *conn=NULL);  // Generic constructor
     void createTable();         // SQL to create the table
     qint32 incrementLidCounter();  // Get the next LID number
     void saveSetting(int key, QByteArray);  // Save a setting
