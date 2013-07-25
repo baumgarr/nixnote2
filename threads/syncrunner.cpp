@@ -39,37 +39,31 @@ extern Global global;
 
 SyncRunner::SyncRunner()
 {
-    moveToThread(this);
-
-    consumerKey = "";
-    secret = "";
-
-    // Setup the user agent
-    userAgent = "NixNote2/Linux";
-
-    userStoreUrl = QString("http://" +global.server +"/edam/user").toStdString();
-     updateSequenceNumber = 0;
+    init = false;
 }
 
 SyncRunner::~SyncRunner() {
 }
 
 
-
-
-void SyncRunner::run() {
-    QLOG_DEBUG() << "SyncRunner starting";
-    defaultMsgTimeout = 30000;
-    this->setPriority(QThread::LowPriority);
-    comm = new CommunicationManager(this);
-    db = new DatabaseConnection("syncrunner");
-    connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
-    exec();
-    QLOG_DEBUG() << "Syncrunner exiting.";
-}
-
 void SyncRunner::synchronize() {
     QLOG_DEBUG() << "Starting SyncRunner.synchronize()";
+    if (!init) {
+        init = true;
+        consumerKey = "";
+        secret = "";
+
+        // Setup the user agent
+        userAgent = "NixNote2/Linux";
+
+        userStoreUrl = QString("http://" +global.server +"/edam/user").toStdString();
+        updateSequenceNumber = 0;
+
+         defaultMsgTimeout = 30000;
+         comm = new CommunicationManager(this);
+         db = new DatabaseConnection("syncrunner");
+         connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
+    }
     error = false;
 
     comm->error.reset();

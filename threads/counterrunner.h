@@ -28,7 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-class CounterRunner : public QThread
+class CounterRunner : public QObject
 {
     Q_OBJECT
 private:
@@ -36,11 +36,12 @@ private:
     QList<QPair<qint32, qint32>*> *tagCounts;
     qint32 trashCounts;
     DatabaseConnection *db;
+    void initialize();
+    bool init;
 
 public:
     explicit CounterRunner(QObject *parent = 0);
     bool keepRunning;
-    void run();
     
 signals:
     void trashTotals(qint32);

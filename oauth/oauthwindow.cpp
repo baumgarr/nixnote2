@@ -121,7 +121,7 @@ void OAuthWindow::tempAuthPageLoaded(bool rc) {
 
     QWebFrame *mainFrame = tempAuthPage->page()->mainFrame();
     QString contents = mainFrame->toPlainText();
-    QLOG_DEBUG() << "Temporary Cred Contents: " << contents;
+//    QLOG_DEBUG() << "Temporary Cred Contents: " << contents;
     int index = contents.indexOf("&oauth_token_secret");
     contents = contents.left(index);
     QUrl accessUrl(urlBase+"/OAuth.action?" +contents);

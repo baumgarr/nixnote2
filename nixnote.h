@@ -143,6 +143,9 @@ public:
     NixNote(QWidget *parent = 0);  // Constructor
     ~NixNote();   //Destructor
     SyncRunner syncRunner;
+    QThread syncThread;
+    QThread indexThread;
+    QThread counterThread;
     IndexRunner indexRunner;
     CounterRunner counterRunner;
     void closeEvent(QCloseEvent *event);

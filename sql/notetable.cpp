@@ -435,6 +435,7 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
     notebookTable.get(notebook, notebookLid);
     // Now let's update the user table
     QSqlQuery query(*db);
+    QLOG_DEBUG() << "CONN" << db->connectionName();
 
     query.prepare("Delete from NoteTable where lid=:lid");
     query.bindValue(":lid", lid);

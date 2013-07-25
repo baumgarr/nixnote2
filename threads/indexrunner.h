@@ -43,11 +43,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 using namespace evernote::edam;
 using namespace std;
 
-class IndexRunner : public QThread
+class IndexRunner : public QObject
 {
     Q_OBJECT
 private:
     QTimer *indexTimer;
+    bool init;
     void indexRecognition(qint32 lid, Resource &r);
     void indexNote(qint32 lid, Note &n);
     void indexPdf(qint32 lid, Resource &r);
@@ -55,13 +56,13 @@ private:
     QTextDocument *textDocument;
     Thumbnailer *hammer;
     DatabaseConnection *db;
+    void initialize();
 
 public:
     bool keepRunning;
     bool pauseIndexing;
     IndexRunner();
     ~IndexRunner();
-    void run();
 
 signals:
     void thumbnailNeeded(qint32);

@@ -33,9 +33,7 @@ using namespace Poppler;
 // Generic constructor
 IndexRunner::IndexRunner()
 {
-    moveToThread(this);
-    keepRunning = true;
-    pauseIndexing = false;
+    init = false;
 }
 
 
@@ -47,8 +45,11 @@ IndexRunner::~IndexRunner() {
 
 // Main thread runner.  This just basically starts up the event queue.  Everything else
 // is done via events signaled from the main thread.
-void IndexRunner::run() {
-    moveToThread(this);
+void IndexRunner::initialize() {
+    //moveToThread(this);
+    keepRunning = true;
+    pauseIndexing = false;
+    init = true;
     QLOG_DEBUG() << "Starting IndexRunner";
     db = new DatabaseConnection("indexrunner");
     indexTimer = new QTimer();
@@ -57,7 +58,6 @@ void IndexRunner::run() {
     indexTimer->start();
     textDocument = new QTextDocument();
     hammer = new Thumbnailer();
-    exec();
     QLOG_DEBUG() << "Indexrunner exiting.";
 }
 
@@ -65,6 +65,8 @@ void IndexRunner::run() {
 
 // The index timer has expired.  Look for any unindexed notes or resources
 void IndexRunner::index() {
+    if (!init)
+        initialize();
 
     indexTimer->stop();   // Stop the timer because we are already working
 

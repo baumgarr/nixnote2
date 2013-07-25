@@ -25,23 +25,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtSql>
 
 CounterRunner::CounterRunner(QObject *parent) :
-    QThread(parent)
+    QObject(parent)
 {
-    moveToThread(this);
-    keepRunning = true;
+    init = false;
 }
 
 
-void CounterRunner::run() {
+void CounterRunner::initialize() {
+    init = true;
 //    hammer = new Thumbnailer();
     QLOG_DEBUG() << "Starting CounterRunner";
     db = new DatabaseConnection("counterrunner");
-    exec();
     QLOG_DEBUG() << "CounterRunner exiting.";
 }
 
 
 void CounterRunner::countAll() {
+    if (!init)
+        initialize();
     this->countNotebooks();
     this->countTags();
     this->countTrash();
@@ -49,6 +50,8 @@ void CounterRunner::countAll() {
 
 
 void CounterRunner::countTrash() {
+    if (!init)
+        initialize();
     NoteTable ntable(&db->conn);
     QList<qint32> lids;
     emit trashTotals(ntable.getAllDeleted(lids));
@@ -56,6 +59,9 @@ void CounterRunner::countTrash() {
 
 
 void CounterRunner::countNotebooks() {
+
+    if (!init)
+        initialize();
 
     // First get every possible tag
     NotebookTable nTable(&db->conn);
@@ -78,6 +84,8 @@ void CounterRunner::countNotebooks() {
 
 
 void CounterRunner::countTags() {
+    if (!init)
+        initialize();
     // First get every possible tag
     TagTable tTable(&db->conn);
     QList<qint32> lids;

@@ -61,11 +61,12 @@ using namespace apache::thrift::transport;
 using namespace evernote::edam;
 using namespace std;
 
-class SyncRunner : public QThread
+class SyncRunner : public QObject
 {
     Q_OBJECT
 private:
     bool idle;
+    bool init;
     int defaultMsgTimeout;
     long evernoteUpdateCount;
     DatabaseConnection *db;
@@ -138,7 +139,6 @@ public:
     string noteStoreUrl;
     SyncRunner();
     ~SyncRunner();
-    void run();
     bool error;
     CommunicationError* getError();
     void communicationErrorHandler();

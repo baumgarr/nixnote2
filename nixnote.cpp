@@ -75,6 +75,14 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     this->setDebugLevel();
+    counterThread.start(QThread::LowestPriority);
+    syncThread.start(QThread::LowPriority);
+    indexThread.start(QThread::LowestPriority);
+
+    indexRunner.moveToThread(&indexThread);
+    syncRunner.moveToThread(&syncThread);
+    counterRunner.moveToThread(&counterThread);
+
     heartbeatTimer.setInterval(1000);
     heartbeatTimer.setSingleShot(false);
     connect(&heartbeatTimer, SIGNAL(timeout()), this, SLOT(heartbeatTimerTriggered()));
@@ -87,19 +95,16 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     db = new DatabaseConnection("nixnote");  // Startup the database
     QLOG_TRACE() << "Setting up global settings";
     this->initializeGlobalSettings();
-//    defaultMsgTimeout = 30000;  // Default time to leave a message
 
     // Setup the sync thread
     QLOG_TRACE() << "Setting up counter thread";
     connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
-    counterRunner.start(QThread::LowestPriority);
+    QLOG_DEBUG() << counterRunner.thread();
 
     // Setup the counter thread
     QLOG_TRACE() << "Setting up sync thread";
     connect(this,SIGNAL(syncRequested()),&syncRunner,SLOT(synchronize()));
     connect(&syncRunner, SIGNAL(setMessage(QString, int)), this, SLOT(setMessage(QString, int)));
-    syncRunner.start(QThread::NormalPriority);
-    indexRunner.start(QThread::LowestPriority);
 
     QLOG_TRACE() << "Setting up GUI";
     this->setupGui();
@@ -136,12 +141,12 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 // Destructor to call when all done
 NixNote::~NixNote()
 {
-    syncRunner.quit();
-    indexRunner.quit();
-    counterRunner.quit();
-    while (!syncRunner.isFinished());
-    while (!indexRunner.isFinished());
-    while(!counterRunner.isFinished());
+    syncThread.quit();
+    indexThread.quit();
+    counterThread.quit();
+    while (!syncThread.isFinished());
+    while (!indexThread.isFinished());
+    while(!counterThread.isFinished());
 
     // Cleanup any temporary files
     QDir myDir(global.fileManager.getTmpDirPath());
@@ -586,8 +591,8 @@ void NixNote::closeEvent(QCloseEvent *event) {
 
     indexRunner.keepRunning = false;
     counterRunner.keepRunning = false;
-    indexRunner.quit();
-    counterRunner.quit();
+    indexThread.quit();
+    counterThread.quit();
 
     global.settings->beginGroup("Sync");
     bool syncOnShutdown = global.settings->value("syncOnShutdown", false).toBool();
@@ -602,7 +607,7 @@ void NixNote::closeEvent(QCloseEvent *event) {
     }
 
     syncRunner.keepRunning = false;
-    syncRunner.quit();
+    syncThread.quit();
 
 
 
