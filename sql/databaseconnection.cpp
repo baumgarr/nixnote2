@@ -41,9 +41,10 @@ DatabaseConnection::DatabaseConnection(QString connection)
         exit(16);
     }
 
+    if (connection == "nixnote")
+        global.db = &conn;
     QLOG_TRACE() << "Preparing tables";
     // Start preparing the tables
-    global.db = &conn;
     configStore = new ConfigStore();
     dataStore = new DataStore(0);
 

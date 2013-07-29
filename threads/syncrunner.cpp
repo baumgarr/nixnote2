@@ -86,7 +86,7 @@ void SyncRunner::synchronize() {
 
 
 void SyncRunner::evernoteSync() {
-    QLOG_DEBUG() << "Starting SyncRunner.evernoteSync()";
+    QLOG_TRACE() << "Sync thread:" << QThread::currentThreadId();
     if (!global.connected)
         return;
 
@@ -150,9 +150,6 @@ void SyncRunner::evernoteSync() {
     }
     updateNoteTableTags();
 
-    /*  This is commented out because for some reason it causes a "could not refill buffer error after
-     * a successfull sync.
-     */
     if (!comm->getUserInfo(user)) {
         this->communicationErrorHandler();
         error = true;
@@ -165,7 +162,6 @@ void SyncRunner::evernoteSync() {
         return;
     }
     userTable.updateSyncState(syncState);   
-    /**/
 
     if (!error)
         emit setMessage(tr("Sync Complete"), defaultMsgTimeout);
@@ -580,17 +576,17 @@ void SyncRunner::updateNoteTableTags() {
 
 
 // Update the note table with any notebooks or tags that have changed
-void SyncRunner::updateNoteTableNotebooks() {
-    QHashIterator<QString, QString> keys(changedNotebooks);
-    NoteTable noteTable(&db->conn);
+//void SyncRunner::updateNoteTableNotebooks() {
+//    QHashIterator<QString, QString> keys(changedNotebooks);
+//    NoteTable noteTable(&db->conn);
 
-    // Go through the list of changed notebooks
-    while (keys.hasNext()) {
-        keys.next();
-        noteTable.updateNoteListNotebooks(keys.key(), keys.value());
-    }
+//    // Go through the list of changed notebooks
+//    while (keys.hasNext()) {
+//        keys.next();
+//        noteTable.updateNoteListNotebooks(keys.key(), keys.value());
+//    }
 
-}
+//}
 
 
 
@@ -683,18 +679,25 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
             fs = false;
         while (more && keepRunning) {
             if (!comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, fs)) {
-                this->communicationErrorHandler();
-                error = true;
-                return;
-            }
-            processSyncChunk(chunk, lids[i]);
-            if (chunk.chunkHighUSN >= syncState.updateCount)
                 more = false;
-            ltable.setLastUpdateSequenceNumber(lids[i], chunk.chunkHighUSN);
-            usn = chunk.chunkHighUSN;
-            if (chunk.updateCount > startingSequenceNumber) {
-                int pct = (usn-startingSequenceNumber)*100/(chunk.updateCount-startingSequenceNumber);
-                emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for shared notebook ") +QString::fromStdString(book.shareName) + tr("."), defaultMsgTimeout);
+                if (comm->error.type == CommunicationError::EDAMNotFoundException) {
+                    ltable.expunge(lids[i]);
+                    emit(notebookExpunged(lids[i]));
+                } else {
+                    this->communicationErrorHandler();
+                    error = true;
+                    return;
+                }
+            } else {
+                processSyncChunk(chunk, lids[i]);
+                if (chunk.chunkHighUSN >= syncState.updateCount)
+                    more = false;
+                ltable.setLastUpdateSequenceNumber(lids[i], chunk.chunkHighUSN);
+                usn = chunk.chunkHighUSN;
+                if (chunk.updateCount > 0 && chunk.updateCount > startingSequenceNumber) {
+                    int pct = (usn-startingSequenceNumber)*100/(chunk.updateCount-startingSequenceNumber);
+                    emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for shared notebook ") +QString::fromStdString(book.shareName) + tr("."), defaultMsgTimeout);
+                }
             }
         }
         comm->disconnectFromLinkedNotebook();

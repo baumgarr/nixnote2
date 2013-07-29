@@ -294,6 +294,15 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
     } catch (TTransportException e) {
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
         return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.identifier) << ":" << QString::fromStdString(e.key) << endl;
+        error.message = "Shared notebook " + QString::fromStdString(e.key) + " not found.";
+        error.type = CommunicationError::EDAMNotFoundException;
+        error.code = -1;
+        return false;
+    } catch (TException e) {
+        QLOG_ERROR() << "TException:" << e.what();
+        return false;
     }
     return true;
 }

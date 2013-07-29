@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QScrollArea>
 #include <QSystemTrayIcon>
 #include <QToolBar>
+#include <QSlider>
 
 #include "watcher/filewatchermanager.h"
 #include "gui/ntabwidget.h"
@@ -137,7 +138,6 @@ private:
     void saveContents();
     void saveNoteColumnPositions();
     void saveNoteColumnWidths();
-    //int defaultMsgTimeout;
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor
@@ -208,6 +208,9 @@ public slots:
     void screenCapture();
     void reindexDatabase();
     void noteSynchronized(qint32 lid, bool value);
+    void indexThreadStarted();
+    void syncThreadStarted();
+    void counterThreadStarted();
 
 signals:
     void syncRequested();

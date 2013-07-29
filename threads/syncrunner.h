@@ -123,7 +123,7 @@ private:
     void syncRemoteLinkedNotebooksActual();
 
     void updateNoteTableTags();
-    void updateNoteTableNotebooks();
+    //void updateNoteTableNotebooks();
 
     void checkForInkNotes(vector<Resource> &resources);
 

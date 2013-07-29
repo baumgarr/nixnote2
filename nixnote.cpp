@@ -75,13 +75,13 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     this->setDebugLevel();
+
+    connect(&syncThread, SIGNAL(started()), this, SLOT(syncThreadStarted()));
+    connect(&counterThread, SIGNAL(started()), this, SLOT(counterThreadStarted()));
+    connect(&indexThread, SIGNAL(started()), this, SLOT(indexThreadStarted()));
     counterThread.start(QThread::LowestPriority);
     syncThread.start(QThread::LowPriority);
     indexThread.start(QThread::LowestPriority);
-
-    indexRunner.moveToThread(&indexThread);
-    syncRunner.moveToThread(&syncThread);
-    counterRunner.moveToThread(&counterThread);
 
     heartbeatTimer.setInterval(1000);
     heartbeatTimer.setSingleShot(false);
@@ -125,14 +125,10 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     importManager->setup();
     connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
-    global.settings->beginGroup("Sync");
-    bool syncOnStartup = global.settings->value("syncOnStartup", false).toBool();
-    global.settings->endGroup();
-    if (syncOnStartup)
-        synchronize();
     finalSync = false;
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
+
 
 
 
@@ -171,9 +167,7 @@ NixNote::~NixNote()
 void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
-    //statusBar();
-    //statusBar()->addPermanentWidget(new QSlider(Qt::Horizontal));
-    setWindowTitle(tr("NixNote 2"));
+    //statusBar();    setWindowTitle(tr("NixNote 2"));
     setWindowIcon(QIcon(":windowIcon.png"));
 
     //QLOG_TRACE() << "Setting up menu bar";
@@ -379,6 +373,28 @@ void NixNote::setupGui() {
 void NixNote::initializeGlobalSettings() {
 
 }
+
+//**************************************************************
+//* Move sync, couter, & index objects to their appropriate
+//* thread.
+//**************************************************************
+void NixNote::counterThreadStarted() {
+    counterRunner.moveToThread(&counterThread);
+}
+
+void NixNote::syncThreadStarted() {
+    syncRunner.moveToThread(&syncThread);
+    global.settings->beginGroup("Sync");
+    bool syncOnStartup = global.settings->value("syncOnStartup", false).toBool();
+    global.settings->endGroup();
+    if (syncOnStartup)
+        synchronize();
+}
+
+void NixNote::indexThreadStarted() {
+    indexRunner.moveToThread(&indexThread);
+}
+
 
 //******************************************************************************
 //* This function sets up the note list window.  This is what the users select

@@ -358,7 +358,7 @@ bool LinkedNotebookTable::update(LinkedNotebook &notebook, bool isDirty) {
 
 void LinkedNotebookTable::expunge(qint32 lid) {
     QSqlQuery query(*db);
-    query.prepare("delete from DataStore where lid=:lid and key>=3200 and key<3300");
+    query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
 }

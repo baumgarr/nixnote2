@@ -145,6 +145,17 @@ qint32 NotebookTable::getLid(string guid) {
 }
 
 
+// Add a new notebook to the database
+qint32 NotebookTable::addStub(QString guid) {
+    QSqlQuery query(*db);
+    ConfigStore cs;
+    qint32 lid = cs.incrementLidCounter();
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTEBOOK_GUID);
+    query.bindValue(":data", guid);
+    query.exec();
+
+}
 
 // Add a new notebook to the database
 qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
@@ -254,6 +265,9 @@ qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
             sharedTable.add(lid, t.sharedNotebooks[i], isDirty);
         }
     }
+
+    NoteTable noteTable;
+    noteTable.updateNotebookName(lid, QString::fromStdString(t.name));
     return lid;
 }
 

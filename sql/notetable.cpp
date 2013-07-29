@@ -426,16 +426,21 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
 
     NotebookTable notebookTable;
     LinkedNotebookTable linkedNotebookTable;
+    QString notebookName = "";
 
     qint32 notebookLid = notebookTable.getLid(t.notebookGuid);
     if (notebookLid <=0) {
         notebookLid = linkedNotebookTable.getLid(t.notebookGuid);
     }
-    Notebook notebook;
-    notebookTable.get(notebook, notebookLid);
+    if (notebookLid <=0)
+        notebookLid = notebookTable.addStub(QString::fromStdString(t.notebookGuid));
+    else {
+        Notebook notebook;
+        notebookTable.get(notebook, notebookLid);
+        notebookName = QString::fromStdString(notebook.name);
+    }
     // Now let's update the user table
     QSqlQuery query(*db);
-    QLOG_DEBUG() << "CONN" << db->connectionName();
 
     query.prepare("Delete from NoteTable where lid=:lid");
     query.bindValue(":lid", lid);
@@ -531,7 +536,7 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
     }
     query.bindValue(":size", size);
 
-    query.bindValue(":notebook", QString::fromStdString(notebook.name));
+    query.bindValue(":notebook", notebookName);
     query.bindValue(":notebookLid", notebookLid);
 
     QString tagNames;
