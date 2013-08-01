@@ -43,6 +43,9 @@ public:
     QString message;
     int code;
     void reset();
+    bool retry();
+    int retryCount;
+    int maxRetryCount;
     
 signals:
     

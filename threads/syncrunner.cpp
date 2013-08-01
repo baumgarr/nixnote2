@@ -483,9 +483,10 @@ void SyncRunner::syncRemoteNotes(vector<Note> notes) {
             lid = noteTable.getLid(t.guid);
         }
         // Remove it from the cache (if it exists)
-        if (global.cache.contains(lid))
+        if (global.cache.contains(lid)) {
             delete global.cache[lid];
             global.cache.remove(lid);
+        }
         emit noteUpdated(lid);
     }
 

@@ -28,7 +28,16 @@ CommunicationError::CommunicationError(QObject *parent) :
 
 
 void CommunicationError::reset() {
+    retryCount = 0;
+    maxRetryCount = 3;
     code = 0;
     message = "";
     type = None;
+}
+
+bool CommunicationError::retry() {
+    if (retryCount < maxRetryCount)
+        return true;
+    else
+        return false;
 }

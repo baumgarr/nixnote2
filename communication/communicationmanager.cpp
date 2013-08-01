@@ -94,7 +94,7 @@ bool CommunicationManager::getSyncState(string token, SyncState &syncState) {
 
 
 // Get a sync chunk
-bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int start, int chunkSize, bool fullSync) {
+bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int start, int chunkSize, bool fullSync, int errorCount) {
     if (token == "")
         token = authToken;
 
@@ -141,6 +141,14 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
         return false;
     } catch (TTransportException e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return getSyncChunk(token, chunk, start, chunkSize, fullSync, errorCount);
+        }
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
         return false;
     }
@@ -254,7 +262,7 @@ bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, Link
 
 
 // Get a linked notebook's sync chunk
-bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook linkedNotebook, int start, int chunkSize, bool fullSync) {
+bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook linkedNotebook, int start, int chunkSize, bool fullSync, int errorCount) {
 
     // Get rid of old stuff from last chunk
     while(inkNoteList->size() > 0) {
@@ -292,6 +300,14 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
         QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
         return false;
     } catch (TTransportException e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return getLinkedNotebookSyncChunk(chunk, linkedNotebook, start,  chunkSize, fullSync, errorCount);
+        }
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
         return false;
     } catch (EDAMNotFoundException e) {

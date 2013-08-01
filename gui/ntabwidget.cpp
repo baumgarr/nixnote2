@@ -141,8 +141,7 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
     if (newWindow && !found) {
         view = new NBrowserWindow();
         addBrowser(view, QString::fromStdString(n.title));
-        connect(view, SIGNAL(noteUpdated(qint32)), this, SLOT(noteUpdateSignaled(qint32)));
-        connect(view, SIGNAL(updateNoteList(qint32,int,QVariant)), this, SLOT(updateNoteListSignaled(qint32,int,QVariant)));
+        setupConnections(view);
     } else {
         view = currentBrowser();
         tabBar->setTabText(tabBar->currentIndex(), QString::fromStdString(n.title));
@@ -166,7 +165,7 @@ void NTabWidget::setTitle(int index, QString t) {
 
 // A signal that a note has been updated.
 void NTabWidget::noteUpdateSignaled(qint32 lid) {
-    emit(this->noteUpdated(lid));
+    //  COMMENTED OUT TO PREVENT SEGFAULT  emit(this->noteUpdated(lid));
 
     Note n;
     NoteTable noteTable;
@@ -189,14 +188,18 @@ void NTabWidget::updateNoteListSignaled(qint32 lid, int column, QVariant data) {
 
 // A note has been synchronized
 void NTabWidget::noteSyncSignaled(qint32 lid) {
-    emit(this->noteUpdated(lid));
+    // COMMENTED OUT TO PREVENT SEGFAULT emit(this->noteUpdated(lid));
 
     Note n;
     NoteTable noteTable;
     noteTable.get(n, lid, false,false);
     for (int i=0;i<browserList->size(); i++) {
-        if (browserList->at(i)->lid == lid) {
+        if (browserList->at(i)->lid == lid && !browserList->at(i)->editor->isDirty) {
             setTitle(i, QString::fromStdString(n.title));
+            browserList->at(i)->blockSignals(true);
+            browserList->at(i)->clear();
+            browserList->at(i)->setContent(lid);
+            browserList->at(i)->blockSignals(false);
             return;
         }
     }

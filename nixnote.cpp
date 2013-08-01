@@ -99,7 +99,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     // Setup the sync thread
     QLOG_TRACE() << "Setting up counter thread";
     connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
-    QLOG_DEBUG() << counterRunner.thread();
 
     // Setup the counter thread
     QLOG_TRACE() << "Setting up sync thread";
