@@ -713,6 +713,13 @@ bool NotebookTable::isReadOnly(qint32 notebookLid) {
             if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
                 return true;
         }
+        if (!found) {
+            LinkedNotebookTable ltable;
+            LinkedNotebook linkedNotebook;
+            found = ltable.get(linkedNotebook, notebookLid);
+            if (found && linkedNotebook.__isset.uri)
+              return true;
+        }
     }
     return false;
 }
