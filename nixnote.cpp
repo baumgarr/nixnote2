@@ -132,7 +132,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 
 
 
-
 // Destructor to call when all done
 NixNote::~NixNote()
 {

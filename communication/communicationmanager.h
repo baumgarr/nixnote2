@@ -95,7 +95,7 @@ private:
     shared_ptr<NoteStoreClient> linkedNoteStoreClient;
     AuthenticationResult linkedAuthToken;
 
-    void downloadInkNoteImage(QString guid, Resource *r, QString shard);
+    void downloadInkNoteImage(QString guid, Resource *r, QString shard, QString authToken);
     void downloadThumbnail(QString guid, string authToken, string shard);
     void setSocketOptions(SOCKET s);
 
@@ -106,7 +106,7 @@ private:
     string authToken;
     bool init();
     QNetworkAccessManager *networkAccessManager;
-    void checkForInkNotes(vector<Resource> &resources, QString shard);
+    void checkForInkNotes(vector<Resource> &resources, QString shard, QString authToken);
 
 public:
     CommunicationManager(QObject *parent = 0);

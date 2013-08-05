@@ -35,7 +35,8 @@ public:
         TTransportException = 4,
         EDAMNotFoundException = 5,
         StdException = 6,
-        TSSLException = 7
+        TSSLException = 7,
+        TException = 8
     };
 
     CommunicationErrorType type;

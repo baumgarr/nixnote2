@@ -130,8 +130,6 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     }
     if (note.__isset.active && !note.active)
         readOnly = true;
-
-    QLOG_DEBUG() << content;
     return content;
 }
 

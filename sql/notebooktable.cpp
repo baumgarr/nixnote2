@@ -103,6 +103,13 @@ qint32 NotebookTable::sync(Notebook &notebook) {
 // Synchronize a new notebook with what is in the database.  We basically
 // just delete the old one & give it a new entry
 qint32 NotebookTable::sync(qint32 lid, Notebook &notebook) {
+    if (lid == 0) {
+        lid = findByName(notebook.name);
+        if (lid == 0) {
+            SharedNotebookTable stable;
+            lid = stable.findByNotebookGuid(notebook.guid);
+        }
+    }
     if (lid > 0) {
         QSqlQuery query(*db);
         NoteTable noteTable;
@@ -133,8 +140,15 @@ qint32 NotebookTable::getLid(QString guid) {
     query.exec();
     if (query.next())
         return query.value(0).toInt();
-    else
-        return 0;
+
+    query.prepare("Select lid from DataStore where key=:key and data=:data");
+    query.bindValue(":data", guid);
+    query.bindValue(":key", SHAREDNOTEBOOK_NOTEBOOK_GUID);
+    query.exec();
+    if (query.next())
+        return query.value(0).toInt();
+
+    return 0;
 }
 
 
@@ -154,11 +168,12 @@ qint32 NotebookTable::addStub(QString guid) {
     query.bindValue(":key", NOTEBOOK_GUID);
     query.bindValue(":data", guid);
     query.exec();
-
+    return lid;
 }
 
 // Add a new notebook to the database
 qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
+
     QSqlQuery query(*db);
     ConfigStore cs;
 
@@ -166,6 +181,14 @@ qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
     qint32 lid = l;
     if (lid == 0) {
         lid = cs.incrementLidCounter();
+    } else {
+        LinkedNotebookTable ltable;
+        LinkedNotebook lbook;
+        if (ltable.get(lbook, lid)) {
+            if (lbook.__isset.shareName) {
+                t.name = lbook.shareName;
+            }
+        }
     }
 
     query.bindValue(":lid", lid);
@@ -261,7 +284,7 @@ qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
 
     if (t.__isset.sharedNotebooks) {
         SharedNotebookTable sharedTable;
-        for (int i=0; i<t.sharedNotebooks.size(); i++) {
+        for (unsigned int i=0; i<t.sharedNotebooks.size(); i++) {
             sharedTable.add(lid, t.sharedNotebooks[i], isDirty);
         }
     }
@@ -712,8 +735,7 @@ bool NotebookTable::isReadOnly(qint32 notebookLid) {
                 return true;
             if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
                 return true;
-        }
-        if (!found) {
+        } else {
             LinkedNotebookTable ltable;
             LinkedNotebook linkedNotebook;
             found = ltable.get(linkedNotebook, notebookLid);
@@ -740,7 +762,6 @@ qint32 NotebookTable::getConflictNotebook() {
     }
 
     // If there is no conflict notebook, we create one
-    qint32 lid;
     Notebook n;
     if (i>0)
         n.name = "Conflict-" +QString::number(i).toStdString();

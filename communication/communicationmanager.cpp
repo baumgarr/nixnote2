@@ -117,7 +117,7 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
             chunk.notes[i] = n;
             if (n.__isset.resources && n.resources.size() > 0) {
                 QLOG_DEBUG() << "Checking for ink note";
-                checkForInkNotes(n.resources, "");
+                checkForInkNotes(n.resources, "", QString::fromStdString(authToken));
             }
             QLOG_DEBUG() << "Downloading thumbnail";
             downloadThumbnail(QString::fromStdString(n.guid), authToken,"");
@@ -132,7 +132,7 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
         }
         if (chunk.__isset.resources && chunk.resources.size()>0) {
             QLOG_DEBUG() << "Checking for ink notes";
-            checkForInkNotes(chunk.resources,"");
+            checkForInkNotes(chunk.resources,"", QString::fromStdString(authToken));
         }
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -212,8 +212,7 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook book
             shared_ptr<TProtocol> noteStoreProtocol(new TBinaryProtocol(linkedNoteStoreHttpClient));
             linkedNoteStoreClient = shared_ptr<NoteStoreClient>(new NoteStoreClient(noteStoreProtocol));
 
-            if (book.shareKey != "")
-                linkedNoteStoreClient->authenticateToSharedNotebook(linkedAuthToken, book.shareKey, authToken);
+            linkedNoteStoreClient->authenticateToSharedNotebook(linkedAuthToken, book.shareKey, authToken);
         } else {
             // This is a workaround to force an http connection for public notebooks to avoid errors
             // getting the sync state.
@@ -278,26 +277,33 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
         for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
             QLOG_DEBUG() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
             Note n;
-            linkedNoteStoreClient->getNote(n, authToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
+            linkedNoteStoreClient->getNote(n, linkedAuthToken.authenticationToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
+           // n.notebookGuid = linkedNotebook.guid;
             chunk.notes[i] = n;
             if (n.__isset.resources && n.resources.size() > 0) {
-                checkForInkNotes(n.resources, QString::fromStdString(linkedNotebook.shardId));
+                checkForInkNotes(n.resources, QString::fromStdString(linkedNotebook.shardId), QString::fromStdString(authToken));
             }
             downloadThumbnail(QString::fromStdString(n.guid), authToken, linkedNotebook.shardId);
         }
         for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
             QLOG_DEBUG() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
             Resource r;
-            linkedNoteStoreClient->getResource(r, authToken, chunk.resources[i].guid, true, true, true, true);
+            linkedNoteStoreClient->getResource(r, linkedAuthToken.authenticationToken, chunk.resources[i].guid, true, true, true, true);
             chunk.resources[i] = r;
         }
         if (chunk.__isset.resources && chunk.resources.size()>0)
-            checkForInkNotes(chunk.resources, QString::fromStdString(linkedNotebook.shardId));
+            checkForInkNotes(chunk.resources, QString::fromStdString(linkedNotebook.shardId), QString::fromStdString(linkedAuthToken.authenticationToken));
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.message = "Shared notebook EDAMUserException " + QString::number(e.errorCode);
+        error.type = CommunicationError::EDAMUserException;
+        error.code = e.errorCode;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        QLOG_ERROR() << "EDAMSystemException:" << e.errorCode << endl;
+        error.message = "Shared notebook EDAMSystemException " + QString::number(e.errorCode);
+        error.type = CommunicationError::EDAMSystemException;
+        error.code = e.errorCode;
         return false;
     } catch (TTransportException e) {
         if (errorCount < 3) {
@@ -318,6 +324,9 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
         return false;
     } catch (TException e) {
         QLOG_ERROR() << "TException:" << e.what();
+        error.message = "Shared notebook TException " + QString::fromStdString(e.what());
+        error.type = CommunicationError::TException;
+        error.code = -1;
         return false;
     }
     return true;
@@ -509,8 +518,7 @@ void CommunicationManager::disconnectUserStore() {
 // Disconnect from Evernote's servers (for linked notebooks)
 void  CommunicationManager::disconnectFromLinkedNotebook() {
     if (linkedNoteStoreHttpClient != NULL && linkedNoteStoreHttpClient->isOpen()) {
-        if (linkedNoteStoreHttpClient->peek())
-            linkedNoteStoreHttpClient->flush();
+        linkedNoteStoreHttpClient->flush();
         linkedNoteStoreHttpClient->close();
     }
 }
@@ -565,11 +573,11 @@ bool CommunicationManager::getUserInfo(User &user) {
 
 
 // See if there are any ink notes in this list of resources
-void CommunicationManager::checkForInkNotes(vector<Resource> &resources, QString shard) {
+void CommunicationManager::checkForInkNotes(vector<Resource> &resources, QString shard, QString authToken) {
     for (unsigned int i=0; i<resources.size(); i++) {
         Resource *r = &resources[i];
         if (r->__isset.mime && r->mime == "application/vnd.evernote.ink") {
-            downloadInkNoteImage(QString::fromStdString(r->guid), r, shard);
+            downloadInkNoteImage(QString::fromStdString(r->guid), r, shard, authToken);
         }
     }
 }
@@ -577,7 +585,7 @@ void CommunicationManager::checkForInkNotes(vector<Resource> &resources, QString
 
 
 // Download an ink note image
-void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QString shard) {
+void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QString shard, QString authToken) {
     UserTable userTable;
     User u;
     userTable.getUser(u);
@@ -593,7 +601,7 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
     size.setHeight(r->height);
     size.setWidth(r->width);
     postData->clear();
-    postData->addQueryItem("auth", QString::fromStdString(authToken));
+    postData->addQueryItem("auth", authToken);
 
     QEventLoop loop;
     QObject::connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));

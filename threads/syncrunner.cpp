@@ -131,8 +131,13 @@ void SyncRunner::evernoteSync() {
         emit setMessage(tr("Downloading changes"), defaultMsgTimeout);
         syncRemoteToLocal(syncState.updateCount);
     }
-    syncRemoteLinkedNotebooksActual();
 
+    if (!comm->getUserInfo(user)) {
+        this->communicationErrorHandler();
+        error = true;
+        return;
+    }
+    userTable.updateUser(user);
 
     if (!global.disableUploads) {
         qint32 searchUsn = uploadSavedSearches();
@@ -148,14 +153,12 @@ void SyncRunner::evernoteSync() {
         if (personalNotesUsn > updateSequenceNumber)
             updateSequenceNumber = personalNotesUsn;
     }
+
+    // Synchronize linked notebooks
+    syncRemoteLinkedNotebooksActual();
+
     updateNoteTableTags();
 
-    if (!comm->getUserInfo(user)) {
-        this->communicationErrorHandler();
-        error = true;
-        return;
-    }
-    userTable.updateUser(user);
     if (!comm->getSyncState("", syncState)) {
         error =true;
         this->communicationErrorHandler();
@@ -244,16 +247,16 @@ void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
 
     // For public linked notebooks, we change any note's GUID to the
     // linked notebook guid.  This saves headaches later
-    if (linkedNotebook > 0) {
-        LinkedNotebookTable ltable(0, &db->conn);
-        LinkedNotebook book;
-        ltable.get(book, linkedNotebook);
-        if (book.shareKey == "") {
-            for (unsigned int i=0; i<chunk.notes.size(); i++) {
-                chunk.notes[i].notebookGuid =  book.guid;
-            }
-        }
-    }
+//    if (linkedNotebook > 0) {
+//        LinkedNotebookTable ltable(0, &db->conn);
+//        LinkedNotebook book;
+//        ltable.get(book, linkedNotebook);
+//        if (book.shareKey == "") {
+//            for (unsigned int i=0; i<chunk.notes.size(); i++) {
+//                chunk.notes[i].notebookGuid =  book.guid;
+//            }
+//        }
+//    }
 
     // Now start processing the chunk
     if (chunk.expungedNotes.size() > 0)
@@ -268,8 +271,9 @@ void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
         syncRemoteExpungedLinkedNotebooks(chunk.expungedLinkedNotebooks);
     if (chunk.tags.size() > 0)
         syncRemoteTags(chunk.tags, linkedNotebook);
-    if (chunk.notebooks.size() > 0)
+    if (chunk.notebooks.size() > 0) {
         syncRemoteNotebooks(chunk.notebooks);
+    }
     if (chunk.searches.size() > 0)
         syncRemoteSearches(chunk.searches);
     if (chunk.notes.size() > 0)
@@ -601,6 +605,34 @@ void SyncRunner::syncRemoteLinkedNotebooks(vector<LinkedNotebook> books) {
             error = true;
             return;
         }
+
+//        NotebookTable ntable(&db->conn);
+
+        // Build the dummy notebook entry
+//        Notebook book;
+//        book.guid = books[i].guid;
+//        book.__isset.guid = true;
+
+//        book.name = books[i].shareName;
+//        book.__isset.name = true;
+
+//        book.updateSequenceNum = books[i].updateSequenceNum;
+//        book.__isset.updateSequenceNum = true;
+
+//        book.published = true;
+//        book.published = true;
+
+//        book.publishing.uri = books[i].uri;
+//        book.publishing.__isset.uri = true;
+//        book.__isset.published = true;
+//        book.__isset.publishing = true;
+
+//        if (books[i].__isset.stack) {
+//            book.__isset.stack = true;
+//            book.stack = books[i].stack;
+//        }
+
+//        ntable.sync(lid, book);
         if (books[i].shareKey != "") {
             SharedNotebook sharedNotebook;
             if (!comm->getSharedNotebookByAuth(sharedNotebook)) {
@@ -609,38 +641,11 @@ void SyncRunner::syncRemoteLinkedNotebooks(vector<LinkedNotebook> books) {
                 return;
             }
             SharedNotebookTable stable(&db->conn);
-            stable.sync(lid, sharedNotebook);
-        }
-        NotebookTable ntable(&db->conn);
-
-        // Build the dummy notebook entry
-        Notebook book;
-        book.guid = books[i].guid;
-        book.__isset.guid = true;
-
-        book.name = books[i].shareName;
-        book.__isset.name = true;
-
-        book.updateSequenceNum = books[i].updateSequenceNum;
-        book.__isset.updateSequenceNum = true;
-
-        book.published = true;
-        book.published = true;
-
-        book.publishing.uri = books[i].uri;
-        book.publishing.__isset.uri = true;
-        book.__isset.published = true;
-        book.__isset.publishing = true;
-
-        if (books[i].__isset.stack) {
-            book.__isset.stack = true;
-            book.stack = books[i].stack;
+            lid = stable.sync(lid, sharedNotebook);
         }
 
-        ntable.sync(lid, book);
         comm->disconnectFromLinkedNotebook();
         emit notebookUpdated(lid, QString::fromStdString(books[i].shareName));
-
     }
 }
 
@@ -965,7 +970,7 @@ void SyncRunner::communicationErrorHandler() {
 
     if (comm->error.type == CommunicationError::EDAMSystemException) {
         if (comm->error.message != "")
-            emitMsg = "Evernote System Error: " +comm->error.message;
+            emitMsg = comm->error.message;
         else
             emitMsg = "Evernote System Error communicating with Evernote.";
         emit(setMessage(emitMsg, 0));
@@ -1044,6 +1049,13 @@ void SyncRunner::communicationErrorHandler() {
     if (comm->error.type == CommunicationError::TSSLException) {
         CommunicationError *e = &comm->error;
         emitMsg = "Communication Error - SSL Exception: " +e->message;
+        emit(setMessage(emitMsg, 0));
+        return;
+    }
+
+    if (comm->error.type == CommunicationError::TException) {
+        CommunicationError *e = &comm->error;
+        emitMsg = "TException: " +e->message;
         emit(setMessage(emitMsg, 0));
         return;
     }

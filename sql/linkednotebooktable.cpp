@@ -129,13 +129,6 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
     query.bindValue(":data", QString::fromStdString(t.guid));
     query.exec();
 
-    if (t.__isset.shareName) {
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", LINKEDNOTEBOOK_SHARE_NAME);
-        query.bindValue(":data", QString::fromStdString(t.shareName));
-        query.exec();
-    }
-
     if (t.__isset.username) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", LINKEDNOTEBOOK_USERNAME);
@@ -197,6 +190,25 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
         query.bindValue(":key", LINKEDNOTEBOOK_BUSINESS_ID);
         query.bindValue(":data", t.businessId);
         query.exec();
+    }
+
+    if (t.__isset.shareName) {
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", LINKEDNOTEBOOK_SHARE_NAME);
+        query.bindValue(":data", QString::fromStdString(t.shareName));
+        query.exec();
+
+        QSqlQuery query2(*db);
+        query2.prepare("Update datastore set data=:name where key=:key and lid=:lid");
+        query2.bindValue(":name", QString::fromStdString(t.shareName));
+        query2.bindValue(":key", NOTEBOOK_NAME);
+        query2.bindValue(":lid", lid);
+        query2.exec();
+
+        query2.prepare("Update notetable set notebook=:name where lid=:lid");
+        query2.bindValue(":name", QString::fromStdString(t.shareName));
+        query2.bindValue(":lid", lid);
+        query2.exec();
     }
 
     return lid;
