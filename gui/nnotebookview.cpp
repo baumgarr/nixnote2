@@ -103,7 +103,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
     // Start building the stack menu
     stackMenu = context.addMenu(tr("Add to stack"));
     QAction *newAction;
-    NotebookTable table;
+    NotebookTable table(global.db);
     QStringList stacks;
     table.getStacks(stacks);
     for (int i=0; i<stacks.size(); i++) {
@@ -221,9 +221,7 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
 // Load up the data from the database
 void NNotebookView::loadData() {
     QSqlQuery query(*global.db);
-    NotebookTable notebookTable;
-    LinkedNotebookTable linkedTable;
-    SharedNotebookTable sharedTable;
+    NotebookTable notebookTable(global.db);
     dataStore.clear();
     query.exec("Select lid, name, stack, username from NotebookModel order by username, name");
     while (query.next()) {
@@ -272,6 +270,17 @@ void NNotebookView::rebuildTree() {
         }
     }
 
+    // Remove any empty stacks
+    QHashIterator<QString, NNotebookViewItem *> s(stackStore);
+    while (s.hasNext()) {
+        s.next();
+        QLOG_DEBUG() << s.value()->childCount();
+        if (s.value()->childCount() == 0) {
+            root->removeChild(s.value());
+            stackStore.remove(s.key());
+        }
+    }
+
     this->sortByColumn(NAME_POSITION, Qt::AscendingOrder);
     this->rebuildNotebookTreeNeeded = false;
     this->resetSize();
@@ -279,19 +288,23 @@ void NNotebookView::rebuildTree() {
 
 void NNotebookView::notebookUpdated(qint32 lid, QString name) {
     this->rebuildNotebookTreeNeeded = true;
-    LinkedNotebookTable linkedTable;
+    LinkedNotebookTable linkedTable(global.db);
     LinkedNotebook linkedbook;
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(global.db);
     Notebook notebook;
     notebookTable.get(notebook, lid);
 
     bool isLinked = false;
-    QString stackName = QString::fromStdString(notebook.stack);
+    QString stackName = "";
+    if (notebook.__isset.stack) {
+        stackName = QString::fromStdString(notebook.stack);
+    }
     if (linkedTable.exists(lid)) {
         linkedTable.get(linkedbook, lid);
         isLinked = true;
         stackName = QString::fromStdString(linkedbook.username);
     }
+
 
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
@@ -423,11 +436,17 @@ void NNotebookView::notebookExpunged(qint32 lid) {
         NNotebookViewItem *item = this->dataStore.value(lid);
         NNotebookViewItem *parent = (NNotebookViewItem*)item->parent();
         this->removeItemWidget(item, 0);
-        delete item;
-        if (parent != NULL && parent->childCount() == 0) {
-            this->removeItemWidget(parent, 0);
-            delete parent;
+        dataStore.remove(lid);
+        if (parent != NULL) {
+            parent->removeChild(item);
+            if (parent->childCount() == 0) {
+                this->removeItemWidget(parent, 0);
+                stackStore.remove(parent->stack);
+                dataStore.remove(parent->lid);
+                delete parent;
+            }
         }
+        delete item;
 
     }
     this->resetSize();
@@ -461,7 +480,7 @@ void NNotebookView::contextMenuEvent(QContextMenuEvent *event) {
         deleteAction->setEnabled(true);
         renameAction->setEnabled(true);
         removeFromStackAction->setVisible(false);
-        NotebookTable table;
+        NotebookTable table(global.db);
 
         for (int i=0; i<items.size(); i++) {
             if (items[i]->data(NAME_POSITION, Qt::UserRole).toString() == "STACK") {
@@ -493,7 +512,7 @@ void NNotebookView::addRequested() {
     if (!dialog.okPressed)
         return;
 
-    NotebookTable table;
+    NotebookTable table(global.db);
     QString name = dialog.name.text().trimmed();
     qint32 lid = table.findByName(name);
     NNotebookViewItem *newWidget = new NNotebookViewItem(lid);
@@ -546,7 +565,7 @@ void NNotebookView::deleteRequested() {
         if (ret == QMessageBox::No)
             return;
     }
-    NotebookTable table;
+    NotebookTable table(global.db);
     table.deleteNotebook(lid);
     items[0]->setHidden(true);
     dataStore.remove(lid);
@@ -580,7 +599,7 @@ void NNotebookView::editComplete() {
     // Check if this is a notebook or a stack
     if (editor->lid > 0) {
         qint32 lid = editor->lid;
-        NotebookTable table;
+        NotebookTable table(global.db);
         Notebook notebook;
         table.get(notebook, lid);
         QString oldName = QString::fromStdString(notebook.name);
@@ -604,7 +623,7 @@ void NNotebookView::editComplete() {
     } else {
         // This is if we are renaming a stack
         QString oldName = editor->stackName;
-        NotebookTable table;
+        NotebookTable table(global.db);
         table.renameStack(oldName, text);
 
         // Rename it in the stackStore
@@ -656,7 +675,7 @@ void NNotebookView::moveToStackRequested() {
     QAction *action = (QAction*)sender();
     qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     Notebook notebook;
-    NotebookTable table;
+    NotebookTable table(global.db);
     table.get(notebook, lid);
     notebook.stack = action->text().toStdString();
     notebook.__isset.stack = true;
@@ -685,7 +704,7 @@ void NNotebookView::moveToNewStackRequested() {
     int i=1;
     QString iStr;
     QList<int> books;
-    NotebookTable table;
+    NotebookTable table(global.db);
 
     while (i>=0) {
         books.clear();
@@ -733,7 +752,7 @@ void NNotebookView::moveToNewStackRequested() {
 void NNotebookView::removeFromStackRequested() {
     QList<QTreeWidgetItem*> items = selectedItems();
     qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
-    NotebookTable table;
+    NotebookTable table(global.db);
     table.removeFromStack(lid);
 
     // Now move it in the actual tree
@@ -799,7 +818,7 @@ bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMime
         qint32 bookLid = parent->data(NAME_POSITION, Qt::UserRole).toInt();
         if (bookLid <=0)
             return false;
-        NotebookTable bookTable;
+        NotebookTable bookTable(global.db);
         Notebook notebook;
         bookTable.get(notebook, bookLid);
 
@@ -809,7 +828,7 @@ bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMime
             if (stringLids[i].trimmed() != "") {
                 qint32 noteLid = stringLids.at(i).toInt();
                 if (noteLid > 0) {
-                    NoteTable noteTable;
+                    NoteTable noteTable(global.db);
                     qint32 currentNotebook = noteTable.getNotebookLid(noteLid);
                     if (currentNotebook != bookLid) {
                         noteTable.updateNotebook(noteLid, bookLid, true);

@@ -626,7 +626,7 @@ void NixNote::closeEvent(QCloseEvent *event) {
 
 
 
-    ConfigStore config;
+    ConfigStore config(global.db);
     config.saveSetting(CONFIG_STORE_WINDOW_STATE, saveState());
     config.saveSetting(CONFIG_STORE_WINDOW_GEOMETRY, saveGeometry());
 
@@ -918,8 +918,8 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
 void NixNote::checkReadOnlyNotebook() {
     qint32 lid = tabWindow->currentBrowser()->lid;
     Note n;
-    NoteTable ntable;
-    NotebookTable btable;
+    NoteTable ntable(global.db);
+    NotebookTable btable(global.db);
     ntable.get(n, lid, false,false);
     qint32 notebookLid = btable.getLid(n.notebookGuid);
     if (btable.isReadOnly(notebookLid)) {
@@ -1094,7 +1094,7 @@ void NixNote::newNote() {
            QString("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
 
     Note n;
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(global.db);
     n.content = newNoteBody.toStdString();
     n.__isset.content = true;
     n.title = "Untitled note";
@@ -1122,7 +1122,7 @@ void NixNote::newNote() {
         n.notebookGuid = notebookGuid.toStdString();
     }
     n.__isset.notebookGuid = true;
-    NoteTable table;
+    NoteTable table(global.db);
     qint32 lid = table.add(0,n,true);
 
     FilterCriteria *criteria = new FilterCriteria();
@@ -1571,12 +1571,12 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
     QByteArray ba = file.readAll();
     file.close();
     QByteArray newHash = QCryptographicHash::hash(ba, QCryptographicHash::Md5);
-    ResourceTable resTable;
+    ResourceTable resTable(global.db);
     QByteArray oldHash = resTable.getDataHash(lid);
     if (oldHash != newHash) {
         qint32 noteLid = resTable.getNoteLid(lid);
         resTable.updateResourceHash(lid, newHash);
-        NoteTable noteTable;
+        NoteTable noteTable(global.db);
         noteTable.updateEnmediaHash(noteLid, oldHash, newHash, true);
         tabWindow->updateResourceHash(noteLid, oldHash, newHash);
     }
@@ -1590,7 +1590,7 @@ void NixNote::screenCapture() {
     sc.exec();
     QPixmap pix = sc.getSelection();
 
-    ConfigStore cs;
+    ConfigStore cs(global.db);
     qint32 lid = cs.incrementLidCounter();
 
     QCryptographicHash md5hash(QCryptographicHash::Md5);
@@ -1608,7 +1608,7 @@ void NixNote::screenCapture() {
     newNote.title = tr("Screen Capture").toStdString();
     newNote.__isset.title = true;
 
-    NotebookTable bookTable;
+    NotebookTable bookTable(global.db);
     QString notebook;
     notebook = bookTable.getDefaultNotebookGuid();
     newNote.notebookGuid = notebook.toStdString();
@@ -1634,7 +1634,7 @@ void NixNote::screenCapture() {
     newNote.updateSequenceNum = 0;
     newNote.__isset.updateSequenceNum = true;
 
-    NoteTable ntable;
+    NoteTable ntable(global.db);
     ntable.add(lid, newNote, true);
     QString noteGuid = ntable.getGuid(lid);
     lid = cs.incrementLidCounter();
@@ -1664,7 +1664,7 @@ void NixNote::screenCapture() {
     newRes.__isset.noteGuid = true;
     newRes.updateSequenceNum = 0;
     newRes.__isset.updateSequenceNum = 0;
-    ResourceTable restable;
+    ResourceTable restable(global.db);
     restable.add(lid, newRes, true);
 
     updateSelectionCriteria();
@@ -1679,8 +1679,8 @@ void NixNote::reindexDatabase() {
     if (response != QMessageBox::Yes)
         return;
 
-    NoteTable ntable;
-    ResourceTable rtable;
+    NoteTable ntable(global.db);
+    ResourceTable rtable(global.db);
     rtable.reindexAllResources();
     ntable.reindexAllNotes();
 

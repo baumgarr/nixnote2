@@ -64,7 +64,7 @@ void SavedSearchProperties::okButtonPressed() {
 
     if (this->lid > 0) {
         SavedSearch s;
-        SearchTable table;
+        SearchTable table(global.db);
         table.get(s, lid);
         s.name = this->name.text().trimmed().toStdString();
         s.__isset.name = true;
@@ -85,7 +85,7 @@ void SavedSearchProperties::okButtonPressed() {
     s.__isset.name = true;
     s.__isset.query = true;
     s.__isset.guid = true;
-    SearchTable t;
+    SearchTable t(global.db);
     t.add(0,s,true);
     close();
 }
@@ -99,7 +99,7 @@ void SavedSearchProperties::setLid(qint32 lid) {
     if (lid > 0) {
         this->lid = lid;
         SavedSearch s;
-        SearchTable table;
+        SearchTable table(global.db);
         table.get(s, lid);
         originalName = QString::fromStdString(s.name).trimmed();
         name.setText(originalName);
@@ -121,7 +121,7 @@ void SavedSearchProperties::validateInput() {
         ok.setEnabled(false);
         return;
     }
-    SearchTable t;
+    SearchTable t(global.db);
     QString search = name.text().trimmed();
     if (t.findByName(search)>0 && name.text().trimmed() != originalName) {
         ok.setEnabled(false);

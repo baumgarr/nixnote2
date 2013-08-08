@@ -35,7 +35,7 @@ public:
         LinkedStack = 6
     };
 
-    void setIconType(qint32 lid);
+    void setIconType();
     void setType(NNotebookWidgetType type);
     explicit NNotebookViewItem(qint32 lid);
     explicit NNotebookViewItem(qint32 lid, QTreeWidget* parent);

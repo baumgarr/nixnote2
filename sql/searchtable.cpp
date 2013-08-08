@@ -29,10 +29,7 @@ extern Global global;
 // Default constructor
 SearchTable::SearchTable(QSqlDatabase *db)
 {
-    if (db != NULL)
-        this->db = db;
-    else
-        this->db = global.db;
+    this->db = db;
 }
 
 
@@ -95,7 +92,7 @@ void SearchTable::sync(qint32 lid, SavedSearch &search) {
         query.bindValue(":lid", lid);
         query.exec();
     } else {
-        ConfigStore cs;
+        ConfigStore cs(db);
         lid = cs.incrementLidCounter();
     }
 
@@ -130,7 +127,7 @@ qint32 SearchTable::getLid(string guid) {
 
 // Add a new search to the database
 void SearchTable::add(qint32 l, SavedSearch &t, bool isDirty) {
-    ConfigStore cs;
+    ConfigStore cs(db);
     qint32 lid = l;
     if (lid == 0)
         lid = cs.incrementLidCounter();

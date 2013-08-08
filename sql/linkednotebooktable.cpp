@@ -21,22 +21,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include "sql/configstore.h"
 #include "sql/notebooktable.h"
+#include "sql/sharednotebooktable.h"
 #include "global.h"
 
-LinkedNotebookTable::LinkedNotebookTable(QObject *parent, QSqlDatabase *db) :
-    QObject(parent)
+LinkedNotebookTable::LinkedNotebookTable(QSqlDatabase *db)
 {
-    if (db != NULL)
-        this->db = db;
-    else
-        this->db = global.db;
+    this->db = db;
 }
 
 
 
 // Given a notebook's name as a std::string, we return the lid
 qint32 LinkedNotebookTable::findByName(string &name) {
-    NotebookTable ntable;
+    NotebookTable ntable(db);
     return ntable.findByName(name);
 }
 
@@ -66,17 +63,59 @@ qint32 LinkedNotebookTable::sync(LinkedNotebook &notebook) {
 // just delete the old one & give it a new entry
 qint32 LinkedNotebookTable::sync(qint32 lid, LinkedNotebook &notebook) {
     qint32 lastUSN = 0;
+    NotebookTable ntable(db);
+    SharedNotebookTable stable(db);
+
+    if (lid == 0 && notebook.__isset.shareKey) {
+        lid = stable.findByShareKey(notebook.shareKey);
+    }
+    if (lid == 0 && notebook.__isset.uri) {
+        lid = ntable.findByUri(notebook.uri);
+    }
+
+
     if (lid > 0) {
         lastUSN = getLastUpdateSequenceNumber(lid);
-
         // Delete the old record
         QSqlQuery query(*db);
         query.prepare("Delete from DataStore where lid=:lid and key>=3200 and key<3300");
         query.bindValue(":lid", lid);
         query.exec();
-    } else {
-        ConfigStore cs;
-        lid = cs.incrementLidCounter();
+    }
+
+    if (lid == 0) {
+        lid = ntable.getLid(notebook.guid);
+        if (lid == 0) {
+            ConfigStore cs(db);
+            lid = cs.incrementLidCounter();
+            NotebookTable ntable(db);
+
+            // Build the dummy notebook entry
+            Notebook book;
+            book.guid = notebook.guid;
+            book.__isset.guid = true;
+
+            book.name = notebook.shareName;
+            book.__isset.name = true;
+
+            book.updateSequenceNum = notebook.updateSequenceNum;
+            book.__isset.updateSequenceNum = true;
+
+            book.published = true;
+            book.published = true;
+
+            book.publishing.uri = notebook.uri;
+            book.publishing.__isset.uri = true;
+            book.__isset.published = true;
+            book.__isset.publishing = true;
+
+            if (notebook.__isset.stack) {
+                book.__isset.stack = true;
+                book.stack = notebook.stack;
+            }
+
+            ntable.sync(lid, book);
+        }
     }
 
     add(lid, notebook, false);
@@ -116,7 +155,7 @@ qint32 LinkedNotebookTable::getLid(string guid) {
 // Add a new notebook to the database
 qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
     QSqlQuery query(*db);
-    ConfigStore cs;
+    ConfigStore cs(db);
 
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     qint32 lid = l;
@@ -344,7 +383,7 @@ bool LinkedNotebookTable::getGuid(QString &retval, qint32 lid){
 
 
 bool LinkedNotebookTable::findGuidByName(QString &retval, QString &guid) {
-    NotebookTable ntable;
+    NotebookTable ntable(db);
     return ntable.findGuidByName(retval, guid);
 }
 
@@ -415,7 +454,7 @@ void LinkedNotebookTable::findByStack(QList<qint32> &lids, QString stackName) {
 
 
 bool LinkedNotebookTable::isDeleted(qint32 lid) {
-    NotebookTable ntable;
+    NotebookTable ntable(db);
     return ntable.isDeleted(lid);
 }
 

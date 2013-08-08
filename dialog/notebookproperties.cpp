@@ -66,7 +66,7 @@ void NotebookProperties::okButtonPressed() {
 
     if (this->lid > 0) {
         Notebook book;
-        NotebookTable table;
+        NotebookTable table(global.db);
         table.get(book, lid);
         book.name = name.text().trimmed().toStdString();
         book.__isset.name = true;
@@ -84,7 +84,7 @@ void NotebookProperties::okButtonPressed() {
     book.guid = g.toStdString();
     book.__isset.name = true;
     book.__isset.guid = true;
-    NotebookTable t;
+    NotebookTable t(global.db);
     t.add(0,book,true, !isSynchronized);
     close();
 }
@@ -98,7 +98,7 @@ void NotebookProperties::setLid(qint32 lid) {
     if (lid > 0) {
         this->lid = lid;
         Notebook book;
-        NotebookTable table;
+        NotebookTable table(global.db);
         table.get(book, lid);
         originalName = QString::fromStdString(book.name).trimmed();
         name.setText(originalName);
@@ -119,7 +119,7 @@ void NotebookProperties::validateInput() {
         ok.setEnabled(false);
         return;
     }
-    NotebookTable t;
+    NotebookTable t(global.db);
     QString notebook = name.text().trimmed();
     if (t.findByName(notebook)>0 && name.text().trimmed() != originalName) {
         ok.setEnabled(false);

@@ -27,8 +27,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 /* Generic constructor. */
-Thumbnailer::Thumbnailer()
+Thumbnailer::Thumbnailer(QSqlDatabase *db)
 {
+    this->db = db;
     connect(&page, SIGNAL(loadFinished(bool)), this, SLOT(pageReady(bool)));
 }
 
@@ -82,6 +83,6 @@ void Thumbnailer::pageReady(bool ok) {
     painter.end();
     QString filename = global.fileManager.getThumbnailDirPath()+QString::number(lid) +".png";
     pix.save(filename);
-    NoteTable ntable;
+    NoteTable ntable(db);
     ntable.setThumbnail(lid, filename);
 }

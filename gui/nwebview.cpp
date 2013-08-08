@@ -414,7 +414,7 @@ void NWebView::downloadRequested(QNetworkRequest req) {
         urlString = urlString.mid(6);
 
         qint32 lid = urlString.toInt();
-        ResourceTable resTable;
+        ResourceTable resTable(global.db);
         Resource r;
         resTable.get(r, lid);
         QString filename;

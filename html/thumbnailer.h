@@ -3,6 +3,7 @@
 
 #include <QtWebKit>
 #include <QObject>
+#include <QSqlDatabase>
 
 #include "html/noteformatter.h"
 
@@ -21,9 +22,12 @@ class Thumbnailer : public QObject
 {
     Q_OBJECT
 
+private:
+    QSqlDatabase *db;
+
 public:
     QWebPage page;
-    Thumbnailer();
+    Thumbnailer(QSqlDatabase *db);
     void render(qint32 lid, QString contents);
     qint32 lid;
 

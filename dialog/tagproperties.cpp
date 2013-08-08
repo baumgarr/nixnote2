@@ -61,7 +61,7 @@ void TagProperties::okButtonPressed() {
 
     if (this->lid > 0) {
         Tag tag;
-        TagTable table;
+        TagTable table(global.db);
         table.get(tag, lid);
         tag.name = this->name.text().trimmed().toStdString();
         tag.__isset.name = true;
@@ -78,7 +78,7 @@ void TagProperties::okButtonPressed() {
     tag.guid = g.toStdString();
     tag.__isset.name = true;
     tag.__isset.guid = true;
-    TagTable t;
+    TagTable t(global.db);
     t.add(0,tag,true, account);
     close();
 }
@@ -93,7 +93,7 @@ void TagProperties::setLid(qint32 lid) {
     if (lid > 0) {
         this->lid = lid;
         Tag tag;
-        TagTable table;
+        TagTable table(global.db);
         table.get(tag, lid);
         originalName = QString::fromStdString(tag.name).trimmed();
         name.setText(originalName);
@@ -115,9 +115,8 @@ void TagProperties::validateInput() {
         ok.setEnabled(false);
         return;
     }
-    TagTable t;
+    TagTable t(global.db);
     QString tag = name.text().trimmed();
-    qint32 x = t.findByName(tag, account);
     if (t.findByName(tag, account)>0 || name.text().trimmed() == originalName) {
         ok.setEnabled(false);
         return;

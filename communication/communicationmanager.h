@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <server/TSimpleServer.h>
 #include <QObject>
 #include <QNetworkAccessManager>
+#include <QSqlDatabase>
 
 using boost::shared_ptr;
 
@@ -75,6 +76,7 @@ class CommunicationManager : public QObject
 
 private:
     bool initComplete;
+    QSqlDatabase *db;
     bool initNoteStore();
     bool initUserStore();
     void disconnectUserStore();
@@ -109,7 +111,7 @@ private:
     void checkForInkNotes(vector<Resource> &resources, QString shard, QString authToken);
 
 public:
-    CommunicationManager(QObject *parent = 0);
+    CommunicationManager(QSqlDatabase *db);
     ~CommunicationManager();
     CommunicationError error;
     bool connect();

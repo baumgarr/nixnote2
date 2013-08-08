@@ -50,7 +50,7 @@ void FileWatcherManager::setup() {
     this->reset();
 
     QList<qint32> lids;
-    FileWatcherTable ft;
+    FileWatcherTable ft(global.db);
     ft.getAll(lids);
 
     for (int i=0; i<lids.size(); i++) {

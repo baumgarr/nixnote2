@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QScrollBar>
 
 
+extern Global global;
+
 
 //****************************************************
 //* Constructor
@@ -70,7 +72,7 @@ void TagEditorNewTag::loadCompleter() {
         delete completer;
     }
     QList<int> tagList;
-    TagTable tagTable;
+    TagTable tagTable(global.db);
     QStringList tagNames;
     tagTable.getAll(tagList);
     for (qint32 i=0; i<tagList.size(); i++) {

@@ -33,7 +33,7 @@ private:
     QSqlDatabase *db;
 
 public:
-    UserTable(QSqlDatabase *db=NULL);
+    UserTable(QSqlDatabase *db);
     void updateUser(User &user);
     void updateSyncState(SyncState s);
     qlonglong getLastSyncDate();

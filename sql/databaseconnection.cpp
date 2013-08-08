@@ -45,8 +45,8 @@ DatabaseConnection::DatabaseConnection(QString connection)
         global.db = &conn;
     QLOG_TRACE() << "Preparing tables";
     // Start preparing the tables
-    configStore = new ConfigStore();
-    dataStore = new DataStore(0);
+    configStore = new ConfigStore(&conn);
+    dataStore = new DataStore(global.db);
 
     QSqlQuery tempTable(this->conn);
 //    tempTable.exec("pragma cache_size=8096");

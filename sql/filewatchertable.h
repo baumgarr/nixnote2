@@ -42,7 +42,7 @@ class FileWatcherTable : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileWatcherTable(QObject *parent = 0, QSqlDatabase *db=NULL);
+    explicit FileWatcherTable(QSqlDatabase *db);
     qint32 addEntry(qint32 lid, QString baseDir, FileWatcher::ScanType type, qint32 notebookLid, bool includeSubdirs);
     void get(qint32 lid, QString &baseDir, FileWatcher::ScanType &type, qint32 &notebookLid, bool &includeSubdirs);
     qint32 findLidByDir(QString baseDir);

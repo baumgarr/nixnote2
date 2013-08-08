@@ -260,8 +260,8 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
     // is < 1 then we can't merge.
     if (lids.size() > 1) {
         mergeNotesAction->setVisible(true);
-        NoteTable nTable;
-        NotebookTable bookTable;
+        NoteTable nTable(global.db);
+        NotebookTable bookTable(global.db);
         for (int i=0; i<lids.size(); i++) {
             qint32 notebookLid = nTable.getNotebookLid(lids[i]);
             if (bookTable.isReadOnly(notebookLid)) {
@@ -274,8 +274,8 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
         bool readOnlySelected =  false;
         for (int i=0; i<lids.size(); i++) {
             Note n;
-            NotebookTable bTable;
-            NoteTable nTable;
+            NotebookTable bTable(global.db);
+            NoteTable nTable(global.db);
             nTable.get(n, lids[i], false, false);
             qint32 notebookLid = bTable.getLid(n.notebookGuid);
             if (bTable.isReadOnly(notebookLid)) {
@@ -450,7 +450,7 @@ void NTableView::restoreSelectedNotes() {
     if (lids.size() == 0)
         return;
 
-    NoteTable ntable;
+    NoteTable ntable(global.db);
     QSqlQuery sql(*global.db);
     QSqlQuery transaction(*global.db);
     //transaction.exec("begin");
@@ -500,7 +500,7 @@ void NTableView::deleteSelectedNotes() {
     if (rc != QMessageBox::Yes)
         return;
 
-    NoteTable ntable;
+    NoteTable ntable(global.db);
     QSqlQuery sql(*global.db);
     QSqlQuery transaction(*global.db);
     //transaction.exec("begin");
@@ -607,12 +607,12 @@ void NTableView::openNoteContextMenuTriggered() {
 // Copy (duplicate) a note
 void NTableView::copyNote() {
     QList<qint32> lids;
-    ConfigStore cs;
+    ConfigStore cs(global.db);
     getSelectedLids(lids);
     if (lids.size() == 0)
         return;
 
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     for (int i=0; i<lids.size(); i++) {
         noteTable.duplicateNote(lids[i]);
     }
@@ -631,7 +631,7 @@ void NTableView::copyNoteLink() {
         return;
 
 
-    UserTable userTable;
+    UserTable userTable(global.db);
     User user;
     userTable.getUser(user);
     bool syncneeded = false;
@@ -653,7 +653,7 @@ void NTableView::copyNoteLink() {
     }
 
     Note note;
-    NoteTable ntable;
+    NoteTable ntable(global.db);
     ntable.get(note, lids[0], false,false);
 
     QString guid = QString::fromStdString(note.guid);
@@ -1029,8 +1029,8 @@ void NTableView::mergeNotes() {
     if (lids.size() == 0)
         return;
 
-    NoteTable nTable;
-    ResourceTable rTable;
+    NoteTable nTable(global.db);
+    ResourceTable rTable(global.db);
 
     Note note;
     qint32 lid = lids[0];

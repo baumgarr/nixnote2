@@ -55,7 +55,7 @@ class LinkedNotebookTable : public QObject
 {
     Q_OBJECT
 public:
-    explicit LinkedNotebookTable(QObject *parent = 0, QSqlDatabase *db=NULL);
+    explicit LinkedNotebookTable(QSqlDatabase *db);
     qint32 getLid(QString guid);            // given a guid, return the lid
     qint32 getLid(string guid);             // Given a guid, return the lid
     qint32 findByName(string &name);           // Find a notebook given a name

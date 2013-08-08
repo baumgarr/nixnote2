@@ -115,10 +115,10 @@ private:
 
     void syncRemoteTags(vector<Tag> tag, qint32 account=0);
     void syncRemoteSearches(vector<SavedSearch> searches);
-    void syncRemoteNotebooks(vector<Notebook> books);
-    void syncRemoteNotes(vector<Note> notes);
+    void syncRemoteNotebooks(vector<Notebook> books, qint32 account=0);
+    void syncRemoteNotes(vector<Note> notes, qint32 account=0);
     void syncRemoteResources(vector<Resource> resources);
-    void syncRemoteLinkedNotebooks(vector<LinkedNotebook> books);
+    void syncRemoteLinkedNotebooksChunk(vector<LinkedNotebook> books);
     void syncRemoteExpungedLinkedNotebooks(vector<string> guids);
     void syncRemoteLinkedNotebooksActual();
 

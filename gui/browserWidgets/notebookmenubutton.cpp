@@ -22,8 +22,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include <QMenu>
 #include <QAction>
+#include "global.h"
 
 
+extern Global global;
 
 NotebookMenuButton::NotebookMenuButton(QWidget *parent) :
     QPushButton(parent)
@@ -50,7 +52,7 @@ void NotebookMenuButton::setCurrentNotebook(int lid, Note note) {
 
     blockSignals(true);
     currentNoteLid = lid;
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(global.db);
     Notebook notebook;
     notebookTable.get(notebook, note.notebookGuid);
     if (currentAction < actions.size())
@@ -71,7 +73,7 @@ void NotebookMenuButton::setCurrentNotebook(int lid, Note note) {
 // Read in all of the data and build the menu.
 void NotebookMenuButton::loadData() {
     rootMenu.clear();
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(global.db);
 
     QList<qint32> lids;
     notebookTable.getAll(lids);
@@ -186,8 +188,8 @@ void NotebookMenuButton::notebookSelected() {
     }
     this->setText(actions[currentAction]->text());
     blockSignals(false);
-    NoteTable noteTable;
-    NotebookTable notebookTable;
+    NoteTable noteTable(global.db);
+    NotebookTable notebookTable(global.db);
     QString name = text();
     qint32 notebookLid = notebookTable.findByName(name);
     if (notebookLid > 0) {
@@ -212,8 +214,8 @@ void NotebookMenuButton::reloadData() {
     // Restore the proper notebook selection
 
     Note n;
-    NoteTable noteTable;
-    NotebookTable notebookTable;
+    NoteTable noteTable(global.db);
+    NotebookTable notebookTable(global.db);
     noteTable.get(n, currentNoteLid, false,false);
     QString notebookGuid = QString::fromStdString(n.notebookGuid);
     QList<qint32> bookList;

@@ -86,14 +86,14 @@ private:
     QSqlDatabase *db;
 
 public:
-    NoteTable(QSqlDatabase *db=NULL);                             // Constructor
+    NoteTable(QSqlDatabase *db);                             // Constructor
     qint32 getLid(QString guid);            // given a guid, return the lid
     qint32 getLid(string guid);             // Given a guid, return the lid
     QString getGuid(int lid);               // given a lid, get the guid
     void updateGuid(qint32 lid, Guid &guid);    // Update a note's guid
-    void sync(Note &note);                    // Sync a note with a new record
-    void sync(qint32 lid, Note &note);           // Sync a note with a new record
-    qint32 add(qint32 lid, Note &t, bool isDirty); // Add a new note
+    void sync(Note &note, qint32 account=0);                    // Sync a note with a new record
+    void sync(qint32 lid, Note &note, qint32 account=0);           // Sync a note with a new record
+    qint32 add(qint32 lid, Note &t, bool isDirty, qint32 account=0); // Add a new note
     bool get(Note &note, qint32 lid, bool loadResources, bool loadResourceRecognition);           // Get a note given a lid
     bool get(Note &note, QString guid, bool loadResources, bool loadResourceRecognition);      // get a note given a guid
     bool get(Note &note, string guid,bool loadResources, bool loadResourceRecognition);       // get a note given a guid
@@ -113,7 +113,7 @@ public:
     void setIndexNeeded(qint32 lid, bool indexNeeded);    // flag if a note needs reindexing
     qint32 getIndexNeeded(QList<qint32> &lids);           // Get a list of all notes needing indexing
     bool updateNotebookGuid(QString oldGuid, QString newGuid, QString name);  // Update a notebook's name/guid
-    bool updateNoteList(qint32 lid, Note &t, bool isDirty);  // Update the user viewing list
+    bool updateNoteList(qint32 lid, Note &t, bool isDirty, qint32 account);  // Update the user viewing list
     bool updateNotebookName(qint32 lid, QString name);  // Update a notebook's name in the user listing
     void updateNotebook(qint32 noteLid, qint32 notebookLid);   // Set the current note's notebook
     void setDirty(qint32 lid, bool dirty);

@@ -216,7 +216,7 @@ void NTrashTree::contextMenuEvent(QContextMenuEvent *event) {
 //* Restore all notes from the trash
 //***********************************************
 void NTrashTree::restoreAll() {
-    NoteTable ntable;
+    NoteTable ntable(global.db);
     QList<qint32> lids;
     ntable.getAllDeleted(lids);
     for (int i=0; i<lids.size(); i++) {
@@ -243,7 +243,7 @@ void NTrashTree::expungeAll() {
     if (rc != QMessageBox::Yes)
         return;
 
-    NoteTable ntable;
+    NoteTable ntable(global.db);
     QList<qint32> lids;
     ntable.getAllDeleted(lids);
     for (int i=0; i<lids.size(); i++) {

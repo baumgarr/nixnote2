@@ -31,6 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
 
+extern Global global;
+
 using namespace evernote::edam;
 
 AccountDialog::AccountDialog(QWidget *parent) :
@@ -43,7 +45,7 @@ AccountDialog::AccountDialog(QWidget *parent) :
     setLayout(grid);
     QLabel *premium = new QLabel(tr("Free"));
     User user;
-    UserTable userTable;
+    UserTable userTable(global.db);
     userTable.getUser(user);
     if (user.__isset.privilege) {
         if (user.privilege == PrivilegeLevel::PREMIUM)

@@ -146,10 +146,10 @@ NTagView::~NTagView() {
 // display all available tags owned by this user.  If it is a linked notebook
 // we only show the tags that are connected to that notebook
 void NTagView::notebookSelectionChanged(qint32 notebookLid) {
-    LinkedNotebookTable table;
+    LinkedNotebookTable table(global.db);
     if (table.exists(notebookLid)) {
         accountFilter = notebookLid;
-        NotebookTable notebookTable;
+        NotebookTable notebookTable(global.db);
         Notebook notebook;
         notebookTable.get(notebook, notebookLid);
         root->setData(NAME_POSITION, Qt::DisplayRole, tr("Tags from ")+QString::fromStdString(notebook.name));
@@ -243,7 +243,7 @@ void NTagView::loadData() {
     }
 
     QSqlQuery query(*global.db);
-    TagTable tagTable;
+    TagTable tagTable(global.db);
     query.exec("Select lid, name, parent_gid, account from TagModel order by name");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
@@ -274,7 +274,7 @@ void NTagView::rebuildTree() {
         return;
 
     QHashIterator<qint32, NTagViewItem *> i(dataStore);
-    TagTable tagTable;
+    TagTable tagTable(global.db);
 
     while (i.hasNext()) {
         i.next();
@@ -302,7 +302,7 @@ void NTagView::rebuildTree() {
 void NTagView::tagUpdated(qint32 lid, QString name) {
     this->rebuildTagTreeNeeded = true;
 
-    TagTable tagTable;
+    TagTable tagTable(global.db);
     qint32 account = tagTable.owningAccount(lid);
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
@@ -410,7 +410,7 @@ void NTagView::updateSelection() {
 
 // Add a new tag to the table
 void NTagView::addNewTag(qint32 lid) {
-    TagTable tagTable;
+    TagTable tagTable(global.db);
     Tag newTag;
     tagTable.get(newTag, lid);
     if (newTag.__isset.guid) {
@@ -463,7 +463,7 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
             if (stringLids[i].trimmed() != "") {
                 qint32 noteLid = stringLids.at(i).toInt();
                 if (noteLid > 0) {
-                    NoteTable noteTable;
+                    NoteTable noteTable(global.db);
                     if (!noteTable.hasTag(noteLid, tagLid)) {
                         noteTable.addTag(noteLid, tagLid, true);
                         QString tagString = noteTable.getNoteListTags(noteLid);
@@ -516,7 +516,7 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
 
         // Update the actual database
         Tag tag;
-        TagTable tagTable;
+        TagTable tagTable(global.db);
         tagTable.get(tag, lid);
         QString guid;
         tagTable.getGuid(guid, newParentLid);
@@ -602,7 +602,7 @@ void NTagView::addRequested() {
     if (!dialog.okPressed)
         return;
 
-    TagTable table;
+    TagTable table(global.db);
     NTagViewItem *newWidget = new NTagViewItem();
     QString name = dialog.name.text().trimmed();
     qint32 lid = table.findByName(name, accountFilter);
@@ -660,7 +660,7 @@ void NTagView::mergeRequested() {
         return;
 
     qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
-    NoteTable ntable;
+    NoteTable ntable(global.db);
     QList<qint32> notes;
     for (int j=1; j<items.size(); j++) {
         ntable.findNotesByTag(notes, items[j]->data(NAME_POSITION, Qt::UserRole).toInt());
@@ -679,7 +679,7 @@ void NTagView::mergeRequested() {
     // Now delete the old tags.
     for (int i=1; i<items.size(); i++) {
         qint32 lid = items[i]->data(NAME_POSITION, Qt::UserRole).toInt();
-        TagTable table;
+        TagTable table(global.db);
         table.deleteTag(lid);
 
         // Now remove it in the datastore
@@ -706,7 +706,7 @@ void NTagView::deleteRequested() {
         if (ret == QMessageBox::No)
             return;
     }
-    TagTable table;
+    TagTable table(global.db);
     table.deleteTag(lid);
 //    NTagViewItem *ptr = (NTagViewItem*)items[0];
 //    ptr->setHidden(true);
@@ -741,7 +741,7 @@ void NTagView::renameRequested() {
 void NTagView::editComplete() {
     QString text = editor->text().trimmed();
     qint32 lid = editor->lid;
-    TagTable table;
+    TagTable table(global.db);
     Tag tag;
     table.get(tag, lid);
     QString oldName = QString::fromStdString(tag.name);
@@ -771,6 +771,7 @@ void NTagView::tagExpunged(qint32 lid) {
     if (this->dataStore.contains(lid)) {
         NTagViewItem *item = this->dataStore.value(lid);
         this->removeItemWidget(item, 0);
+        this->dataStore.remove(lid);
         delete item;
     }
     this->resetSize();

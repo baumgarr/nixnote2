@@ -2,6 +2,9 @@
 #include "dialog/locationdialog.h"
 #include "sql/notetable.h"
 #include <QDesktopServices>
+#include "global.h"
+
+extern Global global;
 
 LocationEditor::LocationEditor(QWidget *parent) :
     QToolButton(parent)
@@ -58,7 +61,7 @@ void LocationEditor::buttonClicked() {
     startLongitude = lon;
     startLatitude = lat;
     if (dialog.okPressed()) {
-        NoteTable ntable;
+        NoteTable ntable(global.db);
         if (lon == 0.0 && lat == 0.0) {
             setText(defaultText);
             ntable.resetGeography(currentLid, true);
@@ -77,7 +80,7 @@ void LocationEditor::setGeography(qint32 lid, double longitude, double latitude,
     currentLid = lid;
 
     Note n;
-    NoteTable ntable;
+    NoteTable ntable(global.db);
     ntable.get(n, lid, false,false);
     if (!n.__isset.attributes || !n.attributes.__isset.latitude || !n.attributes.__isset.longitude)
         return;
@@ -94,7 +97,7 @@ void LocationEditor::setGeography(qint32 lid, double longitude, double latitude,
 
 
 void LocationEditor::clearClicked() {
-    NoteTable ntable;
+    NoteTable ntable(global.db);
     ntable.resetGeography(currentLid, true);
 }
 

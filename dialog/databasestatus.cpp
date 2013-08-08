@@ -23,6 +23,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPushButton>
 #include "sql/notetable.h"
 #include "sql/resourcetable.h"
+#include "global.h"
+
+extern Global global;
 
 DatabaseStatus::DatabaseStatus(QWidget *parent) :
     QDialog(parent)
@@ -33,8 +36,8 @@ DatabaseStatus::DatabaseStatus(QWidget *parent) :
     QGridLayout *textGrid = new QGridLayout();
     setLayout(vBoxLayout);
 
-    NoteTable ntable;
-    ResourceTable rtable;
+    NoteTable ntable(global.db);
+    ResourceTable rtable(global.db);
     qint32 totalNotes = ntable.getCount();
     qint32 totalResources = rtable.getCount();
     qint32 unindexedNotes = ntable.getUnindexedCount();

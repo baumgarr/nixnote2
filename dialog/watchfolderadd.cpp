@@ -38,7 +38,7 @@ WatchFolderAdd::WatchFolderAdd(qint32 lid, QWidget *parent) :
     FileWatcher::ScanType type = FileWatcher::ImportKeep;
     this->lid = lid;
     if (lid > 0) {
-        FileWatcherTable ft;
+        FileWatcherTable ft(global.db);
         ft.get(lid, dir, type, notebookLid, includeSubdirs);
     }
 
@@ -71,7 +71,7 @@ WatchFolderAdd::WatchFolderAdd(qint32 lid, QWidget *parent) :
     subdirs->setChecked(includeSubdirs);
 
     books = new QComboBox(this);
-    NotebookTable ntable;
+    NotebookTable ntable(global.db);
     QList<qint32> lids;
     ntable.getAll(lids);
     for (int i=0; i<lids.size(); i++) {
@@ -116,9 +116,9 @@ void WatchFolderAdd::onClicked() {
     QString after = keep->itemData(keep->currentIndex()).toString();
     if (after == "keep")
         type = FileWatcher::ImportKeep;
-    FileWatcherTable ft;
+    FileWatcherTable ft(global.db);
     if (lid <= 0) {
-        ConfigStore cs;
+        ConfigStore cs(global.db);
         lid = cs.incrementLidCounter();
     } else {
         ft.expunge(lid);

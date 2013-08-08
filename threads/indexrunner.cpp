@@ -57,7 +57,7 @@ void IndexRunner::initialize() {
     connect(indexTimer, SIGNAL(timeout()), this, SLOT(index()));
     indexTimer->start();
     textDocument = new QTextDocument();
-    hammer = new Thumbnailer();
+    hammer = new Thumbnailer(&db->conn);
     QLOG_DEBUG() << "Indexrunner exiting.";
 }
 

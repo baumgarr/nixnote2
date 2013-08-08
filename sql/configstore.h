@@ -41,7 +41,7 @@ private:
     QSqlDatabase *db;           // DB connection
 
 public:
-    ConfigStore(QSqlDatabase *conn=NULL);  // Generic constructor
+    ConfigStore(QSqlDatabase *conn);  // Generic constructor
     void createTable();         // SQL to create the table
     qint32 incrementLidCounter();  // Get the next LID number
     void saveSetting(int key, QByteArray);  // Save a setting

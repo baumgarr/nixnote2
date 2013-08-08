@@ -216,7 +216,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     this->lid = lid;
     this->editor->isDirty = false;
 
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     Note n;
 
     bool rc = noteTable.get(n, this->lid, false, false);
@@ -278,9 +278,9 @@ void NBrowserWindow::setContent(qint32 lid) {
     }
     tagEditor.setTags(names);
     tagEditor.setCurrentLid(lid);
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(global.db);
     qint32 notebookLid = notebookTable.getLid(n.notebookGuid);
-    LinkedNotebookTable linkedTable;
+    LinkedNotebookTable linkedTable(global.db);
     if (linkedTable.exists(notebookLid))
         tagEditor.setAccount(notebookLid);
     else
@@ -367,7 +367,7 @@ void NBrowserWindow::newTagAdded(qint32 lid) {
 
 // Add a tag to a note
 void NBrowserWindow::addTagName(qint32 lid) {
-    TagTable table;
+    TagTable table(global.db);
     Tag t;
     table.get(t, lid);
     tagEditor.addTag(QString::fromStdString(t.name));
@@ -456,7 +456,7 @@ void NBrowserWindow::noteSyncUpdate(qint32 lid) {
 // A note's content was updated
 void NBrowserWindow::noteContentUpdated() {
     if (editor->isDirty) {
-        NoteTable noteTable;
+        NoteTable noteTable(global.db);
         noteTable.setDirty(this->lid, true);
         emit(noteUpdated(this->lid));
     }
@@ -474,10 +474,10 @@ void NBrowserWindow::noteContentUpdated() {
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
     if (this->editor->isDirty) {
-        NoteTable table;
+        NoteTable table(global.db);
         //QString contents = editor->editorPage->mainFrame()->toHtml();
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
-        Thumbnailer thumbnailer;
+        Thumbnailer thumbnailer(global.db);
         thumbnailer.render(lid, contents);
         EnmlFormatter formatter;
         formatter.setHtml(contents);
@@ -492,7 +492,7 @@ void NBrowserWindow::saveNoteContent() {
         // Purge anything that is no longer needed.
         QList<qint32> validLids = formatter.resources;
         QList<qint32> oldLids;
-        ResourceTable resTable;
+        ResourceTable resTable(global.db);
         resTable.getResourceList(oldLids, lid);
 
         for (int i=0; i<oldLids.size(); i++) {
@@ -608,7 +608,7 @@ void NBrowserWindow::pasteButtonPressed() {
 
             Note n;
             bool goodrc = false;
-            NoteTable ntable;
+            NoteTable ntable(global.db);
             goodrc = ntable.get(n, guid,false,false);
             if (!goodrc)
                 goodrc = ntable.get(n,locguid,false,false);
@@ -971,7 +971,7 @@ void NBrowserWindow::insertQuickLinkButtonPressed() {
     if (text.trimmed() == "")
         return;
 
-    NoteTable ntable;
+    NoteTable ntable(global.db);
     QList<qint32> lids;
     if (!ntable.findNotesByTitle(lids, text))
         if (!ntable.findNotesByTitle(lids, text.trimmed()+"%"))
@@ -982,7 +982,7 @@ void NBrowserWindow::insertQuickLinkButtonPressed() {
     // If we have a good return, then we can paste the link, otherwise we fall out
     // to a normal paste.
     if (ntable.get(n, lids[0],false,false)) {
-        UserTable utable;
+        UserTable utable(global.db);
         User user;
         utable.getUser(user);
 
@@ -1193,7 +1193,7 @@ void NBrowserWindow::updateImageHash(QByteArray newhash) {
         int endPos = content.indexOf(">", pos);
         QString section = content.mid(pos, endPos-pos);
         if (section.indexOf("lid=\"" +QString::number(selectedFileLid) + "\"") > 0) {
-            ResourceTable rtable;
+            ResourceTable rtable(global.db);
             QString oldhash = section.mid(section.indexOf("hash=\"")+6);
             oldhash = oldhash.mid(0,oldhash.indexOf("\""));
             section.replace(oldhash, newhash.toHex());
@@ -1391,7 +1391,7 @@ void NBrowserWindow::attachFile() {
             tokens = url.toString().replace("evernote:///view/", "").split("/", QString::SkipEmptyParts);
          QString oguid =tokens[2];
          QString eguid = tokens[3];
-         NoteTable ntable;
+         NoteTable ntable(global.db);
          qint32 newlid = ntable.getLid(eguid);
          if (newlid <= 0)
              newlid = ntable.getLid(oguid);
@@ -1562,7 +1562,7 @@ void NBrowserWindow::editLatex(QString guid) {
         InsertLatexDialog dialog;
         if (guid.trimmed() != "") {
             Resource r;
-            ResourceTable resTable;
+            ResourceTable resTable(global.db);
             resTable.get(r, guid.toInt());
             if (r.__isset.attributes && r.attributes.__isset.sourceURL) {
                 QString formula = QString::fromStdString(r.attributes.sourceURL);
@@ -1578,11 +1578,11 @@ void NBrowserWindow::editLatex(QString guid) {
         text = dialog.getFormula().trimmed();
     }
 
-    ConfigStore cs;
+    ConfigStore cs(global.db);
     qint32 newlid = cs.incrementLidCounter();
     Resource r;
-    NoteTable ntable;
-    ResourceTable rtable;
+    NoteTable ntable(global.db);
+    ResourceTable rtable(global.db);
     QString outfile = global.fileManager.getDbaDirPath() + QString::number(newlid) +QString(".gif");
 
     // Run it through "mimetex" to create the gif
@@ -1784,13 +1784,13 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
 
 // Create  a new resource and add it to the database
 qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data,  QString mime, bool attachment, QString filename) {
-    ConfigStore cs;
+    ConfigStore cs(global.db);
     qint32 rlid = cs.incrementLidCounter();
 
     QByteArray hash = QCryptographicHash::hash(data, QCryptographicHash::Md5);
 
     QString guid =  QString::number(rlid);
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     r.guid = guid.toStdString();
     r.__isset.guid = true;
     r.noteGuid = noteTable.getGuid(lid).toStdString();
@@ -1829,7 +1829,7 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
     a->attachment = attachment;
     a->__isset.attachment = true;
 
-    ResourceTable resourceTable;
+    ResourceTable resourceTable(global.db);
     resourceTable.add(rlid, r, true);
 
     return rlid;

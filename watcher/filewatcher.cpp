@@ -58,7 +58,7 @@ void FileWatcher::saveDirectory(QString dir){
 
 void FileWatcher::saveFile(QString file) {
     Note newNote;
-    NoteTable ntable;
+    NoteTable ntable(global.db);
 
     QFile f(file);
     f.open(QIODevice::ReadOnly);
@@ -68,7 +68,7 @@ void FileWatcher::saveFile(QString file) {
         return;
 
     QLOG_DEBUG() << data;
-    ConfigStore cs;
+    ConfigStore cs(global.db);
     qint32 lid = cs.incrementLidCounter();
 
     QCryptographicHash md5hash(QCryptographicHash::Md5);
@@ -80,7 +80,7 @@ void FileWatcher::saveFile(QString file) {
     newNote.title = file.toStdString();
     newNote.__isset.title = true;
 
-    NotebookTable bookTable;
+    NotebookTable bookTable(global.db);
     QString notebook;
     bookTable.getGuid(notebook, notebookLid);
     newNote.notebookGuid = notebook.toStdString();
@@ -146,7 +146,7 @@ void FileWatcher::saveFile(QString file) {
     newRes.__isset.noteGuid = true;
     newRes.updateSequenceNum = 0;
     newRes.__isset.updateSequenceNum = 0;
-    ResourceTable restable;
+    ResourceTable restable(global.db);
     restable.add(lid, newRes, true);
 
     emit(fileImported(noteLid, lid));

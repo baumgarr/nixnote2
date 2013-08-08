@@ -32,10 +32,7 @@ extern Global global;
 // Default constructor
 TagTable::TagTable(QSqlDatabase *db)
 {
-    if (db != NULL)
-        this->db = db;
-    else
-        this->db = global.db;
+    this->db = db;
 }
 
 
@@ -147,7 +144,7 @@ void TagTable::update(Tag &tag, bool dirty=true) {
         add(lid, tag, dirty,account);
 
         // Now update the Note display list
-        NoteTable noteTable;
+        NoteTable noteTable(db);
         QList<qint32> noteList;
         noteTable.findNotesByTag(noteList, lid);
         for (qint32 i=0; i<noteList.size(); i++) {
@@ -171,7 +168,7 @@ qint32 TagTable::sync(qint32 l, Tag &tag, qint32 account) {
         query.bindValue(":lid", lid);
         query.exec();
     } else {
-        ConfigStore cs;
+        ConfigStore cs(db);
         lid = cs.incrementLidCounter();
     }
 
@@ -207,7 +204,7 @@ qint32 TagTable::getLid(string guid) {
 
 // Add a new tag to the database
 qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
-    ConfigStore cs;
+    ConfigStore cs(db);
     qint32 lid = l;
     if (lid == 0)
         lid = cs.incrementLidCounter();
@@ -441,7 +438,7 @@ void TagTable::deleteTag(qint32 lid) {
     list.append(lid);
 
     for (qint32 i=0; i<list.size(); i++) {
-        NoteTable noteTable;
+        NoteTable noteTable(db);
         Tag tag;
         qint32 currentLid = list[i];
         QSqlQuery query(*db);
@@ -472,7 +469,7 @@ void TagTable::expunge(qint32 lid) {
     query.bindValue(":lid", lid);
     query.exec();
 
-    NoteTable noteTable;
+    NoteTable noteTable(db);
     QList<int> notes;
     noteTable.findNotesByTag(notes, tagGuid);
     for (int i=0; i<notes.size(); i++)

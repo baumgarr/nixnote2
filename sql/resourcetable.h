@@ -76,7 +76,7 @@ class ResourceTable
 private:
     QSqlDatabase *db;
 public:
-    ResourceTable(QSqlDatabase *db=NULL);                             // Constructor
+    ResourceTable(QSqlDatabase *db);                             // Constructor
     qint32 getLid(QString noteGuid, QString guid);            // given a guid, return the lid
     qint32 getLid(string noteGuid, string guid);             // Given a guid, return the lid
     qint32 getLid(string resourceGuid);
@@ -112,6 +112,7 @@ public:
     QByteArray getDataHash(qint32 lid);                    // Get the hash value for the data in a resource
     void reindexAllResources();                             // Reindex all relources
     void updateNoteLid(qint32 resourceLid, qint32 newNoteLid);     // Update the owning note
+    void expungeByNote(qint32 notebookLid);
 };
 
 

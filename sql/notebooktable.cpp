@@ -38,10 +38,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // Default constructor
 NotebookTable::NotebookTable(QSqlDatabase *db)
 {
-    if (db != NULL)
-        this->db = db;
-    else
-        this->db = global.db;
+    this->db = db;
 }
 
 
@@ -106,13 +103,13 @@ qint32 NotebookTable::sync(qint32 lid, Notebook &notebook) {
     if (lid == 0) {
         lid = findByName(notebook.name);
         if (lid == 0) {
-            SharedNotebookTable stable;
+            SharedNotebookTable stable(db);
             lid = stable.findByNotebookGuid(notebook.guid);
         }
     }
     if (lid > 0) {
         QSqlQuery query(*db);
-        NoteTable noteTable;
+        NoteTable noteTable(db);
         noteTable.updateNotebookName(lid, QString::fromStdString(notebook.name));
 
         // Delete the old record
@@ -120,7 +117,7 @@ qint32 NotebookTable::sync(qint32 lid, Notebook &notebook) {
         query.bindValue(":lid", lid);
         query.exec();
     } else {
-        ConfigStore cs;
+        ConfigStore cs(db);
         lid = cs.incrementLidCounter();
     }
 
@@ -162,7 +159,7 @@ qint32 NotebookTable::getLid(string guid) {
 // Add a new notebook to the database
 qint32 NotebookTable::addStub(QString guid) {
     QSqlQuery query(*db);
-    ConfigStore cs;
+    ConfigStore cs(db);
     qint32 lid = cs.incrementLidCounter();
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_GUID);
@@ -175,17 +172,17 @@ qint32 NotebookTable::addStub(QString guid) {
 qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
 
     QSqlQuery query(*db);
-    ConfigStore cs;
+    ConfigStore cs(db);
 
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     qint32 lid = l;
     if (lid == 0) {
         lid = cs.incrementLidCounter();
     } else {
-        LinkedNotebookTable ltable;
+        LinkedNotebookTable ltable(db);
         LinkedNotebook lbook;
         if (ltable.get(lbook, lid)) {
-            if (lbook.__isset.shareName) {
+            if (lbook.__isset.shareName && lbook.shareName != "") {
                 t.name = lbook.shareName;
             }
         }
@@ -283,13 +280,13 @@ qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
     }
 
     if (t.__isset.sharedNotebooks) {
-        SharedNotebookTable sharedTable;
+        SharedNotebookTable sharedTable(db);
         for (unsigned int i=0; i<t.sharedNotebooks.size(); i++) {
             sharedTable.add(lid, t.sharedNotebooks[i], isDirty);
         }
     }
 
-    NoteTable noteTable;
+    NoteTable noteTable(db);
     noteTable.updateNotebookName(lid, QString::fromStdString(t.name));
     return lid;
 }
@@ -542,7 +539,7 @@ void NotebookTable::deleteNotebook(qint32 lid) {
     // First delete all the notes for this notebook and
     // move them to the default notebook
     QList<qint32> notes;
-    NoteTable noteTable;
+    NoteTable noteTable(db);
     QString guid;
     getGuid(guid, lid);
     noteTable.findNotesByNotebook(notes, guid);
@@ -728,7 +725,7 @@ bool NotebookTable::isReadOnly(qint32 notebookLid) {
         return true;
     else {
         SharedNotebook sharedNotebook;
-        SharedNotebookTable stable;
+        SharedNotebookTable stable(db);
         bool found = stable.get(sharedNotebook, notebookLid);
         if (found) {
             if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK)
@@ -736,7 +733,7 @@ bool NotebookTable::isReadOnly(qint32 notebookLid) {
             if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
                 return true;
         } else {
-            LinkedNotebookTable ltable;
+            LinkedNotebookTable ltable(db);
             LinkedNotebook linkedNotebook;
             found = ltable.get(linkedNotebook, notebookLid);
             if (found && linkedNotebook.__isset.uri)
@@ -824,4 +821,22 @@ void NotebookTable::resetLinkedNotebooksDirty() {
     query.bindValue(":key", NOTEBOOK_ISDIRTY);
     query.bindValue(":linkedkey", LINKEDNOTEBOOK_GUID);
     query.exec();
+}
+
+
+
+qint32 NotebookTable::findByUri(QString uri) {
+    QSqlQuery query(*db);
+    query.prepare("Select lid from DataStore where key=:key and data=:data");
+    query.bindValue(":key", NOTEBOOK_PUBLISHING_URI);
+    query.bindValue(":data", uri);
+    query.exec();
+    if (query.next())
+        return query.value(0).toInt();
+    else
+        return 0;
+}
+
+qint32 NotebookTable::findByUri(string uri) {
+    return findByUri(QString::fromStdString(uri));
 }

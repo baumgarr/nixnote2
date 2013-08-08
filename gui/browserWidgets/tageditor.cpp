@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include "sql/tagtable.h"
 
+extern Global global;
+
 
 //*******************************************************
 //* Constructor
@@ -110,8 +112,8 @@ void TagEditor::addTag(QString text) {
     tagNames << text;
     newTag.addTag(text);
     loadTags();
-    NoteTable noteTable;
-    TagTable tagTable;
+    NoteTable noteTable(global.db);
+    TagTable tagTable(global.db);
     qint32 tagLid;
     Tag newTag;
     tagLid = tagTable.findByName(text, account);
@@ -152,7 +154,7 @@ void TagEditor::loadTags() {
 //* Reload the tags after a sync
 //*******************************************************
 void TagEditor::reloadTags() {
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     Note n;
     noteTable.get(n, currentLid, false,false);
     QStringList names;
@@ -199,11 +201,11 @@ void TagEditor::removeTag(QString text) {
     for (qint32 i=0; i<tagNames.size(); i++) {
         if (tags[i].text().toLower() == text.toLower()) {
             found = true;
-            TagTable tagTable;
+            TagTable tagTable(global.db);
             QString name = tags[i].text();
             qint32 lid = tagTable.findByName(name, account);
             if (lid>0) {
-                NoteTable noteTable;
+                NoteTable noteTable(global.db);
                 noteTable.removeTag(currentLid, lid, true);
             }
             j = i;

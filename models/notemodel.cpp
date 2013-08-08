@@ -119,7 +119,7 @@ void NoteModel::createTable() {
 // {
 //    QLOG_TRACE() << "Entering NoteModel::rowCount()";
 
-//    QSqlQuery sql;
+//    QSqlQuery sql(*db);
 //    sql.exec("Select count(lid) from NoteTable where lid in (select lid from filter)");
 //    if (!sql.next()) {
 //        QLOG_ERROR() << "Error retrieving NoteModel::rowCount: " << sql.lastError();

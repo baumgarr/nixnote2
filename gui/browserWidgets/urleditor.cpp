@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include "sql/notetable.h"
 
+extern Global global;
+
 UrlEditor::UrlEditor(QWidget *parent) :
     QLineEdit(parent)
 {
@@ -87,7 +89,7 @@ void UrlEditor::focusOutEvent(QFocusEvent *e)
 void UrlEditor::textModified(QString text) {
     this->blockSignals(true);
 
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     noteTable.updateUrl(currentLid, text, true);
 
     if (text.trimmed() == "" && !hasFocus())

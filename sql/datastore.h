@@ -43,7 +43,7 @@ private:
     QSqlDatabase *db;
 
 public:
-    explicit DataStore(QObject *parent = 0, QSqlDatabase *db=NULL);
+    explicit DataStore(QSqlDatabase *db);
     qint32 getDirtyNoteGuids(QList<QString> &retVal);
 
 signals:

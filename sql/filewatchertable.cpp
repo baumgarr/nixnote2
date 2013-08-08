@@ -21,19 +21,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/configstore.h"
 #include <QSqlQuery>
 
-FileWatcherTable::FileWatcherTable(QObject *parent, QSqlDatabase *db) :
-    QObject(parent)
+FileWatcherTable::FileWatcherTable(QSqlDatabase *db)
 {
-    if (db != NULL)
-        this->db = db;
-    else
-        this->db = global.db;
+    this->db = db;
 }
 
 
 qint32 FileWatcherTable::addEntry(qint32 lid, QString baseDir, FileWatcher::ScanType type, qint32 notebookLid, bool includeSubdirs) {
     if (lid == 0) {
-        ConfigStore cs;
+        ConfigStore cs(global.db);
         lid = cs.incrementLidCounter();
     }
     QSqlQuery sql(*db);

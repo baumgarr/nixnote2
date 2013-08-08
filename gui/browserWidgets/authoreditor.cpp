@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include "sql/notetable.h"
 
+extern Global global;
+
 AuthorEditor::AuthorEditor(QWidget *parent) :
     QLineEdit(parent)
 {
@@ -87,7 +89,7 @@ void AuthorEditor::focusOutEvent(QFocusEvent *e)
 void AuthorEditor::textModified(QString text) {
     this->blockSignals(true);
 
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     noteTable.updateAuthor(currentLid, text, true);
 
     if (text.trimmed() == "" && !hasFocus())

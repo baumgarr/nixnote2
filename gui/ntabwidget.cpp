@@ -119,7 +119,7 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
 
     // If we've gotten this far, we have a good note
     Note n;
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     noteTable.get(n, lid, true,false);
 
     NBrowserWindow *view;
@@ -168,7 +168,7 @@ void NTabWidget::noteUpdateSignaled(qint32 lid) {
     //  COMMENTED OUT TO PREVENT SEGFAULT  emit(this->noteUpdated(lid));
 
     Note n;
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     noteTable.get(n, lid, false,false);
     for (int i=0;i<browserList->size(); i++) {
         if (browserList->at(i)->lid == lid) {
@@ -191,7 +191,7 @@ void NTabWidget::noteSyncSignaled(qint32 lid) {
     // COMMENTED OUT TO PREVENT SEGFAULT emit(this->noteUpdated(lid));
 
     Note n;
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     noteTable.get(n, lid, false,false);
     for (int i=0;i<browserList->size(); i++) {
         if (browserList->at(i)->lid == lid && !browserList->at(i)->editor->isDirty) {

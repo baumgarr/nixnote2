@@ -66,10 +66,7 @@ using namespace evernote::edam;
 
 UserTable::UserTable(QSqlDatabase *db)
 {
-    if (db != NULL)
-        this->db = db;
-    else
-        this->db = global.db;
+    this->db = db;
     // Check if the table exists.  If not, create it.
     QSqlQuery sql(*this->db);
     sql.exec("Select * from sqlite_master where type='table' and name='UserTable';");

@@ -134,14 +134,14 @@ void ImportData::import(QString file) {
     // to do this, but since we don't really do this often this works
     // as well as any awy.
 
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     for (qint32 i=0; i<noteList.size(); i++) {
         qint32 lid = noteTable.getLid(noteList[i]);
         if (lid > 0) {
             Note note;
             bool dirty = noteTable.isDirty(lid);
             noteTable.get(note, lid, false, false);
-            noteTable.updateNoteList(lid, note, dirty);
+            noteTable.updateNoteList(lid, note, dirty, 0);
         }
     }
 
@@ -237,7 +237,7 @@ void ImportData::processNoteNode() {
     for (unsigned int i=0; i<note.resources.size(); i++) {
         note.resources[i].noteGuid = note.guid;
     }
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
     if (backup)
         noteTable.add(0,note, noteIsDirty);
     else {
@@ -448,7 +448,7 @@ void ImportData::processNoteTagList(QStringList &guidList, QStringList &names) {
 
     // Now look for any matches with existing ones.  If they don't
     // exist we create a dummy record
-    TagTable tagTable;
+    TagTable tagTable(global.db);
     for (qint32 i=0; i<guidList.size(); i++) {
         qint32 lid = tagTable.getLid(guidList[i]);
         if (lid == 0) {
@@ -525,7 +525,7 @@ void ImportData::processNoteAttributes(NoteAttributes &attributes) {
 //***********************************************************
 void ImportData::processSynchronizationNode() {
     bool atEnd = false;
-    UserTable userTable;
+    UserTable userTable(global.db);
     while(!atEnd) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
@@ -550,7 +550,7 @@ void ImportData::processSynchronizationNode() {
 void ImportData::processSavedSearchNode() {
     SavedSearch search;
     bool searchIsDirty = false;
-    SearchTable searchTable;
+    SearchTable searchTable(global.db);
 
     bool atEnd = false;
 
@@ -797,7 +797,7 @@ void ImportData::processNotebookNode() {
     }
 
     // We are at the end.  We should have a valid notebook now
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(global.db);
 
     // Check if there is a notebook by this name already.
     // If one exists, we treat this as an update
@@ -859,7 +859,7 @@ void ImportData::processTagNode() {
     }
 
     // We have a good tag, now let's save it to the database
-    TagTable tagTable;
+    TagTable tagTable(global.db);
     QString name(tag.name.c_str());
 
     // Check if we have a tag by this name already.  If we

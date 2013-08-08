@@ -27,10 +27,7 @@ extern Global global;
 
 SharedNotebookTable::SharedNotebookTable(QSqlDatabase *db)
 {
-    if (db != NULL)
-        this->db = db;
-    else
-        this->db = global.db;
+    this->db = db;
 }
 
 
@@ -67,8 +64,8 @@ qint32 SharedNotebookTable::sync(qint32 l, SharedNotebook sharedNotebook){
         query.bindValue(":lid", lid);
         query.exec();
     } else {
-        ConfigStore cs;
-        lid = cs.incrementLidCounter();
+       ConfigStore cs(db);
+       lid = cs.incrementLidCounter();
     }
 
     return add(lid, sharedNotebook, false);
@@ -78,7 +75,7 @@ qint32 SharedNotebookTable::sync(qint32 l, SharedNotebook sharedNotebook){
 
 qint32 SharedNotebookTable::add(qint32 l, SharedNotebook &t, bool isDirty){
     isDirty=isDirty;  //suppress unused
-    ConfigStore cs;
+    ConfigStore cs(db);
     qint32 lid = l;
     if (lid == 0)
         lid = cs.incrementLidCounter();
@@ -315,7 +312,7 @@ qint32 SharedNotebookTable::findById(qlonglong id) {
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
     query.bindValue(":data", id);
     query.exec();
-    while (query.next()) {
+    if (query.next()) {
         return query.value(0).toInt();
     }
     return 0;
@@ -353,7 +350,7 @@ qint32 SharedNotebookTable::findByNotebookGuid(QString id) {
     while (query.next()) {
         return query.value(0).toInt();
     }
-    NotebookTable ntable;
+    NotebookTable ntable(db);
     return ntable.getLid(id);
 }
 
@@ -362,3 +359,5 @@ qint32 SharedNotebookTable::findByNotebookGuid(QString id) {
 qint32 SharedNotebookTable::findByNotebookGuid(string id) {
     return findByNotebookGuid(QString::fromStdString(id));
 }
+
+

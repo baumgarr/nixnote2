@@ -366,7 +366,7 @@ void FilterEngine::filterNotebook(FilterCriteria *criteria) {
     } else {
         FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
         qint32 notebookLid = criteria->getNotebook()->data(0,Qt::UserRole).toInt();
-        NotebookTable notebookTable;
+        NotebookTable notebookTable(global.db);
         QString notebook;
         notebookTable.getGuid(notebook, notebookLid);
         filterIndividualNotebook(notebook);
@@ -375,7 +375,7 @@ void FilterEngine::filterNotebook(FilterCriteria *criteria) {
 
 // If they only chose one notebook, then delete everything else
 void FilterEngine::filterIndividualNotebook(QString &notebook) {
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(global.db);
     qint32 notebookLid = notebookTable.getLid(notebook);
     // Filter out the records
     QSqlQuery sql(*global.db);
@@ -386,7 +386,7 @@ void FilterEngine::filterIndividualNotebook(QString &notebook) {
 }
 
 void FilterEngine::filterStack(QString &stack) {
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(global.db);
     QList<qint32> books;
     QList<qint32> stackBooks;
     notebookTable.getAll(books);
@@ -415,8 +415,8 @@ void FilterEngine::filterTags(FilterCriteria *criteria) {
         selectedTags.push_back(tags[i]->data(0,Qt::UserRole).toInt());
     }
 
-    NoteTable noteTable;
-    TagTable tagTable;
+    NoteTable noteTable(global.db);
+    TagTable tagTable(global.db);
     QList<qint32> goodNotes;
     for (qint32 i=0; i<selectedTags.size(); i++) {
         QList<qint32> notes;

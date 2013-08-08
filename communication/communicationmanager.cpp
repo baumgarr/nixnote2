@@ -25,10 +25,10 @@ extern Global global;
 
 
 // Generic constructor
-CommunicationManager::CommunicationManager(QObject *parent) :
-    QObject(parent)
+CommunicationManager::CommunicationManager(QSqlDatabase *db)
 {
     initComplete = false;
+    this->db = db;
     evernoteHost = global.server.toStdString();
     userStorePath = "/edam/user";
     clientName = "NixNote/Linux";
@@ -586,7 +586,7 @@ void CommunicationManager::checkForInkNotes(vector<Resource> &resources, QString
 
 // Download an ink note image
 void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QString shard, QString authToken) {
-    UserTable userTable;
+    UserTable userTable(db);
     User u;
     userTable.getUser(u);
     if (shard == "")
@@ -933,7 +933,7 @@ qint32 CommunicationManager::deleteNote(string note) {
 
 // Download a thumbnail of the note from Evernote's servers
 void CommunicationManager::downloadThumbnail(QString guid, string authToken, string shard) {
-    UserTable userTable;
+    UserTable userTable(db);
     if (shard == "") {
         User u;
         userTable.getUser(u);

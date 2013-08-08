@@ -34,10 +34,7 @@ extern Global global;
 // Default constructor
 NoteTable::NoteTable(QSqlDatabase *db)
 {
-    if (db != NULL)
-        this->db = db;
-    else
-        this->db = global.db;
+    this->db = db;
 }
 
 
@@ -62,37 +59,33 @@ void NoteTable::updateGuid(qint32 lid, Guid &guid) {
 
 // Synchronize a new note with what is in the database.  We basically
 // just delete the old one & give it a new entry
-void NoteTable::sync(Note &note) {
-    sync(0, note);
+void NoteTable::sync(Note &note, qint32 account) {
+    sync(0, note, account);
 }
 
 
 
 // Synchronize a new note with what is in the database.  We basically
 // just delete the old one & give it a new entry
-void NoteTable::sync(qint32 lid, Note &note) {
+void NoteTable::sync(qint32 lid, Note &note, qint32 account) {
    // QLOG_TRACE() << "Entering NoteTable::sync()";
 
     if (lid > 0) {
         QSqlQuery query(*db);
 
         // Delete the old record
-        query.prepare("Delete from DataStore where lid=:lid and key>=3000 and key<3200");
+        query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
         query.exec();
 
-        ResourceTable resTable;
-        for (unsigned int i=0;i<note.resources.size(); i++) {
-            qint32 resLid = resTable.getLid(note.resources[i].noteGuid, note.resources[i].guid);
-            query.bindValue(":lid", resLid);
-            query.exec();
-        }
+        ResourceTable resTable(db);
+        resTable.expungeByNote(lid);
     } else {
-        ConfigStore cs;
+        ConfigStore cs(db);
         lid = cs.incrementLidCounter();
     }
 
-    add(lid, note, false);
+    add(lid, note, false, account);
 
     //QLOG_TRACE() << "Leaving NoteTable::sync()";
 }
@@ -139,14 +132,14 @@ qint32 NoteTable::getLid(string guid) {
 
 
 // Add a new note to the database
-qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
+qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
     QLOG_DEBUG() << "Adding note: " << QString::fromStdString(t.title);
-    ResourceTable resTable;
-    ConfigStore cs;
+    ResourceTable resTable(db);
+    ConfigStore cs(db);
     QSqlQuery query(*db);
     qint32 position;
     qint32 lid = l;
-    qint32 notebookLid, linkedNobebookLid;
+    qint32 notebookLid = account;
 
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     if (lid <= 0)
@@ -235,9 +228,11 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
     if (t.__isset.notebookGuid) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_NOTEBOOK_LID);
-        NotebookTable notebookTable;
-        LinkedNotebookTable linkedTable;
-        notebookLid = notebookTable.getLid(QString::fromStdString(t.notebookGuid));
+        NotebookTable notebookTable(db);
+        LinkedNotebookTable linkedTable(db);
+        notebookLid = account;
+        if (notebookLid == 0)
+            notebookLid = notebookTable.getLid(QString::fromStdString(t.notebookGuid));
         if (notebookLid == 0) {
             notebookLid = linkedTable.getLid(QString::fromStdString(t.notebookGuid));
         }
@@ -257,7 +252,7 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
     }
 
     for (unsigned int i=0; t.__isset.tagGuids && i<t.tagGuids.size(); i++) {
-        TagTable tagTable;
+        TagTable tagTable(db);
         qint32 tagLid = tagTable.getLid(t.tagGuids.at(i));
         if (tagLid == 0) {
             // create a dummy tag to avoid later problems
@@ -417,21 +412,22 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty) {
         }
     }
 
-    updateNoteList(lid, t, isDirty);
+    updateNoteList(lid, t, isDirty, account);
     return lid;
 }
 
 
-bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
+bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty, qint32 account) {
 
-    NotebookTable notebookTable;
-    LinkedNotebookTable linkedNotebookTable;
+    NotebookTable notebookTable(db);
+    LinkedNotebookTable linkedNotebookTable(db);
     QString notebookName = "";
 
-    qint32 notebookLid = notebookTable.getLid(t.notebookGuid);
-    if (notebookLid <=0) {
+    qint32 notebookLid = account;
+    if (notebookLid <= 0)
+        notebookLid = notebookTable.getLid(t.notebookGuid);
+    if (notebookLid <=0)
         notebookLid = linkedNotebookTable.getLid(t.notebookGuid);
-    }
     if (notebookLid <=0)
         notebookLid = notebookTable.addStub(QString::fromStdString(t.notebookGuid));
     else {
@@ -546,12 +542,7 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty) {
     }
     sortedNames.sort();
 
-    TagTable tagTable;
-    LinkedNotebookTable linkedTable;
-    qint32 account = 0;
-    notebookLid = notebookTable.getLid(t.notebookGuid);
-    if (linkedTable.exists(notebookLid))
-        account = notebookLid;
+    TagTable tagTable(db);
 
     for (int i=0; i<sortedNames.size(); i++) {
         if (i>0)
@@ -645,7 +636,7 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadResource
             break;
         case (NOTE_NOTEBOOK_LID): {
             qint32 notebookLid = query.value(1).toInt();
-            NotebookTable ntable;
+            NotebookTable ntable(db);
             QString notebookGuid;
             ntable.getGuid(notebookGuid, notebookLid);
             note.notebookGuid = notebookGuid.toStdString();
@@ -716,7 +707,7 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadResource
             note.attributes.__isset.reminderTime = true;
             break;
         case (NOTE_TAG_LID) :
-            TagTable tagTable;
+            TagTable tagTable(db);
             qint32 tagLid = query.value(1).toInt();
             Tag tag;
             tagTable.get(tag, tagLid);
@@ -728,7 +719,7 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadResource
         }
     }
 
-    ResourceTable resTable;
+    ResourceTable resTable(db);
     QList<qint32> resList;
     if (resTable.getResourceList(resList, lid)) {
         for (int i=0; i<resList.size(); i++) {
@@ -848,7 +839,7 @@ qint32 NoteTable::findNotesByTag(QList<qint32> &values, qint32 tagLid) {
 
 // Find the note LIDs for a tag
 qint32 NoteTable::findNotesByTag(QList<qint32> &values, QString data) {
-    TagTable tagTable;
+    TagTable tagTable(db);
     qint32 tagLid = tagTable.getLid(data);
     return findNotesByTag(values, tagLid);
 }
@@ -872,7 +863,7 @@ void NoteTable::updateNoteListTags(qint32 noteLid, QString tags) {
 
 // Update the user's notebook name list
 void NoteTable::updateNoteListNotebooks(QString guid, QString name) {
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(db);
     qint32 notebookLid;
     notebookLid = notebookTable.getLid(guid);
     QSqlQuery sql2(*db);
@@ -885,7 +876,7 @@ void NoteTable::updateNoteListNotebooks(QString guid, QString name) {
 
 qint32 NoteTable::getNotesWithTag(QList<qint32> &retval, QString tag) {
     QSqlQuery query(*db);
-    TagTable tagTable;
+    TagTable tagTable(db);
     qint32 tagLid = tagTable.getLid(tag);
     query.prepare("Select lid data from DataStore where data=:tag and key=:key");
     query.bindValue(":tag", tagLid);
@@ -928,7 +919,7 @@ qint32 NoteTable::getIndexNeeded(QList<qint32> &lids) {
 
 void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty) {
     Notebook book;
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(db);
     notebookTable.get(book, notebookLid);
 
     if (book.__isset.guid) {
@@ -1100,7 +1091,7 @@ bool NoteTable::hasTag(qint32 noteLid, qint32 tagLid) {
 void NoteTable::rebuildNoteListTags(qint32 lid) {
     // update the note list
     QStringList tagNames;
-    TagTable tagTable;
+    TagTable tagTable(db);
     QSqlQuery query(*db);
     query.prepare("select data from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
@@ -1280,7 +1271,7 @@ qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {
 void NoteTable::expunge(qint32 lid) {
     Note note;
     this->get(note, lid, true, false);
-    ResourceTable resTable;
+    ResourceTable resTable(db);
     for (unsigned int i=0; note.__isset.resources && i<note.resources.size(); i++) {
         Resource r = note.resources[i];
         resTable.expunge(r.guid);
@@ -1314,7 +1305,7 @@ void NoteTable::expunge(QString guid) {
 qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, QString guid) {
     QSqlQuery query(*db);
     qint32 notebookLid;
-    NotebookTable notebookTable;
+    NotebookTable notebookTable(db);
     notebookLid = notebookTable.getLid(guid);
     query.prepare("Select lid from DataStore where key=:key and data=:notebookLid");
     query.bindValue(":key", NOTE_NOTEBOOK_LID);
@@ -1400,7 +1391,7 @@ qint32 NoteTable::getUnindexedCount() {
 
 
 qint32 NoteTable::duplicateNote(qint32 oldLid) {
-    ConfigStore cs;
+    ConfigStore cs(db);
     qint32 newLid = cs.incrementLidCounter();
 
     QSqlQuery query(*db);
@@ -1423,13 +1414,15 @@ qint32 NoteTable::duplicateNote(qint32 oldLid) {
 
     Note n;
     get(n, newLid, false,false);
-    updateNoteList(newLid, n, true);
+    NotebookTable notebookTable(db);
+    qint32 notebookLid = notebookTable.getLid(n.notebookGuid);
+    updateNoteList(newLid, n, true, notebookLid);
 
     setDirty(newLid, true);
     setIndexNeeded(newLid, true);
 
     // Update all the resources
-    ResourceTable resTable;
+    ResourceTable resTable(db);
     QList<qint32> lids;
     resTable.getResourceList(lids, oldLid);
     for (int i=0; i<lids.size(); i++) {

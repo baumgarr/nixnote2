@@ -60,8 +60,8 @@ void SyncRunner::synchronize() {
         updateSequenceNumber = 0;
 
          defaultMsgTimeout = 30000;
-         comm = new CommunicationManager(this);
          db = new DatabaseConnection("syncrunner");
+         comm = new CommunicationManager(&db->conn);
          connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
     }
     error = false;
@@ -206,7 +206,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
     }
 
-    int chunkSize = 20;
+    int chunkSize = 100;
     bool more = true;
     SyncChunk chunk;
 
@@ -272,16 +272,16 @@ void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
     if (chunk.tags.size() > 0)
         syncRemoteTags(chunk.tags, linkedNotebook);
     if (chunk.notebooks.size() > 0) {
-        syncRemoteNotebooks(chunk.notebooks);
+        syncRemoteNotebooks(chunk.notebooks, linkedNotebook);
     }
     if (chunk.searches.size() > 0)
         syncRemoteSearches(chunk.searches);
     if (chunk.notes.size() > 0)
-        syncRemoteNotes(chunk.notes);
+        syncRemoteNotes(chunk.notes, linkedNotebook);
     if (chunk.resources.size() > 0)
         syncRemoteResources(chunk.resources);
     if (chunk.linkedNotebooks.size() > 0)
-        syncRemoteLinkedNotebooks(chunk.linkedNotebooks);
+        syncRemoteLinkedNotebooksChunk(chunk.linkedNotebooks);
 
     chunk.expungedLinkedNotebooks.clear();;
     chunk.expungedNotebooks.clear();
@@ -433,22 +433,33 @@ void SyncRunner::syncRemoteSearches(vector<SavedSearch> searches) {
 
 // Synchronize remote notebooks with the current database
 // If there is a conflict, the remote wins
-void SyncRunner::syncRemoteNotebooks(vector<Notebook> books) {
+void SyncRunner::syncRemoteNotebooks(vector<Notebook> books, qint32 account) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteNotebooks";
     NotebookTable notebookTable(&db->conn);
+    LinkedNotebookTable ltable(&db->conn);
+    SharedNotebookTable stable(&db->conn);
 
     for (unsigned int i=0; i<books.size() && keepRunning; i++) {
         Notebook t = books.at(i);
 
-        // There are two ways to get the notebook.  We can get
-        // it by name or by guid.  We check both.  We'll find it by
-        // name if a new notebook was created locally with the same name
-        // as the remote.  We then merge them.  We'll find it by guid
-        // if a note was synchrozied with this notebook before a chunk
-        // with this notebook was downloaded.
-        qint32 lid = notebookTable.findByName(t.name);
+        // There are a few to get the notebook.
+        // We can get it by the guid, the share key, the uri, or the name.
+        qint32 lid = account;
         if (lid == 0)
             lid = notebookTable.getLid(t.guid);
+        if (lid == 0)
+            lid = ltable.getLid(t.guid);
+        if (lid == 0 && t.__isset.sharedNotebooks) {
+            for (unsigned int j=0; j<t.sharedNotebooks.size() && lid == 0; j++) {
+                lid = stable.findById(t.sharedNotebooks.at(j).id);
+            }
+        }
+        if (lid == 0 && t.__isset.publishing && t.publishing.__isset.uri) {
+            lid = notebookTable.findByUri(t.publishing.uri);
+        }
+        if (lid == 0)
+            lid = notebookTable.findByName(t.name);
+
 
         if (lid > 0) {
             notebookTable.sync(lid, t);
@@ -465,7 +476,7 @@ void SyncRunner::syncRemoteNotebooks(vector<Notebook> books) {
 
 
 // Synchronize remote notes with the current database
-void SyncRunner::syncRemoteNotes(vector<Note> notes) {
+void SyncRunner::syncRemoteNotes(vector<Note> notes, qint32 account) {
     QLOG_TRACE() << "Entering SyncRunner::syncRemoteNotes";
     NoteTable noteTable(&db->conn);
     NotebookTable bookTable(&db->conn);
@@ -481,9 +492,9 @@ void SyncRunner::syncRemoteNotes(vector<Note> notes) {
                 noteTable.updateNotebook(newLid, conflictNotebook, true);
                 emit noteUpdated(newLid);
              }
-            noteTable.sync(lid, notes.at(i));
+            noteTable.sync(lid, notes.at(i), account);
         } else {
-            noteTable.sync(t);
+            noteTable.sync(t, account);
             lid = noteTable.getLid(t.guid);
         }
         // Remove it from the cache (if it exists)
@@ -580,71 +591,18 @@ void SyncRunner::updateNoteTableTags() {
 
 
 
-// Update the note table with any notebooks or tags that have changed
-//void SyncRunner::updateNoteTableNotebooks() {
-//    QHashIterator<QString, QString> keys(changedNotebooks);
-//    NoteTable noteTable(&db->conn);
-
-//    // Go through the list of changed notebooks
-//    while (keys.hasNext()) {
-//        keys.next();
-//        noteTable.updateNoteListNotebooks(keys.key(), keys.value());
-//    }
-
-//}
-
-
 
 // Synchronize remote linked notebooks
-void SyncRunner::syncRemoteLinkedNotebooks(vector<LinkedNotebook> books) {
-    LinkedNotebookTable ltable(0, &db->conn);
+void SyncRunner::syncRemoteLinkedNotebooksChunk(vector<LinkedNotebook> books) {
+    LinkedNotebookTable ltable(&db->conn);
     for (unsigned int i=0; i<books.size(); i++) {
         qint32 lid = ltable.sync(books[i]);
-        if (!comm->authenticateToLinkedNotebookShard(books[i])) {
-            this->communicationErrorHandler();
-            error = true;
-            return;
-        }
-
-//        NotebookTable ntable(&db->conn);
-
-        // Build the dummy notebook entry
-//        Notebook book;
-//        book.guid = books[i].guid;
-//        book.__isset.guid = true;
-
-//        book.name = books[i].shareName;
-//        book.__isset.name = true;
-
-//        book.updateSequenceNum = books[i].updateSequenceNum;
-//        book.__isset.updateSequenceNum = true;
-
-//        book.published = true;
-//        book.published = true;
-
-//        book.publishing.uri = books[i].uri;
-//        book.publishing.__isset.uri = true;
-//        book.__isset.published = true;
-//        book.__isset.publishing = true;
-
-//        if (books[i].__isset.stack) {
-//            book.__isset.stack = true;
-//            book.stack = books[i].stack;
+//        if (!comm->authenticateToLinkedNotebookShard(books[i])) {
+//            this->communicationErrorHandler();
+//            error = true;
+//            return;
 //        }
-
-//        ntable.sync(lid, book);
-        if (books[i].shareKey != "") {
-            SharedNotebook sharedNotebook;
-            if (!comm->getSharedNotebookByAuth(sharedNotebook)) {
-                this->communicationErrorHandler();
-                error = true;
-                return;
-            }
-            SharedNotebookTable stable(&db->conn);
-            lid = stable.sync(lid, sharedNotebook);
-        }
-
-        comm->disconnectFromLinkedNotebook();
+//        comm->disconnectFromLinkedNotebook();
         emit notebookUpdated(lid, QString::fromStdString(books[i].shareName));
     }
 }
@@ -654,7 +612,7 @@ void SyncRunner::syncRemoteLinkedNotebooks(vector<LinkedNotebook> books) {
 
 // Synchronize remote linked notebooks
 void SyncRunner::syncRemoteLinkedNotebooksActual() {
-    LinkedNotebookTable ltable(0,&db->conn);
+    LinkedNotebookTable ltable(&db->conn);
     QList<qint32> lids;
     ltable.getAll(lids);
     for (int i=0; i<lids.size(); i++) {
@@ -715,7 +673,7 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
 
 // Synchronize remote expunged linked notebooks
 void SyncRunner::syncRemoteExpungedLinkedNotebooks(vector<string> guids) {
-    LinkedNotebookTable btable(0,&db->conn);
+    LinkedNotebookTable btable(&db->conn);
     for (unsigned int i=0; i<guids.size(); i++)
         btable.expunge(guids[0]);
 }
@@ -891,7 +849,7 @@ qint32 SyncRunner::uploadPersonalNotes() {
     qint32 usn;
     qint32 maxUsn = 0;
     NotebookTable notebookTable(&db->conn);
-    LinkedNotebookTable linkedNotebookTable(0,&db->conn);
+    LinkedNotebookTable linkedNotebookTable(&db->conn);
     NoteTable noteTable(&db->conn);
     QList<qint32> lids, validLids, deletedLids;
     noteTable.getAllDirty(lids);

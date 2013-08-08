@@ -64,7 +64,7 @@ private:
     QSqlDatabase *db;
 
 public:
-    NotebookTable(QSqlDatabase *db = NULL);                             // Constructor
+    NotebookTable(QSqlDatabase *db);                             // Constructor
     qint32 getLid(QString guid);            // given a guid, return the lid
     qint32 getLid(string guid);             // Given a guid, return the lid
     qint32 findByName(string &name);           // Find a notebook given a name
@@ -110,6 +110,8 @@ public:
     void resetLinkedNotebooksDirty();                       // mark all linked notebooks as not-dirty
     int getNewUnsequencedCount();                           // Get a count of all notebooks with USN=0
     qint32 addStub(QString guid);                           // Add a stub for later insertion
+    qint32 findByUri(QString uri);
+    qint32 findByUri(string uri);
 };
 
 #endif // NOTEBOOKTABLE_H

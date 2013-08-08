@@ -123,7 +123,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     content.append("</html>");
 
     if (!formatError && !readOnly) {
-        NotebookTable ntable;
+        NotebookTable ntable(global.db);
         qint32 notebookLid = ntable.getLid(note.notebookGuid);
         if (ntable.isReadOnly(notebookLid))
             readOnly = true;
@@ -248,7 +248,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
         return "";
 
     // Get the image resource recognition data.  This tells where to highlight the image
-    ResourceTable resTable;
+    ResourceTable resTable(global.db);
     Resource recoResource;
     resTable.getResourceRecognition(recoResource, resLid);
     if (!recoResource.__isset.recognition || !recoResource.recognition.__isset.size || !recoResource.recognition.__isset.body ||
@@ -338,7 +338,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
   modify the ENML */
 void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     QString mimetype = enMedia.attribute("type");
-    ResourceTable resourceTable;
+    ResourceTable resourceTable(global.db);
     qint32 resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
     Resource r;
     QString highlightString = "";
@@ -396,7 +396,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
             buildInkNote(enmedia, hash);
             return;
     }
-    ResourceTable resTable;
+    ResourceTable resTable(global.db);
     QString contextFileName;
     qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
     Resource r;
@@ -560,7 +560,7 @@ void NoteFormatter::modifyTodoTags(QWebElement &todo) {
 /* If we have an ink note, then we need to pull the image and display it */
 bool NoteFormatter::buildInkNote(QWebElement &docElem, QString &hash) {
 
-    ResourceTable resTable;
+    ResourceTable resTable(global.db);
     qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
     if (resLid <= 0)
         return false;

@@ -92,7 +92,7 @@ void DateTimeEditor::setNote(qint32 lid, Timestamp value, qint32 key) {
 
 
 void DateTimeEditor::valueChanged() {
-    NoteTable noteTable;
+    NoteTable noteTable(global.db);
 
     QDateTime dt = this->dateTime();
     noteTable.updateDate(lid, dt.toMSecsSinceEpoch(), key, true);

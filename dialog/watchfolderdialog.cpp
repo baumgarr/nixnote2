@@ -51,7 +51,7 @@ WatchFolderDialog::WatchFolderDialog(QWidget *parent) :
 
 
     QList<qint32> lids;
-    FileWatcherTable ft;
+    FileWatcherTable ft(global.db);
     ft.getAll(lids);
     table = new QTableWidget(lids.size(),4);
     connect(table, SIGNAL(itemSelectionChanged()), this, SLOT(tableSelection()));
@@ -119,7 +119,7 @@ void WatchFolderDialog::load() {
     table->verticalHeader()->hide();
 
     QList<qint32> lids;
-    FileWatcherTable ft;
+    FileWatcherTable ft(global.db);
     ft.getAll(lids);
     QString dir;
     qint32 notebookLid;
@@ -144,7 +144,7 @@ void WatchFolderDialog::addRow(qint32 lid, int row, QString folder, qint32 noteb
     table->setRowHeight(row, fontHeight);
     dir->setToolTip(folder);
 
-    NotebookTable bookTable;
+    NotebookTable bookTable(global.db);
     Notebook n;
     bookTable.get(n, notebookLid);
 
@@ -228,7 +228,7 @@ void WatchFolderDialog::deletePressed() {
 
     QTableWidgetItem *dirWidget = table->item(row, 0);
     qint32 value = dirWidget->data(Qt::UserRole).toInt();
-    FileWatcherTable ft;
+    FileWatcherTable ft(global.db);
     ft.expunge(value);
     table->removeRow(row);
 

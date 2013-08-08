@@ -32,10 +32,7 @@ extern Global global;
 // Default constructor
 ResourceTable::ResourceTable(QSqlDatabase *db)
 {
-    if (db != NULL)
-        this->db = db;
-    else
-        this->db = global.db;
+    this->db = db;
 }
 
 
@@ -81,7 +78,7 @@ void ResourceTable::sync(qint32 lid, Resource &resource) {
         query.bindValue(":lid", lid);
         query.exec();
     } else {
-        ConfigStore cs;
+        ConfigStore cs(db);
         lid = cs.incrementLidCounter();
     }
 
@@ -97,7 +94,7 @@ void ResourceTable::sync(qint32 lid, Resource &resource) {
 qint32 ResourceTable::getLid(QString noteGuid, QString guid) {
 
     QSqlQuery query(*db);
-    NoteTable n;
+    NoteTable n(db);
     qint32 noteLid = n.getLid(noteGuid);
     query.prepare("Select a.lid from DataStore a where a.data=:data and a.key=:key and a.lid = (select distinct b.lid from DataStore b where b.key=:key2 and b.data=:noteLid)");
     query.bindValue(":data", guid);
@@ -163,7 +160,7 @@ bool ResourceTable::get(Resource &resource, qint32 lid) {
     query.exec();
     if (query.size() == 0)
         return false;
-    NoteTable ntable;
+    NoteTable ntable(db);
     while (query.next()) {
         qint32 key = query.value(0).toInt();
         switch (key) {
@@ -409,7 +406,7 @@ bool ResourceTable::exists(string noteGuid, string guid) {
 
 // Add a resource to the database
 qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
-    ConfigStore cs;
+    ConfigStore cs(db);
     qint32 lid = l;
     if (lid <= 0)
         lid = cs.incrementLidCounter();
@@ -429,7 +426,7 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
     query.bindValue(":data", true);
     query.exec();
 
-    NoteTable noteTable;
+    NoteTable noteTable(db);
     qint32 noteLid = noteTable.getLid(t.noteGuid);
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_NOTE_LID);
@@ -685,7 +682,7 @@ bool ResourceTable::getResourceRecognition(Resource &resource, qint32 lid) {
 // Get a resource for a note by the resource data hash.  This is useful
 // when going through a note and finding the resource for that note
 qint32 ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
-    NoteTable noteTable;
+    NoteTable noteTable(db);
     qint32 notelid = noteTable.getLid(noteGuid);
 
     QSqlQuery query(*db);
@@ -802,9 +799,16 @@ void ResourceTable::expunge(string guid) {
 
 
 // Permanently delete a resource
-void ResourceTable::expunge(QString guid) {
-    int lid = this->getLid(guid);
-    this->expunge(lid);
+void ResourceTable::expungeByNote(qint32 notebookLid) {
+    QSqlQuery query(*db);
+    query.prepare("Select lid from datastore where data=:data and key=:key");
+    query.bindValue(":key", RESOURCE_NOTE_LID);
+    query.bindValue(":data", notebookLid);
+    query.exec();
+    while(query.next()){
+        qint32 lid = query.value(0).toInt();
+        expunge(lid);
+    }
 }
 
 
@@ -860,6 +864,7 @@ qint32 ResourceTable::addStub(qint32 resLid, qint32 noteLid) {
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":data", QString::number(resLid));
     query.exec();
+    return resLid;
 }
 
 // Get the owning note's LID for a resource.

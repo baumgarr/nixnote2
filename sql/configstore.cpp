@@ -29,9 +29,8 @@ extern Global global;
 //**********************
 ConfigStore::ConfigStore(QSqlDatabase *conn)
 {
-    if (conn == NULL)
-        db = global.db;
 
+    db = conn;
     // Check if the database exists.  If not, create it.
     QSqlQuery sql(*db);
     sql.exec("Select * from sqlite_master where type='table' and name='ConfigStore';");

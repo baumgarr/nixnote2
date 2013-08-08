@@ -19,8 +19,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "ntitleeditor.h"
 #include "sql/notetable.h"
+#include "global.h"
 
 #include <QPalette>
+
+extern Global global;
 
 NTitleEditor::NTitleEditor(QWidget *parent) :
     QLineEdit(parent)
@@ -92,7 +95,7 @@ void NTitleEditor::titleChanged(QString text) {
     // we can also get here when focus is lost.
     if (!hasFocus()) {
         if (text.trimmed() != initialTitle.trimmed() || priorTitle.trimmed() != text.trimmed()) {
-            NoteTable noteTable;
+            NoteTable noteTable(global.db);
             noteTable.updateTitle(currentLid, text, true);
             emit(titleChanged());
             setText(text);
@@ -134,7 +137,7 @@ void NTitleEditor::setTitleFromContent(QString s) {
 
 void NTitleEditor::checkNoteTitleChange() {
     if (this->text() != initialTitle) {
-        NoteTable noteTable;
+        NoteTable noteTable(global.db);
         noteTable.updateTitle(currentLid, text(), true);
         emit(titleChanged());
         priorTitle = text();

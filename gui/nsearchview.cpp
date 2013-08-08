@@ -143,7 +143,7 @@ void NSearchView::loadData() {
     query.exec("Select lid, name from SearchModel order by name");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
-        SearchTable table;
+        SearchTable table(global.db);
         if (!table.isDeleted(lid)) {
             NSearchViewItem *newWidget = new NSearchViewItem();
             newWidget->setData(NAME_POSITION, Qt::DisplayRole, query.value(1).toString());
@@ -182,6 +182,7 @@ void NSearchView::searchExpunged(qint32 lid) {
     if (this->dataStore.contains(lid)) {
         NSearchViewItem *item = this->dataStore.value(lid);
         this->removeItemWidget(item, 0);
+        this->dataStore.remove(lid);
         delete item;
     }
     this->resetSize();
@@ -272,7 +273,7 @@ void NSearchView::buildSelection() {
     if (selectedItems.size() > 0) {
         newFilter->setSavedSearch(*(NSearchViewItem*)(selectedItems[0]));
         qint32 lid = selectedItems[0]->data(NAME_POSITION, Qt::UserRole).toInt();
-        SearchTable stable;
+        SearchTable stable(global.db);
         SavedSearch search;
         if (stable.get(search, lid))
             newFilter->setSearchString(QString::fromStdString(search.query));
@@ -344,7 +345,7 @@ void NSearchView::addRequested() {
     if (!dialog.okPressed)
         return;
 
-    SearchTable table;
+    SearchTable table(global.db);
     NSearchViewItem *newWidget = new NSearchViewItem();
     QString name = dialog.name.text().trimmed();
     qint32 lid = table.findByName(name);
@@ -387,7 +388,7 @@ void NSearchView::deleteRequested() {
         if (ret == QMessageBox::No)
             return;
     }
-    SearchTable s;
+    SearchTable s(global.db);
     s.deleteSearch(lid);
     items[0]->setHidden(true);
     dataStore.remove(lid);
@@ -412,7 +413,7 @@ void NSearchView::renameRequested() {
 void NSearchView::editComplete() {
     QString text = editor->text().trimmed();
     qint32 lid = editor->lid;
-    SearchTable table;
+    SearchTable table(global.db);
     SavedSearch s;
     table.get(s, lid);
 

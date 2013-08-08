@@ -33,7 +33,7 @@ NNotebookViewItem::NNotebookViewItem(qint32 lid, QTreeWidget* parent):QTreeWidge
     count = 0;
     this->lid = 0;
     this->lid = lid;
-    this->setIconType(this->lid);
+    this->setIconType();
 }
 
 
@@ -41,7 +41,7 @@ NNotebookViewItem::NNotebookViewItem(qint32 lid):QTreeWidgetItem(){
     count = 0;
     //this->type = type; // what?
     this->lid = lid;
-    this->setIconType(lid);
+    this->setIconType();
 }
 
 void NNotebookViewItem::setRootColor(bool val) {
@@ -89,10 +89,10 @@ void NNotebookViewItem::setType(NNotebookWidgetType type) {
 }
 
 
-void NNotebookViewItem::setIconType(qint32 type) {
-    LinkedNotebookTable linkedTable;
-    SharedNotebookTable sharedTable;
-    NotebookTable bookTable;
+void NNotebookViewItem::setIconType() {
+    LinkedNotebookTable linkedTable(global.db);
+    SharedNotebookTable sharedTable(global.db);
+    NotebookTable bookTable(global.db);
 
     if (lid == 0) {
         this->setType(Stack);
