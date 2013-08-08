@@ -362,6 +362,16 @@ void NixNote::setupGui() {
     this->updateSelectionCriteria();
     // Set default focuse to the editor window
     tabWindow->currentBrowser()->editor->setFocus();
+
+    QStringList accountNames = global.accountsManager->nameList();
+    QList<int> ids = global.accountsManager->idList();
+    for (int i=0; i<ids.size(); i++) {
+        if (ids[i] == global.accountsManager->currentId) {
+            setWindowTitle("NixNote - " +accountNames[i]);
+            i=ids.size();
+        }
+    }
+
 }
 
 
