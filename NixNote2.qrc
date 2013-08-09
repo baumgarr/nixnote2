@@ -49,5 +49,6 @@
         <file alias="eraser.png">images/eraser.png</file>
         <file alias="grid.png">images/grid.png</file>
         <file alias="navigation.png">images/navigation.png</file>
+        <file alias="splash_logo.png">images/splash_logo.png</file>
     </qresource>
 </RCC>

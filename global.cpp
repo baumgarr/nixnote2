@@ -100,7 +100,9 @@ void Global::setup(StartupConfig startupConfig) {
 
     setupDateTimeFormat();
 
-
+    settings->beginGroup("Appearance");
+    pdfPreview = settings->value("showPDFs", true).toBool();
+    settings->endGroup();
 }
 
 

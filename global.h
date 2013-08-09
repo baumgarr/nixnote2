@@ -101,6 +101,7 @@ public:
     string username;
     string password;
     bool connected;
+    bool pdfPreview;
     QSharedMemory *sharedMemory;
     bool confirmDeletes();
     QString tagBehavior();

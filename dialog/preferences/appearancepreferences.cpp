@@ -30,6 +30,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     setLayout(mainLayout);
 
     showTrayIcon = new QCheckBox(tr("Show tray icon"), this);
+    showPDFs = new QCheckBox(tr("Display PDFs inline"), this);
+    showSplashScreen = new QCheckBox(tr("Show splash screen on startup"), this);
 
     defaultNotebookOnStartupLabel = new QLabel(tr("Notebook to use on startup"),this);
     defaultNotebookOnStartup = new QComboBox();
@@ -39,11 +41,15 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     defaultNotebookOnStartup->setEnabled(false);
 
     mainLayout->addWidget(showTrayIcon,0,0);
-    mainLayout->addWidget(defaultNotebookOnStartupLabel,1,0);
-    mainLayout->addWidget(defaultNotebookOnStartup, 1,1);
+    mainLayout->addWidget(showSplashScreen, 1,0);
+    mainLayout->addWidget(showPDFs, 2,0);
+    mainLayout->addWidget(defaultNotebookOnStartupLabel,3,0);
+    mainLayout->addWidget(defaultNotebookOnStartup, 3,1);
 
     global.settings->beginGroup("Appearance");
     showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
+    showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
+    showSplashScreen->setChecked(global.settings->value("showSplashScreen", true).toBool());
     global.settings->endGroup();
 }
 
@@ -51,5 +57,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 void AppearancePreferences::saveValues() {
     global.settings->beginGroup("Appearance");
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
+    global.settings->setValue("showPDFs", showPDFs->isChecked());
+    global.pdfPreview = showPDFs->isChecked();
+    global.settings->setValue("showSplashScreen", showSplashScreen->isChecked());
     global.settings->endGroup();
 }

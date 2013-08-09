@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPrinter>
 #include <QDesktopWidget>
 #include <QFileIconProvider>
+#include <QSplashScreen>
 
 #include "sql/notetable.h"
 #include "dialog/screencapture.h"
@@ -73,6 +74,15 @@ class SyncRunner;
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
+    splashScreen = new QSplashScreen(QPixmap(":splash_logo.png"));
+    global.settings->beginGroup("Appearance");
+    if(global.settings->value("showSplashScreen", true).toBool()) {
+        splashScreen->show();
+        QTimer::singleShot(2500, splashScreen, SLOT(close()));
+    }
+    global.settings->endGroup();
+
+
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     this->setDebugLevel();
 
@@ -135,6 +145,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 // Destructor to call when all done
 NixNote::~NixNote()
 {
+    delete splashScreen;
     syncThread.quit();
     indexThread.quit();
     counterThread.quit();

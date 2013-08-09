@@ -238,7 +238,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         NoteFormatter formatter;
         if (criteria->isSearchStringSet())
             formatter.setHighlightText(criteria->getSearchString());
-        formatter.setNote(n, true);
+        formatter.setNote(n, global.pdfPreview);
         formatter.setHighlight();
         content = formatter.rebuildNoteHTML();
         if (!criteria->isSearchStringSet()) {

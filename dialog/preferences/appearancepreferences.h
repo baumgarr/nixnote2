@@ -44,6 +44,8 @@ public:
     explicit AppearancePreferences(QWidget *parent = 0);
     void saveValues();
     QCheckBox *showTrayIcon;
+    QCheckBox *showPDFs;
+    QCheckBox *showSplashScreen;
 
     
 signals:

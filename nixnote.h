@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSystemTrayIcon>
 #include <QToolBar>
 #include <QSlider>
+#include <QSplashScreen>
 
 #include "watcher/filewatchermanager.h"
 #include "gui/ntabwidget.h"
@@ -138,6 +139,7 @@ private:
     void saveContents();
     void saveNoteColumnPositions();
     void saveNoteColumnWidths();
+    QSplashScreen *splashScreen;
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor
