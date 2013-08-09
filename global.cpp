@@ -30,7 +30,6 @@ Global::Global()
 {
 
     listView = ListViewWide;
-    sharedMemory = new QSharedMemory("1b73cc55-9a2f-441b-877a-ca1d0131cd21");
     FilterCriteria *criteria = new FilterCriteria();
     shortcutKeys = new ShortcutKeys();
     filterCriteria.push_back(criteria);
@@ -46,7 +45,6 @@ Global::Global()
     criteria->resetSearchString = true;
     username = "";
     password = "";
-    //jvm.create_jvm();
 }
 
 
@@ -65,9 +63,17 @@ void Global::setup(StartupConfig startupConfig) {
     QString settingsFile = fileManager.getHomeDirPath("") + "nixnote.conf";
 
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
-    globalSettings->beginGroup("SaveState");
-    int accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
-    globalSettings->endGroup();
+    int accountId = startupConfig.accountId;
+    if (accountId <=0) {
+        globalSettings->beginGroup("SaveState");
+        accountId = globalSettings->value("lastAccessedAccount", 1).toInt();
+        globalSettings->endGroup();
+    }
+
+    QString key = "1b73cc55-9a2f-441b-877a-ca1d0131cd2"+
+            QString::number(accountId);
+    sharedMemory = new QSharedMemory(key);
+
 
     settingsFile = fileManager.getHomeDirPath("") + "nixnote-"+QString::number(accountId)+".conf";
 

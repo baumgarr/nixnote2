@@ -87,17 +87,25 @@ int main(int argc, char *argv[])
 
 
     // Begin setting up the environment
+    StartupConfig startupConfig;
     global.argc = argc;
     global.argv = argv;
+
+    startupConfig.accountId = -1;
+
+    for (int i=1; i<=argc; i++) {
+        QString parm(argv[i]);
+        if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
+            parm = parm.mid(12);
+            startupConfig.accountId = parm.toInt();
+        }
+    }
 
     // Show Qt version.  This is useful for debugging
     QLOG_INFO() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
 
-
-    StartupConfig startupConfig;
     startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
     startupConfig.name = "NixNote";
-    startupConfig.accountId = 1;
     global.setup(startupConfig);
 
     // Create a shared memory region.  We use this to communicate
