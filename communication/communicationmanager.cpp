@@ -94,10 +94,7 @@ bool CommunicationManager::getSyncState(string token, SyncState &syncState) {
 
 
 // Get a sync chunk
-bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int start, int chunkSize, bool fullSync, int errorCount) {
-    if (token == "")
-        token = authToken;
-
+bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, bool fullSync, int errorCount) {
     // Get rid of old stuff from last chunk
     while(inkNoteList->size() > 0) {
         QPair<QString, QImage*> *pair = inkNoteList->takeLast();
@@ -108,11 +105,11 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
 
     // Try to get the chunk
     try {
-        noteStoreClient->getSyncChunk(chunk, token, start, chunkSize, fullSync);
+        noteStoreClient->getSyncChunk(chunk, authToken, start, chunkSize, fullSync);
         for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
             QLOG_DEBUG() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
             Note n;
-            noteStoreClient->getNote(n, token, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
+            noteStoreClient->getNote(n, authToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
             QLOG_DEBUG() << "Note Retrieved";
             chunk.notes[i] = n;
             if (n.__isset.resources && n.resources.size() > 0) {
@@ -126,7 +123,7 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
         for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
             QLOG_DEBUG() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
             Resource r;
-            noteStoreClient->getResource(r, token, chunk.resources[i].guid, true, true, true, true);
+            noteStoreClient->getResource(r, authToken, chunk.resources[i].guid, true, true, true, true);
             QLOG_DEBUG() << "Resource retrieved";
             chunk.resources[i] = r;
         }
@@ -147,7 +144,7 @@ bool CommunicationManager::getSyncChunk(string token, SyncChunk &chunk, int star
             disconnect();
             QLOG_ERROR() << "Reconnecting";
             connect();
-            return getSyncChunk(token, chunk, start, chunkSize, fullSync, errorCount);
+            return getSyncChunk(chunk, start, chunkSize, fullSync, errorCount);
         }
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
         return false;
@@ -196,10 +193,6 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook book
 
     try {
         if (book.shareKey != "") {
-//            shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
-//            QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
-//            sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-//            sslSocketFactory->authenticate(true);
 
             linkedSslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
             shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(linkedSslSocketNoteStore));
@@ -312,6 +305,7 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
             disconnect();
             QLOG_ERROR() << "Reconnecting";
             connect();
+            authenticateToLinkedNotebookShard(linkedNotebook);
             return getLinkedNotebookSyncChunk(chunk, linkedNotebook, start,  chunkSize, fullSync, errorCount);
         }
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;

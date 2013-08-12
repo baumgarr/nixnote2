@@ -216,7 +216,7 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
         QSqlQuery query(db->conn);
         //query.exec("begin");
-        rc = comm->getSyncChunk("", chunk, updateSequenceNumber, chunkSize, fullSync);
+        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, fullSync);
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;

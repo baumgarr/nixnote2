@@ -116,7 +116,7 @@ public:
     CommunicationError error;
     bool connect();
     bool getSyncState(string authToken, SyncState &syncState);
-    bool getSyncChunk(string token, SyncChunk &chunk, int start, int chunkSize, bool fullSync=false, int errorCount=0);
+    bool getSyncChunk(SyncChunk &chunk, int start, int chunkSize, bool fullSync=false, int errorCount=0);
     bool authenticateToLinkedNotebookShard(LinkedNotebook book);
     bool getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook book);
     bool getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook book, int start, int chunkSize, bool fullSync=false, int errorCount=0);
