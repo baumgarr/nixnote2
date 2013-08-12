@@ -56,11 +56,11 @@ private:
     QTextDocument *textDocument;
     Thumbnailer *hammer;
     DatabaseConnection *db;
-    void initialize();
 
 public:
     bool keepRunning;
     bool pauseIndexing;
+    void initialize();
     IndexRunner();
     ~IndexRunner();
 

@@ -412,6 +412,7 @@ void NixNote::syncThreadStarted() {
 
 void NixNote::indexThreadStarted() {
     indexRunner.moveToThread(&indexThread);
+    indexRunner.initialize();
 }
 
 
