@@ -64,14 +64,14 @@ void NMainMenuBar::setupFileMenu() {
     QList<QString> names = global.accountsManager->nameList();
     QList<int> ids = global.accountsManager->idList();
     for (int i=0; i<ids.size(); i++) {
-        QAction *accountAction = new QAction(names[i], this);
+        QAction *accountAction = new QAction(names[i]+" - (" +QString::number(ids[i])+")", this);
         accountAction->setData(ids[i]);
         accountAction->setCheckable(true);
         accountAction->setFont(f);
         if (global.accountsManager->currentId == ids[i])
             accountAction->setChecked(true);
         else {
-            accountAction->setText(tr("Switch to ")+names[i]);
+            accountAction->setText(tr("Switch to ")+names[i] +" - (" +QString::number(ids[i])+")");
         }
         fileMenu->addAction(accountAction);
         connect(accountAction, SIGNAL(triggered()), parent, SLOT(switchUser()));
