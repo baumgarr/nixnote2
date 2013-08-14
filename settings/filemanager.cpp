@@ -63,10 +63,12 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
     QString settingsFile = getHomeDirPath("") + "nixnote.conf";
     QSettings globalSettings(settingsFile, QSettings::IniFormat);
 
-    globalSettings.beginGroup("SaveState");
-    int accountId = globalSettings.value("lastAccessedAccount", 1).toInt();
-    globalSettings.endGroup();
-    id = accountId;
+    if (id <=0) {
+        globalSettings.beginGroup("SaveState");
+        int accountId = globalSettings.value("lastAccessedAccount", 1).toInt();
+        globalSettings.endGroup();
+        id = accountId;
+    }
 
     logsDir.setPath(homeDirPath+"logs-" +QString::number(id));
     createDirOrCheckWriteable(logsDir);

@@ -24,6 +24,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
+struct QPairFirstComparer
+{
+    template<typename T1, typename T2>
+    bool operator()(const QPair<T1,T2> & a, const QPair<T1,T2> & b) const
+    {
+        return a.first < b.first;
+    }
+};
+
 NMainMenuBar::NMainMenuBar(QWidget *parent) :
     QMenuBar(parent)
 {
@@ -63,15 +72,20 @@ void NMainMenuBar::setupFileMenu() {
     // Start adding the user accounts
     QList<QString> names = global.accountsManager->nameList();
     QList<int> ids = global.accountsManager->idList();
+    QList< QPair<int, QString> > pairList;
     for (int i=0; i<ids.size(); i++) {
-        QAction *accountAction = new QAction(names[i]+" - (" +QString::number(ids[i])+")", this);
-        accountAction->setData(ids[i]);
+        pairList.append(QPair<int,QString>(ids[i], names[i]));
+    }
+    qSort(pairList.begin(), pairList.end(), QPairFirstComparer());
+    for (int i=0; i<ids.size(); i++) {
+        QAction *accountAction = new QAction(pairList[i].second +" - (" +QString::number(pairList[i].first)+")", this);
+        accountAction->setData(pairList[i].first);
         accountAction->setCheckable(true);
         accountAction->setFont(f);
-        if (global.accountsManager->currentId == ids[i])
+        if (global.accountsManager->currentId == pairList[i].first)
             accountAction->setChecked(true);
         else {
-            accountAction->setText(tr("Switch to ")+names[i] +" - (" +QString::number(ids[i])+")");
+            accountAction->setText(tr("Switch to ")+pairList[i].second +" - (" +QString::number(pairList[i].first)+")");
         }
         fileMenu->addAction(accountAction);
         connect(accountAction, SIGNAL(triggered()), parent, SLOT(switchUser()));
