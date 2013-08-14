@@ -139,6 +139,7 @@ public:
     qint32 getAllDeleted(QList<qint32> &lids);
     qint32 duplicateNote(qint32 oldLid);
     qint32 getAllDirty(QList<qint32> &lids);                // get all dirty notes
+    qint32 getAllDirty(QList<qint32> &lids, qint32 notebookLid);  // Get all dirty for a particular (linked) notebook
     void setUpdateSequenceNumber(qint32 lid, qint32 usn);   // set the update sequence number
     qint32 getNotebookLid(qint32 noteLid);                  // Get the notebook for a note
     void setThumbnail(qint32 lid, QString filename);        // File containing the thumbnail

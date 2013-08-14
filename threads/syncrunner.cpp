@@ -157,7 +157,7 @@ void SyncRunner::evernoteSync() {
     // Synchronize linked notebooks
     syncRemoteLinkedNotebooksActual();
 
-    updateNoteTableTags();
+    //updateNoteTableTags();
 
     if (!comm->getSyncState("", syncState)) {
         error =true;
@@ -244,19 +244,6 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
 // Deal with the sync chunk returned
 void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
-
-    // For public linked notebooks, we change any note's GUID to the
-    // linked notebook guid.  This saves headaches later
-//    if (linkedNotebook > 0) {
-//        LinkedNotebookTable ltable(0, &db->conn);
-//        LinkedNotebook book;
-//        ltable.get(book, linkedNotebook);
-//        if (book.shareKey == "") {
-//            for (unsigned int i=0; i<chunk.notes.size(); i++) {
-//                chunk.notes[i].notebookGuid =  book.guid;
-//            }
-//        }
-//    }
 
     // Now start processing the chunk
     if (chunk.expungedNotes.size() > 0)
@@ -530,62 +517,62 @@ void SyncRunner::syncRemoteResources(vector<Resource> resources) {
 
 // Update the note table with any notebooks or tags that have changed
 void SyncRunner::updateNoteTableTags() {
-    QHashIterator<QString, QString> keys(changedTags);
-    NoteTable noteTable(&db->conn);
-    TagTable tagTable(&db->conn);
-    QList<qint32> notesChanged;
-    QHash<QString,QString> tagHash;
+//    QHashIterator<QString, QString> keys(changedTags);
+//    NoteTable noteTable(&db->conn);
+//    TagTable tagTable(&db->conn);
+//    QList<qint32> notesChanged;
+//    QHash<QString,QString> tagHash;
 
-    // Create a list of tags.  We'll use this multiple times to avoid needing
-    // to do multiple lookups.
-    QList<qint32> tagLids;
-    tagTable.getAll(tagLids);
-    for (qint32 i=0; i<tagLids.size(); i++) {
-        Tag tag;
-        tagTable.get(tag, tagLids.at(i));
-        tagHash.insert(QString::fromStdString(tag.guid), QString::fromStdString(tag.name));
-    }
+//    // Create a list of tags.  We'll use this multiple times to avoid needing
+//    // to do multiple lookups.
+//    QList<qint32> tagLids;
+//    tagTable.getAll(tagLids);
+//    for (qint32 i=0; i<tagLids.size(); i++) {
+//        Tag tag;
+//        tagTable.get(tag, tagLids.at(i));
+//        tagHash.insert(QString::fromStdString(tag.guid), QString::fromStdString(tag.name));
+//    }
 
-    while (keys.hasNext()) {
-        keys.next();
+//    while (keys.hasNext()) {
+//        keys.next();
 
-        // Find out which notes need to have the tag names updated
-        QList<qint32> noteLids;
-        noteTable.findNotesByTag(noteLids, keys.key());
+//        // Find out which notes need to have the tag names updated
+//        QList<qint32> noteLids;
+//        noteTable.findNotesByTag(noteLids, keys.key());
 
-        // Go through the list of notes and rebuild the tag name string
-        for (qint32 i=0; i<noteLids.size(); i++) {
+//        // Go through the list of notes and rebuild the tag name string
+//        for (qint32 i=0; i<noteLids.size(); i++) {
 
-            // If we haven't already rebuild this note, then we rebuild it now
-            // If multiple tags for a note changed, we can run into the same
-            // note twice, but rebuilding it once is all we need.
-            if (!notesChanged.contains(noteLids[i])) {
-                notesChanged.append(noteLids[i]);
-                QMap<QString,QString> tagMap;
-                Note n;
-                noteTable.get(n, noteLids[i], false, false);
-                for (unsigned int j=0; j<n.tagGuids.size(); j++) {
-                    string noteTag = n.tagGuids.at(j);
-                    QString tname = tagHash.value(QString::fromStdString(noteTag));
-                    tagMap.insert(tname.toUpper(), tname);
-                }
+//            // If we haven't already rebuild this note, then we rebuild it now
+//            // If multiple tags for a note changed, we can run into the same
+//            // note twice, but rebuilding it once is all we need.
+//            if (!notesChanged.contains(noteLids[i])) {
+//                notesChanged.append(noteLids[i]);
+//                QMap<QString,QString> tagMap;
+//                Note n;
+//                noteTable.get(n, noteLids[i], false, false);
+//                for (unsigned int j=0; j<n.tagGuids.size(); j++) {
+//                    string noteTag = n.tagGuids.at(j);
+//                    QString tname = tagHash.value(QString::fromStdString(noteTag));
+//                    tagMap.insert(tname.toUpper(), tname);
+//                }
 
-                //Now we have a map of the possible names, we need to build
-                // the string for the table
-                QString tagNames;
-                QMapIterator<QString,QString> mapI(tagMap);
-                while (mapI.hasNext()) {
-                    mapI.next();
-                    if (tagNames!="") {
-                        tagNames=tagNames+", ";
-                    }
-                    tagNames = tagNames +mapI.value();
-                }
-                noteTable.updateNoteListTags(noteLids[i],tagNames);
+//                //Now we have a map of the possible names, we need to build
+//                // the string for the table
+//                QString tagNames;
+//                QMapIterator<QString,QString> mapI(tagMap);
+//                while (mapI.hasNext()) {
+//                    mapI.next();
+//                    if (tagNames!="") {
+//                        tagNames=tagNames+", ";
+//                    }
+//                    tagNames = tagNames +mapI.value();
+//                }
+//                noteTable.updateNoteListTags(noteLids[i],tagNames);
 
-            }
-        }
-    }
+//            }
+//        }
+//    }
 
 }
 
@@ -597,12 +584,6 @@ void SyncRunner::syncRemoteLinkedNotebooksChunk(vector<LinkedNotebook> books) {
     LinkedNotebookTable ltable(&db->conn);
     for (unsigned int i=0; i<books.size(); i++) {
         qint32 lid = ltable.sync(books[i]);
-//        if (!comm->authenticateToLinkedNotebookShard(books[i])) {
-//            this->communicationErrorHandler();
-//            error = true;
-//            return;
-//        }
-//        comm->disconnectFromLinkedNotebook();
         emit notebookUpdated(lid, QString::fromStdString(books[i].shareName));
     }
 }
@@ -664,6 +645,33 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
                 }
             }
         }
+
+        // Now upload any dirty notes
+        NoteTable ntable(&db->conn);
+        QList<qint32> noteLids;
+        ntable.getAllDirty(noteLids, lids[i]);
+        for (int j=0; j<noteLids.size(); j++) {
+            Note n;
+            qint32 oldUsn = n.updateSequenceNum;
+            ntable.get(n, noteLids[j], true,true);
+            qint32 usn = comm->uploadLinkedNote(n);
+            if (usn == 0) {
+                this->communicationErrorHandler();
+                error = true;
+                return;
+            }
+            if (usn > startingSequenceNumber) {
+                startingSequenceNumber = usn;
+                if (oldUsn == 0)
+                    ntable.updateGuid(noteLids[j], n.guid);
+                ntable.setUpdateSequenceNumber(noteLids[j], usn);
+                ntable.setDirty(noteLids[j], false);
+                emit(noteSynchronized(noteLids[j], false));
+            } else {
+                error = true;
+            }
+        }
+
         comm->disconnectFromLinkedNotebook();
     }
 }

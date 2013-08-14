@@ -1489,6 +1489,24 @@ qint32 NoteTable::getAllDirty(QList<qint32> &lids) {
 
 
 
+// Get all dirty lids
+qint32 NoteTable::getAllDirty(QList<qint32> &lids, qint32 linkedNotebookLid) {
+    QSqlQuery query(*db);
+    lids.clear();
+    query.prepare("Select lid from DataStore where key=:key and data = 'true' and lid=(select lid from datastore where key=:notebookKey and data=:notebookLid)");
+    query.bindValue(":key", NOTE_ISDIRTY);
+    query.bindValue(":notebookKey", NOTE_NOTEBOOK_LID);
+    query.bindValue(":notebookLid", linkedNotebookLid);
+    query.exec();
+    while(query.next()) {
+        lids.append(query.value(0).toInt());
+    }
+    return lids.size();
+}
+
+
+
+
 
 
 

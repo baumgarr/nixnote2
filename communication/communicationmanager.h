@@ -139,6 +139,7 @@ public:
     qint32 expungeNotebook(string guid);
 
     qint32 uploadNote(Note &note);
+    qint32 uploadLinkedNote(Note &note);
     qint32 deleteNote(string guid);
 
     bool getNotebookList(vector<Notebook> &list);
