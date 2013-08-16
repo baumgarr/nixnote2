@@ -109,41 +109,42 @@ private:
     bool init();
     QNetworkAccessManager *networkAccessManager;
     void checkForInkNotes(vector<Resource> &resources, QString shard, QString authToken);
+    void handleEDAMSystemException(EDAMSystemException e);
 
 public:
     CommunicationManager(QSqlDatabase *db);
     ~CommunicationManager();
     CommunicationError error;
     bool connect();
-    bool getSyncState(string authToken, SyncState &syncState);
+    bool getSyncState(string authToken, SyncState &syncState, int errorCount=0);
     bool getSyncChunk(SyncChunk &chunk, int start, int chunkSize, bool fullSync=false, int errorCount=0);
     bool authenticateToLinkedNotebookShard(LinkedNotebook book);
-    bool getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook book);
+    bool getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook book, int errorCount=0);
     bool getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook book, int start, int chunkSize, bool fullSync=false, int errorCount=0);
     string getToken();
     void disconnect();
     void disconnectFromLinkedNotebook();
     bool authenticateToLinkedNotebook(AuthenticationResult &authResult, LinkedNotebook book);
-    bool getUserInfo(User &user);
+    bool getUserInfo(User &user, int errorCount=0);
     QList< QPair<QString, QImage*>* > *inkNoteList;
     QList< QPair<QString, QImage*>* > *thumbnailList;
     bool getSharedNotebookByAuth(SharedNotebook &sharedNotebook);
 
-    qint32 uploadSavedSearch(SavedSearch &search);
-    qint32 expungeSavedSearch(string guid);
+    qint32 uploadSavedSearch(SavedSearch &search, int errorCount=0);
+    qint32 expungeSavedSearch(string guid, int errorCount=0);
 
-    qint32 uploadTag(Tag &tag);
-    qint32 expungeTag(string guid);
+    qint32 uploadTag(Tag &tag, int errorCount=0);
+    qint32 expungeTag(string guid, int errorCount=0);
 
-    qint32 uploadNotebook(Notebook &notebook);
-    qint32 expungeNotebook(string guid);
+    qint32 uploadNotebook(Notebook &notebook, int errorCount=0);
+    qint32 expungeNotebook(string guid, int errorCount=0);
 
-    qint32 uploadNote(Note &note);
-    qint32 uploadLinkedNote(Note &note);
-    qint32 deleteNote(string guid);
+    qint32 uploadNote(Note &note, int errorCount=0);
+    qint32 uploadLinkedNote(Note &note, LinkedNotebook linkedNotebook, int errorCount=0);
+    qint32 deleteNote(string guid, int errorCount=0);
 
-    bool getNotebookList(vector<Notebook> &list);
-    bool getTagList(vector<Tag> &list);
+    bool getNotebookList(vector<Notebook> &list, int errorCount=0);
+    bool getTagList(vector<Tag> &list, int errorCount=0);
 
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);

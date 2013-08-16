@@ -654,7 +654,7 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
             Note n;
             qint32 oldUsn = n.updateSequenceNum;
             ntable.get(n, noteLids[j], true,true);
-            qint32 usn = comm->uploadLinkedNote(n);
+            qint32 usn = comm->uploadLinkedNote(n, book);
             if (usn == 0) {
                 this->communicationErrorHandler();
                 error = true;
@@ -939,6 +939,15 @@ void SyncRunner::communicationErrorHandler() {
             emitMsg = comm->error.message;
         else
             emitMsg = "Evernote System Error communicating with Evernote.";
+        emit(setMessage(emitMsg, 0));
+        return;
+    }
+
+    if (comm->error.type == CommunicationError::RateLimitExceeded) {
+        if (comm->error.message != "")
+            emitMsg = comm->error.message;
+        else
+            emitMsg = "API rate limit exceeded.  Please try again in one hour.";
         emit(setMessage(emitMsg, 0));
         return;
     }

@@ -36,7 +36,8 @@ public:
         EDAMNotFoundException = 5,
         StdException = 6,
         TSSLException = 7,
-        TException = 8
+        TException = 8,
+        RateLimitExceeded = 9
     };
 
     CommunicationErrorType type;

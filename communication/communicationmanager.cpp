@@ -21,6 +21,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
+#include <execinfo.h>
 
 extern Global global;
 
@@ -74,7 +75,7 @@ bool CommunicationManager::connect() {
 
 
 // Get the current sync state
-bool CommunicationManager::getSyncState(string token, SyncState &syncState) {
+bool CommunicationManager::getSyncState(string token, SyncState &syncState, int errorCount) {
     if (token == "")
         token = authToken;
     try {
@@ -85,12 +86,50 @@ bool CommunicationManager::getSyncState(string token, SyncState &syncState) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return getSyncState(token, syncState, errorCount);
+        }
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        error.message = tr("Transport error getting sync state: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
+        return false;
+    } catch (std::exception e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return getSyncState(token, syncState, errorCount);
+        }
+        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+        error.message = tr("Std Error getting sync state: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::StdException;
+        return false;
+    } catch (...) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return getSyncState(token, syncState, errorCount);
+        }
+        QLOG_ERROR() << "Unhandled exception:" << endl;
+        error.message = tr("Unknown error getting sync state");
+        error.type = CommunicationError::Unknown;
         return false;
     }
+    return true;
 }
 
 
@@ -139,10 +178,13 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
             checkForInkNotes(chunk.resources,"", QString::fromStdString(authToken));
         }
     } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.message = tr("EDAMUserException ") + QString::fromStdString(e.what());
+        error.type = CommunicationError::EDAMUserException;
+        error.code = -1;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
         if (errorCount < 3) {
@@ -154,6 +196,8 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
             return getSyncChunk(chunk, start, chunkSize, fullSync, errorCount);
         }
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        error.message = tr("Error getting sync chunk: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
         return false;
     } catch (std::exception e) {
         if (errorCount < 3) {
@@ -165,6 +209,8 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
             return getSyncChunk(chunk, start, chunkSize, fullSync, errorCount);
         }
         QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+        error.message = tr("Error getting sync chunk: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::StdException;
         return false;
     } catch (...) {
         if (errorCount < 3) {
@@ -176,6 +222,8 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
             return getSyncChunk(chunk, start, chunkSize, fullSync, errorCount);
         }
         QLOG_ERROR() << "Unhandled exception:" << endl;
+        error.message = tr("Unknown error getting sync chunk");
+        error.type = CommunicationError::Unknown;
         return false;
     }
     return true;
@@ -192,7 +240,8 @@ bool CommunicationManager::getSharedNotebookByAuth(SharedNotebook &sharedNoteboo
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
@@ -250,7 +299,8 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook book
         QLOG_ERROR() << "EDAMUserException:" << e.what() << endl;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
@@ -263,7 +313,7 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook book
 
 
 // Get a linked notebook's sync state
-bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook linkedNotebook) {
+bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook linkedNotebook, int errorCount) {
     try {
         linkedNoteStoreClient->getLinkedNotebookSyncState(syncState, linkedAuthToken.authenticationToken, linkedNotebook);
         QLOG_DEBUG() << "New linked notebook count: "<< syncState.updateCount;
@@ -272,12 +322,51 @@ bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, Link
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        return false;
-    }
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           authenticateToLinkedNotebookShard(linkedNotebook);
+           return getLinkedNotebookSyncState(syncState, linkedNotebook, errorCount);
+       }
+       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+       error.message = tr("Transport error getting linked notebook state: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::TTransportException;
+       return 0;
+   } catch (std::exception e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           authenticateToLinkedNotebookShard(linkedNotebook);
+           return getLinkedNotebookSyncState(syncState, linkedNotebook, errorCount);
+       }
+       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+       error.message = tr("Error getting linked notebook state: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::StdException;
+       return 0;
+   } catch (...) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return getLinkedNotebookSyncState(syncState, linkedNotebook, errorCount);
+       }
+       QLOG_ERROR() << "Unhandled exception:" << endl;
+       error.message = tr("Unknown error getting linked notebook state");
+       error.type = CommunicationError::Unknown;
+       return 0;
+   }
 }
 
 
@@ -323,15 +412,13 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
             checkForInkNotes(chunk.resources, QString::fromStdString(linkedNotebook.shardId), QString::fromStdString(linkedAuthToken.authenticationToken));
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.message = "Shared notebook EDAMUserException " + QString::number(e.errorCode);
+        error.message = tr("Shared notebook EDAMUserException ") + QString::number(e.errorCode);
         error.type = CommunicationError::EDAMUserException;
         error.code = e.errorCode;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << e.errorCode << endl;
-        error.message = "Shared notebook EDAMSystemException " + QString::number(e.errorCode);
-        error.type = CommunicationError::EDAMSystemException;
-        error.code = e.errorCode;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
         if (errorCount < 3) {
@@ -347,13 +434,13 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
         return false;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.identifier) << ":" << QString::fromStdString(e.key) << endl;
-        error.message = "Shared notebook " + QString::fromStdString(e.key) + " not found.";
+        error.message = tr("Shared notebook ") + QString::fromStdString(e.key) + tr(" not found.");
         error.type = CommunicationError::EDAMNotFoundException;
         error.code = -1;
         return false;
     } catch (TException e) {
         QLOG_ERROR() << "TException:" << e.what();
-        error.message = "Shared notebook TException " + QString::fromStdString(e.what());
+        error.message = tr("Shared notebook TException ") + QString::fromStdString(e.what());
         error.type = CommunicationError::TException;
         error.code = -1;
         return false;
@@ -437,10 +524,8 @@ bool CommunicationManager::initUserStore() {
         error.type = CommunicationError::EDAMUserException;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
@@ -522,10 +607,8 @@ bool CommunicationManager::initNoteStore() {
         error.type = CommunicationError::EDAMUserException;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.message = QString::fromStdString(e.message);
-        error.code = e.errorCode;
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return false;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
@@ -573,7 +656,7 @@ void  CommunicationManager::disconnectFromLinkedNotebook() {
 
 
 // Get a user's information
-bool CommunicationManager::getUserInfo(User &user) {
+bool CommunicationManager::getUserInfo(User &user, int errorCount) {
     QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo";
     try {
        //this->refreshConnection();
@@ -589,10 +672,8 @@ bool CommunicationManager::getUserInfo(User &user) {
         disconnectUserStore();
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         disconnectUserStore();
         return false;
     } catch (EDAMNotFoundException e) {
@@ -602,18 +683,45 @@ bool CommunicationManager::getUserInfo(User &user) {
         disconnectUserStore();
         return false;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException :" << QString::fromStdString(e.what()) << endl;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        disconnectUserStore();
-        return false;
-    } catch (exception e) {
-            QLOG_ERROR() << "StdException :" << QString::fromStdString(e.what()) << endl;
-            error.message = QString::fromStdString(e.what());
-            error.type = CommunicationError::StdException;
-            disconnectUserStore();
-            return false;
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return getUserInfo(user, errorCount);
         }
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        error.message = tr("Error getting sync chunk: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
+        return false;
+    } catch (std::exception e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return getUserInfo(user, errorCount);
+        }
+        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+        error.message = tr("Error getting sync chunk: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::StdException;
+        return false;
+    } catch (...) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return getUserInfo(user, errorCount);
+        }
+        QLOG_ERROR() << "Unhandled exception:" << endl;
+        error.message = tr("Unknown error getting sync chunk");
+        error.type = CommunicationError::Unknown;
+        return false;
+    }
     return true;
 }
 
@@ -704,7 +812,7 @@ int CommunicationManager::inkNoteReady(QImage *img, QImage *replyImage, int posi
 
 
 // Upload a new/changed saved search
-qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
+qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search, int errorCount) {
     // Try upload
     try {
         if (search.updateSequenceNum > 0)
@@ -716,32 +824,64 @@ qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
-        error.message = "Error uploading saved search " + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.what());
+        error.message = tr("Error uploading saved search ") + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.what());
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = "Error uploading saved search " + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading saved search " + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.what());
+        error.message = tr("Error uploading saved search ") + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.what());
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading saved search " + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.what());
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return uploadSavedSearch(search, errorCount);
+        }
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        error.message = tr("Transport error uploading saved search \"") +QString::fromStdString(search.name) +"\" " +QString::fromStdString(e.what());
         error.type = CommunicationError::TTransportException;
         return 0;
+    } catch (std::exception e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return uploadSavedSearch(search, errorCount);
+        }
+        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+        error.message = tr("Std error uploading saved search \"") +QString::fromStdString(search.name) +"\" " +QString::fromStdString(e.what());
+        error.type = CommunicationError::StdException;
+        return 0;
+    } catch (...) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return uploadSavedSearch(search, errorCount);
+        }
+        QLOG_ERROR() << "Unhandled exception:" << endl;
+        error.message = tr("Unknown error uploading saved search \"") +QString::fromStdString(search.name) +"\"";
+        error.type = CommunicationError::Unknown;
+        return 0;
     }
-}
+    return true;}
 
 
 
 // Permanently delete a saved search
-qint32 CommunicationManager::expungeSavedSearch(string guid) {
+qint32 CommunicationManager::expungeSavedSearch(string guid, int errorCount) {
     // Try upload
     try {
         return noteStoreClient->expungeSearch(authToken, guid);
@@ -752,10 +892,8 @@ qint32 CommunicationManager::expungeSavedSearch(string guid) {
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
@@ -763,15 +901,52 @@ qint32 CommunicationManager::expungeSavedSearch(string guid) {
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return expungeSavedSearch(guid, errorCount);
+        }
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        return 0;
+        error.message = tr("Transport error deleting saved search: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
+        return false;
+    } catch (std::exception e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Standard error deleting saved search #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return expungeSavedSearch(guid, errorCount);
+        }
+        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+        error.message = tr("Error deleting saved search: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::StdException;
+        return false;
+    } catch (...) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Unhandled exception deleting saved search #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return expungeSavedSearch(guid, errorCount);
+        }
+        QLOG_ERROR() << "Unhandled exception:" << endl;
+        error.message = tr("Unknown error getting expunging saved search");
+        error.type = CommunicationError::Unknown;
+        return false;
     }
+    return true;
 }
 
 
 
 // Upload a new/changed tag to Evernote
-qint32 CommunicationManager::uploadTag(Tag &tag) {
+qint32 CommunicationManager::uploadTag(Tag &tag, int errorCount) {
     // Try upload
     try {
         if (tag.updateSequenceNum > 0)
@@ -783,32 +958,63 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException: " << e.errorCode << endl;
         error.code = e.errorCode;
-        error.message = "Error uploading tag " + QString::fromStdString(tag.name) + " : " +QString::fromStdString(e.what());
+        error.message = tr("Error uploading tag ") + QString::fromStdString(tag.name) + " : " +QString::fromStdString(e.what());
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = "Error uploading tag " + QString::fromStdString(tag.name) + " : " +QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading tag " + QString::fromStdString(tag.name) + " : "+ QString::fromStdString(e.what());
+        error.message = tr("Error uploading tag ") + QString::fromStdString(tag.name) + " : "+ QString::fromStdString(e.what());
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading tag " + QString::fromStdString(tag.name) + " : " +QString::fromStdString(e.what());
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return uploadTag(tag, errorCount);
+        }
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        error.message = tr("Transport error uploading tag: ") +QString::fromStdString(e.what());
         error.type = CommunicationError::TTransportException;
         return 0;
-
+    } catch (std::exception e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return uploadTag(tag, errorCount);
+        }
+        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+        error.message = tr("Error uploading tag: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::StdException;
+        return 0;
+    } catch (...) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return uploadTag(tag, errorCount);
+        }
+        QLOG_ERROR() << "Unhandled exception:" << endl;
+        error.message = tr("Unknown error uploading tag");
+        error.type = CommunicationError::Unknown;
+        return 0;
     }
 }
 
 
 // Permanently delete a tag from Evernote
-qint32 CommunicationManager::expungeTag(string guid) {
+qint32 CommunicationManager::expungeTag(string guid, int errorCount) {
     // Try upload
     try {
         return noteStoreClient->expungeTag(authToken, guid);
@@ -819,10 +1025,8 @@ qint32 CommunicationManager::expungeTag(string guid) {
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
@@ -830,7 +1034,43 @@ qint32 CommunicationManager::expungeTag(string guid) {
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return expungeTag(guid, errorCount);
+        }
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        error.message = tr("Error expunging tag: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::TTransportException;
+        return 0;
+    } catch (std::exception e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return expungeTag(guid, errorCount);
+        }
+        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+        error.message = tr("Error expunging tag: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::StdException;
+        return 0;
+    } catch (...) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return expungeTag(guid, errorCount);
+        }
+        QLOG_ERROR() << "Unhandled exception:" << endl;
+        error.message = tr("Unknown error expunging tag");
+        error.type = CommunicationError::Unknown;
         return 0;
     }
 }
@@ -838,7 +1078,7 @@ qint32 CommunicationManager::expungeTag(string guid) {
 
 
 // Upload a notebook to Evernote
-qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
+qint32 CommunicationManager::uploadNotebook(Notebook &notebook, int errorCount) {
     // Try upload
     try {
         if (notebook.updateSequenceNum > 0)
@@ -850,32 +1090,63 @@ qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
-        error.message = "Error uploading notebook " + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.what());
+        error.message = tr("Error uploading notebook ") + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.what());
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = "Error uploading notebook " + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading notebook " + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.what());
+        error.message = tr("Error uploading notebook ") + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.what());
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
-    } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading notebook " + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.what());
+     } catch (TTransportException e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return uploadNotebook(notebook, errorCount);
+        }
+        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+        error.message = tr("Transport error uploading notebook: ") +QString::fromStdString(e.what());
         error.type = CommunicationError::TTransportException;
         return 0;
-
+    } catch (std::exception e) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return uploadNotebook(notebook, errorCount);
+        }
+        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+        error.message = tr("Error uploading notebook: ") +QString::fromStdString(e.what());
+        error.type = CommunicationError::StdException;
+        return 0;
+    } catch (...) {
+        if (errorCount < 3) {
+            errorCount++;
+            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+            disconnect();
+            QLOG_ERROR() << "Reconnecting";
+            connect();
+            return uploadNotebook(notebook, errorCount);
+        }
+        QLOG_ERROR() << "Unhandled exception:" << endl;
+        error.message = tr("Unknown error uploading notebook");
+        error.type = CommunicationError::Unknown;
+        return 0;
     }
 }
 
 
 // Permanently delete a notebook from Evernote
-qint32 CommunicationManager::expungeNotebook(string guid) {
+qint32 CommunicationManager::expungeNotebook(string guid, int errorCount) {
     // Try upload
     try {
         return noteStoreClient->expungeNotebook(authToken, guid);
@@ -886,10 +1157,8 @@ qint32 CommunicationManager::expungeNotebook(string guid) {
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
@@ -897,15 +1166,51 @@ qint32 CommunicationManager::expungeNotebook(string guid) {
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        return 0;
-    }
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return expungeNotebook(guid, errorCount);
+       }
+       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+       error.message = tr("Transport error expunging notebook: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::TTransportException;
+       return 0;
+   } catch (std::exception e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return expungeNotebook(guid, errorCount);
+       }
+       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+       error.message = tr("Error expunging notebook: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::StdException;
+       return 0;
+   } catch (...) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return expungeNotebook(guid, errorCount);
+       }
+       QLOG_ERROR() << "Unhandled exception:" << endl;
+       error.message = tr("Unknown error expunging notebook");
+       error.type = CommunicationError::Unknown;
+       return 0;
+   }
 }
 
 
 
 // Upload a note to Evernote
-qint32 CommunicationManager::uploadNote(Note &note) {
+qint32 CommunicationManager::uploadNote(Note &note, int errorCount) {
     // Try upload
     try {
         if (note.updateSequenceNum > 0) {
@@ -918,33 +1223,64 @@ qint32 CommunicationManager::uploadNote(Note &note) {
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
-        error.message = "Error uploading note \"" + QString::fromStdString(note.title) + "\"";
+        error.message = tr("Error uploading note \"") + QString::fromStdString(note.title) + "\"";
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = "Error uploading note \"" + QString::fromStdString(note.title) + "\" : " +QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading note \"" + QString::fromStdString(note.title) + "\". Note not found";
+        error.message = tr("Error uploading note \"") + QString::fromStdString(note.title) + tr("\". Note not found");
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading note \"" + QString::fromStdString(note.title) + "\" : " +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return 0;
-
-    }
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return uploadNote(note, errorCount);
+       }
+       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+       error.message = tr("Transport error uploading note: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::TTransportException;
+       return 0;
+   } catch (std::exception e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return uploadNote(note, errorCount);
+       }
+       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+       error.message = tr("Error uploading note: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::StdException;
+       return 0;
+   } catch (...) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return uploadNote(note, errorCount);
+       }
+       QLOG_ERROR() << "Unhandled exception:" << endl;
+       error.message = tr("Unknown error uploading note");
+       error.type = CommunicationError::Unknown;
+       return 0;
+   }
 }
 
 
 
 // Upload a note to Evernote
-qint32 CommunicationManager::uploadLinkedNote(Note &note) {
+qint32 CommunicationManager::uploadLinkedNote(Note &note, LinkedNotebook linkedNotebook, int errorCount) {
     // Try upload
     try {
         if (note.updateSequenceNum > 0) {
@@ -957,32 +1293,65 @@ qint32 CommunicationManager::uploadLinkedNote(Note &note) {
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
-        error.message = "Error uploading note \"" + QString::fromStdString(note.title) + "\"";
+        error.message = tr("Error uploading note \"") + QString::fromStdString(note.title) + "\"";
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = "Error uploading note \"" + QString::fromStdString(note.title) + "\" : " +QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading note \"" + QString::fromStdString(note.title) + "\". Note not found";
+        error.message = tr("Error uploading note \"") + QString::fromStdString(note.title) + tr("\". Note not found");
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error uploading note \"" + QString::fromStdString(note.title) + "\" : " +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return 0;
-
-    }
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           authenticateToLinkedNotebookShard(linkedNotebook);
+           return uploadLinkedNote(note, linkedNotebook, errorCount);
+       }
+       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+       error.message = tr("Transport error uploading linked note: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::TTransportException;
+       return 0;
+   } catch (std::exception e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           authenticateToLinkedNotebookShard(linkedNotebook);
+           return uploadLinkedNote(note, linkedNotebook, errorCount);
+       }
+       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+       error.message = tr("Error uploading linked note: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::StdException;
+       return 0;
+   } catch (...) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return uploadLinkedNote(note, linkedNotebook, errorCount);
+       }
+       QLOG_ERROR() << "Unhandled exception:" << endl;
+       error.message = tr("Unknown uploading linked note");
+       error.type = CommunicationError::Unknown;
+       return 0;
+   }
 }
 
 
 // delete a note in Evernote
-qint32 CommunicationManager::deleteNote(string note) {
+qint32 CommunicationManager::deleteNote(string note, int errorCount) {
     // Try upload
     try {
         qint32 usn = noteStoreClient->deleteNote(authToken, note);
@@ -990,26 +1359,58 @@ qint32 CommunicationManager::deleteNote(string note) {
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
-        error.message = "Error deleting note \"" + QString::fromStdString(note) + "\"";
+        error.message = tr("Error deleting note \"") + QString::fromStdString(note) + "\"";
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
-        error.code = e.errorCode;
-        error.message = "Error deleting note \"" + QString::fromStdString(note) + "\" : " +QString::fromStdString(e.message);
-        error.type = CommunicationError::EDAMSystemException;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error deleting note \"" + QString::fromStdString(note) + "\". Note not found";
+        error.message = tr("Error deleting note \"") + QString::fromStdString(note) + "\". Note not found";
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << QString::fromStdString(e.what()) << endl;
-        error.message = "Error deleting note \"" + QString::fromStdString(note) + "\" : " +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return 0;
-    }
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return deleteNote(note, errorCount);
+       }
+       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+       error.message = tr("Transport error deleting note: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::TTransportException;
+       return 0;
+   } catch (std::exception e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return deleteNote(note, errorCount);
+       }
+       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+       error.message = tr("Error deleting note: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::StdException;
+       return 0;
+   } catch (...) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return deleteNote(note, errorCount);
+       }
+       QLOG_ERROR() << "Unhandled exception:" << endl;
+       error.message = tr("Unknown error deleting note");
+       error.type = CommunicationError::Unknown;
+       return 0;
+   }
 }
 
 
@@ -1088,7 +1489,7 @@ int CommunicationManager::thumbnailReady(QImage *img, QImage *replyImage, int po
 
 
 // get a list of all notebooks
-bool CommunicationManager::getNotebookList(vector<Notebook> &list) {
+bool CommunicationManager::getNotebookList(vector<Notebook> &list, int errorCount) {
 
     // Try to get the chunk
     try {
@@ -1097,13 +1498,50 @@ bool CommunicationManager::getNotebookList(vector<Notebook> &list) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        return false;
-    }
-    return true;
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return getNotebookList(list, errorCount);
+       }
+       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+       error.message = tr("Transport error getting notebook list: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::TTransportException;
+       return false;
+   } catch (std::exception e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return getNotebookList(list, errorCount);
+       }
+       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+       error.message = tr("Error getting notebook list: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::StdException;
+       return false;
+   } catch (...) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return getNotebookList(list, errorCount);
+       }
+       QLOG_ERROR() << "Unhandled exception:" << endl;
+       error.message = tr("Unknown error getting notebook list");
+       error.type = CommunicationError::Unknown;
+       return false;
+   }
+   return true;
 }
 
 
@@ -1111,7 +1549,7 @@ bool CommunicationManager::getNotebookList(vector<Notebook> &list) {
 
 
 // get a list of all notebooks
-bool CommunicationManager::getTagList(vector<Tag> &list) {
+bool CommunicationManager::getTagList(vector<Tag> &list, int errorCount) {
 
     // Try to get the chunk
     try {
@@ -1120,11 +1558,77 @@ bool CommunicationManager::getTagList(vector<Tag> &list) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         return false;
     } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        return false;
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return getTagList(list, errorCount);
+       }
+       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+       error.message = tr("Transport error getting tag list: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::TTransportException;
+       return false;
+   } catch (std::exception e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return getTagList(list, errorCount);
+       }
+       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+       error.message = tr("Error getting tag list: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::StdException;
+       return false;
+   } catch (...) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return getTagList(list, errorCount);
+       }
+       QLOG_ERROR() << "Unhandled exception:" << endl;
+       error.message = tr("Unknown error getting tag list");
+       error.type = CommunicationError::Unknown;
+       return false;
+   }
+   return true;
+}
+
+
+void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
+    void *array[30];
+    size_t size;
+
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 30);
+
+    // print out all the frames to stderr
+    fprintf(stderr, "EDAM System Exception backtrace");
+    backtrace_symbols_fd(array, size, 2);
+
+    QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+    QLOG_ERROR() << "EDAMSystemException Error Code:" << e.errorCode << endl;
+    QLOG_ERROR() << "EDAMSystemException Rate Limit:" << e.rateLimitDuration << endl;
+    if (e.errorCode == EDAMErrorCode::RATE_LIMIT_REACHED) {
+        int duration = e.rateLimitDuration/60+1;
+        error.type = CommunicationError::RateLimitExceeded;
+        if (duration > 1)
+            error.message = tr("API rate limit exceeded.  Please try again in ") +QString::number(duration)+ tr(" minutes.");
+        else
+            error.message = tr("API rate limit exceeded.  Please try again in ") +QString::number(duration)+ tr(" minute.");
+        return;
     }
-    return true;
+    error.message = tr("EDAMSystemException ") + QString::fromStdString(e.message);
+    error.type = CommunicationError::EDAMSystemException;
+    error.code = e.errorCode;
 }

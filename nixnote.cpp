@@ -1506,8 +1506,6 @@ void NixNote::switchUser() {
         global.globalSettings->beginGroup("SaveState");
         global.globalSettings->setValue("lastAccessedAccount", global.accountsManager->currentId);
         global.globalSettings->endGroup();
-//        QMessageBox::information(this, tr("Restart Required"),
-//             QString(tr("NixNote must be restarted to complete this action.")));
         closeAction->trigger();
         global.sharedMemory->detach();
         QProcess::startDetached(global.fileManager.getProgramDirPath("")+"nixnote");

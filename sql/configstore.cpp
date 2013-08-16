@@ -92,7 +92,7 @@ qint32 ConfigStore::incrementLidCounter() {
         QLOG_ERROR() << "Fetch of ConfigStore LID counter statement failed: " << sql.lastError();
     }
     if (!sql.next()) {
-        QLOG_ERROR() << "LID NOT FOUND!!!";
+        QLOG_ERROR() << "Fetch from ConfigStore failure: LID NOT FOUND!!!";
     } else {
         // Now that we have the next lid, increment the number & save it
         qint32 sequence = QVariant(sql.value(0)).toInt();
