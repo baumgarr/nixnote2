@@ -91,6 +91,7 @@ bool CommunicationManager::getSyncState(string token, SyncState &syncState, int 
         handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
         if (errorCount < 3) {
             errorCount++;
             QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
@@ -229,6 +230,7 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
         handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
         if (errorCount < 3) {
             errorCount++;
             QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
@@ -286,6 +288,7 @@ bool CommunicationManager::getSharedNotebookByAuth(SharedNotebook &sharedNoteboo
         handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
         return false;
     }
@@ -345,6 +348,7 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook book
         handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
         return false;
     }
@@ -368,6 +372,7 @@ bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, Link
         handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
+       QLOG_ERROR() << "TTransport error: Type->" << e.getType();
        if (errorCount < 3) {
            errorCount++;
            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
@@ -483,6 +488,7 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
         handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
         if (errorCount < 3) {
             errorCount++;
             QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying linked notebook";
@@ -589,6 +595,7 @@ bool CommunicationManager::initUserStore() {
         handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
         QLOG_ERROR() << "TTransportException:" << e.what() << endl;
         error.message = QString::fromStdString(e.what());
         error.type = CommunicationError::TTransportException;
@@ -670,6 +677,7 @@ bool CommunicationManager::initNoteStore() {
         error.type = CommunicationError::EDAMNotFoundException;
         return false;
     } catch (TTransportException e) {
+        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
         QLOG_ERROR() << "\n\nTTransportException:" << e.what() << endl;
         error.message = QString(e.what());
         error.message = QString::fromStdString(e.what());
@@ -1449,6 +1457,7 @@ qint32 CommunicationManager::deleteNote(string note, int errorCount) {
         error.type = CommunicationError::EDAMNotFoundException;
         return 0;
     } catch (TTransportException e) {
+       QLOG_ERROR() << "TTransport error: Type->" << e.getType();
        if (errorCount < 3) {
            errorCount++;
            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
@@ -1639,6 +1648,7 @@ bool CommunicationManager::getTagList(vector<Tag> &list, int errorCount) {
         handleEDAMSystemException(e);
         return false;
     } catch (TTransportException e) {
+       QLOG_ERROR() << "TTransport error: Type->" << e.getType();
        if (errorCount < 3) {
            errorCount++;
            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
