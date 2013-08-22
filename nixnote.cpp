@@ -1184,7 +1184,7 @@ void NixNote::openAccount() {
 
 
 void NixNote::openAbout() {
-    QMessageBox::about(this, tr(" NixNote 2 Alpha #3"),
+    QMessageBox::about(this, tr(" NixNote 2 Alpha #4"),
                        tr("This is ALPHA software. "
                           "Use it at your own risk. "
                           "\n\nLicensed under the Gnu Public License v2.\n\nBuilt on "
