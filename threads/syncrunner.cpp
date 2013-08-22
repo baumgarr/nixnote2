@@ -129,7 +129,9 @@ void SyncRunner::evernoteSync() {
         QLOG_DEBUG() <<  "Remote changes found";
         QLOG_DEBUG() << "Downloading changes";
         emit setMessage(tr("Downloading changes"), defaultMsgTimeout);
-        syncRemoteToLocal(syncState.updateCount);
+        bool rc = syncRemoteToLocal(syncState.updateCount);
+        if (!rc)
+            error = true;
     }
 
     if (!comm->getUserInfo(user)) {
@@ -139,7 +141,7 @@ void SyncRunner::evernoteSync() {
     }
     userTable.updateUser(user);
 
-    if (!global.disableUploads) {
+    if (!global.disableUploads && !error) {
         qint32 searchUsn = uploadSavedSearches();
         if (searchUsn > updateSequenceNumber)
             updateSequenceNumber = searchUsn;
@@ -155,16 +157,17 @@ void SyncRunner::evernoteSync() {
     }
 
     // Synchronize linked notebooks
-    syncRemoteLinkedNotebooksActual();
+    if (!error)
+       syncRemoteLinkedNotebooksActual();
 
     //updateNoteTableTags();
 
-    if (!comm->getSyncState("", syncState)) {
+    if (error || !comm->getSyncState("", syncState)) {
         error =true;
         this->communicationErrorHandler();
         return;
     }
-    userTable.updateSyncState(syncState);   
+    userTable.updateSyncState(syncState);
 
     if (!error)
         emit setMessage(tr("Sync Complete"), defaultMsgTimeout);
@@ -173,37 +176,30 @@ void SyncRunner::evernoteSync() {
 
 
 
-void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
+bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     QLOG_TRACE() << "Entering SyncRunner::SyncRemoteToLocal()";
 
     // The first thing we do is to see if any new tags or notebooks (ones with update sequence number = 0) have
     // been created.  If so, we get a list of notebooks & tags to try and find matching names on Evernote.
     // This avoids problems with duplicate or missing names later
-    NotebookTable ntable(&db->conn);
-    TagTable ttable(&db->conn);
-    if (ntable.getNewUnsequencedCount() > 0) {
-        vector<Notebook> books;
-        if (comm->getNotebookList(books))
-            syncRemoteNotebooks(books);
-        else {
-            QLOG_ERROR() << "Error retrieving notebook list";
-            error = true;
-            this->communicationErrorHandler();
-            return;
-        }
 
+    vector<Notebook> books;
+    if (comm->getNotebookList(books))
+        syncRemoteNotebooks(books);
+    else {
+        QLOG_ERROR() << "Error retrieving notebook list";
+        error = true;
+        this->communicationErrorHandler();
+        return false;
     }
-    if (ttable.getNewUnsequencedCount() > 0) {
-        vector<Tag> tags;
-        if (comm->getTagList(tags))
-            syncRemoteTags(tags);
-        else {
-            QLOG_ERROR() << "Error retrieving tag list";
-            error = true;
-            this->communicationErrorHandler();
-            return;
-        }
-
+    vector<Tag> tags;
+    if (comm->getTagList(tags))
+        syncRemoteTags(tags);
+    else {
+        QLOG_ERROR() << "Error retrieving tag list";
+        error = true;
+        this->communicationErrorHandler();
+        return false;
     }
 
     int chunkSize = 100;
@@ -213,15 +209,12 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     bool rc;
     int startingSequenceNumber = updateSequenceNumber;
     while(more && keepRunning)  {
-
-        QSqlQuery query(db->conn);
-        //query.exec("begin");
         rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, fullSync);
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
             this->communicationErrorHandler();
-            return;
+            return false;
         }
         QLOG_DEBUG() << "------>>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
         int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
@@ -234,10 +227,9 @@ void SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         UserTable userTable(&db->conn);
         userTable.updateLastSyncNumber(updateSequenceNumber);
         userTable.updateLastSyncDate(chunk.currentTime);
-
-        //query.exec("commit");
     }
     emit setMessage(tr("Download 100% complete."), defaultMsgTimeout);
+    return true;
 }
 
 
@@ -592,7 +584,7 @@ void SyncRunner::syncRemoteLinkedNotebooksChunk(vector<LinkedNotebook> books) {
 
 
 // Synchronize remote linked notebooks
-void SyncRunner::syncRemoteLinkedNotebooksActual() {
+bool SyncRunner::syncRemoteLinkedNotebooksActual() {
     LinkedNotebookTable ltable(&db->conn);
     QList<qint32> lids;
     ltable.getAll(lids);
@@ -606,14 +598,14 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
         if (!comm->authenticateToLinkedNotebookShard(book)) {
             this->communicationErrorHandler();
             error = true;
-            return;
+            return false;
         }
         bool more = true;
         SyncState syncState;
         if (!comm->getLinkedNotebookSyncState(syncState, book)) {
             this->communicationErrorHandler();
             error = true;
-            return;
+            return false;
         }
         if (syncState.updateCount <= usn)
             more=false;
@@ -631,7 +623,7 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
                 } else {
                     this->communicationErrorHandler();
                     error = true;
-                    return;
+                    return false;
                 }
             } else {
                 processSyncChunk(chunk, lids[i]);
@@ -658,7 +650,7 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
             if (usn == 0) {
                 this->communicationErrorHandler();
                 error = true;
-                return;
+                return false;
             }
             if (usn > startingSequenceNumber) {
                 startingSequenceNumber = usn;
@@ -669,11 +661,13 @@ void SyncRunner::syncRemoteLinkedNotebooksActual() {
                 emit(noteSynchronized(noteLids[j], false));
             } else {
                 error = true;
+                return false;
             }
         }
 
         comm->disconnectFromLinkedNotebook();
     }
+    return true;
 }
 
 

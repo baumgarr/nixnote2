@@ -105,8 +105,7 @@ private:
     QHash<QString, QString> changedTags;
 
     void evernoteSync();
-    void syncRemoteToLocal(qint32 highSequence);
-    //bool refreshConnection();
+    bool syncRemoteToLocal(qint32 highSequence);
     void syncRemoteExpungedNotes(vector<string> guids);
     void syncRemoteExpungedNotebooks(vector<string> guids);
     void processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook=0);
@@ -120,7 +119,7 @@ private:
     void syncRemoteResources(vector<Resource> resources);
     void syncRemoteLinkedNotebooksChunk(vector<LinkedNotebook> books);
     void syncRemoteExpungedLinkedNotebooks(vector<string> guids);
-    void syncRemoteLinkedNotebooksActual();
+    bool syncRemoteLinkedNotebooksActual();
 
     void updateNoteTableTags();
     //void updateNoteTableNotebooks();

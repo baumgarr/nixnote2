@@ -71,8 +71,8 @@ void ResourceTable::sync(qint32 lid, Resource &resource) {
     QLOG_TRACE() << "Leaving ResourceTable::sync()";
 
     if (lid > 0) {
+        expunge(lid);
         QSqlQuery query(*db);
-
         // Delete the old record
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
@@ -405,7 +405,7 @@ bool ResourceTable::exists(string noteGuid, string guid) {
 
 
 // Add a resource to the database
-qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
+qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
     ConfigStore cs(db);
     qint32 lid = l;
     if (lid <= 0)
@@ -426,8 +426,10 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
     query.bindValue(":data", true);
     query.exec();
 
-    NoteTable noteTable(db);
-    qint32 noteLid = noteTable.getLid(t.noteGuid);
+    if (noteLid <=0) {
+        NoteTable noteTable(db);
+        noteLid = noteTable.getLid(t.noteGuid);
+    }
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_NOTE_LID);
     query.bindValue(":data", noteLid);
@@ -464,7 +466,8 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty) {
             QString fileExt = ref.getExtensionFromMime(mimetype, filename);
             QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
             tfile.open(QIODevice::WriteOnly);
-            tfile.write(t.data.body.data(),t.data.size);
+            if (t.data.size > 0)
+                tfile.write(t.data.body.data(),t.data.size);
             tfile.close();
         }
     }
@@ -779,7 +782,7 @@ void ResourceTable::expunge(qint32 lid) {
     query.bindValue(":lid", lid);
     query.exec();
 
-    // Delete the physical files
+    // Delete the physical files (resource)
     QDir myDir(global.fileManager.getDbaDirPath());
     QString num = QString::number(lid);
     QStringList filter;
@@ -787,6 +790,13 @@ void ResourceTable::expunge(qint32 lid) {
     QStringList list = myDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
     for (int i=0; i<list.size(); i++) {
         myDir.remove(list[i]);
+    }
+
+    // Delete the physical files (thumbnail)
+    QDir myTDir(global.fileManager.getThumbnailDirPath());
+    list = myTDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
+    for (int i=0; i<list.size(); i++) {
+        myTDir.remove(list[i]);
     }
 }
 

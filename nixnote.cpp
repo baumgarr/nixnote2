@@ -76,7 +76,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
     splashScreen = new QSplashScreen(QPixmap(":splash_logo.png"));
     global.settings->beginGroup("Appearance");
-    if(global.settings->value("showSplashScreen", true).toBool()) {
+    if(global.settings->value("showSplashScreen", false).toBool()) {
         splashScreen->show();
         QTimer::singleShot(2500, splashScreen, SLOT(close()));
     }
@@ -1657,6 +1657,7 @@ void NixNote::screenCapture() {
     NoteTable ntable(global.db);
     ntable.add(lid, newNote, true);
     QString noteGuid = ntable.getGuid(lid);
+    qint32 noteLid  = lid;
     lid = cs.incrementLidCounter();
 
 
@@ -1685,7 +1686,7 @@ void NixNote::screenCapture() {
     newRes.updateSequenceNum = 0;
     newRes.__isset.updateSequenceNum = 0;
     ResourceTable restable(global.db);
-    restable.add(lid, newRes, true);
+    restable.add(lid, newRes, true, noteLid);
 
     updateSelectionCriteria();
 }

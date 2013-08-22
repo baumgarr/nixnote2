@@ -279,7 +279,7 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
         resLid = resTable.getLid(t.guid,t.resources[i].guid);
         if (resLid == 0)
             resLid = cs.incrementLidCounter();
-        resTable.add(resLid, t.resources[i], isDirty);
+        resTable.add(resLid, t.resources[i], isDirty, lid);
 
         if (r->__isset.mime) {
             QString mime = QString::fromStdString(r->mime);

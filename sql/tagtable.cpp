@@ -233,7 +233,7 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
             Tag tempTag;
             parentLid = cs.incrementLidCounter();
             tempTag.guid = t.parentGuid;
-            tempTag.name=QString::number(parentLid).toStdString();
+            tempTag.name="<no name>";
             tempTag.updateSequenceNum = 0;
             tempTag.__isset.name =true;
             tempTag.__isset.updateSequenceNum = true;

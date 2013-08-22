@@ -49,7 +49,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     global.settings->beginGroup("Appearance");
     showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
     showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
-    showSplashScreen->setChecked(global.settings->value("showSplashScreen", true).toBool());
+    showSplashScreen->setChecked(global.settings->value("showSplashScreen", false).toBool());
     global.settings->endGroup();
 }
 

@@ -11,6 +11,7 @@
 #include "sql/resourcetable.h"
 #include "sql/tagtable.h"
 #include <sql/usertable.h>
+#include <sql/notetable.h>
 #include <QObject>
 #include <QPainter>
 
@@ -145,12 +146,43 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
 
     // Try to get the chunk
     try {
-        noteStoreClient->getSyncChunk(chunk, authToken, start, chunkSize, fullSync);
+        SyncChunkFilter filter;
+        filter.__isset.includeExpunged = true;
+        filter.__isset.includeNotes = true;
+        filter.__isset.includeNoteResources = true;
+        filter.__isset.includeNoteAttributes = true;
+        filter.__isset.includeNotebooks = true;
+        filter.__isset.includeTags = true;
+        filter.__isset.includeSearches = true;
+        filter.__isset.includeResources = true;
+        filter.__isset.includeLinkedNotebooks = true;
+        filter.__isset.includeNoteApplicationDataFullMap = true;
+        filter.__isset.includeNoteResourceApplicationDataFullMap = true;
+        filter.__isset.includeNoteResourceApplicationDataFullMap =true;
+
+        filter.includeExpunged = !fullSync;
+        filter.includeNotes = true;
+        filter.includeNoteResources = fullSync;
+        filter.includeNoteAttributes = true;
+        filter.includeNotebooks = true;
+        filter.includeTags = true;
+        filter.includeSearches = true;
+        filter.includeResources = !fullSync;
+        filter.includeLinkedNotebooks = true;
+        filter.includeNoteApplicationDataFullMap = false;
+        filter.includeNoteResourceApplicationDataFullMap = false;
+        filter.includeNoteResourceApplicationDataFullMap = false;
+        chunk.chunkHighUSN = chunk.updateCount;
+        noteStoreClient->getFilteredSyncChunk(chunk, authToken, start, chunkSize, filter);
+        //noteStoreClient->getSyncChunk(chunk, authToken, start, chunkSize, fullSync);
+
+        QHash<QString,QString> noteList;
         for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
-            QLOG_DEBUG() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
+            QLOG_TRACE() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
             Note n;
+            noteList.insert(QString::fromStdString(n.guid),"");
             noteStoreClient->getNote(n, authToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
-            QLOG_DEBUG() << "Note Retrieved";
+            QLOG_TRACE() << "Note Retrieved";
             TagTable tagTable(db);
             for (unsigned int j=0; j<n.tagGuids.size(); j++) {
                 Tag tag;
@@ -159,22 +191,32 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
             }
             chunk.notes[i] = n;
             if (n.__isset.resources && n.resources.size() > 0) {
-                QLOG_DEBUG() << "Checking for ink note";
+                QLOG_TRACE() << "Checking for ink note";
                 checkForInkNotes(n.resources, "", QString::fromStdString(authToken));
             }
-            QLOG_DEBUG() << "Downloading thumbnail";
+            QLOG_TRACE() << "Downloading thumbnail";
             downloadThumbnail(QString::fromStdString(n.guid), authToken,"");
         }
+
+
         QLOG_DEBUG() << "All notes retrieved.  Getting resources";
+        NoteTable noteTable(db);
         for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
-            QLOG_DEBUG() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
+            QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
             Resource r;
             noteStoreClient->getResource(r, authToken, chunk.resources[i].guid, true, true, true, true);
-            QLOG_DEBUG() << "Resource retrieved";
+            QLOG_TRACE() << "Resource retrieved";
             chunk.resources[i] = r;
+
+            if (noteTable.getLid(QString::fromStdString(r.noteGuid))<=0 || !noteList.contains(QString::fromStdString(r.noteGuid))) {
+                Note n;
+                noteStoreClient->getNote(n, authToken, r.noteGuid, true, true, true, true);
+                chunk.__isset.notes = true;
+                chunk.notes.push_back(n);
+            }
         }
         if (chunk.__isset.resources && chunk.resources.size()>0) {
-            QLOG_DEBUG() << "Checking for ink notes";
+            QLOG_TRACE() << "Checking for ink notes";
             checkForInkNotes(chunk.resources,"", QString::fromStdString(authToken));
         }
     } catch (EDAMUserException e) {
@@ -383,13 +425,15 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
     inkNoteList->empty();
 
     // Try to get the chunk
+    QHash<QString,QString> noteList;
     try {
         linkedNoteStoreClient->getLinkedNotebookSyncChunk(chunk, authToken, linkedNotebook, start, chunkSize, fullSync);
         for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
-            QLOG_DEBUG() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
+            QLOG_TRACE() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
             Note n;
             linkedNoteStoreClient->getNote(n, linkedAuthToken.authenticationToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
            // n.notebookGuid = linkedNotebook.guid;
+            noteList.insert(QString::fromStdString(n.guid),"");
             TagTable tagTable(db);
             for (unsigned int j=0; j<n.tagGuids.size(); j++) {
                 Tag tag;
@@ -402,11 +446,29 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
             }
             downloadThumbnail(QString::fromStdString(n.guid), authToken, linkedNotebook.shardId);
         }
+
+        // Fetch resources
         for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
-            QLOG_DEBUG() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
+            QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
             Resource r;
             linkedNoteStoreClient->getResource(r, linkedAuthToken.authenticationToken, chunk.resources[i].guid, true, true, true, true);
             chunk.resources[i] = r;
+
+            NoteTable noteTable(db);
+            for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
+                QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
+                Resource r;
+                noteStoreClient->getResource(r, authToken, chunk.resources[i].guid, true, true, true, true);
+                QLOG_TRACE() << "Resource retrieved";
+                chunk.resources[i] = r;
+
+                if (noteTable.getLid(QString::fromStdString(r.noteGuid))<=0 || !noteList.contains(QString::fromStdString(r.noteGuid))) {
+                    Note n;
+                    noteStoreClient->getNote(n, authToken, r.noteGuid, true, true, true, true);
+                    chunk.__isset.notes = true;
+                    chunk.notes.push_back(n);
+                }
+            }
         }
         if (chunk.__isset.resources && chunk.resources.size()>0)
             checkForInkNotes(chunk.resources, QString::fromStdString(linkedNotebook.shardId), QString::fromStdString(linkedAuthToken.authenticationToken));
@@ -516,7 +578,6 @@ bool CommunicationManager::initUserStore() {
         SOCKET s = sslSocketUserStore->getSocketFD();
         this->setSocketOptions(s);
 
-
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
@@ -540,39 +601,32 @@ bool CommunicationManager::initUserStore() {
 
 
 void CommunicationManager::setSocketOptions(SOCKET s) {
+    return;   // Disabled to try and fix ttransport errors 8/21/2013
     int optval;
 
     socklen_t optlen = sizeof(optval);
     getsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
     optval = 1;
     setsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, optlen);
-    getsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
 
     getsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, &optlen);
     optval=9;
     setsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, optlen);
-    getsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, &optlen);
 
     getsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, &optlen);
     optval=1200;
     setsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, optlen);
-    getsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, &optlen);
 
     getsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, &optlen);
     optval=60;
     setsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, optlen);
-    getsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, &optlen);
 }
 
 // Initialize the note store
 bool CommunicationManager::initNoteStore() {
-
-
     QLOG_DEBUG() << "Inside CommunicationManager::initNoteStore()";
 
     try {
-
-
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
         QString pgmDir = global.getProgramDirPath() + "/certs/thawte.pem";
         sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
@@ -625,34 +679,58 @@ bool CommunicationManager::initNoteStore() {
     return true;
 }
 
+
+
 // Disconnect from Evernote's servers (for private notebooks)
 void CommunicationManager::disconnect() {
 
-    if (noteStoreHttpClient != NULL && noteStoreHttpClient->isOpen()) {
-//        if (noteStoreHttpClient->peek())
-            noteStoreHttpClient->flush();
-        noteStoreHttpClient->close();
+    QLOG_DEBUG() << "Disconnecting";
+    try {
+        if (noteStoreHttpClient != NULL && noteStoreHttpClient->isOpen()) {
+                noteStoreHttpClient->flush();
+            noteStoreHttpClient->close();
+        }
+    } catch (std::exception e) {
+        QLOG_DEBUG() << "Std exception disconnecting from notestore. " << e.what();
+    } catch (...) {
+        QLOG_DEBUG() << "Unknown exception disconnecting from notestore. ";
     }
     disconnectFromLinkedNotebook();
     initComplete=false;
 }
 
-
+// Disconnect from the user store
 void CommunicationManager::disconnectUserStore() {
-    if (userStoreHttpClient != NULL && userStoreHttpClient->isOpen()) {
-//        if (userStoreHttpClient->peek())
-            userStoreHttpClient->flush();
-        userStoreHttpClient->close();
+    try {
+        if (userStoreHttpClient != NULL && userStoreHttpClient->isOpen()) {
+                userStoreHttpClient->flush();
+            userStoreHttpClient->close();
+        }
+    } catch (std::exception e) {
+        QLOG_DEBUG() << "Std exception disconnecting from userstore. " << e.what();
+    } catch (...) {
+        QLOG_DEBUG() << "Unknown exception disconnecting from userstore. ";
     }
 }
+
+
 
 // Disconnect from Evernote's servers (for linked notebooks)
 void  CommunicationManager::disconnectFromLinkedNotebook() {
-    if (linkedNoteStoreHttpClient != NULL && linkedNoteStoreHttpClient->isOpen()) {
-        linkedNoteStoreHttpClient->flush();
-        linkedNoteStoreHttpClient->close();
+    QLOG_DEBUG() << "Disconnecting from linked notebook";
+    try {
+        if (linkedNoteStoreHttpClient != NULL && linkedNoteStoreHttpClient->isOpen()) {
+            linkedNoteStoreHttpClient->flush();
+            linkedNoteStoreHttpClient->close();
+        }
+    } catch (std::exception e) {
+        QLOG_DEBUG() << "Std exception disconnecting from linked notebook. " << e.what();
+    } catch (...) {
+        QLOG_DEBUG() << "Unknown exception disconnecting from linked notebook. ";
     }
 }
+
+
 
 
 // Get a user's information
@@ -790,7 +868,6 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
     inkNoteList->append(newPair);
 
     QObject::disconnect(&loop, SLOT(quit()));
-
 }
 
 

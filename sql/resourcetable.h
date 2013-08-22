@@ -85,7 +85,7 @@ public:
     void updateGuid(qint32 lid, Guid &guid);    // Update a resource's guid
     void sync(Resource &resource);                    // Sync a resource with a new record
     void sync(qint32 lid, Resource &resource);           // Sync a resource with a new record
-    qint32 add(qint32 lid, Resource &t, bool isDirty); // Add a new resource
+    qint32 add(qint32 lid, Resource &t, bool isDirty, int noteLid=0); // Add a new resource
     bool get(Resource &resource, qint32 lid);           // Get a resource given a lid
     bool get(Resource &resource, QString noteGuid, QString guid);      // get a resource given a guid
     bool get(Resource &resource, string noteGuid, string guid);       // get a resource given a guid

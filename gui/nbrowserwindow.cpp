@@ -1658,7 +1658,7 @@ void NBrowserWindow::editLatex(QString guid) {
     r.attributes.sourceURL = "http://latex.codecogs.com/gif.latex?" +text.toStdString();
     r.attributes.__isset.sourceURL = true;
 
-    rtable.add(newlid, r, true);
+    rtable.add(newlid, r, true, lid);
 
     // do the actual insert into the note
 
@@ -1830,7 +1830,7 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
     a->__isset.attachment = true;
 
     ResourceTable resourceTable(global.db);
-    resourceTable.add(rlid, r, true);
+    resourceTable.add(rlid, r, true, lid);
 
     return rlid;
 }

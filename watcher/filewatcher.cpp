@@ -147,7 +147,7 @@ void FileWatcher::saveFile(QString file) {
     newRes.updateSequenceNum = 0;
     newRes.__isset.updateSequenceNum = 0;
     ResourceTable restable(global.db);
-    restable.add(lid, newRes, true);
+    restable.add(lid, newRes, true, noteLid);
 
     emit(fileImported(noteLid, lid));
 
