@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/browserWidgets/colormenu.h"
 #include "gui/plugins/pluginfactory.h"
 #include "dialog/insertlinkdialog.h"
+#include "html/thumbnailer.h"
 #include "dialog/tabledialog.h"
 #include "dialog/insertlatexdialog.h"
 #include "dialog/encryptdialog.h"
@@ -50,6 +51,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFileDialog>
 #include <QClipboard>
 #include <QBuffer>
+#include <QDateTime>
 #include <iostream>
 #include <istream>
 
@@ -145,6 +147,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     buttonBar->setupVisibleButtons();
 
+    hammer = new Thumbnailer(global.db);
     lid = -1;
 }
 
@@ -198,6 +201,7 @@ void NBrowserWindow::setupShortcut(QShortcut *action, QString text) {
 // Load the note content into the window
 void NBrowserWindow::setContent(qint32 lid) {
 
+    //hammer->timer.stop();
     // First, make sure we have a valid lid
     if (lid == -1) {       
         editor->page()->setContentEditable(false);
@@ -300,6 +304,12 @@ void NBrowserWindow::setContent(qint32 lid) {
             editor->page()->findText(list[i], QWebPage::HighlightAllOccurrences);
         }
     }
+
+    if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
+        hammer->render(this->lid);
+    } /*else
+        hammer->timer.start(1000);*/
+
 }
 
 
@@ -477,8 +487,6 @@ void NBrowserWindow::saveNoteContent() {
         NoteTable table(global.db);
         //QString contents = editor->editorPage->mainFrame()->toHtml();
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
-        Thumbnailer thumbnailer(global.db);
-        thumbnailer.render(lid, contents);
         EnmlFormatter formatter;
         formatter.setHtml(contents);
         formatter.rebuildNoteEnml();
@@ -504,6 +512,8 @@ void NBrowserWindow::saveNoteContent() {
 
 
         table.updateNoteContent(lid, formatter.getEnml());
+        Thumbnailer thumbnailer(global.db);
+        thumbnailer.render(lid);
 
         NoteCache* cache = global.cache[lid];
         if (cache != NULL) {
@@ -513,6 +523,9 @@ void NBrowserWindow::saveNoteContent() {
             global.cache.remove(lid);
             global.cache.insert(lid, cache);
         }
+
+        // Make sure the thumnailer is done
+        while(!thumbnailer.idle);
     }
 }
 
@@ -2026,3 +2039,5 @@ void NBrowserWindow::attachFileSelected(QString filename) {
     editor->page()->mainFrame()->evaluateJavaScript(
             script_start + buffer + script_end);
 }
+
+

@@ -55,6 +55,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "xml/xmlhighlighter.h"
 #include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/nmainmenubar.h"
+#include "html/thumbnailer.h"
 
 class ToolbarWidgetAction;
 
@@ -85,6 +86,7 @@ private:
     void insertImage(const QMimeData *mime);
     qint32 createResource(Resource &r, int sequence, QByteArray data, QString mime, bool attachment, QString filename);
     PluginFactory *factory;
+    Thumbnailer *hammer;
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);

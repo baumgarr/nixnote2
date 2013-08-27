@@ -72,6 +72,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTE_ATTRIBUTE_REMINDER_TIME           5033
 #define NOTE_ATTRIBUTE_REMINDER_DONE_TIME      5034
 
+#define NOTE_THUMBNAIL_NEEDED                  5997
 #define NOTE_EXPUNGED_FROM_TRASH               5998
 #define NOTE_INDEX_NEEDED                      5999
 
@@ -149,6 +150,13 @@ public:
     QString getNoteListTags(qint32 lid);                       // Get the string of tags from the notetable list
     void resetGeography(qint32 lid, bool isDirty);
     void setGeography(qint32 lid, double longitude, double latitude, double altitude, bool isDirty);
+    void setThumbnailNeeded(qint32 lid, bool value);
+    void setThumbnailNeeded(QString guid, bool value);
+    void setThumbnailNeeded(string guid, bool value);
+    bool isThumbnailNeeded(qint32 lid);
+    bool isThumbnailNeeded(QString guid);
+    bool isThumbnailNeeded(string guid);
+    qint32 getNextThumbnailNeeded();
 };
 
 

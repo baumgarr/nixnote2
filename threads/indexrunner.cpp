@@ -25,7 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtXml>
 #include <poppler-qt4.h>
 
-
 extern Global global;
 using namespace Poppler;
 
@@ -57,7 +56,6 @@ void IndexRunner::initialize() {
     connect(indexTimer, SIGNAL(timeout()), this, SLOT(index()));
     indexTimer->start();
     textDocument = new QTextDocument();
-    hammer = new Thumbnailer(&db->conn);
     QLOG_DEBUG() << "Indexrunner initialized.";
 }
 
@@ -85,7 +83,6 @@ void IndexRunner::index() {
             noteTable.get(n, lids[i], false, false);
             indexNote(lids[i],n);
             noteTable.setIndexNeeded(lids[i], false);
-            //emit(thumbnailNeeded(lids[i]));
         }
     }
 

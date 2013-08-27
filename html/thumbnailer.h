@@ -24,12 +24,20 @@ class Thumbnailer : public QObject
 
 private:
     QSqlDatabase *db;
+    QTimer timer;
+    int minTime;
+    int maxTime;
+
 
 public:
-    QWebPage page;
+    QWebPage *page;
     Thumbnailer(QSqlDatabase *db);
-    void render(qint32 lid, QString contents);
+    ~Thumbnailer();
+    void render(qint32 lid);
     qint32 lid;
+    bool idle;
+    void capturePage(QWebPage *page);
+    void startTimer(int minSeconds, int maxSeconds);
 
 signals:
 
@@ -37,6 +45,7 @@ private slots:
 
 public slots:
     void pageReady(bool ok);
+    void generateNextThumbnail();
 
 };
 

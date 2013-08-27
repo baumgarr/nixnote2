@@ -30,7 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/linkednotebooktable.h"
 #include "sql/resourcetable.h"
 #include "sql/sharednotebooktable.h"
-#include "html/thumbnailer.h"
 #include "nixnote.h"
 #include "communication/communicationmanager.h"
 #include "communication/communicationerror.h"
@@ -179,56 +178,100 @@ void SyncRunner::evernoteSync() {
 bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     QLOG_TRACE() << "Entering SyncRunner::SyncRemoteToLocal()";
 
-    // The first thing we do is to see if any new tags or notebooks (ones with update sequence number = 0) have
-    // been created.  If so, we get a list of notebooks & tags to try and find matching names on Evernote.
-    // This avoids problems with duplicate or missing names later
+    // The sync is essentially run 3 times.
+    // The first time gets notes, searches, & tags.
+    // The second time gets notes
+    // The third time gets attachments (if not a full sync).
+    // It is done this way to make sure we have the latest notebook & tag names and the note exists
+    // before the attachment arrives.
 
-    vector<Notebook> books;
-    if (comm->getNotebookList(books))
-        syncRemoteNotebooks(books);
-    else {
-        QLOG_ERROR() << "Error retrieving notebook list";
-        error = true;
-        this->communicationErrorHandler();
-        return false;
-    }
-    vector<Tag> tags;
-    if (comm->getTagList(tags))
-        syncRemoteTags(tags);
-    else {
-        QLOG_ERROR() << "Error retrieving tag list";
-        error = true;
-        this->communicationErrorHandler();
-        return false;
-    }
+    QSqlQuery query(db->conn);
+    query.exec("begin");
 
-    int chunkSize = 100;
+    int chunkSize = 255;
     bool more = true;
     SyncChunk chunk;
 
     bool rc;
     int startingSequenceNumber = updateSequenceNumber;
+
     while(more && keepRunning)  {
-        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, fullSync);
+        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize,
+                                SYNC_CHUNK_LINKED_NOTEBOOKS | SYNC_CHUNK_NOTEBOOKS |
+                                SYNC_CHUNK_TAGS | SYNC_CHUNK_SEARCHES,
+                                fullSync);
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
             this->communicationErrorHandler();
+            query.exec("commit");
             return false;
         }
-        QLOG_DEBUG() << "------>>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
+        QLOG_DEBUG() << "-(Pass 1)->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
         int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
-        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete."), defaultMsgTimeout);
+        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete for notebooks, tags, & searches."), defaultMsgTimeout);
+
         processSyncChunk(chunk);
 
-        if (chunk.chunkHighUSN >= updateCount)
+        updateSequenceNumber = chunk.chunkHighUSN;
+        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
+            more = false;
+    }
+
+    more = true;
+    chunkSize = 100;
+    if (fullSync)
+        chunkSize = 50;
+    updateSequenceNumber = startingSequenceNumber;
+
+    while(more && keepRunning)  {
+        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_NOTES, fullSync);
+        if (!rc) {
+            QLOG_ERROR() << "Error retrieving chunk";
+            error = true;
+            this->communicationErrorHandler();
+            query.exec("commit");
+            return false;
+        }
+        QLOG_DEBUG() << "-(Pass 2) ->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
+        int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
+        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete for notes."), defaultMsgTimeout);
+        processSyncChunk(chunk);
+
+        updateSequenceNumber = chunk.chunkHighUSN;
+        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
+            more = false;
+    }
+
+    more = true;
+    chunkSize = 50;
+    updateSequenceNumber = startingSequenceNumber;
+
+    while(more && keepRunning && !fullSync)  {
+        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_RESOURCES, fullSync);
+        if (!rc) {
+            QLOG_ERROR() << "Error retrieving chunk";
+            error = true;
+            this->communicationErrorHandler();
+            query.exec("commit");
+            return false;
+        }
+        QLOG_DEBUG() << "-(Pass 3) ->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
+        int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
+        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete for attachments."), defaultMsgTimeout);
+        processSyncChunk(chunk);
+
+        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
             more = false;
         updateSequenceNumber = chunk.chunkHighUSN;
-        UserTable userTable(&db->conn);
-        userTable.updateLastSyncNumber(updateSequenceNumber);
-        userTable.updateLastSyncDate(chunk.currentTime);
     }
+
+    UserTable userTable(&db->conn);
+    userTable.updateLastSyncNumber(updateSequenceNumber);
+    userTable.updateLastSyncDate(chunk.currentTime);
+
     emit setMessage(tr("Download 100% complete."), defaultMsgTimeout);
+    query.exec("commit");
     return true;
 }
 

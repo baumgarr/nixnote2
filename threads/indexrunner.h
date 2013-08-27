@@ -28,17 +28,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QVector>
 #include "sql/databaseconnection.h"
 
-
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
-
-#include <html/thumbnailer.h>
 
 #include <iostream>
 #include <string>
 #include <stdio.h>
 #include <QFileInfo>
 #include <QTimer>
+#include <QTextDocument>
 
 using namespace evernote::edam;
 using namespace std;
@@ -54,7 +52,6 @@ private:
     void indexPdf(qint32 lid, Resource &r);
     void indexAttachment(qint32 lid, Resource &r);
     QTextDocument *textDocument;
-    Thumbnailer *hammer;
     DatabaseConnection *db;
 
 public:

@@ -693,7 +693,7 @@ qint32 ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
     query.bindValue(":lid", notelid);
     query.bindValue(":key", RESOURCE_NOTE_LID);
     query.exec();
-    while (query.next()) {
+    if (query.next()) {
         QSqlQuery query2(*db);
         qint32 lid = query.value(0).toInt();
         QByteArray b;

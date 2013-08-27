@@ -86,6 +86,7 @@ void NoteTable::sync(qint32 lid, Note &note, qint32 account) {
     }
 
     add(lid, note, false, account);
+    setThumbnailNeeded(lid, true);
 
     //QLOG_TRACE() << "Leaving NoteTable::sync()";
 }
@@ -1642,4 +1643,66 @@ void NoteTable::setGeography(qint32 lid, double longitude, double latitude, doub
 
     if (isDirty)
         this->setDirty(lid, isDirty);
+}
+
+
+
+void NoteTable::setThumbnailNeeded(qint32 lid, bool value) {
+    QSqlQuery query(*db);
+    query.prepare("Delete from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
+    query.exec();
+
+    if (value) {
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
+        query.bindValue(":data", value);
+        query.exec();
+    }
+
+}
+
+void NoteTable::setThumbnailNeeded(QString guid, bool value) {
+    qint32 lid = getLid(guid);
+    setThumbnailNeeded(lid, value);
+}
+
+void NoteTable::setThumbnailNeeded(string guid, bool value) {
+    qint32 lid = getLid(guid);
+    setThumbnailNeeded(lid, value);
+}
+
+bool NoteTable::isThumbnailNeeded(qint32 lid) {
+    QSqlQuery query(*db);
+    query.prepare("select data from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
+    query.exec();
+    if (query.next()) {
+        return query.value(0).toBool();
+    }
+    return false;
+}
+
+bool NoteTable::isThumbnailNeeded(QString guid) {
+    qint32 lid = getLid(guid);
+    return isThumbnailNeeded(lid);
+}
+
+bool NoteTable::isThumbnailNeeded(string guid) {
+    qint32 lid = getLid(guid);
+    return isThumbnailNeeded(lid);
+}
+
+qint32 NoteTable::getNextThumbnailNeeded() {
+    QSqlQuery query(*db);
+    query.prepare("select lid from datastore where data='true' and key=:key limit 1;");
+    query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
+    query.exec();
+    if (query.next()) {
+        return query.value(0).toInt();
+    }
+    return -1;
 }

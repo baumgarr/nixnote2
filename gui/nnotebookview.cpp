@@ -274,7 +274,6 @@ void NNotebookView::rebuildTree() {
     QHashIterator<QString, NNotebookViewItem *> s(stackStore);
     while (s.hasNext()) {
         s.next();
-        QLOG_DEBUG() << s.value()->childCount();
         if (s.value()->childCount() == 0) {
             root->removeChild(s.value());
             stackStore.remove(s.key());

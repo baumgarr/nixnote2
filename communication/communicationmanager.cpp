@@ -40,10 +40,20 @@ CommunicationManager::CommunicationManager(QSqlDatabase *db)
     thumbnailList = new QList< QPair<QString, QImage*>* >();
 
     sslSocketFactory = shared_ptr<TSSLSocketFactory>(new TSSLSocketFactory());
-    QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
-    sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-    pgmDir = global.getProgramDirPath() + "/certs/thawte.pem";
-    sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
+
+    // Load certificates
+    QDir myDir(global.getProgramDirPath()+"/certs");
+    QStringList filter;
+    filter.append("*.pem");
+    QStringList list = myDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
+    for (int i=0; i<list.size(); i++) {
+        sslSocketFactory->loadTrustedCertificates((global.getProgramDirPath()+"/certs/"+list[i]).toStdString().c_str());
+    }
+
+//    QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
+//    sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
+//    pgmDir = global.getProgramDirPath() + "/certs/thawte.pem";
+//    sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
     sslSocketFactory->authenticate(true);
     postData = new QUrl();
 }
@@ -136,7 +146,7 @@ bool CommunicationManager::getSyncState(string token, SyncState &syncState, int 
 
 
 // Get a sync chunk
-bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, bool fullSync, int errorCount) {
+bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, int type, bool fullSync, int errorCount) {
     // Get rid of old stuff from last chunk
     while(inkNoteList->size() > 0) {
         QPair<QString, QImage*> *pair = inkNoteList->takeLast();
@@ -144,6 +154,24 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
         delete pair;
     }
     inkNoteList->empty();
+
+    bool notebooks = false;
+    bool searches = false;
+    bool tags = false;
+    bool linkedNotebooks = false;
+    bool notes = false;
+    bool resources = false;
+    bool expunged = false;
+
+    notebooks = ((type & SYNC_CHUNK_NOTEBOOKS)>0);
+    searches = ((type & SYNC_CHUNK_SEARCHES)>0);
+    tags = ((type & SYNC_CHUNK_TAGS)>0);
+    linkedNotebooks = ((type & SYNC_CHUNK_LINKED_NOTEBOOKS)>0);
+    notes = ((type & SYNC_CHUNK_NOTES)>0);
+    expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync)>0);
+    resources = ((type & SYNC_CHUNK_RESOURCES)>0);
+    if (fullSync)
+        resources = false;
 
     // Try to get the chunk
     try {
@@ -161,28 +189,33 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
         filter.__isset.includeNoteResourceApplicationDataFullMap = true;
         filter.__isset.includeNoteResourceApplicationDataFullMap =true;
 
-        filter.includeExpunged = !fullSync;
-        filter.includeNotes = true;
+        filter.includeExpunged = notes;
+        filter.includeNotes = notes;
         filter.includeNoteResources = fullSync;
-        filter.includeNoteAttributes = true;
-        filter.includeNotebooks = true;
-        filter.includeTags = true;
-        filter.includeSearches = true;
-        filter.includeResources = !fullSync;
-        filter.includeLinkedNotebooks = true;
+        filter.includeNoteAttributes = notes;
+        filter.includeNotebooks = notebooks;
+        filter.includeTags = tags;
+        filter.includeSearches = searches;
+        filter.includeResources = resources;
+        filter.includeLinkedNotebooks = linkedNotebooks;
         filter.includeNoteApplicationDataFullMap = false;
         filter.includeNoteResourceApplicationDataFullMap = false;
         filter.includeNoteResourceApplicationDataFullMap = false;
+
+        // This is a failsafe to prevnt loops if nothing passes the filter
         chunk.chunkHighUSN = chunk.updateCount;
+
+        // Get the actual chunk.
         noteStoreClient->getFilteredSyncChunk(chunk, authToken, start, chunkSize, filter);
-        //noteStoreClient->getSyncChunk(chunk, authToken, start, chunkSize, fullSync);
 
         QHash<QString,QString> noteList;
+        if (fullSync)
+            resources = true;
         for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
             QLOG_TRACE() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
             Note n;
             noteList.insert(QString::fromStdString(n.guid),"");
-            noteStoreClient->getNote(n, authToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
+            noteStoreClient->getNote(n, authToken, chunk.notes[i].guid, true, resources, resources, resources);
             QLOG_TRACE() << "Note Retrieved";
             TagTable tagTable(db);
             for (unsigned int j=0; j<n.tagGuids.size(); j++) {
@@ -196,12 +229,12 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
                 checkForInkNotes(n.resources, "", QString::fromStdString(authToken));
             }
             QLOG_TRACE() << "Downloading thumbnail";
-            downloadThumbnail(QString::fromStdString(n.guid), authToken,"");
+//            downloadThumbnail(QString::fromStdString(n.guid), authToken,"");
         }
 
 
         QLOG_DEBUG() << "All notes retrieved.  Getting resources";
-        NoteTable noteTable(db);
+//        NoteTable noteTable(db);
         for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
             QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
             Resource r;
@@ -209,13 +242,14 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
             QLOG_TRACE() << "Resource retrieved";
             chunk.resources[i] = r;
 
-            if (noteTable.getLid(QString::fromStdString(r.noteGuid))<=0 || !noteList.contains(QString::fromStdString(r.noteGuid))) {
-                Note n;
-                noteStoreClient->getNote(n, authToken, r.noteGuid, true, true, true, true);
-                chunk.__isset.notes = true;
-                chunk.notes.push_back(n);
-            }
+//            if (noteTable.getLid(QString::fromStdString(r.noteGuid))<=0 || !noteList.contains(QString::fromStdString(r.noteGuid))) {
+//                Note n;
+//                noteStoreClient->getNote(n, authToken, r.noteGuid, true, true, true, true);
+//                chunk.__isset.notes = true;
+//                chunk.notes.push_back(n);
+//            }
         }
+        QLOG_DEBUG() << "Getting ink notes";
         if (chunk.__isset.resources && chunk.resources.size()>0) {
             QLOG_TRACE() << "Checking for ink notes";
             checkForInkNotes(chunk.resources,"", QString::fromStdString(authToken));
@@ -270,6 +304,7 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
         error.type = CommunicationError::Unknown;
         return false;
     }
+    QLOG_DEBUG() << "Chunk complete";
     return true;
 }
 
@@ -568,7 +603,10 @@ bool CommunicationManager::initUserStore() {
     QLOG_DEBUG() << "Inside CommunicationManager::initUserStore()";
     try {
         sslSocketUserStore = sslSocketFactory->createSocket(evernoteHost, 443);
-        sslSocketUserStore->setNoDelay(true);
+        //sslSocketUserStore->setNoDelay(true);
+        SOCKET s = sslSocketUserStore->getSocketFD();
+        this->setSocketOptions(s);
+
         shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(sslSocketUserStore));
         userStoreHttpClient = shared_ptr<TTransport>(new THttpClient(bufferedTransport, evernoteHost, userStorePath));
 
@@ -580,9 +618,6 @@ bool CommunicationManager::initUserStore() {
                 QLOG_ERROR() << "Incompatible Evernote API version";
                 return false;
         }
-
-        SOCKET s = sslSocketUserStore->getSocketFD();
-        this->setSocketOptions(s);
 
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
@@ -608,7 +643,6 @@ bool CommunicationManager::initUserStore() {
 
 
 void CommunicationManager::setSocketOptions(SOCKET s) {
-    return;   // Disabled to try and fix ttransport errors 8/21/2013
     int optval;
 
     socklen_t optlen = sizeof(optval);
@@ -635,14 +669,27 @@ bool CommunicationManager::initNoteStore() {
 
     try {
         shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
-        QString pgmDir = global.getProgramDirPath() + "/certs/thawte.pem";
-        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-        pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
-        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
+
+        // Load certificates
+        QDir myDir(global.getProgramDirPath()+"/certs");
+        QStringList filter;
+        filter.append("*.pem");
+        QStringList list = myDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
+        for (int i=0; i<list.size(); i++) {
+            sslSocketFactory->loadTrustedCertificates((global.getProgramDirPath()+"/certs/"+list[i]).toStdString().c_str());
+        }
+
+//        QString pgmDir = global.getProgramDirPath() + "/certs/thawte.pem";
+//        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
+//       pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
+//        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
         sslSocketFactory->authenticate(true);
 
         sslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
-        sslSocketNoteStore->setNoDelay(true);
+        //sslSocketNoteStore->setNoDelay(true);
+        SOCKET s = sslSocketNoteStore->getSocketFD();
+        this->setSocketOptions(s);
+
         shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(sslSocketNoteStore));
         User user;
         if (!getUserInfo(user))
@@ -656,10 +703,6 @@ bool CommunicationManager::initNoteStore() {
 
         SyncState syncState;
         noteStoreClient->getSyncState(syncState, authToken);
-
-
-        SOCKET s = sslSocketNoteStore->getSocketFD();
-        this->setSocketOptions(s);
 
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;

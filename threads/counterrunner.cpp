@@ -33,7 +33,6 @@ CounterRunner::CounterRunner(QObject *parent) :
 
 void CounterRunner::initialize() {
     init = true;
-//    hammer = new Thumbnailer();
     QLOG_DEBUG() << "Starting CounterRunner";
     db = new DatabaseConnection("counterrunner");
     QLOG_DEBUG() << "CounterRunner exiting.";

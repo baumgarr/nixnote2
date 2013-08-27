@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/findreplace.h"
 #include "threads/counterrunner.h"
 #include "oauth/oauthwindow.h"
+#include "html/thumbnailer.h"
 
 
 
@@ -94,6 +95,7 @@ private:
     QString saveLastPath;   // Last path viewed in the restore dialog
     FileWatcherManager *importManager;
     OAuthWindow oauthWindow;
+    Thumbnailer *hammer;
 
     // Tool & menu bar
     NMainMenuBar *menuBar;

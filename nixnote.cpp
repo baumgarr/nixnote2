@@ -61,6 +61,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/adduseraccountdialog.h"
 #include "dialog/accountmaintenancedialog.h"
 
+
 #include "gui/nmainmenubar.h"
 #include "dialog/logindialog.h"
 #include "xml/importdata.h"
@@ -134,6 +135,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     importManager->setup();
     connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
+    hammer = new Thumbnailer(global.db);
+    hammer->startTimer(10,120);
     finalSync = false;
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }

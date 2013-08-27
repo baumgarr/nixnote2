@@ -64,6 +64,14 @@ using namespace ::apache::thrift::server;
 #define EDAM_CONSUMER_KEY = "baumgarr-3523"
 #define EDAM_CONSUMER_SECRET = "8d5ee175f8a5d3ec"
 
+#define SYNC_CHUNK_NOTEBOOKS            0x0001
+#define SYNC_CHUNK_TAGS                 0x0002
+#define SYNC_CHUNK_LINKED_NOTEBOOKS     0x0004
+#define SYNC_CHKUNK_EXPUNGED            0x0008
+#define SYNC_CHUNK_SEARCHES             0x0010
+#define SYNC_CHUNK_NOTES                0x0020
+#define SYNC_CHUNK_RESOURCES            0x0040
+
 
 //#define EVERNOTE_HOST   "www.evernote.com"
 //#define EDAM_USER_STORE_PATH "/edam/user"
@@ -117,7 +125,7 @@ public:
     CommunicationError error;
     bool connect();
     bool getSyncState(string authToken, SyncState &syncState, int errorCount=0);
-    bool getSyncChunk(SyncChunk &chunk, int start, int chunkSize, bool fullSync=false, int errorCount=0);
+    bool getSyncChunk(SyncChunk &chunk, int start, int chunkSize, int type, bool fullSync, int errorCount=0);
     bool authenticateToLinkedNotebookShard(LinkedNotebook book);
     bool getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook book, int errorCount=0);
     bool getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook book, int start, int chunkSize, bool fullSync=false, int errorCount=0);
