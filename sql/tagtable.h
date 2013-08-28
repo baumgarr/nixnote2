@@ -86,6 +86,7 @@ public:
     void setUpdateSequenceNumber(qint32 lid, qint32 usn);  // set the update sequence number
     void resetLinkedTagsDirty();                // mark all linked tags as not-dirty
     int getNewUnsequencedCount();
+    void cleanupLinkedTags();
 };
 
 #endif // TAGTABLE_H

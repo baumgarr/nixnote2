@@ -710,6 +710,8 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
 
         comm->disconnectFromLinkedNotebook();
     }
+    TagTable tagTable(&db->conn);
+    tagTable.cleanupLinkedTags();
     return true;
 }
 

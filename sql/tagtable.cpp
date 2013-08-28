@@ -577,3 +577,23 @@ int TagTable::getNewUnsequencedCount() {
     return 0;
 }
 
+
+// This function will look at all the tags in linked notebooks.  If any tag has a name of
+// <no name> then it is missing.  This can happen because we get a parent guid from a tag
+// sync chunk, but not the actual parent tag.  When this happens we delete the <no name> tag
+// and remove the parent record.
+void TagTable::cleanupLinkedTags() {
+    // Delete the parent records from the children
+    QSqlQuery query(*db);
+    query.prepare("delete from datastore where data in (select lid from datastore where lid in (select lid from datastore where data='<no name>' and key=:nameKey and lid in (select lid from datastore where key=:owningKey)) and key=:parentKey)");
+    query.bindValue(":parentKey", TAG_PARENT_LID);
+    query.bindValue(":nameKey", TAG_NAME);
+    query.bindValue(":owningKey", TAG_OWNING_ACCOUNT);
+    query.exec();
+
+    // Delete the actual parent
+    query.prepare("delete from datastore where lid in (select lid from datastore where data='<no name>' and key=:nameKey and lid in (select lid from datastore where key=:owningKey))");
+    query.bindValue(":owningKey", TAG_OWNING_ACCOUNT);
+    query.bindValue(":nameKey", TAG_NAME);
+    query.exec();
+}
