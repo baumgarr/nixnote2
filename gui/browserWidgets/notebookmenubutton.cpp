@@ -59,11 +59,10 @@ void NotebookMenuButton::setCurrentNotebook(int lid, Note note) {
         actions[currentAction]->setChecked(false);
     this->setText(QString::fromStdString(notebook.name));
     for (int i=0; i<actions.size(); i++) {
+        actions[i]->setChecked(false);
         if (actions[i]->text().toLower().trimmed() == QString::fromStdString(notebook.name).toLower().trimmed()) {
             currentAction = i;
             actions[currentAction]->setChecked(true);
-            blockSignals(false);
-            return;
         }
     }
     blockSignals(false);
@@ -76,7 +75,7 @@ void NotebookMenuButton::loadData() {
     NotebookTable notebookTable(global.db);
 
     QList<qint32> lids;
-    notebookTable.getAll(lids);
+    notebookTable.getAllOrderByName(lids);
 
     if (notebookTable.findByName(currentNotebookName) <= 0)
         currentNotebookName = "";

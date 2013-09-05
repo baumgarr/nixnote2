@@ -86,6 +86,7 @@ public:
     bool exists(QString guid);              // Does this notebook exist?
     bool exists(string guid);               // Does this notebook exist?
     qint32 getAll(QList<qint32> &retVal);                    // Get a list of all notebooks
+    qint32 getAllOrderByName(QList<qint32> &retVal);                    // Get a list of all notebooks
     qint32 getStack(QList<qint32> &retval, QString &stack);  // Get all notebooks for a particular stack
     bool getGuid(QString& retval, qint32 lid); // Get a guid for a particular lid
     bool findGuidByName(QString &retval, QString &guid);  // Search for a notebook's guid based upon its name

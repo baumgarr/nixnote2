@@ -478,6 +478,21 @@ qint32 NotebookTable::getAll(QList<qint32> &books) {
 }
 
 
+
+// Get a list of all notebooks
+qint32 NotebookTable::getAllOrderByName(QList<qint32> &books) {
+    QSqlQuery query(*db);
+    query.prepare("select distinct lid from DataStore where key=:key order by data");
+    query.bindValue(":key", NOTEBOOK_NAME);
+    query.exec();
+    while (query.next()) {
+        books.append(query.value(0).toInt());
+    }
+
+    return books.size();
+}
+
+
 // Get all notebooks for a particular stack
 qint32 NotebookTable::getStack(QList<qint32> &retval, QString &stack){
     QSqlQuery query(*db);
