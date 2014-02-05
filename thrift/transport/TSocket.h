@@ -22,16 +22,20 @@
 
 #include <string>
 
+#include <thrift/transport/TTransport.h>
+#include <thrift/transport/TVirtualTransport.h>
+#include <thrift/transport/TServerSocket.h>
+#include <thrift/transport/PlatformSocket.h>
+
+#ifdef HAVE_ARPA_INET_H
+#include <arpa/inet.h>
+#endif
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
 #endif
 #ifdef HAVE_NETDB_H
 #include <netdb.h>
 #endif
-
-#include "TTransport.h"
-#include "TVirtualTransport.h"
-#include "TServerSocket.h"
 
 namespace apache { namespace thrift { namespace transport {
 
@@ -169,7 +173,7 @@ class TSocket : public TVirtualTransport<TSocket> {
   void setSendTimeout(int ms);
 
   /**
-   * Set the max number of recv retries in case of an EAGAIN
+   * Set the max number of recv retries in case of an THRIFT_EAGAIN
    * error
    */
   void setMaxRecvRetries(int maxRecvRetries);
@@ -197,7 +201,7 @@ class TSocket : public TVirtualTransport<TSocket> {
   /**
    * Returns the underlying socket file descriptor.
    */
-  int getSocketFD() {
+  THRIFT_SOCKET getSocketFD() {
     return socket_;
   }
 
@@ -208,7 +212,7 @@ class TSocket : public TVirtualTransport<TSocket> {
    *
    * @param fd the descriptor for an already-connected socket
    */
-  void setSocketFD(int fd);
+  void setSocketFD(THRIFT_SOCKET fd);
 
   /*
    * Returns a cached copy of the peer address.
@@ -228,7 +232,7 @@ class TSocket : public TVirtualTransport<TSocket> {
   /**
    * Constructor to create socket from raw UNIX handle.
    */
-  TSocket(int socket);
+  TSocket(THRIFT_SOCKET socket);
 
   /**
    * Set a cache of the peer address (used when trivially available: e.g.
@@ -259,7 +263,7 @@ class TSocket : public TVirtualTransport<TSocket> {
   std::string path_;
 
   /** Underlying UNIX socket handle */
-  int socket_;
+  THRIFT_SOCKET socket_;
 
   /** Connect timeout in ms */
   int connTimeout_;
@@ -290,9 +294,6 @@ class TSocket : public TVirtualTransport<TSocket> {
     sockaddr_in ipv4;
     sockaddr_in6 ipv6;
   } cachedPeerAddr_;
-
-  /** Connection start time */
-  timespec startTime_;
 
   /** Whether to use low minimum TCP retransmission timeout */
   static bool useLowMinRto_;

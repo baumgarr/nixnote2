@@ -17,9 +17,7 @@
  * under the License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#include <thrift/thrift-config.h>
 
 #ifdef HAVE_SYS_TIME_H
 #include <sys/time.h>
@@ -43,7 +41,7 @@ int increase_max_fds(int max_fds=(1<<24))  {
     max_fds /= 2;
   }
 
-  return  fdmaxrl.rlim_cur;
+  return static_cast<int>(fdmaxrl.rlim_cur);
 }
 
 }}} // apache::thrift::server

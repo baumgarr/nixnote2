@@ -20,16 +20,10 @@
 #ifndef _THRIFT_THRIFT_H_
 #define _THRIFT_THRIFT_H_ 1
 
-#include <inttypes.h>
-#include <netinet/in.h>
+#include <thrift/transport/PlatformSocket.h>
 
-#ifdef _WIN32
-#include "windows/config.h"
-#endif
+#include <thrift/thrift-config.h>
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
 #include <stdio.h>
 #include <assert.h>
 
@@ -51,7 +45,7 @@
 #include <boost/utility/enable_if.hpp>
 #include <boost/type_traits/is_convertible.hpp>
 
-#include "TLogging.h"
+#include <thrift/TLogging.h>
 
 /**
  * Helper macros to allow function overloading even when using
@@ -74,6 +68,8 @@
 
 #define THRIFT_OVERLOAD_IF(T, Y) \
   THRIFT_OVERLOAD_IF_DEFN(T, Y) = NULL
+
+#define THRIFT_UNUSED_VARIABLE(x) ((x)=(x))
 
 namespace apache { namespace thrift {
 
@@ -128,14 +124,7 @@ class TOutput {
 
   void printf(const char *message, ...);
 
-  inline static void errorTimeWrapper(const char* msg) {
-    time_t now;
-    char dbgtime[26];
-    time(&now);
-    ctime_r(&now, dbgtime);
-    dbgtime[24] = 0;
-    fprintf(stderr, "Thrift: %s %s\n", dbgtime, msg);
-  }
+  static void errorTimeWrapper(const char* msg);
 
   /** Just like strerror_r but returns a C++ string object. */
   static std::string strerror_s(int errno_copy);

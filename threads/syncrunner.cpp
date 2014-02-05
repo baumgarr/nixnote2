@@ -223,6 +223,8 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     if (fullSync)
         chunkSize = 50;
     updateSequenceNumber = startingSequenceNumber;
+    UserTable userTable(&db->conn);
+
 
     while(more && keepRunning)  {
         rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_NOTES, fullSync);
@@ -237,6 +239,12 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
         emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete for notes."), defaultMsgTimeout);
         processSyncChunk(chunk);
+
+        if (fullSync) {
+            userTable.updateLastSyncNumber(chunk.chunkHighUSN);
+            userTable.updateLastSyncDate(chunk.currentTime);
+            query.exec("commit");
+        }
 
         updateSequenceNumber = chunk.chunkHighUSN;
         if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
@@ -261,14 +269,15 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete for attachments."), defaultMsgTimeout);
         processSyncChunk(chunk);
 
+        userTable.updateLastSyncNumber(chunk.chunkHighUSN);
+        userTable.updateLastSyncDate(chunk.currentTime);
+        query.exec("commit");
+
         if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
             more = false;
         updateSequenceNumber = chunk.chunkHighUSN;
-    }
 
-    UserTable userTable(&db->conn);
-    userTable.updateLastSyncNumber(updateSequenceNumber);
-    userTable.updateLastSyncDate(chunk.currentTime);
+    }
 
     emit setMessage(tr("Download 100% complete."), defaultMsgTimeout);
     query.exec("commit");

@@ -17,9 +17,9 @@
  * under the License.
  */
 
-#include "TimerManager.h"
-#include "Exception.h"
-#include "Util.h"
+#include <thrift/concurrency/TimerManager.h>
+#include <thrift/concurrency/Exception.h>
+#include <thrift/concurrency/Util.h>
 
 #include <assert.h>
 #include <iostream>
@@ -102,7 +102,7 @@ class TimerManager::Dispatcher: public Runnable {
           assert((timeout != 0 && manager_->taskCount_ > 0) || (timeout == 0 && manager_->taskCount_ == 0));
           try {
             manager_->monitor_.wait(timeout);
-          } catch (TimedOutException &e) {}
+          } catch (TimedOutException &) {}
           now = Util::currentTime();
         }
 
@@ -140,12 +140,20 @@ class TimerManager::Dispatcher: public Runnable {
   friend class TimerManager;
 };
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4355) // 'this' used in base member initializer list
+#endif
+
 TimerManager::TimerManager() :
   taskCount_(0),
   state_(TimerManager::UNINITIALIZED),
   dispatcher_(shared_ptr<Dispatcher>(new Dispatcher(this))) {
 }
 
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
 
 TimerManager::~TimerManager() {
 
@@ -166,7 +174,7 @@ void TimerManager::start() {
   bool doStart = false;
   {
     Synchronized s(monitor_);
-    if (threadFactory_ == NULL) {
+    if (!threadFactory_) {
       throw InvalidArgumentException();
     }
     if (state_ == TimerManager::UNINITIALIZED) {
@@ -255,7 +263,7 @@ void TimerManager::add(shared_ptr<Runnable> task, int64_t timeout) {
   }
 }
 
-void TimerManager::add(shared_ptr<Runnable> task, const struct timespec& value) {
+void TimerManager::add(shared_ptr<Runnable> task, const struct THRIFT_TIMESPEC& value) {
 
   int64_t expiration;
   Util::toMilliseconds(expiration, value);
@@ -269,6 +277,19 @@ void TimerManager::add(shared_ptr<Runnable> task, const struct timespec& value) 
   add(task, expiration - now);
 }
 
+void TimerManager::add(shared_ptr<Runnable> task, const struct timeval& value) {
+
+  int64_t expiration;
+  Util::toMilliseconds(expiration, value);
+
+  int64_t now = Util::currentTime();
+
+  if (expiration < now) {
+    throw  InvalidArgumentException();
+  }
+
+  add(task, expiration - now);
+}
 
 void TimerManager::remove(shared_ptr<Runnable> task) {
   (void) task;

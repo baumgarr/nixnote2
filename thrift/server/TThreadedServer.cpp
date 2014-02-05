@@ -17,9 +17,9 @@
  * under the License.
  */
 
-#include "server/TThreadedServer.h"
-#include "transport/TTransportException.h"
-#include <concurrency/PlatformThreadFactory.h>
+#include <thrift/server/TThreadedServer.h>
+#include <thrift/transport/TTransportException.h>
+#include <thrift/concurrency/PlatformThreadFactory.h>
 
 #include <string>
 #include <iostream>
@@ -59,12 +59,12 @@ public:
     boost::shared_ptr<TServerEventHandler> eventHandler =
       server_.getEventHandler();
     void* connectionContext = NULL;
-    if (eventHandler != NULL) {
+    if (eventHandler) {
       connectionContext = eventHandler->createContext(input_, output_);
     }
     try {
       for (;;) {
-        if (eventHandler != NULL) {
+        if (eventHandler) {
           eventHandler->processContext(connectionContext, transport_);
         }
         if (!processor_->process(input_, output_, connectionContext) ||
@@ -83,7 +83,7 @@ public:
     } catch (...) {
       GlobalOutput("TThreadedServer uncaught exception.");
     }
-    if (eventHandler != NULL) {
+    if (eventHandler) {
       eventHandler->deleteContext(connectionContext, input_, output_);
     }
 
@@ -139,17 +139,11 @@ void TThreadedServer::serve() {
   shared_ptr<TProtocol> inputProtocol;
   shared_ptr<TProtocol> outputProtocol;
 
-  try {
-    // Start the server listening
-    serverTransport_->listen();
-  } catch (TTransportException& ttx) {
-    string errStr = string("TThreadedServer::run() listen(): ") +ttx.what();
-    GlobalOutput(errStr.c_str());
-    return;
-  }
+  // Start the server listening
+  serverTransport_->listen();
 
   // Run the preServe event
-  if (eventHandler_ != NULL) {
+  if (eventHandler_) {
     eventHandler_->preServe();
   }
 
@@ -197,25 +191,25 @@ void TThreadedServer::serve() {
       thread->start();
 
     } catch (TTransportException& ttx) {
-      if (inputTransport != NULL) { inputTransport->close(); }
-      if (outputTransport != NULL) { outputTransport->close(); }
-      if (client != NULL) { client->close(); }
+      if (inputTransport) { inputTransport->close(); }
+      if (outputTransport) { outputTransport->close(); }
+      if (client) { client->close(); }
       if (!stop_ || ttx.getType() != TTransportException::INTERRUPTED) {
         string errStr = string("TThreadedServer: TServerTransport died on accept: ") + ttx.what();
         GlobalOutput(errStr.c_str());
       }
       continue;
     } catch (TException& tx) {
-      if (inputTransport != NULL) { inputTransport->close(); }
-      if (outputTransport != NULL) { outputTransport->close(); }
-      if (client != NULL) { client->close(); }
+      if (inputTransport) { inputTransport->close(); }
+      if (outputTransport) { outputTransport->close(); }
+      if (client) { client->close(); }
       string errStr = string("TThreadedServer: Caught TException: ") + tx.what();
       GlobalOutput(errStr.c_str());
       continue;
     } catch (string s) {
-      if (inputTransport != NULL) { inputTransport->close(); }
-      if (outputTransport != NULL) { outputTransport->close(); }
-      if (client != NULL) { client->close(); }
+      if (inputTransport) { inputTransport->close(); }
+      if (outputTransport) { outputTransport->close(); }
+      if (client) { client->close(); }
       string errStr = "TThreadedServer: Unknown exception: " + s;
       GlobalOutput(errStr.c_str());
       break;

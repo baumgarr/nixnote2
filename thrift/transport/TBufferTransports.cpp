@@ -20,7 +20,7 @@
 #include <cassert>
 #include <algorithm>
 
-#include <transport/TBufferTransports.h>
+#include <thrift/transport/TBufferTransports.h>
 
 using std::string;
 
@@ -28,13 +28,13 @@ namespace apache { namespace thrift { namespace transport {
 
 
 uint32_t TBufferedTransport::readSlow(uint8_t* buf, uint32_t len) {
-  uint32_t have = rBound_ - rBase_;
+  uint32_t have = static_cast<uint32_t>(rBound_ - rBase_);
 
   // We should only take the slow path if we can't satisfy the read
   // with the data already in the buffer.
   assert(have < len);
 
-  // If we have some date in the buffer, copy it out and return it.
+  // If we have some data in the buffer, copy it out and return it.
   // We have to return it without attempting to read more, since we aren't
   // guaranteed that the underlying transport actually has more data, so
   // attempting to read from it could block.
@@ -52,7 +52,7 @@ uint32_t TBufferedTransport::readSlow(uint8_t* buf, uint32_t len) {
   setReadBuffer(rBuf_.get(), transport_->read(rBuf_.get(), rBufSize_));
 
   // Hand over whatever we have.
-  uint32_t give = std::min(len, static_cast<uint32_t>(rBound_ - rBase_));
+  uint32_t give = (std::min)(len, static_cast<uint32_t>(rBound_ - rBase_));
   memcpy(buf, rBase_, give);
   rBase_ += give;
 
@@ -60,8 +60,8 @@ uint32_t TBufferedTransport::readSlow(uint8_t* buf, uint32_t len) {
 }
 
 void TBufferedTransport::writeSlow(const uint8_t* buf, uint32_t len) {
-  uint32_t have_bytes = wBase_ - wBuf_.get();
-  uint32_t space = wBound_ - wBase_;
+  uint32_t have_bytes = static_cast<uint32_t>(wBase_ - wBuf_.get());
+  uint32_t space = static_cast<uint32_t>(wBound_ - wBase_);
   // We should only take the slow path if we can't accomodate the write
   // with the free space already in the buffer.
   assert(wBound_ - wBase_ < static_cast<ptrdiff_t>(len));
@@ -118,7 +118,7 @@ const uint8_t* TBufferedTransport::borrowSlow(uint8_t* buf, uint32_t* len) {
 
 void TBufferedTransport::flush()  {
   // Write out any data waiting in the write buffer.
-  uint32_t have_bytes = wBase_ - wBuf_.get();
+  uint32_t have_bytes = static_cast<uint32_t>(wBase_ - wBuf_.get());
   if (have_bytes > 0) {
     // Note that we reset wBase_ prior to the underlying write
     // to ensure we're in a sane state (i.e. internal buffer cleaned)
@@ -134,17 +134,20 @@ void TBufferedTransport::flush()  {
 
 uint32_t TFramedTransport::readSlow(uint8_t* buf, uint32_t len) {
   uint32_t want = len;
-  uint32_t have = rBound_ - rBase_;
+  uint32_t have = static_cast<uint32_t>(rBound_ - rBase_);
 
   // We should only take the slow path if we can't satisfy the read
   // with the data already in the buffer.
   assert(have < want);
 
-  // Copy out whatever we have.
+  // If we have some data in the buffer, copy it out and return it.
+  // We have to return it without attempting to read more, since we aren't
+  // guaranteed that the underlying transport actually has more data, so
+  // attempting to read from it could block.
   if (have > 0) {
     memcpy(buf, rBase_, have);
-    want -= have;
-    buf += have;
+    setReadBuffer(rBuf_.get(), 0);
+    return have;
   }
 
   // Read another frame.
@@ -156,7 +159,7 @@ uint32_t TFramedTransport::readSlow(uint8_t* buf, uint32_t len) {
   // TODO(dreiss): Should we warn when reads cross frames?
 
   // Hand over whatever we have.
-  uint32_t give = std::min(want, static_cast<uint32_t>(rBound_ - rBase_));
+  uint32_t give = (std::min)(want, static_cast<uint32_t>(rBound_ - rBase_));
   memcpy(buf, rBase_, give);
   rBase_ += give;
   want -= give;
@@ -176,7 +179,9 @@ bool TFramedTransport::readFrame() {
   uint32_t size_bytes_read = 0;
   while (size_bytes_read < sizeof(sz)) {
     uint8_t* szp = reinterpret_cast<uint8_t*>(&sz) + size_bytes_read;
-    uint32_t bytes_read = transport_->read(szp, sizeof(sz) - size_bytes_read);
+    uint32_t bytes_read = transport_->read(
+      szp,
+      static_cast<uint32_t>(sizeof(sz)) - size_bytes_read);
     if (bytes_read == 0) {
       if (size_bytes_read == 0) {
         // EOF before any data was read.
@@ -209,8 +214,12 @@ bool TFramedTransport::readFrame() {
 
 void TFramedTransport::writeSlow(const uint8_t* buf, uint32_t len) {
   // Double buffer size until sufficient.
-  uint32_t have = wBase_ - wBuf_.get();
+  uint32_t have = static_cast<uint32_t>(wBase_ - wBuf_.get());
   uint32_t new_size = wBufSize_;
+  if (len + have < have /* overflow */ || len + have > 0x7fffffff) {
+    throw TTransportException(TTransportException::BAD_ARGS,
+        "Attempted to write over 2 GB to TFramedTransport.");
+  }
   while (new_size < len + have) {
     new_size = new_size > 0 ? new_size * 2 : 1;
   }
@@ -240,7 +249,7 @@ void TFramedTransport::flush()  {
   assert(wBufSize_ > sizeof(sz_nbo));
 
   // Slip the frame size into the start of the buffer.
-  sz_hbo = wBase_ - (wBuf_.get() + sizeof(sz_nbo));
+  sz_hbo = static_cast<uint32_t>(wBase_ - (wBuf_.get() + sizeof(sz_nbo)));
   sz_nbo = (int32_t)htonl((uint32_t)(sz_hbo));
   memcpy(wBuf_.get(), (uint8_t*)&sz_nbo, sizeof(sz_nbo));
 
@@ -252,7 +261,9 @@ void TFramedTransport::flush()  {
     wBase_ = wBuf_.get() + sizeof(sz_nbo);
 
     // Write size and frame body.
-    transport_->write(wBuf_.get(), sizeof(sz_nbo)+sz_hbo);
+    transport_->write(
+      wBuf_.get(),
+      static_cast<uint32_t>(sizeof(sz_nbo))+sz_hbo);
   }
 
   // Flush the underlying transport.
@@ -260,7 +271,7 @@ void TFramedTransport::flush()  {
 }
 
 uint32_t TFramedTransport::writeEnd() {
-  return wBase_ - wBuf_.get();
+  return static_cast<uint32_t>(wBase_ - wBuf_.get());
 }
 
 const uint8_t* TFramedTransport::borrowSlow(uint8_t* buf, uint32_t* len) {
@@ -274,7 +285,7 @@ const uint8_t* TFramedTransport::borrowSlow(uint8_t* buf, uint32_t* len) {
 
 uint32_t TFramedTransport::readEnd() {
   // include framing bytes
-  return rBound_ - rBuf_.get() + sizeof(uint32_t);
+  return static_cast<uint32_t>(rBound_ - rBuf_.get() + sizeof(uint32_t));
 }
 
 void TMemoryBuffer::computeRead(uint32_t len, uint8_t** out_start, uint32_t* out_give) {
@@ -282,7 +293,7 @@ void TMemoryBuffer::computeRead(uint32_t len, uint8_t** out_start, uint32_t* out
   rBound_ = wBase_;
 
   // Decide how much to give.
-  uint32_t give = std::min(len, available_read());
+  uint32_t give = (std::min)(len, available_read());
 
   *out_start = rBase_;
   *out_give = give;

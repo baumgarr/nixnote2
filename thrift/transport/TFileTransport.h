@@ -20,26 +20,20 @@
 #ifndef _THRIFT_TRANSPORT_TFILETRANSPORT_H_
 #define _THRIFT_TRANSPORT_TFILETRANSPORT_H_ 1
 
-#include "TTransport.h"
-#include "Thrift.h"
-#include "TProcessor.h"
+#include <thrift/transport/TTransport.h>
+#include <thrift/Thrift.h>
+#include <thrift/TProcessor.h>
 
 #include <string>
 #include <stdio.h>
 
-#ifdef HAVE_PTHREAD_H
-#include <pthread.h>
-#endif
-
-#ifdef USE_BOOST_THREAD
-#include <boost/thread.hpp>
-#endif
-
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 
-#include "concurrency/Mutex.h"
-#include "concurrency/Monitor.h"
+#include <thrift/concurrency/Mutex.h>
+#include <thrift/concurrency/Monitor.h>
+#include <thrift/concurrency/PlatformThreadFactory.h>
+#include <thrift/concurrency/Thread.h>
 
 namespace apache { namespace thrift { namespace transport {
 
@@ -92,6 +86,11 @@ typedef struct readState {
       delete(event_);
     }
     event_ = 0;
+  }
+
+  inline uint32_t getEventSize() {
+  	  const void *buffer=reinterpret_cast<const void *>(eventSizeBuff_);
+	  return *reinterpret_cast<const uint32_t *>(buffer);
   }
 
   readState() {
@@ -201,7 +200,7 @@ class TFileTransport : public TFileReaderTransport,
   uint32_t getCurChunk();
 
   // for changing the output file
-  void resetOutputFile(int fd, std::string filename, int64_t offset);
+  void resetOutputFile(int fd, std::string filename, off_t offset);
 
   // Setter/Getter functions for user-controllable options
   void setReadBuffSize(uint32_t readBuffSize) {
@@ -302,13 +301,13 @@ class TFileTransport : public TFileReaderTransport,
  private:
   // helper functions for writing to a file
   void enqueueEvent(const uint8_t* buf, uint32_t eventLen);
-  bool swapEventBuffers(struct timespec* deadline);
+  bool swapEventBuffers(struct timeval* deadline);
   bool initBufferAndWriteThread();
 
   // control for writer thread
   static void* startWriterThread(void* ptr) {
-    (((TFileTransport*)ptr)->writerThread());
-    return 0;
+    static_cast<TFileTransport*>(ptr)->writerThread();
+    return NULL;
   }
   void writerThread();
 
@@ -321,7 +320,7 @@ class TFileTransport : public TFileReaderTransport,
 
   // Utility functions
   void openLogFile();
-  void getNextFlushTime(struct timespec* ts_next_flush);
+  void getNextFlushTime(struct timeval* ts_next_flush);
 
   // Class variables
   readState readState_;
@@ -370,12 +369,9 @@ class TFileTransport : public TFileReaderTransport,
   uint32_t writerThreadIOErrorSleepTime_;
   static const uint32_t DEFAULT_WRITER_THREAD_SLEEP_TIME_US = 60 * 1000 * 1000;
 
-  // writer thread id
-#ifdef USE_BOOST_THREAD
-	std::auto_ptr<boost::thread> writerThreadId_;
-#else
-	pthread_t writerThreadId_;
-#endif
+  // writer thread
+  apache::thrift::concurrency::PlatformThreadFactory threadFactory_;
+  boost::shared_ptr<apache::thrift::concurrency::Thread> writerThread_;
 
   // buffers to hold data before it is flushed. Each element of the buffer stores a msg that
   // needs to be written to the file.  The buffers are swapped by the writer thread.

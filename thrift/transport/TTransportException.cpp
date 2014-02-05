@@ -17,10 +17,11 @@
  * under the License.
  */
 
-#include <transport/TTransportException.h>
+#include <thrift/transport/TTransportException.h>
 #include <boost/lexical_cast.hpp>
 #include <cstring>
-#include <config.h>
+
+#include <thrift/thrift-config.h>
 
 using std::string;
 using boost::lexical_cast;
@@ -28,4 +29,3 @@ using boost::lexical_cast;
 namespace apache { namespace thrift { namespace transport {
 
 }}} // apache::thrift::transport
-

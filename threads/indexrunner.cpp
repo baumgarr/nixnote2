@@ -71,9 +71,11 @@ void IndexRunner::index() {
     QList<qint32> lids;
     NoteTable noteTable(&db->conn);
     ResourceTable resourceTable(&db->conn);
+    bool endMsgNeeded = false;
 
     // Get any unindexed notes
     if (keepRunning && noteTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
+        endMsgNeeded = true;
         QLOG_DEBUG() << "Unindexed Notes found: " << lids.size();
 
 
@@ -91,6 +93,7 @@ void IndexRunner::index() {
 
     // Start indexing resources
     if (keepRunning && resourceTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
+        endMsgNeeded = true;
         QLOG_DEBUG() << "Unindexed Resources found: " << lids.size();
 
         // Index each resource that is needed.
@@ -108,6 +111,9 @@ void IndexRunner::index() {
             resourceTable.setIndexNeeded(lids.at(i), false);
         }
     }
+    if (endMsgNeeded) {
+        QLOG_DEBUG() << "Indexing completed";
+    }
     indexTimer->start();
 
 }
@@ -116,6 +122,7 @@ void IndexRunner::index() {
 
 // This indexes the actual note.
 void IndexRunner::indexNote(qint32 lid, Note &n) {
+    QLOG_DEBUG() << "Indexing note: " << QString::fromStdString(n.title);
     QString content = QString::fromStdString(n.content); //.replace(QString("\n"), QString(" "));
 
 
@@ -153,7 +160,9 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
     sql.bindValue(":content", QString::fromStdString(n.title) + QString(" " ) +content);
+    QLOG_DEBUG() << "Adding note content to index DB";
     sql.exec();
+    //QLOG_DEBUG() << sql.lastError();
 
 }
 
@@ -161,6 +170,8 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
 
 // Index any resources
 void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
+
+    QLOG_DEBUG() << "Adding resource " << lid << " to db";
 
     // Make sure we have something to look through.
     if (!r.__isset.recognition || !r.recognition.__isset.body)
@@ -181,12 +192,20 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 
     // Start adding words to the index.
     QSqlQuery trans(db->conn);
-    //trans.exec("begin");
+    trans.exec("begin");
+    int tracelog = 50;
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
     for (unsigned int i=0; i<anchors.length() && keepRunning && !pauseIndexing; i++) {
         QDomElement enmedia = anchors.at(i).toElement();
         QString weight = enmedia.attribute("w");
         QString text = enmedia.text();
+        tracelog--;
+        if (tracelog <=0 ) {
+            QLOG_DEBUG() << " Still adding ... " << i;
+            tracelog = 50;
+            trans.exec("commit");
+            trans.exec("begin");
+        }
         if (text != "") {
             int w = weight.toInt();
             sql.bindValue(":lid", lid);
@@ -195,7 +214,7 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
             sql.exec();
         }
     }
-    //trans.exec("commit");
+    trans.exec("commit");
 }
 
 
@@ -221,9 +240,11 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
     sql.bindValue(":content", text);
+    QLOG_DEBUG() << "Adding PDF " << lid << " to index db";
     sql.exec();
-
+    QLOG_DEBUG() << sql.lastError();
 }
+
 
 
 
@@ -265,6 +286,9 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
     //sql.bindValue(":content", text);
+    QLOG_DEBUG() << "Adding note resource to index DB";
+    sql.exec();
+    QLOG_DEBUG() << sql.lastError();
     sql.exec();
 
 }

@@ -20,8 +20,7 @@
 #include <cassert>
 #include <cstring>
 #include <algorithm>
-#include <transport/TZlibTransport.h>
-#include <zlib.h>
+#include <thrift/transport/TZlibTransport.h>
 
 using std::string;
 
@@ -57,7 +56,7 @@ void TZlibTransport::initZlib() {
     // Have to set this flag so we know whether to de-initialize.
     r_init = true;
 
-    rv = deflateInit(wstream_, Z_DEFAULT_COMPRESSION);
+    rv = deflateInit(wstream_, comp_level_);
     checkZlibRv(rv, wstream_->msg);
   }
 
@@ -110,8 +109,14 @@ TZlibTransport::~TZlibTransport() {
 }
 
 bool TZlibTransport::isOpen() {
-  return (readAvail() > 0) || transport_->isOpen();
+  return (readAvail() > 0) || (rstream_->avail_in > 0) || transport_->isOpen();
 }
+
+bool TZlibTransport::peek() {
+  return (readAvail() > 0) || (rstream_->avail_in > 0) || transport_->peek();
+}
+
+
 
 // READING STRATEGY
 //
@@ -253,7 +258,7 @@ void TZlibTransport::flush()  {
                               "flush() called after finish()");
   }
 
-  flushToTransport(Z_SYNC_FLUSH);
+  flushToTransport(Z_FULL_FLUSH);
 }
 
 void TZlibTransport::finish()  {

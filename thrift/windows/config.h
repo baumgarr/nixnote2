@@ -28,81 +28,63 @@
 #error This is a MSVC header only.
 #endif
 
-#pragma warning(disable: 4996) // Depreciated posix name.
-#pragma warning(disable: 4250) // Inherits via dominance.
+// use std::thread in MSVC11 (2012) or newer
+#if _MSC_VER >= 1700
+#  define USE_STD_THREAD 1
+// otherwise use boost threads
+#else
+#  define USE_BOOST_THREAD 1
+#endif
 
-#define VERSION "0.8.0"
+#ifndef TARGET_WIN_XP
+#  define TARGET_WIN_XP 1
+#endif
+
+#if TARGET_WIN_XP
+#  ifndef WINVER
+#    define WINVER 0x0501
+#  endif
+#  ifndef _WIN32_WINNT
+#    define _WIN32_WINNT 0x0501
+#  endif
+#endif
+
+#ifndef _WIN32_WINNT
+#  define _WIN32_WINNT 0x0601
+#endif
+
+#pragma warning(disable: 4996) // Deprecated posix name.
+
+#define VERSION "1.0.0-dev"
 #define HAVE_GETTIMEOFDAY 1
 #define HAVE_SYS_STAT_H 1
 
-#include "TargetVersion.h"
-#include "GetTimeOfDay.h"
-#include "Operators.h"
-#include "TWinsockSingleton.h"
-#include "WinFcntl.h"
-#include "SocketPair.h"
+#ifdef HAVE_STDINT_H
+#  include <stdint.h>
+#else
+#  include <boost/cstdint.hpp>
 
-// boost
-#include <boost/cstdint.hpp>
+typedef boost::int64_t    int64_t;
+typedef boost::uint64_t  uint64_t;
+typedef boost::int32_t    int32_t;
+typedef boost::uint32_t  uint32_t;
+typedef boost::int16_t    int16_t;
+typedef boost::uint16_t  uint16_t;
+typedef boost::int8_t      int8_t;
+typedef boost::uint8_t    uint8_t;
+#endif
 
-typedef boost::int64_t  int64_t;
-typedef boost::uint32_t uint32_t;
-typedef boost::uint8_t  uint8_t;
+#include <thrift/transport/PlatformSocket.h>
+#include <thrift/windows/GetTimeOfDay.h>
+#include <thrift/windows/Operators.h>
+#include <thrift/windows/TWinsockSingleton.h>
+#include <thrift/windows/WinFcntl.h>
+#include <thrift/windows/SocketPair.h>
 
 // windows
 #include <Winsock2.h>
 #include <ws2tcpip.h>
 #pragma comment(lib, "Ws2_32.lib")
-
-// pthreads
-#if 0
-#	include <pthread.h>
-#else
-struct timespec {
-	int64_t tv_sec;
-	int64_t tv_nsec;
-};
-#	define USE_BOOST_THREAD 1
-#	define ctime_r( _clock, _buf ) \
-        ( strcpy( (_buf), ctime( (_clock) ) ),  \
-          (_buf) )
-#endif
-
-typedef ptrdiff_t ssize_t;
-
-// Missing functions.
-#define usleep(ms) Sleep(ms)
-
-#if WINVER <= 0x0502
-#define poll(fds, nfds, timeout) \
-    poll_win32(fds, nfds, timeout)
-
-inline int poll_win32(LPWSAPOLLFD fdArray, ULONG fds, INT timeout)
-{
-    fd_set read_fds;
-    fd_set write_fds;
-    fd_set except_fds;
-
-    FD_ZERO(&read_fds);
-    FD_ZERO(&write_fds);
-    FD_ZERO(&except_fds);
-
-    FD_SET(fdArray[0].fd, &read_fds);
-    FD_SET(fdArray[0].fd, &write_fds);
-    FD_SET(fdArray[0].fd, &except_fds);
-
-    timeval time_out = {timeout * 0.001, timeout * 1000};
-    return select(1, &read_fds, &write_fds, &except_fds, &time_out);
-}
-#else
-	inline int poll(struct pollfd* fdArray, ULONG fds, INT timeout) {
-		return WSAPoll(fdArray, fds, timeout);
-	}
-#endif // WINVER
-
-inline void close(SOCKET socket)
-{
-    ::closesocket(socket);
-}
+#pragma comment(lib, "advapi32.lib") //For security APIs in TPipeServer
 
 #endif // _THRIFT_WINDOWS_CONFIG_H_

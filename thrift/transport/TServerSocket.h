@@ -20,7 +20,8 @@
 #ifndef _THRIFT_TRANSPORT_TSERVERSOCKET_H_
 #define _THRIFT_TRANSPORT_TSERVERSOCKET_H_ 1
 
-#include "TServerTransport.h"
+#include <thrift/transport/TServerTransport.h>
+#include <thrift/transport/PlatformSocket.h>
 #include <boost/shared_ptr.hpp>
 
 namespace apache { namespace thrift { namespace transport {
@@ -34,6 +35,8 @@ class TSocket;
  */
 class TServerSocket : public TServerTransport {
  public:
+  const static int DEFAULT_BACKLOG = 1024;
+
   TServerSocket(int port);
   TServerSocket(int port, int sendTimeout, int recvTimeout);
   TServerSocket(std::string path);
@@ -44,6 +47,7 @@ class TServerSocket : public TServerTransport {
   void setRecvTimeout(int recvTimeout);
 
   void setAcceptTimeout(int accTimeout);
+  void setAcceptBacklog(int accBacklog);
 
   void setRetryLimit(int retryLimit);
   void setRetryDelay(int retryDelay);
@@ -58,12 +62,12 @@ class TServerSocket : public TServerTransport {
 
  protected:
   boost::shared_ptr<TTransport> acceptImpl();
-  virtual boost::shared_ptr<TSocket> createSocket(int client);
+  virtual boost::shared_ptr<TSocket> createSocket(THRIFT_SOCKET client);
 
  private:
   int port_;
   std::string path_;
-  int serverSocket_;
+  THRIFT_SOCKET serverSocket_;
   int acceptBacklog_;
   int sendTimeout_;
   int recvTimeout_;
@@ -73,8 +77,8 @@ class TServerSocket : public TServerTransport {
   int tcpSendBuffer_;
   int tcpRecvBuffer_;
 
-  int intSock1_;
-  int intSock2_;
+  THRIFT_SOCKET intSock1_;
+  THRIFT_SOCKET intSock2_;
 };
 
 }}} // apache::thrift::transport

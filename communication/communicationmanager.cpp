@@ -170,8 +170,6 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
     notes = ((type & SYNC_CHUNK_NOTES)>0);
     expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync)>0);
     resources = ((type & SYNC_CHUNK_RESOURCES)>0);
-    if (fullSync)
-        resources = false;
 
     // Try to get the chunk
     try {
@@ -189,7 +187,7 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
         filter.__isset.includeNoteResourceApplicationDataFullMap = true;
         filter.__isset.includeNoteResourceApplicationDataFullMap =true;
 
-        filter.includeExpunged = notes;
+        filter.includeExpunged = expunged;
         filter.includeNotes = notes;
         filter.includeNoteResources = fullSync;
         filter.includeNoteAttributes = notes;

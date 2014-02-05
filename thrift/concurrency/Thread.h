@@ -24,8 +24,16 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/weak_ptr.hpp>
 
-#ifdef USE_BOOST_THREAD
-#include <boost/thread.hpp>
+#include <thrift/thrift-config.h>
+
+#if USE_BOOST_THREAD
+#  include <boost/thread.hpp>
+#elif USE_STD_THREAD
+#  include <thread>
+#else
+#  ifdef HAVE_PTHREAD_H
+#    include <pthread.h>
+#  endif
 #endif
 
 namespace apache { namespace thrift { namespace concurrency {
@@ -72,10 +80,21 @@ class Thread {
 
  public:
 
-#ifdef USE_BOOST_THREAD
+#if USE_BOOST_THREAD
   typedef boost::thread::id id_t;
+
+  static inline bool is_current(id_t t) { return t == boost::this_thread::get_id(); }
+  static inline id_t get_current() { return boost::this_thread::get_id(); }
+#elif USE_STD_THREAD
+  typedef std::thread::id id_t;
+
+  static inline bool is_current(id_t t) { return t == std::this_thread::get_id(); }
+  static inline id_t get_current() { return std::this_thread::get_id(); }
 #else
-  typedef uint64_t id_t;
+  typedef pthread_t id_t;
+
+  static inline bool is_current(id_t t) { return pthread_equal(pthread_self(), t); }
+  static inline id_t get_current() { return pthread_self(); }
 #endif
 
   virtual ~Thread() {};

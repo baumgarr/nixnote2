@@ -20,9 +20,9 @@
 #ifndef _THRIFT_SERVER_TTHREADPOOLSERVER_H_
 #define _THRIFT_SERVER_TTHREADPOOLSERVER_H_ 1
 
-#include <concurrency/ThreadManager.h>
-#include <server/TServer.h>
-#include <transport/TServerTransport.h>
+#include <thrift/concurrency/ThreadManager.h>
+#include <thrift/server/TServer.h>
+#include <thrift/transport/TServerTransport.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -44,12 +44,13 @@ class TThreadPoolServer : public TServer {
       const boost::shared_ptr<TTransportFactory>& transportFactory,
       const boost::shared_ptr<TProtocolFactory>& protocolFactory,
       const boost::shared_ptr<ThreadManager>& threadManager,
-      THRIFT_OVERLOAD_IF(ProcessorFactory, TProtocolFactory)) :
+      THRIFT_OVERLOAD_IF(ProcessorFactory, TProcessorFactory)) :
     TServer(processorFactory, serverTransport, transportFactory,
             protocolFactory),
     threadManager_(threadManager),
     stop_(false),
-    timeout_(0) {}
+    timeout_(0),
+    taskExpiration_(0) {}
 
   template<typename Processor>
   TThreadPoolServer(
@@ -62,7 +63,8 @@ class TThreadPoolServer : public TServer {
     TServer(processor, serverTransport, transportFactory, protocolFactory),
     threadManager_(threadManager),
     stop_(false),
-    timeout_(0) {}
+    timeout_(0),
+    taskExpiration_(0) {}
 
   template<typename ProcessorFactory>
   TThreadPoolServer(
@@ -79,7 +81,8 @@ class TThreadPoolServer : public TServer {
             inputProtocolFactory, outputProtocolFactory),
     threadManager_(threadManager),
     stop_(false),
-    timeout_(0) {}
+    timeout_(0),
+    taskExpiration_(0) {}
 
   template<typename Processor>
   TThreadPoolServer(
@@ -96,7 +99,8 @@ class TThreadPoolServer : public TServer {
             inputProtocolFactory, outputProtocolFactory),
     threadManager_(threadManager),
     stop_(false),
-    timeout_(0) {}
+    timeout_(0),
+    taskExpiration_(0) {}
 
   virtual ~TThreadPoolServer();
 
@@ -111,6 +115,10 @@ class TThreadPoolServer : public TServer {
     serverTransport_->interrupt();
   }
 
+  virtual int64_t getTaskExpiration() const;
+
+  virtual void setTaskExpiration(int64_t value);
+
  protected:
 
   boost::shared_ptr<ThreadManager> threadManager_;
@@ -118,6 +126,8 @@ class TThreadPoolServer : public TServer {
   volatile bool stop_;
 
   volatile int64_t timeout_;
+
+  volatile int64_t taskExpiration_;
 
 };
 

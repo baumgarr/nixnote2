@@ -20,7 +20,7 @@
 #ifndef _THRIFT_TRANSPORT_TVIRTUALTRANSPORT_H_
 #define _THRIFT_TRANSPORT_TVIRTUALTRANSPORT_H_ 1
 
-#include <transport/TTransport.h>
+#include <thrift/transport/TTransport.h>
 
 namespace apache { namespace thrift { namespace transport {
 

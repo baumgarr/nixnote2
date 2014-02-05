@@ -20,10 +20,10 @@
 #ifndef _THRIFT_TASYNCPROCESSOR_H_
 #define _THRIFT_TASYNCPROCESSOR_H_ 1
 
-#include <tr1/functional>
+#include <thrift/cxxfunctional.h>
 #include <boost/shared_ptr.hpp>
-#include <protocol/TProtocol.h>
-#include <TProcessor.h>
+#include <thrift/protocol/TProtocol.h>
+#include <thrift/TProcessor.h>
 
 namespace apache { namespace thrift { namespace async {
 
@@ -38,11 +38,11 @@ class TAsyncProcessor {
  public:
   virtual ~TAsyncProcessor() {}
 
-  virtual void process(std::tr1::function<void(bool success)> _return,
+  virtual void process(apache::thrift::stdcxx::function<void(bool success)> _return,
                        boost::shared_ptr<protocol::TProtocol> in,
                        boost::shared_ptr<protocol::TProtocol> out) = 0;
 
-  void process(std::tr1::function<void(bool success)> _return,
+  void process(apache::thrift::stdcxx::function<void(bool success)> _return,
                boost::shared_ptr<apache::thrift::protocol::TProtocol> io) {
     return process(_return, io, io);
   }

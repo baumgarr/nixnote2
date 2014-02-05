@@ -20,7 +20,7 @@
 #ifndef _THRIFT_PROTOCOL_TBINARYPROTOCOL_TCC_
 #define _THRIFT_PROTOCOL_TBINARYPROTOCOL_TCC_ 1
 
-#include "TBinaryProtocol.h"
+#include <thrift/protocol/TBinaryProtocol.h>
 
 #include <limits>
 
@@ -32,7 +32,7 @@ uint32_t TBinaryProtocolT<Transport_>::writeMessageBegin(const std::string& name
                                                          const TMessageType messageType,
                                                          const int32_t seqid) {
   if (this->strict_write_) {
-    uint32_t version = (VERSION_1) | ((int32_t)messageType);
+    int32_t version = (VERSION_1) | ((int32_t)messageType);
     uint32_t wsize = 0;
     wsize += writeI32(version);
     wsize += writeString(name);
@@ -176,8 +176,11 @@ uint32_t TBinaryProtocolT<Transport_>::writeDouble(const double dub) {
 
 
 template <class Transport_>
-uint32_t TBinaryProtocolT<Transport_>::writeString(const std::string& str) {
-  uint32_t size = str.size();
+template<typename StrType>
+uint32_t TBinaryProtocolT<Transport_>::writeString(const StrType& str) {
+  if(str.size() > static_cast<size_t>((std::numeric_limits<int32_t>::max)()))
+    throw TProtocolException(TProtocolException::SIZE_LIMIT);
+  uint32_t size = static_cast<uint32_t>(str.size());
   uint32_t result = writeI32((int32_t)size);
   if (size > 0) {
     this->trans_->write((uint8_t*)str.data(), size);
@@ -204,7 +207,7 @@ uint32_t TBinaryProtocolT<Transport_>::readMessageBegin(std::string& name,
 
   if (sz < 0) {
     // Check for correct version number
-    uint32_t version = sz & VERSION_MASK;
+    int32_t version = sz & VERSION_MASK;
     if (version != VERSION_1) {
       throw TProtocolException(TProtocolException::BAD_VERSION, "Bad version identifier");
     }
@@ -401,7 +404,8 @@ uint32_t TBinaryProtocolT<Transport_>::readDouble(double& dub) {
 }
 
 template <class Transport_>
-uint32_t TBinaryProtocolT<Transport_>::readString(std::string& str) {
+template<typename StrType>
+uint32_t TBinaryProtocolT<Transport_>::readString(StrType& str) {
   uint32_t result;
   int32_t size;
   result = readI32(size);
@@ -414,7 +418,8 @@ uint32_t TBinaryProtocolT<Transport_>::readBinary(std::string& str) {
 }
 
 template <class Transport_>
-uint32_t TBinaryProtocolT<Transport_>::readStringBody(std::string& str,
+template<typename StrType>
+uint32_t TBinaryProtocolT<Transport_>::readStringBody(StrType& str,
                                                       int32_t size) {
   uint32_t result = 0;
 
@@ -428,7 +433,7 @@ uint32_t TBinaryProtocolT<Transport_>::readStringBody(std::string& str,
 
   // Catch empty string case
   if (size == 0) {
-    str = "";
+    str.clear();
     return result;
   }
 
@@ -451,7 +456,7 @@ uint32_t TBinaryProtocolT<Transport_>::readStringBody(std::string& str,
     this->string_buf_size_ = size;
   }
   this->trans_->readAll(this->string_buf_, size);
-  str = std::string((char*)this->string_buf_, size);
+  str.assign((char*)this->string_buf_, size);
   return (uint32_t)size;
 }
 

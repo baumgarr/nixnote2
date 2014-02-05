@@ -109,6 +109,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     page.mainFrame()->setContent(htmlPage);
     QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
 
+    QLOG_DEBUG() << page.mainFrame()->toHtml();
     modifyTags(page);
 
     note.content = page.mainFrame()->toHtml().toStdString();

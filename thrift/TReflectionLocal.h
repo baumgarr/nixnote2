@@ -22,7 +22,7 @@
 
 #include <stdint.h>
 #include <cstring>
-#include <protocol/TProtocol.h>
+#include <thrift/protocol/TProtocol.h>
 
 /**
  * Local Reflection is a blanket term referring to the the structure

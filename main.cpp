@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 //#include "utilities/encrypt.h"
 #include "application.h"
+#include "thrift/config.h"
 
 
 //using namespace std;
@@ -103,6 +104,7 @@ int main(int argc, char *argv[])
 
     // Show Qt version.  This is useful for debugging
     QLOG_INFO() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
+    QLOG_INFO() << "Thrift version: " << PACKAGE_VERSION;
 
     startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
     startupConfig.name = "NixNote";

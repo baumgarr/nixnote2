@@ -20,8 +20,8 @@
 #ifndef _THRIFT_PROTOCOL_TBINARYPROTOCOL_H_
 #define _THRIFT_PROTOCOL_TBINARYPROTOCOL_H_ 1
 
-#include "TProtocol.h"
-#include "TVirtualProtocol.h"
+#include <thrift/protocol/TProtocol.h>
+#include <thrift/protocol/TVirtualProtocol.h>
 
 #include <boost/shared_ptr.hpp>
 
@@ -36,8 +36,8 @@ template <class Transport_>
 class TBinaryProtocolT
   : public TVirtualProtocol< TBinaryProtocolT<Transport_> > {
  protected:
-  static const uint32_t VERSION_MASK = 0xffff0000;
-  static const uint32_t VERSION_1 = 0x80010000;
+  static const int32_t VERSION_MASK = ((int32_t)0xffff0000);
+  static const int32_t VERSION_1 = ((int32_t)0x80010000);
   // VERSION_2 (0x80020000)  is taken by TDenseProtocol.
 
  public:
@@ -134,7 +134,8 @@ class TBinaryProtocolT
 
   inline uint32_t writeDouble(const double dub);
 
-  inline uint32_t writeString(const std::string& str);
+  template <typename StrType>
+  inline uint32_t writeString(const StrType& str);
 
   inline uint32_t writeBinary(const std::string& str);
 
@@ -187,12 +188,14 @@ class TBinaryProtocolT
 
   inline uint32_t readDouble(double& dub);
 
-  inline uint32_t readString(std::string& str);
+  template<typename StrType>
+  inline uint32_t readString(StrType& str);
 
   inline uint32_t readBinary(std::string& str);
 
  protected:
-  uint32_t readStringBody(std::string& str, int32_t sz);
+  template<typename StrType>
+  uint32_t readStringBody(StrType& str, int32_t sz);
 
   Transport_* trans_;
 
@@ -274,6 +277,6 @@ typedef TBinaryProtocolFactoryT<TTransport> TBinaryProtocolFactory;
 
 }}} // apache::thrift::protocol
 
-#include "TBinaryProtocol.tcc"
+#include <thrift/protocol/TBinaryProtocol.tcc>
 
 #endif // #ifndef _THRIFT_PROTOCOL_TBINARYPROTOCOL_H_

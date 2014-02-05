@@ -17,11 +17,11 @@
  * under the License.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-#include "Mutex.h"
-#include "Util.h"
+#include <thrift/thrift-config.h>
+
+#include <thrift/Thrift.h>
+#include <thrift/concurrency/Mutex.h>
+#include <thrift/concurrency/Util.h>
 
 #include <assert.h>
 #ifdef HAVE_PTHREAD_H
@@ -127,6 +127,7 @@ class Mutex::impl {
     if (initialized_) {
       initialized_ = false;
       int ret = pthread_mutex_destroy(&pthread_mutex_);
+      THRIFT_UNUSED_VARIABLE(ret);
       assert(ret == 0);
     }
   }
@@ -143,8 +144,8 @@ class Mutex::impl {
 #if defined(_POSIX_TIMEOUTS) && _POSIX_TIMEOUTS >= 200112L
     PROFILE_MUTEX_START_LOCK();
 
-    struct timespec ts;
-    Util::toTimespec(ts, milliseconds);
+    struct THRIFT_TIMESPEC ts;
+    Util::toTimespec(ts, milliseconds + Util::currentTime());
     int ret = pthread_mutex_timedlock(&pthread_mutex_, &ts);
     if (ret == 0) {
       PROFILE_MUTEX_LOCKED();
@@ -154,9 +155,24 @@ class Mutex::impl {
     PROFILE_MUTEX_NOT_LOCKED();
     return false;
 #else
-    // If pthread_mutex_timedlock isn't supported, the safest thing to do
-    // is just do a nonblocking trylock.
-    return trylock();
+    /* Otherwise follow solution used by Mono for Android */
+    struct THRIFT_TIMESPEC sleepytime, now, to;
+
+    /* This is just to avoid a completely busy wait */
+    sleepytime.tv_sec = 0;
+    sleepytime.tv_nsec = 10000000L; /* 10ms */
+
+    Util::toTimespec(to, milliseconds + Util::currentTime());
+
+    while ((trylock()) == false) {
+      Util::toTimespec(now, Util::currentTime());
+      if (now.tv_sec >= to.tv_sec && now.tv_nsec >= to.tv_nsec) {
+        return false;
+      }
+      nanosleep(&sleepytime, NULL);
+    }
+
+    return true;
 #endif
   }
 
@@ -191,6 +207,7 @@ void Mutex::unlock() const { impl_->unlock(); }
 void Mutex::DEFAULT_INITIALIZER(void* arg) {
   pthread_mutex_t* pthread_mutex = (pthread_mutex_t*)arg;
   int ret = pthread_mutex_init(pthread_mutex, NULL);
+  THRIFT_UNUSED_VARIABLE(ret);
   assert(ret == 0);
 }
 
@@ -209,6 +226,7 @@ static void init_with_kind(pthread_mutex_t* mutex, int kind) {
 
   ret = pthread_mutexattr_destroy(&mutexattr);
   assert(ret == 0);
+  THRIFT_UNUSED_VARIABLE(ret);
 }
 #endif
 
@@ -245,6 +263,7 @@ public:
     profileTime_ = 0;
 #endif
     int ret = pthread_rwlock_init(&rw_lock_, NULL);
+    THRIFT_UNUSED_VARIABLE(ret);
     assert(ret == 0);
     initialized_ = true;
   }
@@ -253,6 +272,7 @@ public:
     if(initialized_) {
       initialized_ = false;
       int ret = pthread_rwlock_destroy(&rw_lock_);
+      THRIFT_UNUSED_VARIABLE(ret);
       assert(ret == 0);
     }
   }
@@ -269,9 +289,9 @@ public:
     PROFILE_MUTEX_LOCKED();
   }
 
-  bool attemptRead() const { return pthread_rwlock_tryrdlock(&rw_lock_); }
+  bool attemptRead() const { return !pthread_rwlock_tryrdlock(&rw_lock_); }
 
-  bool attemptWrite() const { return pthread_rwlock_trywrlock(&rw_lock_); }
+  bool attemptWrite() const { return !pthread_rwlock_trywrlock(&rw_lock_); }
 
   void release() const {
     PROFILE_MUTEX_START_UNLOCK();
@@ -298,6 +318,36 @@ bool ReadWriteMutex::attemptRead() const { return impl_->attemptRead(); }
 bool ReadWriteMutex::attemptWrite() const { return impl_->attemptWrite(); }
 
 void ReadWriteMutex::release() const { impl_->release(); }
+
+NoStarveReadWriteMutex::NoStarveReadWriteMutex() : writerWaiting_(false) {}
+
+void NoStarveReadWriteMutex::acquireRead() const
+{
+  if (writerWaiting_) {
+    // writer is waiting, block on the writer's mutex until he's done with it
+    mutex_.lock();
+    mutex_.unlock();
+  }
+
+  ReadWriteMutex::acquireRead();
+}
+
+void NoStarveReadWriteMutex::acquireWrite() const
+{
+  // if we can acquire the rwlock the easy way, we're done
+  if (attemptWrite()) {
+    return;
+  }
+
+  // failed to get the rwlock, do it the hard way:
+  // locking the mutex and setting writerWaiting will cause all new readers to
+  // block on the mutex rather than on the rwlock.
+  mutex_.lock();
+  writerWaiting_ = true;
+  ReadWriteMutex::acquireWrite();
+  writerWaiting_ = false;
+  mutex_.unlock();
+}
 
 }}} // apache::thrift::concurrency
 

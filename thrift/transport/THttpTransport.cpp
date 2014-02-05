@@ -17,7 +17,7 @@
  * under the License.
  */
 
-#include <transport/THttpTransport.h>
+#include <thrift/transport/THttpTransport.h>
 
 namespace apache { namespace thrift { namespace transport {
 
@@ -171,7 +171,7 @@ char* THttpTransport::readLine() {
       // Return pointer to next line
       *eol = '\0';
       char* line = httpBuf_+httpPos_;
-      httpPos_ = (eol-httpBuf_) + CRLF_LEN;
+      httpPos_ = static_cast<uint32_t>((eol-httpBuf_) + CRLF_LEN);
       return line;
     }
   }
