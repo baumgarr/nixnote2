@@ -39,6 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/encrypt.h"
 #include "utilities/mimereference.h"
 #include "html/attachmenticonbuilder.h"
+#include "dialog/remindersetdialog.h"
 
 #include <QVBoxLayout>
 #include <QAction>
@@ -67,9 +68,20 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     QHBoxLayout *line1Layout = new QHBoxLayout();
     QVBoxLayout *layout = new QVBoxLayout();   // Note content layout
 
+
+    // Setup the alarm button & display
+    alarmText.setStyleSheet("QPushButton {background-color: transparent; border-radius: 0px;}");
+    connect(alarmButton.setAction, SIGNAL(triggered()), this, SLOT(alarmSet()));
+    connect(alarmButton.clearAction, SIGNAL(triggered()), this, SLOT(alarmClear()));
+    connect(alarmButton.doneAction, SIGNAL(triggered()), this, SLOT(alarmCompleted()));
+    connect(&alarmButton.menu, SIGNAL(aboutToShow()), this, SLOT(alarmMenuActivated()));
+
     // Setup line #1 of the window.  The text & notebook
+    connect(&alarmText, SIGNAL(clicked()), this, SLOT(alarmCompleted()));
     layout->addLayout(line1Layout);
     line1Layout->addWidget(&noteTitle);
+    line1Layout->addWidget(&alarmText);
+    line1Layout->addWidget(&alarmButton);
     line1Layout->addWidget(&notebookMenu);
     line1Layout->addWidget(&expandButton);
 
@@ -273,6 +285,36 @@ void NBrowserWindow::setContent(qint32 lid) {
     // is this an ink note?
     if (inkNote)
         editor->page()->setContentEditable(false);
+
+    // Setup the alarm
+    if (n.__isset.attributes && n.attributes.__isset.reminderTime) {
+        Timestamp t = n.attributes.reminderTime;
+        QFont f = alarmText.font();
+        if (n.attributes.__isset.reminderDoneTime) {
+            f.setStrikeOut(true);
+        } else {
+            f.setStrikeOut(false);
+        }
+        alarmText.setFont(f);
+        alarmText.setVisible(true);
+        QDateTime atime;
+        atime.setMSecsSinceEpoch(t);
+        //alarmText.setText(atime.toString(Qt::SystemLocaleShortDate));
+        if (atime.date() == QDate::currentDate())
+            alarmText.setText(tr("Today"));
+        else if (atime.date() == QDate::currentDate().addDays(+1))
+            alarmText.setText(tr("Tomorrow"));
+        else if (atime.date() == QDate::currentDate().addDays(-1))
+            alarmText.setText(tr("Yesterday"));
+        else
+            alarmText.setText(atime.date().toString(global.dateFormat));
+
+
+    } else {
+        alarmText.setText("");
+        alarmText.setVisible(false);
+    }
+
 
     // Set the tag names
     tagEditor.clear();
@@ -2041,3 +2083,87 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 }
 
 
+
+// Alarm has been completed
+void NBrowserWindow::alarmCompleted() {
+    QFont f = alarmText.font();
+    bool completed = false;
+    if (!f.strikeOut())
+        completed = true;
+    f.setStrikeOut(completed);
+    alarmText.setFont(f);
+
+    NoteTable noteTable(global.db);
+    noteTable.setDirty(this->lid, true);
+    noteTable.setReminderCompleted(this->lid, completed);
+    global.reminderManager->remove(this->lid);
+    emit(noteUpdated(this->lid));
+}
+
+
+
+void NBrowserWindow::alarmSet() {
+    ReminderSetDialog dialog;
+    Note n;
+    NoteTable ntable(global.db);
+    ntable.get(n, lid, false,false);
+    if (n.__isset.attributes && n.attributes.__isset.reminderTime) {
+        QDateTime dt;
+        dt.setMSecsSinceEpoch(n.attributes.reminderTime);
+        dialog.time->setTime(dt.time());
+        dialog.calendar->setSelectedDate(dt.date());
+    } else {
+        QTime t = QTime::currentTime();
+        dialog.time->setTime(t.addSecs(60*60));
+    }
+    dialog.exec();
+    if (!dialog.okPressed)
+        return;
+
+    QDateTime dt;
+    dt.setTime(dialog.time->time());
+    QTime t = dialog.time->time();
+    t.setHMS(t.hour(), t.minute(), 0,0);
+    dt.setTime(t);
+    dt.setDate(dialog.calendar->selectedDate());
+
+    ntable.updateDate(this->lid, dt.toMSecsSinceEpoch(), NOTE_ATTRIBUTE_REMINDER_TIME, true);
+    //alarmText.setText(dt.date().toString(Qt::SystemLocaleShortDate));
+    if (dt.date() == QDate::currentDate())
+        alarmText.setText(tr("Today"));
+    else if (dt.date() == QDate::currentDate().addDays(+1))
+        alarmText.setText(tr("Tomorrow"));
+    else if (dt.date() == QDate::currentDate().addDays(-1))
+        alarmText.setText(tr("Yesterday"));
+    else
+        alarmText.setText(dt.date().toString(global.dateFormat));
+
+    alarmText.setVisible(true);
+    QFont f = alarmText.font();
+    f.setStrikeOut(false);
+    alarmText.setFont(f);
+
+    // Update the reminders
+    global.reminderManager->updateReminder(this->lid, dt);
+}
+
+void NBrowserWindow::alarmClear() {
+    alarmText.setText("");
+    alarmText.setVisible(false);
+
+    NoteTable noteTable(global.db);
+    noteTable.setDirty(this->lid, true);
+    noteTable.removeReminder(this->lid);
+    emit(noteUpdated(this->lid));
+}
+
+void NBrowserWindow::alarmMenuActivated() {
+    QFont f = alarmText.font();
+    f.setStrikeOut(false);
+    alarmText.setFont(f);
+
+    NoteTable noteTable(global.db);
+    noteTable.setDirty(this->lid, true);
+    noteTable.setReminderCompleted(this->lid, false);
+    emit(noteUpdated(this->lid));
+}

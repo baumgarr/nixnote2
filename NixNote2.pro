@@ -149,7 +149,11 @@ SOURCES += main.cpp\
     dialog/locationdialog.cpp \
     gui/browserWidgets/locationeditor.cpp \
     dialog/preferences/localepreferences.cpp \
-    gui/reminderorderdelegate.cpp
+    gui/reminderorderdelegate.cpp \
+    gui/browserWidgets/reminderbutton.cpp \
+    dialog/remindersetdialog.cpp \
+    reminders/reminderevent.cpp \
+    reminders/remindermanager.cpp
 
 
 
@@ -279,7 +283,11 @@ HEADERS  += nixnote.h \
     dialog/locationdialog.h \
     gui/browserWidgets/locationeditor.h \
     dialog/preferences/localepreferences.h \
-    gui/reminderorderdelegate.h
+    gui/reminderorderdelegate.h \
+    gui/browserWidgets/reminderbutton.h \
+    dialog/remindersetdialog.h \
+    reminders/reminderevent.h \
+    reminders/remindermanager.h
 
 
 

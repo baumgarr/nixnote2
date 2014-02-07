@@ -248,6 +248,18 @@ void Global::setMinimumRecognitionWeight(int weight) {
 }
 
 
+qlonglong Global::getLastReminderTime() {
+    settings->beginGroup("Reminders");
+    qlonglong value = settings->value("lastReminderTime", 0).toLongLong();
+    settings->endGroup();
+    return value;
+}
+
+void Global::setLastReminderTime(qlonglong value) {
+    settings->beginGroup("Reminders");
+    settings->setValue("lastReminderTime", value);
+    settings->endGroup();
+}
 
 
 // Setup the default date & time formatting

@@ -138,6 +138,23 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     hammer = new Thumbnailer(global.db);
     hammer->startTimer(10,120);
     finalSync = false;
+
+
+    // Setup reminders
+    global.reminderManager = new ReminderManager();
+    global.reminderManager = new ReminderManager();
+    global.reminderManager->trayIcon = trayIcon;
+    global.reminderManager->reloadTimers();
+
+    global.settings->beginGroup("Appearance");
+    bool showMissed = global.settings->value("showMissedReminders", false).toBool();
+    global.settings->endGroup();
+    if (showMissed)
+        QTimer::singleShot(5000, global.reminderManager, SLOT(timerPop()));
+    else
+        global.setLastReminderTime(QDateTime::currentMSecsSinceEpoch());
+
+
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 

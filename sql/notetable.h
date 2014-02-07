@@ -148,15 +148,18 @@ public:
     bool isDeleted(qint32 lid);                             // Is this note deleted?
     bool hasTag(qint32 noteLid, qint32 tagLid);             // Does this note have the specified tag?
     QString getNoteListTags(qint32 lid);                       // Get the string of tags from the notetable list
-    void resetGeography(qint32 lid, bool isDirty);
+    void resetGeography(qint32 lid, bool isDirty);          // clear geography of note
     void setGeography(qint32 lid, double longitude, double latitude, double altitude, bool isDirty);
-    void setThumbnailNeeded(qint32 lid, bool value);
-    void setThumbnailNeeded(QString guid, bool value);
-    void setThumbnailNeeded(string guid, bool value);
-    bool isThumbnailNeeded(qint32 lid);
-    bool isThumbnailNeeded(QString guid);
-    bool isThumbnailNeeded(string guid);
-    qint32 getNextThumbnailNeeded();
+    void setThumbnailNeeded(qint32 lid, bool value);       // Do we need t ocreate a thumbnail?
+    void setThumbnailNeeded(QString guid, bool value);      // Set if a thumbail is needed
+    void setThumbnailNeeded(string guid, bool value);      // set if a thumbnail is needed
+    bool isThumbnailNeeded(qint32 lid);                    // set if a thumbnail is needed
+    bool isThumbnailNeeded(QString guid);                  // set if a thumbnail is needed
+    bool isThumbnailNeeded(string guid);                   // set if a thumbnail is needed
+    qint32 getNextThumbnailNeeded();                       // get any note that needs a thumbnail
+    void setReminderCompleted(qint32 lid, bool completed);              // Set a note reminder as completed or clear it
+    void removeReminder(qint32 lid);                        // Clear any existing reminder
+    void getAllReminders(QList< QPair<qint32, qlonglong>* > *reminders);  // Get all notes with un-completed reminders
 };
 
 

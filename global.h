@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "models/notecache.h"
 #include "gui/shortcutkeys.h"
 #include "settings/accountsmanager.h"
+#include "reminders/remindermanager.h"
 
 //#include "java/javamachine.h"
 
@@ -122,6 +123,8 @@ public:
     int getColumnPosition(QString col);
     int getColumnWidth(QString col);
     int getMinimumRecognitionWeight();
+    qlonglong getLastReminderTime();
+    void setLastReminderTime(qlonglong value);
     void setMinimumRecognitionWeight(int weight);
     QString dateFormat;
     QString timeFormat;
@@ -139,6 +142,8 @@ public:
     QList< QPair<int, QString> > passwordRemember;   // Cache of passwords
     void appendFilter(FilterCriteria *criteria);
     void setupDateTimeFormat();
+
+    ReminderManager *reminderManager;
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);

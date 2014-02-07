@@ -17,26 +17,37 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#include "datedelegate.h"
-#include <QDateTime>
-#include "global.h"
 
-extern Global global;
+#ifndef REMINDERSETDIALOG_H
+#define REMINDERSETDIALOG_H
 
-DateDelegate::DateDelegate()
+#include <QDialog>
+#include <QDateTimeEdit>
+#include <QLayout>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QCalendarWidget>
+#include <QPushButton>
+
+class ReminderSetDialog : public QDialog
 {
-}
+    Q_OBJECT
+private:
+    QPushButton *ok;
+    QPushButton *cancel;
 
+public:
+    explicit ReminderSetDialog(QWidget *parent = 0);
+    QTimeEdit *time;
+    QCalendarWidget *calendar;
+    bool okPressed;
 
-QString DateDelegate::displayText(const QVariant &value, const QLocale &locale) const {
-    if (value.toLongLong() == 0)
-        return "";
-    QDateTime timestamp;
-    timestamp.setTime_t(value.toLongLong()/1000);
+signals:
+    
+public slots:
+    void okButtonPressed();
+    void cancelButtonPressed();
+    
+};
 
-    //QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedKingdom));
-    if (timestamp.date() == QDate::currentDate())
-        return tr("Today") +" " + timestamp.time().toString(Qt::SystemLocaleShortDate);
-    return timestamp.toString(global.dateFormat + " " +global.timeFormat);
-//    return timestamp.toString(Qt::SystemLocaleShortDate);
-}
+#endif // REMINDERSETDIALOG_H

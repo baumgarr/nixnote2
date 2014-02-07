@@ -49,6 +49,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "threads/counterrunner.h"
 #include "oauth/oauthwindow.h"
 #include "html/thumbnailer.h"
+#include "reminders/remindermanager.h"
+
 
 
 

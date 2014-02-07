@@ -1032,6 +1032,35 @@ void NoteTable::updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty = 
         query.prepare("Update NoteTable set dateDeleted=:date where lid=:lid");
     if (key == NOTE_ATTRIBUTE_SUBJECT_DATE)
         query.prepare("Update NoteTable set dateSubject=:date where lid=:lid");
+    if (key == NOTE_ATTRIBUTE_REMINDER_TIME) {
+        query.prepare("Delete from Datastore where lid=:lid and key=:key");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
+        query.exec();
+
+        query.prepare("Delete from Datastore where lid=:lid and key=:key");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_ORDER);
+        query.exec();
+
+        query.prepare("Delete from Datastore where lid=:lid and key=:key");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
+        query.exec();
+
+        query.prepare("Insert into Datastore (lid, key, data) values (:lid, :key, :data)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
+        query.bindValue(":data", QVariant::fromValue(ts));
+        query.exec();
+
+        query.prepare("Insert into Datastore (lid, key, data) values (:lid, :key, datetime('now'))");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key",NOTE_ATTRIBUTE_REMINDER_ORDER);
+        query.exec();
+
+        query.prepare("Update NoteTable set reminderTime=:date where lid=:lid");
+    }
 
     query.bindValue(":date", QVariant::fromValue(ts));
     query.bindValue(":lid", lid);
@@ -1705,4 +1734,67 @@ qint32 NoteTable::getNextThumbnailNeeded() {
         return query.value(0).toInt();
     }
     return -1;
+}
+
+
+
+void NoteTable::setReminderCompleted(qint32 lid, bool completed) {
+    QSqlQuery query(*db);
+    query.prepare("Delete from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
+    query.exec();
+
+    if (completed) {
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, datetime('now'))");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
+        query.exec();
+
+//        query.prepare("Update NoteTable set reminderTime=datetime('now') where lid=:lid");
+//        query.bindValue(":lid", lid);
+//        query.exec();
+    }
+}
+
+
+
+void NoteTable::removeReminder(qint32 lid) {
+    QSqlQuery query(*db);
+    query.prepare("Delete from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
+    query.exec();
+
+    query.prepare("Delete from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_ORDER);
+    query.exec();
+
+
+    query.prepare("Delete from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
+    query.exec();
+
+    query.prepare("Update NoteTable set reminderTime=0 where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+}
+
+
+void NoteTable::getAllReminders(QList< QPair<qint32,qlonglong>* > *reminders) {
+    QSqlQuery query(*db);
+    query.prepare("select lid,data from datastore where  key=:key1 and lid not in (select lid from datastore where key=:key2)");
+    query.bindValue(":key1", NOTE_ATTRIBUTE_REMINDER_TIME);
+    query.bindValue(":key2", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
+    query.exec();
+    while (query.next()) {
+        qint32 lid = query.value(0).toInt();
+        qlonglong dt = query.value(1).toLongLong();
+        QPair<qint32, qlonglong> *p = new QPair<qint32, qlonglong>();
+        p->first = lid;
+        p->second = dt;
+        reminders->append(p);
+    }
 }

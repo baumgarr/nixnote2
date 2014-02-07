@@ -46,6 +46,7 @@ public:
     QCheckBox *showTrayIcon;
     QCheckBox *showPDFs;
     QCheckBox *showSplashScreen;
+    QCheckBox *showMissedReminders;
 
     
 signals:

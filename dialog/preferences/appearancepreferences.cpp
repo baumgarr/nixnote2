@@ -32,6 +32,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showTrayIcon = new QCheckBox(tr("Show tray icon"), this);
     showPDFs = new QCheckBox(tr("Display PDFs inline"), this);
     showSplashScreen = new QCheckBox(tr("Show splash screen on startup"), this);
+    showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
 
     defaultNotebookOnStartupLabel = new QLabel(tr("Notebook to use on startup"),this);
     defaultNotebookOnStartup = new QComboBox();
@@ -43,13 +44,15 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(showTrayIcon,0,0);
     mainLayout->addWidget(showSplashScreen, 1,0);
     mainLayout->addWidget(showPDFs, 2,0);
-    mainLayout->addWidget(defaultNotebookOnStartupLabel,3,0);
-    mainLayout->addWidget(defaultNotebookOnStartup, 3,1);
+    mainLayout->addWidget(showMissedReminders, 3, 0);
+    mainLayout->addWidget(defaultNotebookOnStartupLabel,4,0);
+    mainLayout->addWidget(defaultNotebookOnStartup, 4,1);
 
     global.settings->beginGroup("Appearance");
     showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
     showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
     showSplashScreen->setChecked(global.settings->value("showSplashScreen", false).toBool());
+    showMissedReminders->setChecked(global.settings->value("showMissedReminders", false).toBool());
     global.settings->endGroup();
 }
 
@@ -60,5 +63,6 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("showPDFs", showPDFs->isChecked());
     global.pdfPreview = showPDFs->isChecked();
     global.settings->setValue("showSplashScreen", showSplashScreen->isChecked());
+    global.settings->setValue("showMissedReminders", showMissedReminders->isChecked());
     global.settings->endGroup();
 }

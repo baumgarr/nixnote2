@@ -17,26 +17,28 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#include "datedelegate.h"
-#include <QDateTime>
-#include "global.h"
 
-extern Global global;
+#ifndef REMINDERBUTTON_H
+#define REMINDERBUTTON_H
 
-DateDelegate::DateDelegate()
+#include <QPushButton>
+#include <QMenu>
+#include <QAction>
+
+class ReminderButton : public QPushButton
 {
-}
+    Q_OBJECT
+public:
+    explicit ReminderButton(QWidget *parent = 0);
+    QMenu menu;
+    QAction *setAction;
+    QAction *clearAction;
+    QAction *doneAction;
+    
+signals:
+    
+public slots:
+    
+};
 
-
-QString DateDelegate::displayText(const QVariant &value, const QLocale &locale) const {
-    if (value.toLongLong() == 0)
-        return "";
-    QDateTime timestamp;
-    timestamp.setTime_t(value.toLongLong()/1000);
-
-    //QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedKingdom));
-    if (timestamp.date() == QDate::currentDate())
-        return tr("Today") +" " + timestamp.time().toString(Qt::SystemLocaleShortDate);
-    return timestamp.toString(global.dateFormat + " " +global.timeFormat);
-//    return timestamp.toString(Qt::SystemLocaleShortDate);
-}
+#endif // REMINDERBUTTON_H

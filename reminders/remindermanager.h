@@ -17,26 +17,35 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#include "datedelegate.h"
-#include <QDateTime>
-#include "global.h"
 
-extern Global global;
+#ifndef REMINDERMANAGER_H
+#define REMINDERMANAGER_H
 
-DateDelegate::DateDelegate()
+#include <QObject>
+#include <QList>
+#include <QSystemTrayIcon>
+
+#include "reminders/reminderevent.h"
+
+class ReminderManager : public QObject
 {
-}
+    Q_OBJECT
+private:
+    QList<ReminderEvent*> reminders;
 
+public:
+    explicit ReminderManager(QObject *parent = 0);
+    QSystemTrayIcon *trayIcon;
+    void reloadTimers();
+    void checkReminders();
+    void updateReminder(qint32 lid, QDateTime time);
+    void remove(qint32 lid);
+    
+signals:
+    
+public slots:
+    void timerPop();
+    
+};
 
-QString DateDelegate::displayText(const QVariant &value, const QLocale &locale) const {
-    if (value.toLongLong() == 0)
-        return "";
-    QDateTime timestamp;
-    timestamp.setTime_t(value.toLongLong()/1000);
-
-    //QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedKingdom));
-    if (timestamp.date() == QDate::currentDate())
-        return tr("Today") +" " + timestamp.time().toString(Qt::SystemLocaleShortDate);
-    return timestamp.toString(global.dateFormat + " " +global.timeFormat);
-//    return timestamp.toString(Qt::SystemLocaleShortDate);
-}
+#endif // REMINDERMANAGER_H

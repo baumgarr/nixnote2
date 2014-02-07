@@ -160,9 +160,7 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
     sql.bindValue(":content", QString::fromStdString(n.title) + QString(" " ) +content);
-    QLOG_DEBUG() << "Adding note content to index DB";
     sql.exec();
-    //QLOG_DEBUG() << sql.lastError();
 
 }
 
@@ -170,8 +168,6 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
 
 // Index any resources
 void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
-
-    QLOG_DEBUG() << "Adding resource " << lid << " to db";
 
     // Make sure we have something to look through.
     if (!r.__isset.recognition || !r.recognition.__isset.body)
@@ -240,9 +236,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
     sql.bindValue(":content", text);
-    QLOG_DEBUG() << "Adding PDF " << lid << " to index db";
     sql.exec();
-    QLOG_DEBUG() << sql.lastError();
 }
 
 

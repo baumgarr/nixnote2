@@ -55,6 +55,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "xml/xmlhighlighter.h"
 #include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/nmainmenubar.h"
+#include "gui/browserWidgets/reminderbutton.h"
 #include "html/thumbnailer.h"
 
 class ToolbarWidgetAction;
@@ -94,6 +95,8 @@ public:
     void setContent(qint32 lid);
     void saveNoteContent();
     NTitleEditor noteTitle;
+    ReminderButton alarmButton;
+    QPushButton alarmText;
     NotebookMenuButton notebookMenu;
     ExpandButton expandButton;
     UrlEditor urlEditor;
@@ -203,12 +206,16 @@ public slots:
     void noteSourceUpdated();
     void setInsideLink(QString link);
     QString fixEncryptionPaste(QString data);
-
+    void alarmCompleted();
+    void alarmSet();
+    void alarmClear();
+    void alarmMenuActivated();
 
 
 private slots:
     void sendUpdateSignal();
     void newTagAdded(qint32);
+
 };
 
 #endif // NBROWSERWINDOW_H
