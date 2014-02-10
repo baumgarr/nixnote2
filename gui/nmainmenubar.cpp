@@ -255,6 +255,11 @@ void NMainMenuBar::setupViewMenu() {
     viewSourceAction->setFont(font);
     viewMenu->addAction(viewSourceAction);
 
+    viewHistoryAction = new QAction(tr("Note History"), this);
+    setupShortcut(viewHistoryAction, "View_Note_History");
+    viewHistoryAction->setFont(font);
+    viewMenu->addAction(viewHistoryAction);
+
     viewMenu->addSeparator();
 
     viewLeftPanel = new QAction(tr("Show Left Panel"), this);

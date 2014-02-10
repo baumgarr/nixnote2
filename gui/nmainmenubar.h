@@ -82,6 +82,7 @@ public:
     QAction *resetSearchAction;
 
     QAction *viewSourceAction;
+    QAction *viewHistoryAction;
     QAction *viewExtendedInformation;
     QAction *viewNoteListWide;
     QAction *viewNoteListNarrow;

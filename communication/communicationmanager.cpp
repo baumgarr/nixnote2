@@ -1615,6 +1615,128 @@ int CommunicationManager::thumbnailReady(QImage *img, QImage *replyImage, int po
 
 
 
+
+// get a list of all prior versions of a note
+bool CommunicationManager::listNoteVersions(vector<NoteVersionId> &list, QString guid, int errorCount) {
+    try {
+        noteStoreClient->listNoteVersions(list, authToken, guid.toStdString());
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    } catch (TTransportException e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return listNoteVersions(list, guid, errorCount);
+       }
+       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+       error.message = tr("Transport error getting note versions: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::TTransportException;
+       return false;
+   } catch (std::exception e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return listNoteVersions(list, guid, errorCount);
+       }
+       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+       error.message = tr("Error getting note versions: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::StdException;
+       return false;
+   } catch (...) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return listNoteVersions(list, guid, errorCount);
+       }
+       QLOG_ERROR() << "Unhandled exception:" << endl;
+       error.message = tr("Unknown error getting note versions");
+       error.type = CommunicationError::Unknown;
+       return false;
+   }
+   return true;
+}
+
+
+
+// Get a prior version of a notebook
+bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData, bool withResourceRecognition, bool withResourceAlternateData, int errorCount) {
+    try {
+        noteStoreClient->getNoteVersion(note, authToken, guid.toStdString(), usn,
+                                        withResourceData, withResourceRecognition, withResourceAlternateData);
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    } catch (TTransportException e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return getNoteVersion(note, guid, usn, withResourceData, withResourceRecognition, withResourceAlternateData, errorCount);
+       }
+       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+       error.message = tr("Transport error getting note version: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::TTransportException;
+       return false;
+   } catch (std::exception e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return getNoteVersion(note, guid, usn, withResourceData, withResourceRecognition, withResourceAlternateData, errorCount);
+       }
+       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+       error.message = tr("Error getting note version: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::StdException;
+       return false;
+   } catch (...) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return getNoteVersion(note, guid, usn, withResourceData, withResourceRecognition, withResourceAlternateData, errorCount);
+       }
+       QLOG_ERROR() << "Unhandled exception:" << endl;
+       error.message = tr("Unknown error getting note version");
+       error.type = CommunicationError::Unknown;
+       return false;
+   }
+   return true;
+}
+
+
+
 // get a list of all notebooks
 bool CommunicationManager::getNotebookList(vector<Notebook> &list, int errorCount) {
 
@@ -1759,4 +1881,24 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
     error.message = tr("EDAMSystemException ") + QString::fromStdString(e.message);
     error.type = CommunicationError::EDAMSystemException;
     error.code = e.errorCode;
+}
+
+
+
+void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) {
+    void *array[30];
+    size_t size;
+
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 30);
+
+    // print out all the frames to stderr
+    fprintf(stderr, "EDAM Not Found Exception backtrace");
+    backtrace_symbols_fd(array, size, 2);
+
+    QLOG_ERROR() << "EDAMNotFoundException:" << endl;
+
+    error.message = tr("EDAMNotFoundException: Note not found");
+    error.type = CommunicationError::EDAMNotFoundException;
+    error.code = 16;
 }

@@ -45,12 +45,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/screencapture.h"
 #include "gui/ntabwidget.h"
 #include "sql/notebooktable.h"
+#include "sql/usertable.h"
 #include "settings/startupconfig.h"
 #include "dialog/logindialog.h"
 #include "gui/lineedit.h"
 #include "gui/findreplace.h"
 #include "gui/nattributetree.h"
 #include "dialog/watchfolderdialog.h"
+#include "dialog/notehistoryselect.h"
 #include "gui/ntrashtree.h"
 #include "filters/filterengine.h"
 #include "global.h"
@@ -60,6 +62,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/databasestatus.h"
 #include "dialog/adduseraccountdialog.h"
 #include "dialog/accountmaintenancedialog.h"
+#include "communication/communicationmanager.h"
 
 
 #include "gui/nmainmenubar.h"
@@ -602,6 +605,7 @@ void NixNote::setupTabWindow() {
 
     connect(noteTableView, SIGNAL(openNote(bool)), this, SLOT(openNote(bool)));
     connect(menuBar->viewSourceAction, SIGNAL(triggered()), tabWindow, SLOT(toggleSource()));
+    connect(menuBar->viewHistoryAction, SIGNAL(triggered()), this, SLOT(viewNoteHistory()));
 
     connect(menuBar->undoAction, SIGNAL(triggered()), tabWindow, SLOT(undoButtonPressed()));
     connect(menuBar->redoAction, SIGNAL(triggered()), tabWindow, SLOT(redoButtonPressed()));
@@ -1250,6 +1254,78 @@ void NixNote::toggleStatusbar() {
         statusBar()->hide();
     else
         statusBar()->show();
+}
+
+
+void NixNote::viewNoteHistory() {
+    this->saveContents();
+    statusBar()->clearMessage();
+    if (!global.accountsManager->oauthTokenFound()) {
+        oauthWindow.setWindowFlags(Qt::Dialog);
+        oauthWindow.showNormal();
+        if (oauthWindow.error) {
+            setMessage(oauthWindow.errorMessage);
+            return;
+        }
+        if (oauthWindow.response == "")
+            return;
+
+        global.accountsManager->setOAuthToken(oauthWindow.response);
+    }
+
+    UserTable userTable(global.db);
+    User user;
+    userTable.getUser(user);
+    if (user.privilege == PrivilegeLevel::NORMAL) {
+        QMessageBox mbox;
+        mbox.setText(tr("This feature is only available to premium users."));
+        mbox.setWindowTitle(tr("Premium Feature"));
+        mbox.exec();
+        return;
+    }
+    NoteHistorySelect dialog;
+    CommunicationManager comm(global.db);
+    if (comm.connect()) {
+        vector<NoteVersionId> versions;
+        NoteTable ntable(global.db);
+        QString guid = ntable.getGuid(tabWindow->currentBrowser()->lid);
+        comm.listNoteVersions(versions, guid);
+        if (versions.size() > 0) {
+            dialog.loadData(versions);
+            dialog.exec();
+            if (!dialog.importPressed)
+                return;
+            Note note;
+            if (!comm.getNoteVersion(note, guid, dialog.usn)) {
+                QMessageBox mbox;
+                mbox.setText(tr("Error retrieving note."));
+                mbox.setWindowTitle(tr("Error retrieving note"));
+                mbox.exec();
+                return;
+            }
+            note.updateSequenceNum = 0;
+            note.__isset.active = true;
+            note.active = true;
+            QUuid uuid;
+            QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
+            note.guid = newGuid.toStdString();
+            for (unsigned int i=0; note.__isset.resources && i<note.resources.size(); i++) {
+                note.resources.at(i).updateSequenceNum = 0;
+                newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
+                note.resources.at(i).guid = newGuid.toStdString();
+            }
+            ntable.add(0,note,true);
+            updateSelectionCriteria();
+            setMessage(tr("Note restored"));
+
+        } else {
+            QMessageBox mbox;
+            mbox.setText(tr("No versions of this note can be found."));
+            mbox.setWindowTitle(tr("Note Not Found"));
+            mbox.exec();
+            return;
+        }
+    }
 }
 
 

@@ -153,7 +153,8 @@ SOURCES += main.cpp\
     gui/browserWidgets/reminderbutton.cpp \
     dialog/remindersetdialog.cpp \
     reminders/reminderevent.cpp \
-    reminders/remindermanager.cpp
+    reminders/remindermanager.cpp \
+    dialog/notehistoryselect.cpp
 
 
 
@@ -287,7 +288,8 @@ HEADERS  += nixnote.h \
     gui/browserWidgets/reminderbutton.h \
     dialog/remindersetdialog.h \
     reminders/reminderevent.h \
-    reminders/remindermanager.h
+    reminders/remindermanager.h \
+    dialog/notehistoryselect.h
 
 
 

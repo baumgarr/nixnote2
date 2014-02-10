@@ -197,7 +197,6 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
         QString text = enmedia.text();
         tracelog--;
         if (tracelog <=0 ) {
-            QLOG_DEBUG() << " Still adding ... " << i;
             tracelog = 50;
             trans.exec("commit");
             trans.exec("begin");

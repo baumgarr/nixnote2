@@ -120,6 +120,8 @@ private:
     QNetworkAccessManager *networkAccessManager;
     void checkForInkNotes(vector<Resource> &resources, QString shard, QString authToken);
     void handleEDAMSystemException(EDAMSystemException e);
+    void handleEDAMNotFoundException(EDAMNotFoundException e);
+
 
 public:
     CommunicationManager(QSqlDatabase *db);
@@ -155,6 +157,9 @@ public:
 
     bool getNotebookList(vector<Notebook> &list, int errorCount=0);
     bool getTagList(vector<Tag> &list, int errorCount=0);
+
+    bool listNoteVersions(vector<NoteVersionId> &list, QString guid, int errorCount=0);
+    bool getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData=true, bool withResourceRecognition=true, bool withResourceAlternateData=true, int errorCount=0);
 
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);

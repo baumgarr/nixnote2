@@ -194,6 +194,7 @@ public slots:
     void findInNote();
     void findNextInNote();
     void findPrevInNote();
+    void viewNoteHistory();
     void findReplaceWindowHidden();
     void checkReadOnlyNotebook();
     void heartbeatTimerTriggered();
