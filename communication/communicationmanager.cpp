@@ -1886,6 +1886,7 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
 
 
 void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) {
+    e=e;   // suppress unused variable message
     void *array[30];
     size_t size;
 

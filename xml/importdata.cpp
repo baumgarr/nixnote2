@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #include "importdata.h"
 #include <QStringList>
 #include "sql/resourcetable.h"
@@ -140,7 +141,7 @@ void ImportData::import(QString file) {
         if (lid > 0) {
             Note note;
             bool dirty = noteTable.isDirty(lid);
-            noteTable.get(note, lid, false, false);
+            noteTable.get(note, lid, false);
             noteTable.updateNoteList(lid, note, dirty, 0);
         }
     }
@@ -261,7 +262,7 @@ void ImportData::processNoteNode() {
 //***********************************************************
 void ImportData::processResource(Resource &resource) {
     bool atEnd = false;
-    bool isDirty;
+    bool isDirty = false;
 
     while(!atEnd) {
         if (reader->isStartElement()) {
@@ -596,7 +597,7 @@ void ImportData::processSavedSearchNode() {
 //***********************************************************
 void ImportData::processLinkedNotebookNode() {
     LinkedNotebook  linkedNotebook;
-    bool linkedNotebookIsDirty=false;
+    bool linkedNotebookIsDirty = false;
 
     QLOG_ERROR() << "Linked notebook database support not implemented yet";
 

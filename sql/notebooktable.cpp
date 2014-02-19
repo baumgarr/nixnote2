@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #include "notebooktable.h"
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
@@ -854,4 +855,60 @@ qint32 NotebookTable::findByUri(QString uri) {
 
 qint32 NotebookTable::findByUri(string uri) {
     return findByUri(QString::fromStdString(uri));
+}
+
+
+// Return a list of all closed notebooks.  Return the
+// list of LIDs.
+void NotebookTable::getClosedNotebooks(QList<qint32> &lids) {
+    lids.empty();
+    QSqlQuery query(*db);
+    query.prepare("Select lid from DataStore where key=:key");
+    query.bindValue(":key", NOTEBOOK_IS_CLOSED);
+    query.exec();
+    while (query.next()) {
+        lids.append(query.value(0).toInt());
+    }
+}
+
+// Get a list of any notebooks that are open and
+// return a list of LIDs.
+void NotebookTable::getOpenNotebooks(QList<qint32> &lids) {
+    lids.empty();
+    QSqlQuery query(*db);
+    query.prepare("Select lid from DataStore where key=:key and lid not in (select lid from datastore where key=:key2)");
+    query.bindValue(":key", NOTEBOOK_GUID);
+    query.bindValue(":key2", NOTEBOOK_IS_CLOSED);
+    query.exec();
+    while (query.next()) {
+        qint32 lid = query.value(0).toInt();
+        lids.append(lid);
+    }
+}
+
+
+// Open all notebooks.  Really we just delete the
+// NOTEBOOK_IS_CLOSED record since the default is to be
+// open.
+void NotebookTable::openAllNotebooks() {
+    QSqlQuery query(*db);
+    query.prepare("delete from DataStore where key=:key");
+    query.bindValue(":key", NOTEBOOK_IS_CLOSED);
+    query.exec();
+}
+
+
+
+// Close a specific notebook
+void NotebookTable::closeNotebook(qint32 lid) {
+    QSqlQuery query(*db);
+    query.prepare("delete from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTEBOOK_IS_CLOSED);
+    query.exec();
+
+    query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, 'true')");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTEBOOK_IS_CLOSED);
+    query.exec();
 }

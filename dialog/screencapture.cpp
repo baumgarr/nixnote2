@@ -75,6 +75,7 @@ bool ScreenCapture::event(QEvent *event)
 
 void ScreenCapture::paintEvent(QPaintEvent *event)
 {
+    event=event;  // suppress unused variable warning
     QPainter painter(this);
 
     if (!palBackground)

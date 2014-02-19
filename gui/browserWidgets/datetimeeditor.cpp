@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #include "datetimeeditor.h"
 #include <QDateTimeEdit>
 #include <QVBoxLayout>
@@ -87,6 +88,14 @@ void DateTimeEditor::setNote(qint32 lid, Timestamp value, qint32 key) {
     blockSignals(true);
     setDateTime(dt);
     blockSignals(false);
+}
+
+void DateTimeEditor::setDate(qint64 value) {
+    this->blockSignals(true);
+    QDateTime dt;
+    dt.setMSecsSinceEpoch(value);
+    setDateTime(dt);
+    this->blockSignals(false);
 }
 
 

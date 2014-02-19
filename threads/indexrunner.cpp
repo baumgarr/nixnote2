@@ -82,7 +82,7 @@ void IndexRunner::index() {
         // Index any undindexed note content.
         for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
             Note n;
-            noteTable.get(n, lids[i], false, false);
+            noteTable.get(n, lids[i], false);
             indexNote(lids[i],n);
             noteTable.setIndexNeeded(lids[i], false);
         }

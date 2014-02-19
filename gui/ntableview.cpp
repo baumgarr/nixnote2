@@ -276,7 +276,7 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
             Note n;
             NotebookTable bTable(global.db);
             NoteTable nTable(global.db);
-            nTable.get(n, lids[i], false, false);
+            nTable.get(n, lids[i], false);
             qint32 notebookLid = bTable.getLid(n.notebookGuid);
             if (bTable.isReadOnly(notebookLid)) {
                 readOnlySelected = true;
@@ -305,7 +305,7 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
     // Check the highlighted LIDs from the history selection.
     if (proxy->lidMap->contains(lid)) {
         int rowLocation = proxy->lidMap->value(lid);
-        if (rowLocation > 0) {
+        if (rowLocation >= 0) {
             QModelIndex modelIndex = model()->index(rowLocation,cell);
             QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
             model()->setData(proxyIndex, data);
@@ -654,7 +654,7 @@ void NTableView::copyNoteLink() {
 
     Note note;
     NoteTable ntable(global.db);
-    ntable.get(note, lids[0], false,false);
+    ntable.get(note, lids[0], false);
 
     QString guid = QString::fromStdString(note.guid);
     QString localid;
@@ -1034,7 +1034,7 @@ void NTableView::mergeNotes() {
 
     Note note;
     qint32 lid = lids[0];
-    nTable.get(note, lid, false,false);
+    nTable.get(note, lid, false);
     QString content = QString::fromStdString(note.content);
     content = content.replace("</en-note>","<p/>");
 
@@ -1049,7 +1049,7 @@ void NTableView::mergeNotes() {
         }
 
         Note oldNote;
-        nTable.get(oldNote, lids[i], false,false);
+        nTable.get(oldNote, lids[i], false);
         QString oldContent = QString::fromStdString(oldNote.content);
         oldContent = oldContent.replace("</en-note>", "<p/>");
         int startPos = oldContent.indexOf("<en-note");
@@ -1092,6 +1092,7 @@ void NTableView::dragEnterEvent(QDragEnterEvent *event) {
 
 // Accept the drag move event if possible
 void NTableView::dragMoveEvent(QDragMoveEvent *event) {
+    event = event;   // Suppress unused variable
 //    if (event->mimeData()->hasFormat("application/x-nixnote-note")) {
 //        //if (event->answerRect().intersects(childrenRect()))
 //        event->acceptProposedAction();

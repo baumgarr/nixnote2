@@ -154,7 +154,8 @@ SOURCES += main.cpp\
     dialog/remindersetdialog.cpp \
     reminders/reminderevent.cpp \
     reminders/remindermanager.cpp \
-    dialog/notehistoryselect.cpp
+    dialog/notehistoryselect.cpp \
+    dialog/closenotebookdialog.cpp
 
 
 
@@ -289,12 +290,14 @@ HEADERS  += nixnote.h \
     dialog/remindersetdialog.h \
     reminders/reminderevent.h \
     reminders/remindermanager.h \
-    dialog/notehistoryselect.h
+    dialog/notehistoryselect.h \
+    dialog/closenotebookdialog.h
 
 
 
 #LIBS +=    -Wl,-rpath,./lib32:./lib64 -L./lib -L./liba -lthrift -lpthread  -L/usr/lib -lpoppler-qt4 -g -rdynamic
 
-LIBS +=    -Wl,-L./lib -lthrift -L/usr/lib/x86_64-linux-gnu/ -lssl -lpthread  -L/usr/lib -lpoppler-qt4 -g -rdynamic
+LIBS +=   -Wl,-L./lib -lthrift -L/usr/lib/x86_64-linux-gnu/ -lssl -lpthread  -L/usr/lib -lpoppler-qt4 -g -rdynamic
 INCLUDEPATH += /usr/local/include/thrift \
             /usr/include/poppler/qt4
+#QMAKE_CXXFLAGS += -Wno-return-type

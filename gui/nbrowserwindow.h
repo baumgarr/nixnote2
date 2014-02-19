@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #ifndef NBROWSERWINDOW_H
 #define NBROWSERWINDOW_H
 
@@ -88,6 +89,7 @@ private:
     qint32 createResource(Resource &r, int sequence, QByteArray data, QString mime, bool attachment, QString filename);
     PluginFactory *factory;
     Thumbnailer *hammer;
+    Thumbnailer *thumbnailer;
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
@@ -175,6 +177,7 @@ public slots:
     void fontColorClicked();
     void fontHighlightClicked();
     void encryptButtonPressed();
+    void decryptText(QString id, QString text, QString hint,  QString cipher="RC2", int len=64);
     void insertLinkButtonPressed();
     void insertQuickLinkButtonPressed();
     void insertLatexButtonPressed();
@@ -210,10 +213,14 @@ public slots:
     void alarmSet();
     void alarmClear();
     void alarmMenuActivated();
+    void removeEncryption(QString id, QString plainText, bool permanent, QString slot);
 
 
 private slots:
-    void sendUpdateSignal();
+    void sendTitleUpdateSignal();
+    void sendNotebookUpdateSignal();
+    void sendDateUpdateSignal(qint64 dt=0);
+    void sendTagUpdateSignal();
     void newTagAdded(qint32);
 
 };

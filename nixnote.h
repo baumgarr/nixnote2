@@ -96,7 +96,7 @@ private:
     QSystemTrayIcon *trayIcon;
     QString saveLastPath;   // Last path viewed in the restore dialog
     FileWatcherManager *importManager;
-    OAuthWindow oauthWindow;
+    OAuthWindow *oauthWindow;
     Thumbnailer *hammer;
 
     // Tool & menu bar
@@ -218,6 +218,7 @@ public slots:
     void indexThreadStarted();
     void syncThreadStarted();
     void counterThreadStarted();
+    void openCloseNotebooks();
 
 signals:
     void syncRequested();

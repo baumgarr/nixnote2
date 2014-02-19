@@ -53,6 +53,8 @@ public:
     explicit NotebookMenuButton(QWidget *parent = 0);
     void setCurrentNotebook(qint32 lid, Note n);
     void addNotebook(qint32 lid);
+    qint32 notebookLid;
+    QString notebookName;
 
     
 signals:

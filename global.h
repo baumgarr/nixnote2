@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #ifndef GLOBAL_H
 #define GLOBAL_H
 
@@ -129,6 +130,7 @@ public:
     QString dateFormat;
     QString timeFormat;
     QSqlDatabase *db;
+    bool javaFound;
 
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;
@@ -139,7 +141,8 @@ public:
 
     void setup(StartupConfig config);  // Setup the global variables
     QString getProgramDirPath();      // Get the path the program is executing from
-    QList< QPair<int, QString> > passwordRemember;   // Cache of passwords
+    QList< QPair<QString, QString> > passwordRemember;   // Cache of passwords
+    QHash< QString, QPair <QString, QString> > passwordSafe;  // Saved passwords
     void appendFilter(FilterCriteria *criteria);
     void setupDateTimeFormat();
 

@@ -109,3 +109,9 @@ void DateEditor::showEvent(QShowEvent* event) {
 void DateEditor::emitChangedSignal() {
     emit(valueChanged());
 }
+
+void DateEditor::setUpdateDate(qint64 value) {
+    this->blockSignals(true);
+    updatedDate.setDate(value);
+    this->blockSignals(false);
+}

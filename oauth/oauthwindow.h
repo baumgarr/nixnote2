@@ -49,6 +49,7 @@ private:
 
 public:
     explicit OAuthWindow(QMainWindow *parent = 0);
+    void reset();
     QString response;
     bool error;
     QString errorMessage;

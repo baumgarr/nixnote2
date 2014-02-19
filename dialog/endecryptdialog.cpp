@@ -34,29 +34,47 @@ EnDecryptDialog::EnDecryptDialog(QWidget *parent) :
     okPressed = false;
     setWindowTitle(tr("Decrypt"));
     setWindowIcon(QIcon(":password.png"));
-    setLayout(&grid);
+    grid = new QGridLayout(this);
+    setLayout(grid);
 
-    connect(&password, SIGNAL(textChanged(const QString&)), this, SLOT(validateInput()));
+    password = new QLineEdit(this);
+    hintLabel = new QLabel(this);
+    hint = new QLabel(this);
+    passwordGrid = new QGridLayout(this);
+    buttonGrid = new QGridLayout(this);
 
-    hintLabel.setText(tr("Userid"));
-    passwordLabel.setText(tr("Password"));
-    passwordGrid.addWidget(&passwordLabel, 1,1);
-    passwordGrid.addWidget(&password, 1, 2);
-    passwordGrid.addWidget(&hintLabel, 2,1);
-    passwordGrid.addWidget(&hint, 2, 2);
-    passwordGrid.setContentsMargins(10, 10,  -10, -10);
-    grid.addLayout(&passwordGrid,1,1);
+    ok= new QPushButton(this);
+    cancel = new QPushButton(this);
+    connect(password, SIGNAL(textChanged(const QString&)), this, SLOT(validateInput()));
 
-    ok.setText(tr("OK"));
+    passwordLabel = new QLabel();
+    passwordLabel->setText(tr("Password"));
+    hintLabel->setText(tr("Hint"));
+    passwordGrid->addWidget(passwordLabel, 1,1);
+    passwordGrid->addWidget(password, 1, 2);
+    passwordGrid->addWidget(hintLabel, 2,1);
+    passwordGrid->addWidget(hint, 2, 2);
+    rememberPassword = new QCheckBox(this);
+    permanentlyDecrypt = new QCheckBox(this);
+    passwordGrid->addWidget(new QLabel(tr("Permanently Decrypt")), 3,1);
+    passwordGrid->addWidget(permanentlyDecrypt, 3,2);
+    passwordGrid->addWidget(new QLabel(tr("Remember Password")), 4,1);
+    passwordGrid->addWidget(rememberPassword, 4,2);
+    passwordGrid->setContentsMargins(10, 10,  -10, -10);
+    grid->addLayout(passwordGrid,1,1);
+
+    ok->setText(tr("OK"));
     if (global.password == "" and global.username == "")
-        ok.setEnabled(false);
-    connect(&ok, SIGNAL(clicked()), this, SLOT(okButtonPressed()));
-    cancel.setText(tr("Cancel"));
-    connect(&cancel, SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
-    buttonGrid.addWidget(&ok, 1, 1);
-    buttonGrid.addWidget(&cancel, 1,2);
-    grid.addLayout(&buttonGrid,2,1);
-    grid.setSizeConstraint( QLayout::SetFixedSize );
+        ok->setEnabled(false);
+    connect(ok, SIGNAL(clicked()), this, SLOT(okButtonPressed()));
+    cancel->setText(tr("Cancel"));
+    connect(cancel, SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
+    buttonGrid->addWidget(ok, 1, 1);
+    buttonGrid->addWidget(cancel, 1,2);
+    grid->addLayout(buttonGrid,2,1);
+    grid->setSizeConstraint( QLayout::SetFixedSize );
+
+    password->setEchoMode(QLineEdit::Password);
 }
 
 
@@ -74,9 +92,9 @@ void EnDecryptDialog::cancelButtonPressed() {
 
 
 void EnDecryptDialog::validateInput() {
-    ok.setEnabled(true);
-    if (password.text()=="") {
-            ok.setEnabled(false);
+    ok->setEnabled(true);
+    if (password->text()=="") {
+            ok->setEnabled(false);
             return;
     }
 }

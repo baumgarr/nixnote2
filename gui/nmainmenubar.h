@@ -51,6 +51,7 @@ public:
     QMenu *findReplaceMenu;
 
     QAction *exitAction;
+    QAction *openCloseAction;
     QAction *printAction;
     QAction *synchronizeAction;
     QAction *importFoldersDialogAction;

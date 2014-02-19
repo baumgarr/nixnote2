@@ -32,12 +32,21 @@ private:
     bool do_decrypt(const unsigned char *in, unsigned char *out, int inlen, unsigned char *key, unsigned char *iv);
     string string_to_hex(const std::string& input);
     string hex_to_string(const std::string& input);
-
+    int runner(QString &result, QString text, QString passphrase, QString method,  int keylen);
 
 public:
     EnCrypt();
-    QString encrypt(QString text, QString passphrase);
-    QString decrypt(QString text, QString passphrase);
+    enum CryptoResults {
+        Java_Not_Found = 255,
+        Invalid_Arguments = 16,
+        Invaid_Method = 14,
+        Invalid_Key = 4
+    };
+
+    int encrypt(QString&result, QString text, QString passphrase, QString cipher, int length);
+    int encrypt(QString &result, QString text, QString passphrase);
+    int decrypt(QString &result, QString text, QString passphrase, QString cipher, int length);
+    int decrypt(QString &result, QString text, QString passphrase);
     QByteArray CRC32(QByteArray ba);
 };
 

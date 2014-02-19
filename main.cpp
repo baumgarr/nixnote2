@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #include <QtGui/QApplication>
 #include "nixnote.h"
 #include "global.h"
@@ -35,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //#include "utilities/encrypt.h"
 #include "application.h"
 #include "thrift/config.h"
+#include "utilities/encrypt.h"
 
 
 //using namespace std;
@@ -67,17 +69,16 @@ int main(int argc, char *argv[])
 {
 
     Botan::LibraryInitializer botanInit;
-
     signal(SIGSEGV, fault_handler);   // install our handler
 
     // Setup the QApplication so we can begin
-    Application a(argc, argv);
-    global.application = &a;
+    Application *a = new Application(argc, argv);
+    global.application = a;
 
     // Setup the QLOG functions for debugging & messages
     QsLogging::Logger& logger = QsLogging::Logger::instance();
     logger.setLoggingLevel(QsLogging::TraceLevel);
-    const QString sLogPath(a.applicationDirPath());
+    const QString sLogPath(a->applicationDirPath());
 
     QsLogging::DestinationPtr fileDestination(
                 QsLogging::DestinationFactory::MakeFileDestination(sLogPath) );
@@ -148,9 +149,21 @@ int main(int argc, char *argv[])
     // Save the clipboard
     global.clipboard = QApplication::clipboard();
 
-    NixNote w;
-    w.show();
+    NixNote *w = new NixNote();
+    //QMainWindow *w = new QMainWindow();
+    w->setAttribute(Qt::WA_QuitOnClose);
+    w->show();
 
-    return a.exec();
-
+    int rc = a->exec();
+    QLOG_DEBUG() << "Unlocking memory";
+    global.sharedMemory->unlock();
+    QLOG_DEBUG() << "Deleting NixNote instance";
+    delete w;
+    QLOG_DEBUG() << "Quitting application instance";
+    a->exit(rc);
+    QLOG_DEBUG() << "Deleting application instance";
+    delete a;
+    QLOG_DEBUG() << "Exiting: RC=" << rc;
+    exit(rc);
+    return rc;
 }

@@ -104,6 +104,15 @@ void NMainMenuBar::setupFileMenu() {
 
     fileMenu->addSeparator();
 
+    openCloseAction = new QAction(tr("Open/Close Notebooks"), this);
+    openCloseAction->setToolTip(tr("Open/Close Notebooks"));
+    connect(openCloseAction, SIGNAL(triggered()), parent, SLOT(openCloseNotebooks()));
+    openCloseAction->setFont(f);
+    setupShortcut(exitAction, QString("File_Notebook_OpenClose"));
+    fileMenu->addAction(openCloseAction);
+
+    fileMenu->addSeparator();
+
     exitAction = new QAction(tr("Exit"), this);
     exitAction->setToolTip(tr("Close the program"));
     connect(exitAction, SIGNAL(triggered()), parent, SLOT(closeNixNote()));

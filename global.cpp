@@ -45,6 +45,7 @@ Global::Global()
     criteria->resetSearchString = true;
     username = "";
     password = "";
+    javaFound = false;
 }
 
 

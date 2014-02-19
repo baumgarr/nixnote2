@@ -27,7 +27,7 @@ ReminderButton::ReminderButton(QWidget *parent) :
     QPushButton(parent)
 {
     setIcon(QIcon(":alarmclock.png"));
-    setAction = menu.addAction(tr("Mark as Done"));
+    doneAction = menu.addAction(tr("Mark as Done"));
     setAction = menu.addAction(tr("Change Date"));
     clearAction = menu.addAction(tr("Clear Reminder"));
     this->setMenu(&menu);

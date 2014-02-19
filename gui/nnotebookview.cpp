@@ -222,6 +222,8 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
 void NNotebookView::loadData() {
     QSqlQuery query(*global.db);
     NotebookTable notebookTable(global.db);
+    QList<qint32> closedLids;
+    notebookTable.getClosedNotebooks(closedLids);
     dataStore.clear();
     query.exec("Select lid, name, stack, username from NotebookModel order by username, name");
     while (query.next()) {
@@ -230,6 +232,8 @@ void NNotebookView::loadData() {
             NNotebookViewItem *newWidget = new NNotebookViewItem(lid);
             newWidget->setData(NAME_POSITION, Qt::DisplayRole, query.value(1).toString());
             newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
+            if (closedLids.contains(lid))
+                newWidget->setHidden(true);
             QString username = query.value(3).toString();
             if (username.trimmed() != "")
                 newWidget->stack = username;
@@ -255,13 +259,28 @@ void NNotebookView::loadData() {
     //this->resizeColumnToContents(TOTAL_POSITION);
 }
 
+
+// Rebuild the notebook tree view
 void NNotebookView::rebuildTree() {
     if (!this->rebuildNotebookTreeNeeded)
         return;
 
+    // Go through all the widgets in the view.  If
+    // it should be hidden (because the notebook is closed
+    // then hide it, othwise make it visible.  If it has
+    // a stack, then save the stack name later so we can
+    // display stacks properly.
+    NotebookTable notebookTable(global.db);
+    QList<qint32> closedLids;
+    notebookTable.getClosedNotebooks(closedLids);
     QHashIterator<qint32, NNotebookViewItem *> i(dataStore);
     while (i.hasNext()) {
         i.next();
+        NNotebookViewItem *widget = i.value();
+        if (closedLids.contains(widget->lid))
+            widget->setHidden(true);
+        else
+            widget->setHidden(false);
         if (i.value()->stack != "") {
             NNotebookViewItem *stackWidget = stackStore[i.value()->stack];
             i.value()->parent()->removeChild(i.value());
@@ -807,6 +826,8 @@ void NNotebookView::updateTotals(qint32 lid, qint32 total) {
 
 // Handle what happens when something is dropped onto a tag item
 bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action) {
+    index=index; // suppress unused variable
+    action=action; // suppress unused variable
 
     // If this is a note-to-tag drop we are assigning tags to a note
     if (data->hasFormat("application/x-nixnote-note")) {

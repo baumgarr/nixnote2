@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #include "linkednotebooktable.h"
 #include "sql/notetable.h"
 #include "sql/configstore.h"
@@ -249,6 +250,13 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
         query2.bindValue(":lid", lid);
         query2.exec();
     }
+    if (isDirty) {
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", LINKEDNOTEBOOK_IS_DIRTY);
+        query.bindValue(":data", true);
+        query.exec();
+    }
+
 
     return lid;
 }

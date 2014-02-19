@@ -45,6 +45,7 @@ private:
 public:
     explicit DateTimeEditor(QWidget *parent = 0);
     void setNote(qint32 lid, Timestamp value, qint32 key);
+    void setDate(qint64 value);
     
 signals:
     

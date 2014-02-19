@@ -17,9 +17,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #include "enmlformatter.h"
 #include "sql/resourcetable.h"
 #include "global.h"
+#include "utilities/encrypt.h"
 
 #include <QFileIconProvider>
 #include <QIcon>
@@ -104,6 +106,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.prepend("<head><meta http-equiv=\"content-type\" content=\"text-html; charset=utf-8\"></head>");
     content.prepend("<html>");
     content.append("</html>");
+    content = fixEncryptionTags(content);
 
     QWebPage page;
     QEventLoop loop;
@@ -228,6 +231,9 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
     // Check if we have an en-crypt tag.  Change it from an img to en-crypt
     if (enType.toLower() == "en-crypt") {
         QString encrypted = e.attribute("alt");
+        QString cipher = e.attribute("cipher", "RC2");
+        QString hint = e.attribute("hint", "");
+        QString length = e.attribute("length", "64");
         e.removeAttribute("onmouseover");
         e.removeAttribute("name");
         e.removeAttribute("alt");
@@ -236,7 +242,10 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
         e.removeAttribute("style");
         removeInvalidAttributes(e);
         e.setInnerXml(encrypted);
-        e.setOuterXml("<en-crypt>"+encrypted+"</en-crypt>");
+        e.setOuterXml("<en-crypt cipher=\"" +cipher +"\" length=\"" +
+                      length + "\" hint=\"" +hint
+                      +"\">"+encrypted+"</en-crypt>");
+//        e.setOuterXml(e.toOuterXml().replace("<img", "<en-crypt").replace("</img", "</en-crypt"));
         return;
     }
 
@@ -463,4 +472,42 @@ void EnmlFormatter::postXmlFix() {
         pos = content.indexOf("<en-media", pos+1);
     }
 
+}
+
+
+
+QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
+    int endPos, startPos, endData,slotStart, slotEnd;
+    QByteArray eTag = "<table class=\"en-crypt-temp\"";
+    for (int i=newContent.indexOf(eTag); i>0; i = newContent.indexOf(eTag,i+1)) {
+        slotStart = newContent.indexOf("slot", i+1)+6;
+        slotEnd = newContent.indexOf("\"",slotStart+1);
+        QString slot = newContent.mid(slotStart, slotEnd-slotStart);
+        slot = slot.replace("\"", "");
+        startPos = newContent.indexOf("<td>", i+1)+4;
+        endData = newContent.indexOf("</td>",startPos);
+        QString text = newContent.mid(startPos,endData-startPos);
+        endPos = newContent.indexOf("</table>",i+1)+8;
+
+        // Encrypt the text
+        QPair<QString, QString> pair = global.passwordSafe.value(slot);
+        QString password = pair.first;
+        QString hint = pair.second;
+        EnCrypt crypt;
+        QString encrypted;
+        crypt.encrypt(encrypted, text, password);
+
+        // replace the table with an en-crypt tag.
+        QByteArray start = newContent.mid(0,i-1);
+        QByteArray end = newContent.mid(endPos);
+        newContent.clear();
+        newContent.append(start);
+        newContent.append(QByteArray("<en-crypt cipher=\"RC2\" length=\"64\" hint=\""));
+        newContent.append(hint.toLocal8Bit());
+        newContent.append(QByteArray("\">"));
+        newContent.append(encrypted.toLocal8Bit());
+        newContent.append(QByteArray("</en-crypt>"));
+        newContent.append(end);
+    }
+    return newContent;
 }

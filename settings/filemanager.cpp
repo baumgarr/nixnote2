@@ -46,6 +46,10 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
     checkExistingReadableDir(imagesDir);
     imagesDirPath = slashTerminatePath(imagesDir.path());
 
+    javaDir.setPath(programDirPath+"java");
+    checkExistingReadableDir(imagesDir);
+    javaDirPath = slashTerminatePath(javaDir.path());
+
     spellDir.setPath(programDirPath+"spell");
     checkExistingReadableDir(spellDir);
     spellDirPath = slashTerminatePath(spellDir.path());
@@ -214,6 +218,12 @@ QDir FileManager::getImageDirFile(QString relativePath) {
 }
 QString FileManager::getImageDirPath(QString relativePath) {
     return imagesDirPath + toPlatformPathSeparator(relativePath);
+}
+QDir FileManager::getJavaDirFile(QString relativePath) {
+    return QDir(javaDir.dirName()+ toPlatformPathSeparator(relativePath));
+}
+QString FileManager::getJavaDirPath(QString relativePath) {
+    return javaDirPath + toPlatformPathSeparator(relativePath);
 }
 QDir FileManager::getLogsDirFile(QString relativePath) {
     return QDir(logsDir.dirName() + toPlatformPathSeparator(relativePath));

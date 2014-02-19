@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "html/thumbnailer.h"
 #include "dialog/tabledialog.h"
 #include "dialog/insertlatexdialog.h"
+#include "dialog/endecryptdialog.h"
 #include "dialog/encryptdialog.h"
 #include "sql/configstore.h"
 #include "utilities/encrypt.h"
@@ -137,11 +138,11 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     // Setup the signals
     connect(&expandButton, SIGNAL(stateChanged(int)), this, SLOT(changeExpandState(int)));
-    connect(&notebookMenu, SIGNAL(notebookChanged()), this, SLOT(sendUpdateSignal()));
-    connect(&urlEditor, SIGNAL(textUpdated()), this, SLOT(sendUpdateSignal()));
-    connect(&noteTitle, SIGNAL(titleChanged()), this, SLOT(sendUpdateSignal()));
-    connect(&dateEditor, SIGNAL(valueChanged()), this, SLOT(sendUpdateSignal()));
-    connect(&tagEditor, SIGNAL(tagsUpdated()), this, SLOT(sendUpdateSignal()));
+    connect(&notebookMenu, SIGNAL(notebookChanged()), this, SLOT(sendNotebookUpdateSignal()));
+    connect(&urlEditor, SIGNAL(textUpdated()), this, SLOT(sendTextUpdateSignal()));
+    connect(&noteTitle, SIGNAL(titleChanged()), this, SLOT(sendTitleUpdateSignal()));
+    connect(&dateEditor, SIGNAL(valueChanged()), this, SLOT(sendDateUpdateSignal()));
+    connect(&tagEditor, SIGNAL(tagsUpdated()), this, SLOT(sendTagUpdateSignal()));
     connect(&tagEditor, SIGNAL(newTagCreated(qint32)), this, SLOT(newTagAdded(qint32)));
     connect(editor, SIGNAL(noteChanged()), this, SLOT(noteContentUpdated()));
     connect(sourceEdit, SIGNAL(textChanged()), this, SLOT(noteSourceUpdated()));
@@ -161,6 +162,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     hammer = new Thumbnailer(global.db);
     lid = -1;
+    thumbnailer = NULL;
 }
 
 
@@ -235,7 +237,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     NoteTable noteTable(global.db);
     Note n;
 
-    bool rc = noteTable.get(n, this->lid, false, false);
+    bool rc = noteTable.get(n, this->lid, false);
     if (!rc)
         return;
 
@@ -277,7 +279,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     noteTitle.setTitle(lid, QString::fromStdString(n.title), QString::fromStdString(n.title));
     dateEditor.setNote(lid, n);
-    QLOG_DEBUG() << content;
+    //QLOG_DEBUG() << content;
     //editor->setContent(content,  "application/xhtml+xml");
     QWebSettings::setMaximumPagesInCache(0);
     QWebSettings::setObjectCacheCapacities(0, 0, 0);
@@ -402,11 +404,8 @@ void NBrowserWindow::changeExpandState(int value) {
 
 
 
-// Send a signal that the note has been updated
-void NBrowserWindow::sendUpdateSignal() {
-    emit(this->noteUpdated(lid));
-    emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, this->noteTitle.text()));
-}
+
+
 
 
 
@@ -510,17 +509,17 @@ void NBrowserWindow::noteContentUpdated() {
     if (editor->isDirty) {
         NoteTable noteTable(global.db);
         noteTable.setDirty(this->lid, true);
+        qint64 dt = QDateTime::currentMSecsSinceEpoch();
         emit(noteUpdated(this->lid));
+        emit(updateNoteList(this->lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
     }
-    if (sourceEdit->isVisible()) {
-        sourceEditorTimer->stop();
-        sourceEditorTimer->setInterval(500);
-        sourceEditorTimer->setSingleShot(true);
-        sourceEditorTimer->start();
-    }
+//    if (sourceEdit->isVisible()) {
+//        sourceEditorTimer->stop();
+//        sourceEditorTimer->setInterval(500);
+//        sourceEditorTimer->setSingleShot(false);
+//        sourceEditorTimer->start();
+//    }
 }
-
-
 
 
 // Save the note's content
@@ -554,8 +553,9 @@ void NBrowserWindow::saveNoteContent() {
 
 
         table.updateNoteContent(lid, formatter.getEnml());
-        Thumbnailer thumbnailer(global.db);
-        thumbnailer.render(lid);
+        if (thumbnailer == NULL)
+            thumbnailer = new Thumbnailer(global.db);
+        thumbnailer->render(lid);
 
         NoteCache* cache = global.cache[lid];
         if (cache != NULL) {
@@ -567,7 +567,7 @@ void NBrowserWindow::saveNoteContent() {
         }
 
         // Make sure the thumnailer is done
-        while(!thumbnailer.idle);
+        //while(!thumbnailer.idle);
     }
 }
 
@@ -664,9 +664,9 @@ void NBrowserWindow::pasteButtonPressed() {
             Note n;
             bool goodrc = false;
             NoteTable ntable(global.db);
-            goodrc = ntable.get(n, guid,false,false);
+            goodrc = ntable.get(n, guid,false);
             if (!goodrc)
-                goodrc = ntable.get(n,locguid,false,false);
+                goodrc = ntable.get(n,locguid,false);
 
             // If we have a good return, then we can paste the link, otherwise we fall out
             // to a normal paste.
@@ -718,7 +718,7 @@ void NBrowserWindow::pasteWithoutFormatButtonPressed() {
                 +QString("   var selObj = window.getSelection();")
                 +QString("   var selRange = selObj.getRangeAt(0);")
                 +QString("   var workingNode = window.getSelection().anchorNode;")
-                         +QString("   while(workingNode != null && workingNode.nodeName.toLowerCase() != 'table') { ")
+                +QString("   while(workingNode != null && workingNode.nodeName.toLowerCase() != 'table') { ")
                 +QString("           workingNode = workingNode.parentNode;")
                 +QString("   } ")
                 +QString("   workingNode.innerHTML = window.browserWindow.fixEncryptionPaste(workingNode.innerHTML);")
@@ -872,7 +872,7 @@ void NBrowserWindow::bulletListButtonPressed() {
 void NBrowserWindow::contentChanged() {
     this->editor->isDirty = true;
     saveNoteContent();
-    this->sendUpdateSignal();
+    this->sendDateUpdateSignal();
 }
 
 // The todo button was pressed
@@ -1036,7 +1036,7 @@ void NBrowserWindow::insertQuickLinkButtonPressed() {
 
     // If we have a good return, then we can paste the link, otherwise we fall out
     // to a normal paste.
-    if (ntable.get(n, lids[0],false,false)) {
+    if (ntable.get(n, lids[0],false)) {
         UserTable utable(global.db);
         User user;
         utable.getUser(user);
@@ -1061,20 +1061,6 @@ void NBrowserWindow::insertLatexButtonPressed() {
 }
 
 
-void NBrowserWindow::encryptButtonPressed() {
-        EnCrypt encrypt;
-
-    QString text = editor->selectedText();
-    if (text.trimmed() == "")
-        return;
-    text = text.replace("\n", "<br/>");
-
-    EnCryptDialog dialog;
-    dialog.exec();
-    if (!dialog.okPressed()) {
-        return;
-    }
-}
 
 
 void NBrowserWindow::insertTableButtonPressed() {
@@ -1311,6 +1297,11 @@ void NBrowserWindow::attachFile() {
      insideEncryption = false;
      forceTextPaste = false;
 
+     if (editor->selectedText().trimmed().length() > 0 && global.javaFound)
+         editor->encryptAction->setEnabled(true);
+     else
+         editor->encryptAction->setEnabled(false);
+
     QString js = QString("function getCursorPos() {")
         +QString("var cursorPos;")
         +QString("if (window.getSelection) {")
@@ -1493,6 +1484,10 @@ void NBrowserWindow::attachFile() {
 void NBrowserWindow::showSource(bool value) {
      setSource();
      sourceEdit->setVisible(value);
+     if (!value)
+         sourceEditorTimer->stop();
+     else
+         sourceEditorTimer->start();
  }
 
 
@@ -2106,7 +2101,7 @@ void NBrowserWindow::alarmSet() {
     ReminderSetDialog dialog;
     Note n;
     NoteTable ntable(global.db);
-    ntable.get(n, lid, false,false);
+    ntable.get(n, lid, false);
     if (n.__isset.attributes && n.attributes.__isset.reminderTime) {
         QDateTime dt;
         dt.setMSecsSinceEpoch(n.attributes.reminderTime);
@@ -2145,6 +2140,8 @@ void NBrowserWindow::alarmSet() {
 
     // Update the reminders
     global.reminderManager->updateReminder(this->lid, dt);
+    this->noteUpdated(this->lid);
+    this->editor->isDirty = true;
 }
 
 void NBrowserWindow::alarmClear() {
@@ -2167,3 +2164,188 @@ void NBrowserWindow::alarmMenuActivated() {
     noteTable.setReminderCompleted(this->lid, false);
     emit(noteUpdated(this->lid));
 }
+
+
+
+void NBrowserWindow::decryptText(QString id, QString text, QString hint, QString cipher, int len) {
+    if (cipher != "RC2") {
+        QMessageBox::critical(this, tr("Decryption Error"),
+                                       tr("Unknown encryption method.\n"
+                                          "Unable to decrypt."));
+        return;
+    }
+
+    EnCrypt crypt;
+    QString plainText = "";
+    QUuid uuid;
+    QString slot = uuid.createUuid().toString().replace("{","").replace("}","");
+
+    // First, try to decrypt with any keys we already have
+    for (int i=0; i<global.passwordRemember.size(); i++) {
+        QString password = global.passwordRemember.at(i).first;
+        int rc = crypt.decrypt(plainText, text, password, cipher, len);
+        if (rc == 0) {
+            QPair<QString, QString> newEntry;
+            newEntry.first = id;
+            newEntry.second = global.passwordRemember.at(i).second;
+            global.passwordRemember.append(newEntry);
+            removeEncryption(id, plainText, false, slot);
+            return;
+        }
+    }
+
+
+    EnDecryptDialog dialog;
+    if (hint.trimmed() != "")
+        dialog.hint->setText(hint);
+    while (plainText == "" || !dialog.okPressed) {
+        dialog.exec();
+        if (!dialog.okPressed) {
+            return;
+        }
+        int rc = crypt.decrypt(plainText, text, dialog.password->text().trimmed());
+        if (rc == EnCrypt::Invalid_Key) {
+//            QMessageBox.warning(this, tr("Incorrect Password"), tr("The password entered is not correct"));
+        }
+    }
+    QPair<QString,QString> passwordPair;
+    passwordPair.first = dialog.password->text().trimmed();
+    passwordPair.second = dialog.hint->text().trimmed();
+    global.passwordSafe.insert(slot, passwordPair);
+    bool permanentlyDecrypt = dialog.permanentlyDecrypt->isChecked();
+    removeEncryption(id, plainText, permanentlyDecrypt, slot);
+    bool rememberPassword = dialog.rememberPassword->isChecked();
+    if (rememberPassword) {
+        QPair<QString, QString> pair;
+        pair.first = dialog.password->text().trimmed();
+        pair.second = dialog.hint->text().trimmed();
+        global.passwordRemember.append(pair);
+    }
+}
+
+
+
+void NBrowserWindow::removeEncryption(QString id, QString plainText, bool permanent, QString slot) {
+    if (!permanent) {
+        plainText = " <table class=\"en-crypt-temp\" slot=\""
+                +slot
+                +"\""
+                +"border=1 width=100%><tbody><tr><td>"
+                +plainText+"</td></tr></tbody></table>";
+    }
+
+    QString html = editor->page()->mainFrame()->toHtml();
+    QString text = html;
+    int imagePos = html.indexOf("<img");
+    int endPos;
+    for ( ;imagePos>0; ) {
+        // Find the end tag
+        endPos = text.indexOf(">", imagePos);
+        QString tag = text.mid(imagePos-1,endPos);
+        if (tag.indexOf("id=\""+id+"\"") > -1) {
+                text = text.mid(0,imagePos) +plainText+text.mid(endPos+1);
+                editor->page()->mainFrame()->setHtml(text);
+                editor->reload();
+                if (permanent)
+                    contentChanged();
+        }
+        imagePos = text.indexOf("<img", imagePos+1);
+    }
+}
+
+
+void NBrowserWindow::encryptButtonPressed() {
+        EnCrypt encrypt;
+
+    QString text = editor->selectedText();
+    if (text.trimmed() == "")
+        return;
+    text = text.replace("\n", "<br/>");
+
+    EnCryptDialog dialog;
+    dialog.exec();
+    if (!dialog.okPressed()) {
+        return;
+    }
+
+    EnCrypt crypt;
+    QString encrypted;
+    int rc = crypt.encrypt(encrypted, text, dialog.getPassword().trimmed());
+
+    if (rc != 0) {
+        QMessageBox::information(this, tr("Error"),
+                                tr("Error Encrypting String.  Please verify you have Java installed."));
+        return;
+    }
+    QString buffer;
+    buffer.append("<img en-tag=\"en-crypt\" cipher=\"RC2\" hint=\""
+            + dialog.getHint().replace("'","\\'") + "\" length=\"64\" ");
+    buffer.append("contentEditable=\"false\" alt=\"");
+    buffer.append(encrypted);
+    buffer.append("\" src=\"file://").append(global.fileManager.getImageDirPath("encrypt.png") +"\"");
+    global.cryptCounter++;
+    buffer.append(" id=\"crypt"+QString::number(global.cryptCounter) +"\"");
+    buffer.append(" onMouseOver=\"style.cursor=\\'hand\\'\"");
+    buffer.append(" onClick=\"window.browserWindow.decryptText(\\'crypt"+QString::number(global.cryptCounter)
+                  +"\\', \\'"+encrypted+"\\', \\'"+dialog.getHint().replace("'", "\\&amp;apos;")+"\\', \\'RC2\\', 64);\"");
+    buffer.append("style=\"display:block\" />");
+
+
+    QString script_start = "document.execCommand('insertHtml', false, '";
+    QString script_end = "');";
+    editor->page()->mainFrame()->evaluateJavaScript(
+            script_start + buffer + script_end);
+}
+
+
+
+
+// Send a signal that the note has been updated
+void NBrowserWindow::sendTitleUpdateSignal() {
+    NoteTable ntable(global.db);
+    ntable.updateTitle(this->lid, this->noteTitle.text().trimmed(), true);
+    emit(this->noteUpdated(lid));
+    emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, this->noteTitle.text()));
+    sendDateUpdateSignal();
+}
+
+
+// Send a signal that the note has been updated
+void NBrowserWindow::sendNotebookUpdateSignal() {
+    NoteTable ntable(global.db);
+
+//    QString notebook = notebookMenu.d
+//    ntable.updateNotebook(this->lid, this->noteTitle.text().trimmed(), true);
+//    this->editor->isDirty = true;
+    ntable.setDirty(this->lid, true);
+    emit(this->noteUpdated(lid));
+    qint32 lid = notebookMenu.notebookLid;
+    QString name = notebookMenu.notebookName;
+    emit(this->updateNoteList(lid, NOTE_TABLE_NOTEBOOK_POSITION, name));
+    emit(this->updateNoteList(lid, NOTE_TABLE_NOTEBOOK_LID_POSITION, lid));
+    sendDateUpdateSignal();
+}
+
+
+// Send a signal that the note has been updated
+void NBrowserWindow::sendDateUpdateSignal(qint64 dt) {
+    NoteTable ntable(global.db);
+    ntable.setDirty(this->lid, true);
+    if (dt == 0) {
+        dt = QDateTime::currentMSecsSinceEpoch();
+        this->dateEditor.setUpdateDate(dt);
+    }
+    emit(this->noteUpdated(lid));
+    emit(this->updateNoteList(lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+}
+
+
+
+// Send a signal that the note has been updated
+void NBrowserWindow::sendTagUpdateSignal() {
+    NoteTable ntable(global.db);
+    ntable.setDirty(this->lid, true);
+    emit(this->noteUpdated(lid));
+    sendDateUpdateSignal();
+}
+

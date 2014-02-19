@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
+
 #include <QTimer>
 
 #include "syncrunner.h"
@@ -697,7 +698,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
         for (int j=0; j<noteLids.size(); j++) {
             Note n;
             qint32 oldUsn = n.updateSequenceNum;
-            ntable.get(n, noteLids[j], true,true);
+            ntable.get(n, noteLids[j], true);
             qint32 usn = comm->uploadLinkedNote(n, book);
             if (usn == 0) {
                 this->communicationErrorHandler();
@@ -924,7 +925,7 @@ qint32 SyncRunner::uploadPersonalNotes() {
     // Start uploading notes
     for (int i=0; i<validLids.size(); i++) {
         Note note;
-        noteTable.get(note, validLids[i],true,true);
+        noteTable.get(note, validLids[i],true);
         qint32 oldUsn = note.updateSequenceNum;
         usn = comm->uploadNote(note);
         if (usn == 0) {

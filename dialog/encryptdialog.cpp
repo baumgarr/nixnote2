@@ -48,6 +48,8 @@ EnCryptDialog::EnCryptDialog(QWidget *parent) :
     input->addWidget(&password2, 2, 2);
     input->addWidget(new QLabel(tr("Hint"), this), 3,1);
     input->addWidget(&hint, 3, 2);
+    input->addWidget(new QLabel(tr("Remember Password")), 4,1);
+    input->addWidget(&rememberPassword, 4,2);
     input->setContentsMargins(10, 10,  -10, -10);
     grid->addLayout(input, 1,1);
 

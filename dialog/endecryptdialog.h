@@ -25,28 +25,32 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPushButton>
 #include <QLabel>
 #include <QGridLayout>
+#include <QCheckBox>
 
 class EnDecryptDialog : public QDialog
 {
     Q_OBJECT
 private:
 
-    QPushButton ok;
-    QLabel passwordLabel;
-    QLabel hintLabel;
-    QPushButton cancel;
-    QGridLayout grid;
-    QGridLayout passwordGrid;
-    QGridLayout buttonGrid;
+    QGridLayout *grid;
+    QGridLayout *passwordGrid;
+    QGridLayout *buttonGrid;
+    QPushButton *ok;
+    QLabel *passwordLabel;
+    QLabel *hintLabel;
+    QPushButton *cancel;
+
 
 
 
 
 public:
-    explicit EnDecryptDialog(QWidget *parent = 0);
-    QLineEdit	hint;
-    QLineEdit	password;
-    bool okPressed;
+    explicit    EnDecryptDialog(QWidget *parent = 0);
+    QLabel      *hint;
+    QLineEdit	*password;
+    bool        okPressed;
+    QCheckBox *permanentlyDecrypt;
+    QCheckBox *rememberPassword;
 
 
 signals:

@@ -24,7 +24,9 @@ void FilterEngine::filter() {
     QLOG_DEBUG() << "Purging filters";
     sql.exec("delete from filter");
     QLOG_DEBUG() << "Resetting filter table";
-    sql.exec("Insert into filter (lid) select lid from NoteTable");
+    sql.prepare("Insert into filter (lid) select lid from NoteTable where notebooklid not in (select lid from datastore where key=:closedNotebooks)");
+    sql.bindValue(":closedNotebooks", NOTEBOOK_IS_CLOSED);
+    sql.exec();
     QLOG_DEBUG() << "Reset complete";
 
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];

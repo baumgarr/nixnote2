@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #ifndef LINKEDNOTEBOOKTABLE_H
 #define LINKEDNOTEBOOKTABLE_H
 
@@ -32,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define LINKEDNOTEBOOK_STACK                   3209
 #define LINKEDNOTEBOOK_BUSINESS_ID             3210
 #define LINKEDNOTEBOOK_LAST_USN                3211
+#define LINKEDNOTEBOOK_IS_DIRTY                3299
 
 #include <QObject>
 #include <iostream>

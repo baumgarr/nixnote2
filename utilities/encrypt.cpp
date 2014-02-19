@@ -22,10 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QString>
 #include <algorithm>
 #include <stdexcept>
-#include "botan/botan_all.h"
+//#include "botan/botan_all.h"
 #include "global.h"
 #include <boost/crc.hpp>
-#include "crypto++/rc2.h"
+//#include "crypto++/rc2.h"
+//#include <mcrypt.h>
+#include <QCryptographicHash>
 
 extern Global global;
 
@@ -34,73 +36,148 @@ extern Global global;
 //#define MY_CIPHER_MODE EVP_rc2_cbc()    // RC2 CBC mode
 
 using namespace std;
-using namespace Botan;
+//using namespace Botan;
 
 EnCrypt::EnCrypt()
 {
 }
 
 
+int EnCrypt::decrypt(QString &result, QString text, QString passphrase) {
+    return decrypt(result, text, passphrase, "RC2", 64);
+}
 
-QString EnCrypt::decrypt(QString text, QString passphrase) {
+int EnCrypt::decrypt(QString &result, QString text, QString passphrase, QString cipher, int length) {
 
-    QCryptographicHash md5hash(QCryptographicHash::Md5);
-    qDebug() << passphrase.toUtf8();
-    md5hash.hash(passphrase.toUtf8(), QCryptographicHash::Md5);
-    QByteArray hashResult = md5hash.result();
-
-    SymmetricKey key((const byte*)hashResult.constData(), hashResult.size()); // encoded string
-    // Turn the hex string back into cypher gibberish
-//    QByteArray ba64;
-//    ba64.append(text);
-//    QByteArray ba = QByteArray::fromBase64(ba64);
-
-    QByteArray ba = QByteArray::fromBase64("OI9WcCRoSLwSr6z4i2pvu9XsgMx0k8zxg1Tzk2bn5yXelooq/CVXJxywqgA9aKw2MERlFK2mXu9dHr1oJQ+YWflGVc58NeNWiE/JP8qlo6rzSs0RXFgGbDdOfSdlzgcS");
-
-    // Separate out the CRC & the text
-    try {
-        // The algorithm we want is specified by a string
-        Pipe pipe(get_cipher("RC2/ECB/NoPadding", key, DECRYPTION));
-        byte* x;
-        x = (byte*)malloc(ba.length());
-        memcpy(x, ba.constData(), ba.length());
-        pipe.process_msg(x,ba.length());
-        SecureVector<byte> v = pipe.read_all();
-        free(x);
-
-        byte* x1;
-        x1 = (byte*)malloc(v.size());
-        memcpy(x1,v.begin(), v.size());
-        QByteArray ba1;
-        ba1.append((const char*)x1, v.size());
-        free(x1);
-
-        QString c1(ba1);
-        QString msgCrc = c1.mid(0,4);
-        QString msg = c1.mid(4);
-        ba.clear();
-        ba.append(msg);
-        QByteArray crc = CRC32(ba);
-        if (crc  != msgCrc)
-            return "";
-
-        // Trim off trailing blanks
-        int cnt = 0;
-        bool finished = false;
-        for (int i=msg.length()-1; i>=0 && !finished; i--) {
-            if (msg[i] == 0)
-                cnt++;
-            else
-                finished=true;
-        }
-        msg = msg.mid(0,msg.length()-cnt);
-        return msg;
+    if (cipher == "RC2")
+        return this->runner(result, text, passphrase, "decrypt-rc2", length);
+    return this->Invaid_Method;
+}
 
 
-    } catch (Exception e) {
-        QLOG_DEBUG() << e.what();
-        return "";
-    }
+int EnCrypt::encrypt(QString &result, QString text, QString passphrase) {
+    return encrypt(result, text, passphrase, "RC2", 64);
+}
+
+int EnCrypt::encrypt(QString &result, QString text, QString passphrase, QString cipher, int length) {
+
+    if (cipher == "RC2")
+        return this->runner(result, text, passphrase, "encrypt-rc2", length);
+    return this->Invaid_Method;
+}
+
+
+int EnCrypt::runner(QString &result, QString text, QString passphrase, QString method,  int keylen) {
+
+    // Run the Java program to decrypt the text.  This is an extremely ugly
+    // hack, but I haven't been able to get anything else to work.
+    QString jar = global.fileManager.getJavaDirPath("") + "crypto.jar";
+
+    QProcess javaProcess;
+    QStringList args;
+    args.append("-jar");
+    args.append(jar);
+    args.append(method);
+    args.append(passphrase);
+    args.append(QString::number(keylen));
+    args.append(text);
+    javaProcess.start("java", args);
+
+    result.clear();
+    javaProcess.waitForFinished();
+    int rc = javaProcess.exitCode();
+    QLOG_DEBUG() << "Return Code: " << rc;
+    if (rc == 0)
+        result.append(javaProcess.readAllStandardOutput());
+
+    return rc;
+
+//    tidyProcess.start("tidy -raw -asxhtml -q -m -u -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
+//    QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
+//    tidyProcess.waitForStarted();
+//    tidyProcess.write(content);
+//    tidyProcess.closeWriteChannel();
+//    tidyProcess.waitForFinished();
+//    QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
+//    QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
+//    content.clear();
+//    content.append(tidyProcess.readAllStandardOutput());
+//    if (content == "") {
+//        formattingError = true;
+//        return "";
+//    }
+
+
+    // Below is a botan test
+//    QByteArray hash = QCryptographicHash::hash(passphrase.toUtf8(),QCryptographicHash::Md5);
+//    SymmetricKey key;
+//    key.change(QString(hash.toHex()).toStdString());
+//    qDebug() << "Key:" << QString::fromStdString(key.as_string());
+
+//    try {
+//        Keyed_Filter *cipher = get_cipher("RC2/ECB/NoPadding", DECRYPTION);
+//        cipher->set_key(key);
+//        Pipe pipe(new Base64_Decoder, cipher);
+//        byte *in = (byte*)text.data();
+//        QLOG_DEBUG() << text.length();
+//        pipe.process_msg(in, text.length());
+//        SecureVector<byte> sv =  pipe.read_all();
+//        QByteArray x1 = QByteArray::fromRawData((const char*)sv.begin(), sv.size());
+//        QLOG_DEBUG() << x1;
+//        QLOG_DEBUG() << x1.toHex();
+//        QLOG_DEBUG() << x1.toBase64();
+//        QLOG_DEBUG() << QByteArray::fromBase64(x1);
+//        QLOG_DEBUG() << "ptr";
+//    } catch(std::exception& ex) {
+//        QLOG_DEBUG() << "Decrypt failed: " << QString(ex.what());
+//    }
+
+//    return "";
+
+// Below is an mcrypt trial
+//    QLOG_DEBUG() << text;
+//    QLOG_DEBUG() << hash.toHex();
+//    MCRYPT td;
+//    int i;
+//    void *key;
+//    char *block_buffer;
+//    int keysize=hash.length();
+//    int blocksize;
+//    key = calloc(1, keysize);
+//    memcpy(key, hash.data(), hash.length());
+//    char cypher[] = "rc2";
+//    char block[] = "ecb";
+
+//    td = mcrypt_module_open(cypher, NULL, block, NULL);
+//    if (td == MCRYPT_FAILED)
+//        return "";
+
+//      QByteArray ba;
+//      ba.append(text);
+//      ba = QByteArray::fromBase64(ba);
+//      blocksize = mcrypt_enc_get_block_size(td);
+//      block_buffer = (char *)malloc(ba.size()*blocksize);
+//      memset(block_buffer, '\0', ba.size()*blocksize);
+//      memcpy(block_buffer, ba.data(), ba.length());
+//      qDebug() << block_buffer;
+
+//      i=mcrypt_generic_init(td, key, keysize, NULL);
+//      if (i<0) {
+//         mcrypt_perror(i);
+//         return "";
+//      }
+//      //mcrypt_generic (td, &block_buffer, 1);
+//      int rc = mdecrypt_generic(td, block_buffer, ba.length());
+//      QLOG_DEBUG() << rc;
+
+//    /* Deinit the encryption thread, and unload the module */
+//      mcrypt_generic_end(td);
+//      QByteArray ba3;
+//      ba3.append(block_buffer, ba.size()*blocksize);
+//      QLOG_DEBUG() << ba3.toHex();
+//      QLOG_DEBUG() << QByteArray::fromBase64(ba3);
+
+//    return "";
 }
 
 

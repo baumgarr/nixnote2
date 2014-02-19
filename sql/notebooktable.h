@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTEBOOK_SERVICE_CREATED            3008
 #define NOTEBOOK_SERVICE_UPDATED            3009
 #define NOTEBOOK_ALIAS                      3010
+#define NOTEBOOK_IS_CLOSED                  3999
 
 #define NOTEBOOK_PUBLISHED                  3100
 #define NOTEBOOK_PUBLISHING_URI             3101
@@ -113,6 +114,10 @@ public:
     qint32 addStub(QString guid);                           // Add a stub for later insertion
     qint32 findByUri(QString uri);
     qint32 findByUri(string uri);
+    void getOpenNotebooks(QList<qint32> &lids);
+    void getClosedNotebooks(QList<qint32> &lids);
+    void openAllNotebooks();
+    void closeNotebook(qint32 lid);
 };
 
 #endif // NOTEBOOKTABLE_H

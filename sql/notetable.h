@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #ifndef NOTETABLE_H
 #define NOTETABLE_H
 
@@ -95,9 +96,9 @@ public:
     void sync(Note &note, qint32 account=0);                    // Sync a note with a new record
     void sync(qint32 lid, Note &note, qint32 account=0);           // Sync a note with a new record
     qint32 add(qint32 lid, Note &t, bool isDirty, qint32 account=0); // Add a new note
-    bool get(Note &note, qint32 lid, bool loadResources, bool loadResourceRecognition);           // Get a note given a lid
-    bool get(Note &note, QString guid, bool loadResources, bool loadResourceRecognition);      // get a note given a guid
-    bool get(Note &note, string guid,bool loadResources, bool loadResourceRecognition);       // get a note given a guid
+    bool get(Note &note, qint32 lid, bool loadResources);           // Get a note given a lid
+    bool get(Note &note, QString guid, bool loadResources);      // get a note given a guid
+    bool get(Note &note, string guid,bool loadResources);       // get a note given a guid
     bool isDirty(qint32 lid);                  // Check if a note is dirty
     bool isDirty(QString guid);             // Check if a note is dirty
     bool isDirty(string guid);              // Check if a note is dirty

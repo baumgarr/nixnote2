@@ -3,6 +3,17 @@
  *
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  */
+
+
+
+
+// Suppress stupid Thrift warnings
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#pragma GCC diagnostic push
+
+
+
+
 #ifndef NoteStore_H
 #define NoteStore_H
 
@@ -10960,3 +10971,6 @@ class NoteStoreMultiface : virtual public NoteStoreIf {
 }} // namespace
 
 #endif
+
+// Suppress stupid Thrift warnings
+#pragma GCC diagnostic pop

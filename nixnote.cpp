@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/usertable.h"
 #include "settings/startupconfig.h"
 #include "dialog/logindialog.h"
+#include "dialog/closenotebookdialog.h"
 #include "gui/lineedit.h"
 #include "gui/findreplace.h"
 #include "gui/nattributetree.h"
@@ -63,6 +64,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/adduseraccountdialog.h"
 #include "dialog/accountmaintenancedialog.h"
 #include "communication/communicationmanager.h"
+#include "utilities/encrypt.h"
 
 
 #include "gui/nmainmenubar.h"
@@ -78,7 +80,7 @@ class SyncRunner;
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
-    splashScreen = new QSplashScreen(QPixmap(":splash_logo.png"));
+    splashScreen = new QSplashScreen(this, QPixmap(":splash_logo.png"));
     global.settings->beginGroup("Appearance");
     if(global.settings->value("showSplashScreen", false).toBool()) {
         splashScreen->show();
@@ -156,6 +158,21 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         QTimer::singleShot(5000, global.reminderManager, SLOT(timerPop()));
     else
         global.setLastReminderTime(QDateTime::currentMSecsSinceEpoch());
+
+
+    // Check for Java and verify encryption works
+    QString test = "Test Message";
+    QString  result;
+    EnCrypt encrypt;
+    if (!encrypt.encrypt(result, test, test)) {
+        if (!encrypt.decrypt(result, result, test)) {
+            if (result == test)
+                global.javaFound = true;
+        }
+    }
+
+    // Init OAuth winwod
+    oauthWindow = NULL;
 
 
     QLOG_DEBUG() << "Exiting NixNote constructor";
@@ -699,6 +716,8 @@ void NixNote::closeEvent(QCloseEvent *event) {
     saveNoteColumnWidths();
     saveNoteColumnPositions();
     noteTableView->saveColumnsVisible();
+    QMainWindow::closeEvent(event);
+    QLOG_DEBUG() << "Quitting";
 }
 
 
@@ -814,21 +833,27 @@ void NixNote::syncTimerExpired() {
 //* User synchronize was requested
 //******************************************************************************
 void NixNote::synchronize() {
+    if (oauthWindow == NULL)
+        oauthWindow = new OAuthWindow(this);
+    else
+        oauthWindow->reset();
     this->saveContents();
     statusBar()->clearMessage();
     indexRunner.pauseIndexing = true;
     if (!global.accountsManager->oauthTokenFound()) {
-        oauthWindow.setWindowFlags(Qt::Dialog);
-        connect(&oauthWindow, SIGNAL(closed()), this, SLOT(synchronize()));
-        oauthWindow.showNormal();
-        if (oauthWindow.error) {
-            setMessage(oauthWindow.errorMessage);
+        oauthWindow->setWindowFlags(Qt::Dialog);
+        oauthWindow->setFocus();  // This fixes a cursor problem.
+        connect(oauthWindow, SIGNAL(closed()), this, SLOT(synchronize()));
+        oauthWindow->showNormal();
+        if (oauthWindow->error) {
+            setMessage(oauthWindow->errorMessage);
             return;
         }
-        if (oauthWindow.response == "")
+        if (oauthWindow->response == "") {
             return;
+        }
 
-        global.accountsManager->setOAuthToken(oauthWindow.response);
+        global.accountsManager->setOAuthToken(oauthWindow->response);
     }
     syncButtonTimer.start(3);
     emit syncRequested();
@@ -966,7 +991,7 @@ void NixNote::checkReadOnlyNotebook() {
     Note n;
     NoteTable ntable(global.db);
     NotebookTable btable(global.db);
-    ntable.get(n, lid, false,false);
+    ntable.get(n, lid, false);
     qint32 notebookLid = btable.getLid(n.notebookGuid);
     if (btable.isReadOnly(notebookLid)) {
         newNoteButton->setEnabled(false);
@@ -1185,11 +1210,13 @@ void NixNote::newNote() {
 
 // Slot for when notes have been deleted from the notes list.
 void NixNote::notesDeleted(QList<qint32> lids) {
+    lids=lids;
     updateSelectionCriteria();
 }
 
 // Slot for when notes have been deleted from the notes list.
 void NixNote::notesRestored(QList<qint32> lids) {
+    lids=lids;
     updateSelectionCriteria();
 }
 
@@ -1261,16 +1288,18 @@ void NixNote::viewNoteHistory() {
     this->saveContents();
     statusBar()->clearMessage();
     if (!global.accountsManager->oauthTokenFound()) {
-        oauthWindow.setWindowFlags(Qt::Dialog);
-        oauthWindow.showNormal();
-        if (oauthWindow.error) {
-            setMessage(oauthWindow.errorMessage);
+        if (oauthWindow == NULL)
+            oauthWindow = new OAuthWindow(this);
+        oauthWindow->setWindowFlags(Qt::Dialog);
+        oauthWindow->showNormal();
+        if (oauthWindow->error) {
+            setMessage(oauthWindow->errorMessage);
             return;
         }
-        if (oauthWindow.response == "")
+        if (oauthWindow->response == "")
             return;
 
-        global.accountsManager->setOAuthToken(oauthWindow.response);
+        global.accountsManager->setOAuthToken(oauthWindow->response);
     }
 
     UserTable userTable(global.db);
@@ -1802,4 +1831,17 @@ void NixNote::reindexDatabase() {
     ntable.reindexAllNotes();
 
     setMessage(tr("Notes will be reindexed."));
+}
+
+
+
+// Open/Close selected notebooks
+void NixNote::openCloseNotebooks() {
+    CloseNotebookDialog dialog;
+    dialog.exec();
+    if (dialog.okPressed) {
+        notebookTreeView->rebuildNotebookTreeNeeded = true;
+        this->updateSelectionCriteria();
+        notebookTreeView->rebuildTree();
+    }
 }

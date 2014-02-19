@@ -106,6 +106,22 @@ OAuthWindow::OAuthWindow(QMainWindow *parent) :
 }
 
 
+void OAuthWindow::reset() {
+    authTokenReceived = false;
+    userLoginPageLoaded = false;
+    error = false;
+    errorMessage = "";
+
+    // Load the temporary URL to start the authentication procesess.  When
+    // finished, this QWebView will contain the URL to start the
+    // authentication process.
+    QUrl tu(temporaryCredUrl);
+    connect(tempAuthPage, SIGNAL(loadFinished(bool)), this, SLOT(tempAuthPageLoaded(bool)));
+    connect(tempAuthPage->page()->networkAccessManager(),SIGNAL(finished(QNetworkReply*)), this, SLOT(tempAuthPageReply(QNetworkReply*)));
+    tempAuthPage->load(tu);
+}
+
+
 void OAuthWindow::tempAuthPageLoaded(bool rc) {
     QLOG_DEBUG() << "Temporary credentials received from Evernote";
     if (!rc) {
@@ -136,7 +152,7 @@ void OAuthWindow::tempAuthPageReply(QNetworkReply* reply) {
     QLOG_DEBUG() << "error: " << reply->error();
     if (reply->error() != QNetworkReply::NoError) {
         int statusCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-//        QLOG_DEBUG() << "status:" << statusCode;
+        QLOG_DEBUG() << "status:" << statusCode;
 //        QLOG_DEBUG() << "error: " << reply->error();
         return;
     }

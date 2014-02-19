@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #include "noteformatter.h"
 #include "sql/resourcetable.h"
 #include "sql/notebooktable.h"
@@ -109,7 +110,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     page.mainFrame()->setContent(htmlPage);
     QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
 
-    QLOG_DEBUG() << page.mainFrame()->toHtml();
+    //QLOG_DEBUG() << page.mainFrame()->toHtml();
     modifyTags(page);
 
     note.content = page.mainFrame()->toHtml().toStdString();
@@ -197,9 +198,16 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     qint32 enCryptLen = anchors.count();
     for (qint32 i=enCryptLen-1; i>=0; i--) {
         QWebElement enmedia = anchors.at(i);
+        QString hint = enmedia.attribute("hint");
+        QString cipher = enmedia.attribute("cipher", "RC2");
+        QString length = enmedia.attribute("length","64");
+
         enmedia.setAttribute("contentEditable","false");
         enmedia.setAttribute("src", QString("file://")+global.fileManager.getImageDirPath("encrypt.png"));
         enmedia.setAttribute("en-tag","en-crypt");
+        enmedia.setAttribute("cipher", cipher);
+        enmedia.setAttribute("length", length);
+        enmedia.setAttribute("hint", hint);
         enmedia.setAttribute("alt", enmedia.toInnerXml());
         global.cryptCounter++;
         enmedia.setAttribute("id", "crypt"+QString().number(global.cryptCounter));
@@ -212,9 +220,14 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
                 encryptedText.truncate(encryptedText.length()-1);
 
         // Add the commands
-        QString hint = enmedia.attribute("hint");
         hint = hint.replace("'","&apos;");
-        enmedia.setAttribute("onClick", "window.jsbridge.decryptText('crypt"+QString().number(global.cryptCounter)+"', '"+encryptedText+"', '"+hint+"');");
+        enmedia.setAttribute("onClick", "window.browserWindow.decryptText('crypt"+
+                             QString().number(global.cryptCounter)+
+                             "', '"+encryptedText+"', '"+
+                             hint +"', '" +
+                             cipher+ "', " +
+                             length +
+                             ");");
         enmedia.setAttribute("onMouseOver", "style.cursor='hand'");
         enmedia.setInnerXml("");
         QString k = enmedia.toOuterXml();

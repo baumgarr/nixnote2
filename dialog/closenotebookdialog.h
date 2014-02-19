@@ -1,6 +1,6 @@
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2013 Randy Baumgarte
+Copyright (C) 2014 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -18,31 +18,39 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#ifndef NOTECACHE_H
-#define NOTECACHE_H
+#ifndef CLOSENOTEBOOKDIALOG_H
+#define CLOSENOTEBOOKDIALOG_H
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
-#include <QObject>
+#include <QDialog>
+#include <QPushButton>
+#include <QListWidget>
+#include <QLabel>
+#include <QGridLayout>
 
-
-using namespace evernote::edam  ;
-
-
-class NoteCache : public QObject
+class CloseNotebookDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit NoteCache(QObject *parent = 0);
-    QByteArray noteContent;
-    bool isReadOnly;
-    bool isContentReadOnly;
-    bool isInkNote;
-
+    explicit CloseNotebookDialog(QWidget *parent = 0);
+    bool okPressed;
+    QPushButton openButton;
+    QPushButton closeButton;
+    QPushButton cancelButton;
+    QPushButton okButton;
+    QListWidget openNotebooks;
+    QListWidget closeNotebooks;
+    QLabel openLabel;
+    QLabel closeLabel;
+    
 signals:
-
+    
 public slots:
-
+    void openButtonClicked();
+    void closeButtonClicked();
+    void okButtonPressed();
+    void cancelButtonPressed();
+    void closeListSelection();
+    void openListSelection();
 };
 
-#endif // NOTECACHE_H
+#endif // CLOSENOTEBOOKDIALOG_H

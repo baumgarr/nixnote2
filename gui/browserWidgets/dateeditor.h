@@ -17,6 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+
 #ifndef DATEEDITOR_H
 #define DATEEDITOR_H
 
@@ -46,6 +47,7 @@ private:
 public:
     explicit DateEditor(QWidget *parent = 0);
     void setNote(qint32 lid, Note n);
+    void setUpdateDate(qint64 value);
     
 signals:
     void valueChanged();

@@ -576,7 +576,7 @@ bool NoteTable::updateNotebookName(qint32 lid, QString name) {
 
 
 // Return a note structure given the LID
-bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadResourceRecognition) {
+bool NoteTable::get(Note &note, qint32 lid,bool loadResources) {
 
     QSqlQuery query(*db);
     query.prepare("Select key, data from DataStore where lid=:lid");
@@ -753,17 +753,17 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadResource
 
 
 // Return a note given the GUID
-bool NoteTable::get(Note& note, QString guid,bool loadResources, bool loadResourceRecognition) {
+bool NoteTable::get(Note& note, QString guid,bool loadResources) {
     qint32 lid = getLid(guid);
-    return get(note, lid, loadResources, loadResourceRecognition);
+    return get(note, lid, loadResources);
 }
 
 
 
 // Return a note given the GUID as a std::string
-bool NoteTable::get(Note &note, string guid, bool loadResources, bool loadResourceRecognition) {
+bool NoteTable::get(Note &note, string guid, bool loadResources) {
     qint32 lid = getLid(guid);
-    return get(note, lid, loadResources, loadResourceRecognition);
+    return get(note, lid, loadResources);
 }
 
 
@@ -1180,6 +1180,26 @@ void NoteTable::setDirty(qint32 lid, bool dirty) {
         query.bindValue(":data", dirty);
         query.exec();
         setIndexNeeded(lid, true);
+
+        query.prepare("Delete from DataStore where lid=:lid and key=:key");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_UPDATED_DATE);
+        query.exec();
+
+        qint64 dt = QDateTime::currentMSecsSinceEpoch();
+
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :value)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_UPDATED_DATE);
+        query.bindValue(":value", dt);
+        query.exec();
+
+        query.prepare("Update NoteTable set dateUpdated=:value where lid=:lid");
+        query.bindValue(":lid", lid);
+        query.bindValue(":value", dt);
+        query.exec();
+
+        setIndexNeeded(lid, true);
     }
 }
 
@@ -1300,7 +1320,7 @@ qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {
 
 void NoteTable::expunge(qint32 lid) {
     Note note;
-    this->get(note, lid, true, false);
+    this->get(note, lid, true);
     ResourceTable resTable(db);
     for (unsigned int i=0; note.__isset.resources && i<note.resources.size(); i++) {
         Resource r = note.resources[i];
@@ -1443,7 +1463,7 @@ qint32 NoteTable::duplicateNote(qint32 oldLid) {
     query.exec();
 
     Note n;
-    get(n, newLid, false,false);
+    get(n, newLid, false);
     NotebookTable notebookTable(db);
     qint32 notebookLid = notebookTable.getLid(n.notebookGuid);
     updateNoteList(newLid, n, true, notebookLid);

@@ -3,6 +3,12 @@
  *
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  */
+
+// Suppress stupid Thrift warnings
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#pragma GCC diagnostic push
+
+
 #ifndef UserStore_H
 #define UserStore_H
 
@@ -1722,3 +1728,5 @@ class UserStoreMultiface : virtual public UserStoreIf {
 }} // namespace
 
 #endif
+// Suppress stupid Thrift warnings
+#pragma GCC diagnostic pop

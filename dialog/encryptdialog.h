@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include <QLabel>
+#include <QCheckBox>
 
 class EnCryptDialog : public QDialog
 {
@@ -35,6 +36,8 @@ private:
     QLineEdit hint;
     QPushButton ok;
     QLabel error;
+    QCheckBox rememberPassword;
+
 
 public:
     explicit EnCryptDialog(QWidget *parent = 0);
