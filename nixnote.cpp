@@ -172,6 +172,15 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         }
     }
 
+    // Check if Tidy is installed
+    QProcess tidyProcess;
+    tidyProcess.start("tidy -h");
+    tidyProcess.waitForFinished();
+    if (!tidyProcess.exitCode()) {
+        QMessageBox mb;
+        mb.critical(this, tr("Tidy Not Found"), tr("Tidy is not found on this system.\nUntil tidy is installed you cannot save any notes."));
+    }
+
     // Init OAuth winwod
     oauthWindow = NULL;
 
