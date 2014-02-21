@@ -221,6 +221,8 @@ public slots:
     void counterThreadStarted();
     void openCloseNotebooks();
     void newWebcamNote();
+    void deleteCurrentNote();
+    void duplicateCurrentNote();
 
 signals:
     void syncRequested();

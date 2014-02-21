@@ -502,7 +502,7 @@ void NTableView::deleteSelectedNotes() {
 
     NoteTable ntable(global.db);
     QSqlQuery sql(*global.db);
-    QSqlQuery transaction(*global.db);
+//    QSqlQuery transaction(*global.db);
     //transaction.exec("begin");
     sql.prepare("Delete from filter where lid=:lid");
     for (int i=0; i<lids.size(); i++) {

@@ -37,6 +37,7 @@ private:
     void setupFileMenu();
     void setupEditMenu();
     void setupViewMenu();
+    void setupNoteMenu();
     void setupToolsMenu();
     void setupHelpMenu();
     void setupShortcut(QAction *action, QString text);
@@ -46,6 +47,7 @@ public:
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *viewMenu;
+    QMenu *noteMenu;
     QMenu *toolsMenu;
     QMenu *helpMenu;
     QMenu *findReplaceMenu;
@@ -71,7 +73,6 @@ public:
     QAction *pasteAction;
     QAction *pasteAsTextAction;
     QAction *removeFormattingAction;
-    QAction *deleteNoteAction;
     QAction *selectAllAction;
     QAction *preferencesAction;
 
@@ -92,6 +93,11 @@ public:
     QAction *viewNotePanel;
     QAction *viewToolbar;
     QAction *viewStatusbar;
+
+    QAction *deleteNoteAction;
+    QAction *newNoteAction;
+    QAction *newWebcamNoteAction;
+    QAction *duplicateNoteAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 

@@ -139,7 +139,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     // Setup the signals
     connect(&expandButton, SIGNAL(stateChanged(int)), this, SLOT(changeExpandState(int)));
     connect(&notebookMenu, SIGNAL(notebookChanged()), this, SLOT(sendNotebookUpdateSignal()));
-    connect(&urlEditor, SIGNAL(textUpdated()), this, SLOT(sendTextUpdateSignal()));
+    connect(&urlEditor, SIGNAL(textUpdated()), this, SLOT(sendUrlUpdateSignal()));
     connect(&noteTitle, SIGNAL(titleChanged()), this, SLOT(sendTitleUpdateSignal()));
     connect(&dateEditor, SIGNAL(valueChanged()), this, SLOT(sendDateUpdateSignal()));
     connect(&tagEditor, SIGNAL(tagsUpdated()), this, SLOT(sendTagUpdateSignal()));
@@ -2349,3 +2349,12 @@ void NBrowserWindow::sendTagUpdateSignal() {
     sendDateUpdateSignal();
 }
 
+
+// Send a signal that the note has been updated
+void NBrowserWindow::sendUrlUpdateSignal() {
+    NoteTable ntable(global.db);
+    ntable.setDirty(this->lid, true);
+    emit(this->noteUpdated(lid));
+    sendDateUpdateSignal();
+    emit(this->updateNoteList(lid, NOTE_TABLE_SOURCE_URL_POSITION, urlEditor.getText()));
+}

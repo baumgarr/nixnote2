@@ -176,7 +176,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     QProcess tidyProcess;
     tidyProcess.start("tidy -h");
     tidyProcess.waitForFinished();
-    if (!tidyProcess.exitCode()) {
+    if (tidyProcess.exitCode()) {
         QMessageBox mb;
         mb.critical(this, tr("Tidy Not Found"), tr("Tidy is not found on this system.\nUntil tidy is installed you cannot save any notes."));
     }
@@ -1987,3 +1987,67 @@ void NixNote::newWebcamNote() {
     tabWindow->currentBrowser()->editor->setFocus();
     return;
 }
+
+
+// Delete the note we are currently viewing
+void NixNote::deleteCurrentNote() {
+    qint32 lid = tabWindow->currentBrowser()->lid;
+
+    QString typeDelete;
+    QString msg;
+    FilterCriteria *f  = global.filterCriteria[global.filterPosition];
+    bool expunged = false;
+    typeDelete = tr("Delete ");
+
+    if (f->isDeletedOnlySet() && f->getDeletedOnly()) {
+        typeDelete = tr("Permanently delete ");
+        expunged = true;
+    }
+
+    msg = typeDelete + tr("this note?");
+
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(tr("Verify Delete"));
+    msgBox.setText(msg);
+    msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+    msgBox.setIcon(QMessageBox::Question);
+    msgBox.setDefaultButton(QMessageBox::Yes);
+    int rc = msgBox.exec();
+    if (rc != QMessageBox::Yes)
+        return;
+
+    NoteTable ntable(global.db);
+    QSqlQuery sql(*global.db);
+    sql.prepare("Delete from filter where lid=:lid");
+    ntable.deleteNote(lid, true);
+    if (expunged)
+        ntable.expunge(lid);
+    sql.bindValue(":lid", lid);
+    sql.exec();
+    delete global.cache[lid];
+    global.cache.remove(lid);
+    QList<qint32> lids;
+    lids.append(lid);
+    emit(notesDeleted(lids));
+}
+
+
+
+// Duplicate the current note
+void NixNote::duplicateCurrentNote() {
+    qint32 oldLid = tabWindow->currentBrowser()->lid;
+    qint32 newLid;
+    NoteTable ntable(global.db);
+    newLid = ntable.duplicateNote(oldLid);
+
+    FilterCriteria *criteria = new FilterCriteria();
+    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    criteria->setLid(newLid);
+    global.filterCriteria.append(criteria);
+    global.filterPosition++;
+    openNote(false);
+    updateSelectionCriteria();
+    tabWindow->currentBrowser()->editor->setFocus();
+}
+
+

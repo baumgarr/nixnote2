@@ -42,6 +42,7 @@ NMainMenuBar::NMainMenuBar(QWidget *parent) :
     setupFileMenu();
     setupEditMenu();
     setupViewMenu();
+    setupNoteMenu();
     setupToolsMenu();
     setupHelpMenu();
 }
@@ -172,11 +173,6 @@ void NMainMenuBar::setupEditMenu() {
     editMenu->addAction(removeFormattingAction);
 
     editMenu->addSeparator();
-
-    deleteNoteAction = new QAction(tr("Delete"), this);
-    setupShortcut(deleteNoteAction, QString("File_Note_Delete"));
-    deleteNoteAction->setFont(font);
-    //editMenu->addAction(deleteNoteAction);
 
     selectAllAction = new QAction(tr("Select All"), this);
     setupShortcut(selectAllAction, QString("Edit_Select_All"));
@@ -319,6 +315,38 @@ void NMainMenuBar::setupViewMenu() {
     connect(viewStatusbar, SIGNAL(triggered()), parent, SLOT(toggleStatusbar()));
 
 }
+
+
+void NMainMenuBar::setupNoteMenu() {
+
+    noteMenu = this->addMenu(tr("&Note"));
+
+    newNoteAction = new QAction(tr("New Note"), noteMenu);
+    setupShortcut(deleteNoteAction, QString("File_Note_New"));
+    newNoteAction->setFont(font);
+    noteMenu->addAction(newNoteAction);
+    connect(newNoteAction, SIGNAL(triggered()), parent, SLOT(newNote()));
+
+    newWebcamNoteAction = new QAction(tr("New Webcam Note"), noteMenu);
+    setupShortcut(deleteNoteAction, QString("File_Note_New_Webcam"));
+    newWebcamNoteAction->setFont(font);
+    noteMenu->addAction(newWebcamNoteAction);
+    connect(newWebcamNoteAction, SIGNAL(triggered()), parent, SLOT(newWebcamNote()));
+
+    duplicateNoteAction = new QAction(tr("Duplicate Note"), noteMenu);
+    setupShortcut(duplicateNoteAction, QString("File_Note_Duplicate"));
+    duplicateNoteAction->setFont(font);
+    noteMenu->addAction(duplicateNoteAction);
+    connect(duplicateNoteAction, SIGNAL(triggered()), parent, SLOT(duplicateCurrentNote()));
+
+    deleteNoteAction = new QAction(tr("Delete"), noteMenu);
+    setupShortcut(deleteNoteAction, QString("File_Note_Delete"));
+    deleteNoteAction->setFont(font);
+    noteMenu->addAction(deleteNoteAction);
+    connect(deleteNoteAction, SIGNAL(triggered()), parent, SLOT(deleteCurrentNote()));
+
+}
+
 
 void NMainMenuBar::setupToolsMenu() {
   toolsMenu = this->addMenu(tr("&Tools"));

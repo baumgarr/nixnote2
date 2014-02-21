@@ -221,6 +221,7 @@ private slots:
     void sendNotebookUpdateSignal();
     void sendDateUpdateSignal(qint64 dt=0);
     void sendTagUpdateSignal();
+    void sendUrlUpdateSignal();
     void newTagAdded(qint32);
 
 };

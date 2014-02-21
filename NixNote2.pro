@@ -301,9 +301,10 @@ HEADERS  += nixnote.h \
 
 #LIBS +=    -Wl,-rpath,./lib32:./lib64 -L./lib -L./liba -lthrift -lpthread  -L/usr/lib -lpoppler-qt4 -g -rdynamic
 
-LIBS +=   -Wl,-L./lib -lthrift -L/usr/lib/x86_64-linux-gnu/ \
-            -lssl -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic \
-           -lopencv_core -lopencv_highgui -lopencv_imgproc
+LIBS +=    -Wl,-L./lib -lthrift \
+           -lopencv_core -lopencv_highgui -lopencv_imgproc \
+           -L/usr/lib/x86_64-linux-gnu/ \
+           -lssl -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=./lib
 INCLUDEPATH += /usr/local/include/thrift \
             /usr/include/poppler/qt4
 
