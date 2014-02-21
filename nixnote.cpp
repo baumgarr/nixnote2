@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "watcher/filewatcher.h"
 #include "dialog/accountdialog.h"
 #include "dialog/preferences/preferencesdialog.h"
+#include "dialog/webcamcapturedialog.h"
 #include "sql/resourcetable.h"
 
 #include <QThread>
@@ -252,12 +253,14 @@ void NixNote::setupGui() {
 //  syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
     toolBar->addSeparator();
     trunkButton = toolBar->addAction(QIcon(":trunk.png"), tr("Trunk"));
-    newNoteButton = toolBar->addAction(QIcon(":newNote.png"), tr("New Note"));
+    newNoteButton = toolBar->addAction(QIcon(":newNote.png"), tr("New Text Note"));
+    newWebcamNoteButton = toolBar->addAction(QIcon(":webcam.png"), tr("New Webcam Note"));
     usageButton = toolBar->addAction(QIcon(":usage.png"), tr("Usage"));
     connect(syncButton,SIGNAL(triggered()), this, SLOT(synchronize()));
     connect(homeButton, SIGNAL(triggered()), this, SLOT(resetView()));
     connect(trunkButton, SIGNAL(triggered()), this, SLOT(openTrunk()));
     connect(newNoteButton, SIGNAL(triggered()), this, SLOT(newNote()));
+    connect(newWebcamNoteButton, SIGNAL(triggered()), this, SLOT(newWebcamNote()));
     connect(usageButton, SIGNAL(triggered()), this, SLOT(openAccount()));
 
     QLOG_TRACE() << "Adding main splitter";
@@ -1235,7 +1238,7 @@ void NixNote::openAccount() {
 
 
 void NixNote::openAbout() {
-    QMessageBox::about(this, tr(" NixNote 2 Alpha #4"),
+    QMessageBox::about(this, tr(" NixNote 2 Alpha #5"),
                        tr("This is ALPHA software. "
                           "Use it at your own risk. "
                           "\n\nLicensed under the Gnu Public License v2.\n\nBuilt on "
@@ -1844,4 +1847,134 @@ void NixNote::openCloseNotebooks() {
         this->updateSelectionCriteria();
         notebookTreeView->rebuildTree();
     }
+}
+
+
+
+// Capture an image from the webcam and create a new note
+void NixNote::newWebcamNote() {
+    WebcamCaptureDialog dialog;
+    QMessageBox msgBox;
+    msgBox.setText(tr("Unable to find webcam or capture image."));
+    msgBox.setWindowTitle(tr("Webcam Error"));
+
+    // Check for error reading camera
+    if (!dialog.webcamReady) {
+        msgBox.exec();
+        return;
+    }
+
+    dialog.exec();
+
+    if (!dialog.okPressed) {
+        return;
+    }
+
+    QImage img;
+    // Check for webcam error
+    if (!dialog.webcamReady || !dialog.webcamImage->getImage(img)) {
+        msgBox.exec();
+        return;
+    }
+
+    //Start generating the new note
+    Note newNote;
+    NoteTable ntable(global.db);
+
+    QByteArray data;
+    QBuffer buffer(&data);
+    buffer.open(QIODevice::WriteOnly);
+    img.save(&buffer, "PNG");
+
+    ConfigStore cs(global.db);
+    qint32 lid = cs.incrementLidCounter();
+
+    QCryptographicHash md5hash(QCryptographicHash::Md5);
+    QByteArray hash = md5hash.hash(data, QCryptographicHash::Md5);
+
+    // * Start setting up the new note
+    newNote.guid = QString::number(lid).toStdString();
+    newNote.__isset.guid = true;
+    newNote.title = "Webcam Note";
+    newNote.__isset.title = true;
+
+    NotebookTable notebookTable(global.db);
+    if (notebookTreeView->selectedItems().size() == 0) {
+        newNote.notebookGuid = notebookTable.getDefaultNotebookGuid().toStdString();
+    } else {
+        NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
+        QString notebookGuid;
+        notebookTable.getGuid(notebookGuid, item->lid);
+        newNote.notebookGuid = notebookGuid.toStdString();
+    }
+    newNote.__isset.notebookGuid = true;
+
+    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
+           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
+           QString("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">");
+
+
+    QString enMedia =QString("<en-media hash=\"") +hash.toHex() +QString("\" border=\"0\"")
+            +QString(" type=\"image/png\" ")
+            +QString("/>");
+    newNoteBody.append(enMedia + QString("</en-note>"));
+    newNote.content = newNoteBody.toStdString();
+    newNote.__isset.content = true;
+    newNote.active = true;
+    newNote.__isset.active = true;
+    newNote.created = QDateTime::currentMSecsSinceEpoch();;
+    newNote.__isset.created = true;
+    newNote.updated = newNote.created;
+    newNote.__isset.updated = true;
+    newNote.updateSequenceNum = 0;
+    newNote.__isset.updateSequenceNum = true;
+    newNote.attributes.__isset.sourceURL = false;
+    newNote.__isset.attributes = true;
+
+
+    qint32 noteLid = lid;
+    ntable.add(lid, newNote, true);
+    QString noteGuid = ntable.getGuid(lid);
+    lid = cs.incrementLidCounter();
+
+
+    // Start creating the new resource
+    Resource newRes;
+    string bodystring(data.constData(), data.size());
+    newRes.data.body = bodystring;
+    string hashstring(hash.constData(), hash.size());
+    newRes.data.bodyHash = hashstring;
+    newRes.data.size = data.size();
+    newRes.data.__isset.body = true;
+    newRes.data.__isset.bodyHash = true;
+    newRes.data.__isset.size = true;
+    newRes.__isset.data = true;
+    newRes.mime = "image/png";
+    newRes.__isset.mime = true;
+    newRes.attributes.fileName = "";
+    newRes.attributes.__isset.fileName = false;
+    newRes.__isset.attributes = true;
+    newRes.attributes.attachment = false;
+    newRes.attributes.__isset.attachment = true;
+    newRes.active = true;
+    newRes.__isset.active = true;
+    newRes.guid = QString::number(lid).toStdString();
+    newRes.__isset.guid = true;
+    newRes.noteGuid = noteGuid.toStdString();
+    newRes.__isset.noteGuid = true;
+    newRes.updateSequenceNum = 0;
+    newRes.__isset.updateSequenceNum = 0;
+    ResourceTable restable(global.db);
+    restable.add(lid, newRes, true, noteLid);
+
+
+    FilterCriteria *criteria = new FilterCriteria();
+    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    criteria->setLid(noteLid);
+    global.filterCriteria.append(criteria);
+    global.filterPosition++;
+    openNote(false);
+    updateSelectionCriteria();
+    tabWindow->currentBrowser()->editor->setFocus();
+    return;
 }

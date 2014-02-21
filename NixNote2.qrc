@@ -51,5 +51,6 @@
         <file alias="navigation.png">images/navigation.png</file>
         <file alias="splash_logo.png">images/splash_logo.png</file>
         <file alias="alarmclock.png">images/alarmclock.png</file>
+        <file alias="webcam.png">images/webcam.png</file>
     </qresource>
 </RCC>

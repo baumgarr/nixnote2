@@ -108,6 +108,7 @@ private:
     QAction *homeButton;
     QAction *syncButton;
     QAction *newNoteButton;
+    QAction *newWebcamNoteButton;
     QAction *screenCaptureButton;
     QAction *trunkButton;
     QAction *usageButton;
@@ -219,6 +220,7 @@ public slots:
     void syncThreadStarted();
     void counterThreadStarted();
     void openCloseNotebooks();
+    void newWebcamNote();
 
 signals:
     void syncRequested();

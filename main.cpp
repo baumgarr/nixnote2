@@ -33,7 +33,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <execinfo.h>
 #include <signal.h>
 
-//#include "utilities/encrypt.h"
 #include "application.h"
 #include "thrift/config.h"
 #include "utilities/encrypt.h"
@@ -64,10 +63,10 @@ void fault_handler(int sig) {
   exit(1);
 }
 
+//using namespace cv;
 
 int main(int argc, char *argv[])
 {
-
     Botan::LibraryInitializer botanInit;
     signal(SIGSEGV, fault_handler);   // install our handler
 
