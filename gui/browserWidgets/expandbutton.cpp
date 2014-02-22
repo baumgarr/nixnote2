@@ -30,22 +30,35 @@ ExpandButton::ExpandButton(QWidget *parent) :
     connect(this, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 }
 
+void ExpandButton::setState(int state) {
+    currentState = state;
+    switch (currentState) {
+    case EXPANDBUTTON_1 :
+        setIcon(QIcon(":down_arrow_small.png"));
+        emit(stateChanged(currentState));
+        break;
+    case EXPANDBUTTON_2 :
+        setIcon(QIcon(":down_arrow_small.png"));
+        emit(stateChanged(currentState));
+        break;
+    case EXPANDBUTTON_3 :
+        setIcon(QIcon(":up_arrow_small.png"));
+        emit(stateChanged(currentState));
+        break;
+    }
+}
 
 void ExpandButton::buttonClicked() {
     switch (currentState) {
     case EXPANDBUTTON_1 :
         currentState = EXPANDBUTTON_2;
-        emit(stateChanged(currentState));
         break;
     case EXPANDBUTTON_2 :
         currentState = EXPANDBUTTON_3;
-        setIcon(QIcon(":up_arrow_small.png"));
-        emit(stateChanged(currentState));
         break;
     case EXPANDBUTTON_3 :
         currentState = EXPANDBUTTON_1;
-        setIcon(QIcon(":down_arrow_small.png"));
-        emit(stateChanged(currentState));
         break;
     }
+    setState(currentState);
 }

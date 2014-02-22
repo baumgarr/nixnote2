@@ -163,6 +163,13 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     hammer = new Thumbnailer(global.db);
     lid = -1;
     thumbnailer = NULL;
+
+    // Restore the expand/collapse state
+    global.settings->beginGroup("SaveState");
+    int expandButton = global.settings->value("ExpandButton", EXPANDBUTTON_1).toInt();
+    global.settings->endGroup();
+    this->expandButton.setState(expandButton);
+    //changeExpandState(expandButton);
 }
 
 
@@ -400,6 +407,9 @@ void NBrowserWindow::changeExpandState(int value) {
         dateEditor.show();
         break;
     }
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("ExpandButton", value);
+    global.settings->endGroup();
 }
 
 

@@ -31,6 +31,7 @@ class ExpandButton : public QToolButton
 public:
     explicit ExpandButton(QWidget *parent = 0);
     int currentState;
+    void setState(int state);
     
 signals:
     void stateChanged(int state);
