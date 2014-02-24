@@ -73,6 +73,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTE_ATTRIBUTE_REMINDER_TIME           5033
 #define NOTE_ATTRIBUTE_REMINDER_DONE_TIME      5034
 
+#define NOTE_ISPINNED                          5996
 #define NOTE_THUMBNAIL_NEEDED                  5997
 #define NOTE_EXPUNGED_FROM_TRASH               5998
 #define NOTE_INDEX_NEEDED                      5999
@@ -105,6 +106,12 @@ public:
     bool exists(qint32 lid);                   // Does this note exist?
     bool exists(QString guid);              // Does this note exist?
     bool exists(string guid);               // Does this note exist?
+    bool isPinned(string guid);             // is the note pinned?
+    bool isPinned(QString guid);            // is the note pinned?
+    bool isPinned(qint32 lid);              // is the note pinned?
+    void pinNote(string guid, bool value);             // pin the current note
+    void pinNote(QString guid, bool value);            // pin the current note
+    void pinNote(qint32 lid, bool value);              // pin the current note
     qint32 findNotesByTag(QList<qint32> &values, QString tags);
     qint32 findNotesByTag(QList<qint32> &values, string tags);
     qint32 findNotesByTag(QList<qint32> &values, qint32 tagLid);

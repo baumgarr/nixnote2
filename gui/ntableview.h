@@ -65,6 +65,8 @@ public:
     QAction *openNoteAction;
     QAction *copyNoteLinkAction;
     QAction *copyNoteAction;
+    QAction *pinNoteAction;
+    QAction *unpinNoteAction;
     QAction *mergeNotesAction;
 
     void getSelectedLids(QList<qint32> &lids);
@@ -91,6 +93,8 @@ public slots:
     void copyNoteLink();
     void toggleColumnVisible(int position, bool visible);
     void copyNote();
+    void pinNote();
+    void unpinNote();
     void mergeNotes();
     void refreshCell(qint32 lid, int cell, QVariant data);
     void dragMoveEvent(QDragMoveEvent *event);

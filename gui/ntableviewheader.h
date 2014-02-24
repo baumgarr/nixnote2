@@ -51,6 +51,7 @@ public:
     QAction *reminderTimeAction;
     QAction *reminderOrderAction;
     QAction *reminderTimeDoneAction;
+    QAction *pinnedAction;
     void checkActions();
     bool isThumbnailVisible();
 
@@ -82,6 +83,7 @@ public slots:
     void reminderTimeChecked(bool);
     void reminderTimeDoneChecked(bool);
     void reminderOrderChecked(bool);
+    void pinnedChecked(bool);
 };
 
 #endif // NTABLEVIEWHEADER_H

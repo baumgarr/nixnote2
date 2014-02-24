@@ -99,6 +99,8 @@ public:
     QAction *newNoteAction;
     QAction *newWebcamNoteAction;
     QAction *duplicateNoteAction;
+    QAction *pinNoteAction;
+    QAction *unpinNoteAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 

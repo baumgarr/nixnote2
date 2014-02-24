@@ -1818,3 +1818,79 @@ void NoteTable::getAllReminders(QList< QPair<qint32,qlonglong>* > *reminders) {
         reminders->append(p);
     }
 }
+
+
+// Return if a note is dirty given its lid
+bool NoteTable::isPinned(qint32 lid) {
+    QSqlQuery query(*db);
+    query.prepare("Select data from DataStore where key=:key and lid=:lid");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ISPINNED);
+    query.exec();
+    if (query.next())
+        return query.value(0).toBool();
+    else
+        return false;
+}
+
+
+// Determine if a note is pinned given a guid
+bool NoteTable::isPinned(QString guid) {
+    qint32 lid = getLid(guid);
+    return isPinned(lid);
+}
+
+
+// Determine if a note is pinned a guid
+bool NoteTable::isPinned(string guid) {
+    QString g(QString::fromStdString(guid));
+    return isPinned(g);
+}
+
+
+// Return if a note is dirty given its lid
+void NoteTable::pinNote(qint32 lid, bool value) {
+    if (value && isPinned(lid))
+        return;
+
+    QSqlQuery query(*db);
+    query.prepare("Delete from DataStore where key=:key and lid=:lid");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ISPINNED);
+    query.exec();
+
+    if (!value) {
+        query.prepare("Update NoteTable set isPinned='false' where lid=:lid");
+        query.bindValue(":lid", lid);
+        query.exec();
+        QLOG_DEBUG() << query.lastError();
+        return;
+    }
+
+    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, 'true')");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_ISPINNED);
+    query.exec();
+    QLOG_DEBUG() << query.lastError();
+
+    query.prepare("Update NoteTable set isPinned='true' where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+    query.lastError();
+
+    setDirty(lid, true);
+}
+
+
+// Determine if a note is pinned given a guid
+void NoteTable::pinNote(QString guid, bool value) {
+    qint32 lid = getLid(guid);
+    pinNote(lid, value);
+}
+
+
+// Determine if a note is pinned a guid
+void NoteTable::pinNote(string guid, bool value) {
+    QString g(QString::fromStdString(guid));
+    pinNote(g, value);
+}

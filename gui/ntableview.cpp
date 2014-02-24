@@ -99,6 +99,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_IS_DIRTY_POSITION, trueFalseDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_HAS_ENCRYPTION_POSITION, trueFalseDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_HAS_TODO_POSITION, trueFalseDelegate);
+    this->setItemDelegateForColumn(NOTE_TABLE_PINNED_POSITION, trueFalseDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_REMINDER_ORDER_POSITION, reminderOrderDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_THUMBNAIL_POSITION, thumbnailDelegate);
 
@@ -113,6 +114,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setColumnHidden(NOTE_TABLE_HAS_TODO_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_HAS_ENCRYPTION_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_SOURCE_APPLICATION_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_PINNED_POSITION, true);
 
     blockSignals(true);
     if (!isColumnHidden(NOTE_TABLE_DATE_CREATED_POSITION))
@@ -182,6 +184,7 @@ NTableView::NTableView(QWidget *parent) :
     this->model()->setHeaderData(NOTE_TABLE_IS_DIRTY_POSITION, Qt::Horizontal, QObject::tr("Sync"));
     this->model()->setHeaderData(NOTE_TABLE_SIZE_POSITION, Qt::Horizontal, QObject::tr("Size"));
     this->model()->setHeaderData(NOTE_TABLE_THUMBNAIL_POSITION, Qt::Horizontal, QObject::tr("Thumbnail"));
+    this->model()->setHeaderData(NOTE_TABLE_PINNED_POSITION, Qt::Horizontal, QObject::tr("Pinned"));
 
     contextMenu = new QMenu(this);
     QFont font;
@@ -212,6 +215,16 @@ NTableView::NTableView(QWidget *parent) :
     contextMenu->addAction(copyNoteAction);
     copyNoteAction->setFont(font);
     connect(copyNoteAction, SIGNAL(triggered()), this, SLOT(copyNote()));
+
+    pinNoteAction = new QAction(tr("Pin Note"), this);
+    contextMenu->addAction(pinNoteAction);
+    pinNoteAction->setFont(font);
+    connect(pinNoteAction, SIGNAL(triggered()), this, SLOT(pinNote()));
+
+    unpinNoteAction = new QAction(tr("Unpin Note"), this);
+    contextMenu->addAction(unpinNoteAction);
+    unpinNoteAction->setFont(font);
+    connect(unpinNoteAction, SIGNAL(triggered()), this, SLOT(unpinNote()));
 
     mergeNotesAction = new QAction(tr("Merge Notes"), this);
     contextMenu->addAction(mergeNotesAction);
@@ -772,6 +785,9 @@ void NTableView::saveColumnsVisible() {
     value = isColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION);
     global.settings->setValue("reminderOrder", value);
 
+    value = isColumnHidden(NOTE_TABLE_PINNED_POSITION);
+    global.settings->setValue("isPinned", value);
+
     global.settings->endGroup();
 }
 
@@ -863,6 +879,10 @@ void NTableView::setColumnsVisible() {
     value = global.settings->value("reminderOrder", false).toBool();
     tableViewHeader->reminderOrderAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, value);
+
+    value = global.settings->value("isPinned", false).toBool();
+    tableViewHeader->pinnedAction->setChecked(!value);
+    setColumnHidden(NOTE_TABLE_PINNED_POSITION, value);
 
     global.settings->endGroup();
 }
@@ -1073,6 +1093,41 @@ void NTableView::mergeNotes() {
 
 
 
+// Pin notes
+void NTableView::pinNote() {
+    QList<qint32> lids;
+    ConfigStore cs(global.db);
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    NoteTable noteTable(global.db);
+    for (int i=0; i<lids.size(); i++) {
+        noteTable.pinNote(lids[i], true);
+    }
+    FilterEngine engine;
+    engine.filter();
+    refreshData();
+}
+
+
+// Unpin notes
+void NTableView::unpinNote() {
+    QList<qint32> lids;
+    ConfigStore cs(global.db);
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    NoteTable noteTable(global.db);
+    for (int i=0; i<lids.size(); i++) {
+        noteTable.pinNote(lids[i], false);
+    }
+    FilterEngine engine;
+    engine.filter();
+    refreshData();
+}
+
 
 // Drag a note event.  Determine if dragging is even possible
 void NTableView::dragEnterEvent(QDragEnterEvent *event) {
@@ -1124,3 +1179,6 @@ void NTableView::mouseMoveEvent(QMouseEvent *event)
     drag->setMimeData(mimeData);
     drag->exec(Qt::MoveAction);
 }
+
+
+

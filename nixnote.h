@@ -224,6 +224,8 @@ public slots:
     void newWebcamNote();
     void deleteCurrentNote();
     void duplicateCurrentNote();
+    void pinCurrentNote();
+    void unpinCurrentNote();
 
 signals:
     void syncRequested();

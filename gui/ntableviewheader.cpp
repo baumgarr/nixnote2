@@ -129,6 +129,11 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
     reminderTimeDoneAction->setCheckable(true);
     addAction(reminderTimeDoneAction);
 
+    pinnedAction = new QAction(this);
+    pinnedAction->setText(tr("Pinned"));
+    pinnedAction->setCheckable(true);
+    addAction(pinnedAction);
+
     thumbnailAction = new QAction(this);
     thumbnailAction->setText(tr("Thumbnail"));
     thumbnailAction->setCheckable(true);
@@ -159,6 +164,7 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
    connect(reminderTimeAction, SIGNAL(toggled(bool)), this, SLOT(reminderTimeChecked(bool)));
    connect(reminderTimeDoneAction, SIGNAL(toggled(bool)), this, SLOT(reminderTimeDoneChecked(bool)));
    connect(reminderOrderAction, SIGNAL(toggled(bool)), this, SLOT(reminderOrderChecked(bool)));
+   connect(pinnedAction, SIGNAL(toggled(bool)), this, SLOT(pinnedChecked(bool)));
 
 }
 
@@ -280,6 +286,10 @@ void NTableViewHeader::reminderOrderChecked(bool checked) {
     checkActions();
 }
 
+void NTableViewHeader::pinnedChecked(bool checked) {
+    emit (setColumnVisible(NOTE_TABLE_PINNED_POSITION, checked));
+    checkActions();
+}
 
 bool NTableViewHeader::isThumbnailVisible() {
     return thumbnailAction->isChecked();

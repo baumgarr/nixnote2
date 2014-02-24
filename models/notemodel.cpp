@@ -86,6 +86,7 @@ void NoteModel::createTable() {
                   QString("reminderOrder real default null,") +
                   QString("reminderTime real default null,") +
                   QString("reminderDoneTime real default null,") +
+                  QString("isPinned integer default null,") +
                   QString("thumbnail default null") +
                   QString(")"));
     if (!sql.exec(command) ||
@@ -108,6 +109,7 @@ void NoteModel::createTable() {
             !sql.exec("CREATE INDEX NoteTable_Is_Dirty_Index on NoteTable (isDirty)") ||
             !sql.exec("CREATE INDEX NoteTable_Reminder_Order_Index on NoteTable (reminderOrder)") ||
             !sql.exec("CREATE INDEX NoteTable_Reminder_Time_Index on NoteTable (reminderTime)") ||
+            !sql.exec("CREATE INDEX NoteTable_isPinned_Index on NoteTable (isPinned)") ||
             !sql.exec("CREATE INDEX NoteTable_Reminder_Done_Time_Index on NoteTable (reminderDoneTime)")
        ) {
         QLOG_ERROR() << "Creation of NoteTable table failed: " << sql.lastError();

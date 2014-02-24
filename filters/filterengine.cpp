@@ -43,6 +43,11 @@ void FilterEngine::filter() {
     filterAttributes(criteria);
     QLOG_DEBUG() << "Filtering complete";
 
+    // Now, re-insert any pinned notes
+    sql.prepare("Insert into filter (lid) select lid from Datastore where key=:key and lid not in (select lid from filter)");
+    sql.bindValue(":closedNotebooks", NOTE_ISPINNED);
+    sql.exec();
+
 
     // Remove any selected notes that are not in the filter.
     QSqlQuery query(*global.db);

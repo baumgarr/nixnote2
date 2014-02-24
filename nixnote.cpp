@@ -698,9 +698,6 @@ void NixNote::closeEvent(QCloseEvent *event) {
     syncRunner.keepRunning = false;
     syncThread.quit();
 
-
-
-
     ConfigStore config(global.db);
     config.saveSetting(CONFIG_STORE_WINDOW_STATE, saveState());
     config.saveSetting(CONFIG_STORE_WINDOW_GEOMETRY, saveGeometry());
@@ -2071,3 +2068,17 @@ void NixNote::duplicateCurrentNote() {
 }
 
 
+void NixNote::pinCurrentNote() {
+    qint32 lid = tabWindow->currentBrowser()->lid;
+    NoteTable ntable(global.db);
+    ntable.pinNote(lid, true);
+    updateSelectionCriteria();
+}
+
+
+void NixNote::unpinCurrentNote() {
+    qint32 lid = tabWindow->currentBrowser()->lid;
+    NoteTable ntable(global.db);
+    ntable.pinNote(lid, false);
+    updateSelectionCriteria();
+}

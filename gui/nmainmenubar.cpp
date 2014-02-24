@@ -242,9 +242,6 @@ void NMainMenuBar::setupEditMenu() {
     editMenu->addAction(preferencesAction);
     connect(preferencesAction, SIGNAL(triggered()), parent, SLOT(openPreferences()));
 
-
-
-
 }
 
 void NMainMenuBar::setupViewMenu() {
@@ -353,6 +350,20 @@ void NMainMenuBar::setupNoteMenu() {
     deleteNoteAction->setFont(font);
     noteMenu->addAction(deleteNoteAction);
     connect(deleteNoteAction, SIGNAL(triggered()), parent, SLOT(deleteCurrentNote()));
+
+    noteMenu->addSeparator();
+
+    pinNoteAction = new QAction(tr("Pin Note"), noteMenu);
+    setupShortcut(pinNoteAction, QString("NOTE_PIN"));
+    pinNoteAction->setFont(font);
+    noteMenu->addAction(pinNoteAction);
+    connect(pinNoteAction, SIGNAL(triggered()), parent, SLOT(pinCurrentNote()));
+
+    unpinNoteAction = new QAction(tr("UnPin Note"), noteMenu);
+    setupShortcut(unpinNoteAction, QString("NOTE_UNPIN"));
+    unpinNoteAction->setFont(font);
+    noteMenu->addAction(unpinNoteAction);
+    connect(unpinNoteAction, SIGNAL(triggered()), parent, SLOT(unpinCurrentNote()));
 
 }
 
