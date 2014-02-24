@@ -61,12 +61,21 @@ void NMainMenuBar::setupFileMenu() {
     setupShortcut(printAction, QString("File_Print"));
     fileMenu->addAction(printAction);
 
+    fileMenu->addSeparator();
+
     restoreDatabaseAction = new QAction(tr("Restore Database"), this);
     restoreDatabaseAction->setToolTip(tr("Restore from a backup"));
     restoreDatabaseAction->setFont(f);
     connect(restoreDatabaseAction, SIGNAL(triggered()), parent, SLOT(databaseRestore()));
     setupShortcut(restoreDatabaseAction, QString("File_Restore_Database"));
     fileMenu->addAction(restoreDatabaseAction);
+
+    importNoteAction = new QAction(tr("Import from Export File"), this);
+    importNoteAction->setToolTip(tr("Import notes from an export file"));
+    importNoteAction->setFont(f);
+    connect(importNoteAction, SIGNAL(triggered()), parent, SLOT(noteImport()));
+    setupShortcut(importNoteAction, QString("File_Note_Import"));
+    fileMenu->addAction(importNoteAction);
 
 
     fileMenu->addSeparator();

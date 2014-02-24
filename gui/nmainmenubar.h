@@ -62,6 +62,7 @@ public:
     QAction *databaseStatusDialogAction;
     QAction *reindexDatabaseAction;
     QAction *restoreDatabaseAction;
+    QAction *importNoteAction;
     QAction *accountDialogAction;
     QAction *userMaintenanceAction;
     QAction *aboutAction;

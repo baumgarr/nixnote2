@@ -1027,38 +1027,48 @@ void NixNote::leftButtonTriggered() {
 }
 
 
+//**************************************************
+// Import notes menu option chosen
+//**************************************************
+void NixNote::noteImport() {
+    databaseRestore(false);
+}
 
 
 
 //**************************************************
-//* Backup & Restore
+//* Restore (or import) notest
 //**************************************************
 
-void NixNote::databaseRestore() {
+void NixNote::databaseRestore(bool fullRestore) {
     QLOG_TRACE() << "Entering databaseRestore()";
 
-    QMessageBox msgBox;
-    msgBox.setText(tr("This is used to restore a database from backups.\nIt is HIGHLY recommened that this only be used to populate\nan empty database.  Restoring into a database that\n already has data can cause problems.\n\nAre you sure you want to continue?"));
-    msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
-    msgBox.setDefaultButton(QMessageBox::Ok);
-    msgBox.setWindowTitle(tr("Confirm Restore"));
-    int retval = msgBox.exec();
+    if (fullRestore) {
+        QMessageBox msgBox;
+        msgBox.setText(tr("This is used to restore a database from backups.\nIt is HIGHLY recommened that this only be used to populate\nan empty database.  Restoring into a database that\n already has data can cause problems.\n\nAre you sure you want to continue?"));
+        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Cancel);
+        msgBox.setDefaultButton(QMessageBox::Ok);
+        msgBox.setWindowTitle(tr("Confirm Restore"));
+        int retval = msgBox.exec();
 
-    switch (retval) {
-      case QMessageBox::Cancel:    // Cancel was clicked, let's exit
-        QLOG_DEBUG() << "Database restore has been canceled";
-        return;
-        break;
-      default:  // Anything else we don't care
-        break;
+        switch (retval) {
+        case QMessageBox::Cancel:    // Cancel was clicked, let's exit
+            QLOG_DEBUG() << "Database restore has been canceled";
+            return;
+            break;
+        default:  // Anything else we don't care
+            break;
+        }
     }
-
-
 
     QFileDialog fd;
     fd.setFileMode(QFileDialog::ExistingFile);
     fd.setConfirmOverwrite(true);
-    fd.setWindowTitle(tr("Restore Database"));
+    if (fullRestore)
+        fd.setWindowTitle(tr("Restore Database"));
+    else
+        fd.setWindowTitle(tr("Import Notes"));
+
     fd.setFilter(tr("NixNote Export (*.nnex);;All Files (*.*)"));
     fd.setAcceptMode(QFileDialog::AcceptOpen);
     if (saveLastPath == "")
@@ -1070,7 +1080,6 @@ void NixNote::databaseRestore() {
         return;
     }
 
-
     waitCursor(true);
     QStringList fileNames;
     fileNames = fd.selectedFiles();
@@ -1079,8 +1088,12 @@ void NixNote::databaseRestore() {
     if (pos > 0)
         saveLastPath.truncate(pos);
 
-    setMessage(tr("Restoring database"));
-    ImportData noteReader(true);
+    if (fullRestore)
+        setMessage(tr("Restoring database"));
+    else
+        setMessage(tr("Importing Notes"));
+
+    ImportData noteReader(fullRestore);
     noteReader.import(fileNames[0]);
 
     if (noteReader.lastError != 0) {
@@ -1092,13 +1105,20 @@ void NixNote::databaseRestore() {
 
     // Finish by filtering & displaying the data
     updateSelectionCriteria();
- //   noteTableView->refreshData();
-    tagTreeView->rebuildTagTreeNeeded = true;
-    tagTreeView->loadData();
+
+    if (fullRestore) {
+        tagTreeView->rebuildTagTreeNeeded = true;
+        tagTreeView->loadData();
+        searchTreeView->loadData();
+    }
     notebookTreeView->rebuildNotebookTreeNeeded = true;
     notebookTreeView->loadData();
-    searchTreeView->loadData();
-    setMessage(tr("Database has been restored."));
+
+    if (fullRestore)
+        setMessage(tr("Database has been restored."));
+    else
+        setMessage(tr("Notes have been imported."));
+
     waitCursor(false);
 }
 

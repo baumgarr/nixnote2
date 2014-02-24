@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "importdata.h"
 #include <QStringList>
+#include <QString>
 #include "sql/resourcetable.h"
 #include "sql/notebooktable.h"
 #include "sql/notetable.h"
@@ -45,6 +46,27 @@ ImportData::ImportData(bool full)
     importNotebooks = false;
     backup = full;
     createTags = false;
+
+    // get the
+    if (!full) {
+        NotebookTable t(global.db);
+        QString name = QObject::tr("Imported Notes");
+        qint32 lid=t.findByName(name);
+        if (lid == 0) {
+            // We have a new notebook to add
+            Notebook book;
+            book.name = name.toStdString();
+            bool isSynchronized = true;
+            QUuid uuid;
+            notebookGuid =  uuid.createUuid().toString().replace("{","").replace("}","");
+            book.guid = notebookGuid.toStdString();
+            book.__isset.name = true;
+            book.__isset.guid = true;
+            t.add(0,book,true, !isSynchronized);
+        } else {
+            t.getGuid(notebookGuid, lid);
+        }
+    }
 }
 
 
@@ -94,12 +116,12 @@ void ImportData::import(QString file) {
             }
             if (type.toLower() == "backup" && !backup) {
                 lastError = 4;
-                errorMessage = "This is an export file, not a backup file";
+                errorMessage = "This is backup file, not an export file";
                 return;
             }
             if (type.toLower() == "export" && backup) {
                 lastError = 5;
-                errorMessage = "This is a backup file, not an export file";
+                errorMessage = "This is an export file, not a backup file";
                 return;
             }
         }
@@ -133,7 +155,7 @@ void ImportData::import(QString file) {
     // is because we may have gotten notes & tags before the notebook
     // & tag names existed.  There is probably a more efficient way
     // to do this, but since we don't really do this often this works
-    // as well as any awy.
+    // as well as any other way.
 
     NoteTable noteTable(global.db);
     for (qint32 i=0; i<noteList.size(); i++) {
@@ -164,7 +186,7 @@ void ImportData::processNoteNode() {
     bool atEnd = false;
     while(!atEnd) {
         QString name = reader->name().toString().toLower();
-        if (name == "guid" && !reader->isEndElement()) {
+        if (name == "guid" && !reader->isEndElement() && backup) {
             note.guid = textValue().toStdString();
             note.__isset.guid = true;
             noteList.append(QString::fromStdString(note.guid));
@@ -224,6 +246,9 @@ void ImportData::processNoteNode() {
         if (name == "noteresource" && !reader->isEndElement()) {
             Resource newRes;
             processResource(newRes);
+            newRes.noteGuid = note.guid;
+            if (!backup)
+                newRes.updateSequenceNum = 0;
             note.resources.push_back(newRes);
             note.__isset.resources = true;
         }
@@ -245,9 +270,6 @@ void ImportData::processNoteNode() {
         note.updateSequenceNum = 0;
         if (notebookGuid != NULL)
             note.notebookGuid = notebookGuid.toStdString();
-        for (unsigned int i=0; i<note.resources.size(); i++) {
-             note.resources[i].updateSequenceNum = 0;
-        }
         noteTable.add(0,note, true);
         if (metaData.contains(QString(note.guid.c_str()))) {
             QLOG_ERROR() << "ERROR IN IMPORTING DATA:  Metadata not yet supported";

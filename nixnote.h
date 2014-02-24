@@ -173,7 +173,8 @@ public slots:
     void leftButtonTriggered();
     void rightButtonTriggered();
     void openNote(bool newWindow);
-    void databaseRestore();
+    void noteImport();
+    void databaseRestore(bool fullRestore=true);
     void resetView();
     void newNote();
     void setSyncTimer();
