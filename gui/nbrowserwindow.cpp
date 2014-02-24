@@ -1529,6 +1529,9 @@ void NBrowserWindow::clear() {
 
 // Set the source for the "show source" button
 void NBrowserWindow::setSource() {
+    if (sourceEdit->hasFocus())
+        return;
+
     QString text = editor->editorPage->mainFrame()->toHtml();
     sourceEdit->blockSignals(true);
     int body = text.indexOf("<body", Qt::CaseInsensitive);
