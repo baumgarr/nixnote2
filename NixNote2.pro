@@ -157,7 +157,9 @@ SOURCES += main.cpp\
     dialog/notehistoryselect.cpp \
     dialog/closenotebookdialog.cpp \
     webcam/cvimagewidget.cpp \
-    dialog/webcamcapturedialog.cpp
+    dialog/webcamcapturedialog.cpp \
+    utilities/spellchecker.cpp \
+    dialog/spellcheckdialog.cpp
 
 
 
@@ -295,7 +297,9 @@ HEADERS  += nixnote.h \
     dialog/notehistoryselect.h \
     dialog/closenotebookdialog.h \
     webcam/cvimagewidget.h \
-    dialog/webcamcapturedialog.h
+    dialog/webcamcapturedialog.h \
+    utilities/spellchecker.h \
+    dialog/spellcheckdialog.h
 
 
 
@@ -303,6 +307,7 @@ HEADERS  += nixnote.h \
 
 LIBS +=    -Wl,-L./lib -lthrift \
            -lopencv_core -lopencv_highgui -lopencv_imgproc \
+           -lhunspell \
            -L/usr/lib/x86_64-linux-gnu/ \
            -lssl -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=./lib
 INCLUDEPATH += /usr/local/include/thrift \

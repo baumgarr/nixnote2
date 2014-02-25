@@ -2082,3 +2082,10 @@ void NixNote::unpinCurrentNote() {
     ntable.pinNote(lid, false);
     updateSelectionCriteria();
 }
+
+
+
+void NixNote::spellCheckCurrentNote() {
+    tabWindow->currentBrowser()->spellCheckPressed();
+}
+

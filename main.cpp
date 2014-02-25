@@ -35,7 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "application.h"
 #include "thrift/config.h"
-#include "utilities/encrypt.h"
 
 
 //using namespace std;

@@ -56,6 +56,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     fontColorVisible = contextMenu->addAction(tr("Font Color"));
     highlightVisible = contextMenu->addAction(tr("Highlight"));
     todoVisible = contextMenu->addAction(tr("Todo"));
+    spellCheckButtonVisible = contextMenu->addAction(tr("Spell Check"));
     insertTableButtonVisible = contextMenu->addAction(tr("Insert Table"));
 
     undoVisible->setCheckable(true);
@@ -82,6 +83,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     fontColorVisible->setCheckable(true);
     fontSizeVisible->setCheckable(true);
     fontVisible->setCheckable(true);
+    spellCheckButtonVisible->setCheckable(true);
+    spellCheckButtonVisible->setChecked(true);
     insertTableButtonVisible->setCheckable(true);
 
     connect(undoVisible, SIGNAL(triggered()), this, SLOT(toggleUndoButtonVisible()));
@@ -108,6 +111,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 //    connect(highlightVisible, SIGNAL(triggered()), this, SLOT(toggleHlineButtonVisible()));
 //    connect(fontColorVisible, SIGNAL(triggered()), this, SLOT(toggleFontColorVisible()));
   connect(insertTableButtonVisible, SIGNAL(triggered()), this, SLOT(toggleInsertTableButtonVisible()));
+  connect(spellCheckButtonVisible, SIGNAL(triggered()), this, SLOT(toggleSpellCheckButtonVisible()));
 
 
   undoButtonAction = this->addAction(QIcon(":undo.png"), tr("Undo"));
@@ -194,6 +198,9 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
   todoButtonAction = this->addAction(QIcon(":todo.png"), tr("Todo"));
   this->setupShortcut(todoButtonAction, "Edit_Insert_Todo");
+  spellCheckButtonAction = this->addAction(QIcon(":spellCheck.png"), tr("Spell Check"));
+  this->setupShortcut(spellCheckButtonAction, "Note_Spell_Check");
+
   insertTableButtonAction = this->addAction(QIcon(":grid.png"), tr("Insert Table"));
   this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
 }
@@ -482,6 +489,10 @@ void EditorButtonBar::toggleFontColorVisible() {
 }
 void EditorButtonBar::toggleInsertTableButtonVisible() {
     insertTableButtonAction->setVisible(insertTableButtonVisible->isChecked());
+    saveVisibleButtons();
+}
+void EditorButtonBar::toggleSpellCheckButtonVisible() {
+    spellCheckButtonAction->setVisible(spellCheckButtonVisible->isChecked());
     saveVisibleButtons();
 }
 

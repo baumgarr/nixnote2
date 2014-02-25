@@ -101,6 +101,7 @@ public:
     QAction *duplicateNoteAction;
     QAction *pinNoteAction;
     QAction *unpinNoteAction;
+    QAction *spellCheckAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 

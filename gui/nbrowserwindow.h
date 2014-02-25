@@ -214,7 +214,7 @@ public slots:
     void alarmClear();
     void alarmMenuActivated();
     void removeEncryption(QString id, QString plainText, bool permanent, QString slot);
-
+    void spellCheckPressed();
 
 private slots:
     void sendTitleUpdateSignal();

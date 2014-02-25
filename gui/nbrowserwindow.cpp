@@ -41,6 +41,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/mimereference.h"
 #include "html/attachmenticonbuilder.h"
 #include "dialog/remindersetdialog.h"
+#include "utilities/spellchecker.h"
+#include "dialog/spellcheckdialog.h"
+
 
 #include <QVBoxLayout>
 #include <QAction>
@@ -198,6 +201,7 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->bulletListButtonAction, SIGNAL(triggered()), this, SLOT(bulletListButtonPressed()));
     connect(buttonBar->numberListButtonAction, SIGNAL(triggered()), this, SLOT(numberListButtonPressed()));
     connect(buttonBar->todoButtonAction, SIGNAL(triggered()), this, SLOT(todoButtonPressed()));
+    connect(buttonBar->spellCheckButtonAction, SIGNAL(triggered()), this, SLOT(spellCheckPressed()));
     connect(buttonBar->fontSizes, SIGNAL(currentIndexChanged(int)), this, SLOT(fontSizeSelected(int)));
     connect(buttonBar->fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
     connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
@@ -2371,3 +2375,56 @@ void NBrowserWindow::sendUrlUpdateSignal() {
     sendDateUpdateSignal();
     emit(this->updateNoteList(lid, NOTE_TABLE_SOURCE_URL_POSITION, urlEditor.getText()));
 }
+
+
+
+
+void NBrowserWindow::spellCheckPressed() {
+    QWebPage *page = editor->page();
+    page->action(QWebPage::MoveToStartOfDocument);
+    page->mainFrame()->setFocus();
+
+    Qt::KeyboardModifier ctrl(Qt::ControlModifier);
+
+    QKeyEvent key(QEvent::KeyPress, Qt::Key_Home, ctrl);
+    editor->keyPressEvent(&key);
+    page->mainFrame()->setFocus();
+
+    QStringList words = page->mainFrame()->toPlainText().split(" ");
+    QStringList ignoreWords;
+    QStringList rwords;
+    SpellChecker checker;
+    checker.setup();
+    bool finished = false;
+
+    for (int i=0; i<words.size() && !finished; i++) {
+        QString currentWord = words[i];
+        page->findText(currentWord);
+        if (!checker.spellCheck(currentWord, rwords) && !ignoreWords.contains(currentWord)) {
+            SpellCheckDialog dialog(currentWord, rwords, this);
+            dialog.move(0,0);
+            dialog.exec();
+            if (dialog.cancelPressed)
+                finished = true;
+            if (dialog.ignoreAllPressed)
+                ignoreWords.append(currentWord);
+            if (dialog.replacePressed)  {
+                QClipboard *clipboard = global.clipboard;
+                clipboard->setText(dialog.replacement);
+                pasteButtonPressed();
+            }
+            if (dialog.addToDictionaryPressed) {
+                checker.addWord(currentWord);
+            }
+        }
+    }
+
+    // Go to the end of the document & finish up
+    QKeyEvent key2(QEvent::KeyPress, Qt::Key_End, ctrl);
+    editor->keyPressEvent(&key2);
+
+    QMessageBox::information(this, tr("Spell Check Complete"), tr("Spell Check Complete."), QMessageBox::Ok);
+
+
+}
+

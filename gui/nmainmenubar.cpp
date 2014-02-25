@@ -353,6 +353,15 @@ void NMainMenuBar::setupNoteMenu() {
 
     noteMenu->addSeparator();
 
+    spellCheckAction = new QAction(tr("Spell Check"), noteMenu);
+    setupShortcut(spellCheckAction, QString("File_Note_Spell_Check"));
+    spellCheckAction->setFont(font);
+    noteMenu->addAction(spellCheckAction);
+    connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
+
+
+    noteMenu->addSeparator();
+
     pinNoteAction = new QAction(tr("Pin Note"), noteMenu);
     setupShortcut(pinNoteAction, QString("NOTE_PIN"));
     pinNoteAction->setFont(font);

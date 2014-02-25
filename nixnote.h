@@ -226,6 +226,7 @@ public slots:
     void duplicateCurrentNote();
     void pinCurrentNote();
     void unpinCurrentNote();
+    void spellCheckCurrentNote();
 
 signals:
     void syncRequested();

@@ -54,6 +54,10 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
     checkExistingReadableDir(spellDir);
     spellDirPath = slashTerminatePath(spellDir.path());
 
+    spellDirUser.setPath(homeDirPath+"spell");
+    createDirOrCheckWriteable(spellDirUser);
+    spellDirPathUser = slashTerminatePath(spellDirUser.path());
+
     //xmlDir.setPath(programDirPath+"xml");
     //checkExistingReadableDir(xmlDir);
 
