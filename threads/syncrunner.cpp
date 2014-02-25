@@ -228,7 +228,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
 
     while(more && keepRunning)  {
-        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_NOTES, fullSync);
+        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_NOTES | SYNC_CHUNK_RESOURCES, fullSync);
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
@@ -238,14 +238,12 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         }
         QLOG_DEBUG() << "-(Pass 2) ->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
         int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
-        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete for notes."), defaultMsgTimeout);
+        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete."), defaultMsgTimeout);
         processSyncChunk(chunk);
 
-        if (fullSync) {
-            userTable.updateLastSyncNumber(chunk.chunkHighUSN);
-            userTable.updateLastSyncDate(chunk.currentTime);
-            query.exec("commit");
-        }
+        userTable.updateLastSyncNumber(chunk.chunkHighUSN);
+        userTable.updateLastSyncDate(chunk.currentTime);
+        query.exec("commit");
 
         updateSequenceNumber = chunk.chunkHighUSN;
         if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
