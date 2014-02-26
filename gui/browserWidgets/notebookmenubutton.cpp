@@ -219,7 +219,7 @@ void NotebookMenuButton::reloadData() {
     Note n;
     NoteTable noteTable(global.db);
     NotebookTable notebookTable(global.db);
-    noteTable.get(n, currentNoteLid, false);
+    noteTable.get(n, currentNoteLid, false, false);
     QString notebookGuid = QString::fromStdString(n.notebookGuid);
     QList<qint32> bookList;
     notebookTable.getAll(bookList);

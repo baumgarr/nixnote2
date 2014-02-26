@@ -289,7 +289,7 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
             Note n;
             NotebookTable bTable(global.db);
             NoteTable nTable(global.db);
-            nTable.get(n, lids[i], false);
+            nTable.get(n, lids[i], false, false);
             qint32 notebookLid = bTable.getLid(n.notebookGuid);
             if (bTable.isReadOnly(notebookLid)) {
                 readOnlySelected = true;
@@ -667,7 +667,7 @@ void NTableView::copyNoteLink() {
 
     Note note;
     NoteTable ntable(global.db);
-    ntable.get(note, lids[0], false);
+    ntable.get(note, lids[0], false, false);
 
     QString guid = QString::fromStdString(note.guid);
     QString localid;
@@ -1054,7 +1054,7 @@ void NTableView::mergeNotes() {
 
     Note note;
     qint32 lid = lids[0];
-    nTable.get(note, lid, false);
+    nTable.get(note, lid, false, false);
     QString content = QString::fromStdString(note.content);
     content = content.replace("</en-note>","<p/>");
 
@@ -1069,7 +1069,7 @@ void NTableView::mergeNotes() {
         }
 
         Note oldNote;
-        nTable.get(oldNote, lids[i], false);
+        nTable.get(oldNote, lids[i], false, false);
         QString oldContent = QString::fromStdString(oldNote.content);
         oldContent = oldContent.replace("</en-note>", "<p/>");
         int startPos = oldContent.indexOf("<en-note");

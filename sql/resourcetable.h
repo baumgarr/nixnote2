@@ -86,9 +86,9 @@ public:
     void sync(Resource &resource);                    // Sync a resource with a new record
     void sync(qint32 lid, Resource &resource);           // Sync a resource with a new record
     qint32 add(qint32 lid, Resource &t, bool isDirty, int noteLid=0); // Add a new resource
-    bool get(Resource &resource, qint32 lid);           // Get a resource given a lid
-    bool get(Resource &resource, QString noteGuid, QString guid);      // get a resource given a guid
-    bool get(Resource &resource, string noteGuid, string guid);       // get a resource given a guid
+    bool get(Resource &resource, qint32 lid, bool withBinary);           // Get a resource given a lid
+    bool get(Resource &resource, QString noteGuid, QString guid, bool withBinary);      // get a resource given a guid
+    bool get(Resource &resource, string noteGuid, string guid, bool withBinary);       // get a resource given a guid
     bool isDirty(qint32 lid);                  // Check if a resource is dirty
     bool isDirty(QString noteGuid, QString guid);             // Check if a resource is dirty
     bool isDirty(string noteGuid, string guid);              // Check if a resource is dirty
@@ -113,6 +113,11 @@ public:
     void reindexAllResources();                             // Reindex all relources
     void updateNoteLid(qint32 resourceLid, qint32 newNoteLid);     // Update the owning note
     void expungeByNote(qint32 notebookLid);
+    void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, qint32 noteLid);
+    void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, string guid);
+    void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, QString guid);
+    void mapResource(QSqlQuery &query, Resource &resource);
+    void getAllResources(QList<Resource> list, qint32 noteLid, bool fullLoad, bool withBinary);
 };
 
 

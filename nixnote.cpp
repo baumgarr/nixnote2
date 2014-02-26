@@ -142,7 +142,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
     hammer = new Thumbnailer(global.db);
-    hammer->startTimer(10,120);
+    hammer->startTimer(2,120);
     finalSync = false;
 
 
@@ -1000,7 +1000,7 @@ void NixNote::checkReadOnlyNotebook() {
     Note n;
     NoteTable ntable(global.db);
     NotebookTable btable(global.db);
-    ntable.get(n, lid, false);
+    ntable.get(n, lid, false, false);
     qint32 notebookLid = btable.getLid(n.notebookGuid);
     if (btable.isReadOnly(notebookLid)) {
         newNoteButton->setEnabled(false);

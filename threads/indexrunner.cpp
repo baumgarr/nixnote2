@@ -82,7 +82,7 @@ void IndexRunner::index() {
         // Index any undindexed note content.
         for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
             Note n;
-            noteTable.get(n, lids[i], false);
+            noteTable.get(n, lids[i], false, false);
             indexNote(lids[i],n);
             noteTable.setIndexNeeded(lids[i], false);
         }
@@ -99,7 +99,7 @@ void IndexRunner::index() {
         // Index each resource that is needed.
         for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
             Resource r;
-            resourceTable.get(r, lids.at(i));
+            resourceTable.get(r, lids.at(i), false);
             qint32 noteLid = noteTable.getLid(r.noteGuid);
             indexRecognition(noteLid, r);
             if (r.__isset.mime && r.mime == "application/pdf")

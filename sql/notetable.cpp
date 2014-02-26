@@ -576,7 +576,7 @@ bool NoteTable::updateNotebookName(qint32 lid, QString name) {
 
 
 // Return a note structure given the LID
-bool NoteTable::get(Note &note, qint32 lid,bool loadResources) {
+bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadBinary) {
 
     QSqlQuery query(*db);
     query.prepare("Select key, data from DataStore where lid=:lid");
@@ -720,22 +720,34 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources) {
         }
     }
 
+//    QLOG_DEBUG() << "***************** PERFORMANCE DRAG ***************";
     ResourceTable resTable(db);
-    QList<qint32> resList;
-    if (resTable.getResourceList(resList, lid)) {
-        for (int i=0; i<resList.size(); i++) {
-            Resource resource;
-            if (loadResources) {
-                resTable.get(resource, resList[i]);
-            } else {
-                QString resGuid = resTable.getGuid(resList[i]);
-                resource.guid = resGuid.toStdString();
-                resource.__isset.guid = true;
-            }
-            note.__isset.resources = true;
-            note.resources.push_back(resource);
-        }
+    QLOG_TRACE() << "Fetching Resources? " << loadResources << " With binary? " << loadBinary;
+//    QList<qint32> resList;
+
+    QList<Resource> resources;
+    resTable.getAllResources(resources, lid, loadResources, loadBinary);
+    for (int i=0; i<resources.size(); i++) {
+        note.__isset.resources = true;
+        note.resources.push_back(resources[i]);
     }
+
+
+//    if (resTable.getResourceList(resList, lid)) {
+//        for (int i=0; i<resList.size(); i++) {
+//            Resource resource;
+//            if (loadResources) {
+//                resTable.get(resource, resList[i], loadBinary);
+//            } else {
+//                QString resGuid = resTable.getGuid(resList[i]);
+//                resource.guid = resGuid.toStdString();
+//                resource.__isset.guid = true;
+//            }
+//            note.__isset.resources = true;
+//            note.resources.push_back(resource);
+//        }
+//    }
+    QLOG_TRACE() << "Fetched resources";
 
     /*
     TagScanner test;
@@ -753,17 +765,17 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources) {
 
 
 // Return a note given the GUID
-bool NoteTable::get(Note& note, QString guid,bool loadResources) {
+bool NoteTable::get(Note& note, QString guid,bool loadResources, bool loadBinary) {
     qint32 lid = getLid(guid);
-    return get(note, lid, loadResources);
+    return get(note, lid, loadResources, loadBinary);
 }
 
 
 
 // Return a note given the GUID as a std::string
-bool NoteTable::get(Note &note, string guid, bool loadResources) {
+bool NoteTable::get(Note &note, string guid, bool loadResources, bool loadBinary) {
     qint32 lid = getLid(guid);
-    return get(note, lid, loadResources);
+    return get(note, lid, loadResources, loadBinary);
 }
 
 
@@ -1320,7 +1332,7 @@ qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {
 
 void NoteTable::expunge(qint32 lid) {
     Note note;
-    this->get(note, lid, true);
+    this->get(note, lid, true, false);
     ResourceTable resTable(db);
     for (unsigned int i=0; note.__isset.resources && i<note.resources.size(); i++) {
         Resource r = note.resources[i];
@@ -1463,7 +1475,7 @@ qint32 NoteTable::duplicateNote(qint32 oldLid) {
     query.exec();
 
     Note n;
-    get(n, newLid, false);
+    get(n, newLid, false, false);
     NotebookTable notebookTable(db);
     qint32 notebookLid = notebookTable.getLid(n.notebookGuid);
     updateNoteList(newLid, n, true, notebookLid);
@@ -1754,6 +1766,19 @@ qint32 NoteTable::getNextThumbnailNeeded() {
         return query.value(0).toInt();
     }
     return -1;
+}
+
+
+
+qint32 NoteTable::getThumbnailsNeededCount() {
+    QSqlQuery query(*db);
+    query.prepare("select count(lid)from datastore where data='true' and key=:key;");
+    query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
+    query.exec();
+    if (query.next()) {
+        return query.value(0).toInt();
+    }
+    return 0;
 }
 
 

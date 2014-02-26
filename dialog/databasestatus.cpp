@@ -42,6 +42,7 @@ DatabaseStatus::DatabaseStatus(QWidget *parent) :
     qint32 totalResources = rtable.getCount();
     qint32 unindexedNotes = ntable.getUnindexedCount();
     qint32 unindexedResources = rtable.getUnindexedCount();
+    qint32 thumbnailsNeeded = ntable.getThumbnailsNeededCount();
 
     textGrid->addWidget(new QLabel(tr("Total Notes:")),1,1);
     textGrid->addWidget(new QLabel(QString::number(totalNotes)), 1,2);
@@ -51,6 +52,8 @@ DatabaseStatus::DatabaseStatus(QWidget *parent) :
     textGrid->addWidget(new QLabel(QString::number(unindexedNotes)),3,2);
     textGrid->addWidget(new QLabel(tr("Unindexed Resources:")), 4,1);
     textGrid->addWidget(new QLabel(QString::number(unindexedResources)),4,2);
+    textGrid->addWidget(new QLabel(tr("Thumbnails Needed:")), 5,1);
+    textGrid->addWidget(new QLabel(QString::number(thumbnailsNeeded)),5,2);
 
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();

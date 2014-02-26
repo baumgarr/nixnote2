@@ -50,7 +50,7 @@ void Thumbnailer::render(qint32 lid) {
     formatter.thumbnail = true;
     NoteTable noteTable(db);
     Note n;
-    noteTable.get(n,lid,false);
+    noteTable.get(n,lid,false, false);
     formatter.setNote(n,false);
     QByteArray formattedContent = formatter.rebuildNoteHTML();
     page->mainFrame()->setContent(formattedContent);
@@ -60,9 +60,9 @@ void Thumbnailer::render(qint32 lid) {
 
 void Thumbnailer::startTimer(int minSeconds, int maxSeconds) {
     timer.stop();
-    minTime = minSeconds;
-    maxTime = maxSeconds;
-    timer.start(minTime*100);
+    minTime = minSeconds*1000;
+    maxTime = maxSeconds*1000;
+    timer.start(minTime);
 }
 
 
@@ -70,9 +70,9 @@ void Thumbnailer::startTimer(int minSeconds, int maxSeconds) {
 void Thumbnailer::pageReady(bool ok) {
     if (ok) {
         capturePage(page);
-        NoteTable ntable(db);
-        ntable.setThumbnailNeeded(lid, false);
     }
+    NoteTable ntable(db);
+    ntable.setThumbnailNeeded(lid, false);
     idle = true;
 
 }

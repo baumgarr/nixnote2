@@ -100,7 +100,7 @@ void LocationEditor::setGeography(qint32 lid, double longitude, double latitude,
 
     Note n;
     NoteTable ntable(global.db);
-    ntable.get(n, lid, false);
+    ntable.get(n, lid, false, false);
     if (!n.__isset.attributes || !n.attributes.__isset.latitude || !n.attributes.__isset.longitude)
         return;
 

@@ -248,7 +248,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     NoteTable noteTable(global.db);
     Note n;
 
-    bool rc = noteTable.get(n, this->lid, false);
+    bool rc = noteTable.get(n, this->lid, false, false);
     if (!rc)
         return;
 
@@ -678,9 +678,9 @@ void NBrowserWindow::pasteButtonPressed() {
             Note n;
             bool goodrc = false;
             NoteTable ntable(global.db);
-            goodrc = ntable.get(n, guid,false);
+            goodrc = ntable.get(n, guid,false, false);
             if (!goodrc)
-                goodrc = ntable.get(n,locguid,false);
+                goodrc = ntable.get(n,locguid,false, false);
 
             // If we have a good return, then we can paste the link, otherwise we fall out
             // to a normal paste.
@@ -1050,7 +1050,7 @@ void NBrowserWindow::insertQuickLinkButtonPressed() {
 
     // If we have a good return, then we can paste the link, otherwise we fall out
     // to a normal paste.
-    if (ntable.get(n, lids[0],false)) {
+    if (ntable.get(n, lids[0],false, false)) {
         UserTable utable(global.db);
         User user;
         utable.getUser(user);
@@ -1630,7 +1630,7 @@ void NBrowserWindow::editLatex(QString guid) {
         if (guid.trimmed() != "") {
             Resource r;
             ResourceTable resTable(global.db);
-            resTable.get(r, guid.toInt());
+            resTable.get(r, guid.toInt(), false);
             if (r.__isset.attributes && r.attributes.__isset.sourceURL) {
                 QString formula = QString::fromStdString(r.attributes.sourceURL);
                 formula = formula.replace("http://latex.codecogs.com/gif.latex?", "");
@@ -2118,7 +2118,7 @@ void NBrowserWindow::alarmSet() {
     ReminderSetDialog dialog;
     Note n;
     NoteTable ntable(global.db);
-    ntable.get(n, lid, false);
+    ntable.get(n, lid, false, false);
     if (n.__isset.attributes && n.attributes.__isset.reminderTime) {
         QDateTime dt;
         dt.setMSecsSinceEpoch(n.attributes.reminderTime);

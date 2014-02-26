@@ -696,7 +696,7 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
         for (int j=0; j<noteLids.size(); j++) {
             Note n;
             qint32 oldUsn = n.updateSequenceNum;
-            ntable.get(n, noteLids[j], true);
+            ntable.get(n, noteLids[j], true, true);
             qint32 usn = comm->uploadLinkedNote(n, book);
             if (usn == 0) {
                 this->communicationErrorHandler();
@@ -923,7 +923,7 @@ qint32 SyncRunner::uploadPersonalNotes() {
     // Start uploading notes
     for (int i=0; i<validLids.size(); i++) {
         Note note;
-        noteTable.get(note, validLids[i],true);
+        noteTable.get(note, validLids[i],true, true);
         qint32 oldUsn = note.updateSequenceNum;
         usn = comm->uploadNote(note);
         if (usn == 0) {

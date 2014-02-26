@@ -163,7 +163,7 @@ void ImportData::import(QString file) {
         if (lid > 0) {
             Note note;
             bool dirty = noteTable.isDirty(lid);
-            noteTable.get(note, lid, false);
+            noteTable.get(note, lid, false, false);
             noteTable.updateNoteList(lid, note, dirty, 0);
         }
     }

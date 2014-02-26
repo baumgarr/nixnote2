@@ -39,6 +39,8 @@ private:
     void modifyTags(QWebPage &doc);
     QString findIcon(qint32 lid, Resource r, QString appl);
     QString preHtmlFormat(QString content);
+    QHash<QString, qint32> hashMap;
+    QHash<qint32, Resource> resourceMap;
 
 public:
     bool resourceError;

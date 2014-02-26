@@ -156,7 +156,7 @@ void TagEditor::loadTags() {
 void TagEditor::reloadTags() {
     NoteTable noteTable(global.db);
     Note n;
-    noteTable.get(n, currentLid, false);
+    noteTable.get(n, currentLid, false, false);
     QStringList names;
     for (unsigned int i=0; i<n.tagNames.size(); i++) {
         names << QString::fromStdString(n.tagNames[i]);

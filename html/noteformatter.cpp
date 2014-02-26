@@ -96,22 +96,29 @@ void NoteFormatter::setNoteHistory(bool value) {
 /* Take the ENML note and transform it into HTML that WebKit will
   not complain about */
 QByteArray NoteFormatter::rebuildNoteHTML() {
+    QLOG_TRACE() << "Rebuilding HTML";
+
+    ResourceTable resTable(global.db);
+    resTable.getResourceMap(hashMap, resourceMap, note.guid);
 
     formatError = false;
     readOnly = false;
 
     QWebPage page;
     QEventLoop loop;
+    QLOG_TRACE() << "Before preHTMLFormat";
     QString html = preHtmlFormat(QString::fromStdString(note.content));
     html.replace("<en-note", "<body");
     html.replace("</en-note>", "</body>");
     QByteArray htmlPage;
     htmlPage.append(html);
+    QLOG_TRACE() << "About to set content";
     page.mainFrame()->setContent(htmlPage);
     QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
 
-    //QLOG_DEBUG() << page.mainFrame()->toHtml();
+    QLOG_TRACE() << "Starting to modify tags";
     modifyTags(page);
+    QLOG_TRACE() << "Done modifying tags";
 
     note.content = page.mainFrame()->toHtml().toStdString();
     content.clear();
@@ -132,6 +139,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     }
     if (note.__isset.active && !note.active)
         readOnly = true;
+    QLOG_TRACE() << "Done rebuiling HTML";
     return content;
 }
 
@@ -170,7 +178,9 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     tempFiles.clear();
 
     // Modify en-media tags
+    QLOG_TRACE() << "Searching for all en-media tags;";
     QWebElementCollection anchors = doc.mainFrame()->findAllElements("en-media");
+    QLOG_TRACE() << "Search complete: " << anchors.toList().size();
     foreach (QWebElement enmedia, anchors) {
         if (enmedia.hasAttribute("type")) {
             QString attr = enmedia.attribute("type");
@@ -178,10 +188,12 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
             QStringList type = attr.split("/");
             if (type.size() >= 2) {
                 QString appl = type[1];
+                QLOG_TRACE() << "En-Media tag type: " << type[0];
                 if (type[0] == "image")
                     modifyImageTags(enmedia, hash);
                 else
                     modifyApplicationTags(enmedia, hash, appl);
+                QLOG_TRACE() << "Type modified";
             }
         }
     }
@@ -353,18 +365,24 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
 void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     QString mimetype = enMedia.attribute("type");
     ResourceTable resourceTable(global.db);
-    qint32 resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
-    Resource r;
+//    QLOG_TRACE() << "Searching for lid by hash";
+//    qint32 resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
+//    QLOG_TRACE() << "Lid retrieved";
+    qint32 resLid = 0;
+    resLid = hashMap[hash];
     QString highlightString = "";
     if (resLid>0) {
-        resourceTable.get(r, resLid);
+        QLOG_TRACE() << "Getting resource";
+        Resource r = resourceMap[resLid];
+//        resourceTable.get(r, resLid, false);
+        QLOG_TRACE() << "resource retrieved";
         MimeReference ref;
         QString filename;
         if (r.__isset.attributes && r.attributes.__isset.fileName)
             filename = QString::fromStdString(r.attributes.fileName);
         QString type = ref.getExtensionFromMime(mimetype, filename);
 
-        if (r.__isset.data && r.data.__isset.body && r.data.body.length() > 0) {
+        if (r.__isset.data && r.data.__isset.size && r.data.size > 0) {
             QString imgfile = "file:///"+global.fileManager.getDbDirPath(QString("dba/") +QString::number(resLid) +type);
             enMedia.setAttribute("src", imgfile);
             // Check if this is a LaTeX image
@@ -414,7 +432,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
     QString contextFileName;
     qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
     Resource r;
-    resTable.get(r, resLid);
+    resTable.get(r, resLid, false);
     if (!r.__isset.data)
         resourceError = true;
     else {

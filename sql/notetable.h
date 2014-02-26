@@ -97,9 +97,9 @@ public:
     void sync(Note &note, qint32 account=0);                    // Sync a note with a new record
     void sync(qint32 lid, Note &note, qint32 account=0);           // Sync a note with a new record
     qint32 add(qint32 lid, Note &t, bool isDirty, qint32 account=0); // Add a new note
-    bool get(Note &note, qint32 lid, bool loadResources);           // Get a note given a lid
-    bool get(Note &note, QString guid, bool loadResources);      // get a note given a guid
-    bool get(Note &note, string guid,bool loadResources);       // get a note given a guid
+    bool get(Note &note, qint32 lid, bool loadResources, bool loadBinary);           // Get a note given a lid
+    bool get(Note &note, QString guid, bool loadResources, bool loadBinary);      // get a note given a guid
+    bool get(Note &note, string guid,bool loadResources, bool loadBinary);       // get a note given a guid
     bool isDirty(qint32 lid);                  // Check if a note is dirty
     bool isDirty(QString guid);             // Check if a note is dirty
     bool isDirty(string guid);              // Check if a note is dirty
@@ -168,6 +168,7 @@ public:
     void setReminderCompleted(qint32 lid, bool completed);              // Set a note reminder as completed or clear it
     void removeReminder(qint32 lid);                        // Clear any existing reminder
     void getAllReminders(QList< QPair<qint32, qlonglong>* > *reminders);  // Get all notes with un-completed reminders
+    qint32 getThumbnailsNeededCount();
 };
 
 
