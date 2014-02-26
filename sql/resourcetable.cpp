@@ -948,7 +948,8 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Re
 
 
 void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32, Resource> &resourceMap, qint32 noteLid) {
-
+    NoteTable ntable(db);
+    QString noteGuid = ntable.getGuid(noteLid);
     QSqlQuery query(*db);
     qint32 prevLid = -1;
     query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");
@@ -957,14 +958,32 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
     query.exec();
     hashMap.clear();
     resourceMap.clear();
-    Resource *r;
+    Resource *r = NULL;
     QString hash;
     while (query.next()) {
         qint32 lid = query.value(2).toInt();
+
+        // Peek at the next record to see if we are at the end
+        // If this is the last result set, we force a save of the
+        // record
+        if (!query.next()) {
+            prevLid = lid;
+            lid = -1;
+        }
+        query.previous();
+
+        // If these don't match, we need to save the current
+        // record we are building.
         if (prevLid != lid) {
             if (prevLid > 0) {
                 if (hash != "") {
                     hashMap.insert(hash, prevLid);
+                    if (r == NULL)
+                        r = new Resource();
+                    if (!r->__isset.noteGuid) {
+                        r->noteGuid = noteGuid.toStdString();
+                        r->__isset.noteGuid = true;
+                    }
                     resourceMap.insert(prevLid, *r);
                     delete r;
                 }
@@ -979,11 +998,13 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
         }
         mapResource(query, *r);
     }
+    if (r != NULL)
+        delete r;
 }
 
 
 
-void ResourceTable::getAllResources(QList<Resource> list, qint32 noteLid, bool fullLoad, bool withBinary) {
+void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary) {
     NoteTable ntable(db);
     QString noteGuid = ntable.getGuid(noteLid);
     QSqlQuery query(*db);
@@ -1000,11 +1021,23 @@ void ResourceTable::getAllResources(QList<Resource> list, qint32 noteLid, bool f
     }
     query.exec();
     list.clear();
-    Resource *r;
+    Resource *r=NULL;
     while (query.next()) {
-        qint32 lid = query.value(2).toInt();
+        int lid = query.value(2).toInt();
+
+        // If this is the last result set, we force a save of the
+        // record
+        if (!query.next()) {
+            prevLid = lid;
+            lid = -1;
+        }
+        query.previous();
+
+        // Save the last record if we are currently pointing to a new one
         if (prevLid != lid) {
             if (prevLid > 0) {
+                if (r==NULL)
+                    r = new Resource();
                 if (!r->__isset.noteGuid) {
                     r->noteGuid = noteGuid.toStdString();
                     r->__isset.noteGuid = true;
@@ -1036,4 +1069,6 @@ void ResourceTable::getAllResources(QList<Resource> list, qint32 noteLid, bool f
         }
         mapResource(query, *r);
     }
+    if (r != NULL)
+        delete r;
 }

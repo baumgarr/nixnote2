@@ -117,7 +117,7 @@ public:
     void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, string guid);
     void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, QString guid);
     void mapResource(QSqlQuery &query, Resource &resource);
-    void getAllResources(QList<Resource> list, qint32 noteLid, bool fullLoad, bool withBinary);
+    void getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary);
 };
 
 
