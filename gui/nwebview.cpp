@@ -239,9 +239,16 @@ void NWebView::focusOutEvent(QFocusEvent *e) {
 }
 
 void NWebView::editAlert() {
+
+    // If this is the first time the note is dirty, set the dirty
+    // flag (this is checked elsewhere) and signal the change
     if (!isDirty) {
+        isDirty = true;
         emit(noteChanged());
     }
+    emit (htmlEditAlert());
+
+    // This should already be set, but just in case...
     isDirty = true;
 }
 

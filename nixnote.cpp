@@ -633,6 +633,7 @@ void NixNote::setupTabWindow() {
     rightPanelSplitter->setStretchFactor(1,10);
 
     connect(noteTableView, SIGNAL(openNote(bool)), this, SLOT(openNote(bool)));
+    connect(noteTableView, SIGNAL(openNoteExternalWindow(qint32)), this, SLOT(openExternalNote(qint32)));
     connect(menuBar->viewSourceAction, SIGNAL(triggered()), tabWindow, SLOT(toggleSource()));
     connect(menuBar->viewHistoryAction, SIGNAL(triggered()), this, SLOT(viewNoteHistory()));
 
@@ -931,9 +932,12 @@ void NixNote::openNote(bool newWindow) {
     qint32 lid;
     if (criteria->isLidSet()) {
         lid = criteria->getLid();
-        tabWindow->openNote(lid, newWindow);
+        if (newWindow)
+            tabWindow->openNote(lid, NTabWidget::NewTab);
+        else
+            tabWindow->openNote(lid, NTabWidget::CurrentTab);
     } else {
-        tabWindow->openNote(-1, false);
+        tabWindow->openNote(-1, NTabWidget::CurrentTab);
     }
     rightArrowButton->setEnabled(false);
     leftArrowButton->setEnabled(false);
@@ -943,6 +947,15 @@ void NixNote::openNote(bool newWindow) {
         leftArrowButton->setEnabled(true);
     checkReadOnlyNotebook();
 }
+
+
+
+void NixNote::openExternalNote(qint32 lid) {
+    tabWindow->openNote(lid, NTabWidget::ExternalWindow);
+}
+
+
+
 
 //*****************************************************
 //* Called when a user changes the selection criteria

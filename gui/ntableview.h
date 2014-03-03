@@ -63,6 +63,8 @@ public:
     QAction *deleteNoteAction;
     QAction *restoreNoteAction;
     QAction *openNoteAction;
+    QAction *openNoteExternalWindowAction;
+    QAction *openNoteNewTabAction;
     QAction *copyNoteLinkAction;
     QAction *copyNoteAction;
     QAction *pinNoteAction;
@@ -83,6 +85,7 @@ signals:
     void notesDeleted(QList<qint32> lid, bool expunged);
     void notesRestored(QList<qint32>);
     void refreshNoteContent(qint32 lid);
+    void openNoteExternalWindow(qint32 lid);
 
 public slots:
     void refreshData();
@@ -90,6 +93,8 @@ public slots:
     void deleteSelectedNotes();
     void restoreSelectedNotes();
     void openNoteContextMenuTriggered();
+    void openNoteExternalWindowTriggered();
+    void openNoteNewTabTriggered();
     void copyNoteLink();
     void toggleColumnVisible(int position, bool visible);
     void copyNote();

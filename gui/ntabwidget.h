@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/ntagview.h"
 #include "gui/nnotebookview.h"
 #include "threads/syncrunner.h"
+#include "gui/externalbrowse.h"
 
 #include <QTabBar>
 #include <QStackedWidget>
@@ -36,6 +37,7 @@ class NTabWidget : public QWidget
     Q_OBJECT
 private:
     void setupConnections(NBrowserWindow *browserWindow);
+    void setupExternalBrowserConnections(NBrowserWindow *browserWindow);
     NTagView *tagTreeView;
     NNotebookView *notebookTreeView;
     SyncRunner *syncThread;
@@ -46,11 +48,17 @@ public:
     QTabBar *tabBar;
     QVBoxLayout vboxlayout;
     QList<NBrowserWindow *> *browserList;
+    QList<ExternalBrowse *> *externalList;
     void addBrowser(NBrowserWindow *v, QString title);
     void setTitle(QString t);
     void setTitle(qint32 index, QString title);
     QStackedWidget stack;
     NBrowserWindow *currentBrowser();
+    enum OpenNoteMode {
+        CurrentTab = 0,
+        NewTab = 1,
+        ExternalWindow = 2
+    };
 
 
 signals:
@@ -62,7 +70,7 @@ signals:
 public slots:
     void closeTab(int index);
     void moveTab(int to, int from);
-    void openNote(qint32 lid, bool newWindow);
+    void openNote(qint32 lid, OpenNoteMode mode);
     void tagCreationSignaled(qint32 lid);
     void noteSyncSignaled(qint32 lid);
     void noteUpdateSignaled(qint32);
@@ -80,6 +88,7 @@ public slots:
     void updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash);  // Update the hash of a resource in a note
     void refreshNoteContent(qint32 lid);  // refresh a note's contents
     void updateNoteListSignaled(qint32, int, QVariant); // A note was edited so we update the note list
+    void noteContentEdited(QString uuid, qint32 lid, QString content);
 
 };
 

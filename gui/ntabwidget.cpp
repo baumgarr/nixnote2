@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLabel>
 
 #include "html/noteformatter.h"
+#include "gui/externalbrowse.h"
 #include "sql/notetable.h"
 #include "global.h"
 
@@ -47,6 +48,7 @@ NTabWidget::NTabWidget(SyncRunner *s, NNotebookView *n, NTagView *t)
  //   tabBar.setMaximumHeight(20);
 
     browserList = new QList<NBrowserWindow *>();
+    externalList = new QList<ExternalBrowse *>();
     vboxlayout.addWidget(tabBar);
     vboxlayout.addWidget(&stack);
     setLayout(&vboxlayout);
@@ -103,13 +105,25 @@ void NTabWidget::moveTab(int from, int to) {
 
 
 NBrowserWindow* NTabWidget::currentBrowser() {
+    // If the current tab has focus, then we return it.
+    if (this->browserList->at(tabBar->currentIndex())->hasFocus())
+        return this->browserList->at(tabBar->currentIndex());
+
+    // If no tab has focus, then an external window has focus
+    for (int i=0; i<externalList->size(); i++) {
+        if (externalList->at(i)->hasFocus())
+            return externalList->at(i)->browser;
+    }
+
+    // If no external window has focus then we return any current
+    // tab.  This really shouldn't happen.
     return this->browserList->at(tabBar->currentIndex());
 }
 
 
 
-// Open up a note.  If it is already open in a tab we raise that tab.
-void NTabWidget::openNote(qint32 lid, bool newWindow) {
+// Open upCurrentTab a note.  If it is already open in a tab we raise that tab.
+void NTabWidget::openNote(qint32 lid, OpenNoteMode mode) {
 
     // If the lid < 0, then we just clear it & get out
     if (lid < 0) {
@@ -126,7 +140,8 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
     bool found = false;
 
     // Find out if we already have it open somewhere else
-    for (int i=0;i<browserList->size() && !found; i++) {
+    for (int i=0;i<browserList->size() && !found &&
+         mode != ExternalWindow; i++) {
         if (browserList->at(i)->lid == lid) {
             found = true;
             tabBar->setCurrentIndex(i);
@@ -136,15 +151,34 @@ void NTabWidget::openNote(qint32 lid, bool newWindow) {
             return;
         }
     }
+    for (int i=0;i<externalList->size() && !found &&
+         mode == ExternalWindow; i++) {
+        if (externalList->at(i)->browser->lid == lid) {
+            ExternalBrowse *external = externalList->at(i);
+            external->setVisible(true);
+            external->raise();
+            external->setFocus();
+            return;
+        }
+    }
 
     // if we want a new window AND it isn't already open, create a new tab
-    if (newWindow && !found) {
+    if (mode == NewTab && !found) {
         view = new NBrowserWindow();
         addBrowser(view, QString::fromStdString(n.title));
         setupConnections(view);
     } else {
-        view = currentBrowser();
-        tabBar->setTabText(tabBar->currentIndex(), QString::fromStdString(n.title));
+        if (mode == CurrentTab) {
+            view = currentBrowser();
+            tabBar->setTabText(tabBar->currentIndex(), QString::fromStdString(n.title));
+        } else {
+            ExternalBrowse *external = new ExternalBrowse(lid);
+            externalList->append(external);
+            setupExternalBrowserConnections(external->browser);
+            external->setWindowTitle(tr("NixNote - ") +external->browser->noteTitle.text());
+            external->show();
+            return;
+        }
     }
 
     view->setContent(lid);
@@ -203,6 +237,16 @@ void NTabWidget::noteSyncSignaled(qint32 lid) {
             return;
         }
     }
+    for (int i=0;i<externalList->size(); i++) {
+        if (externalList->at(i)->browser->lid == lid && !externalList->at(i)->browser->editor->isDirty) {
+            externalList->at(i)->setWindowTitle(tr("NixNote - ")+ QString::fromStdString(n.title));
+            externalList->at(i)->browser->blockSignals(true);
+            externalList->at(i)->browser->clear();
+            externalList->at(i)->browser->setContent(lid);
+            externalList->at(i)->browser->blockSignals(false);
+            return;
+        }
+    }
 }
 
 
@@ -228,8 +272,7 @@ void NTabWidget::setupConnections(NBrowserWindow *newBrowser) {
     connect(newBrowser, SIGNAL(tagAdded(qint32)), this, SLOT(tagCreationSignaled(qint32)));
     connect(newBrowser, SIGNAL(updateNoteList(qint32,int,QVariant)), this, SLOT(updateNoteListSignaled(qint32,int,QVariant)));
     connect(syncThread, SIGNAL(noteUpdated(qint32)), this, SLOT(noteSyncSignaled(qint32)));
-
-//    connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32, bool)), this, SLOT(openNote(qint32, bool)));
+    connect(newBrowser, SIGNAL(noteContentEditedSignal(QString,qint32,QString)), this,  SLOT(noteContentEdited(QString,qint32,QString)));
     connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool)), this, SLOT(evernoteLinkClicked(qint32, bool)));
 }
 
@@ -237,7 +280,10 @@ void NTabWidget::setupConnections(NBrowserWindow *newBrowser) {
 
 void NTabWidget::evernoteLinkClicked(qint32 openLid, bool newWindow) {
     emit(updateSelectionRequested());
-    openNote(openLid, newWindow);
+    if (newWindow)
+        openNote(openLid, NewTab);
+    else
+        openNote(openLid, CurrentTab);
 }
 
 
@@ -309,5 +355,58 @@ void NTabWidget::refreshNoteContent(qint32 lid) {
             browserList->at(i)->setContent(lid);
             return;
         }
+    }
+}
+
+
+
+// Called when an external editor is created
+
+void NTabWidget::setupExternalBrowserConnections(NBrowserWindow *newBrowser) {
+    connect(tagTreeView, SIGNAL(tagRenamed(qint32,QString,QString)), newBrowser, SLOT(tagRenamed(qint32,QString,QString)));
+    connect(tagTreeView, SIGNAL(tagDeleted(qint32, QString)), newBrowser, SLOT(tagDeleted(qint32, QString)));
+    connect(tagTreeView, SIGNAL(tagAdded(qint32)), &newBrowser->tagEditor.newTag, SLOT(loadCompleter()));
+
+    connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), newBrowser, SLOT(notebookRenamed(qint32,QString,QString)));
+    connect(notebookTreeView, SIGNAL(notebookDeleted(qint32, QString)), newBrowser, SLOT(notebookDeleted(qint32, QString)));
+    connect(notebookTreeView, SIGNAL(notebookAdded(qint32)), newBrowser, SLOT(notebookAdded(qint32)));
+
+    connect(notebookTreeView, SIGNAL(stackRenamed(QString,QString)), newBrowser, SLOT(stackRenamed(QString,QString)));
+    connect(notebookTreeView, SIGNAL(stackDeleted(QString)), newBrowser, SLOT(stackDeleted(QString)));
+    connect(notebookTreeView, SIGNAL(stackAdded(QString)), newBrowser, SLOT(stackAdded(QString)));
+
+    connect(newBrowser, SIGNAL(noteUpdated(qint32)), this, SLOT(noteUpdateSignaled(qint32)));
+    connect(newBrowser, SIGNAL(tagAdded(qint32)), this, SLOT(tagCreationSignaled(qint32)));
+    connect(newBrowser, SIGNAL(updateNoteList(qint32,int,QVariant)), this, SLOT(updateNoteListSignaled(qint32,int,QVariant)));
+    connect(syncThread, SIGNAL(noteUpdated(qint32)), this, SLOT(noteSyncSignaled(qint32)));
+    connect(newBrowser, SIGNAL(noteContentEditedSignal(QString,qint32,QString)), this,  SLOT(noteContentEdited(QString,qint32,QString)));
+    connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool)), this, SLOT(evernoteLinkClicked(qint32, bool)));
+}
+
+
+// A note was edited, so we need to make sure all the windows
+// are in sync.
+void NTabWidget::noteContentEdited(QString uuid, qint32 lid, QString content) {
+    for (int i=0; i<browserList->size(); i++) {
+        if (lid == browserList->at(i)->lid &&
+                browserList->at(i)->uuid != uuid) {
+            browserList->at(i)->editor->blockSignals(true);
+            browserList->at(i)->editor->setHtml(content);
+            browserList->at(i)->editor->blockSignals(false);
+        }
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        if (lid == externalList->at(i)->browser->lid &&
+                externalList->at(i)->browser->uuid != uuid) {
+            externalList->at(i)->browser->editor->blockSignals(true);
+            externalList->at(i)->browser->editor->setHtml(content);
+            externalList->at(i)->browser->editor->blockSignals(false);
+        }
+    }
+
+    // Invalidate the cache (if needed)
+    if (global.cache.contains(lid)) {
+        NoteCache *cache = global.cache[lid];
+        cache->noteContent = content.toUtf8();
     }
 }

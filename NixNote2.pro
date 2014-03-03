@@ -159,7 +159,8 @@ SOURCES += main.cpp\
     webcam/cvimagewidget.cpp \
     dialog/webcamcapturedialog.cpp \
     utilities/spellchecker.cpp \
-    dialog/spellcheckdialog.cpp
+    dialog/spellcheckdialog.cpp \
+    gui/externalbrowse.cpp
 
 
 
@@ -299,7 +300,8 @@ HEADERS  += nixnote.h \
     webcam/cvimagewidget.h \
     dialog/webcamcapturedialog.h \
     utilities/spellchecker.h \
-    dialog/spellcheckdialog.h
+    dialog/spellcheckdialog.h \
+    gui/externalbrowse.h
 
 
 

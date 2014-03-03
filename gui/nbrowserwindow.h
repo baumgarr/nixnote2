@@ -55,7 +55,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/nwebview.h"
 #include "xml/xmlhighlighter.h"
 #include "gui/browserWidgets/editorbuttonbar.h"
-#include "gui/nmainmenubar.h"
 #include "gui/browserWidgets/reminderbutton.h"
 #include "html/thumbnailer.h"
 
@@ -93,6 +92,7 @@ private:
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
+    QString uuid;
     NWebView *editor;
     void setContent(qint32 lid);
     void saveNoteContent();
@@ -136,6 +136,7 @@ signals:
     qint32 tagAdded(qint32);
     void evernoteLinkClicked(qint32 lid, bool newWindow);
     void updateNoteList(qint32 lid, int column, QVariant data);
+    void noteContentEditedSignal(QString uuid, qint32 lid, QString content);
 
 public slots:
     void changeExpandState(int value);
@@ -215,6 +216,7 @@ public slots:
     void alarmMenuActivated();
     void removeEncryption(QString id, QString plainText, bool permanent, QString slot);
     void spellCheckPressed();
+    void noteContentEdited();
 
 private slots:
     void sendTitleUpdateSignal();

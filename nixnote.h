@@ -227,6 +227,7 @@ public slots:
     void pinCurrentNote();
     void unpinCurrentNote();
     void spellCheckCurrentNote();
+    void openExternalNote(qint32 lid);
 
 signals:
     void syncRequested();

@@ -195,6 +195,18 @@ NTableView::NTableView(QWidget *parent) :
     connect(openNoteAction, SIGNAL(triggered()), this, SLOT(openNoteContextMenuTriggered()));
     openNoteAction->setFont(font);
 
+
+    openNoteNewTabAction = new QAction(tr("Open Note In New Tab"), this);
+    contextMenu->addAction(openNoteNewTabAction);
+    connect(openNoteNewTabAction, SIGNAL(triggered()), this, SLOT(openNoteNewTabTriggered()));
+    openNoteNewTabAction->setFont(font);
+
+
+    openNoteExternalWindowAction = new QAction(tr("Open Note In New Window"), this);
+    contextMenu->addAction(openNoteExternalWindowAction);
+    connect(openNoteExternalWindowAction, SIGNAL(triggered()), this, SLOT(openNoteExternalWindowTriggered()));
+    openNoteExternalWindowAction->setFont(font);
+
     deleteNoteAction = new QAction(tr("Delete Note"), this);
     contextMenu->addAction(deleteNoteAction);
     connect(deleteNoteAction, SIGNAL(triggered()), this, SLOT(deleteSelectedNotes()));
@@ -1182,3 +1194,14 @@ void NTableView::mouseMoveEvent(QMouseEvent *event)
 
 
 
+void NTableView::openNoteExternalWindowTriggered() {
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    for (int i=0; i<lids.size(); i++)
+        emit(openNoteExternalWindow(lids[i]));
+}
+
+
+void NTableView::openNoteNewTabTriggered() {
+    this->openSelectedLids(true);
+}

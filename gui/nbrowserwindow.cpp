@@ -67,6 +67,9 @@ extern Global global;
 NBrowserWindow::NBrowserWindow(QWidget *parent) :
     QWidget(parent)
 {
+    // Setup a unique identifier for this editor instance.
+    QUuid uuid;
+    this->uuid =  uuid.createUuid().toString().replace("{","").replace("}","");
 
 //    this->setStyleSheet("margins:0px;");
     QHBoxLayout *line1Layout = new QHBoxLayout();
@@ -149,7 +152,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(&tagEditor, SIGNAL(newTagCreated(qint32)), this, SLOT(newTagAdded(qint32)));
     connect(editor, SIGNAL(noteChanged()), this, SLOT(noteContentUpdated()));
     connect(sourceEdit, SIGNAL(textChanged()), this, SLOT(noteSourceUpdated()));
-
+    connect(editor, SIGNAL(htmlEditAlert()), this, SLOT(noteContentEdited()));
     connect(editor->page(), SIGNAL(linkClicked(QUrl)), this, SLOT(linkClicked(QUrl)));
     connect(editor->page(), SIGNAL(microFocusChanged()), this, SLOT(microFocusChanged()));
 
@@ -1950,9 +1953,9 @@ void NBrowserWindow::noteSourceUpdated() {
     ba.append(sourceEditHeader);
     ba.append(source);
     ba.append("</body></html>");
-//    editor->setContent(ba,  "application/xhtml+xml");
     editor->setContent(ba);
     this->editor->isDirty = true;
+    emit noteContentEditedSignal(uuid, lid, editor->editorPage->mainFrame()->documentElement().toOuterXml());
 }
 
 // Update a resource's hash if it was edited somewhere else
@@ -2428,3 +2431,13 @@ void NBrowserWindow::spellCheckPressed() {
 
 }
 
+
+// This is used to notify the tab window that the contents of a
+// note have changed.  It avoids some of the overhead that happens
+// when a note is first edited, but it is signaled on every change.
+// The tab window uses it to update any duplicate windows (i.e. a note
+// was edited in an external editor and is still being viewed internally
+// so we need to keep the contents in sync.
+void NBrowserWindow::noteContentEdited() {
+    emit noteContentEditedSignal(uuid, lid, editor->editorPage->mainFrame()->documentElement().toOuterXml());
+}
