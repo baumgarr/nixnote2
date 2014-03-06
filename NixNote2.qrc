@@ -52,5 +52,7 @@
         <file alias="splash_logo.png">images/splash_logo.png</file>
         <file alias="alarmclock.png">images/alarmclock.png</file>
         <file alias="webcam.png">images/webcam.png</file>
+        <file alias="printer.png">images/printer.png</file>
+        <file alias="delete.png">images/delete.png</file>
     </qresource>
 </RCC>

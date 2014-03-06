@@ -119,7 +119,6 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QLOG_TRACE() << "Starting to modify tags";
     modifyTags(page);
     QLOG_TRACE() << "Done modifying tags";
-
     note.content = page.mainFrame()->toHtml().toStdString();
     content.clear();
     content.append(QString::fromStdString(note.content));
@@ -149,7 +148,10 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
 // QWebPage tends to miss the /> tag and it can cause some text to be missed
 QString NoteFormatter::preHtmlFormat(QString note) {
     int pos;
-    QString content = note;
+
+    // Correct <br></br> because Webkit messes it up.
+    QString content = note.replace("<br></br>", "<br/>");
+
     pos = content.indexOf("<en-media");
     while (pos > 0) {
         int endPos = content.indexOf(">", pos);

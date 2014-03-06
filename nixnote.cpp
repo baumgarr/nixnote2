@@ -261,12 +261,20 @@ void NixNote::setupGui() {
     syncButton = toolBar->addAction(QIcon(":synchronize.png"), tr("Sync"));
 //  syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
     toolBar->addSeparator();
-    trunkButton = toolBar->addAction(QIcon(":trunk.png"), tr("Trunk"));
+    printNoteButton = toolBar->addAction(QIcon(":printer.png"), tr("Print"));
+    deleteNoteButton = toolBar->addAction(QIcon(":delete.png"), tr("Delete"));
     newNoteButton = toolBar->addAction(QIcon(":newNote.png"), tr("New Text Note"));
     newWebcamNoteButton = toolBar->addAction(QIcon(":webcam.png"), tr("New Webcam Note"));
+
+    toolBar->addSeparator();
+    trunkButton = toolBar->addAction(QIcon(":trunk.png"), tr("Trunk"));
     usageButton = toolBar->addAction(QIcon(":usage.png"), tr("Usage"));
+
+
     connect(syncButton,SIGNAL(triggered()), this, SLOT(synchronize()));
     connect(homeButton, SIGNAL(triggered()), this, SLOT(resetView()));
+    connect(printNoteButton, SIGNAL(triggered()), this, SLOT(fastPrintNote()));
+    connect(deleteNoteButton, SIGNAL(triggered()), this, SLOT(deleteCurrentNote()));
     connect(trunkButton, SIGNAL(triggered()), this, SLOT(openTrunk()));
     connect(newNoteButton, SIGNAL(triggered()), this, SLOT(newNote()));
     connect(newWebcamNoteButton, SIGNAL(triggered()), this, SLOT(newWebcamNote()));
@@ -1517,13 +1525,19 @@ void NixNote::openImportFolders() {
 
 // Print the current note
 void NixNote::printNote() {
-    QPrintDialog dialog;
-    if (dialog.exec() ==  QDialog::Accepted) {
-        QPrinter *printer = dialog.printer();
-        //tabWindow->currentBrowser()->editor->print(printer);
-        tabWindow->currentBrowser()->printNote(printer);
-    }
+    tabWindow->currentBrowser()->fastPrint = false;
+    tabWindow->currentBrowser()->printNote();
 }
+
+
+
+// Print the current note
+void NixNote::fastPrintNote() {
+    tabWindow->currentBrowser()->fastPrint = true;
+    tabWindow->currentBrowser()->printNote();
+}
+
+
 
 
 void NixNote::toggleVisible() {

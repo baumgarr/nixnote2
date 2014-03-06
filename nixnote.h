@@ -107,6 +107,8 @@ private:
     QAction *rightArrowButton;
     QAction *homeButton;
     QAction *syncButton;
+    QAction *printNoteButton;
+    QAction *deleteNoteButton;
     QAction *newNoteButton;
     QAction *newWebcamNoteButton;
     QAction *screenCaptureButton;
@@ -202,6 +204,7 @@ public slots:
     void heartbeatTimerTriggered();
     void notesRestored(QList<qint32>);
     void printNote();
+    void fastPrintNote();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void toggleVisible();
     void trayIconBehavior();

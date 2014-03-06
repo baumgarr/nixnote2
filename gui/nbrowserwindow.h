@@ -113,6 +113,8 @@ public:
     QShortcut *focusNoteShortcut;
     QShortcut *focusTitleShortcut;
     QShortcut *insertDatetimeShortcut;
+    QWebView *printPage;
+    bool fastPrint;
 
     QHBoxLayout line2Layout;
     QHBoxLayout line3Layout;
@@ -128,7 +130,7 @@ public:
     void clear();
     void setupShortcut(QShortcut *action, QString text);
     void contentChanged();
-    void printNote(QPrinter *printer);
+    void printNote();
     void updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash);
 
 signals:
@@ -225,6 +227,7 @@ private slots:
     void sendTagUpdateSignal();
     void sendUrlUpdateSignal();
     void newTagAdded(qint32);
+    void printReady(bool ok);
 
 };
 

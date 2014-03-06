@@ -57,6 +57,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QClipboard>
 #include <QBuffer>
 #include <QDateTime>
+#include <QPrintDialog>
+#include <QPrinterInfo>
 #include <iostream>
 #include <istream>
 
@@ -166,6 +168,9 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     buttonBar->setupVisibleButtons();
 
+    printPage = new QWebView();
+    printPage->setVisible(false);
+    connect(printPage, SIGNAL(loadFinished(bool)), this, SLOT(printReady(bool)));
     hammer = new Thumbnailer(global.db);
     lid = -1;
     thumbnailer = NULL;
@@ -256,7 +261,6 @@ void NBrowserWindow::setContent(qint32 lid) {
         return;
 
     QByteArray content;
-
     bool inkNote;
     bool readOnly;
 
@@ -1909,8 +1913,7 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
 // Print the contents of a note.  Basically it loops through the
 // note and repaces the <object> tags with <img> tags.  The plugin
 // object should be creating temporary images for the print.
-void NBrowserWindow::printNote(QPrinter *printer) {
-    NWebView *tempEditor = new NWebView(this);
+void NBrowserWindow::printNote() {
     QString contents = editor->editorPage->mainFrame()->toHtml();
 
     // Start removing object tags
@@ -1926,22 +1929,68 @@ void NBrowserWindow::printNote(QPrinter *printer) {
         pos = contents.indexOf("<object", endPos);
     }
 
-    // Hack to do a synchronous load of a web page.  Basically loop until the
-    // load is finished.  If we don't do this the web page might try to print
-    // before any images are rendered.
-    QEventLoop loop;
-    QObject::connect(tempEditor, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
+    // Load the print page.  When it is ready the printReady() slot will
+    // do the actual print
+    printPage->setContent(contents.toUtf8());
+}
 
-//    tempEditor->setContent(contents.toUtf8(),  "application/xhtml+xml");
-    tempEditor->setContent(contents.toUtf8());
-    loop.exec();
 
-    // Do the actual print
-    tempEditor->print(printer);
+void NBrowserWindow::printReady(bool ok) {
+    if (!ok) {
+        QMessageBox msgBox;
+        msgBox.setText(tr("Error loading document for printing.\nPrinting aborted."));
+        msgBox.setWindowTitle(tr("Print Error"));
+        msgBox.exec();
+        return;
+    }
 
-    // Cleanup
-    QObject::disconnect(&loop, SLOT(quit()));
-    delete tempEditor;
+    QPrinter *printer;
+
+    if (fastPrint) {
+        global.settings->beginGroup("Printer");
+        QPrinter::Orientation orientation = static_cast<QPrinter::Orientation>(global.settings->value("orientation").toUInt());
+        QString name = global.settings->value("printerName", "").toString();
+        QPrinter::OutputFormat format = static_cast<QPrinter::OutputFormat>(global.settings->value("outputFormat").toUInt());
+        QString fileName = global.settings->value("outputFileName", "").toString();
+        global.settings->endGroup();
+
+        bool error = false;
+        printer = new QPrinter();
+        printer->setOutputFormat(format);
+        printer->setOrientation(orientation);
+        if (format == QPrinter::PdfFormat) {
+            if (fileName == "")
+                error = true;
+            else
+                printer->setOutputFileName(fileName);
+        } else {
+            if (name == "")
+                error = true;
+            else
+                printer->setPrinterName(name);
+        }
+        if (error) {
+            fastPrint = false;
+            delete printer;
+        }
+    }
+
+    if (!fastPrint) {
+        QPrintDialog dialog;
+        if (dialog.exec() ==  QDialog::Accepted) {
+            printer = dialog.printer();
+            printPage->print(printer);
+            global.settings->beginGroup("Printer");
+            global.settings->setValue("orientation", printer->orientation());
+            global.settings->setValue("printerName", printer->printerName());
+            global.settings->setValue("outputFormat", printer->outputFormat());
+            global.settings->setValue("outputFileName", printer->outputFileName());
+            global.settings->endGroup();
+        }
+    } else
+        printPage->print(printer);
+
+    this->fastPrint = false;
 }
 
 
