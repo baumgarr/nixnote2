@@ -40,7 +40,7 @@ AccountMaintenanceDialog::AccountMaintenanceDialog(NMainMenuBar *menubar, QWidge
     buttonLayout2->setStretch(0,100);
     buttonLayout2->setStretch(3,100);
     this->setLayout(mainLayout);
-    this->setWindowTitle(tr("User Accountt Maintenance"));
+    this->setWindowTitle(tr("User Account Maintenance"));
 
     connect(okButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));

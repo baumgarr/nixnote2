@@ -262,9 +262,9 @@ void NixNote::setupGui() {
 //  syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
     toolBar->addSeparator();
     printNoteButton = toolBar->addAction(QIcon(":printer.png"), tr("Print"));
-    deleteNoteButton = toolBar->addAction(QIcon(":delete.png"), tr("Delete"));
     newNoteButton = toolBar->addAction(QIcon(":newNote.png"), tr("New Text Note"));
     newWebcamNoteButton = toolBar->addAction(QIcon(":webcam.png"), tr("New Webcam Note"));
+    deleteNoteButton = toolBar->addAction(QIcon(":delete.png"), tr("Delete"));
 
     toolBar->addSeparator();
     trunkButton = toolBar->addAction(QIcon(":trunk.png"), tr("Trunk"));
