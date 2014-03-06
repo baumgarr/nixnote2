@@ -189,6 +189,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   fontColorAction = this->addWidget(fontColorButtonWidget);
 
   highlightColorMenuWidget = new ColorMenu();
+  highlightColorMenuWidget->setDefault(Qt::yellow);
   highlightColorButtonWidget = new QToolButton(this);
   highlightColorButtonWidget->setAutoRaise(false);
   highlightColorButtonWidget->setMenu(highlightColorMenuWidget->getMenu());
