@@ -285,12 +285,8 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
-    //sql.bindValue(":content", text);
     QLOG_DEBUG() << "Adding note resource to index DB";
     sql.exec();
-    QLOG_DEBUG() << sql.lastError();
-    sql.exec();
-
 }
 
 
