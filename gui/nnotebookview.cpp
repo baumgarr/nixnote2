@@ -36,8 +36,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <evernote/NoteStore.h>
 #include "dialog/notebookproperties.h"
 #include "gui/nnotebookviewdelegate.h"
+#include "sql/nsqlquery.h"
 
 #define NAME_POSITION 0
+
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
+
 
 extern Global global;
 
@@ -220,7 +226,7 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
 
 // Load up the data from the database
 void NNotebookView::loadData() {
-    QSqlQuery query(*global.db);
+    NSqlQuery query(*global.db);
     NotebookTable notebookTable(global.db);
     QList<qint32> closedLids;
     notebookTable.getClosedNotebooks(closedLids);
@@ -895,3 +901,6 @@ void NNotebookView::dragMoveEvent(QDragMoveEvent *event) {
         return;
     }
 }
+
+
+#pragma GCC diagnostic pop

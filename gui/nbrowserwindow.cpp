@@ -63,6 +63,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <istream>
 
 
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
+
+
 
 extern Global global;
 
@@ -2490,3 +2495,6 @@ void NBrowserWindow::spellCheckPressed() {
 void NBrowserWindow::noteContentEdited() {
     emit noteContentEditedSignal(uuid, lid, editor->editorPage->mainFrame()->documentElement().toOuterXml());
 }
+
+
+#pragma GCC diagnostic pop

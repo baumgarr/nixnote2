@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "indexrunner.h"
 #include "global.h"
 #include "sql/notetable.h"
+#include "sql/nsqlquery.h"
 #include "sql/resourcetable.h"
 #include <QTextDocument>
 #include <QtXml>
@@ -27,6 +28,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 using namespace Poppler;
+
+
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
+
 
 
 // Generic constructor
@@ -150,7 +157,7 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     content = textDocument->toPlainText() + " " + QString::fromStdString(n.title);
 
     // Delete any old content
-    QSqlQuery sql(db->conn);
+    NSqlQuery sql(db->conn);
     sql.prepare("Delete from SearchIndex where lid=:lid and source='text'");
     sql.bindValue(":lid", lid);
     sql.exec();
@@ -181,13 +188,13 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
 
     // Delete the old resource index information
-    QSqlQuery sql(db->conn);
+    NSqlQuery sql(db->conn);
     sql.prepare("Delete from SearchIndex where lid=:lid and source='recognition'");
     sql.bindValue(":lid", lid);
     sql.exec();
 
     // Start adding words to the index.
-    QSqlQuery trans(db->conn);
+    NSqlQuery trans(db->conn);
     trans.exec("begin");
     int tracelog = 50;
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
@@ -230,7 +237,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
         QRectF rect;
         text = text + doc->page(i)->text(rect) + QString(" ");
     }
-    QSqlQuery sql(db->conn);
+    NSqlQuery sql(db->conn);
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
@@ -274,7 +281,7 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     return;
 
 
-    QSqlQuery sql(db->conn);
+    NSqlQuery sql(db->conn);
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
@@ -285,3 +292,6 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     sql.exec();
 
 }
+
+
+#pragma GCC diagnostic pop

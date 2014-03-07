@@ -34,6 +34,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "nixnote.h"
 #include "communication/communicationmanager.h"
 #include "communication/communicationerror.h"
+#include "sql/nsqlquery.h"
+
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
 
 extern Global global;
 
@@ -186,10 +191,10 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     // It is done this way to make sure we have the latest notebook & tag names and the note exists
     // before the attachment arrives.
 
-    QSqlQuery query(db->conn);
+    NSqlQuery query(db->conn);
     query.exec("begin");
 
-    int chunkSize = 255;
+    int chunkSize = 5000;
     bool more = true;
     SyncChunk chunk;
 
@@ -220,9 +225,9 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     }
 
     more = true;
-    chunkSize = 100;
+    chunkSize = 500;
     if (fullSync)
-        chunkSize = 50;
+        chunkSize = 250;
     updateSequenceNumber = startingSequenceNumber;
     UserTable userTable(&db->conn);
 
@@ -251,7 +256,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     }
 
     more = true;
-    chunkSize = 50;
+    chunkSize = 150;
     updateSequenceNumber = startingSequenceNumber;
 
     while(more && keepRunning && !fullSync)  {
@@ -1090,3 +1095,6 @@ void SyncRunner::communicationErrorHandler() {
     }
 
 }
+
+
+#pragma GCC diagnostic pop

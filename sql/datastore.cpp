@@ -29,6 +29,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "tagtable.h"
 #include "notebooktable.h"
 #include "global.h"
+#include "sql/nsqlquery.h"
+
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
+
 
 extern Global global;
 
@@ -42,7 +48,7 @@ DataStore::DataStore(QSqlDatabase *db)
   this->db = db;
 
   // Check if the table exists.  If not, create it.
-    QSqlQuery sql(*this->db);
+    NSqlQuery sql(*this->db);
   sql.exec("Select * from sqlite_master where type='table' and name='DataStore';");
   if (!sql.next())
       this->createTable();
@@ -57,7 +63,7 @@ void DataStore::createTable() {
     QLOG_TRACE() << "Entering DataStore::createTable()";
 
     QLOG_DEBUG() << "Creating table DataStore";
-    QSqlQuery sql(*db);
+    NSqlQuery sql(*db);
     QString command("Create table DataStore (" +
                   QString("lid integer,") +
                   QString("key integer,") +
@@ -102,3 +108,6 @@ qint32 DataStore::getDirtyNoteGuids(QList<QString> &retVal) {
     retVal = retVal;  /* suppress unused warning */
     return 0;
 }
+
+
+#pragma GCC diagnostic pop

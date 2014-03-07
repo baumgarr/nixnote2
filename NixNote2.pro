@@ -160,7 +160,8 @@ SOURCES += main.cpp\
     dialog/webcamcapturedialog.cpp \
     utilities/spellchecker.cpp \
     dialog/spellcheckdialog.cpp \
-    gui/externalbrowse.cpp
+    gui/externalbrowse.cpp \
+    sql/nsqlquery.cpp
 
 
 
@@ -301,7 +302,8 @@ HEADERS  += nixnote.h \
     dialog/webcamcapturedialog.h \
     utilities/spellchecker.h \
     dialog/spellcheckdialog.h \
-    gui/externalbrowse.h
+    gui/externalbrowse.h \
+    sql/nsqlquery.h
 
 
 

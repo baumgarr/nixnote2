@@ -88,7 +88,7 @@ void ImportData::import(QString file) {
     }
 
     reader = new QXmlStreamReader(&xmlFile);
-    QSqlQuery query(*global.db);
+    NSqlQuery query(*global.db);
     //query.exec("begin");
     while (!reader->atEnd()) {
         reader->readNext();

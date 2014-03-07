@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/savedsearchproperties.h"
 #include "sql/searchtable.h"
 #include "gui/treewidgeteditor.h"
+#include "sql/nsqlquery.h"
 
 #include <QHeaderView>
 #include <QMouseEvent>
@@ -33,6 +34,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NAME_POSITION 0
 
 extern Global global;
+
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
 
 
 // Constructor
@@ -139,7 +144,7 @@ void NSearchView::mousePressEvent(QMouseEvent *event)
 
 // Load up the data from the database
 void NSearchView::loadData() {
-    QSqlQuery query(*global.db);
+    NSqlQuery query(*global.db);
     query.exec("Select lid, name from SearchModel order by name");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
@@ -434,3 +439,4 @@ void NSearchView::editComplete() {
 }
 
 
+#pragma GCC diagnostic pop

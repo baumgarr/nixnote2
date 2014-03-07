@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/tagproperties.h"
 #include "filters/filtercriteria.h"
 #include "gui/ntagviewdelegate.h"
+#include "sql/nsqlquery.h"
 
 #include <QHeaderView>
 #include <QMouseEvent>
@@ -34,6 +35,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include <QMessageBox>
 
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
 
 
 #define NAME_POSITION 0
@@ -242,7 +246,7 @@ void NTagView::loadData() {
         delete ptr;
     }
 
-    QSqlQuery query(*global.db);
+    NSqlQuery query(*global.db);
     TagTable tagTable(global.db);
     query.exec("Select lid, name, parent_gid, account from TagModel order by name");
     while (query.next()) {
@@ -850,3 +854,6 @@ void NTagView::hideUnassignedTags() {
 NTagViewItem* NTagView::getItem(qint32 lid) {
     return dataStore[lid];
 }
+
+
+#pragma GCC diagnostic pop

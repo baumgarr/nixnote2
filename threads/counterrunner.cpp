@@ -20,9 +20,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "counterrunner.h"
 #include "sql/notetable.h"
 #include "sql/notebooktable.h"
+#include "sql/nsqlquery.h"
 #include "sql/tagtable.h"
 
 #include <QtSql>
+
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
 
 CounterRunner::CounterRunner(QObject *parent) :
     QObject(parent)
@@ -68,7 +73,7 @@ void CounterRunner::countNotebooks() {
     nTable.getAll(lids);
 
 
-    QSqlQuery query(db->conn);
+    NSqlQuery query(db->conn);
     query.exec("select notebooklid, count(notebooklid) from notetable where lid in (select lid from filter) group by notebooklid;");
 
     while(query.next()) {
@@ -90,7 +95,7 @@ void CounterRunner::countTags() {
     QList<qint32> lids;
     tTable.getAll(lids);
 
-    QSqlQuery query(db->conn);
+    NSqlQuery query(db->conn);
     query.prepare("select data, count(lid) from datastore where key=:key and lid in (select lid from filter) group by data;");
     query.bindValue(":key", NOTE_TAG_LID);
     query.exec();
@@ -106,3 +111,5 @@ void CounterRunner::countTags() {
     // Finally, emit that we are done so unassigned tags can be hidden
     emit(tagCountComplete());
 }
+
+#pragma GCC diagnostic pop

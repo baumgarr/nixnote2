@@ -18,6 +18,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "usertable.h"
+#include "nsqlquery.h"
+
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
+
 
 #define USER_EVERNOTE_ACCOUNT 1   // Unique Evernote account number
 #define USER_EMAIL 2                         // User email registered with Evernote
@@ -68,7 +74,7 @@ UserTable::UserTable(QSqlDatabase *db)
 {
     this->db = db;
     // Check if the table exists.  If not, create it.
-    QSqlQuery sql(*this->db);
+    NSqlQuery sql(*this->db);
     sql.exec("Select * from sqlite_master where type='table' and name='UserTable';");
     if (!sql.next())
         this->createTable();
@@ -80,7 +86,7 @@ void UserTable::createTable() {
     QLOG_TRACE() << "Entering UserTable::userTable()";
 
     QLOG_DEBUG() << "Creating table UserTable";
-    QSqlQuery sql(*db);
+    NSqlQuery sql(*db);
     QString command("Create table UserTable (" +
                   QString("key integer primary key,") +
                   QString("data blob default null collate nocase") +
@@ -94,7 +100,7 @@ void UserTable::createTable() {
 
 // Update the database's user record
 void UserTable::updateUser(User &user) {
-    QSqlQuery query(*db);
+    NSqlQuery query(*db);
     query.prepare("delete from UserTable where key != :last_date and key != :last_number;");
     query.bindValue(":key1", USER_SYNC_LAST_DATE);
     query.bindValue(":key2", USER_SYNC_LAST_NUMBER);
@@ -266,7 +272,7 @@ void UserTable::updateUser(User &user) {
 
 // Update the database's user record
 void UserTable::updateSyncState(SyncState s) {
-    QSqlQuery query(*db);
+    NSqlQuery query(*db);
     query.prepare("Delete from UserTable where key=:key1 or key=:key2 or key=:key3;");
     query.bindValue(":key1", USER_SYNC_UPLOADED);
     query.bindValue(":key2", USER_SYNC_LAST_DATE);
@@ -301,7 +307,7 @@ void UserTable::updateSyncState(SyncState s) {
 
 // Get the last date we synchronized
 qlonglong UserTable::getLastSyncDate() {
-    QSqlQuery query(*db);
+    NSqlQuery query(*db);
     query.prepare("Select data from UserTable where key=:key");
     query.bindValue(":key", USER_SYNC_LAST_DATE);
     query.exec();
@@ -316,7 +322,7 @@ qlonglong UserTable::getLastSyncDate() {
 // Get the last sequence number
 qint32 UserTable::getLastSyncNumber() {
     qint32 value = 0;
-    QSqlQuery query(*db);
+    NSqlQuery query(*db);
     query.prepare("Select data from UserTable where key=:key");
     query.bindValue(":key", USER_SYNC_LAST_NUMBER);
     query.exec();
@@ -331,7 +337,7 @@ qint32 UserTable::getLastSyncNumber() {
 
 // update the last date we synchronized
 void UserTable::updateLastSyncDate(long date) {
-    QSqlQuery query(*db);
+    NSqlQuery query(*db);
     query.prepare("delete from UserTable where key=:key");
     query.bindValue(":key", USER_SYNC_LAST_DATE);
     query.exec();
@@ -343,7 +349,7 @@ void UserTable::updateLastSyncDate(long date) {
 
 // update the last sequence number
 void UserTable::updateLastSyncNumber(qint32 value) {
-    QSqlQuery query(*db);
+    NSqlQuery query(*db);
     query.prepare("delete from UserTable where key=:key");
     query.bindValue(":key", USER_SYNC_LAST_NUMBER);
     query.exec();
@@ -355,7 +361,7 @@ void UserTable::updateLastSyncNumber(qint32 value) {
 
 
 void UserTable::getUser(User &user) {
-    QSqlQuery query(*db);
+    NSqlQuery query(*db);
     query.exec("Select key, data from UserTable;");
     while (query.next()) {
         if (query.value(0) == USER_EVERNOTE_ACCOUNT) {
@@ -430,7 +436,7 @@ void UserTable::getUser(User &user) {
 
 
 qlonglong UserTable::getUploadAmt() {
-    QSqlQuery query(*db);
+    NSqlQuery query(*db);
     query.prepare("Select data from usertable where key=:key");
     query.bindValue(":key", USER_SYNC_UPLOADED);
     query.exec();
@@ -439,3 +445,6 @@ qlonglong UserTable::getUploadAmt() {
     else
         return 0;
 }
+
+
+#pragma GCC diagnostic pop

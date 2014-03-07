@@ -24,7 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QApplication>
 #include <QMouseEvent>
 #include <sql/resourcetable.h>
-#include <QSqlQuery>
+#include "sql/nsqlquery.h"
 #include <QMessageBox>
 #include <sql/notetable.h>
 #include <QClipboard>
@@ -33,6 +33,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/usertable.h"
 #include "sql/notetable.h"
 #include "sql/notebooktable.h"
+
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
+
 
 //*****************************************************************
 //* This class overrides QTableView and is used to provide a
@@ -358,7 +363,7 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
 // Update the list of notes.
 void NTableView::refreshData() {
     QLOG_TRACE() << "Getting valid lids in filter";
-    QSqlQuery sql(*global.db);
+    NSqlQuery sql(*global.db);
     sql.exec("select lid from filter");
     proxy->lidMap->clear();
     while(sql.next()) {
@@ -476,8 +481,8 @@ void NTableView::restoreSelectedNotes() {
         return;
 
     NoteTable ntable(global.db);
-    QSqlQuery sql(*global.db);
-    QSqlQuery transaction(*global.db);
+    NSqlQuery sql(*global.db);
+    NSqlQuery transaction(*global.db);
     //transaction.exec("begin");
     sql.prepare("Delete from filter where lid=:lid");
     for (int i=0; i<lids.size(); i++) {
@@ -526,8 +531,8 @@ void NTableView::deleteSelectedNotes() {
         return;
 
     NoteTable ntable(global.db);
-    QSqlQuery sql(*global.db);
-//    QSqlQuery transaction(*global.db);
+    NSqlQuery sql(*global.db);
+//    NSqlQuery transaction(*global.db);
     //transaction.exec("begin");
     sql.prepare("Delete from filter where lid=:lid");
     for (int i=0; i<lids.size(); i++) {
@@ -1205,3 +1210,6 @@ void NTableView::openNoteExternalWindowTriggered() {
 void NTableView::openNoteNewTabTriggered() {
     this->openSelectedLids(true);
 }
+
+
+#pragma GCC diagnostic pop

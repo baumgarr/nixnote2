@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <evernote/UserStore.h>
 #include <evernote/NoteStore.h>
+#include "sql/nsqlquery.h"
 #include "global.h"
 
 #include <iostream>
@@ -116,7 +117,7 @@ public:
     void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, qint32 noteLid);
     void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, string guid);
     void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, QString guid);
-    void mapResource(QSqlQuery &query, Resource &resource);
+    void mapResource(NSqlQuery &query, Resource &resource);
     void getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary);
 };
 

@@ -20,8 +20,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "databaseconnection.h"
 #include "global.h"
 #include "notetable.h"
-#include <QSqlQuery>
+#include "sql/nsqlquery.h"
 
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
 
 extern Global global;
 //*****************************************
@@ -48,10 +51,11 @@ DatabaseConnection::DatabaseConnection(QString connection)
     configStore = new ConfigStore(&conn);
     dataStore = new DataStore(global.db);
 
-    QSqlQuery tempTable(this->conn);
+    NSqlQuery tempTable(this->conn);
 //    tempTable.exec("pragma cache_size=8096");
 //    tempTable.exec("pragma page_size=8096");
-    tempTable.exec("pragma busy_timeout=5000");
+    tempTable.exec("pragma busy_timeout=50000");
+    QLOG_DEBUG() << tempTable.lastError();
     QLOG_TRACE() << "Creating filter table";
     tempTable.exec("Create table if not exists filter (lid integer)");
     tempTable.exec("delete from filter");
@@ -73,5 +77,4 @@ DatabaseConnection::~DatabaseConnection() {
     delete dataStore;
 }
 
-
-
+#pragma GCC diagnostic pop

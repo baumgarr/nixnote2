@@ -20,6 +20,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "notemodel.h"
 #include "logger/qslog.h"
 #include "global.h"
+#include "sql/nsqlquery.h"
 
 #include <QString>
 #include <QtSql/QSqlDatabase>
@@ -34,12 +35,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
+
+// Suppress C++ string wanings
+#pragma GCC diagnostic ignored "-Wwrite-strings"
+#pragma GCC diagnostic push
+
+
 // Generic constructor
 NoteModel::NoteModel(QObject *parent)
     :QSqlTableModel(parent, *global.db)
 {
     // Check if the table exists.  If not, create it.
-    QSqlQuery sql(*global.db);
+    NSqlQuery sql(*global.db);
     sql.exec("Select *  from sqlite_master where type='table' and name='NoteTable';");
     if (!sql.next())
         this->createTable();
@@ -59,7 +66,7 @@ void NoteModel::createTable() {
     QLOG_TRACE() << "Entering NoteModel::createTable()";
 
     QLOG_DEBUG() << "Creating table NoteTable";
-    QSqlQuery sql(*global.db);
+    NSqlQuery sql(*global.db);
     QString command("Create table if not exists NoteTable (" +
                   QString("lid integer primary key,") +
                   QString("dateCreated real default null,") +
@@ -121,7 +128,7 @@ void NoteModel::createTable() {
 // {
 //    QLOG_TRACE() << "Entering NoteModel::rowCount()";
 
-//    QSqlQuery sql(*db);
+//    NSqlQuery sql(*db);
 //    sql.exec("Select count(lid) from NoteTable where lid in (select lid from filter)");
 //    if (!sql.next()) {
 //        QLOG_ERROR() << "Error retrieving NoteModel::rowCount: " << sql.lastError();
@@ -160,3 +167,6 @@ QVariant NoteModel::data (const QModelIndex & index, int role) const {
 //    else
 //        return QPixmap(":notebook_small.png");
 }
+
+
+#pragma GCC diagnostic pop

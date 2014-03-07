@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/preferences/preferencesdialog.h"
 #include "dialog/webcamcapturedialog.h"
 #include "sql/resourcetable.h"
+#include "sql/nsqlquery.h"
 
 #include <QThread>
 #include <QLabel>
@@ -2061,7 +2062,7 @@ void NixNote::deleteCurrentNote() {
         return;
 
     NoteTable ntable(global.db);
-    QSqlQuery sql(*global.db);
+    NSqlQuery sql(*global.db);
     sql.prepare("Delete from filter where lid=:lid");
     ntable.deleteNote(lid, true);
     if (expunged)
