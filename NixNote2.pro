@@ -315,6 +315,7 @@ LIBS +=    -Wl,-L./lib -lthrift \
            -L/usr/lib/x86_64-linux-gnu/ \
            -lssl -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=./lib
 INCLUDEPATH += /usr/local/include/thrift \
+            /usr/include/thrift \
             /usr/include/poppler/qt4
 
 #QMAKE_CXXFLAGS += `pkg-config --cflags opencv`
