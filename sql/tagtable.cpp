@@ -48,7 +48,7 @@ qint32 TagTable::findByName(string &name, qint32 account) {
 
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
-        if (owningAccount(lid) == account)
+        if (account == 0 || owningAccount(lid) == account)
             return lid;
     }
     return 0;
