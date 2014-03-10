@@ -232,6 +232,9 @@ void FilterCriteria::duplicate(FilterCriteria &newFilter) {
     if (attributeIsSet)
         newFilter.setAttribute(*attribute);
 
+    if (notebookIsSet)
+        newFilter.setNotebook(*this->notebook);
+
     if (contentIsSet)
         newFilter.setLid(content);
 

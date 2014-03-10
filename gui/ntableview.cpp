@@ -637,18 +637,28 @@ void NTableView::openNoteContextMenuTriggered() {
 // Copy (duplicate) a note
 void NTableView::copyNote() {
     QList<qint32> lids;
-    ConfigStore cs(global.db);
     getSelectedLids(lids);
     if (lids.size() == 0)
         return;
 
     NoteTable noteTable(global.db);
+    qint32 saveLid = 0;
     for (int i=0; i<lids.size(); i++) {
-        noteTable.duplicateNote(lids[i]);
+        saveLid = noteTable.duplicateNote(lids[i]);
     }
+
+    FilterCriteria *criteria = new FilterCriteria();
+    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    criteria->setLid(saveLid);
+    global.filterCriteria.append(criteria);
+    global.filterPosition++;
+
     FilterEngine engine;
     engine.filter();
     refreshData();
+
+    this->openNote(false);
+
 }
 
 
