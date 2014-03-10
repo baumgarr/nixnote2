@@ -1170,29 +1170,56 @@ void NTableView::dragEnterEvent(QDragEnterEvent *event) {
 }
 
 
+void NTableView::dragLeaveEvent(QDragLeaveEvent *event) {
+    QTableView::dragLeaveEvent(event);
+}
 
-
-// Accept the drag move event if possible
-void NTableView::dragMoveEvent(QDragMoveEvent *event) {
-    event = event;   // Suppress unused variable
-//    if (event->mimeData()->hasFormat("application/x-nixnote-note")) {
-//        //if (event->answerRect().intersects(childrenRect()))
-//        event->acceptProposedAction();
-//        return;
-//    }
+void NTableView::dropEvent(QDropEvent *event) {
+    QTableView::dropEvent(event);
 }
 
 
 
+
+
+// Accept the drag move event if possible
+void NTableView::dragMoveEvent(QDragMoveEvent *event) {
+    QTableView::dragMoveEvent(event);
+}
+
+void NTableView::mousePressEvent(QMouseEvent *event) {
+    dragStartIndex = this->indexAt(event->pos());
+    QTableView::mousePressEvent(event);
+}
+
 // Procees mouse move events
 void NTableView::mouseMoveEvent(QMouseEvent *event)
 {
+    if (!(event->buttons() & Qt::LeftButton)) {
+        event->ignore();
+        return;
+    }
+    if (dragStartIndex.row() == this->indexAt(event->pos()).row()) {
+        event->ignore();
+        return;
+    }
+//    int minDistance = QApplication::startDragDistance();
+//    int rowHeightMin = this->rowHeight(0)/2;
+//    if (rowHeightMin > minDistance)
+//        minDistance = rowHeightMin;
+//    if (minDistance < 25)
+//        minDistance = 25;
+
+//    if ((event->pos() - dragStartPosition).manhattanLength()
+//              < minDistance) {
+//        event->ignore();
+//        return;
+//    }
+//    QTableView::mouseMoveEvent(event);
+
     QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() == 0)
-        return;
-
-    if (!(event->buttons() & Qt::LeftButton))
         return;
 
     QDrag *drag = new QDrag(this);

@@ -45,6 +45,7 @@ private:
     TrueFalseDelegate *trueFalseDelegate;
     ImageDelegate *thumbnailDelegate;
     ReminderOrderDelegate *reminderOrderDelegate;
+    QModelIndex dragStartIndex;
 
 
 public:
@@ -105,6 +106,10 @@ public slots:
     void dragMoveEvent(QDragMoveEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void dragLeaveEvent(QDragLeaveEvent *event);
+    void dropEvent(QDropEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+
 };
 
 #endif // NTABLEVIEW_H
