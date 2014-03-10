@@ -1075,8 +1075,6 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
     attributeTree->updateSelection();
     trashTree->updateSelection();
     searchText->updateSelection();
-    //noteTableView->refreshSelection();
-
 
     rightArrowButton->setEnabled(false);
     leftArrowButton->setEnabled(false);
@@ -1084,8 +1082,6 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
         rightArrowButton->setEnabled(true);
     if (global.filterPosition > 0)
         leftArrowButton->setEnabled(true);
-
-    //openNote(false);
 
     QList<qint32> selectedNotes;
     global.filterCriteria[global.filterPosition]->getSelectedNotes(selectedNotes);

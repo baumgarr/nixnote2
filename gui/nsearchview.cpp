@@ -257,11 +257,6 @@ void NSearchView::buildSelection() {
     QLOG_TRACE() << "Inside NNotebookView::buildSelection()";
 
     QList<QTreeWidgetItem*> selectedItems = this->selectedItems();
-    if (selectedItems.size() > 0 && selectedItems[0]->data(0,Qt::UserRole) == "root")
-        return;
-    if (selectedItems.size() == 0)
-        return;
-
 
     // First, find out if we're already viewing history.  If we are we
     // chop off the end of the history & start a new one
@@ -312,10 +307,9 @@ void NSearchView::updateSelection() {
             selectedItems[i]->setSelected(false);
         }
 
-
-        if (criteria->isNotebookSet()) {
-            criteria->getNotebook()->setSelected(true);
-        }
+//        if (criteria->isNotebookSet()) {
+//            criteria->getNotebook()->setSelected(true);
+//        }
     }
     filterPosition = global.filterPosition;
 

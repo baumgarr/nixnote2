@@ -91,6 +91,7 @@ extern Global global;
      newFilter->resetTags = true;
      newFilter->resetAttribute = true;
      newFilter->resetDeletedOnly = true;
+     newFilter->resetSavedSearch = true;
      QList<qint32> oldLids;
      oldFilter->getSelectedNotes(oldLids);
      newFilter->setSelectedNotes(oldLids);
@@ -111,6 +112,12 @@ extern Global global;
      blockSignals(true);
 
      FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+//     if (criteria->resetSearchString) {
+//         this->blockSignals(true);
+//         this->setText(defaultText);
+//         setStyleSheet(inactiveColor);
+//         this->blockSignals(false);
+//     }
      if (global.filterPosition != filterPosition) {
          if (criteria->resetSearchString) {
              setText(defaultText);
