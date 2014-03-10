@@ -318,6 +318,9 @@ void NixNote::setupGui() {
 
     // Restore the window state
     QLOG_TRACE() << "Restoring window state";
+    global.settings->beginGroup("Appearance");
+    int selectionBehavior = global.settings->value("startupNotebook", AppearancePreferences::UseLastViewedNotebook).toInt();
+    global.settings->endGroup();
     global.settings->beginGroup("SaveState");
     restoreState(global.settings->value("WindowState").toByteArray());
     restoreGeometry(global.settings->value("WindowGeometry").toByteArray());
@@ -432,51 +435,72 @@ void NixNote::setupGui() {
     connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), this, SLOT(updateSelectionCriteria()));
 
     // Reload saved selection criteria
-    bool criteriaFound = false;
-    FilterCriteria *criteria = new FilterCriteria();
+    if (selectionBehavior != AppearancePreferences::UseAllNotebooks) {
+        bool criteriaFound = false;
+        FilterCriteria *criteria = new FilterCriteria();
 
-    global.settings->beginGroup("SaveState");
-    qint32 notebookLid = global.settings->value("selectedNotebook", 0).toInt();
-    if (notebookLid > 0 && notebookTreeView->dataStore[notebookLid] != NULL) {
-        criteria->setNotebook(*notebookTreeView->dataStore[notebookLid]);
-        criteriaFound = true;
-    } else {
-        QString selectedStack = global.settings->value("selectedStack", "").toString();
-        if (selectedStack != "" && notebookTreeView->stackStore[selectedStack] != NULL) {
-            criteria->setNotebook(*notebookTreeView->stackStore[selectedStack]);
-            criteriaFound = true;
+        // Restore whatever they were looking at in the past
+        if (selectionBehavior == AppearancePreferences::UseLastViewedNotebook) {
+
+            global.settings->beginGroup("SaveState");
+            qint32 notebookLid = global.settings->value("selectedNotebook", 0).toInt();
+            if (notebookLid > 0 && notebookTreeView->dataStore[notebookLid] != NULL) {
+                criteria->setNotebook(*notebookTreeView->dataStore[notebookLid]);
+                criteriaFound = true;
+            } else {
+                QString selectedStack = global.settings->value("selectedStack", "").toString();
+                if (selectedStack != "" && notebookTreeView->stackStore[selectedStack] != NULL) {
+                    criteria->setNotebook(*notebookTreeView->stackStore[selectedStack]);
+                    criteriaFound = true;
+                }
+            }
+
+            QString prevSearch = global.settings->value("searchString", "").toString();
+            if (prevSearch != "") {
+                searchText->setText(prevSearch);
+                criteria->setSearchString(prevSearch);
+                criteriaFound = true;
+            }
+
+            qint32 searchLid = global.settings->value("selectedSearch", 0).toInt();
+            if (searchLid > 0 && searchTreeView->dataStore[searchLid] != NULL) {
+                criteria->setSavedSearch(*searchTreeView->dataStore[searchLid]);
+                criteriaFound = true;
+            }
+
+            QString selectedTags = global.settings->value("selectedTags", "").toString();
+            if (selectedTags != "") {
+                QStringList tags = selectedTags.split(" ");
+                QList<QTreeWidgetItem *> items;
+                for (int i=0; i<tags.size(); i++) {
+                    if (tagTreeView->dataStore[tags[i].toInt()] != NULL)
+                        items.append(tagTreeView->dataStore[tags[i].toInt()]);
+                }
+                criteriaFound = true;
+                criteria->setTags(items);
+            }
+            global.settings->endGroup();
         }
-    }
 
-    QString prevSearch = global.settings->value("searchString", "").toString();
-    if (prevSearch != "") {
-        searchText->setText(prevSearch);
-        criteria->setSearchString(prevSearch);
-        criteriaFound = true;
-    }
-
-    qint32 searchLid = global.settings->value("selectedSearch", 0).toInt();
-    if (searchLid > 0 && searchTreeView->dataStore[searchLid] != NULL) {
-        criteria->setSavedSearch(*searchTreeView->dataStore[searchLid]);
-        criteriaFound = true;
-    }
-
-    QString selectedTags = global.settings->value("selectedTags", "").toString();
-    if (selectedTags != "") {
-        QStringList tags = selectedTags.split(" ");
-        QList<QTreeWidgetItem *> items;
-        for (int i=0; i<tags.size(); i++) {
-            if (tagTreeView->dataStore[tags[i].toInt()] != NULL)
-                items.append(tagTreeView->dataStore[tags[i].toInt()]);
+        // Select the default notebook
+        if (selectionBehavior == AppearancePreferences::UseDefaultNotebook) {
+            NotebookTable ntable(global.db);
+            qint32 lid = ntable.getDefaultNotebookLid();
+            if (notebookTreeView->dataStore[lid] != NULL) {
+                criteria->setNotebook(*notebookTreeView->dataStore[lid]);
+                criteriaFound = true;
+            }
         }
-        criteriaFound = true;
-        criteria->setTags(items);
-    }
-    global.settings->endGroup();
 
-    if (criteriaFound) {
-        global.filterPosition++;
-        global.appendFilter(criteria);
+
+
+        // If we have some filter criteria, save it.  Otherwise delete
+        // the unused memory.
+        if (criteriaFound) {
+            global.filterPosition++;
+            global.appendFilter(criteria);
+        } else
+            delete criteria;
     }
 
     this->updateSelectionCriteria();

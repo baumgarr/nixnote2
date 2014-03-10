@@ -29,11 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class AppearancePreferences : public QWidget
 {
     Q_OBJECT
-    enum DefaultNotebook {
-        UseDefaultNotebook = 0,
-        UseAllNotebooks = 1,
-        UseLastViewedNotebook = 2
-    };
 
 private:
     QGridLayout *mainLayout;
@@ -47,6 +42,12 @@ public:
     QCheckBox *showPDFs;
     QCheckBox *showSplashScreen;
     QCheckBox *showMissedReminders;
+
+    enum DefaultNotebook {
+        UseLastViewedNotebook = 0,
+        UseDefaultNotebook = 1,
+        UseAllNotebooks = 2
+    };
 
     
 signals:

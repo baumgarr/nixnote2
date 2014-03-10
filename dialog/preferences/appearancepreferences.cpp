@@ -34,12 +34,11 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showSplashScreen = new QCheckBox(tr("Show splash screen on startup"), this);
     showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
 
-    defaultNotebookOnStartupLabel = new QLabel(tr("Notebook to use on startup"),this);
+    defaultNotebookOnStartupLabel = new QLabel(tr("Startup Behavior"),this);
     defaultNotebookOnStartup = new QComboBox();
-    defaultNotebookOnStartup->addItem(tr("Default notebook"), UseDefaultNotebook);
-    defaultNotebookOnStartup->addItem(tr("All notebooks"), UseAllNotebooks);
-    defaultNotebookOnStartup->addItem(tr("Last viewed"), UseLastViewedNotebook);
-    defaultNotebookOnStartup->setEnabled(false);
+    defaultNotebookOnStartup->addItem(tr("Restore Selection Criteria"), UseLastViewedNotebook);
+    defaultNotebookOnStartup->addItem(tr("Select Default Notebook"), UseDefaultNotebook);
+    defaultNotebookOnStartup->addItem(tr("View All Notebooks"), UseAllNotebooks);
 
     mainLayout->addWidget(showTrayIcon,0,0);
     mainLayout->addWidget(showSplashScreen, 1,0);
@@ -49,10 +48,13 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(defaultNotebookOnStartup, 4,1);
 
     global.settings->beginGroup("Appearance");
+
     showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
     showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
     showSplashScreen->setChecked(global.settings->value("showSplashScreen", false).toBool());
     showMissedReminders->setChecked(global.settings->value("showMissedReminders", false).toBool());
+    int defaultNotebook = global.settings->value("startupNotebook", UseLastViewedNotebook).toInt();
+    defaultNotebookOnStartup->setCurrentIndex(defaultNotebook);
     global.settings->endGroup();
 }
 
@@ -64,5 +66,8 @@ void AppearancePreferences::saveValues() {
     global.pdfPreview = showPDFs->isChecked();
     global.settings->setValue("showSplashScreen", showSplashScreen->isChecked());
     global.settings->setValue("showMissedReminders", showMissedReminders->isChecked());
+    int index = defaultNotebookOnStartup->currentIndex();
+    int value = defaultNotebookOnStartup->itemData(index).toInt();
+    global.settings->setValue("startupNotebook", value);
     global.settings->endGroup();
 }
