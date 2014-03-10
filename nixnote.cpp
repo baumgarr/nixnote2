@@ -124,9 +124,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(&syncRunner, SIGNAL(setMessage(QString, int)), this, SLOT(setMessage(QString, int)));
 
     QLOG_TRACE() << "Setting up GUI";
-    this->setupGui();
-
     global.filterPosition = 0;
+    this->setupGui();
     this->openNote(false);
 
     QLOG_TRACE() << "Connecting signals";
@@ -433,29 +432,33 @@ void NixNote::setupGui() {
     connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), this, SLOT(updateSelectionCriteria()));
 
     // Reload saved selection criteria
+    bool criteriaFound = false;
     FilterCriteria *criteria = new FilterCriteria();
-    global.filterPosition++;
-    global.appendFilter(criteria);
 
     global.settings->beginGroup("SaveState");
     qint32 notebookLid = global.settings->value("selectedNotebook", 0).toInt();
     if (notebookLid > 0 && notebookTreeView->dataStore[notebookLid] != NULL) {
         criteria->setNotebook(*notebookTreeView->dataStore[notebookLid]);
+        criteriaFound = true;
     } else {
         QString selectedStack = global.settings->value("selectedStack", "").toString();
-        if (selectedStack != "" && notebookTreeView->stackStore[selectedStack] != NULL)
+        if (selectedStack != "" && notebookTreeView->stackStore[selectedStack] != NULL) {
             criteria->setNotebook(*notebookTreeView->stackStore[selectedStack]);
+            criteriaFound = true;
+        }
     }
 
     QString prevSearch = global.settings->value("searchString", "").toString();
     if (prevSearch != "") {
         searchText->setText(prevSearch);
         criteria->setSearchString(prevSearch);
+        criteriaFound = true;
     }
 
     qint32 searchLid = global.settings->value("selectedSearch", 0).toInt();
     if (searchLid > 0 && searchTreeView->dataStore[searchLid] != NULL) {
         criteria->setSavedSearch(*searchTreeView->dataStore[searchLid]);
+        criteriaFound = true;
     }
 
     QString selectedTags = global.settings->value("selectedTags", "").toString();
@@ -466,15 +469,15 @@ void NixNote::setupGui() {
             if (tagTreeView->dataStore[tags[i].toInt()] != NULL)
                 items.append(tagTreeView->dataStore[tags[i].toInt()]);
         }
+        criteriaFound = true;
         criteria->setTags(items);
     }
-
-
     global.settings->endGroup();
-    notebookTreeView->updateSelection();
-//    QList<FilterCriteria*> *l = &global.filterCriteria;
-//    QLOG_DEBUG() << l->size();
 
+    if (criteriaFound) {
+        global.filterPosition++;
+        global.appendFilter(criteria);
+    }
 
     this->updateSelectionCriteria();
     // Set default focuse to the editor window
