@@ -55,7 +55,6 @@ DatabaseConnection::DatabaseConnection(QString connection)
 //    tempTable.exec("pragma cache_size=8096");
 //    tempTable.exec("pragma page_size=8096");
     tempTable.exec("pragma busy_timeout=50000");
-    QLOG_DEBUG() << tempTable.lastError();
     QLOG_TRACE() << "Creating filter table";
     tempTable.exec("Create table if not exists filter (lid integer)");
     tempTable.exec("delete from filter");

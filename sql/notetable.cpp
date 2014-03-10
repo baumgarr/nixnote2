@@ -1453,7 +1453,7 @@ qint32 NoteTable::getUnindexedCount() {
 
 
 
-qint32 NoteTable::duplicateNote(qint32 oldLid) {
+qint32 NoteTable::duplicateNote(qint32 oldLid, bool keepCreatedDate) {
     ConfigStore cs(db);
     qint32 newLid = cs.incrementLidCounter();
 
@@ -1483,6 +1483,11 @@ qint32 NoteTable::duplicateNote(qint32 oldLid) {
 
     setDirty(newLid, true);
     setIndexNeeded(newLid, true);
+
+    if (!keepCreatedDate) {
+        qint64 dt = QDateTime::currentMSecsSinceEpoch();
+        this->updateDate(newLid, dt, NOTE_CREATED_DATE, true);
+    }
 
     // Update all the resources
     ResourceTable resTable(db);

@@ -41,7 +41,6 @@ class NSearchView : public QTreeWidget
     Q_OBJECT
 private:
     NSearchViewItem *root;
-    QHash<qint32, NSearchViewItem*> dataStore;
     virtual void mousePressEvent(QMouseEvent *event);
     int filterPosition;
     QMenu context;
@@ -63,6 +62,7 @@ private slots:
 public:
     explicit NSearchView(QWidget *parent = 0);
     ~NSearchView();
+    QHash<qint32, NSearchViewItem*> dataStore;
     void resetSize();
     void loadData();
     void contextMenuEvent(QContextMenuEvent *event);

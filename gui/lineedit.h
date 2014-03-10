@@ -27,6 +27,7 @@
  public:
      LineEdit(QWidget *parent = 0);
      void updateSelection();
+     bool isSet();
 
  protected:
      void resizeEvent(QResizeEvent *);

@@ -46,7 +46,6 @@ private:
     QShortcut *deleteShortcut;
     TreeWidgetEditor *editor;
     qint32 accountFilter;
-    QHash<qint32, NTagViewItem*> dataStore;
 
 private slots:
     int calculateHeightRec(QTreeWidgetItem * item);
@@ -56,6 +55,7 @@ private slots:
 public:
     explicit NTagView(QWidget *parent = 0);
     ~NTagView();
+    QHash<qint32, NTagViewItem*> dataStore;
     void resetSize();
     bool hideUnassigned;
     void updateSelection();

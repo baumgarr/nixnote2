@@ -45,6 +45,7 @@ extern Global global;
      connect(this, SIGNAL(returnPressed()), this, SLOT(buildSelection()));
      connect(this, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
      connect(clearButton, SIGNAL(clicked()), this, SLOT(buildSelection()));
+     setStyleSheet(inactiveColor);
  }
 
  void LineEdit::resizeEvent(QResizeEvent *)
@@ -159,4 +160,13 @@ void LineEdit::focusOutEvent(QFocusEvent *e)
   }
 //  this->setCursor(Qt::PointingHandCursor);
 
+}
+
+
+// Check if any value is set
+bool LineEdit::isSet() {
+    if (this->text().trimmed() != defaultText && this->text().trimmed() != "")
+        return true;
+    else
+        return false;
 }

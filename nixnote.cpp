@@ -431,6 +431,51 @@ void NixNote::setupGui() {
     // connect signal on a tag rename
     connect(tagTreeView, SIGNAL(tagRenamed(qint32,QString,QString)), this, SLOT(updateSelectionCriteria()));
     connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), this, SLOT(updateSelectionCriteria()));
+
+    // Reload saved selection criteria
+    FilterCriteria *criteria = new FilterCriteria();
+    global.filterPosition++;
+    global.appendFilter(criteria);
+
+    global.settings->beginGroup("SaveState");
+    qint32 notebookLid = global.settings->value("selectedNotebook", 0).toInt();
+    if (notebookLid > 0 && notebookTreeView->dataStore[notebookLid] != NULL) {
+        criteria->setNotebook(*notebookTreeView->dataStore[notebookLid]);
+    } else {
+        QString selectedStack = global.settings->value("selectedStack", "").toString();
+        if (selectedStack != "" && notebookTreeView->stackStore[selectedStack] != NULL)
+            criteria->setNotebook(*notebookTreeView->stackStore[selectedStack]);
+    }
+
+    QString prevSearch = global.settings->value("searchString", "").toString();
+    if (prevSearch != "") {
+        searchText->setText(prevSearch);
+        criteria->setSearchString(prevSearch);
+    }
+
+    qint32 searchLid = global.settings->value("selectedSearch", 0).toInt();
+    if (searchLid > 0 && searchTreeView->dataStore[searchLid] != NULL) {
+        criteria->setSavedSearch(*searchTreeView->dataStore[searchLid]);
+    }
+
+    QString selectedTags = global.settings->value("selectedTags", "").toString();
+    if (selectedTags != "") {
+        QStringList tags = selectedTags.split(" ");
+        QList<QTreeWidgetItem *> items;
+        for (int i=0; i<tags.size(); i++) {
+            if (tagTreeView->dataStore[tags[i].toInt()] != NULL)
+                items.append(tagTreeView->dataStore[tags[i].toInt()]);
+        }
+        criteria->setTags(items);
+    }
+
+
+    global.settings->endGroup();
+    notebookTreeView->updateSelection();
+//    QList<FilterCriteria*> *l = &global.filterCriteria;
+//    QLOG_DEBUG() << l->size();
+
+
     this->updateSelectionCriteria();
     // Set default focuse to the editor window
     tabWindow->currentBrowser()->editor->setFocus();
@@ -729,6 +774,47 @@ void NixNote::closeEvent(QCloseEvent *event) {
     global.settings->setValue("mainSplitter", mainSplitter->saveState());
     global.settings->setValue("rightSplitter", rightPanelSplitter->saveState());
     global.settings->setValue("listView", global.listView);
+
+    global.settings->remove("selectedStack");
+    global.settings->remove("selectedNotebook");
+    global.settings->remove("selectedTags");
+    global.settings->remove("selectedSearch");
+    global.settings->remove("searchString");
+
+    // Save the current notebook/stack selection
+    if (notebookTreeView->selectedItems().size() > 0) {
+        NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
+        qint32 saveLid = item->lid;
+        if (saveLid > 0) {
+            global.settings->setValue("selectedNotebook", saveLid);
+        } else {
+            QString saveStack = item->text(0);
+            global.settings->setValue("selectedStack", saveStack);
+        }
+    }
+
+    if (searchText->isSet()) {
+        global.settings->setValue("searchString", searchText->text().trimmed());
+    }
+
+    if (searchTreeView->selectedItems().size() > 0) {
+        NSearchViewItem *item = (NSearchViewItem*)searchTreeView->selectedItems().at(0);
+        qint32 saveLid = item->data(0, Qt::UserRole).toInt();
+        if (saveLid > 0) {
+            global.settings->setValue("selectedSearch", saveLid);
+        }
+    }
+
+    // Save any selected tags
+    QString savedLids = "";
+    if (tagTreeView->selectedItems().size() > 0) {
+        for (int i=0; i<tagTreeView->selectedItems().size(); i++) {
+            NTagViewItem *item = (NTagViewItem*)tagTreeView->selectedItems().at(i);
+            qint32 saveLid = item->data(0, Qt::UserRole).toInt();
+            savedLids = savedLids + QString::number(saveLid) + " ";
+        }
+        global.settings->setValue("selectedTags", savedLids.trimmed());
+    }
 
     global.settings->endGroup();
 

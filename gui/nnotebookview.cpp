@@ -78,7 +78,6 @@ NNotebookView::NNotebookView(QWidget *parent) :
     root->setData(NAME_POSITION, Qt::UserRole, "rootsynchronized");
     root->setData(NAME_POSITION, Qt::DisplayRole, tr("Notebooks"));
     root->setRootColor(true);
-    root->setExpanded(true);
     this->setMinimumHeight(1);
     this->addTopLevelItem(root);
     this->rebuildNotebookTreeNeeded = true;
@@ -88,7 +87,6 @@ NNotebookView::NNotebookView(QWidget *parent) :
     connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(buildSelection()));
-
 
     addAction = context.addAction(tr("Create New Notebook"));
     addAction->setShortcut(QKeySequence(Qt::Key_Insert));
@@ -149,6 +147,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
 
     this->setAcceptDrops(true);
     this->setItemDelegate(new NNotebookViewDelegate());
+    root->setExpanded(true);
 }
 
 
