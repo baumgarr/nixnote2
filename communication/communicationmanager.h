@@ -140,6 +140,7 @@ public:
     bool getUserInfo(User &user, int errorCount=0);
     QList< QPair<QString, QImage*>* > *inkNoteList;
     QList< QPair<QString, QImage*>* > *thumbnailList;
+    QHash<QString,QString> *tagGuidMap;
     bool getSharedNotebookByAuth(SharedNotebook &sharedNotebook);
 
     qint32 uploadSavedSearch(SavedSearch &search, int errorCount=0);
@@ -160,6 +161,7 @@ public:
 
     bool listNoteVersions(vector<NoteVersionId> &list, QString guid, int errorCount=0);
     bool getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData=true, bool withResourceRecognition=true, bool withResourceAlternateData=true, int errorCount=0);
+    void loadTagGuidMap();
 
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);

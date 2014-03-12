@@ -87,6 +87,7 @@ public:
     void resetLinkedTagsDirty();                // mark all linked tags as not-dirty
     int getNewUnsequencedCount();
     void cleanupLinkedTags();
+    void getGuidMap(QHash<QString, QString> &nameMap);
 };
 
 #endif // TAGTABLE_H

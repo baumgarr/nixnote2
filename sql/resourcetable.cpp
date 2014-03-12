@@ -433,6 +433,9 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
     if (noteLid <=0) {
         NoteTable noteTable(db);
         noteLid = noteTable.getLid(t.noteGuid);
+        if (noteLid <=0) {
+            noteLid = noteTable.addStub(QString::fromStdString(t.noteGuid));
+        }
     }
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_NOTE_LID);

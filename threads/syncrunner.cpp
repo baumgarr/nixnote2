@@ -64,7 +64,7 @@ void SyncRunner::synchronize() {
         userStoreUrl = QString("http://" +global.server +"/edam/user").toStdString();
         updateSequenceNumber = 0;
 
-         defaultMsgTimeout = 30000;
+         defaultMsgTimeout = 150000;
          db = new DatabaseConnection("syncrunner");
          comm = new CommunicationManager(&db->conn);
          connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
@@ -165,8 +165,6 @@ void SyncRunner::evernoteSync() {
     if (!error)
        syncRemoteLinkedNotebooksActual();
 
-    //updateNoteTableTags();
-
     if (error || !comm->getSyncState("", syncState)) {
         error =true;
         this->communicationErrorHandler();
@@ -184,12 +182,22 @@ void SyncRunner::evernoteSync() {
 bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     QLOG_TRACE() << "Entering SyncRunner::SyncRemoteToLocal()";
 
-    // The sync is essentially run 3 times.
-    // The first time gets notes, searches, & tags.
-    // The second time gets notes
-    // The third time gets attachments (if not a full sync).
-    // It is done this way to make sure we have the latest notebook & tag names and the note exists
-    // before the attachment arrives.
+    // The sync is run in several parts.
+    // Part #1: Get all remote tags, notebooks, & saved searches for
+    //          a user's account.  We do this first because we want
+    //          the tag & notebook naems for filling out the note table.
+    //          It is just easier this way.
+    // Part #2: Get all changed notes & resources.  If it is a full sync
+    //          then we get the resources & notes together as one entity
+    //          (the resource chunk won't have anything).  We also do not
+    //          get deleted notes on a full sync.  If it is a partial sync
+    //          then we get resources & notes separately (i.e. the notes chunk
+    //          may reference a resource guid, but it won't have the detail and
+    //          the chunk resources will have valid data.  We get deleted notes
+    //          on a partial sync.
+    // Part #3: Upload anything local to the user's account.
+    // Part #4: Do linked notebook stuff.  Basically the same as
+    //          this except we do it across multiple accounts.
 
     NSqlQuery query(db->conn);
     query.exec("begin");
@@ -224,10 +232,11 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             more = false;
     }
 
+    emit setMessage(tr("Download complete for notebooks, tags, & searches.  Downloading notes."), defaultMsgTimeout);
+
+    comm->loadTagGuidMap();
     more = true;
-    chunkSize = 500;
-    if (fullSync)
-        chunkSize = 250;
+    chunkSize = 100;
     updateSequenceNumber = startingSequenceNumber;
     UserTable userTable(&db->conn);
 
@@ -249,41 +258,44 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         userTable.updateLastSyncNumber(chunk.chunkHighUSN);
         userTable.updateLastSyncDate(chunk.currentTime);
         query.exec("commit");
+        query.exec("begin");
 
         updateSequenceNumber = chunk.chunkHighUSN;
-        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
+        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount) {
             more = false;
-    }
-
-    more = true;
-    chunkSize = 150;
-    updateSequenceNumber = startingSequenceNumber;
-
-    while(more && keepRunning && !fullSync)  {
-        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_RESOURCES, fullSync);
-        if (!rc) {
-            QLOG_ERROR() << "Error retrieving chunk";
-            error = true;
-            this->communicationErrorHandler();
-            query.exec("commit");
-            return false;
+            userTable.updateLastSyncNumber(updateCount);
         }
-        QLOG_DEBUG() << "-(Pass 3) ->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
-        int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
-        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete for attachments."), defaultMsgTimeout);
-        processSyncChunk(chunk);
-
-        userTable.updateLastSyncNumber(chunk.chunkHighUSN);
-        userTable.updateLastSyncDate(chunk.currentTime);
-        query.exec("commit");
-
-        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
-            more = false;
-        updateSequenceNumber = chunk.chunkHighUSN;
-
     }
 
-    emit setMessage(tr("Download 100% complete."), defaultMsgTimeout);
+//    more = true;
+//    chunkSize = 150;
+//    updateSequenceNumber = startingSequenceNumber;
+
+//    while(more && keepRunning && !fullSync)  {
+//        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_RESOURCES, fullSync);
+//        if (!rc) {
+//            QLOG_ERROR() << "Error retrieving chunk";
+//            error = true;
+//            this->communicationErrorHandler();
+//            query.exec("commit");
+//            return false;
+//        }
+//        QLOG_DEBUG() << "-(Pass 3) ->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
+//        int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
+//        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete for attachments."), defaultMsgTimeout);
+//        processSyncChunk(chunk);
+
+//        userTable.updateLastSyncNumber(chunk.chunkHighUSN);
+//        userTable.updateLastSyncDate(chunk.currentTime);
+//        query.exec("commit");
+
+//        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
+//            more = false;
+//        updateSequenceNumber = chunk.chunkHighUSN;
+
+//    }
+
+    emit setMessage(tr("Download complete."), defaultMsgTimeout);
     query.exec("commit");
     return true;
 }
@@ -683,13 +695,14 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
                 }
             } else {
                 processSyncChunk(chunk, lids[i]);
-                if (chunk.chunkHighUSN >= syncState.updateCount)
-                    more = false;
-                ltable.setLastUpdateSequenceNumber(lids[i], chunk.chunkHighUSN);
                 usn = chunk.chunkHighUSN;
                 if (chunk.updateCount > 0 && chunk.updateCount > startingSequenceNumber) {
                     int pct = (usn-startingSequenceNumber)*100/(chunk.updateCount-startingSequenceNumber);
                     emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for shared notebook ") +QString::fromStdString(book.shareName) + tr("."), defaultMsgTimeout);
+                }
+                if (chunk.chunkHighUSN >= syncState.updateCount) {
+                    more = false;
+                    ltable.setLastUpdateSequenceNumber(lids[i], syncState.updateCount);
                 }
             }
         }

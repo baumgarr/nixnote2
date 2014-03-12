@@ -56,6 +56,7 @@ CommunicationManager::CommunicationManager(QSqlDatabase *db)
 //    sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
     sslSocketFactory->authenticate(true);
     postData = new QUrl();
+    tagGuidMap = new QHash<QString,QString>;
 }
 
 
@@ -71,6 +72,7 @@ CommunicationManager::~CommunicationManager() {
         sslSocketNoteStore->close();
     }
     delete postData;
+    delete tagGuidMap;
 }
 
 
@@ -169,7 +171,7 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
     linkedNotebooks = ((type & SYNC_CHUNK_LINKED_NOTEBOOKS)>0);
     notes = ((type & SYNC_CHUNK_NOTES)>0);
     expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync)>0);
-    resources = ((type & SYNC_CHUNK_RESOURCES)>0);
+    resources = ((type & SYNC_CHUNK_RESOURCES) && (!fullSync)>0);
 
     // Try to get the chunk
     try {
@@ -207,26 +209,27 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
         noteStoreClient->getFilteredSyncChunk(chunk, authToken, start, chunkSize, filter);
 
         QHash<QString,QString> noteList;
-        if (fullSync)
-            resources = true;
         for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
             QLOG_TRACE() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
             Note n;
             noteList.insert(QString::fromStdString(n.guid),"");
-            noteStoreClient->getNote(n, authToken, chunk.notes[i].guid, true, resources, resources, resources);
+            noteStoreClient->getNote(n, authToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
             QLOG_TRACE() << "Note Retrieved";
-            TagTable tagTable(db);
+
+            // Load up the tag names because Evernote doesn't give them.
             for (unsigned int j=0; j<n.tagGuids.size(); j++) {
-                Tag tag;
-                if (tagTable.get(tag, n.tagGuids[j]))
-                    n.tagNames.push_back(tag.name);
+                QString tagGuid = QString::fromStdString(n.tagGuids[j]);
+                if (tagGuidMap->contains(tagGuid)) {
+                    QString tagName = tagGuidMap->value(tagGuid);
+                    n.tagNames.push_back(tagName.toStdString());
+                }
             }
             chunk.notes[i] = n;
             if (n.__isset.resources && n.resources.size() > 0) {
                 QLOG_TRACE() << "Checking for ink note";
                 checkForInkNotes(n.resources, "", QString::fromStdString(authToken));
             }
-            QLOG_TRACE() << "Downloading thumbnail";
+//            QLOG_TRACE() << "Downloading thumbnail";
 //            downloadThumbnail(QString::fromStdString(n.guid), authToken,"");
         }
 
@@ -239,13 +242,6 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
             noteStoreClient->getResource(r, authToken, chunk.resources[i].guid, true, true, true, true);
             QLOG_TRACE() << "Resource retrieved";
             chunk.resources[i] = r;
-
-//            if (noteTable.getLid(QString::fromStdString(r.noteGuid))<=0 || !noteList.contains(QString::fromStdString(r.noteGuid))) {
-//                Note n;
-//                noteStoreClient->getNote(n, authToken, r.noteGuid, true, true, true, true);
-//                chunk.__isset.notes = true;
-//                chunk.notes.push_back(n);
-//            }
         }
         QLOG_DEBUG() << "Getting ink notes";
         if (chunk.__isset.resources && chunk.resources.size()>0) {
@@ -1902,4 +1898,10 @@ void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) 
     error.message = tr("EDAMNotFoundException: Note not found");
     error.type = CommunicationError::EDAMNotFoundException;
     error.code = 16;
+}
+
+
+void CommunicationManager::loadTagGuidMap() {
+    TagTable tagTable(db);
+    tagTable.getGuidMap(*this->tagGuidMap);
 }

@@ -419,6 +419,26 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
 }
 
 
+
+qint32 NoteTable::addStub(QString noteGuid) {
+    QLOG_DEBUG() << "Adding note stub: " << noteGuid;
+    ConfigStore cs(db);
+    NSqlQuery query(*db);
+
+    qint32 lid = 0;
+    lid = getLid(noteGuid);
+
+    if (lid <= 0)
+        lid = cs.incrementLidCounter();
+
+    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_GUID);
+    query.bindValue(":data", noteGuid);
+    query.exec();
+}
+
+
 bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty, qint32 notebook) {
 
     NotebookTable notebookTable(db);

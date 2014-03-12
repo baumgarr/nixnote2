@@ -57,7 +57,8 @@ bool NSqlQuery::exec(QString &query) {
         }
         if (lastError().number() != DATABASE_LOCKED)
             return false;
-        QLOG_ERROR() << "DB Locked:  Retry #" << i;
+        if (i>10)
+            QLOG_ERROR() << "DB Locked:  Retry #" << i;
         QTime dieTime= QTime::currentTime().addSecs(1);
         while( QTime::currentTime() < dieTime )
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);

@@ -598,3 +598,15 @@ void TagTable::cleanupLinkedTags() {
     query.bindValue(":nameKey", TAG_NAME);
     query.exec();
 }
+
+
+void TagTable::getGuidMap(QHash<QString,QString> &guidMap) {
+    QList<qint32> tags;
+    Tag t;
+    getAll(tags);
+    guidMap.empty();
+    for (int i=0; i<tags.size(); i++) {
+        get(t,tags[i]);
+        guidMap.insert(QString::fromStdString(t.guid), QString::fromStdString(t.name));
+    }
+}

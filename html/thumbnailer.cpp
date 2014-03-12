@@ -96,6 +96,11 @@ void Thumbnailer::capturePage(QWebPage *page) {
 
 
 void Thumbnailer::generateNextThumbnail() {
+    // If we are connected we are downloading or uploading, so
+    // we don't want to do this now.
+    if (global.connected)
+        return;
+
     timer.stop();
     NoteTable noteTable(db);
     qint32 lid = noteTable.getNextThumbnailNeeded();
