@@ -33,6 +33,7 @@ private:
     QGridLayout *mainLayout;
     QComboBox *debugLevel;
     QCheckBox *disableUploads;
+    QCheckBox *showLidColumn;
     QLabel *debugLevelLabel;
     int getMessageLevel();
 

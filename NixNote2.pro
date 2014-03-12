@@ -12,6 +12,11 @@ RESOURCES = NixNote2.qrc
 
 UI_DIR = .
 
+#CONFIG +=64bit
+message(Beginnig Build)
+message($$ARCH)
+
+
 CONFIG(debug, debug|release) {
         OBJECTS_DIR = build/debug
         MOC_DIR = build/debug
@@ -115,7 +120,6 @@ SOURCES += main.cpp\
     dialog/tabledialog.cpp \
     dialog/encryptdialog.cpp \
     dialog/insertlatexdialog.cpp \
-    botan/botan_all.cpp \
     gui/plugins/popplerviewer.cpp \
     gui/plugins/pluginfactory.cpp \
     gui/findreplace.cpp \
@@ -257,7 +261,6 @@ HEADERS  += nixnote.h \
     dialog/tabledialog.h \
     dialog/encryptdialog.h \
     dialog/insertlatexdialog.h \
-    botan/botan_all.h \
     gui/plugins/popplerviewer.h \
     gui/plugins/pluginfactory.h \
     gui/findreplace.h \
@@ -306,16 +309,31 @@ HEADERS  += nixnote.h \
     sql/nsqlquery.h
 
 
-
-#LIBS +=    -Wl,-rpath,./lib32:./lib64 -L./lib -L./liba -lthrift -lpthread  -L/usr/lib -lpoppler-qt4 -g -rdynamic
-
-LIBS +=    -Wl,-L./lib -lthrift \
-           -lopencv_core -lopencv_highgui -lopencv_imgproc \
-           -lhunspell \
-           -L/usr/lib/x86_64-linux-gnu/ \
-           -lssl -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=./lib
 INCLUDEPATH += /usr/local/include/thrift \
             /usr/include/thrift \
             /usr/include/poppler/qt4
 
+LIBS +=    -Wl,-L./lib -lthrift \
+           -lopencv_core -lopencv_highgui -lopencv_imgproc \
+           -lhunspell \
+           -lssl -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=./lib
+
+#$$ARCH(32bit)   {
+#       QMAKE_CXXFLAGS += -m32 -msse -msse2 -msse3
+#       LIBS += -rdynamic -Wl,-rpath=./lib32
+#       QMAKE_LFLAGS = '-m32'
+#}
+
+#$$ARCH(64bit)   {
+#       LIBS += -rdynamic -Wl,-rpath=./lib64
+#}
+
+
+LIBS +=    -Wl,-L./lib -lthrift \
+           -lopencv_core -lopencv_highgui -lopencv_imgproc \
+           -lhunspell \
+           -lssl -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=./lib
+
+
 #QMAKE_CXXFLAGS += `pkg-config --cflags opencv`
+

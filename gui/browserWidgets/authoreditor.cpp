@@ -43,7 +43,7 @@ AuthorEditor::AuthorEditor(QWidget *parent) :
     this->setStyleSheet(inactiveColor);
 
     defaultText = QString(tr("Click to set Author..."));
-    connect(this, SIGNAL(textChanged(QString)), this, SLOT(textModified(QString)));
+//    connect(this, SIGNAL(textChanged(QString)), this, SLOT(textModified(QString)));
     //this->textModified(defaultText);
 
     connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
@@ -90,7 +90,13 @@ void AuthorEditor::textModified(QString text) {
     this->blockSignals(true);
 
     NoteTable noteTable(global.db);
-    noteTable.updateAuthor(currentLid, text, true);
+    Note n;
+    noteTable.get(n, currentLid, false,false);
+    QString oldAuthor;
+    if (n.__isset.attributes && n.attributes.__isset.author)
+        oldAuthor = QString::fromStdString(n.attributes.author);
+    if (oldAuthor.trimmed() != text.trimmed())
+        noteTable.updateAuthor(currentLid, text, true);
 
     if (text.trimmed() == "" && !hasFocus())
         setText(defaultText);

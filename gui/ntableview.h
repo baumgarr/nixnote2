@@ -87,6 +87,7 @@ signals:
     void notesRestored(QList<qint32>);
     void refreshNoteContent(qint32 lid);
     void openNoteExternalWindow(qint32 lid);
+    void saveAllNotes();
 
 public slots:
     void refreshData();

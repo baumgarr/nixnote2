@@ -396,9 +396,21 @@ void NNotebookView::buildSelection() {
             global.filterCriteria.removeLast();
     }
 
-    filterPosition++;
+    int currentCount = global.filterCriteria.size();
     FilterCriteria *newFilter = new FilterCriteria();
+    if (currentCount > 0) {
+        FilterCriteria *currentFilter = global.filterCriteria[currentCount-1];
+        if (currentFilter->isLidSet()) {
+            newFilter->setLid(currentFilter->getLid());
+        }
+        if (currentFilter->isSelectedNotesSet()) {
+            QList<qint32> lids;
+            currentFilter->getSelectedNotes(lids);
+            newFilter->setSelectedNotes(lids);
+        }
+    }
     global.filterCriteria.push_back(newFilter);
+    filterPosition++;
     global.filterPosition++;
 
     if (selectedItems.size() > 0) {

@@ -89,7 +89,9 @@ void NTitleEditor::titleChanged(QString text) {
     // Check that we have some type of title.  If not we go with
     // the default
     text = cleanupTitle(text);
+    int cursorPosition = this->cursorPosition();
     this->setText(text);
+    this->setCursorPosition(cursorPosition);
     this->blockSignals(false);
 
     // Now check that the text has actually changed.  We need to do this because

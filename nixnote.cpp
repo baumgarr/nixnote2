@@ -419,6 +419,7 @@ void NixNote::setupGui() {
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countTags()));
     connect(tabWindow, SIGNAL(updateNoteList(qint32, int, QVariant)), noteTableView, SLOT(refreshCell(qint32, int, QVariant)));
     connect(noteTableView, SIGNAL(refreshNoteContent(qint32)), tabWindow, SLOT(refreshNoteContent(qint32)));
+    connect(noteTableView, SIGNAL(saveAllNotes()), tabWindow, SLOT(saveAllNotes()));
 
     // connect so we refresh the tag tree when a new tag is added
     connect(tabWindow, SIGNAL(tagCreated(qint32)), tagTreeView, SLOT(addNewTag(qint32)));
@@ -2189,6 +2190,7 @@ void NixNote::deleteCurrentNote() {
 
 // Duplicate the current note
 void NixNote::duplicateCurrentNote() {
+    tabWindow->currentBrowser()->saveNoteContent();
     qint32 oldLid = tabWindow->currentBrowser()->lid;
     qint32 newLid;
     NoteTable ntable(global.db);

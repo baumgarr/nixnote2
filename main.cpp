@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "nixnote.h"
 #include "global.h"
 #include "settings/startupconfig.h"
-#include "botan/botan_all.h"
 
 #include "logger/qslog.h"
 #include <QtCore/QCoreApplication>
@@ -36,11 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "application.h"
 #include "thrift/config.h"
 
-
-//using namespace std;
-using namespace Botan;
-//#include <QString>
-//#include <QByteArray>
 
 
 //*********************************************
@@ -66,7 +60,6 @@ void fault_handler(int sig) {
 
 int main(int argc, char *argv[])
 {
-    Botan::LibraryInitializer botanInit;
     signal(SIGSEGV, fault_handler);   // install our handler
 
     // Setup the QApplication so we can begin
@@ -84,7 +77,6 @@ int main(int argc, char *argv[])
                 QsLogging::DestinationFactory::MakeDebugOutputDestination() );
     logger.addDestination(debugDestination.get());
     logger.addDestination(fileDestination.get());
-
 
     // Begin setting up the environment
     StartupConfig startupConfig;

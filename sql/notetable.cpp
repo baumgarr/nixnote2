@@ -1014,7 +1014,12 @@ void NoteTable::updateTitle(qint32 noteLid, QString title, bool setAsDirty=false
 
 void NoteTable::updateAuthor(qint32 noteLid, QString author, bool setAsDirty=false) {
     NSqlQuery query(*db);
-    query.prepare("Update DataStore set data=:author where lid=:lid and key=:key;");
+    query.prepare("Delete from Datastore where lid=:lid and key=:key");
+    query.bindValue(":lid", noteLid);
+    query.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
+    query.exec();
+
+    query.prepare("Insert into Datastore(lid, key, data) values(:lid, :key, :author);");
     query.bindValue(":author", author);
     query.bindValue(":lid", noteLid);
     query.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);

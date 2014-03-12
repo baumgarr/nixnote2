@@ -251,8 +251,8 @@ void NBrowserWindow::setContent(qint32 lid) {
     if (lid == this->lid)
         return;
 
-//    if (this->editor->isDirty)
-//        this->saveNoteContent();
+    if (this->editor->isDirty)
+        this->saveNoteContent();
 
     // let's load the new note
     this->lid = lid;
@@ -550,6 +550,12 @@ void NBrowserWindow::noteContentUpdated() {
 
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
+    // Do a little bit of focus changing to make sure things are saved properly
+    this->editor->setFocus();
+    microFocusChanged();
+    this->editor->titleEditor->setFocus();
+
+
     if (this->editor->isDirty) {
         NoteTable table(global.db);
         //QString contents = editor->editorPage->mainFrame()->toHtml();

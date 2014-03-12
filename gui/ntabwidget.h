@@ -76,6 +76,7 @@ public slots:
     void noteUpdateSignaled(qint32);
     void evernoteLinkClicked(qint32 openLid, bool newWindow);
 
+    void saveAllNotes();
     void undoButtonPressed();
     void redoButtonPressed();
     void cutButtonPressed();

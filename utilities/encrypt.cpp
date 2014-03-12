@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QString>
 #include <algorithm>
 #include <stdexcept>
-//#include "botan/botan_all.h"
 #include "global.h"
 #include <boost/crc.hpp>
 //#include "crypto++/rc2.h"
@@ -36,7 +35,6 @@ extern Global global;
 //#define MY_CIPHER_MODE EVP_rc2_cbc()    // RC2 CBC mode
 
 using namespace std;
-//using namespace Botan;
 
 EnCrypt::EnCrypt()
 {

@@ -4,17 +4,13 @@
 NoteSortFilterProxyModel::NoteSortFilterProxyModel() :
     QSortFilterProxyModel()
 {
-    QLOG_TRACE() << "Entering NoteSortFilterProxyModel constructor";
     lidMap = new QMap<qint32,qint32>();
-    QLOG_TRACE() << "Exiting NoteSortFilterProxyModel constructor";
 }
 
 
 NoteSortFilterProxyModel::~NoteSortFilterProxyModel()
 {
-    QLOG_TRACE() << "Entering NoteSortFilterProxyModel destructor";
     delete lidMap;
-    QLOG_TRACE() << "Exiting NoteSortFilterProxyModel constructor";
 }
 
 
@@ -29,10 +25,6 @@ bool NoteSortFilterProxyModel::filterAcceptsRow(qint32 source_row, const QModelI
     return false;
 }
 
-
-//void NoteSortFilterProxyModel::sort(int column, Qt::SortOrder order) {
-//    this->QAbstractProxyModel::sort(column, order);
-//}
 
 bool NoteSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) const {
     QVariant leftData = this->sourceModel()->data(left);

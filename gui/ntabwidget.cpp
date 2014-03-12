@@ -410,3 +410,14 @@ void NTabWidget::noteContentEdited(QString uuid, qint32 lid, QString content) {
         cache->noteContent = content.toUtf8();
     }
 }
+
+
+void NTabWidget::saveAllNotes() {
+    for (int i=0; i<browserList->size(); i++) {
+        browserList->at(i)->saveNoteContent();
+    }
+
+    for (int i=0; i<externalList->size(); i++) {
+        externalList->at(i)->browser->saveNoteContent();
+    }
+}

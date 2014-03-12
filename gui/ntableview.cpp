@@ -109,7 +109,9 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_THUMBNAIL_POSITION, thumbnailDelegate);
 
     QLOG_TRACE() << "Setting up column headers";
-    this->setColumnHidden(NOTE_TABLE_LID_POSITION,true);
+    global.settings->beginGroup("Debugging");
+    this->setColumnHidden(NOTE_TABLE_LID_POSITION,!global.settings->value("showLids", false).toBool());
+    global.settings->endGroup();
     this->setColumnHidden(NOTE_TABLE_NOTEBOOK_LID_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_DATE_DELETED_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_ALTITUDE_POSITION, true);
@@ -330,33 +332,37 @@ void NTableView::contextMenuEvent(QContextMenuEvent *event) {
 // Update a specific table row/column.
 void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
 
+    SelectionMode mode = selectionMode();
+//    this->blockSignals(true);
+//    proxy->blockSignals(true);
+//    model()->blockSignals(true);
+
     QList<qint32> selectedLids;
     getSelectedLids(selectedLids);
+
     // Check the highlighted LIDs from the history selection.
     if (proxy->lidMap->contains(lid)) {
         int rowLocation = proxy->lidMap->value(lid);
         if (rowLocation >= 0) {
             QModelIndex modelIndex = model()->index(rowLocation,cell);
-            QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
-            model()->setData(proxyIndex, data);
+            model()->setData(modelIndex, data);
         }
     }
 
     // We need to re-select all the rows.  The selection model is
     // temporarily set to multiselection so it allows multiple rows.
-    this->blockSignals(true);
-    proxy->blockSignals(true);
-    model()->blockSignals(true);
-    SelectionMode mode = selectionMode();
     setSelectionMode(QAbstractItemView::MultiSelection);
     for (int i=0; i<selectedLids.size(); i++) {
-        int rowLocation = proxy->lidMap->value(selectedLids[i]);
-        selectRow(rowLocation);
+        int sourceRow = proxy->lidMap->value(selectedLids[i]);
+        QModelIndex sourceIndex = model()->index(sourceRow, NOTE_TABLE_LID_POSITION);
+        QModelIndex proxyIndex = proxy->mapFromSource(sourceIndex);
+        selectRow(proxyIndex.row());
     }
+
     setSelectionMode(mode);
-    this->blockSignals(false);
-    proxy->blockSignals(false);
-    model()->blockSignals(false);
+//    this->blockSignals(false);
+//    proxy->blockSignals(false);
+//    model()->blockSignals(false);
 }
 
 
@@ -394,11 +400,11 @@ void NTableView::refreshSelection() {
     for (int i=0; i<historyList.size(); i++) {
         if (proxy->lidMap->contains(historyList[i])) {
             int rowLocation = proxy->lidMap->value(historyList[i]);
-            if (rowLocation > 0) {
+            if (rowLocation >= 0) {
                 QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
                 QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
                 rowLocation = proxyIndex.row();
-                selectRow(rowLocation);
+                selectRow(proxyIndex.row());
             }
         }
     }
@@ -448,8 +454,10 @@ void NTableView::openSelectedLids(bool newWindow) {
 
     QList<qint32> lids;
     getSelectedLids(lids);
-    if (lids.size() == 0)
+    if (lids.size() == 0) {
+        QLOG_DEBUG() << "No selected lids";
         return;
+    }
 
     // First, find out if we're already viewing history.  If we are we
     // chop off the end of the history & start a new one
@@ -636,6 +644,9 @@ void NTableView::openNoteContextMenuTriggered() {
 
 // Copy (duplicate) a note
 void NTableView::copyNote() {
+    // Make sure we save whatever we are currently viewing
+    emit saveAllNotes();
+
     QList<qint32> lids;
     getSelectedLids(lids);
     if (lids.size() == 0)
@@ -643,12 +654,16 @@ void NTableView::copyNote() {
 
     NoteTable noteTable(global.db);
     qint32 saveLid = 0;
+    QList<qint32> newLids;
     for (int i=0; i<lids.size(); i++) {
         saveLid = noteTable.duplicateNote(lids[i]);
+        newLids.append(saveLid);
     }
 
     FilterCriteria *criteria = new FilterCriteria();
     global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    criteria->resetSelectedNotes = true;
+    criteria->setSelectedNotes(newLids);
     criteria->setLid(saveLid);
     global.filterCriteria.append(criteria);
     global.filterPosition++;
