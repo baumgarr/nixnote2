@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/sharednotebooktable.h"
 #include "sql/linkednotebooktable.h"
 #include "sql/nsqlquery.h"
+#include "sql/usertable.h"
 #include "global.h"
 
 #include <iostream>
@@ -747,9 +748,16 @@ bool NotebookTable::isReadOnly(qint32 notebookLid) {
         return true;
     else {
         SharedNotebook sharedNotebook;
-        SharedNotebookTable stable(db);
+        SharedNotebookTable stable(db);   
         bool found = stable.get(sharedNotebook, notebookLid);
         if (found) {
+            UserTable userTable(db);
+            User user;
+            userTable.getUser(user);
+            if (user.__isset.username &&
+                    sharedNotebook.__isset.username &&
+                    user.username == sharedNotebook.username)
+                return false;
             if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK)
                 return true;
             if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)

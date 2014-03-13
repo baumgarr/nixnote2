@@ -366,17 +366,12 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
   modify the ENML */
 void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     QString mimetype = enMedia.attribute("type");
-    ResourceTable resourceTable(global.db);
-//    QLOG_TRACE() << "Searching for lid by hash";
-//    qint32 resLid = resourceTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
-//    QLOG_TRACE() << "Lid retrieved";
     qint32 resLid = 0;
     resLid = hashMap[hash];
     QString highlightString = "";
     if (resLid>0) {
         QLOG_TRACE() << "Getting resource";
         Resource r = resourceMap[resLid];
-//        resourceTable.get(r, resLid, false);
         QLOG_TRACE() << "resource retrieved";
         MimeReference ref;
         QString filename;
