@@ -187,6 +187,10 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     // look for text tags
     QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
 
+    // Setup transaction
+    NSqlQuery trans(db->conn);
+    trans.exec("begin");
+
     // Delete the old resource index information
     NSqlQuery sql(db->conn);
     sql.prepare("Delete from SearchIndex where lid=:lid and source='recognition'");
@@ -194,26 +198,23 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     sql.exec();
 
     // Start adding words to the index.
-    NSqlQuery trans(db->conn);
-    trans.exec("begin");
-    int tracelog = 50;
+    int tracelog = 200;
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
     for (unsigned int i=0; i<anchors.length() && keepRunning && !pauseIndexing; i++) {
         QDomElement enmedia = anchors.at(i).toElement();
         QString weight = enmedia.attribute("w");
         QString text = enmedia.text();
         tracelog--;
-        if (tracelog <=0 ) {
-            tracelog = 50;
-            trans.exec("commit");
-            trans.exec("begin");
-        }
         if (text != "") {
             int w = weight.toInt();
             sql.bindValue(":lid", lid);
             sql.bindValue(":weight", w);
             sql.bindValue(":content", text);
             sql.exec();
+        }
+        if (tracelog <=0 ) {
+            tracelog = 200;
+            trans.exec("commit");
         }
     }
     trans.exec("commit");
