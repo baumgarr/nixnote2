@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "nwebpage.h"
 #include <QDebug>
+#include <QWebFrame>
 #include "global.h"
 
 //*******************************************************
@@ -31,6 +32,7 @@ NWebPage::NWebPage(QWidget *parent) :
     QWebPage(parent)
 {
     connect(this,SIGNAL(contentsChanged()), this, SLOT(editAlert()));
+    mainFrame()->setScrollBarPolicy(Qt::Horizontal, Qt::ScrollBarAsNeeded);
 }
 
 
