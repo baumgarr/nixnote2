@@ -12,9 +12,7 @@ RESOURCES = NixNote2.qrc
 
 UI_DIR = .
 
-#CONFIG +=64bit
 message(Beginnig Build)
-message($$ARCH)
 
 
 CONFIG(debug, debug|release) {
@@ -317,23 +315,3 @@ LIBS +=    -Wl,-L./lib -lthrift \
            -lopencv_core -lopencv_highgui -lopencv_imgproc \
            -lhunspell \
            -lssl -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=./lib
-
-#$$ARCH(32bit)   {
-#       QMAKE_CXXFLAGS += -m32 -msse -msse2 -msse3
-#       LIBS += -rdynamic -Wl,-rpath=./lib32
-#       QMAKE_LFLAGS = '-m32'
-#}
-
-#$$ARCH(64bit)   {
-#       LIBS += -rdynamic -Wl,-rpath=./lib64
-#}
-
-
-LIBS +=    -Wl,-L./lib -lthrift \
-           -lopencv_core -lopencv_highgui -lopencv_imgproc \
-           -lhunspell \
-           -lssl -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=./lib
-
-
-#QMAKE_CXXFLAGS += `pkg-config --cflags opencv`
-
