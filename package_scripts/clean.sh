@@ -1,7 +1,12 @@
 #!/bin/sh
 
-arch="amd64"
 version="2.0-alpha5"
+
+# Determine which platform we are on
+arch="i386"
+case "$(uname -m)" in
+   "x86_64" ) arch="amd64";;
+esac
 
 #Do any parameter overrides
 while [ -n "$*" ]

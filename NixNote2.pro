@@ -311,7 +311,11 @@ INCLUDEPATH += /usr/local/include/thrift \
             /usr/include/thrift \
             /usr/include/poppler/qt4
 
-LIBS +=    -Wl,-L./lib -lthrift \
+#LIBS +=    -Wl,-L./lib -lthrift \
+LIBS +=    -lthrift \
            -lopencv_core -lopencv_highgui -lopencv_imgproc \
            -lhunspell \
-           -lssl -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=./lib
+           -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=/usr/lib/nixnote2
+
+QMAKE_CXXFLAGS += '`dpkg-buildflags --get CFLAGS`
+QMAKE_LFLAGS += `dpkg-buildflags --get LDFLAGS`
