@@ -64,6 +64,6 @@ sed -i "s/__ARCH__/$arch/" $package_dir/rpmbuild/SPECS/nixnote2.spec
 
 #rpmbuild --define "_topdir `pwd`" -ba ./SPECS/nixnote.spec
 rpmbuild --define "_topdir $package_dir/rpmbuild" -ba $package_dir/rpmbuild/SPECS/nixnote2.spec
-cp $package_dir/rpmbuild/RPMS/$(uname -m)/*.rpm $package_dir/
+cp $package_dir/rpmbuild/RPMS/$arch/*.rpm $package_dir/
 cd -
 rm -rf $package_dir/rpmbuild
