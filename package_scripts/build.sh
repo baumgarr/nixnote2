@@ -1,5 +1,5 @@
 #!/bin/sh
-version="2.0-alpha5"
+#version="2.0-alpha5"
 
 ####################################################
 # Make sure we are running as root
@@ -24,11 +24,11 @@ do
    shift
 done
 
-
+read -p "Enter version for build: " version
 
 
 sudo $package_dir/clean.sh arch=$arch version=$version
-#sudo $package_dir/translate.sh arch=$arch version=$version
+sudo $package_dir/translate.sh arch=$arch version=$version
 sudo $package_dir/copy_files.sh arch=$arch version=$version
 sudo $package_dir/tar.sh arch=$arch version=$version
 sudo $package_dir/dpkg.sh arch=$arch version=$version
