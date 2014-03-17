@@ -1,0 +1,3 @@
+NixNote (2.0-alpha5) stable; urgency=low
+  * Initial alpha-5 release.  Uploads are disabled by default.
+

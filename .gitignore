@@ -18,6 +18,11 @@
 *.log
 core
  
+# Deb/RPM/tar files
+*.tar
+*.deb
+*.rpm
+ 
 # moc_* files
 moc_*.*
 qrc_*.*

@@ -1,0 +1,35 @@
+Welcome to NixNote.     
+
+This is a very basic clone of Evernote designed to run on Linux.
+
+See release.txt for details of what works and what doesn't work.
+
+===========================
+===========================
+==  INSTALL INSTRUCTIONS ==
+===========================
+===========================
+
+
+*********************************************************
+*** Debian or Debian based systems (including Ubuntu) ***
+*********************************************************
+1.) Download the appropriate version (i386 or amd64).
+2.) Issue dpkg -i <package> 
+
+
+************************
+*** RPM ased systems ***
+************************
+--NOTE: I used Alien to create these, so I'm not too sure how usable they are.
+1.) Download the appropriate version (i386 or amd64).
+2.) Issue rpm -ivf <package> 
+
+
+
+************************
+*** Manual install   ***
+************************
+1.) Download the appropriate version (i386 or amd64).
+2.) Unzip the files to a local directory.
+3.) As root, issue ./install.sh
