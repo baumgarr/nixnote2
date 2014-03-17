@@ -19,7 +19,7 @@
 core
  
 # Deb/RPM/tar files
-*.tar
+*.tar.gz
 *.deb
 *.rpm
  

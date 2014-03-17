@@ -36,6 +36,8 @@ echo "**********************************"
 echo "* Checking deb for errors"
 echo "**********************************"
 lintian $package_dir/nixnote2-${version}_${arch}.deb 
+sudo $package_dir/rpm.sh arch=$arch version=$version
+
 
 # Cleanup
 echo "Cleaning up"
