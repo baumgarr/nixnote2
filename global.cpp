@@ -117,13 +117,14 @@ void Global::setup(StartupConfig startupConfig) {
 
 
 // Return the path the program is executing under
+// If we are in /usr/bin, then we need to return /usr/share/nixnote2.
+// This is because we want to find other paths (like images).  This
+// allows for users to run it out of a non-path location.
 QString Global::getProgramDirPath() {
-//    QString path(QFileInfo(this->argv[0]).absoluteFilePath());
-//    int i = path.lastIndexOf("/");
-//    path.chop(path.length()-i);
-//    return path;
-        return QCoreApplication::applicationDirPath();
-
+    QString path = QCoreApplication::applicationDirPath();
+    if (path == "/usr/bin")
+        return "/usr/share/nixnote2";
+    return path;
 }
 
 bool Global::confirmDeletes() {
