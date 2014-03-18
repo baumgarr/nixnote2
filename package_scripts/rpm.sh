@@ -22,6 +22,11 @@ case "$(uname -m)" in
    "x86_64" ) arch="amd64";;
 esac
 
+rpmdir="i386"
+case "$(uname -m)" in
+   "x86_64" ) rpmdir="x86_64";;
+esac
+
 #Do any parameter overrides
 while [ -n "$*" ]
 do
@@ -64,6 +69,6 @@ sed -i "s/__ARCH__/$arch/" $package_dir/rpmbuild/SPECS/nixnote2.spec
 
 #rpmbuild --define "_topdir `pwd`" -ba ./SPECS/nixnote.spec
 rpmbuild --define "_topdir $package_dir/rpmbuild" -ba $package_dir/rpmbuild/SPECS/nixnote2.spec
-cp $package_dir/rpmbuild/RPMS/$arch/*.rpm $package_dir/
+cp $package_dir/rpmbuild/RPMS/$rpmdir/*.rpm $package_dir/
 cd -
 rm -rf $package_dir/rpmbuild
