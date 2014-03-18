@@ -317,5 +317,5 @@ LIBS +=    -lthrift \
            -lhunspell \
            -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=/usr/lib/nixnote2
 
-QMAKE_CXXFLAGS += '`dpkg-buildflags --get CFLAGS`
+QMAKE_CXXFLAGS += `dpkg-buildflags --get CFLAGS`
 QMAKE_LFLAGS += `dpkg-buildflags --get LDFLAGS`

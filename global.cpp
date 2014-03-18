@@ -19,8 +19,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "global.h"
 
-#include <QString>
-#include <QProxyStyle>
+//#include <QString>
+//#include <QProxyStyle>
+#include <string>
+#include <limits.h>
+#include <unistd.h>
 
 
 //******************************************
@@ -115,10 +118,12 @@ void Global::setup(StartupConfig startupConfig) {
 
 // Return the path the program is executing under
 QString Global::getProgramDirPath() {
-    QString path(QFileInfo(this->argv[0]).absoluteFilePath());
-    int i = path.lastIndexOf("/");
-    path.chop(path.length()-i);
-    return path;
+//    QString path(QFileInfo(this->argv[0]).absoluteFilePath());
+//    int i = path.lastIndexOf("/");
+//    path.chop(path.length()-i);
+//    return path;
+        return QCoreApplication::applicationDirPath();
+
 }
 
 bool Global::confirmDeletes() {
