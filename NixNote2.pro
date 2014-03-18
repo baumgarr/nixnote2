@@ -315,7 +315,9 @@ INCLUDEPATH += /usr/local/include/thrift \
 LIBS +=    -lthrift \
            -lopencv_core -lopencv_highgui -lopencv_imgproc \
            -lhunspell \
-           -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic -Wl,-rpath=/usr/lib/nixnote2
+           -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic \
+           -Wl,-rpath=/usr/lib/nixnote2 \
+           -Wl,-rpath=/usr/local/lib
 
 QMAKE_CXXFLAGS += `dpkg-buildflags --get CFLAGS`
 QMAKE_LFLAGS += `dpkg-buildflags --get LDFLAGS`
