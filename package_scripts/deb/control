@@ -4,7 +4,7 @@ Section: x11
 Priority: optional
 Architecture: __ARCH__ 
 Installed-Size: 133120
-Depends: libc6, tidy, libhunspell-1.3-0, libpoppler-qt4-4, libqtwebkit4, libqt4-sql, libqt4-xml, libqtgui4, libqt4-network, libqtcore4, libpng12-0, libpoppler28, libsqlite3-0, libtbb2, libopenexr6, tidy
+Depends: libc6, tidy, libhunspell-1.3-0, libpoppler-qt4-4, libqtwebkit4, libqt4-sql, libqt4-xml, libqtgui4, libqt4-network, libqtcore4, libpng12-0, libpoppler28 | libpoppler43, libsqlite3-0, libtbb2, libopenexr6, tidy
 Recommends: mimetex, libreoffice-common, openjdk-6-jre | openjdk-6-jdk | sun-java6-jdk | sun-java6-jre | java6-sdk | java6-runtime | default-jre 
 Maintainer: Randy Baumgarte <randy@fbn.cx>
 Description: Open Source Evernote client.
