@@ -52,7 +52,6 @@ mkdir $package_dir/nixnote2/usr/share/man
 mkdir $package_dir/nixnote2/usr/share/man/man1
 mkdir $package_dir/nixnote2/usr/bin
 mkdir $package_dir/nixnote2/usr/lib
-mkdir $package_dir/nixnote2/usr/lib/nixnote2
 mkdir $package_dir/nixnote2/usr/share/doc/
 mkdir $package_dir/nixnote2/usr/share/doc/nixnote2
 
