@@ -124,6 +124,10 @@ QString Global::getProgramDirPath() {
     QString path = QCoreApplication::applicationDirPath();
     if (path == "/usr/bin")
         return "/usr/share/nixnote2";
+    if (path == "/usr/share/bin")
+        return "/usr/share/nixnote2";
+    if (path == "/usr/local/bin")
+        return "/usr/share/nixnote2";
     return path;
 }
 
