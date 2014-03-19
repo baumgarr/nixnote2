@@ -57,22 +57,16 @@ mkdir $package_dir/rpmbuild
 mkdir $package_dir/rpmbuild/SPECS
 mkdir $package_dir/rpmbuild/SOURCES
 
-# Check if Thrift exists
-if [ -d $package_dir/nixnote2/usr/lib ] 
-then
-  thrift = "y"
-fi
-
 #start creating the  source tar.  Note, we don't include the /usr/lib directory
 # since there is a Thrift RPM package.
 cp $package_dir/rpm/nixnote2.spec $package_dir/rpmbuild/SPECS/nixnote2.spec
 
-if [ "$thrift" = "y" ] 
+if [ -d "$package_dir/nixnote2/usr/lib" ] 
 then
    mv $package_dir/nixnote2/usr/lib $package_dir/nixnote2-lib
 fi
 tar -czf $package_dir/rpmbuild/SOURCES/nixnote2_${version}_${arch}.tar.gz ./nixnote2
-if [ "$thrift" = "y" ] 
+if [ -d "$package_dir/nixnote2-lib" ] 
 then
   mv $package_dir/nixnote2-lib $package_dir/nixnote2/usr/lib
 fi
