@@ -316,8 +316,7 @@ LIBS +=    -lthrift \
            -lopencv_core -lopencv_highgui -lopencv_imgproc \
            -lhunspell \
            -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic \
-           -Wl,-rpath=/usr/lib/nixnote2 \
-           -Wl,-rpath=/usr/local/lib
+           -Wl,-rpath=/usr/lib/nixnote2
 
 QMAKE_CXXFLAGS += `dpkg-buildflags --get CFLAGS`
 QMAKE_LFLAGS += `dpkg-buildflags --get LDFLAGS`
