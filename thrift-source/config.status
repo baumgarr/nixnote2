@@ -449,7 +449,7 @@ Copyright (C) 2010 Free Software Foundation, Inc.
 This config.status script is free software; the Free Software Foundation
 gives unlimited permission to copy, distribute and modify it."
 
-ac_pwd='/home/randy/Dropbox/thrift-0.9.1/thrift-0.9.1'
+ac_pwd='/home/randy/Dropbox/nixnote2-git/nn64/thrift-source'
 srcdir='.'
 INSTALL='/usr/bin/install -c'
 MKDIR_P='/bin/mkdir -p'
@@ -1131,12 +1131,12 @@ S["mkdir_p"]="/bin/mkdir -p"
 S["MKDIR_P"]="/bin/mkdir -p"
 S["INSTALL_STRIP_PROGRAM"]="$(install_sh) -c -s"
 S["STRIP"]="strip"
-S["install_sh"]="${SHELL} /home/randy/Dropbox/thrift-0.9.1/thrift-0.9.1/install-sh"
-S["MAKEINFO"]="${SHELL} /home/randy/Dropbox/thrift-0.9.1/thrift-0.9.1/missing --run makeinfo"
-S["AUTOHEADER"]="${SHELL} /home/randy/Dropbox/thrift-0.9.1/thrift-0.9.1/missing --run autoheader"
-S["AUTOMAKE"]="${SHELL} /home/randy/Dropbox/thrift-0.9.1/thrift-0.9.1/missing --run automake-1.11"
-S["AUTOCONF"]="${SHELL} /home/randy/Dropbox/thrift-0.9.1/thrift-0.9.1/missing --run autoconf"
-S["ACLOCAL"]="${SHELL} /home/randy/Dropbox/thrift-0.9.1/thrift-0.9.1/missing --run aclocal-1.11"
+S["install_sh"]="${SHELL} /home/randy/Dropbox/nixnote2-git/nn64/thrift-source/install-sh"
+S["MAKEINFO"]="${SHELL} /home/randy/Dropbox/nixnote2-git/nn64/thrift-source/missing --run makeinfo"
+S["AUTOHEADER"]="${SHELL} /home/randy/Dropbox/nixnote2-git/nn64/thrift-source/missing --run autoheader"
+S["AUTOMAKE"]="${SHELL} /home/randy/Dropbox/nixnote2-git/nn64/thrift-source/missing --run automake-1.11"
+S["AUTOCONF"]="${SHELL} /home/randy/Dropbox/nixnote2-git/nn64/thrift-source/missing --run autoconf"
+S["ACLOCAL"]="${SHELL} /home/randy/Dropbox/nixnote2-git/nn64/thrift-source/missing --run aclocal-1.11"
 S["VERSION"]="0.9.1"
 S["PACKAGE"]="thrift"
 S["CYGPATH_W"]="echo"

@@ -3,10 +3,11 @@
 version="2.0-alpha5"
 arch="amd64"
 
-
 package_dir=$(cd `dirname $0` && pwd)
-
 source_dir=".."
+
+thrift_lib="$source_dir/thrift-source/lib/cpp/.libs"
+thrift="y"
 
 
 ####################################################
@@ -51,7 +52,6 @@ mkdir $package_dir/nixnote2/usr/share/nixnote2
 mkdir $package_dir/nixnote2/usr/share/man 
 mkdir $package_dir/nixnote2/usr/share/man/man1
 mkdir $package_dir/nixnote2/usr/bin
-mkdir $package_dir/nixnote2/usr/lib
 mkdir $package_dir/nixnote2/usr/share/doc/
 mkdir $package_dir/nixnote2/usr/share/doc/nixnote2
 
@@ -66,10 +66,17 @@ gzip -c -9 $source_dir/man/nixnote2.1 > $package_dir/nixnote2/usr/share/man/man1
 cp $source_dir/changelog.txt $package_dir/nixnote2/usr/share/doc/nixnote2/changelog.Debian
 gzip -c -9 $package_dir/nixnote2/usr/share/doc/nixnote2/changelog.Debian > $package_dir/nixnote2/usr/share/doc/nixnote2/changelog.Debian.gz
 rm $package_dir/nixnote2/usr/share/doc/nixnote2/changelog.Debian
+ 
+if [ $thrift = "y" ]
+then
+   mkdir $package_dir/nixnote2/usr/lib
+   mkdir $package_dir/nixnote2/usr/lib/nixnote2
+   strip --strip-all $thrift_lib/libthrift-0.9.1.so -o $package_dir/nixnote2/usr/lib/nixnote2/libthrift-0.9.1.so
+fi
+
 
 # Copy subdirectories
 cp -r $source_dir/images $package_dir/nixnote2/usr/share/nixnote2/
-cp -r $source_dir/$lib $package_dir/nixnote2/usr/lib/nixnote2
 cp -r $source_dir/spell $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/translations $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/certs $package_dir/nixnote2/usr/share/nixnote2/
@@ -77,8 +84,13 @@ cp -r $source_dir/qss $package_dir/nixnote2/usr/share/nixnote2/
 
 
 # Reset user permissions
-echo "Resetting permissions"
+echo "Resetting ownership & permissions"
 chown -R root:root $package_dir/nixnote2/
+
+if [ "$thrift" = "y" ] 
+then
+  chmod 644 $package_dir/nixnote2/usr/lib/nixnote2/*.*
+fi
 
 # Cleanup
 #echo "Cleaning up"

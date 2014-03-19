@@ -45,7 +45,6 @@ sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 rm -rf ${RPM_BUILD_DIR}/nixnote2
-rm /usr/bin/nixnote2
 
 
 %prep

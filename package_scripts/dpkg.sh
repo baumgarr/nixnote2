@@ -56,11 +56,23 @@ cd $package_dir
 # Copy control file for the package
 mkdir $package_dir/nixnote2/DEBIAN
 cp $package_dir/deb/control $package_dir/nixnote2/DEBIAN/control
+
+# remove the gpl.txt to avoid a lintian warning
+rm $package_dir/nixnote2/usr/share/nixnote2/gpl.txt
+
+# edit the version & architecture
 sed -i "s/__ARCH__/$arch/" $package_dir/nixnote2/DEBIAN/control
 sed -i "s/__VERSION__/$version/" $package_dir/nixnote2/DEBIAN/control
 
+# build the deb
 dpkg -b $package_dir/nixnote2 $package_dir/nixnote2-${version}_${arch}.deb
 
+# remove the temporary directory
 rm -rf $package_dir/nixnote2/DEBIAN
+
+# copy the gpl.txt back in 
+cp $source_dir/gpl.txt $package_dir/nixnote2/usr/share/nixnote2/gpl.txt
+
+# Exit
 cd -
 

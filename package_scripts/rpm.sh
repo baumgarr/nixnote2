@@ -2,8 +2,6 @@
 export DEB_BUILD_HARDENING=0
 
 version="2.0-alpha5"
-
-
 package_dir=$(cd `dirname $0` && pwd)
 
 
@@ -59,16 +57,37 @@ mkdir $package_dir/rpmbuild
 mkdir $package_dir/rpmbuild/SPECS
 mkdir $package_dir/rpmbuild/SOURCES
 
+# Check if Thrift exists
+if [ -d $package_dir/nixnote2/usr/lib ] 
+then
+  thrift = "y"
+fi
 
+#start creating the  source tar.  Note, we don't include the /usr/lib directory
+# since there is a Thrift RPM package.
 cp $package_dir/rpm/nixnote2.spec $package_dir/rpmbuild/SPECS/nixnote2.spec
-#cp $package_dir/nixnote2-${version}_${arch}.tar.gz  $package_dir/rpmbuild/SOURCES/
-tar -czf $package_dir/rpmbuild/SOURCES/nixnote2_${version}_${arch}.tar.gz ./nixnote2
 
+if [ "$thrift" = "y" ] 
+then
+   mv $package_dir/nixnote2/usr/lib $package_dir/nixnote2-lib
+fi
+tar -czf $package_dir/rpmbuild/SOURCES/nixnote2_${version}_${arch}.tar.gz ./nixnote2
+if [ "$thrift" = "y" ] 
+then
+  mv $package_dir/nixnote2-lib $package_dir/nixnote2/usr/lib
+fi
+
+
+#edit the spec file to update the version & architecture
 sed -i "s/__VERSION__/$version/" $package_dir/rpmbuild/SPECS/nixnote2.spec
 sed -i "s/__ARCH__/$arch/" $package_dir/rpmbuild/SPECS/nixnote2.spec
 
-#rpmbuild --define "_topdir `pwd`" -ba ./SPECS/nixnote.spec
-rpmbuild --define "_topdir $package_dir/rpmbuild" -ba $package_dir/rpmbuild/SPECS/nixnote2.spec
+#do the actual build
+rpmbuild --quiet --define "_topdir $package_dir/rpmbuild" -ba $package_dir/rpmbuild/SPECS/nixnote2.spec
+
+#copy the rpm out
 cp $package_dir/rpmbuild/RPMS/$rpmdir/*.rpm $package_dir/
+
+#cleanup
 cd -
 rm -rf $package_dir/rpmbuild
