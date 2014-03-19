@@ -1,5 +1,5 @@
 Summary: An Evernote client clone for Linux
-Name: nixnote
+Name: nixnote2
 Version: __VERSION__
 Release: 0
 License: GPLv2
@@ -9,7 +9,7 @@ URL: http://nevernote.sourceforge.net/
 Packager: Randy Baumgarte <randy@fbn.cx>
 Source: /home/randy/nn2/package_scripts/nixnote2___VERSION_____ARCH__.tar.gz
 AutoReqProv: no
-Requires: tidy, bash, qt >= 4.8.5, qt-x11 >= 4.8.5, glibc >= 2.18, libgcc >= 4.8.2, hunspell >= 1.3.2, poppler-qt, libstdc++ >= 4.8.2, openssl >= 1.0.0, OpenEXR >= 1.7, ffmpeg, tbb >=4.1, opencv >=2.4.7, thrift >= 0.9.1
+Requires: tidy, bash, qt >= 4.8.5, qt-x11 >= 4.8.5, qtwebkit >= 2.3, glibc >= 2.18, libgcc >= 4.8.2, hunspell >= 1.3.2, poppler-qt, libstdc++ >= 4.8.2, openssl >= 1.0.0, OpenEXR >= 1.7, tbb >= 4.1, opencv >= 2.4.7, thrift >= 0.9.1
 
 %description
 NixNote:: Evernote client clone for Linux
@@ -73,15 +73,11 @@ if [ -f /usr/bin/nixnote2 ]; then
 fi
 
 %files
-%attr(644,root,root) /usr/share/nixnote2
+%attr(755,root,root) /usr/share/nixnote2
 %attr(755,root,root) /usr/bin/nixnote2  
-%attr(644,root,root) /usr/lib/nixnote2/libopencv_core.so.2.3  
-%attr(644,root,root) /usr/lib/nixnote2/libopencv_highgui.so.2.3
-%attr(644,root,root) /usr/lib/nixnote2/libopencv_imgproc.so.2.3 
-%attr(644,root,root) /usr/lib/nixnote2/libthrift-0.9.1.so
-%attr(644,root,root) /usr/share/doc/nixnote2
-%attr(644,root,root) /usr/share/applications/nixnote2.desktop
-%attr(644,root,root) /usr/share/man/man1/nixnote2.1.gz
+%attr(755,root,root) /usr/share/doc/nixnote2
+%attr(755,root,root) /usr/share/applications/nixnote2.desktop
+%attr(755,root,root) /usr/share/man/man1/nixnote2.1.gz
 
 %changelog
 * Sat Mar 15 2014 Randy Baumgarte <randy@fbn.cx> - 2.0-alpha5
