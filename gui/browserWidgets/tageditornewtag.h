@@ -30,7 +30,6 @@ class TagEditorNewTag : public QLineEdit
 private:
     QString activeColor;
     QString inactiveColor;
-    QString defaultText;
     QCompleter *completer;
     QStringList currentTags;
     qint32 account;
@@ -45,7 +44,7 @@ public:
 public slots:
     void setActiveColor();
     void textModified(QString text);
-    void gainedFocus(bool focus);
+//    void gainedFocus(bool focus);
     void notebookSelectionChanged(qint32 notebook);
     void loadCompleter();
 

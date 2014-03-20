@@ -39,7 +39,9 @@ public:
     explicit NTrashTree(QWidget *parent = 0);
     void updateSelection();
     void resetSize();
+    QSize sizeHint();
     qint32 count;
+    void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
 
 signals:
     void updateSelectionRequested();

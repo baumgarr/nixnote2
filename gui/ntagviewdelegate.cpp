@@ -37,7 +37,6 @@ void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     painter->save();
 
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
-
     qint32 lid = index.data(Qt::UserRole).toInt();
     if (lid > 0) {
 
@@ -46,7 +45,6 @@ void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         qint32 count = item->count;
         QString countString = QString("(")+QString::number(count) + QString(")");
 
-        // shift text right to make icon visible
         QSize iconSize = options.icon.actualSize(options.rect.size());
         painter->translate(options.rect.left()+iconSize.width(), options.rect.top());
         QRect clip(0, 0, options.rect.width()+iconSize.width(), options.rect.height());
@@ -54,8 +52,8 @@ void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
         painter->setClipRect(clip);
         QFontMetrics fm = options.fontMetrics;
         painter->setPen(Qt::darkGray);
-//        painter->drawText(fm.width(index.data().toString()+QString("  ")),fm.ascent(), countString);
-        painter->drawText(fm.width(index.data().toString()+QString("  ")),iconSize.height(), countString);
+        painter->drawText(6+fm.width(index.data().toString()+QString("   ")),fm.height()-1,countString);
+//        painter->drawText(fm.width(index.data().toString()+QString("  ")),iconSize.height(), countString);
 
     }
     painter->restore();

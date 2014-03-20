@@ -36,17 +36,12 @@ AuthorEditor::AuthorEditor(QWidget *parent) :
     QFont f = font();
     f.setPointSize(8);
     setFont(f);
+    this->setPlaceholderText(tr("Click to set author"));
 
     inactiveColor = "QLineEdit {background-color: transparent; border-radius: 0px;} ";
     activeColor = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
     this->setCursor(Qt::PointingHandCursor);
     this->setStyleSheet(inactiveColor);
-
-    defaultText = QString(tr("Click to set Author..."));
-//    connect(this, SIGNAL(textChanged(QString)), this, SLOT(textModified(QString)));
-    //this->textModified(defaultText);
-
-    connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
     hide();
 }
 
@@ -58,10 +53,7 @@ void AuthorEditor::setActiveColor() {
 void AuthorEditor::setAuthor(qint32 lid, QString text) {
     currentLid = lid;
     blockSignals(true);
-    if (text.trimmed() == "")
-        setText(defaultText);
-    else
-        setText(text);
+    setText(text);
     blockSignals(false);
     initialText = text;
     priorText = text;
@@ -87,6 +79,9 @@ void AuthorEditor::focusOutEvent(QFocusEvent *e)
 
 
 void AuthorEditor::textModified(QString text) {
+    if (this->hasFocus())
+        return;
+
     this->blockSignals(true);
 
     NoteTable noteTable(global.db);
@@ -98,10 +93,7 @@ void AuthorEditor::textModified(QString text) {
     if (oldAuthor.trimmed() != text.trimmed())
         noteTable.updateAuthor(currentLid, text, true);
 
-    if (text.trimmed() == "" && !hasFocus())
-        setText(defaultText);
-    else
-        setText(text);
+    setText(text);
     this->blockSignals(false);
 
     if (text.trimmed() != initialText.trimmed() || priorText.trimmed() != text.trimmed())
@@ -111,17 +103,6 @@ void AuthorEditor::textModified(QString text) {
 }
 
 
-void AuthorEditor::gainedFocus(bool focus) {
-    if (focus && this->text() == defaultText)
-        textModified("");
-    if (!focus && this->text().trimmed() == "")
-        textModified(defaultText);
-}
-
-
 QString AuthorEditor::getText() {
-    if (this->text().trimmed() == defaultText)
-        return "";
-    else
-        return text();
+    return text();
 }

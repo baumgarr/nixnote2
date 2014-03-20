@@ -163,6 +163,8 @@ public:
     void updateSelection();
     void resetSize();
     void mousePressEvent(QMouseEvent *event);
+    QSize sizeHint();
+    void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
 
 signals:
     void updateSelectionRequested();

@@ -44,7 +44,8 @@ NTrashTree::NTrashTree(QWidget *parent) :
     this->setRootIsDecorated(true);
     this->setSortingEnabled(false);
     this->header()->setVisible(false);
-    this->setStyleSheet("QTreeWidget {  border: none; background-color:transparent; }");
+    this->setContentsMargins(10,10,10,10);
+    //this->setStyleSheet("QTreeWidget {  border: none; background-color:transparent; }");
 
     // Build the root item
     QIcon icon(":trash.png");
@@ -70,6 +71,8 @@ NTrashTree::NTrashTree(QWidget *parent) :
     connect(expungeAction, SIGNAL(triggered()), this, SLOT(expungeAll()));
 
     setItemDelegate(new NTrashViewDelegate());
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    this->setFrameShape(QFrame::NoFrame);
 }
 
 
@@ -79,21 +82,20 @@ void NTrashTree::calculateHeight()
 
     int topLevelCount = topLevelItemCount();
 
-    for(int i = 0;i < topLevelCount;i++)
-    {
+    for(int i = 0;i < topLevelCount;i++)    {
         QTreeWidgetItem * item = topLevelItem(i);
         h += calculateHeightRec(item);
         h += item->sizeHint(0).height() + 5;
     }
 
-    if(h != 0)
-    {
-//        h += header()->sizeHint().height();
-
-        setMinimumHeight(h);
-        setMaximumHeight(h);
+    if(h != 0)    {
+        setMinimumHeight(h+5);
+        setMaximumHeight(h+5);
     }
+    this->setMaximumWidth(this->sizeHint().width());
 }
+
+
 
 int NTrashTree::calculateHeightRec(QTreeWidgetItem * item)
 {
@@ -262,3 +264,25 @@ void NTrashTree::updateTotals(qint32 total) {
     this->count = total;
     repaint();
 }
+
+
+
+QSize NTrashTree::sizeHint() {
+    QSize sz = QTreeView::sizeHint();
+    QFontMetrics fm(root->font(0));
+    QString numString =  tr("Trash  ") +
+            QString("(")+QString::number(count) +QString(")");
+    int numWidth = fm.width(numString);
+
+    sz.setWidth(root->icon(0).availableSizes().at(0).width()
+                + numWidth+24);  // Add some extra at the end for totals
+    QLOG_DEBUG() << sz.width();
+
+    return sz;
+}
+
+
+void NTrashTree::drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const {
+    return;
+}
+

@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPainter>
 #include "nnotebookviewitem.h"
 #include "nnotebookview.h"
+#include "global.h"
+
+extern Global global;
 
 NNotebookViewDelegate::NNotebookViewDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
@@ -53,9 +56,26 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
         painter->setClipRect(clip);
         QFontMetrics fm = options.fontMetrics;
         painter->setPen(Qt::darkGray);
-//        painter->drawText(fm.width(index.data().toString()+QString("    ")),fm.height()-fm.descent()-1,countString);
-        painter->drawText(fm.width(index.data().toString()+QString("    ")),fm.ascent()+2,countString);
-
+        painter->drawText(6+fm.width(index.data().toString()+QString("   ")),fm.height()-1,countString);
     }
     painter->restore();
+}
+
+
+
+QSize NNotebookViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+//    int theWidth=-1;
+
+//    // handle other types of view here if needed
+//    QTreeView* tree=qobject_cast<QTreeView*>(this->);
+//    if(tree)
+//    {
+//        qDebug("WIDTH @ %d : %d",index.column(),tree->header()->sectionSize(index.column()));
+//        theWidth=tree->header()->sectionSize(index.column());
+//    }
+    QSize sz=QStyledItemDelegate::sizeHint(option, index);
+//    if(theWidth>=0)
+//        sz.setWidth(theWidth);
+
+    return sz;
 }

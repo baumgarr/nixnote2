@@ -214,6 +214,13 @@ NTableView::NTableView(QWidget *parent) :
     connect(openNoteExternalWindowAction, SIGNAL(triggered()), this, SLOT(openNoteExternalWindowTriggered()));
     openNoteExternalWindowAction->setFont(font);
 
+    contextMenu->addSeparator();
+
+    addNoteAction = new QAction(tr("Add Note"), this);
+    contextMenu->addAction(addNoteAction);
+//    connect(addNoteAction, SIGNAL(triggered()), this, SLOT(addNote()));
+    addNoteAction->setFont(font);
+
     deleteNoteAction = new QAction(tr("Delete Note"), this);
     contextMenu->addAction(deleteNoteAction);
     connect(deleteNoteAction, SIGNAL(triggered()), this, SLOT(deleteSelectedNotes()));
@@ -1218,19 +1225,6 @@ void NTableView::mouseMoveEvent(QMouseEvent *event)
         event->ignore();
         return;
     }
-//    int minDistance = QApplication::startDragDistance();
-//    int rowHeightMin = this->rowHeight(0)/2;
-//    if (rowHeightMin > minDistance)
-//        minDistance = rowHeightMin;
-//    if (minDistance < 25)
-//        minDistance = 25;
-
-//    if ((event->pos() - dragStartPosition).manhattanLength()
-//              < minDistance) {
-//        event->ignore();
-//        return;
-//    }
-//    QTableView::mouseMoveEvent(event);
 
     QList<qint32> lids;
     getSelectedLids(lids);

@@ -40,7 +40,6 @@ NTitleEditor::NTitleEditor(QWidget *parent) :
     activeColor = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
     this->setStyleSheet(inactiveColor);
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(titleChanged(QString)));
-
 }
 
 void NTitleEditor::setActiveColor() {
@@ -64,6 +63,7 @@ void NTitleEditor::focusOutEvent(QFocusEvent *e)
   setStyleSheet(inactiveColor);
   titleChanged(cleanupTitle(text()));
   emit(focussed(false));
+  this->setCursorPosition(0);
 }
 
 
@@ -78,6 +78,7 @@ void NTitleEditor::setTitle(qint32 lid, QString title, QString defaultT) {
     defaultTitle = defaultT;
     blockSignals(true);
     setText(title);
+    this->setCursorPosition(0);
     blockSignals(false);
 }
 

@@ -19,6 +19,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "widgetpanel.h"
 #include <QVBoxLayout>
+#include <QStyleOption>
+#include <QStyle>
+#include <QPainter>
+#include <QScrollArea>
+
 
 WidgetPanel::WidgetPanel(QWidget *parent) :
     QWidget(parent)
@@ -27,6 +32,9 @@ WidgetPanel::WidgetPanel(QWidget *parent) :
     this->setLayout(vboxLayout);
     vboxLayout->setSpacing(10);
     vboxLayout->setSizeConstraint(QLayout::SetNoConstraint);
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    this->setStyleSheet("QTreeView {background:transparent; border:none; margin:0px; padding: 0px;} "); //QTreeView::branch { image:none; border-image:none }");
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
 }
 
 WidgetPanel::~WidgetPanel() {
@@ -40,5 +48,17 @@ void WidgetPanel::addWidget(QWidget *widget) {
 
 
 
+void WidgetPanel::paintEvent(QPaintEvent *e)
+ {
+    return;
+     QStyleOption opt;
+     opt.init(this);
+     QPainter p(this);
+     style()->drawPrimitive(QStyle::PE_Widget, &opt, &p, this);
+ }
 
 
+
+QSize WidgetPanel::sizeHint() {
+    return minimumSizeHint();
+}

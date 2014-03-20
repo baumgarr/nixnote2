@@ -40,11 +40,11 @@ NAttributeTree::NAttributeTree(QWidget *parent) :
     this->setRootIsDecorated(true);
     this->setSortingEnabled(false);
     this->header()->setVisible(false);
-    this->setStyleSheet("QTreeWidget {  border: none; background-color:transparent; }");
+    //this->setStyleSheet("QTreeWidget {  border: none; background-color:transparent; }");
 
     // Build the root item
     root = new QTreeWidgetItem(this);
-    QIcon icon(":attribute.png");
+    QIcon icon(":attributes.png");
     root->setIcon(0,icon);
     root->setData(0, Qt::UserRole, "root");
     root->setData(0, Qt::DisplayRole, tr("Attributes"));
@@ -355,6 +355,10 @@ NAttributeTree::NAttributeTree(QWidget *parent) :
     root->addChild(lastUpdatedRoot);
     root->addChild(containsRoot);
     root->addChild(sourceRoot);
+    root->setExpanded(true);
+
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    this->setFrameShape(QFrame::NoFrame);
 }
 
 NAttributeTree::~NAttributeTree() {
@@ -368,20 +372,17 @@ void NAttributeTree::calculateHeight()
 
     int topLevelCount = topLevelItemCount();
 
-    for(int i = 0;i < topLevelCount;i++)
-    {
+    for(int i = 0;i < topLevelCount;i++)    {
         QTreeWidgetItem * item = topLevelItem(i);
         h += calculateHeightRec(item);
         h += item->sizeHint(0).height() + 5;
     }
 
-    if(h != 0)
-    {
-//        h += header()->sizeHint().height();
-
+    if(h != 0)  {
         setMinimumHeight(h);
         setMaximumHeight(h);
     }
+    this->setMaximumWidth(this->sizeHint().width());
 }
 
 int NAttributeTree::calculateHeightRec(QTreeWidgetItem * item)
@@ -431,10 +432,6 @@ void NAttributeTree::buildSelection() {
         QTreeWidgetItem *item = selectedItems[i];
         if (item->data(0, Qt::UserRole) == 0 || item->data(0,Qt::UserRole) == "root") {
             item->setSelected(false);
-            //if (item->isExpanded())
-            //   this->collapseItem(item);
-            //else
-            //    this->expandItem(item);
         }
     }
 
@@ -508,7 +505,35 @@ void NAttributeTree::mousePressEvent(QMouseEvent *event)
 
     for (int i=0; i<this->selectedItems() .size(); i++) {
         if (this->selectedIndexes().at(i).data(Qt::UserRole) == "root") {
+            if (!root->isExpanded())
+                root->setExpanded(true);
             selectionModel()->select(this->selectedIndexes().at(i), QItemSelectionModel::Deselect);
         }
     }
 }
+
+
+
+QSize NAttributeTree::sizeHint() {
+
+    QSize sz = QTreeView::sizeHint();
+
+    if (root->isExpanded())
+        return sz;
+
+    QFontMetrics fm(root->font(0));;
+    int numWidth = fm.width(tr("Attributes"));
+
+    sz.setWidth(numWidth+44+root->icon(0).availableSizes().at(0).width());  // Add some extra at the end for totals
+    return sz;
+}
+
+
+
+void NAttributeTree::drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const {
+    if (index.data(Qt::UserRole).toString() == "root")
+        return;
+
+    QTreeView::drawBranches(painter, rect, index);
+}
+

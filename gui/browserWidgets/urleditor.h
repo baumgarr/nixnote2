@@ -28,7 +28,7 @@ class UrlEditor : public QLineEdit
 private:
     QString activeColor;
     QString inactiveColor;
-    QString defaultText;
+//    QString defaultText;
     QString initialText;
     QString priorText;
     qint32 currentLid;
@@ -40,7 +40,6 @@ public:
 public slots:
     void setActiveColor();
     void textModified(QString text);
-    void gainedFocus(bool focus);
     void setUrl(qint32 lid, QString text);
 
 signals:

@@ -53,11 +53,10 @@ TagEditorNewTag::TagEditorNewTag(QWidget *parent) :
     activeColor = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
     this->setStyleSheet(inactiveColor);
 
-    defaultText = QString(tr("Click to add..."));
+    this->setPlaceholderText(tr("Click to add tag..."));
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(textModified(QString)));
-    this->textModified(defaultText);
 
-    connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
+//    connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
     completer = NULL;
     loadCompleter();
     hide();
@@ -89,7 +88,6 @@ void TagEditorNewTag::loadCompleter() {
     completer = new QCompleter(tagNames, this);
     completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
-    //completer->setCompletionMode(QCompleter::InlineCompletion);
     setCompleter(completer);
 }
 
@@ -131,11 +129,10 @@ void TagEditorNewTag::focusOutEvent(QFocusEvent *e)
 //* The current text has changed
 //*******************************************************
 void TagEditorNewTag::textModified(QString text) {
+    if (this->hasFocus())
+        return;
     this->blockSignals(true);
-    if (text.trimmed() == "" && !hasFocus())
-        setText(defaultText);
-    else
-        setText(text);
+    setText(text);
     this->blockSignals(false);
 }
 
@@ -143,12 +140,10 @@ void TagEditorNewTag::textModified(QString text) {
 //*******************************************************
 //* Event listener for when the editor gains focus
 //*******************************************************
-void TagEditorNewTag::gainedFocus(bool focus) {
-    if (focus && text() == defaultText)
-        textModified("");
-    if (!focus && text().trimmed() == "")
-        textModified(defaultText);
-}
+//void TagEditorNewTag::gainedFocus(bool focus) {
+//    if (focus && text() == defaultText)
+//        textModified("");
+//}
 
 
 
@@ -157,10 +152,7 @@ void TagEditorNewTag::gainedFocus(bool focus) {
 //* text, the n return an empty string.
 //*******************************************************
 QString TagEditorNewTag::getText() {
-    if (this->text().trimmed() == defaultText)
-        return "";
-    else
-        return text();
+    return text().trimmed();
 }
 
 
@@ -210,7 +202,7 @@ bool  TagEditorNewTag::event(QEvent *event)
 //*******************************************************
 void TagEditorNewTag::resetText() {
     blockSignals(true);
-    setText(defaultText);
+    setText("");
     blockSignals(false);
 }
 

@@ -45,6 +45,7 @@ private:
     QShortcut *deleteShortcut;
     TreeWidgetEditor *editor;
     QHash<QString, QAction*> menuData;
+    int maxCount;
     void sortStackMenu();
 
 
@@ -63,6 +64,9 @@ public:
     void contextMenuEvent(QContextMenuEvent *event);
     QHash<qint32, NNotebookViewItem*> dataStore;
     QHash<QString, NNotebookViewItem*> stackStore;
+    QSize sizeHint();
+    void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
+
 
 signals:
     void updateSelectionRequested();

@@ -71,7 +71,7 @@ NSearchView::NSearchView(QWidget *parent) :
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     //QString qss = "QTreeWidget::branch:closed:has-children  {border-image: none; image: url(qss/branch-closed.png); } QTreeWidget::branch:open:has-children { border-image: none; image: url(qss/branch-open.png); }";
     //this->setStyleSheet(qss + " QTreeWidget { background-color: rgb(216,216,216);  border: none  }");
-    this->setStyleSheet(" QTreeWidget {  border: none; background-color:transparent; }");
+   // this->setStyleSheet(" QTreeWidget {  border: none; background-color:transparent; }");
     connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(buildSelection()));
@@ -114,6 +114,9 @@ NSearchView::NSearchView(QWidget *parent) :
     connect(addShortcut, SIGNAL(activated()), this, SLOT(addRequested()));
     connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
     connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    this->setFrameShape(QFrame::NoFrame);
+
 }
 
 
@@ -136,6 +139,8 @@ void NSearchView::mousePressEvent(QMouseEvent *event)
 
     for (int i=0; i<this->selectedItems() .size(); i++) {
         if (this->selectedIndexes().at(i).data(Qt::UserRole) == "root") {
+            if (!root->isExpanded())
+                root->setExpanded(true);
             selectionModel()->select(this->selectedIndexes().at(i), QItemSelectionModel::Deselect);
         }
     }
@@ -215,6 +220,7 @@ void NSearchView::calculateHeight()
         setMinimumHeight(h);
         setMaximumHeight(h);
     }
+    setMaximumWidth(sizeHint().width());
 }
 
 int NSearchView::calculateHeightRec(QTreeWidgetItem * item)
@@ -430,6 +436,27 @@ void NSearchView::editComplete() {
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);
     resetSize();
     this->sortByColumn(NAME_POSITION);
+}
+
+
+
+QSize NSearchView::sizeHint() {
+    QSize sz = QTreeView::sizeHint();
+    int width=0;
+    for (int i=0; i<columnCount(); ++i) {
+        width += 2 + columnWidth(i);
+    }
+    sz.setWidth(14+width+root->icon(0).availableSizes().at(0).width());  // Add some extra at the end for totals
+    return sz;
+}
+
+
+
+void NSearchView::drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const {
+    if (index.data(Qt::UserRole).toString() == "root")
+        return;
+
+    QTreeView::drawBranches(painter, rect, index);
 }
 
 

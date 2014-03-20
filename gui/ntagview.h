@@ -34,6 +34,7 @@ private:
     NTagViewItem *root;
     virtual void mousePressEvent(QMouseEvent *event);
     int filterPosition;
+    int maxCount;
     QMenu context;
     QAction *addAction;
     QAction *propertiesAction;
@@ -67,6 +68,8 @@ public:
     void dropEvent(QDropEvent *event);
     void contextMenuEvent(QContextMenuEvent *event);
     NTagViewItem* getItem(qint32 lid);
+    QSize sizeHint();
+    void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
 
 
 

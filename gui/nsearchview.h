@@ -66,6 +66,8 @@ public:
     void resetSize();
     void loadData();
     void contextMenuEvent(QContextMenuEvent *event);
+    QSize sizeHint();
+    void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
 
 signals:
     void updateSelectionRequested();

@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPainter>
 #include <QMessageBox>
 #include <QTextDocument>
+#include <QFontMetrics>
 
 #include "sql/notebooktable.h"
 #include "sql/linkednotebooktable.h"
@@ -56,6 +57,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
     this->setFont(f);
 
     filterPosition = -1;
+    maxCount = 0;  // Highest count of any notebook.  Used in calculating column width
     // setup options
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -63,21 +65,14 @@ NNotebookView::NNotebookView(QWidget *parent) :
     this->setRootIsDecorated(true);
     this->setSortingEnabled(false);
     this->header()->setVisible(false);
-    this->setStyleSheet(QString("QTreeWidget { border: none; background-color: transparent; }"));
+//    this->setStyleSheet("QTreeWidget { border-image: none; border:none; background-color: transparent; }");
 
-    // Build the root item
-//    root = new NNotebookViewItem(this);
-//    root->setIcon(NAME_POSITION,icon);
-//    root->setData(NAME_POSITION, Qt::UserRole, "rootlocal");
-//    root->setData(NAME_POSITION, Qt::DisplayRole, tr("Local  Notebooks"));
-//    root->setRootColor(true);
-//    root->setExpanded(true);
     root = new NNotebookViewItem(0);
     root->setType(NNotebookViewItem::Stack);
-    //root->setIcon(NAME_POSITION,QIcon(":stack.png"));
     root->setData(NAME_POSITION, Qt::UserRole, "rootsynchronized");
     root->setData(NAME_POSITION, Qt::DisplayRole, tr("Notebooks"));
-    root->setRootColor(true);
+    root->setRootColor(false);
+
     this->setMinimumHeight(1);
     this->addTopLevelItem(root);
     this->rebuildNotebookTreeNeeded = true;
@@ -148,6 +143,8 @@ NNotebookView::NNotebookView(QWidget *parent) :
     this->setAcceptDrops(true);
     this->setItemDelegate(new NNotebookViewDelegate());
     root->setExpanded(true);
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    this->setFrameShape(QFrame::NoFrame);
 }
 
 
@@ -164,20 +161,17 @@ void NNotebookView::calculateHeight()
 
     int topLevelCount = topLevelItemCount();
 
-    for(int i = 0;i < topLevelCount;i++)
-    {
+    for(int i = 0;i < topLevelCount;i++)    {
         QTreeWidgetItem * item = topLevelItem(i);
         h += calculateHeightRec(item);
         h += item->sizeHint(0).height() + 5;
     }
 
-    if(h != 0)
-    {
-       // h += header()->sizeHint().height();
-
-        setMinimumHeight(h);
-        setMaximumHeight(h);
+    if(h != 0)   {
+        setMinimumHeight(h+10);
+        setMaximumHeight(h+10);
     }
+    this->setMaximumWidth(this->sizeHint().width());
 }
 
 int NNotebookView::calculateHeightRec(QTreeWidgetItem * item)
@@ -836,6 +830,8 @@ void NNotebookView::updateTotals(qint32 lid, qint32 total) {
     if (dataStore.contains(lid)) {
         NNotebookViewItem *item = dataStore[lid];
         item->count = total;
+        if (total > maxCount)
+            maxCount = total;
         repaint();
     }
 }
@@ -912,6 +908,34 @@ void NNotebookView::dragMoveEvent(QDragMoveEvent *event) {
         return;
     }
 }
+
+
+QSize NNotebookView::sizeHint() {
+    QSize sz = QTreeView::sizeHint();
+    int width=0;
+    for (int i=0; i<columnCount(); ++i) {
+        width += 2 + columnWidth(i);
+    }
+    // Calculate the spacing at the end to leave for totals
+    QFontMetrics fm(this->font());
+    QString numString = QString("(")+QString::number(maxCount) +QString(")");
+    int numWidth = fm.width(numString);
+
+    sz.setWidth(width+numWidth+14);  // Add some extra at the end for totals
+    return sz;
+}
+
+
+
+void NNotebookView::drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const {
+    if (index.data(Qt::UserRole).toString() == "rootsynchronized")
+        return;
+
+    QTreeView::drawBranches(painter, rect, index);
+}
+
+
+
 
 
 #pragma GCC diagnostic pop

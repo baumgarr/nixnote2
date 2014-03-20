@@ -61,6 +61,7 @@ public:
     void keyPressEvent(QKeyEvent *event);
 
     QMenu *contextMenu;
+    QAction *addNoteAction;
     QAction *deleteNoteAction;
     QAction *restoreNoteAction;
     QAction *openNoteAction;

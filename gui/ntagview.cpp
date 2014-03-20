@@ -54,6 +54,7 @@ NTagView::NTagView(QWidget *parent) :
     this->setFont(f);
 
     filterPosition = 0;
+    maxCount = 0;
     // setup options
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);
     this->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -61,7 +62,7 @@ NTagView::NTagView(QWidget *parent) :
     this->setRootIsDecorated(true);
     this->setSortingEnabled(false);
     this->header()->setVisible(false);
-    this->setStyleSheet("QTreeWidget { border: none; background-color:transparent;}");
+    //this->setStyleSheet("QTreeWidget { background:transparent; border:none; margin:0px; padding: 0px; }");
 
     // Build the root item
     QIcon icon(":tag.png");
@@ -136,6 +137,8 @@ NTagView::NTagView(QWidget *parent) :
     connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
 
     this->setItemDelegate(new NTagViewDelegate());
+    this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
+    this->setFrameShape(QFrame::NoFrame);
 }
 
 
@@ -191,6 +194,7 @@ void NTagView::calculateHeight()
         setMinimumHeight(h);
         setMaximumHeight(h);
     }
+    this->setMaximumWidth(sizeHint().width());
 }
 
 int NTagView::calculateHeightRec(QTreeWidgetItem * item)
@@ -229,6 +233,8 @@ void NTagView::mousePressEvent(QMouseEvent *event)
 
     for (int i=0; i<this->selectedItems() .size(); i++) {
         if (this->selectedIndexes().at(i).data(Qt::UserRole) == "root") {
+            if (!root->isExpanded())
+                root->setExpanded(true);
             selectionModel()->select(this->selectedIndexes().at(i), QItemSelectionModel::Deselect);
         }
     }
@@ -789,6 +795,8 @@ void NTagView::updateTotals(qint32 lid, qint32 total) {
         NTagViewItem *item = dataStore[lid];
         if (item != NULL)
             item->count = total;
+        if (total > maxCount)
+            maxCount = total;
     }
 }
 
@@ -854,6 +862,31 @@ void NTagView::hideUnassignedTags() {
 NTagViewItem* NTagView::getItem(qint32 lid) {
     return dataStore[lid];
 }
+
+
+QSize NTagView::sizeHint() {
+    QSize sz = QTreeView::sizeHint();
+    int width=0;
+    for (int i=0; i<columnCount(); ++i) {
+        width += 2 + columnWidth(i);
+    }
+    // Calculate the spacing at the end to leave for totals
+    QFontMetrics fm(this->font());
+    QString numString = QString("(")+QString::number(maxCount) +QString(")");
+    int numWidth = fm.width(numString);
+    sz.setWidth(width+numWidth+14);  // Add some extra at the end for totals
+    return sz;
+}
+
+
+void NTagView::drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const {
+    if (index.data(Qt::UserRole).toString() == "root") {
+        return;
+    }
+
+    QTreeView::drawBranches(painter, rect, index);
+}
+
 
 
 #pragma GCC diagnostic pop

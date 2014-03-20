@@ -184,7 +184,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     // Init OAuth winwod
     oauthWindow = NULL;
 
-
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
 
@@ -302,7 +301,7 @@ void NixNote::setupGui() {
     leftScroll = new QScrollArea();
     leftScroll->setWidgetResizable(true);
     leftScroll->setWidget(leftPanel);
-    leftScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    leftScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     leftScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     mainSplitter->insertWidget(0,leftScroll);
@@ -580,9 +579,10 @@ void NixNote::setupNoteList() {
     else
         mainSplitter->addWidget(topRightWidget);
 
-    noteTableView->contextMenu->insertAction(noteTableView->deleteNoteAction, newNoteButton);
-    noteTableView->contextMenu->insertSeparator(noteTableView->deleteNoteAction);
+//    noteTableView->contextMenu->insertAction(noteTableView->deleteNoteAction, newNoteButton);
+//    noteTableView->contextMenu->insertSeparator(noteTableView->deleteNoteAction);
 
+    connect(noteTableView->contextMenu, SIGNAL(triggered(QAction*)), this, SLOT(newNote()));
     connect(noteTableView, SIGNAL(notesDeleted(QList<qint32>,bool)), this, SLOT(notesDeleted(QList<qint32>)));
     connect(noteTableView, SIGNAL(notesRestored(QList<qint32>)), this, SLOT(notesRestored(QList<qint32>)));
     connect(&syncRunner, SIGNAL(syncComplete()), noteTableView, SLOT(refreshData()));
@@ -676,11 +676,6 @@ void NixNote::setupTrashTree() {
 //*****************************************************************************
 void NixNote::setupSynchronizedNotebookTree() {
     QLOG_TRACE() << "Starting NixNote.setupSynchronizedNotebookTree()";
-    QLabel *lbl = new QLabel();
-    lbl->setTextFormat(Qt::RichText);
-    //lbl->setText("<hr>");
-    //leftPanel->addWidget(lbl);
-
     notebookTreeView = new NNotebookView(leftPanel);
     leftPanel->addWidget(notebookTreeView);
     connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString)),notebookTreeView, SLOT(notebookUpdated(qint32, QString)));

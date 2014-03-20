@@ -35,7 +35,9 @@ public:
     explicit WidgetPanel(QWidget *parent = 0);
     ~WidgetPanel();
     void addWidget(QWidget *widget);
-
+    void paintEvent(QPaintEvent *);
+    QSize sizeHint();
+    QScrollArea *scroll;
 
 signals:
 

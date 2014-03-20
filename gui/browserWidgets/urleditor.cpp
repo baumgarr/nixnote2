@@ -42,11 +42,12 @@ UrlEditor::UrlEditor(QWidget *parent) :
     this->setCursor(Qt::PointingHandCursor);
     this->setStyleSheet(inactiveColor);
 
-    defaultText = QString(tr("Click to set source URL..."));
+    this->setPlaceholderText(tr("Click to set source URL..."));
+//    defaultText = QString(tr("Click to set source URL..."));
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(textModified(QString)));
     //this->textModified(defaultText);
 
-    connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
+    //connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
     hide();
 }
 
@@ -59,7 +60,7 @@ void UrlEditor::setUrl(qint32 lid, QString text) {
     currentLid = lid;
     blockSignals(true);
     if (text.trimmed() == "")
-        setText(defaultText);
+        return;
     else
         setText(text);
     blockSignals(false);
@@ -87,13 +88,16 @@ void UrlEditor::focusOutEvent(QFocusEvent *e)
 
 
 void UrlEditor::textModified(QString text) {
+    if (hasFocus())
+        return;
+
     this->blockSignals(true);
 
     NoteTable noteTable(global.db);
     noteTable.updateUrl(currentLid, text, true);
 
-    if (text.trimmed() == "" && !hasFocus())
-        setText(defaultText);
+    if (text.trimmed() == "" && !hasFocus() && priorText.trimmed() == text.trimmed())
+        return;
     else
         setText(text);
     this->blockSignals(false);
@@ -105,17 +109,6 @@ void UrlEditor::textModified(QString text) {
 }
 
 
-void UrlEditor::gainedFocus(bool focus) {
-    if (focus && this->text() == defaultText)
-        textModified("");
-    if (!focus && this->text().trimmed() == "")
-        textModified(defaultText);
-}
-
-
 QString UrlEditor::getText() {
-    if (this->text().trimmed() == defaultText)
-        return "";
-    else
         return text();
 }
