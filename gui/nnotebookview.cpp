@@ -71,6 +71,10 @@ NNotebookView::NNotebookView(QWidget *parent) :
     root->setType(NNotebookViewItem::Stack);
     root->setData(NAME_POSITION, Qt::UserRole, "rootsynchronized");
     root->setData(NAME_POSITION, Qt::DisplayRole, tr("Notebooks"));
+    QFont rootFont = root->font(NAME_POSITION);
+    rootFont.setBold(true);
+    root->setFont(NAME_POSITION, rootFont);
+
     root->setRootColor(false);
 
     this->setMinimumHeight(1);
