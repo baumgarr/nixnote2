@@ -31,7 +31,11 @@ AddUserAccountDialog::AddUserAccountDialog(QWidget *parent) :
     cancelButton = new QPushButton(this);
     buttonLayout = new QHBoxLayout();
     mainLayout = new QVBoxLayout();
-    labelLayout = new QHBoxLayout();
+    labelLayout = new QGridLayout();
+    newAccountLabel = new QLabel();
+    newAccountServer = new QComboBox();
+    newAccountServerLabel = new QLabel();
+    newAccountServerLabel->setText(tr("Server"));
     okButton->setText(tr("Ok"));
     okButton->setEnabled(false);
     cancelButton->setText(tr("Cancel"));
@@ -43,8 +47,10 @@ AddUserAccountDialog::AddUserAccountDialog(QWidget *parent) :
     newAccountName = new QLineEdit();
     connect(newAccountName, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
 
-    labelLayout->addWidget(newAccountLabel);
-    labelLayout->addWidget(newAccountName);
+    labelLayout->addWidget(newAccountLabel,0,0);
+    labelLayout->addWidget(newAccountName, 0, 1);
+    labelLayout->addWidget(newAccountServerLabel, 1,0);;
+    labelLayout->addWidget(newAccountServer,1,1);
 
     QSpacerItem *spacer1 = new QSpacerItem(10,10,QSizePolicy::Maximum, QSizePolicy::Minimum);
     QSpacerItem *spacer2= new QSpacerItem(10,10,QSizePolicy::Maximum, QSizePolicy::Minimum);
@@ -60,6 +66,8 @@ AddUserAccountDialog::AddUserAccountDialog(QWidget *parent) :
 
     accountNames = global.accountsManager->nameList();
 
+    newAccountServer->addItem(tr("www.evernote.com"), "www.evernote.com");
+    newAccountServer->addItem(tr("sandbox.evernote.com"), "sandbox.evernote.com");
 }
 
 

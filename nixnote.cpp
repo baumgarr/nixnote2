@@ -1807,7 +1807,9 @@ void NixNote::addAnotherUser() {
     if (!dialog.okPushed)
         return;
     QString name = dialog.newAccountName->text().trimmed();
-    int newid = global.accountsManager->addId(-1, name);
+    int six = dialog.newAccountServer->currentIndex();
+    QString server = dialog.newAccountServer->itemData(six, Qt::UserRole).toString();
+    int newid = global.accountsManager->addId(-1, name, "", server);
     QAction *newAction = new QAction(menuBar);
     newAction->setText(tr("Switch to ") +name);
     newAction->setCheckable(true);

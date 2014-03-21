@@ -25,8 +25,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include <QVBoxLayout>
+#include <QGridLayout>
 #include <QLabel>
 #include <QLineEdit>
+#include <QComboBox>
 
 class AddUserAccountDialog : public QDialog
 {
@@ -39,9 +41,11 @@ public:
     bool okPushed;
     QVBoxLayout *mainLayout;
     QHBoxLayout *buttonLayout;
-    QHBoxLayout *labelLayout;
+    QGridLayout *labelLayout;
     QLabel *newAccountLabel;
     QLineEdit *newAccountName;
+    QLabel *newAccountServerLabel;
+    QComboBox *newAccountServer;
     QStringList accountNames;
     
 signals:

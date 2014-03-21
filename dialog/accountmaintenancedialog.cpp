@@ -128,6 +128,8 @@ void AccountMaintenanceDialog::renameAccount() {
                 activeId = false;
             AddUserAccountDialog userDialog;
             userDialog.newAccountName->setText(name);
+            userDialog.newAccountServer->setVisible(false);
+            userDialog.newAccountServerLabel->setVisible(false);
             userDialog.exec();
             if (!userDialog.okPushed)
                 return;
@@ -158,7 +160,9 @@ void AccountMaintenanceDialog::addAccount() {
     if (!dialog.okPushed)
         return;
     QString name = dialog.newAccountName->text().trimmed();
-    int newid = global.accountsManager->addId(-1, name);
+    int six = dialog.newAccountServer->currentIndex();
+    QString server = dialog.newAccountServer->itemData(six, Qt::UserRole).toString();
+    int newid = global.accountsManager->addId(-1, name, "", server);
     QAction *newAction = new QAction(menuBar);
     newAction->setText(tr("Switch to ") +name);
     newAction->setCheckable(true);
