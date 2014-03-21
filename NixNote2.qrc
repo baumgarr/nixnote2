@@ -54,5 +54,9 @@
         <file alias="webcam.png">images/webcam.png</file>
         <file alias="printer.png">images/printer.png</file>
         <file alias="delete.png">images/delete.png</file>
+        <file>images/encrypt.png</file>
+        <file>images/gps.png</file>
+        <file>images/notebook_old.png</file>
+        <file>images/notebook_small_old.png</file>
     </qresource>
 </RCC>

@@ -33,7 +33,7 @@ WidgetPanel::WidgetPanel(QWidget *parent) :
     vboxLayout->setSpacing(10);
     vboxLayout->setSizeConstraint(QLayout::SetNoConstraint);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
-    this->setStyleSheet("QTreeView {background:transparent; border:none; margin:0px; padding: 0px;} "); //QTreeView::branch { image:none; border-image:none }");
+    this->setStyleSheet("QTreeView {background:transparent; border:none; margin:0px; padding: 0px;} ");
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
 }
 
