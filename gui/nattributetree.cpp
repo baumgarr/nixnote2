@@ -515,17 +515,17 @@ void NAttributeTree::mousePressEvent(QMouseEvent *event)
 
 
 QSize NAttributeTree::sizeHint() {
+    return QTreeView::sizeHint();
+//    QSize sz = QTreeView::sizeHint();
 
-    QSize sz = QTreeView::sizeHint();
+//    if (root->isExpanded())
+//        return sz;
 
-    if (root->isExpanded())
-        return sz;
+//    QFontMetrics fm(root->font(0));;
+//    int numWidth = fm.width(tr("Attributes"));
 
-    QFontMetrics fm(root->font(0));;
-    int numWidth = fm.width(tr("Attributes"));
-
-    sz.setWidth(numWidth+44+root->icon(0).availableSizes().at(0).width());  // Add some extra at the end for totals
-    return sz;
+//    sz.setWidth(numWidth+44+root->icon(0).availableSizes().at(0).width());  // Add some extra at the end for totals
+//    return sz;
 }
 
 

@@ -441,13 +441,14 @@ void NSearchView::editComplete() {
 
 
 QSize NSearchView::sizeHint() {
-    QSize sz = QTreeView::sizeHint();
-    int width=0;
-    for (int i=0; i<columnCount(); ++i) {
-        width += 2 + columnWidth(i);
-    }
-    sz.setWidth(14+width+root->icon(0).availableSizes().at(0).width());  // Add some extra at the end for totals
-    return sz;
+    return QTreeView::sizeHint();
+//    QSize sz = QTreeView::sizeHint();
+//    int width=0;
+//    for (int i=0; i<columnCount(); ++i) {
+//        width += 2 + columnWidth(i);
+//    }
+//    sz.setWidth(14+width+root->icon(0).availableSizes().at(0).width());  // Add some extra at the end for totals
+//    return sz;
 }
 
 

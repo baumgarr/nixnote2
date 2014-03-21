@@ -915,18 +915,19 @@ void NNotebookView::dragMoveEvent(QDragMoveEvent *event) {
 
 
 QSize NNotebookView::sizeHint() {
-    QSize sz = QTreeView::sizeHint();
-    int width=0;
-    for (int i=0; i<columnCount(); ++i) {
-        width += 2 + columnWidth(i);
-    }
-    // Calculate the spacing at the end to leave for totals
-    QFontMetrics fm(this->font());
-    QString numString = QString("(")+QString::number(maxCount) +QString(")");
-    int numWidth = fm.width(numString);
+    return QTreeView::sizeHint();
+//    QSize sz = QTreeView::sizeHint();
+//    int width=0;
+//    for (int i=0; i<columnCount(); ++i) {
+//        width += 2 + columnWidth(i);
+//    }
+//    // Calculate the spacing at the end to leave for totals
+//    QFontMetrics fm(this->font());
+//    QString numString = QString("(")+QString::number(maxCount) +QString(")");
+//    int numWidth = fm.width(numString);
 
-    sz.setWidth(width+numWidth+14);  // Add some extra at the end for totals
-    return sz;
+//    sz.setWidth(width+numWidth+14);  // Add some extra at the end for totals
+//    return sz;
 }
 
 

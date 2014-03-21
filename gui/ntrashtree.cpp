@@ -268,17 +268,18 @@ void NTrashTree::updateTotals(qint32 total) {
 
 
 QSize NTrashTree::sizeHint() {
-    QSize sz = QTreeView::sizeHint();
-    QFontMetrics fm(root->font(0));
-    QString numString =  tr("Trash  ") +
-            QString("(")+QString::number(count) +QString(")");
-    int numWidth = fm.width(numString);
+    return QTreeView::sizeHint();
+//    QSize sz = QTreeView::sizeHint();
+//    QFontMetrics fm(root->font(0));
+//    QString numString =  tr("Trash  ") +
+//            QString("(")+QString::number(count) +QString(")");
+//    int numWidth = fm.width(numString);
 
-    sz.setWidth(root->icon(0).availableSizes().at(0).width()
-                + numWidth+24);  // Add some extra at the end for totals
-    QLOG_DEBUG() << sz.width();
+//    sz.setWidth(root->icon(0).availableSizes().at(0).width()
+//                + numWidth+24);  // Add some extra at the end for totals
+//    QLOG_DEBUG() << sz.width();
 
-    return sz;
+//    return sz;
 }
 
 
