@@ -72,6 +72,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/nmainmenubar.h"
 #include "dialog/logindialog.h"
 #include "xml/importdata.h"
+#include "dialog/aboutdialog.h"
 
 extern Global global;
 class SyncRunner;
@@ -1391,11 +1392,13 @@ void NixNote::openAccount() {
 
 
 void NixNote::openAbout() {
-    QMessageBox::about(this, tr(" NixNote 2 Alpha #5"),
-                       tr("This is ALPHA software. "
-                          "Use it at your own risk. "
-                          "\n\nLicensed under the Gnu Public License v2.\n\nBuilt on "
-                          ) + __TIMESTAMP__);
+//    QMessageBox::about(this, tr(" NixNote 2 Alpha #5"),
+//                       tr("This is ALPHA software. "
+//                          "Use it at your own risk. "
+//                          "\n\nLicensed under the Gnu Public License v2.\n\nBuilt on "
+//                          ) + __TIMESTAMP__);
+    AboutDialog about;
+    about.exec();
 }
 
 

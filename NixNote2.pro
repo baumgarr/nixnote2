@@ -163,7 +163,8 @@ SOURCES += main.cpp\
     utilities/spellchecker.cpp \
     dialog/spellcheckdialog.cpp \
     gui/externalbrowse.cpp \
-    sql/nsqlquery.cpp
+    sql/nsqlquery.cpp \
+    dialog/aboutdialog.cpp
 
 
 
@@ -304,7 +305,8 @@ HEADERS  += nixnote.h \
     utilities/spellchecker.h \
     dialog/spellcheckdialog.h \
     gui/externalbrowse.h \
-    sql/nsqlquery.h
+    sql/nsqlquery.h \
+    dialog/aboutdialog.h
 
 
 INCLUDEPATH += /usr/local/include/thrift \

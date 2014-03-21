@@ -75,12 +75,22 @@ then
 fi
 
 
+if [ ! -d $source_dir/spell ] 
+then
+   mkdir $source_dir/spell
+fi
+
 # Copy subdirectories
 cp -r $source_dir/images $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/spell $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/translations $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/certs $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/qss $package_dir/nixnote2/usr/share/nixnote2/
+cp -r $source_dir/help $package_dir/nixnote2/usr/share/nixnote2/
+
+
+#set help page
+sed -i "s/__VERSION__/$version/" $package_dir/nixnote2/usr/share/nixnote2/help/about.html
 
 
 # Reset user permissions
