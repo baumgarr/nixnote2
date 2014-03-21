@@ -215,6 +215,8 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
 
     for (int i=0; i<this->selectedItems() .size(); i++) {
         if (this->selectedIndexes().at(i).data(Qt::UserRole).toString().startsWith("root", Qt::CaseInsensitive)) {
+            if (!root->isExpanded())
+                root->setExpanded(true);
             selectionModel()->select(this->selectedIndexes().at(i), QItemSelectionModel::Deselect);
         }
     }
