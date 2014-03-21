@@ -89,6 +89,7 @@ signals:
     void refreshNoteContent(qint32 lid);
     void openNoteExternalWindow(qint32 lid);
     void saveAllNotes();
+    void newNote();
 
 public slots:
     void refreshData();
@@ -103,6 +104,7 @@ public slots:
     void copyNote();
     void pinNote();
     void unpinNote();
+    void createNewNote();
     void mergeNotes();
     void refreshCell(qint32 lid, int cell, QVariant data);
     void dragMoveEvent(QDragMoveEvent *event);

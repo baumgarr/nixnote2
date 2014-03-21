@@ -582,7 +582,7 @@ void NixNote::setupNoteList() {
 //    noteTableView->contextMenu->insertAction(noteTableView->deleteNoteAction, newNoteButton);
 //    noteTableView->contextMenu->insertSeparator(noteTableView->deleteNoteAction);
 
-    connect(noteTableView->contextMenu, SIGNAL(triggered(QAction*)), this, SLOT(newNote()));
+    connect(noteTableView, SIGNAL(newNote()), this, SLOT(newNote()));
     connect(noteTableView, SIGNAL(notesDeleted(QList<qint32>,bool)), this, SLOT(notesDeleted(QList<qint32>)));
     connect(noteTableView, SIGNAL(notesRestored(QList<qint32>)), this, SLOT(notesRestored(QList<qint32>)));
     connect(&syncRunner, SIGNAL(syncComplete()), noteTableView, SLOT(refreshData()));

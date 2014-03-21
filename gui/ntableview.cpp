@@ -218,7 +218,7 @@ NTableView::NTableView(QWidget *parent) :
 
     addNoteAction = new QAction(tr("Add Note"), this);
     contextMenu->addAction(addNoteAction);
-//    connect(addNoteAction, SIGNAL(triggered()), this, SLOT(addNote()));
+    connect(addNoteAction, SIGNAL(triggered()), this, SLOT(createNewNote()));
     addNoteAction->setFont(font);
 
     deleteNoteAction = new QAction(tr("Delete Note"), this);
@@ -1255,6 +1255,11 @@ void NTableView::openNoteExternalWindowTriggered() {
 
 void NTableView::openNoteNewTabTriggered() {
     this->openSelectedLids(true);
+}
+
+
+void NTableView::createNewNote() {
+    emit(newNote());
 }
 
 
