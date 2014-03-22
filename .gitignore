@@ -36,3 +36,6 @@ nixnote2
 
 #user files
 *.pro.*
+
+#compiled translations
+translations/*.qm

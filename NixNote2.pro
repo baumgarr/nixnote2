@@ -25,6 +25,10 @@ CONFIG(release, debug|release) {
         MOC_DIR = build/release
 }
 
+TRANSLATIONS = \
+    translations/nixnote2_cs_CZ.ts \
+    translations/nixnote2_de.ts
+
 SOURCES += main.cpp\
         nixnote.cpp \
     global.cpp \
