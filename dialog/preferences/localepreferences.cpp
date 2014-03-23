@@ -33,7 +33,7 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     timeFormatLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     timeFormat = new QComboBox(this);
     timeFormat->addItem(tr("HH:mm:ss - ")+time.toString("HH:mm:ss"), HHmmss);
-    timeFormat->addItem(tr("HH:MM:SS a - ")+time.toString("HH:MM:SS a"), HHMMSSa);
+    timeFormat->addItem(tr("HH:mm:ss a - ")+time.toString("HH:mm:ss a"), HHmmssa);
     timeFormat->addItem(tr("HH:mm - ")+time.toString("HH:mm"), HHmm);
     timeFormat->addItem(tr("HH:mm a - ")+time.toString("HH:mm a"), HHmma);
     timeFormat->addItem(tr("hh:mm:ss - ")+time.toString("hh:mm:ss"), hhmmss);
@@ -50,7 +50,7 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
 
     global.settings->beginGroup("Locale");
     int datei = global.settings->value("dateFormat", MMddyy).toInt();
-    int timei = global.settings->value("dateFormat", HHmmss).toInt();
+    int timei = global.settings->value("timeFormat", HHmmss).toInt();
     global.settings->endGroup();
     int index = dateFormat->findData(datei);
     dateFormat->setCurrentIndex(index);
@@ -117,7 +117,7 @@ void LocalePreferences::saveValues() {
     case HHmmss:
         timefmt = "HH:mm:ss";
         break;
-    case HHMMSSa:
+    case HHmmssa:
         timefmt = "HH:MM:SS a";
         break;
     case HHmm:

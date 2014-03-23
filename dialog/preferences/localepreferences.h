@@ -31,7 +31,7 @@ private:
     };
     enum TimeFormat {
         HHmmss = 1,
-        HHMMSSa = 2,
+        HHmmssa = 2,
         HHmm = 3,
         HHmma = 4,
         hhmmss = 5,
