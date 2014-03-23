@@ -79,7 +79,7 @@ void CounterRunner::countNotebooks() {
     }
 
     NSqlQuery query(db->conn);
-    query.exec(" select data, count(data) from datastore where key=5011 group by data;");
+    query.exec(" select data, count(data) from datastore where key=5011 and lid not in (select lid from datastore where data='false' and key=5010) group by data;");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
         qint32 total = query.value(1).toInt();
@@ -115,7 +115,7 @@ void CounterRunner::countTags() {
     }
 
     NSqlQuery query(db->conn);
-    query.exec(" select data, count(data) from datastore where key=5012 group by data;");
+    query.exec(" select data, count(data) from datastore where key=5012 and lid not in (select lid from datastore where data='false' and key=5010) group by data;");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
         qint32 total = query.value(1).toInt();
