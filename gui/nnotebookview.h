@@ -92,7 +92,7 @@ public slots:
     void moveToNewStackRequested();
     void removeFromStackRequested();
     void notebookExpunged(qint32 lid);
-    void updateTotals(qint32 lid, qint32 total);
+    void updateTotals(qint32 lid, qint32 subTotal, qint32 total);
     bool dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action);
     void dropEvent(QDropEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);

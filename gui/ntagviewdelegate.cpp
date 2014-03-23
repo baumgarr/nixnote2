@@ -42,8 +42,14 @@ void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
 
         NTagView  *tree = (NTagView*)options.widget;
         NTagViewItem *item = tree->getItem(lid);
-        qint32 count = item->count;
-        QString countString = QString("(")+QString::number(count) + QString(")");
+        qint32 subTotal = item->subTotal;
+        qint32 total = item->total;
+        QString countString;
+        if (total == subTotal) {
+            countString = QString("(")+QString::number(total) + QString(")");
+        } else {
+            countString = QString("(")+QString::number(subTotal) +QString("/") +QString::number(total) + QString(")");
+        }
 
         QSize iconSize = options.icon.actualSize(options.rect.size());
         painter->translate(options.rect.left()+iconSize.width(), options.rect.top());

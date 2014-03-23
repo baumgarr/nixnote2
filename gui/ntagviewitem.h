@@ -30,7 +30,8 @@ public:
     qint32 parentLid;
     QList<qint32> childrenLids;
     QString parentGuid;
-    qint32 count;
+    qint32 total;
+    qint32 subTotal;
     qint32 account;
 
     bool operator<(const QTreeWidgetItem &other)const;

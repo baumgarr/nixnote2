@@ -551,7 +551,8 @@ void NNotebookView::addRequested() {
     QString name = dialog.name.text().trimmed();
     qint32 lid = table.findByName(name);
     NNotebookViewItem *newWidget = new NNotebookViewItem(lid);
-    newWidget->count = 0;
+    newWidget->total = 0;
+    newWidget->subTotal = 0;
     newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
     newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
     this->dataStore.insert(lid, newWidget);
@@ -832,12 +833,13 @@ void NNotebookView::sortStackMenu() {
 
 
 
-void NNotebookView::updateTotals(qint32 lid, qint32 total) {
+void NNotebookView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
     if (dataStore.contains(lid)) {
         NNotebookViewItem *item = dataStore[lid];
-        item->count = total;
-        if (total > maxCount)
-            maxCount = total;
+        item->subTotal = subTotal;
+        item->total = total;
+        if (subTotal > maxCount)
+            maxCount = subTotal;
         repaint();
     }
 }

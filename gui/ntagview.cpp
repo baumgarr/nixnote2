@@ -790,11 +790,13 @@ void NTagView::tagExpunged(qint32 lid) {
 
 
 // Update the total counts for the tag.
-void NTagView::updateTotals(qint32 lid, qint32 total) {
+void NTagView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
     if (dataStore.contains(lid)) {
         NTagViewItem *item = dataStore[lid];
-        if (item != NULL)
-            item->count = total;
+        if (item != NULL) {
+            item->subTotal = subTotal;
+            item->total = total;
+        }
         if (total > maxCount)
             maxCount = total;
     }
@@ -837,7 +839,7 @@ void NTagView::hideUnassignedTags() {
     for (int i=0; i<keys.size(); i++) {
         item = dataStore[keys[i]];
         if (item != NULL) {
-            if (item->count == 0 || item->account != accountFilter)
+            if (item->subTotal == 0 || item->account != accountFilter)
                 item->setHidden(true);
             else
                 item->setHidden(false);

@@ -24,7 +24,8 @@ NTagViewItem::NTagViewItem(QTreeWidget* parent):QTreeWidgetItem(parent) {
     account = 0;        // The notebook account that owns this tag (non zero if this tag is from a linked notebook).
     childrenLids.clear();  // Children of this tag.
     parentGuid = "";    // GUID of the parent of this tag.
-    count = 0;          // Count of notes matching this tag
+    subTotal = 0;          // Count of notes matching this tag
+    total = 0;
 }
 
 
@@ -33,7 +34,8 @@ NTagViewItem::NTagViewItem():QTreeWidgetItem(){
     account = 0;        // The notebook account that owns this tag (non zero if this tag is from a linked notebook).
     childrenLids.clear();  // Children of this tag.
     parentGuid = "";    // GUID of the parent of this tag.
-    count = 0;          // Count of notes matching this tag
+    subTotal = 0;          // Count of notes matching this tag
+    total = 0;          // Total of all notes with this tag
 }
 
 

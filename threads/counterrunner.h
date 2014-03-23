@@ -45,8 +45,8 @@ public:
     
 signals:
     void trashTotals(qint32);
-    void notebookTotals(qint32, qint32);
-    void tagTotals(qint32, qint32);
+    void notebookTotals(qint32, qint32, qint32);
+    void tagTotals(qint32, qint32, qint32);
     void tagCountComplete();
     
 public slots:

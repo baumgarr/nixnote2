@@ -41,7 +41,8 @@ public:
     explicit NNotebookViewItem(qint32 lid, QTreeWidget* parent);
     QString stack;
     QList<qint32> childrenLids;
-    qint32 count;
+    qint32 subTotal;
+    qint32 total;
     NNotebookWidgetType type;
     qint32 lid;
 

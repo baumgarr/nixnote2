@@ -67,23 +67,36 @@ void CounterRunner::countNotebooks() {
     if (!init)
         initialize();
 
-    // First get every possible tag
+    // First get every possible notebook
     NotebookTable nTable(&db->conn);
     QList<qint32> lids;
     nTable.getAll(lids);
 
+    // Next, get the totals of everything possible
+    QHash<qint32, qint32> allNotebooks;
+    for (int i=0; i<lids.size(); i++) {
+        allNotebooks.insert(lids.at(i), 0);
+    }
 
     NSqlQuery query(db->conn);
+    query.exec(" select data, count(data) from datastore where key=5011 group by data;");
+    while (query.next()) {
+        qint32 lid = query.value(0).toInt();
+        qint32 total = query.value(1).toInt();
+        allNotebooks[lid] = total;
+    }
+
     query.exec("select notebooklid, count(notebooklid) from notetable where lid in (select lid from filter) group by notebooklid;");
 
     while(query.next()) {
-        emit notebookTotals(query.value(0).toInt(), query.value(1).toInt());
-        lids.removeAll(query.value(0).toInt());
+        qint32 lid = query.value(0).toInt();
+        emit notebookTotals(lid, query.value(1).toInt(), allNotebooks[lid]);
+        lids.removeAll(lid);
     }
 
     // The ones that are left have a zero count
     for (int i=0; i<lids.size(); i++)
-        emit(notebookTotals(lids[i], 0));
+        emit(notebookTotals(lids[i], 0, allNotebooks[lids[i]]));
 }
 
 
@@ -95,18 +108,33 @@ void CounterRunner::countTags() {
     QList<qint32> lids;
     tTable.getAll(lids);
 
+    // Next, get the totals of everything possible
+    QHash<qint32, qint32> allTags;
+    for (int i=0; i<lids.size(); i++) {
+        allTags.insert(lids.at(i), 0);
+    }
+
     NSqlQuery query(db->conn);
+    query.exec(" select data, count(data) from datastore where key=5012 group by data;");
+    while (query.next()) {
+        qint32 lid = query.value(0).toInt();
+        qint32 total = query.value(1).toInt();
+        allTags[lid] = total;
+    }
+
+    // Start counting
     query.prepare("select data, count(lid) from datastore where key=:key and lid in (select lid from filter) group by data;");
     query.bindValue(":key", NOTE_TAG_LID);
     query.exec();
     while(query.next()) {
-        emit tagTotals(query.value(0).toInt(), query.value(1).toInt());
-        lids.removeAll(query.value(0).toInt());
+        qint32 lid = query.value(0).toInt();
+        emit tagTotals(lid, query.value(1).toInt(), allTags[lid]);
+        lids.removeAll(lid);
     }
 
     // The ones that are left have a zero count, so we reset them
     for (int i=0; i<lids.size(); i++)
-        emit(tagTotals(lids[i], 0));
+        emit(tagTotals(lids[i], 0, allTags[lids[i]]));
 
     // Finally, emit that we are done so unassigned tags can be hidden
     emit(tagCountComplete());

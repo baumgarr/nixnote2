@@ -45,8 +45,14 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 
         NNotebookView  *tree = (NNotebookView*)options.widget;
         NNotebookViewItem *item = tree->dataStore[lid];
-        qint32 count = item->count;
-        QString countString = QString("(")+QString::number(count) + QString(")");
+        qint32 total = item->total;
+        qint32 subTotal = item->subTotal;
+        QString countString;
+        if (total == subTotal){
+            countString = QString("(")+QString::number(total) + QString(")");
+        } else {
+            countString = QString("(")+QString::number(subTotal) + QString("/") + QString::number(total) + QString(")");
+        }
 
         // shift text right to make icon visible
         QSize iconSize = options.icon.actualSize(options.rect.size());

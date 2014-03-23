@@ -92,7 +92,7 @@ public slots:
     void renameRequested();
     void mergeRequested();
     void tagExpunged(qint32 lid);
-    void updateTotals(qint32 lid, qint32 total);
+    void updateTotals(qint32 lid, qint32 subTotal, qint32 total);
     void hideUnassignedTags();
     void notebookSelectionChanged(qint32 notebookLid);
 
