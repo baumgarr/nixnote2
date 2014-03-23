@@ -24,8 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class DateDelegate : public QStyledItemDelegate
 {
+    Q_OBJECT
 public:
-    DateDelegate();
+    DateDelegate(QObject * parent = 0);
     QString displayText(const QVariant &value, const QLocale &locale) const;
 };
 

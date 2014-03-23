@@ -95,6 +95,12 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
     this->setDebugLevel();
 
+    QTranslator *nixnoteTranslator = new QTranslator();
+    QLOG_DEBUG() << "Looking for transaltions: " << global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm");
+    nixnoteTranslator->load(global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm"));
+    QApplication::instance()->installTranslator(nixnoteTranslator);
+
+
     connect(&syncThread, SIGNAL(started()), this, SLOT(syncThreadStarted()));
     connect(&counterThread, SIGNAL(started()), this, SLOT(counterThreadStarted()));
     connect(&indexThread, SIGNAL(started()), this, SLOT(indexThreadStarted()));
