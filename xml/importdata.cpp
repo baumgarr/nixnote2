@@ -89,7 +89,7 @@ void ImportData::import(QString file) {
 
     reader = new QXmlStreamReader(&xmlFile);
     NSqlQuery query(*global.db);
-    //query.exec("begin");
+    query.exec("begin");
     while (!reader->atEnd()) {
         reader->readNext();
         if (reader->hasError()) {
@@ -148,7 +148,7 @@ void ImportData::import(QString file) {
         }
     }
     xmlFile.close();
-    //query.exec("commit");
+    query.exec("commit");
 
     // Now we do what is a "ahem" hack.  We need to
     // go through all of the notes & rebuild the NoteTable.  This
