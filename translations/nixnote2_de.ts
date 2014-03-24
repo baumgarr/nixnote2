@@ -5,7 +5,7 @@
     <name>AboutDialog</name>
     <message>
         <location filename="../dialog/aboutdialog.cpp" line="17"/>
-        <source>Ok</source>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -101,7 +101,7 @@
     <name>AccountMaintenanceDialog</name>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="15"/>
-        <source>Ok</source>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -160,7 +160,7 @@
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="39"/>
-        <source>Ok</source>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -257,7 +257,7 @@
     </message>
     <message>
         <location filename="../dialog/closenotebookdialog.cpp" line="42"/>
-        <source>Ok</source>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1140,7 +1140,7 @@
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="36"/>
-        <source>HH:MM:SS a - </source>
+        <source>HH:mm:ss a - </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1904,12 +1904,12 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="595"/>
+        <location filename="../gui/nnotebookview.cpp" line="596"/>
         <source>Are you sure you want to delete this notebook?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="596"/>
+        <location filename="../gui/nnotebookview.cpp" line="597"/>
         <source>Verify Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2029,32 +2029,32 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="525"/>
+        <location filename="../gui/ntableview.cpp" line="533"/>
         <source>Delete </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="528"/>
+        <location filename="../gui/ntableview.cpp" line="536"/>
         <source>Permanently delete </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="534"/>
+        <location filename="../gui/ntableview.cpp" line="542"/>
         <source>selected note?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="539"/>
+        <location filename="../gui/ntableview.cpp" line="547"/>
         <source>Verify Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="732"/>
+        <location filename="../gui/ntableview.cpp" line="760"/>
         <source>Unsynchronized Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="733"/>
+        <location filename="../gui/ntableview.cpp" line="761"/>
         <source>This note has never been synchronized.
 Using this in a note link can cause problems unless you synchronize it first.</source>
         <translation type="unfinished"></translation>
@@ -2844,7 +2844,7 @@ Are you sure you want to continue?</source>
     </message>
     <message>
         <location filename="../dialog/preferences/preferencesdialog.cpp" line="41"/>
-        <source>Ok</source>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3457,7 +3457,7 @@ any key or using the right or middle mouse buttons.</source>
     </message>
     <message>
         <location filename="../dialog/webcamcapturedialog.cpp" line="60"/>
-        <source>Ok</source>
+        <source>OK</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

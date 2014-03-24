@@ -5,7 +5,7 @@
     <name>AboutDialog</name>
     <message>
         <location filename="../dialog/aboutdialog.cpp" line="17"/>
-        <source>Ok</source>
+        <source>OK</source>
         <translation type="unfinished">OK</translation>
     </message>
 </context>
@@ -105,8 +105,8 @@
     <name>AccountMaintenanceDialog</name>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="15"/>
-        <source>Ok</source>
-        <translation>OK</translation>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="16"/>
@@ -164,8 +164,8 @@
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="39"/>
-        <source>Ok</source>
-        <translation>OK</translation>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="41"/>
@@ -262,8 +262,8 @@
     </message>
     <message>
         <location filename="../dialog/closenotebookdialog.cpp" line="42"/>
-        <source>Ok</source>
-        <translation>OK</translation>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <location filename="../dialog/closenotebookdialog.cpp" line="43"/>
@@ -1148,8 +1148,8 @@
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="36"/>
-        <source>HH:MM:SS a - </source>
-        <translation>HH:MM:SS a - </translation>
+        <source>HH:mm:ss a - </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="37"/>
@@ -1917,12 +1917,12 @@ Dešifrování selhalo.</translation>
         <translation>Vlastnosti</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="595"/>
+        <location filename="../gui/nnotebookview.cpp" line="596"/>
         <source>Are you sure you want to delete this notebook?</source>
         <translation>Opravdu chcete smazat tento poznámkový blok?</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="596"/>
+        <location filename="../gui/nnotebookview.cpp" line="597"/>
         <source>Verify Delete</source>
         <translation>Potvrzení smazání</translation>
     </message>
@@ -2042,32 +2042,32 @@ Dešifrování selhalo.</translation>
         <translation>Sloučit poznámky</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="525"/>
+        <location filename="../gui/ntableview.cpp" line="533"/>
         <source>Delete </source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="528"/>
+        <location filename="../gui/ntableview.cpp" line="536"/>
         <source>Permanently delete </source>
         <translation>Trvale smazat </translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="534"/>
+        <location filename="../gui/ntableview.cpp" line="542"/>
         <source>selected note?</source>
         <translation>označenou poznámku?</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="539"/>
+        <location filename="../gui/ntableview.cpp" line="547"/>
         <source>Verify Delete</source>
         <translation>Potvrzení smazání</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="732"/>
+        <location filename="../gui/ntableview.cpp" line="760"/>
         <source>Unsynchronized Note</source>
         <translation>Nesynchronizovaná poznámka</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="733"/>
+        <location filename="../gui/ntableview.cpp" line="761"/>
         <source>This note has never been synchronized.
 Using this in a note link can cause problems unless you synchronize it first.</source>
         <translation>Poznámka nebyla nikdy synchronizována.
@@ -2646,24 +2646,6 @@ Opravdu chcete pokračovat?</translation>
         <translation>Synchronizace úspěšně dokončena.</translation>
     </message>
     <message>
-        <source> NixNote 2 Alpha #5</source>
-        <translation type="obsolete"> NixNote 2 Alpha #5</translation>
-    </message>
-    <message>
-        <source>This is ALPHA software. Use it at your own risk. 
-
-Licensed under the Gnu Public License v2.
-
-Built on </source>
-        <translation type="obsolete">Toto je ALFA verze softwaru. Používejte ji na vlastní nebezpečí.
-
-Vydáno pod licencí Gnu Public License v2.
-
-Český překlad Miloš Kožina - Milos.Kozina@postino.net
-
-Sestaveno </translation>
-    </message>
-    <message>
         <location filename="../nixnote.cpp" line="1475"/>
         <source>This feature is only available to premium users.</source>
         <translation>Tato funkce je dostupná pouze pro prémiové uživatele.</translation>
@@ -2885,8 +2867,8 @@ Sestaveno </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/preferencesdialog.cpp" line="41"/>
-        <source>Ok</source>
-        <translation>OK</translation>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/preferencesdialog.cpp" line="81"/>
@@ -3499,8 +3481,8 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
     </message>
     <message>
         <location filename="../dialog/webcamcapturedialog.cpp" line="60"/>
-        <source>Ok</source>
-        <translation>OK</translation>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
     </message>
 </context>
 </TS>
