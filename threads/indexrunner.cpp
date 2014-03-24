@@ -138,7 +138,6 @@ void IndexRunner::index() {
     }
     indexTimer->setInterval(maxInterval);
     indexTimer->start();
-
 }
 
 

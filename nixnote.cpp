@@ -1003,14 +1003,16 @@ void NixNote::disconnect() {
     global.connected = false;
     menuBar->disconnectAction->setEnabled(false);
     syncButtonTimer.stop();
-    indexRunner.pauseIndexing = false;
+    if (!menuBar->pauseIndexingAction->isChecked())
+       indexRunner.pauseIndexing = false;
 }
 
 
 
 
 void NixNote::syncButtonReset() {
-    indexRunner.pauseIndexing = false;
+    if (!menuBar->pauseIndexingAction->isChecked())
+        indexRunner.pauseIndexing = false;
     if (syncIcons.size() == 0)
         return;
     syncButtonTimer.stop();
@@ -2235,3 +2237,9 @@ void NixNote::spellCheckCurrentNote() {
     tabWindow->currentBrowser()->spellCheckPressed();
 }
 
+
+void NixNote::pauseIndexing() {
+    indexRunner.pauseIndexing = false;
+    if (menuBar->pauseIndexingAction->isChecked())
+       indexRunner.pauseIndexing = true;
+}

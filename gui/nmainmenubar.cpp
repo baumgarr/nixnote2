@@ -396,6 +396,14 @@ void NMainMenuBar::setupToolsMenu() {
   disconnectAction->setEnabled(false);
   disconnectAction->setVisible(false);  /// We can probably delete this whole menu option
 
+  pauseIndexingAction = new QAction(tr("Pause Indexing"), this);
+  pauseIndexingAction->setToolTip(tr("Temporarily pause indexng"));
+  setupShortcut(pauseIndexingAction, QString("Tools_Pause_Indexing"));
+  pauseIndexingAction->setFont(font);
+  connect(pauseIndexingAction, SIGNAL(triggered()), parent, SLOT(pauseIndexing()));
+  pauseIndexingAction->setCheckable(true);
+  toolsMenu->addAction(pauseIndexingAction);
+
   accountDialogAction = new QAction(tr("Account"), this);
   accountDialogAction->setToolTip(tr("Account information"));
   accountDialogAction->setFont(font);
