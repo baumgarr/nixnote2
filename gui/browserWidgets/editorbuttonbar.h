@@ -81,7 +81,6 @@ public:
     QAction *highlightColorAction;
     QAction *fontColorAction;
     QAction *todoButtonAction;
-    QAction *spellButtonAction;
     QAction *fontButtonAction;
     QAction *fontSizeButtonAction;
     QAction *insertTableButtonAction;

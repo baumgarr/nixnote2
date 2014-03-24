@@ -105,13 +105,13 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(shiftLeftVisible, SIGNAL(triggered()), this, SLOT(toggleShiftLeftButtonVisible()));
     connect(buttonListVisible, SIGNAL(triggered()), this, SLOT(toggleButtonListButtonVisible()));
     connect(numberListVisible, SIGNAL(triggered()), this, SLOT(toggleNumberListButtonVisible()));
-//    connect(fontVisible, SIGNAL(triggered()), this, SLOT(toggleFontButtonVisible()));
-//    connect(fontSizeVisible, SIGNAL(triggered()), this, SLOT(toggleFontSizeButtonVisible()));
-  connect(todoVisible, SIGNAL(triggered()), this, SLOT(toggleTodoButtonVisible()));
-//    connect(highlightVisible, SIGNAL(triggered()), this, SLOT(toggleHlineButtonVisible()));
-//    connect(fontColorVisible, SIGNAL(triggered()), this, SLOT(toggleFontColorVisible()));
-  connect(insertTableButtonVisible, SIGNAL(triggered()), this, SLOT(toggleInsertTableButtonVisible()));
-  connect(spellCheckButtonVisible, SIGNAL(triggered()), this, SLOT(toggleSpellCheckButtonVisible()));
+    connect(fontVisible, SIGNAL(triggered()), this, SLOT(toggleFontButtonVisible()));
+    connect(fontSizeVisible, SIGNAL(triggered()), this, SLOT(toggleFontSizeButtonVisible()));
+    connect(todoVisible, SIGNAL(triggered()), this, SLOT(toggleTodoButtonVisible()));
+    connect(highlightVisible, SIGNAL(triggered()), this, SLOT(toggleHighlightColorVisible()));
+    connect(fontColorVisible, SIGNAL(triggered()), this, SLOT(toggleFontColorVisible()));
+    connect(insertTableButtonVisible, SIGNAL(triggered()), this, SLOT(toggleInsertTableButtonVisible()));
+    connect(spellCheckButtonVisible, SIGNAL(triggered()), this, SLOT(toggleSpellCheckButtonVisible()));
 
 
   undoButtonAction = this->addAction(QIcon(":undo.png"), tr("Undo"));
@@ -199,6 +199,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
   todoButtonAction = this->addAction(QIcon(":todo.png"), tr("Todo"));
   this->setupShortcut(todoButtonAction, "Edit_Insert_Todo");
+
   spellCheckButtonAction = this->addAction(QIcon(":spellCheck.png"), tr("Spell Check"));
   this->setupShortcut(spellCheckButtonAction, "Note_Spell_Check");
 
@@ -312,6 +313,9 @@ void EditorButtonBar::saveVisibleButtons() {
     value = insertTableButtonAction->isVisible();
     global.settings->setValue("insertTableButtonVisible", value);
 
+    value = spellCheckButtonAction->isVisible();
+    global.settings->setValue("spellCheckButtonVisible", value);
+
     global.settings->endGroup();
 }
 
@@ -373,11 +377,11 @@ void EditorButtonBar::setupVisibleButtons() {
     numberListButtonAction->setVisible(global.settings->value("numberListButtonVisible", true).toBool());
     numberListVisible->setChecked(numberListButtonAction->isVisible());
 
-    //fontButtonAction->setVisible(global.settings->value("fontButtonVisible", true).toBool());
-    //fontVisible->setChecked(fontButtonAction->isVisible());
+    fontButtonAction->setVisible(global.settings->value("fontButtonVisible", true).toBool());
+    fontVisible->setChecked(fontButtonAction->isVisible());
 
-    //fontSizeButtonAction->setVisible(global.settings->value("fontSizeButtonVisible", true).toBool());
-    //fontSizeVisible->setChecked(fontSizeButtonAction->isVisible());
+    fontSizeButtonAction->setVisible(global.settings->value("fontSizeButtonVisible", true).toBool());
+    fontSizeVisible->setChecked(fontSizeButtonAction->isVisible());
 
     todoButtonAction->setVisible(global.settings->value("todoButtonVisible", true).toBool());
     todoVisible->setChecked(todoButtonAction->isVisible());
@@ -385,11 +389,14 @@ void EditorButtonBar::setupVisibleButtons() {
     insertTableButtonAction->setVisible(global.settings->value("insertTableButtonVisible", true).toBool());
     insertTableButtonVisible->setChecked(insertTableButtonAction->isVisible());
 
-    //fontColorAction ->setVisible(global.settings->value("fontColorButtonVisible", true).toBool());
-    //fontColorVisible->setChecked(fontColorAction->isVisible());
+    fontColorAction ->setVisible(global.settings->value("fontColorButtonVisible", true).toBool());
+    fontColorVisible->setChecked(fontColorAction->isVisible());
 
-    //highlightColorAction->setVisible(global.settings->value("highlightButtonVisible", true).toBool());
-    //highlightVisible->setChecked(highlightColorAction->isVisible());
+    highlightColorAction->setVisible(global.settings->value("highlightButtonVisible", true).toBool());
+    highlightColorAction->setChecked(highlightColorAction->isVisible());
+
+    spellCheckButtonAction->setVisible(global.settings->value("spelLCheckButtonVisible", true).toBool());
+    spellCheckButtonVisible->setChecked(spellCheckButtonAction->isVisible());
 
     global.settings->endGroup();
 }
