@@ -107,7 +107,7 @@ void IndexRunner::index() {
 
     lids.clear();  // Clear out the list so we can start on resources
 
-    countPause = 10;
+    countPause = 2;
     // Start indexing resources
     if (keepRunning && resourceTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
         endMsgNeeded = true;
