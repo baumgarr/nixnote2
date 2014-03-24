@@ -42,10 +42,10 @@ signals:
     void editComplete();
     
 public slots:
+    void textChanged();
 
 protected:
     virtual void focusOutEvent(QFocusEvent *e);
-    
 };
 
 #endif // TREEWIDGETEDITOR_H

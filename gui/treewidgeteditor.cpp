@@ -19,6 +19,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "treewidgeteditor.h"
 #include <QTreeWidget>
+#include <QEvent>
+#include <QKeyEvent>
+#include "global.h"
+
+
 
 TreeWidgetEditor::TreeWidgetEditor(QTreeWidget *parent) :
     QLineEdit(parent)
@@ -29,6 +34,7 @@ TreeWidgetEditor::TreeWidgetEditor(QTreeWidget *parent) :
     setFont(f);
     lid = 0;
     stackName = "";
+    connect(this, SIGNAL(returnPressed()), SLOT(textChanged()));
 }
 
 
@@ -36,12 +42,19 @@ void TreeWidgetEditor::setTreeWidgetItem(QTreeWidgetItem *w, int col) {
    this->originalWidgetItem = w;
    this->column = col;
    this->originalWidget = parent->itemWidget(w, col);
-
 }
 
 void TreeWidgetEditor::focusOutEvent(QFocusEvent *e) {
-    e=e; // suppress unused
     originalWidgetItem->setData(0, Qt::DisplayRole, text().trimmed());
     parent->setItemWidget(originalWidgetItem, column, originalWidget);
     emit(editComplete());
 }
+
+
+// When a user presses "Enter", force a focus out to save the data
+void TreeWidgetEditor::textChanged() {
+//    originalWidgetItem->setData(0, Qt::DisplayRole, text().trimmed());
+//    parent->setItemWidget(originalWidgetItem, column, originalWidget);
+    emit(editComplete());
+}
+

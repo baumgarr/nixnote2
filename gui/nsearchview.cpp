@@ -432,7 +432,6 @@ void NSearchView::editComplete() {
         s.name = text.toStdString();
         table.update(lid, s, true);
     }
-    delete editor;
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);
     resetSize();
     this->sortByColumn(NAME_POSITION);

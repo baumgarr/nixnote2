@@ -766,7 +766,6 @@ void NTagView::editComplete() {
         tag.name = text.toStdString();
         table.update(tag, true);
     }
-    delete editor;
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);
     resetSize();
     this->sortByColumn(NAME_POSITION);

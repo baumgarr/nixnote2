@@ -611,7 +611,6 @@ void NNotebookView::deleteRequested() {
 void NNotebookView::renameRequested() {
     editor = new TreeWidgetEditor(this);
     connect(editor, SIGNAL(editComplete()), this, SLOT(editComplete()));
-
     QList<QTreeWidgetItem*> items = selectedItems();
     editor->setText(items[0]->text(NAME_POSITION));
     if (items[0]->data(NAME_POSITION, Qt::UserRole).toString() != "STACK") {
@@ -630,6 +629,7 @@ void NNotebookView::renameRequested() {
 
 
 void NNotebookView::editComplete() {
+    editor->setVisible(false);
     QString text = editor->text().trimmed();
 
     // Check if this is a notebook or a stack
@@ -651,7 +651,7 @@ void NNotebookView::editComplete() {
             table.update(notebook, true);
         }
 
-        delete editor;
+        //delete editor;
         this->sortItems(NAME_POSITION, Qt::AscendingOrder);
         resetSize();
         this->sortByColumn(NAME_POSITION);
@@ -694,7 +694,6 @@ void NNotebookView::editComplete() {
             connect(newAction, SIGNAL(triggered()), this, SLOT(moveToStackRequested()));
         }
 
-        delete editor;
         this->sortItems(NAME_POSITION, Qt::AscendingOrder);
         resetSize();
         this->sortByColumn(NAME_POSITION);
