@@ -30,7 +30,7 @@ SpellChecker::SpellChecker(QObject *parent) :
     QObject(parent)
 {
     dictionaryPath.append(global.fileManager.getSpellDirPathUser());
-    dictionaryPath.append(global.fileManager.getSpellDirPath());
+    //dictionaryPath.append(global.fileManager.getSpellDirPath());
     dictionaryPath.append(global.fileManager.getProgramDirPath(""));
     dictionaryPath.append("/usr/share/hunspell/");
     dictionaryPath.append("/usr/share/myspell/");

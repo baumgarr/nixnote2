@@ -12,22 +12,28 @@ RESOURCES = NixNote2.qrc
 
 UI_DIR = .
 
-message(Beginnig Build)
-
-
 CONFIG(debug, debug|release) {
         OBJECTS_DIR = build/debug
         MOC_DIR = build/debug
 }
 
-CONFIG(release, debug|release) {
-        OBJECTS_DIR = build/release
-        MOC_DIR = build/release
-}
 
 TRANSLATIONS = \
     translations/nixnote2_cs_CZ.ts \
-    translations/nixnote2_de.ts
+    translations/nixnote2_de.ts    \
+    translations/nixnote2_ca.ts    \
+    translations/nixnote2_da.ts    \
+    translations/nixnote2_es.ts    \
+    translations/nixnote2_ja.ts    \
+    translations/nixnote2_pt.ts    \
+    translations/nixnote2_sk.ts    \
+    translations/nixnote2_zh_TW.ts \
+    translations/nixnote2_fr.ts    \
+    translations/nixnote2_pl.ts    \
+    translations/nixnote2_ru.ts    \
+    translations/nixnote2_zh_CN.ts
+
+
 
 SOURCES += main.cpp\
         nixnote.cpp \
@@ -324,5 +330,7 @@ LIBS +=    -lthrift \
            -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic \
            -Wl,-rpath=/usr/lib/nixnote2
 
-QMAKE_CXXFLAGS += `dpkg-buildflags --get CFLAGS`
-QMAKE_LFLAGS += `dpkg-buildflags --get LDFLAGS`
+#QMAKE_CXXFLAGS += `dpkg-buildflags --get CFLAGS`
+QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
+#QMAKE_LFLAGS += `dpkg-buildflags --get LDFLAGS`
+QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro

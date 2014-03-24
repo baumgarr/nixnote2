@@ -56,8 +56,8 @@ private:
     QString javaDirPath;
     QDir javaDir;
 
-    QString spellDirPath;
-    QDir spellDir;
+//    QString spellDirPath;
+//    QDir spellDir;
 
     QString spellDirPathUser;
     QDir spellDirUser;
@@ -97,8 +97,8 @@ public:
     QString getProgramDirPath(QString relativePath);
     QDir getHomeDirFile(QString relativePath);
     QString getHomeDirPath(QString relativePath);
-    QString getSpellDirPath(QString relativePath);
-    QDir getSpellDirFile(QString relativePath);
+//    QString getSpellDirPath(QString relativePath);
+//    QDir getSpellDirFile(QString relativePath);
     QString getSpellDirPath();
     QDir getSpellDirFileUser(QString relativePath);
     QString getSpellDirPathUser();

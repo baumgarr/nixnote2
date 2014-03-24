@@ -50,9 +50,9 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
     checkExistingReadableDir(imagesDir);
     javaDirPath = slashTerminatePath(javaDir.path());
 
-    spellDir.setPath(programDirPath+"spell");
-    checkExistingReadableDir(spellDir);
-    spellDirPath = slashTerminatePath(spellDir.path());
+//    spellDir.setPath(programDirPath+"spell");
+//    checkExistingReadableDir(spellDir);
+//    spellDirPath = slashTerminatePath(spellDir.path());
 
     spellDirUser.setPath(homeDirPath+"spell");
     createDirOrCheckWriteable(spellDirUser);
@@ -199,15 +199,15 @@ QDir FileManager::getHomeDirFile(QString relativePath) {
 QString FileManager::getHomeDirPath(QString relativePath) {
     return homeDirPath + toPlatformPathSeparator(relativePath);
 }
-QString FileManager::getSpellDirPath(QString relativePath) {
-    return spellDirPath + toPlatformPathSeparator(relativePath);
-}
-QDir FileManager::getSpellDirFile(QString relativePath) {
-    return QDir(spellDir.dirName() + toPlatformPathSeparator(relativePath));
-}
-QString FileManager::getSpellDirPath() {
-    return spellDirPath;
-}
+//QString FileManager::getSpellDirPath(QString relativePath) {
+//    return spellDirPath + toPlatformPathSeparator(relativePath);
+//}
+//QDir FileManager::getSpellDirFile(QString relativePath) {
+//    return QDir(spellDir.dirName() + toPlatformPathSeparator(relativePath));
+//}
+//QString FileManager::getSpellDirPath() {
+//    return spellDirPath;
+//}
 QDir FileManager::getSpellDirFileUser(QString relativePath) {
     return spellDirPathUser + toPlatformPathSeparator(relativePath);
 }
