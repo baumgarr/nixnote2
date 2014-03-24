@@ -864,13 +864,13 @@
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="202"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="203"/>
         <source>Spell Check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="205"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="206"/>
         <source>Insert Table</source>
         <translation type="unfinished"></translation>
     </message>

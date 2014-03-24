@@ -2,2624 +2,3468 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="ja_JP">
 <context>
-    <name>cx.fbn.nevernote.NeverNote</name>
+    <name>AboutDialog</name>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="787"/>
-        <source>Beginning shutdown.</source>
-        <translation>シャットダウン開始.</translation>
+        <location filename="../dialog/aboutdialog.cpp" line="17"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+</context>
+<context>
+    <name>AccountDialog</name>
+    <message>
+        <location filename="../dialog/accountdialog.cpp" line="43"/>
+        <source>Account Information</source>
+        <translation type="unfinished">アカウント情報</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="791"/>
-        <source>Performing synchronization before closing.</source>
-        <translation>終了前に同期を行う。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1186"/>
-        <source>Edit Notebook</source>
-        <translation>ノートブックの編集</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1246"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1252"/>
-        <source>Unable to Delete</source>
-        <translation>削除できない</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1247"/>
-        <source>Some of the selected notebook(s) contain notes.
-Please delete the notes or move them to another notebook before deleting any notebooks.</source>
-        <translation>選択されたノートブックの中に、ノートが残っています。
-ノートブックを削除する前に、ノートを削除するか、ほかのノートブックに移動してください。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1252"/>
-        <source>You must have at least one notebook.</source>
-        <translation>少なくとも一つのノートブックが必要です。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="709"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="728"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1257"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1454"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1895"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3251"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3292"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4491"/>
-        <source>Confirmation</source>
-        <translation>確認</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="710"/>
-        <source>Are you sure</source>
-        <comment>Are you sure you wish to decrypt the database?</comment>
+        <location filename="../dialog/accountdialog.cpp" line="47"/>
+        <source>Free</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="716"/>
-        <source>Decryption Complete</source>
+        <location filename="../dialog/accountdialog.cpp" line="53"/>
+        <source>Premium</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="716"/>
-        <source>Decryption is complete</source>
+        <location filename="../dialog/accountdialog.cpp" line="55"/>
+        <source>Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="732"/>
-        <source>Encrypting the database is usedto enhance security and is performed
-upon shutdown, but please be aware that if you lose the password your
-is lost forever.
-
-It is highly recommended you perform a backup and/or fully synchronize
- prior to executing this funtction.
-
-Do you wish to proceed?</source>
+        <location filename="../dialog/accountdialog.cpp" line="57"/>
+        <source>Support</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="751"/>
-        <source>Incorrect Password</source>
+        <location filename="../dialog/accountdialog.cpp" line="59"/>
+        <source>Admin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1257"/>
-        <source>Delete the selected notebooks?</source>
-        <translation>選択したノートブックを削除しますか?</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1454"/>
-        <source>Delete the selected tags?</source>
-        <translation>選択したタグを削除しますか?</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1704"/>
-        <source>Edit Search</source>
-        <translation>検索ワードを編集</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1897"/>
-        <source>This will free unused space in the database, but please be aware that depending upon the size of your database this can be time consuming and NeverNote will be unresponsive until it is complete.  Do you wish to continue?</source>
-        <translation>これは、データベース中の未使用領域を開放します。一方、データベースの大きさに注意してください。この処理は、時間を要する処理となり、完了するまでNeverNoteが反応しなくなるかもしれません。継続しますか?</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1930"/>
-        <source>Release Notes</source>
-        <translation>リリースノート</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1946"/>
-        <source>Mesasge Log</source>
-        <translation>メッセージログ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1955"/>
-        <source>About NeverNote</source>
-        <translation>Nevernoteについて</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1957"/>
-        <source>&lt;h4&gt;&lt;center&gt;&lt;b&gt;NeverNote&lt;/b&gt;&lt;/center&gt;&lt;/h4&gt;&lt;hr&gt;&lt;center&gt;Version </source>
-        <translatorcomment>HTMLの一部</translatorcomment>
-        <translation>&lt;h4&gt;&lt;center&gt;&lt;b&gt;Nevernote&lt;/b&gt;&lt;/center&gt;&lt;/h4&gt;&lt;hr&gt;&lt;center&gt;バージョン</translation>
-    </message>
-    <message>
-        <source>&lt;hr&gt;&lt;/center&gt;Evernote Generic client.&lt;br&gt;&lt;br&gt;Licensed under GPL v2.  &lt;br&gt;&lt;hr&gt;&lt;br&gt;Evernote is copyright 2001-2010 by Evernote Corporation&lt;br&gt;Jambi and QT are the licensed trademark of Nokia Corporation&lt;br&gt;PDFRenderer is licened under the LGPL&lt;br&gt;Jazzy is licened under the LGPL&lt;br&gt;Java is a registered trademark of Sun Microsystems.&lt;br&gt;&lt;hr&gt;</source>
-        <translatorcomment>Oracle aquire Sun microsystems.</translatorcomment>
-        <translation type="obsolete">&lt;hr&gt;&lt;/center&gt;Evernoteの総合クライアント&lt;br&gt;&lt;br&gt;GPLｖ２でライセンスされています。&lt;br&gt;&lt;hr&gt;&lt;br&gt;Evernoteは、Evernote Corporationの2001-2010の著作物です。&lt;br&gt;JambiとQtは、Nokia Corporationの著作物で商標です。&lt;br&gt;PDFRendererは、LGPLのもとライセンスされています&lt;br&gt;Jazzyは、LGPLのもとライセンスされています&lt;br&gt;Javaは、Oracle Corporationの登録商標です&lt;br&gt;&lt;hr&gt;</translation>
-    </message>
-    <message>
-        <source>toolBar</source>
-        <translation type="obsolete">ツールバー</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="1967"/>
-        <source>&lt;hr&gt;&lt;/center&gt;EvernoteAn Open Source Evernote Client.&lt;br&gt;&lt;br&gt;Licensed under GPL v2.  &lt;br&gt;&lt;hr&gt;&lt;br&gt;Evernote is copyright 2001-2010 by Evernote Corporation&lt;br&gt;Jambi and QT are the licensed trademark of Nokia Corporation&lt;br&gt;PDFRenderer is licened under the LGPL&lt;br&gt;JTidy is copyrighted under the World Wide Web Consortium&lt;br&gt;Apache Common Utilities licensed under the Apache License Version 2.0&lt;br&gt;Jazzy is licened under the LGPL&lt;br&gt;Java is a registered trademark of Oracle Corporation.&lt;br&gt;&lt;hr&gt;</source>
+        <location filename="../dialog/accountdialog.cpp" line="77"/>
+        <source> Bytes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="2040"/>
-        <source>Tool Bar</source>
+        <location filename="../dialog/accountdialog.cpp" line="81"/>
+        <source> KB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="2107"/>
-        <source>Quota:</source>
-        <translation>転送上限:</translation>
+        <location filename="../dialog/accountdialog.cpp" line="85"/>
+        <source> MB</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="2120"/>
-        <source>Zoom</source>
-        <translation>ズーム</translation>
+        <location filename="../dialog/accountdialog.cpp" line="92"/>
+        <source>Account:</source>
+        <translation type="unfinished">アカウント:</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="2125"/>
-        <source>  Search:</source>
-        <translation>  検索:</translation>
+        <location filename="../dialog/accountdialog.cpp" line="95"/>
+        <source>User Name:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="2310"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="2367"/>
-        <source>Connect</source>
-        <translation>接続</translation>
+        <location filename="../dialog/accountdialog.cpp" line="97"/>
+        <source>Account Type:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="2311"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="2368"/>
-        <source>Connect to Evernote</source>
-        <translation>Evernoteに接続</translation>
+        <location filename="../dialog/accountdialog.cpp" line="99"/>
+        <source>Limit:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="2371"/>
-        <source>Disconnect</source>
-        <translation>切断</translation>
+        <location filename="../dialog/accountdialog.cpp" line="101"/>
+        <source>Uploaded In This Period:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="2372"/>
-        <source>Disconnect from Evernote</source>
-        <translation>Evernoteから切断</translation>
+        <location filename="../dialog/accountdialog.cpp" line="105"/>
+        <source>Less than 1MB</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3253"/>
-        <source>This will cause all notes &amp; attachments to be reindexed, but please be aware that depending upon the size of your database updating all these records can be time consuming and NeverNote will be unresponsive until it is complete.  Do you wish to continue?</source>
-        <translation>これは、すべてのノートと添付ファイルが再索引作成されることを意味しています。この処理が、データベースの大きさに依存して時間がかかることに注意してください。すべての記録を更新することは、時間を要する処理となり、完了するまでNeverNoteは反応しなくなるかもしれません。継続しますか?</translation>
+        <location filename="../dialog/accountdialog.cpp" line="106"/>
+        <source>Current Cycle Ends:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3260"/>
-        <source>Marking notes for reindex.</source>
-        <translation>ノートを再索引対象として印をつけました。</translation>
+        <location filename="../dialog/accountdialog.cpp" line="114"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+</context>
+<context>
+    <name>AccountMaintenanceDialog</name>
+    <message>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="15"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3263"/>
-        <source>Database will be reindexed.</source>
-        <translation>データベースの索引が再作成されました。</translation>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="16"/>
+        <source>Close</source>
+        <translation type="unfinished">閉じる</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3275"/>
-        <source>Notes will be reindexed.</source>
-        <translation>ノートは再索引されます。</translation>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="17"/>
+        <source>Add</source>
+        <translation type="unfinished">追加</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3277"/>
-        <source>Note will be reindexed.</source>
-        <translation>ノートは再索引されます.</translation>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="18"/>
+        <source>Rename</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3292"/>
-        <source>Delete selected note(s)?</source>
-        <translation>選択したノートを削除しますか?</translation>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="19"/>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3699"/>
-        <source>Error Saving Note</source>
-        <translation>ノートの保存時にエラー発生</translation>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="43"/>
+        <source>User Account Maintenance</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3721"/>
-        <source>Note has never been synchronized.</source>
-        <translation>ノートはまだ同期されていません。</translation>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="77"/>
+        <source>Are you sure you want to delete this account?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3722"/>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="78"/>
+        <source>Verify Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="90"/>
+        <source>You cannot delete the active account.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="143"/>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="167"/>
+        <source>Switch to </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AddUserAccountDialog</name>
+    <message>
+        <location filename="../dialog/adduseraccountdialog.cpp" line="38"/>
+        <source>Server</source>
+        <translation type="unfinished">サーバ</translation>
+    </message>
+    <message>
+        <location filename="../dialog/adduseraccountdialog.cpp" line="39"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/adduseraccountdialog.cpp" line="41"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/adduseraccountdialog.cpp" line="46"/>
+        <source>Account Name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/adduseraccountdialog.cpp" line="69"/>
+        <source>www.evernote.com</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/adduseraccountdialog.cpp" line="70"/>
+        <source>sandbox.evernote.com</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AppearancePreferences</name>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="32"/>
+        <source>Show tray icon</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="33"/>
+        <source>Display PDFs inline</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="34"/>
+        <source>Show splash screen on startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="35"/>
+        <source>Show missed reminders on startup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="37"/>
+        <source>Startup Behavior</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="39"/>
+        <source>Restore Selection Criteria</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="40"/>
+        <source>Select Default Notebook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="41"/>
+        <source>View All Notebooks</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AttachmentIconBuilder</name>
+    <message>
+        <location filename="../html/attachmenticonbuilder.cpp" line="54"/>
+        <source>Bytes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../html/attachmenticonbuilder.cpp" line="58"/>
+        <source>KB</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>AuthorEditor</name>
+    <message>
+        <location filename="../gui/browserWidgets/authoreditor.cpp" line="39"/>
+        <source>Click to set author</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CloseNotebookDialog</name>
+    <message>
+        <location filename="../dialog/closenotebookdialog.cpp" line="37"/>
+        <source>Open/Close Notebooks</source>
+        <translation type="unfinished">ノートブックの表示/非表示</translation>
+    </message>
+    <message>
+        <location filename="../dialog/closenotebookdialog.cpp" line="42"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/closenotebookdialog.cpp" line="43"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/closenotebookdialog.cpp" line="56"/>
+        <source>Open Notebooks</source>
+        <translation type="unfinished">ノートブックを開く</translation>
+    </message>
+    <message>
+        <location filename="../dialog/closenotebookdialog.cpp" line="57"/>
+        <source>Closed Notebooks</source>
+        <translation type="unfinished">ノートブックを閉じる</translation>
+    </message>
+    <message>
+        <location filename="../dialog/closenotebookdialog.cpp" line="59"/>
+        <source>Open</source>
+        <translation type="unfinished">開く</translation>
+    </message>
+    <message>
+        <location filename="../dialog/closenotebookdialog.cpp" line="60"/>
+        <source>Close</source>
+        <translation type="unfinished">閉じる</translation>
+    </message>
+</context>
+<context>
+    <name>CommunicationManager</name>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="116"/>
+        <source>Transport error getting sync state: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="129"/>
+        <source>Std Error getting sync state: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="142"/>
+        <source>Unknown error getting sync state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="252"/>
+        <source>EDAMUserException </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="271"/>
+        <location filename="../communication/communicationmanager.cpp" line="284"/>
+        <location filename="../communication/communicationmanager.cpp" line="818"/>
+        <location filename="../communication/communicationmanager.cpp" line="831"/>
+        <source>Error getting sync chunk: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="297"/>
+        <location filename="../communication/communicationmanager.cpp" line="844"/>
+        <source>Unknown error getting sync chunk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="415"/>
+        <source>Transport error getting linked notebook state: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="429"/>
+        <source>Error getting linked notebook state: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="442"/>
+        <source>Unknown error getting linked notebook state</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="511"/>
+        <source>Shared notebook EDAMUserException </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="534"/>
+        <source>Shared notebook </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="534"/>
+        <source> not found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="540"/>
+        <source>Shared notebook TException </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="949"/>
+        <location filename="../communication/communicationmanager.cpp" line="958"/>
+        <source>Error uploading saved search </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="971"/>
+        <source>Transport error uploading saved search &quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="984"/>
+        <source>Std error uploading saved search &quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="997"/>
+        <source>Unknown error uploading saved search &quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1035"/>
+        <source>Transport error deleting saved search: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1048"/>
+        <source>Error deleting saved search: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1061"/>
+        <source>Unknown error getting expunging saved search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1083"/>
+        <location filename="../communication/communicationmanager.cpp" line="1092"/>
+        <source>Error uploading tag </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1105"/>
+        <source>Transport error uploading tag: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1118"/>
+        <source>Error uploading tag: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1131"/>
+        <source>Unknown error uploading tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1168"/>
+        <location filename="../communication/communicationmanager.cpp" line="1181"/>
+        <source>Error expunging tag: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1194"/>
+        <source>Unknown error expunging tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1215"/>
+        <location filename="../communication/communicationmanager.cpp" line="1224"/>
+        <source>Error uploading notebook </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1237"/>
+        <source>Transport error uploading notebook: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1250"/>
+        <source>Error uploading notebook: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1263"/>
+        <source>Unknown error uploading notebook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1300"/>
+        <source>Transport error expunging notebook: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1313"/>
+        <source>Error expunging notebook: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1326"/>
+        <source>Unknown error expunging notebook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1348"/>
+        <location filename="../communication/communicationmanager.cpp" line="1357"/>
+        <location filename="../communication/communicationmanager.cpp" line="1418"/>
+        <location filename="../communication/communicationmanager.cpp" line="1427"/>
+        <source>Error uploading note &quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1357"/>
+        <location filename="../communication/communicationmanager.cpp" line="1427"/>
+        <source>&quot;. Note not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1370"/>
+        <source>Transport error uploading note: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1383"/>
+        <source>Error uploading note: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1396"/>
+        <source>Unknown error uploading note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1441"/>
+        <source>Transport error uploading linked note: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1455"/>
+        <source>Error uploading linked note: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1468"/>
+        <source>Unknown uploading linked note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1484"/>
+        <location filename="../communication/communicationmanager.cpp" line="1493"/>
+        <source>Error deleting note &quot;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1507"/>
+        <source>Transport error deleting note: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1520"/>
+        <source>Error deleting note: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1533"/>
+        <source>Unknown error deleting note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1640"/>
+        <source>Transport error getting note versions: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1653"/>
+        <source>Error getting note versions: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1666"/>
+        <source>Unknown error getting note versions</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1701"/>
+        <source>Transport error getting note version: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1714"/>
+        <source>Error getting note version: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1727"/>
+        <source>Unknown error getting note version</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1759"/>
+        <source>Transport error getting notebook list: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1772"/>
+        <source>Error getting notebook list: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1785"/>
+        <source>Unknown error getting notebook list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1820"/>
+        <source>Transport error getting tag list: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1833"/>
+        <source>Error getting tag list: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1846"/>
+        <source>Unknown error getting tag list</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1872"/>
+        <location filename="../communication/communicationmanager.cpp" line="1874"/>
+        <source>API rate limit exceeded.  Please try again in </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1872"/>
+        <source> minutes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1874"/>
+        <source> minute.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1877"/>
+        <source>EDAMSystemException </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1898"/>
+        <source>EDAMNotFoundException: Note not found</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DatabaseStatus</name>
+    <message>
+        <location filename="../dialog/databasestatus.cpp" line="35"/>
+        <source>Database Status</source>
+        <translation type="unfinished">データベースの状態</translation>
+    </message>
+    <message>
+        <location filename="../dialog/databasestatus.cpp" line="47"/>
+        <source>Total Notes:</source>
+        <translation type="unfinished">全ノート:</translation>
+    </message>
+    <message>
+        <location filename="../dialog/databasestatus.cpp" line="49"/>
+        <source>Total Resources:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/databasestatus.cpp" line="51"/>
+        <source>Unindexed Notes:</source>
+        <translation type="unfinished">索引前ノート:</translation>
+    </message>
+    <message>
+        <location filename="../dialog/databasestatus.cpp" line="53"/>
+        <source>Unindexed Resources:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/databasestatus.cpp" line="55"/>
+        <source>Thumbnails Needed:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/databasestatus.cpp" line="60"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+</context>
+<context>
+    <name>DateDelegate</name>
+    <message>
+        <location filename="../gui/datedelegate.cpp" line="42"/>
+        <source>Today</source>
+        <translation type="unfinished">今日</translation>
+    </message>
+</context>
+<context>
+    <name>DateEditor</name>
+    <message>
+        <location filename="../gui/browserWidgets/dateeditor.cpp" line="38"/>
+        <source>Created:</source>
+        <translation type="unfinished">作成日:</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/dateeditor.cpp" line="42"/>
+        <source>Updated:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/dateeditor.cpp" line="46"/>
+        <source>Subject:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DebugPreferences</name>
+    <message>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="35"/>
+        <source>Disable uploads to server</source>
+        <translation type="unfinished">サーバへのアップロードを無効にする</translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="36"/>
+        <source>Show LID column (requires restart)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="45"/>
+        <source>Message Level</source>
+        <translation type="unfinished">メッセージレベル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="48"/>
+        <source>Trace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="49"/>
+        <source>Debug</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="50"/>
+        <source>Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="51"/>
+        <source>Warnings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="52"/>
+        <source>Errors</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="53"/>
+        <source>Fatal</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EditorButtonBar</name>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="36"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="117"/>
+        <source>Undo</source>
+        <translation type="unfinished">元に戻す</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="37"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="119"/>
+        <source>Redo</source>
+        <translation type="unfinished">やり直す</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="38"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="122"/>
+        <source>Cut</source>
+        <translation type="unfinished">切り取り</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="39"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="124"/>
+        <source>Copy</source>
+        <translation type="unfinished">コピー</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="40"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="126"/>
+        <source>Paste</source>
+        <translation type="unfinished">貼り付け</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="41"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="128"/>
+        <source>Remove Formatting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="42"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="133"/>
+        <source>Bold</source>
+        <translation type="unfinished">太字</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="43"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="140"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="141"/>
+        <source>Italics</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="44"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="147"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="148"/>
+        <source>Underline</source>
+        <translation type="unfinished">下線</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="45"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="152"/>
+        <source>Strikethrough</source>
+        <translation type="unfinished">取消線</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="46"/>
+        <source>Align Left</source>
+        <translation type="unfinished">左寄せ</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="47"/>
+        <source>Align Center</source>
+        <translation type="unfinished">中央寄せ</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="48"/>
+        <source>Align Right</source>
+        <translation type="unfinished">右寄せ</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="49"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="162"/>
+        <source>Horizontal Line</source>
+        <translation type="unfinished">水平線</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="50"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="165"/>
+        <source>Shift Right</source>
+        <translation type="unfinished">右へシフト</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="51"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="167"/>
+        <source>Shift Left</source>
+        <translation type="unfinished">左へシフト</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="52"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="170"/>
+        <source>Bullet List</source>
+        <translation type="unfinished">箇条書き</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="53"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="172"/>
+        <source>Number List</source>
+        <translation type="unfinished">番号つきリスト</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="54"/>
+        <source>Font</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="55"/>
+        <source>Font Size</source>
+        <translation type="unfinished">フォントのサイズ</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="56"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="188"/>
+        <source>Font Color</source>
+        <translation type="unfinished">フォントの色</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="57"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="197"/>
+        <source>Highlight</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="58"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="200"/>
+        <source>Todo</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="203"/>
+        <source>Spell Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="206"/>
+        <source>Insert Table</source>
+        <translation type="unfinished">表の挿入</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="155"/>
+        <source>Left Justify</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="157"/>
+        <source>Center</source>
+        <translation type="unfinished">中央</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="159"/>
+        <source>Right Justify</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EnCryptDialog</name>
+    <message>
+        <location filename="../dialog/encryptdialog.cpp" line="29"/>
+        <source>Encrypt Text</source>
+        <translation type="unfinished">テキストの暗号化</translation>
+    </message>
+    <message>
+        <location filename="../dialog/encryptdialog.cpp" line="45"/>
+        <source>Password</source>
+        <translation type="unfinished">パスワード</translation>
+    </message>
+    <message>
+        <location filename="../dialog/encryptdialog.cpp" line="47"/>
+        <source>Verify</source>
+        <translation type="unfinished">確認</translation>
+    </message>
+    <message>
+        <location filename="../dialog/encryptdialog.cpp" line="49"/>
+        <source>Hint</source>
+        <translation type="unfinished">ヒント</translation>
+    </message>
+    <message>
+        <location filename="../dialog/encryptdialog.cpp" line="51"/>
+        <source>Remember Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/encryptdialog.cpp" line="59"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/encryptdialog.cpp" line="63"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/encryptdialog.cpp" line="110"/>
+        <source>Password must be at least 4 characters</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/encryptdialog.cpp" line="114"/>
+        <source>Passwords do not match</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/encryptdialog.cpp" line="118"/>
+        <source>Hint must be entered</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>EnDecryptDialog</name>
+    <message>
+        <location filename="../dialog/endecryptdialog.cpp" line="35"/>
+        <source>Decrypt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/endecryptdialog.cpp" line="51"/>
+        <source>Password</source>
+        <translation type="unfinished">パスワード</translation>
+    </message>
+    <message>
+        <location filename="../dialog/endecryptdialog.cpp" line="52"/>
+        <source>Hint</source>
+        <translation type="unfinished">ヒント</translation>
+    </message>
+    <message>
+        <location filename="../dialog/endecryptdialog.cpp" line="59"/>
+        <source>Permanently Decrypt</source>
+        <translation type="unfinished">永久に複号する</translation>
+    </message>
+    <message>
+        <location filename="../dialog/endecryptdialog.cpp" line="61"/>
+        <source>Remember Password</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/endecryptdialog.cpp" line="66"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/endecryptdialog.cpp" line="70"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+</context>
+<context>
+    <name>ExternalBrowse</name>
+    <message>
+        <location filename="../gui/externalbrowse.cpp" line="9"/>
+        <source>NixNote</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FindReplace</name>
+    <message>
+        <location filename="../gui/findreplace.cpp" line="43"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/findreplace.cpp" line="44"/>
+        <source>Previous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/findreplace.cpp" line="45"/>
+        <source>Match case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/findreplace.cpp" line="54"/>
+        <source>Replace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/findreplace.cpp" line="55"/>
+        <source>Replace all</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>InsertLatexDialog</name>
+    <message>
+        <location filename="../dialog/insertlatexdialog.cpp" line="28"/>
+        <source>Insert LaTeX Formula</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/insertlatexdialog.cpp" line="38"/>
+        <source>Formula</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/insertlatexdialog.cpp" line="43"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/insertlatexdialog.cpp" line="47"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+</context>
+<context>
+    <name>InsertLinkDialog</name>
+    <message>
+        <location filename="../dialog/insertlinkdialog.cpp" line="30"/>
+        <source>Insert Link</source>
+        <translation type="unfinished">リンクの挿入</translation>
+    </message>
+    <message>
+        <location filename="../dialog/insertlinkdialog.cpp" line="41"/>
+        <source>Url</source>
+        <translation type="unfinished">URL</translation>
+    </message>
+    <message>
+        <location filename="../dialog/insertlinkdialog.cpp" line="46"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/insertlinkdialog.cpp" line="50"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+</context>
+<context>
+    <name>LineEdit</name>
+    <message>
+        <location filename="../gui/lineedit.cpp" line="39"/>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LocalePreferences</name>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="17"/>
+        <source>Date Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="20"/>
+        <source>MM/dd/yy - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="21"/>
+        <source>MM/dd/yyyy - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="22"/>
+        <source>M/dd/yyyy - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="23"/>
+        <source>M/d/yyyy - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="24"/>
+        <source>dd/MM/yy - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="25"/>
+        <source>d/M/yy - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="26"/>
+        <source>dd/MM/yyyy - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="27"/>
+        <source>d/M/yyyy - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="28"/>
+        <source>yyyy-MM-dd - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="29"/>
+        <source>yy-MM-dd - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="32"/>
+        <source>Time Format</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="35"/>
+        <source>HH:mm:ss - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="36"/>
+        <source>HH:mm:ss a - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="37"/>
+        <source>HH:mm - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="38"/>
+        <source>HH:mm a - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="39"/>
+        <source>hh:mm:ss - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="40"/>
+        <source>hh:mm:ss a- </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="41"/>
+        <source>h:mm:ss a - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="42"/>
+        <source>hh:mm - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="43"/>
+        <source>hh:mm a - </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/localepreferences.cpp" line="44"/>
+        <source>h:mm a - </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LocationDialog</name>
+    <message>
+        <location filename="../dialog/locationdialog.cpp" line="10"/>
+        <source>Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/locationdialog.cpp" line="17"/>
+        <source>Longitude</source>
+        <translation type="unfinished">軽度</translation>
+    </message>
+    <message>
+        <location filename="../dialog/locationdialog.cpp" line="19"/>
+        <source>Latitude</source>
+        <translation type="unfinished">緯度</translation>
+    </message>
+    <message>
+        <location filename="../dialog/locationdialog.cpp" line="21"/>
+        <source>Altitude</source>
+        <translation type="unfinished">高度</translation>
+    </message>
+    <message>
+        <location filename="../dialog/locationdialog.cpp" line="26"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/locationdialog.cpp" line="29"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+</context>
+<context>
+    <name>LocationEditor</name>
+    <message>
+        <location filename="../gui/browserWidgets/locationeditor.cpp" line="43"/>
+        <source>Click to set location...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/locationeditor.cpp" line="46"/>
+        <source>Edit...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/locationeditor.cpp" line="47"/>
+        <source>Clear</source>
+        <translation type="unfinished">クリアー</translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/locationeditor.cpp" line="48"/>
+        <source>View on map</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>LoginDialog</name>
+    <message>
+        <location filename="../dialog/logindialog.cpp" line="34"/>
+        <source>NixNote Login</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/logindialog.cpp" line="43"/>
+        <source>Userid</source>
+        <translation type="unfinished">ユーザID</translation>
+    </message>
+    <message>
+        <location filename="../dialog/logindialog.cpp" line="44"/>
+        <source>Password</source>
+        <translation type="unfinished">パスワード</translation>
+    </message>
+    <message>
+        <location filename="../dialog/logindialog.cpp" line="52"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/logindialog.cpp" line="56"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+</context>
+<context>
+    <name>NAttributeTree</name>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="50"/>
+        <source>Attributes</source>
+        <translation type="unfinished">属性</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="127"/>
+        <source>Created</source>
+        <translation type="unfinished">作成日</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="130"/>
+        <location filename="../gui/nattributetree.cpp" line="211"/>
+        <source>Since</source>
+        <translation type="unfinished">以降</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="134"/>
+        <location filename="../gui/nattributetree.cpp" line="171"/>
+        <location filename="../gui/nattributetree.cpp" line="215"/>
+        <location filename="../gui/nattributetree.cpp" line="252"/>
+        <source>Today</source>
+        <translation type="unfinished">今日</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="138"/>
+        <location filename="../gui/nattributetree.cpp" line="175"/>
+        <location filename="../gui/nattributetree.cpp" line="219"/>
+        <location filename="../gui/nattributetree.cpp" line="256"/>
+        <source>Yesterday</source>
+        <translation type="unfinished">昨日</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="142"/>
+        <location filename="../gui/nattributetree.cpp" line="179"/>
+        <location filename="../gui/nattributetree.cpp" line="223"/>
+        <location filename="../gui/nattributetree.cpp" line="260"/>
+        <source>This week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="146"/>
+        <location filename="../gui/nattributetree.cpp" line="183"/>
+        <location filename="../gui/nattributetree.cpp" line="227"/>
+        <location filename="../gui/nattributetree.cpp" line="264"/>
+        <source>Last week</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="150"/>
+        <location filename="../gui/nattributetree.cpp" line="187"/>
+        <location filename="../gui/nattributetree.cpp" line="231"/>
+        <location filename="../gui/nattributetree.cpp" line="268"/>
+        <source>This Month</source>
+        <translation type="unfinished">今月</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="154"/>
+        <location filename="../gui/nattributetree.cpp" line="191"/>
+        <location filename="../gui/nattributetree.cpp" line="235"/>
+        <location filename="../gui/nattributetree.cpp" line="272"/>
+        <source>Last Month</source>
+        <translation type="unfinished">先月</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="158"/>
+        <location filename="../gui/nattributetree.cpp" line="195"/>
+        <location filename="../gui/nattributetree.cpp" line="239"/>
+        <location filename="../gui/nattributetree.cpp" line="276"/>
+        <source>This Year</source>
+        <translation type="unfinished">今年</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="162"/>
+        <location filename="../gui/nattributetree.cpp" line="199"/>
+        <location filename="../gui/nattributetree.cpp" line="243"/>
+        <location filename="../gui/nattributetree.cpp" line="280"/>
+        <source>Last Year</source>
+        <translation type="unfinished">昨年</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="167"/>
+        <location filename="../gui/nattributetree.cpp" line="248"/>
+        <source>Before</source>
+        <translation type="unfinished">以前</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="208"/>
+        <source>Last Modified</source>
+        <translation type="unfinished">最終変更</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="287"/>
+        <source>Contains</source>
+        <translation type="unfinished">内容</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="290"/>
+        <source>Images</source>
+        <translation type="unfinished">画像</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="294"/>
+        <source>Audio</source>
+        <translation type="unfinished">音声</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="298"/>
+        <source>Ink</source>
+        <translation type="unfinished">インク</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="302"/>
+        <source>Encrypted Text</source>
+        <translation type="unfinished">暗号化した文章</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="306"/>
+        <source>To-do items</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="310"/>
+        <source>Unfinished to-do items</source>
+        <translation type="unfinished">終了していないTo-Do項目</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="314"/>
+        <source>Finished to-do items</source>
+        <translation type="unfinished">完了したTo-Do項目</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="318"/>
+        <source>PDF document</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="322"/>
+        <source>Attachment</source>
+        <translation type="unfinished">添付ファイル</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="329"/>
+        <source>Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="332"/>
+        <source>Emailed to Evernote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="336"/>
+        <source>Email</source>
+        <translation type="unfinished">電子メール</translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="340"/>
+        <source>Web page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="344"/>
+        <source>Mobile</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nattributetree.cpp" line="348"/>
+        <source>Another application</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NBrowserWindow</name>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="329"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2208"/>
+        <source>Today</source>
+        <translation type="unfinished">今日</translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="331"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2210"/>
+        <source>Tomorrow</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="333"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2212"/>
+        <source>Yesterday</source>
+        <translation type="unfinished">昨日</translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="567"/>
+        <source>Unable to Save</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="567"/>
+        <source>Unable to save this note.  Either tidy isn&apos;t installed or the note is too complex to save.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="1320"/>
+        <source>Insert Link</source>
+        <translation type="unfinished">リンクの挿入</translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="1493"/>
+        <source>Unable Open</source>
+        <translation type="unfinished">開くのに失敗</translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="1493"/>
+        <source>This is an ink note.
+Ink notes are not supported since Evernote has not
+ published any specifications on them
+and I&apos;m too lazy to figure them out by myself.</source>
+        <translation type="unfinished">これはインクノートです。
+インクノートは、Evernoteが仕様を公開しないうちはサポートされません。</translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="1634"/>
+        <source>Edit Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="1694"/>
+        <source>Unable to create LaTeX image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="1695"/>
+        <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="1952"/>
+        <source>Error loading document for printing.
+Printing aborted.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="1953"/>
+        <source>Print Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="2252"/>
+        <source>Decryption Error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="2253"/>
+        <source>Unknown encryption method.
+Unable to decrypt.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nbrowserwindow.cpp" line="2356"/>
         <source>Error</source>
-        <translation>エラー</translation>
+        <translation type="unfinished">エラー</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3722"/>
-        <source>This note has never been sent to Evernote, so there is no history.</source>
-        <translation>このノートは、Evernoteに送られたことがありません。したがって、過去の記録がありません。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3726"/>
-        <source>Getting Note History</source>
-        <translation>ノートの過去の記録を取得する</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3743"/>
-        <source>Note not found on server.</source>
-        <translation>サーバにノートが見つかりませんでした。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3767"/>
-        <source>History retrieved</source>
-        <translation>記録取得</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3825"/>
-        <source>Restoring as new note.</source>
-        <translation>新しいノートとして復元する。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3827"/>
-        <source>Note has been restored as a new note.</source>
-        <translation>ノートは新しいノートとして復元されました。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3831"/>
-        <source>Restoring note.</source>
-        <translation>ノートの復元。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="3843"/>
-        <source>Note has been restored.</source>
-        <translation>ノートは復元されました。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4183"/>
-        <source>DOUGH!!!</source>
-        <translation>ああっ!!</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4192"/>
-        <source>Well, this is embarrassing.
-
-Some attachments or images for this note appear to be missing from my database.
-In a perfect world this wouldn&apos;t happen, but it has.
-It is embarasing when a program like me, designed to save all your
-precious data, has a problem finding data.
-
-I guess life isn&apos;t fair, but I&apos;ll survive.  Somehow...
-
-In the mean time, I&apos;m not going to let you make changes to this note.
-Don&apos;t get angry.  I&apos;m doing it to prevent you from messing up
-this note on the Evernote servers.  Sorry.
-
-P.S. You might want to re-synchronize to see if it corrects this problem.
-Who knows, you might get lucky.</source>
+        <location filename="../gui/nbrowserwindow.cpp" line="2357"/>
+        <source>Error Encrypting String.  Please verify you have Java installed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4235"/>
-        <source>Finalizing Synchronization</source>
-        <translation>同期の終了処理</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4254"/>
-        <source>Synchronization Complete</source>
-        <translation>同期完了</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4256"/>
-        <source>Synchronization completed with errors.  Please check the log for details.</source>
+        <location filename="../gui/nbrowserwindow.cpp" line="2489"/>
+        <source>Spell Check Complete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4353"/>
-        <source>Index completed.</source>
-        <translation>索引完了。</translation>
+        <location filename="../gui/nbrowserwindow.cpp" line="2489"/>
+        <source>Spell Check Complete.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NMainMenuBar</name>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="52"/>
+        <source>&amp;File</source>
+        <translation type="unfinished">ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4367"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4377"/>
-        <source>Indexing notes.</source>
-        <translation>ノートの索引作成。</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="57"/>
+        <source>Print Note</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4391"/>
-        <source>Indexing is now enabled.</source>
-        <translation>索引作成は有効にされました。</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="58"/>
+        <source>Print this note</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4393"/>
-        <source>Indexing is now disabled.</source>
-        <translation>索引作成は無効にされました。</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="66"/>
+        <source>Restore Database</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4408"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4416"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4424"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4432"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4439"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4446"/>
-        <source>A thread his died.</source>
-        <translation>死んだときのスレッド.</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="67"/>
+        <source>Restore from a backup</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4409"/>
-        <source>It appears as the tag counter thread has died.  I recommend checking stopping NeverNote, saving the logs for later viewing, and restarting.  Sorry.</source>
-        <translation>タグカウントスレッドが死んだようです。NeverNoteを停止し、原因究明のためログを保存し、再起動することをおすすめします。ごめんなさい。</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="73"/>
+        <source>Import from Export File</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4417"/>
-        <source>It appears as the notebook counter thread has died.  I recommend checking stopping NeverNote, saving the logs for later viewing, and restarting.  Sorry.</source>
-        <translation>ノートブックカウント・スレッドが死んだようです。NeverNoteを停止し、原因究明のためログを保存し、再起動することをおすすめします。ごめんなさい。</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="74"/>
+        <source>Import notes from an export file</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4433"/>
-        <source>It appears as the note saver thread has died.  I recommend checking stopping NeverNote, saving the logs for later viewing, and restarting.  Sorry.</source>
-        <translation>ノート保存・スレッドが死んだようです。NeverNoteを停止し、原因究明のためログを保存し、再起動することをおすすめします。ごめんなさい。</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="98"/>
+        <source>Switch to </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4440"/>
-        <source>It appears as the synchronization thread has died.  I recommend checking stopping NeverNote, saving the logs for later viewing, and restarting.  Sorry.</source>
-        <translation>同期・スレッドが死んだようです。NeverNoteを停止し、原因究明のためログを保存し、再起動することをおすすめします。ごめんなさい。</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="105"/>
+        <source>Add Another User...</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4447"/>
-        <source>It appears as the index thread has died.  I recommend checking stopping NeverNote, saving the logs for later viewing, and restarting.  Sorry.</source>
-        <translation>索引作成・スレッドが死んだようです。NeverNoteを停止し、原因究明のためログを保存し、再起動することをおすすめします。ごめんなさい。</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="110"/>
+        <source>User Account Maintenance</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4464"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4537"/>
-        <source>Backup Database</source>
-        <translation>データベースバックアップ</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="117"/>
+        <location filename="../gui/nmainmenubar.cpp" line="118"/>
+        <source>Open/Close Notebooks</source>
+        <translation type="unfinished">ノートブックの表示/非表示</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4465"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4506"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4538"/>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4571"/>
-        <source>NeverNote Export (*.nnex);;All Files (*.*)</source>
-        <translation>Nevernoteエキスポート(*.nnex);;すべてのファイル(*.*)</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="126"/>
+        <source>Exit</source>
+        <translation type="unfinished">終了</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4474"/>
-        <source>Backing up database</source>
-        <translation>データベースバックアップ</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="127"/>
+        <location filename="../gui/nmainmenubar.cpp" line="384"/>
+        <source>Close the program</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4484"/>
-        <source>Database backup completed.</source>
-        <translation>データベースのバックアップ完了。</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="145"/>
+        <source>&amp;Edit</source>
+        <translation type="unfinished">編集(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4495"/>
+        <location filename="../gui/nmainmenubar.cpp" line="147"/>
+        <source>Undo</source>
+        <translation type="unfinished">元に戻す</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="152"/>
+        <source>Redo</source>
+        <translation type="unfinished">やり直す</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="159"/>
+        <source>Cut</source>
+        <translation type="unfinished">切り取り</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="164"/>
+        <source>Copy</source>
+        <translation type="unfinished">コピー</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="169"/>
+        <source>Paste</source>
+        <translation type="unfinished">貼り付け</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="174"/>
+        <source>Paste as Unformatted Text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="179"/>
+        <source>Remove Formatting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="186"/>
+        <source>Select All</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="193"/>
+        <source>Find and Replace</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="196"/>
+        <source>Search Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="202"/>
+        <source>Reset Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="210"/>
+        <source>Find in Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="217"/>
+        <source>Find Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="223"/>
+        <source>Find Previous</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="231"/>
+        <source>Replace Within Note...</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="239"/>
+        <source>Preferences</source>
+        <translation type="unfinished">設定</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="248"/>
+        <source>&amp;View</source>
+        <translation type="unfinished">表示(&amp;V)</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="250"/>
+        <source>Wide Note List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="256"/>
+        <source>Narrow Note List</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="264"/>
+        <source>Show Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="269"/>
+        <source>Note History</source>
+        <translation type="unfinished">ノートの経緯</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="276"/>
+        <source>Show Left Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="284"/>
+        <source>Show Note List</source>
+        <translation type="unfinished">ノート一覧を表示</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="292"/>
+        <source>Show Note Panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="302"/>
+        <source>View Note Info</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="307"/>
+        <source>View Toolbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="315"/>
+        <source>View Statusbar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="328"/>
+        <source>&amp;Note</source>
+        <translation type="unfinished">ノート(&amp;N)</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="330"/>
+        <source>New Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="336"/>
+        <source>New Webcam Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="342"/>
+        <source>Duplicate Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="348"/>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="356"/>
+        <source>Spell Check</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="365"/>
+        <source>Pin Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="371"/>
+        <source>UnPin Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="381"/>
+        <source>&amp;Tools</source>
+        <translation type="unfinished">ツール(&amp;T)</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="383"/>
+        <source>Synchronize</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="390"/>
+        <source>Disconnect</source>
+        <translation type="unfinished">切断</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="391"/>
+        <source>Disconnect from Evernote</source>
+        <translation type="unfinished">Evernoteから切断</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="399"/>
+        <source>Account</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="400"/>
+        <source>Account information</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="408"/>
+        <location filename="../gui/nmainmenubar.cpp" line="409"/>
+        <source>Database Status</source>
+        <translation type="unfinished">データベースの状態</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="415"/>
+        <source>Reindex Database</source>
+        <translation type="unfinished">データベースの再索引</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="416"/>
+        <source>Reindex all notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="424"/>
+        <location filename="../gui/nmainmenubar.cpp" line="425"/>
+        <source>Import Folders</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="435"/>
+        <source>&amp;Help</source>
+        <translation type="unfinished">ヘルプ(&amp;H)</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="436"/>
+        <location filename="../gui/nmainmenubar.cpp" line="437"/>
+        <source>About</source>
+        <translation type="unfinished">情報</translation>
+    </message>
+</context>
+<context>
+    <name>NNotebookView</name>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="73"/>
+        <source>Notebooks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="90"/>
+        <source>Create New Notebook</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="99"/>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="107"/>
+        <source>Add to stack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="120"/>
+        <source>New stack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="123"/>
+        <source>Remove from stack</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="127"/>
+        <source>Rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="135"/>
+        <source>Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="596"/>
+        <source>Are you sure you want to delete this notebook?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="597"/>
+        <source>Verify Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="751"/>
+        <source>New Stack (</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nnotebookview.cpp" line="751"/>
+        <source>)</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NSearchView</name>
+    <message>
+        <location filename="../gui/nsearchview.cpp" line="67"/>
+        <source>Saved Searches</source>
+        <translation type="unfinished">検索の保存</translation>
+    </message>
+    <message>
+        <location filename="../gui/nsearchview.cpp" line="79"/>
+        <source>Create Saved Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nsearchview.cpp" line="89"/>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location filename="../gui/nsearchview.cpp" line="97"/>
+        <source>Rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nsearchview.cpp" line="106"/>
+        <source>Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nsearchview.cpp" line="388"/>
+        <source>Are you sure you want to delete this saved search?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nsearchview.cpp" line="389"/>
+        <source>Verify Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NTabWidget</name>
+    <message>
+        <location filename="../gui/ntabwidget.cpp" line="178"/>
+        <location filename="../gui/ntabwidget.cpp" line="242"/>
+        <source>NixNote - </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NTableView</name>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="200"/>
+        <source>Open Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="206"/>
+        <source>Open Note In New Tab</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="212"/>
+        <source>Open Note In New Window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="219"/>
+        <source>Add Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="224"/>
+        <source>Delete Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="229"/>
+        <source>Restore Note</source>
+        <translation type="unfinished">ノートの復元</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="235"/>
+        <source>Copy Note Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="240"/>
+        <source>Duplicate Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="245"/>
+        <source>Pin Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="250"/>
+        <source>Unpin Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="255"/>
+        <source>Merge Notes</source>
+        <translation type="unfinished">ノートの結合</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="533"/>
+        <source>Delete </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="536"/>
+        <source>Permanently delete </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="542"/>
+        <source>selected note?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="547"/>
+        <source>Verify Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="760"/>
+        <source>Unsynchronized Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="761"/>
+        <source>This note has never been synchronized.
+Using this in a note link can cause problems unless you synchronize it first.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NTableViewHeader</name>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="38"/>
+        <source>Date Created</source>
+        <translation type="unfinished">作成日</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="43"/>
+        <source>Date Updated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="48"/>
+        <source>Title</source>
+        <translation type="unfinished">タイトル</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="53"/>
+        <source>Notebook</source>
+        <translation type="unfinished">ノートブック</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="58"/>
+        <source>Tags</source>
+        <translation type="unfinished">タグ</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="63"/>
+        <source>Author</source>
+        <translation type="unfinished">作者</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="68"/>
+        <source>Subject Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="73"/>
+        <source>Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="78"/>
+        <source>Source URL</source>
+        <translation type="unfinished">ソースURL</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="83"/>
+        <source>Latitude</source>
+        <translation type="unfinished">緯度</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="88"/>
+        <source>Longitude</source>
+        <translation type="unfinished">軽度</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="93"/>
+        <source>Altitude</source>
+        <translation type="unfinished">高度</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="98"/>
+        <source>Has Encryption</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="103"/>
+        <source>Has To-do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="108"/>
+        <source>Synchronized</source>
+        <translation type="unfinished">同期済</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="113"/>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="118"/>
+        <source>Reminder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="123"/>
+        <source>Reminder Due</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="128"/>
+        <source>Reminder Completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="133"/>
+        <source>Pinned</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableviewheader.cpp" line="138"/>
+        <source>Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NTagView</name>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="72"/>
+        <location filename="../gui/ntagview.cpp" line="164"/>
+        <source>Tags from Personal</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="96"/>
+        <source>Create New Tag</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="105"/>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="112"/>
+        <source>Rename</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="115"/>
+        <source>Merge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="122"/>
+        <source>Hide Unassigned</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="128"/>
+        <source>Properties</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="162"/>
+        <source>Tags from </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="664"/>
+        <source>Are you sure you want to merge these tags?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="665"/>
+        <source>Verify Merge</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="711"/>
+        <source>Are you sure you want to delete this tag?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="712"/>
+        <source>Verify Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NTitleEditor</name>
+    <message>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="116"/>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="131"/>
+        <source>Untitled note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="128"/>
+        <source>untitled note</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NTrashTree</name>
+    <message>
+        <location filename="../gui/ntrashtree.cpp" line="55"/>
+        <source>Trash</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntrashtree.cpp" line="67"/>
+        <source>Restore Deleted Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntrashtree.cpp" line="70"/>
+        <source>Empty Trash</source>
+        <translation type="unfinished">ゴミ箱を空にする</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntrashtree.cpp" line="239"/>
+        <source>Verify Delete</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntrashtree.cpp" line="240"/>
+        <source>Are you sure you want to permanently delete these notes?</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>NWebView</name>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="54"/>
+        <source>Open</source>
+        <translation type="unfinished">開く</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="58"/>
+        <source>Cut</source>
+        <translation type="unfinished">切り取り</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="63"/>
+        <source>Copy</source>
+        <translation type="unfinished">コピー</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="68"/>
+        <source>Paste</source>
+        <translation type="unfinished">貼り付け</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="73"/>
+        <source>Paste as Unformatted Text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="78"/>
+        <source>Remove Formatting</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="85"/>
+        <source>Background Color</source>
+        <translation type="unfinished">背景の色</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="86"/>
+        <source>White</source>
+        <translation type="unfinished">白</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="89"/>
+        <source>Red</source>
+        <translation type="unfinished">赤</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="92"/>
+        <source>Blue</source>
+        <translation type="unfinished">青</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="95"/>
+        <source>Green</source>
+        <translation type="unfinished">緑</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="98"/>
+        <source>Yellow</source>
+        <translation type="unfinished">黄</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="101"/>
+        <source>Black</source>
+        <translation type="unfinished">黒</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="104"/>
+        <source>Grey</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="107"/>
+        <source>Purple</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="110"/>
+        <source>Brown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="113"/>
+        <source>Orange</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="116"/>
+        <source>Powder Blue</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="123"/>
+        <source>To-do</source>
+        <translation type="unfinished">To-Do</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="128"/>
+        <source>Encrypted Selected Text</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="133"/>
+        <source>Insert Hyperlink</source>
+        <translation type="unfinished">ハイパーリンクの挿入</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="138"/>
+        <source>Quick Link</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="143"/>
+        <source>Attach File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="149"/>
+        <source>Insert LaTeX Formula</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="155"/>
+        <source>Table</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="157"/>
+        <source>Insert Table</source>
+        <translation type="unfinished">表の挿入</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="162"/>
+        <source>Insert Row</source>
+        <translation type="unfinished">列の挿入</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="166"/>
+        <source>Insert Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="171"/>
+        <source>Delete Row</source>
+        <translation type="unfinished">列の削除</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="175"/>
+        <source>Delete Column</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="181"/>
+        <source>Image</source>
+        <translation type="unfinished">画像</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="183"/>
+        <source>Save Image</source>
+        <translation type="unfinished">画像の保存</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="191"/>
+        <source>Rotate Left</source>
+        <translation type="unfinished">左回転</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="195"/>
+        <source>Rotate Right</source>
+        <translation type="unfinished">右回転</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="201"/>
+        <source>Save Attachment</source>
+        <translation type="unfinished">添付の保存</translation>
+    </message>
+    <message>
+        <location filename="../gui/nwebview.cpp" line="435"/>
+        <location filename="../gui/nwebview.cpp" line="456"/>
+        <source>Save File</source>
+        <translation type="unfinished">ファイルの保存</translation>
+    </message>
+</context>
+<context>
+    <name>NixNote</name>
+    <message>
+        <location filename="../nixnote.cpp" line="188"/>
+        <source>Tidy Not Found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="188"/>
+        <source>Tidy is not found on this system.
+Until tidy is installed you cannot save any notes.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="244"/>
+        <source>ToolBar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="254"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="255"/>
+        <source>Next</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="265"/>
+        <source>All Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="267"/>
+        <source>Sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="270"/>
+        <source>Print</source>
+        <translation type="unfinished">印刷</translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="271"/>
+        <source>New Text Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="272"/>
+        <source>New Webcam Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="273"/>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="276"/>
+        <source>Trunk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="277"/>
+        <source>Usage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="379"/>
+        <location filename="../nixnote.cpp" line="1926"/>
+        <source>Screen Capture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="384"/>
+        <source>Show/Hide</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="385"/>
+        <source>Minimize to tray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="388"/>
+        <source>Close to tray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="398"/>
+        <source>Close</source>
+        <translation type="unfinished">閉じる</translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1179"/>
         <source>This is used to restore a database from backups.
 It is HIGHLY recommened that this only be used to populate
 an empty database.  Restoring into a database that
  already has data can cause problems.
 
 Are you sure you want to continue?</source>
-        <translation>これは、バックアップからデータベースを復元するために用いる機能です。
+        <translation type="unfinished">これは、バックアップからデータベースを復元するために用いる機能です。
 空のデータベースに対してだけ実施することを、強く推奨します。
 データの存在するデータベースに対して行われた場合は、問題が発生します。
 
 本当に継続しますか?</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4505"/>
-        <source>Restore Database</source>
-        <translation>データベース復元</translation>
+        <location filename="../nixnote.cpp" line="1182"/>
+        <source>Confirm Restore</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4515"/>
+        <location filename="../nixnote.cpp" line="1199"/>
+        <source>Restore Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1201"/>
+        <source>Import Notes</source>
+        <translation type="unfinished">ノートの取り込み</translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1203"/>
+        <source>NixNote Export (*.nnex);;All Files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1223"/>
         <source>Restoring database</source>
-        <translation>データベースを復元します</translation>
+        <translation type="unfinished">データベースを復元します</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4529"/>
+        <location filename="../nixnote.cpp" line="1225"/>
+        <source>Importing Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1249"/>
         <source>Database has been restored.</source>
-        <translation>データベースは復元されました。</translation>
+        <translation type="unfinished">データベースは復元されました。</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4547"/>
-        <source>Exporting Notes</source>
-        <translation>ノートの書き出し</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4559"/>
-        <source>Export completed.</source>
-        <translation>書き出し完了。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4570"/>
-        <source>Import Notes</source>
-        <translation>ノートの取り込み</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/NeverNote.java" line="4608"/>
+        <location filename="../nixnote.cpp" line="1251"/>
         <source>Notes have been imported.</source>
-        <translation>ノートは取り込まれました。</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.AccountDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/AccountDialog.java" line="41"/>
-        <source>Account Information</source>
-        <translation>アカウント情報</translation>
+        <translation type="unfinished">ノートは取り込まれました。</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/AccountDialog.java" line="78"/>
-        <source>Account:</source>
-        <translation>アカウント:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/AccountDialog.java" line="93"/>
-        <source>User Attributes</source>
-        <translation>ユーザ属性</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/AccountDialog.java" line="94"/>
-        <source>Incoming Email:</source>
-        <translation>登録用電子メール:</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.ConfigAppearancePage</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="77"/>
-        <source>GUI Style</source>
-        <translation>GUIスタイル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="83"/>
-        <source>Use standard palette</source>
-        <translation>標準色パレットを使う</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="92"/>
-        <source>Tag Behavior</source>
-        <translation>タグの動作</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="94"/>
-        <source>Do nothing</source>
-        <translation>何もしない</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="95"/>
-        <source>Count tags &amp; do not hide inactive</source>
-        <translation>タグを数える＆非活性タグを隠さない</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="96"/>
-        <source>Count tags &amp; hide inactive</source>
-        <translation>タグを数える＆非活性タグを隠す</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="97"/>
-        <source>Color active tags</source>
-        <translation>有効なタグに色づけ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="106"/>
-        <source>Date/Time Format</source>
-        <translation>日付フォーマット</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="122"/>
-        <source>Mimic Evernote Selection Behavior (Requires Restart)</source>
-        <translation>Evernoteの選択の挙動に似せる（再起動が必要）</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="123"/>
-        <source>Show Splash Screen on Startup</source>
-        <translation>開始時にスプラッシュ画面を表示する</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="124"/>
-        <source>Show Tray Icon</source>
-        <translation>トレーアイコンを表示</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="125"/>
-        <source>Verify Deletes</source>
-        <translation>削除時に確認する</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="126"/>
-        <source>Display PDF Documents Inline</source>
-        <translation>PDF文書をインライン表示する</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="127"/>
-        <source>Create New Notes With Selected Tags</source>
-        <translation>選択したタグを持つ新しいノートを作成</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigAppearancePage.java" line="130"/>
-        <source>Automatic Save Interval (in Minutes)</source>
-        <translation>自動保存の間隔(分）</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.ConfigConnectionPage</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigConnectionPage.java" line="49"/>
-        <source>Connection</source>
-        <translation>接続</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigConnectionPage.java" line="50"/>
-        <source>Userid</source>
-        <translation>ユーザID</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigConnectionPage.java" line="51"/>
-        <source>Password</source>
-        <translation>パスワード</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigConnectionPage.java" line="76"/>
-        <source>Syncronization Interval</source>
-        <translation>同期間隔</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.ConfigDebugPage</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="40"/>
-        <source>Server Configuration</source>
-        <translation>サーバ設定</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="41"/>
-        <source>Server</source>
-        <translation>サーバ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="46"/>
-        <source>Disable uploads to server</source>
-        <translation>サーバへのアップロードを無効にする</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="54"/>
-        <source>Debug Messages</source>
-        <translation>デバッグメッセージ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="55"/>
-        <source>Message Level</source>
-        <translation>メッセージレベル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="57"/>
-        <source>Low</source>
-        <translation>低</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="58"/>
-        <source>Medium</source>
-        <translation>中</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="59"/>
-        <source>High</source>
-        <translation>高</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="60"/>
-        <source>Extreme</source>
-        <translation>最高</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="72"/>
-        <source>Carriage Return Fix</source>
-        <translation>エンターキー挙動修正</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="79"/>
-        <source>Note: The carriage return is a test fix.  If you enable it, it will do some modifications to the notes you view to try and get the carriage returns to look correct.  This is due to the way that the way Evernote 3.1 Windows client is dealing with carriage returns.  This fixwill try and correct this problem.  This fix is not permanent unless you edit a note.  Ifyou edit a note, this fix is PERMANENT and will be sent to Evernote on the next sync.  I haven&apos;thad any issues with this, but please be aware of this condition.</source>
-        <translation>注：キャリッジリターンは、テスト中の修正です。もし有効としたならば、エンターキーが正しい挙動を仕様とする代わりに、閲覧しているノートに何か変更が加わるかもしれません。それでも、Windows版のEvernote 3.1が、エンターキーを扱うのと同じ挙動なのです。この修正は、この問題を修正しようとします。ノートの編集が行われるまでは、この修正は働きません。ノートを編集すると、この修正は永遠に反映され、次の同期でサーバーに送られます。わたしは、まだこの問題に遭遇していませんが、この条件の下使うと言うことを了承してください。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDebugPage.java" line="82"/>
-        <source>Enable Carriage Return Fix</source>
-        <translation>エンターキー挙動修正を有効にする</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.ConfigDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDialog.java" line="70"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDialog.java" line="71"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDialog.java" line="86"/>
-        <source>Settings</source>
-        <translation>設定</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDialog.java" line="199"/>
-        <source>Appearance</source>
-        <translation>見え方</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDialog.java" line="205"/>
-        <source>Indexing</source>
-        <translation>索引作成</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDialog.java" line="211"/>
-        <source>Connection</source>
-        <translation>接続</translation>
-    </message>
-    <message>
-        <source>Hide Columns</source>
-        <translation type="obsolete">列を隠す</translation>
-    </message>
-    <message>
-        <source>Hide Edit Buttons</source>
-        <translation type="obsolete">編集ボタンを隠す</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigDialog.java" line="217"/>
-        <source>Debugging</source>
-        <translation>デバッグ</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.ConfigIndexPage</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigIndexPage.java" line="48"/>
-        <source>Maximum Threads</source>
-        <translation>最大スレッド</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigIndexPage.java" line="52"/>
-        <source>Indexing Threads (Requires Restart)</source>
-        <translation>スレッドの索引作成（再スタート必要）</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigIndexPage.java" line="59"/>
-        <source>Word Length</source>
-        <translation>単語長</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigIndexPage.java" line="60"/>
-        <source>Minimum Word Length</source>
-        <translation>最小の単語の長さ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigIndexPage.java" line="73"/>
-        <source>Recognition</source>
+        <location filename="../nixnote.cpp" line="1281"/>
+        <source>Sync Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigIndexPage.java" line="74"/>
-        <source>Minimum Recognition Weight</source>
+        <location filename="../nixnote.cpp" line="1281"/>
+        <source>Sync completed with errors.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigIndexPage.java" line="87"/>
-        <source>Index Interval</source>
+        <location filename="../nixnote.cpp" line="1283"/>
+        <source>Sync Complete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigIndexPage.java" line="88"/>
-        <source>Seconds between looking for unindexed notes</source>
+        <location filename="../nixnote.cpp" line="1283"/>
+        <source>Sync completed successfully.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigIndexPage.java" line="102"/>
-        <source>Word Parse</source>
-        <translation>単語の認識</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/ConfigIndexPage.java" line="103"/>
-        <source>Regular Expression</source>
-        <translation>正規表現</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.ConfigShowColumnsPage</name>
-    <message>
-        <source>Date Created</source>
-        <translation type="obsolete">作成日</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation type="obsolete">表示</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="obsolete">非表示</translation>
-    </message>
-    <message>
-        <source>Subject Date</source>
-        <translation type="obsolete">サブジェクトの日付</translation>
-    </message>
-    <message>
-        <source>Source URL</source>
-        <translation type="obsolete">ソースURL</translation>
-    </message>
-    <message>
-        <source>Author</source>
-        <translation type="obsolete">作者</translation>
-    </message>
-    <message>
-        <source>Date Changed</source>
-        <translation type="obsolete">更新日</translation>
-    </message>
-    <message>
-        <source>Notebook</source>
-        <translation type="obsolete">ノートブック</translation>
-    </message>
-    <message>
-        <source>Tags</source>
-        <translation type="obsolete">タグ</translation>
-    </message>
-    <message>
-        <source>Synchronized Indicator</source>
-        <translation type="obsolete">同期表示</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.ConfigShowEditorButtonsPage</name>
-    <message>
-        <source>Undo</source>
-        <translation type="obsolete">元に戻す</translation>
-    </message>
-    <message>
-        <source>Show</source>
-        <translation type="obsolete">表示</translation>
-    </message>
-    <message>
-        <source>Hide</source>
-        <translation type="obsolete">隠す</translation>
-    </message>
-    <message>
-        <source>Redo</source>
-        <translation type="obsolete">やり直す</translation>
-    </message>
-    <message>
-        <source>Paste</source>
-        <translation type="obsolete">貼り付け</translation>
-    </message>
-    <message>
-        <source>Copy</source>
-        <translation type="obsolete">コピー</translation>
-    </message>
-    <message>
-        <source>Cut</source>
-        <translation type="obsolete">切り取り</translation>
-    </message>
-    <message>
-        <source>Underline</source>
-        <translation type="obsolete">下線</translation>
-    </message>
-    <message>
-        <source>Bold</source>
-        <translation type="obsolete">太字</translation>
-    </message>
-    <message>
-        <source>Italic</source>
-        <translation type="obsolete">イタリック体</translation>
-    </message>
-    <message>
-        <source>Strikethrough</source>
-        <translation type="obsolete">取消線</translation>
-    </message>
-    <message>
-        <source>Horizontal Line</source>
-        <translation type="obsolete">水平線</translation>
-    </message>
-    <message>
-        <source>Outdent</source>
-        <translation type="obsolete">インデントを戻す</translation>
-    </message>
-    <message>
-        <source>Indent</source>
-        <translation type="obsolete">インデントする</translation>
-    </message>
-    <message>
-        <source>Bullet List</source>
-        <translation type="obsolete">箇条書き</translation>
-    </message>
-    <message>
-        <source>Numbered List</source>
-        <translation type="obsolete">番号付きリスト</translation>
-    </message>
-    <message>
-        <source>Fonts</source>
-        <translation type="obsolete">フォント</translation>
-    </message>
-    <message>
-        <source>Font Size</source>
-        <translation type="obsolete">フォントのサイズ</translation>
-    </message>
-    <message>
-        <source>Font Color</source>
-        <translation type="obsolete">フォントの色</translation>
-    </message>
-    <message>
-        <source>Text Highlight</source>
-        <translation type="obsolete">ハイライト</translation>
-    </message>
-    <message>
-        <source>Align Left</source>
-        <translation type="obsolete">左寄せ</translation>
-    </message>
-    <message>
-        <source>Align Center</source>
-        <translation type="obsolete">中央寄せ</translation>
-    </message>
-    <message>
-        <source>Align Right</source>
-        <translation type="obsolete">右寄せ</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.DatabaseLoginDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseLoginDialog.java" line="38"/>
-        <source>Database Password</source>
-        <translation>データベースパスワード</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseLoginDialog.java" line="51"/>
-        <source>Password</source>
-        <translation>パスワード</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseLoginDialog.java" line="56"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseLoginDialog.java" line="58"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.DatabaseStatus</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseStatus.java" line="42"/>
-        <source>Current Database Status</source>
-        <translation>現在のデータベースの状態</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseStatus.java" line="54"/>
-        <source>Notebooks:</source>
-        <translation>ノートブック:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseStatus.java" line="57"/>
-        <source>Tags:</source>
-        <translation>タグ:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseStatus.java" line="60"/>
-        <source>Total Notes:</source>
-        <translation>全ノート:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseStatus.java" line="63"/>
-        <source>Unsynchronized Notes:</source>
-        <translation>同期されていないノート:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseStatus.java" line="66"/>
-        <source>Unindexed Notes:</source>
-        <translation>索引前ノート:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseStatus.java" line="69"/>
-        <source>Attachments/Images:</source>
-        <translation>添付/画像:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseStatus.java" line="72"/>
-        <source>Saved Searches:</source>
-        <translation>保存された検索:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseStatus.java" line="75"/>
-        <source>Words In Index</source>
-        <translation>索引中の単語:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/DatabaseStatus.java" line="79"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.EnCryptDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnCryptDialog.java" line="42"/>
-        <source>Encrypt Text</source>
-        <translation>テキストの暗号化</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnCryptDialog.java" line="57"/>
-        <source>Password</source>
-        <translation>パスワード</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnCryptDialog.java" line="59"/>
-        <source>Verify</source>
-        <translation>確認</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnCryptDialog.java" line="61"/>
-        <source>Hint</source>
-        <translation>ヒント</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnCryptDialog.java" line="70"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnCryptDialog.java" line="74"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnCryptDialog.java" line="120"/>
-        <source>Password must be at least 4 characters</source>
+        <location filename="../nixnote.cpp" line="1475"/>
+        <source>This feature is only available to premium users.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnCryptDialog.java" line="124"/>
-        <source>Passwords do not match</source>
+        <location filename="../nixnote.cpp" line="1476"/>
+        <source>Premium Feature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnCryptDialog.java" line="128"/>
-        <source>Hint must be entered</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.EnDecryptDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnDecryptDialog.java" line="45"/>
-        <source>Decrypt Text</source>
-        <translation>テキストの複号</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnDecryptDialog.java" line="60"/>
-        <source>Password</source>
-        <translation>パスワード</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnDecryptDialog.java" line="62"/>
-        <source>Verify</source>
-        <translation>確認</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnDecryptDialog.java" line="66"/>
-        <source>Permanently Decrypt</source>
-        <translation>永久に複号する</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnDecryptDialog.java" line="70"/>
-        <source>Remember For This Session</source>
-        <translation>このセッションで覚えておく</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnDecryptDialog.java" line="76"/>
-        <source>Hint: </source>
-        <translation>ヒント:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/EnDecryptDialog.java" line="88"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.FindDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/FindDialog.java" line="42"/>
-        <source>Find</source>
-        <translation>検索</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/FindDialog.java" line="53"/>
-        <source>Text</source>
-        <translation>テキスト</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/FindDialog.java" line="58"/>
-        <source>Case Sensitive</source>
-        <translation>大文字・小文字区別</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/FindDialog.java" line="60"/>
-        <source>Forward</source>
+        <location filename="../nixnote.cpp" line="1495"/>
+        <source>Error retrieving note.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/FindDialog.java" line="62"/>
-        <source>Backward</source>
+        <location filename="../nixnote.cpp" line="1496"/>
+        <source>Error retrieving note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/FindDialog.java" line="64"/>
-        <source>Wrap</source>
+        <location filename="../nixnote.cpp" line="1513"/>
+        <source>Note restored</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/FindDialog.java" line="73"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/FindDialog.java" line="75"/>
-        <source>Close</source>
-        <translation>閉じる</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.GeoDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/GeoDialog.java" line="42"/>
-        <source>NeverNote Login</source>
-        <translation>NeverNoteログイン</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/GeoDialog.java" line="65"/>
-        <source>Longitude</source>
-        <translation>軽度</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/GeoDialog.java" line="67"/>
-        <source>Latitude</source>
-        <translation>緯度</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/GeoDialog.java" line="69"/>
-        <source>Altitude</source>
-        <translation>高度</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/GeoDialog.java" line="74"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/GeoDialog.java" line="76"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.InsertLinkDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/InsertLinkDialog.java" line="41"/>
-        <source>Insert Link</source>
-        <translation>リンクの挿入</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/InsertLinkDialog.java" line="50"/>
-        <source>Url</source>
-        <translation>URL</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/InsertLinkDialog.java" line="55"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/InsertLinkDialog.java" line="59"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.LoginDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/LoginDialog.java" line="41"/>
-        <source>NeverNote Login</source>
-        <translation>NeverNoteのログイン</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/LoginDialog.java" line="57"/>
-        <source>Userid</source>
-        <translation>ユーザID</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/LoginDialog.java" line="59"/>
-        <source>Password</source>
-        <translation>パスワード</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/LoginDialog.java" line="64"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/LoginDialog.java" line="66"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.NotebookArchive</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookArchive.java" line="53"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookArchive.java" line="57"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookArchive.java" line="61"/>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookArchive.java" line="122"/>
-        <source>Open Notebooks</source>
-        <translation>ノートブックを開く</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookArchive.java" line="78"/>
-        <source>Closed Notebooks</source>
-        <translation>ノートブックを閉じる</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookArchive.java" line="93"/>
-        <source>Open/Close Notebooks</source>
-        <translation>ノートブックの表示/非表示</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.NotebookEdit</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookEdit.java" line="42"/>
-        <source>Add Notebook</source>
-        <translation>ノートブックの追加</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookEdit.java" line="48"/>
-        <source>Notebook Name</source>
-        <translation>ノートブック名</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookEdit.java" line="54"/>
-        <source>Local Notebook</source>
-        <translation>ローカルのノートブック</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookEdit.java" line="59"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/NotebookEdit.java" line="62"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.OnlineNoteHistory</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/OnlineNoteHistory.java" line="58"/>
-        <source>Online Note History</source>
-        <translation>オンラインのノートの履歴</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/OnlineNoteHistory.java" line="64"/>
-        <source>History Date:</source>
-        <translation>履歴日付:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/OnlineNoteHistory.java" line="80"/>
-        <source>Restore Note</source>
-        <translation>ノートの復元</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/OnlineNoteHistory.java" line="83"/>
-        <source>Restore As New Note</source>
-        <translation>新しいノートとして復元</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/OnlineNoteHistory.java" line="85"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/OnlineNoteHistory.java" line="112"/>
-        <source>Current (Non Synchronized)</source>
-        <translation>現在（未同期)</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/OnlineNoteHistory.java" line="114"/>
-        <source>Current (Synchronized)</source>
-        <translation>現在(同期済)</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.PreviewDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/PreviewDialog.java" line="58"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/PreviewDialog.java" line="68"/>
-        <source>Note Preview</source>
-        <translation>ノートのプレビュー</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.SavedSearchEdit</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/SavedSearchEdit.java" line="42"/>
-        <source>Add a search</source>
-        <translation>検索の追加</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/SavedSearchEdit.java" line="48"/>
-        <source>Name</source>
-        <translation>名前</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/SavedSearchEdit.java" line="51"/>
-        <source>String</source>
-        <translation>文字列</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/SavedSearchEdit.java" line="57"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/SavedSearchEdit.java" line="60"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.TableDialog</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TableDialog.java" line="47"/>
-        <source>Insert Table</source>
-        <translation>表の挿入</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TableDialog.java" line="55"/>
-        <source>Percent</source>
-        <translation>パーセント</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TableDialog.java" line="56"/>
-        <source>Pixels</source>
-        <translation>ピクセル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TableDialog.java" line="72"/>
-        <source>Rows</source>
+        <location filename="../nixnote.cpp" line="1517"/>
+        <source>No versions of this note can be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TableDialog.java" line="74"/>
-        <source>Columns</source>
+        <location filename="../nixnote.cpp" line="1518"/>
+        <source>Note Not Found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TableDialog.java" line="76"/>
-        <source>Width</source>
-        <translation>幅</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TableDialog.java" line="78"/>
-        <source>Unit</source>
-        <translation>単位</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TableDialog.java" line="87"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TableDialog.java" line="90"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.TagAssign</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TagAssign.java" line="54"/>
-        <source>Add</source>
-        <translation>追加</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TagAssign.java" line="64"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TagAssign.java" line="68"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TagAssign.java" line="78"/>
-        <source>Note Tags</source>
-        <translation>ノートのタグ</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.TagEdit</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TagEdit.java" line="41"/>
-        <source>Add Tag</source>
-        <translation>タグ追加</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TagEdit.java" line="47"/>
-        <source>Tag Name</source>
-        <translation>タグ名称</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TagEdit.java" line="53"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/TagEdit.java" line="56"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.WatchFolder</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="58"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="62"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="70"/>
-        <source>Auto Import Folders</source>
-        <translation>自動取り込みフォルダー</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="74"/>
-        <source>Directory</source>
-        <translation>ディレクトリ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="75"/>
-        <source>Target Notebook</source>
-        <translation>対象ノートブック</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="76"/>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="167"/>
-        <source>Keep</source>
-        <translation>保持</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="87"/>
-        <source>Add</source>
-        <translation>追加</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="91"/>
-        <source>Edit</source>
-        <translation>編集</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="96"/>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolder.java" line="170"/>
-        <source>Delete</source>
-        <translation>削除</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.dialog.WatchFolderAdd</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolderAdd.java" line="53"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolderAdd.java" line="57"/>
-        <source>Cancel</source>
-        <translation>キャンセル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolderAdd.java" line="61"/>
-        <source>Directory</source>
-        <translation>ディレクトリ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolderAdd.java" line="71"/>
-        <source>Keep</source>
-        <translation>保持</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolderAdd.java" line="72"/>
-        <source>Delete</source>
-        <translation>削除</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolderAdd.java" line="92"/>
-        <source>Notebook</source>
-        <translation>ノートブック</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolderAdd.java" line="94"/>
-        <source>After Import</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/dialog/WatchFolderAdd.java" line="101"/>
-        <source>Add Import Folder</source>
-        <translation>取り込むフォルダーの追加</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.filters.ContainsAttributeFilter</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/ContainsAttributeFilterFactory.java" line="36"/>
-        <source>Images</source>
-        <translation>画像</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/ContainsAttributeFilterFactory.java" line="39"/>
-        <source>Audio</source>
-        <translation>音声</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/ContainsAttributeFilterFactory.java" line="42"/>
-        <source>Ink</source>
-        <translation>インク</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/ContainsAttributeFilterFactory.java" line="45"/>
-        <source>Encrypted Text</source>
-        <translation>暗号化した文章</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/ContainsAttributeFilterFactory.java" line="48"/>
-        <source>ToDo Items</source>
-        <translation>ToDo項目</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/ContainsAttributeFilterFactory.java" line="51"/>
-        <source>Unfinished to-do items</source>
-        <translation>終了していないTo-Do項目</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/ContainsAttributeFilterFactory.java" line="54"/>
-        <source>Finished to-do items</source>
-        <translation>完了したTo-Do項目</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/ContainsAttributeFilterFactory.java" line="57"/>
-        <source>Attachment</source>
-        <translation>添付ファイル</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/ContainsAttributeFilterFactory.java" line="60"/>
-        <source>PDF</source>
-        <translation>PDF</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.filters.DateAttributeFilter</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/DateAttributeFilterFactory.java" line="71"/>
-        <source>Today</source>
-        <translation>今日</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/DateAttributeFilterFactory.java" line="91"/>
-        <source>Yesterday</source>
-        <translation>昨日</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/DateAttributeFilterFactory.java" line="112"/>
-        <source>This Week</source>
-        <translation>今週</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/DateAttributeFilterFactory.java" line="133"/>
-        <source>Last Week</source>
-        <translation>先週</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/DateAttributeFilterFactory.java" line="161"/>
-        <source>This Month</source>
-        <translation>今月</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/DateAttributeFilterFactory.java" line="193"/>
-        <source>Last Month</source>
-        <translation>先月</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/DateAttributeFilterFactory.java" line="216"/>
-        <source>This Year</source>
-        <translation>今年</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/filters/DateAttributeFilterFactory.java" line="240"/>
-        <source>Last Year</source>
-        <translation>昨年</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.gui.AttributeTreeWidget</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/AttributeTreeWidget.java" line="37"/>
-        <location filename="../src/cx/fbn/nevernote/gui/AttributeTreeWidget.java" line="40"/>
-        <source>Attributes</source>
-        <translation>属性</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/AttributeTreeWidget.java" line="45"/>
-        <source>Created</source>
-        <translation>作成日</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/AttributeTreeWidget.java" line="52"/>
-        <location filename="../src/cx/fbn/nevernote/gui/AttributeTreeWidget.java" line="97"/>
-        <source>Since</source>
-        <translation>以降</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/AttributeTreeWidget.java" line="77"/>
-        <location filename="../src/cx/fbn/nevernote/gui/AttributeTreeWidget.java" line="111"/>
-        <source>Before</source>
-        <translation>以前</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/AttributeTreeWidget.java" line="90"/>
-        <source>Last Modified</source>
-        <translation>最終変更</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/AttributeTreeWidget.java" line="124"/>
-        <source>Contains</source>
-        <translation>内容</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.gui.BrowserWindow</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="308"/>
-        <source>Subject Date:</source>
-        <translation>サブジェクト日付:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="315"/>
-        <source>Notebook</source>
-        <translation>ノートブック</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="316"/>
-        <source>Created:</source>
-        <translation>作成日:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="325"/>
-        <source>Set</source>
-        <translation>設定</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="326"/>
-        <source>Clear</source>
-        <translation>クリアー</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="327"/>
-        <source>View On Map</source>
-        <translation>地図上で表示</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="397"/>
-        <source>Undo Change</source>
-        <translation>変更の取り消し</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="398"/>
-        <source>Redo Change</source>
-        <translation>変更し直し</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="399"/>
-        <source>Cut</source>
-        <translation>切り取り</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="400"/>
-        <source>Copy</source>
-        <translation>コピー</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="401"/>
-        <source>Paste</source>
-        <translation>貼り付け</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="402"/>
-        <source>Bold</source>
-        <translation>太字</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="403"/>
-        <source>Underline</source>
-        <translation>下線</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="404"/>
-        <source>Italic</source>
-        <translation>イタリック体</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="406"/>
-        <source>Right Align</source>
-        <translation>右寄せ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="407"/>
-        <source>Left Align</source>
-        <translation>左寄せ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="408"/>
-        <source>Center Align</source>
-        <translation>中央寄せ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="410"/>
-        <source>Strikethrough</source>
-        <translation>取消線</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="411"/>
-        <source>Insert Horizontal Line</source>
-        <translation>水平線の挿入</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="412"/>
-        <source>Shift Right</source>
-        <translation>右へシフト</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="413"/>
-        <source>Shift Left</source>
-        <translation>左へシフト</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="414"/>
-        <source>Bullet List</source>
-        <translation>箇条書き</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="415"/>
-        <source>Number List</source>
-        <translation>番号つきリスト</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="489"/>
-        <source>Font Color</source>
-        <translation>フォントの色</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="497"/>
-        <source>Font Hilight Color</source>
-        <translation>フォントのハイライト色</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="619"/>
-        <source>Source URL:</source>
-        <translation>ソースURL:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="682"/>
-        <source>Source URL:	</source>
-        <translation>ソースURL:	</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="693"/>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="694"/>
-        <source>http://</source>
+        <location filename="../nixnote.cpp" line="1823"/>
+        <source>Switch to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="702"/>
-        <source>Author:	</source>
-        <translation>作者:</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="800"/>
-        <source>Unable Open</source>
-        <translation>開くのに失敗</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="802"/>
-        <source>This is an ink note.
-Ink notes are not supported since Evernote has not
- published any specifications on them
-and I&apos;m too lazy to figure them out by myself.</source>
-        <translation>これはインクノートです。
-インクノートは、Evernoteが仕様を公開しないうちはサポートされません。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="1195"/>
-        <source>Error</source>
-        <translation>エラー</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="1195"/>
-        <source>Error Encrypting String</source>
-        <translation>文字列の暗号化に失敗</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="1594"/>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="1602"/>
-        <source>Untitled Note</source>
-        <translation>タイトルのないノート</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="1937"/>
-        <source>Non-premium accounts can only attach JPG, PNG, GIF, MP3, WAV, AMR, or PDF files.</source>
-        <translation>プラミアム契約でない場合、JPG, PNG, GIF, MP3, WAV, AMR, PDFファイルしか添付できません。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="1938"/>
-        <source>Non-Premium Account</source>
-        <translation>プレミアム契約ではない</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="1957"/>
-        <source>A file attachment may not exceed 25MB.</source>
-        <translation>ファイル添付は、25MBを超えられません。</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="1958"/>
-        <source>Attachment Size</source>
-        <translation>添付のサイズ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="2045"/>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="2097"/>
-        <source>Save File</source>
-        <translation>ファイルの保存</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="2214"/>
-        <source>Insert Hyperlink</source>
-        <translation>ハイパーリンクの挿入</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="2308"/>
-        <source>Edit Hyperlink</source>
-        <translation>ハイパーリンクの編集</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="2658"/>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="2687"/>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="2691"/>
-        <source>Spell Check Error</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="2661"/>
-        <source>An error has occurred while launching the spell check.  The most probable cause is that the cursor was not at the beginning of the document.
-
-Please place the cursor at the beginning &amp; try again</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="2684"/>
-        <source>Spell Check Complete</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/BrowserWindow.java" line="2685"/>
-        <source>No spelling errors found</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.gui.ContentView</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="84"/>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="85"/>
-        <source>Open</source>
-        <translation>開く</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="89"/>
-        <source>Cut</source>
-        <translation>切り取り</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="98"/>
-        <source>Copy</source>
-        <translation>コピー</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="116"/>
-        <source>Paste Without Formatting</source>
-        <translation>書式無しで貼り付け</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="125"/>
-        <source>Background Color</source>
-        <translation>背景の色</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="142"/>
-        <source>To-do</source>
-        <translation>To-Do</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="151"/>
-        <source>Encrypt Selected Text</source>
-        <translation>選択した文章の暗号化</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="161"/>
-        <source>Insert Hyperlink</source>
-        <translation>ハイパーリンクの挿入</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="172"/>
-        <source>Insert Table</source>
-        <translation>表の挿入</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="180"/>
-        <source>Insert Row</source>
-        <translation>列の挿入</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="188"/>
-        <source>Delete Row</source>
-        <translation>列の削除</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="201"/>
-        <source>Image</source>
-        <translation>画像</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="204"/>
-        <source>Save Image</source>
-        <translation>画像の保存</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="210"/>
-        <source>Rotate Right</source>
-        <translation>右回転</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="217"/>
-        <source>Rotate Left</source>
-        <translation>左回転</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/ContentView.java" line="225"/>
-        <source>Save Attachment</source>
-        <translation>添付の保存</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.gui.MainMenuBar</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="140"/>
+        <location filename="../nixnote.cpp" line="1997"/>
         <source>Reindex Database</source>
-        <translation>データベースの再索引</translation>
+        <translation type="unfinished">データベースの再索引</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="145"/>
-        <source>Print</source>
-        <translation>印刷</translation>
+        <location filename="../nixnote.cpp" line="1997"/>
+        <source>Reindex the entire database?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="150"/>
-        <source>Email</source>
-        <translation>電子メール</translation>
+        <location filename="../nixnote.cpp" line="2006"/>
+        <source>Notes will be reindexed.</source>
+        <translation type="unfinished">ノートは再索引されます。</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="155"/>
-        <source>Backup Database</source>
-        <translation>データベースのバックアップ</translation>
+        <location filename="../nixnote.cpp" line="2028"/>
+        <source>Unable to find webcam or capture image.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="160"/>
-        <source>Restore Database</source>
-        <translation>データベースの復元</translation>
+        <location filename="../nixnote.cpp" line="2029"/>
+        <source>Webcam Error</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="165"/>
-        <source>Empty Trash</source>
-        <translation>ゴミ箱を空にする</translation>
+        <location filename="../nixnote.cpp" line="2161"/>
+        <source>Delete </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="170"/>
-        <source>Restore</source>
-        <translation>復元</translation>
+        <location filename="../nixnote.cpp" line="2164"/>
+        <source>Permanently delete </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="176"/>
-        <source>Preferences</source>
-        <translation>設定</translation>
+        <location filename="../nixnote.cpp" line="2168"/>
+        <source>this note?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="181"/>
-        <source>Exit</source>
-        <translation>終了</translation>
+        <location filename="../nixnote.cpp" line="2171"/>
+        <source>Verify Delete</source>
+        <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>NoteFormatter</name>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="187"/>
-        <source>Extended Information</source>
-        <translation>拡張情報</translation>
+        <location filename="../html/noteformatter.cpp" line="517"/>
+        <source>File</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="193"/>
-        <source>Reindex</source>
-        <translation>再索引</translation>
+        <location filename="../html/noteformatter.cpp" line="545"/>
+        <source>Bytes</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="194"/>
-        <source>Reindex this note</source>
-        <translation>このノートの索引を再度作成</translation>
+        <location filename="../html/noteformatter.cpp" line="549"/>
+        <source>KB</source>
+        <translation type="unfinished"></translation>
     </message>
+</context>
+<context>
+    <name>NoteHistorySelect</name>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="198"/>
-        <source>Duplicate</source>
-        <translation>複製</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="199"/>
-        <source>Duplicate this note</source>
-        <translation>このノートの複製</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="203"/>
-        <source>Merge Notes</source>
-        <translation>ノートの結合</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="204"/>
-        <source>Merge Multiple notes</source>
-        <translation>複数ノートの結合</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="208"/>
-        <source>Export Selected Notes</source>
-        <translation>選択したーノートを書き出し</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="209"/>
-        <source>Export selected notes</source>
-        <translation>選択したノートを書き出し</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="213"/>
-        <source>Import Notes</source>
-        <translation>ノートの取り込み</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="214"/>
-        <source>Import notes</source>
-        <translation>ノートの取り込み</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="218"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="421"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="444"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="459"/>
-        <source>Add</source>
-        <translation>追加</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="219"/>
-        <source>Add a new note</source>
-        <translation>新規ノートの追加</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="224"/>
-        <source>Modify Tags</source>
-        <translation>タグの変更</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="225"/>
-        <source>Change the tags assigned to this note</source>
-        <translation>このノートに割り当てられたタグの変更</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="229"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="430"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="454"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="468"/>
-        <source>Delete</source>
-        <translation>削除</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="230"/>
-        <source>Delete this note</source>
-        <translation>このノートの削除</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="234"/>
-        <source>Find In Note</source>
-        <translation>ノート内を検索</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="235"/>
-        <source>Find a string in the current note</source>
-        <translation>現在のノートで文字列を検索する</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="240"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="241"/>
-        <source>Undo</source>
-        <translation>元に戻す</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="246"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="247"/>
-        <source>Redo</source>
-        <translation>やり直す</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="252"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="253"/>
-        <source>Cut</source>
-        <translation>切り取り</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="258"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="259"/>
-        <source>Copy</source>
-        <translation>コピー</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="264"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="265"/>
-        <source>Paste</source>
-        <translation>貼り付け</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="269"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="270"/>
-        <source>Paste Without Formatting</source>
-        <translation>書式なしで貼り付け</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="274"/>
-        <source>Show Note List</source>
-        <translation>ノート一覧を表示</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="281"/>
-        <source>Show Tags</source>
-        <translation>タグを表示</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="288"/>
-        <source>Show Notebooks</source>
-        <translation>ノートブックを表示</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="295"/>
-        <source>Preview</source>
-        <translation>プレビュー</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="300"/>
-        <source>Show Saved Searches</source>
-        <translation>保存した検索を表示</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="307"/>
-        <source>Show Attribute Searches</source>
-        <translation>属性検索を表示</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="314"/>
-        <source>Show Trash</source>
-        <translation>ゴミ箱を表示</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="322"/>
-        <source>Show Editor Button Bar</source>
-        <translation>エディターのボタンバーを表示</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="330"/>
-        <source>Hide Left Side Panels</source>
-        <translation>左サイドパネルを隠す</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="338"/>
-        <source>Left</source>
-        <translation>左</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="339"/>
-        <source>Left Align</source>
-        <translation>左寄せ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="344"/>
-        <source>Right</source>
-        <translation>右</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="345"/>
-        <source>Right Align</source>
-        <translation>右寄せ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="350"/>
-        <source>Center</source>
-        <translation>中央</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="351"/>
-        <source>Center Align</source>
-        <translation>中央寄せ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="356"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="357"/>
-        <source>Bold</source>
-        <translation>太字</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="362"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="363"/>
-        <source>Italic</source>
-        <translation>イタリック体</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="368"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="369"/>
-        <source>Underline</source>
-        <translation>下線</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="375"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="376"/>
-        <source>Superscript</source>
-        <translation>上添え字</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="381"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="382"/>
-        <source>Subscript</source>
-        <translation>下添え字</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="387"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="388"/>
-        <source>Strikethrough</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="392"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="393"/>
-        <source>Horizontal Line</source>
-        <translation>水平線</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="397"/>
-        <source>Bulleted List</source>
-        <translation>箇条書き</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="403"/>
-        <source>Numbered List</source>
-        <translation>番号リスト</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="404"/>
-        <source>Numbered list</source>
-        <translation>番号リスト</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="409"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="410"/>
-        <source>&gt;&gt; Increase</source>
-        <translation>&gt;&gt; 増加</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="415"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="416"/>
-        <source>&lt;&lt; Decrease</source>
-        <translation>&lt;&lt; 削減</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="425"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="449"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="463"/>
-        <source>Edit</source>
-        <translation>編集</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="435"/>
-        <source>Open/Close Notebooks</source>
-        <translation>ノートブックの表示/非表示</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="474"/>
-        <source>Connect</source>
-        <translation>接続</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="479"/>
-        <source>Synchronize with Evernote</source>
-        <translation>Evernote と同期</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="486"/>
+        <location filename="../dialog/notehistoryselect.cpp" line="32"/>
         <source>Note History</source>
-        <translation>ノートの経緯</translation>
+        <translation type="unfinished">ノートの経緯</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="495"/>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="496"/>
-        <source>Account Information</source>
-        <translation>アカウント情報</translation>
+        <location filename="../dialog/notehistoryselect.cpp" line="33"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="505"/>
-        <source>Database Status</source>
-        <translation>データベースの状態</translation>
+        <location filename="../dialog/notehistoryselect.cpp" line="34"/>
+        <source>Import</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="506"/>
-        <source>Show current database information</source>
-        <translation>現在のデータベース情報の表示</translation>
+        <location filename="../dialog/notehistoryselect.cpp" line="80"/>
+        <source>Today</source>
+        <translation type="unfinished">今日</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="511"/>
-        <source>Disable Note Indexing</source>
-        <translation>ノート索引作成の無効化</translation>
+        <location filename="../dialog/notehistoryselect.cpp" line="82"/>
+        <source>Yesterday</source>
+        <translation type="unfinished">昨日</translation>
+    </message>
+</context>
+<context>
+    <name>NotebookProperties</name>
+    <message>
+        <location filename="../dialog/notebookproperties.cpp" line="36"/>
+        <source>Notebook</source>
+        <translation type="unfinished">ノートブック</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="519"/>
-        <source>Automatic Folder Importing</source>
-        <translation>自動フォルダー取り込み</translation>
+        <location filename="../dialog/notebookproperties.cpp" line="40"/>
+        <source>Synchronized</source>
+        <translation type="unfinished">同期済</translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="524"/>
+        <location filename="../dialog/notebookproperties.cpp" line="46"/>
+        <source>Name</source>
+        <translation type="unfinished">名前</translation>
+    </message>
+    <message>
+        <location filename="../dialog/notebookproperties.cpp" line="53"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/notebookproperties.cpp" line="55"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/notebookproperties.cpp" line="112"/>
+        <source>Add Notebook</source>
+        <translation type="unfinished">ノートブックの追加</translation>
+    </message>
+</context>
+<context>
+    <name>OAuthWindow</name>
+    <message>
+        <location filename="../oauth/oauthwindow.cpp" line="70"/>
+        <source>Please Grant NixNote Access</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../oauth/oauthwindow.cpp" line="81"/>
+        <source>SSL Support not found.  Aborting connection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../oauth/oauthwindow.cpp" line="128"/>
+        <source>Error receiving temporary credentials</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../oauth/oauthwindow.cpp" line="172"/>
+        <source>Error receiving permanent credentials</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../oauth/oauthwindow.cpp" line="215"/>
+        <source>Error receiving authorization</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PopplerViewer</name>
+    <message>
+        <location filename="../gui/plugins/popplerviewer.cpp" line="55"/>
+        <location filename="../gui/plugins/popplerviewer.cpp" line="95"/>
+        <source>Page </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/plugins/popplerviewer.cpp" line="55"/>
+        <location filename="../gui/plugins/popplerviewer.cpp" line="95"/>
+        <source> of </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>PreferencesDialog</name>
+    <message>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="27"/>
+        <source>User Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="40"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="41"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="81"/>
+        <source>Appearance</source>
+        <translation type="unfinished">見え方</translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="87"/>
+        <source>Locale</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="93"/>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="99"/>
+        <source>Sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="104"/>
+        <source>Debugging</source>
+        <translation type="unfinished">デバッグ</translation>
+    </message>
+</context>
+<context>
+    <name>QApplication</name>
+    <message>
+        <location filename="../dialog/screencapture.cpp" line="109"/>
+        <source>Use your mouse to draw a rectangle to screenshot or exit pressing
+any key or using the right or middle mouse buttons.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/screencapture.cpp" line="146"/>
+        <source>%1 x %2 pixels </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>QObject</name>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="172"/>
+        <source>Title</source>
+        <translation type="unfinished">タイトル</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="173"/>
+        <source>Author</source>
+        <translation type="unfinished">作者</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="174"/>
+        <source>Notebook</source>
+        <translation type="unfinished">ノートブック</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="175"/>
+        <source>Tags</source>
+        <translation type="unfinished">タグ</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="176"/>
+        <source>Date Created</source>
+        <translation type="unfinished">作成日</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="177"/>
+        <source>Date Updated</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="178"/>
+        <source>Subject Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="179"/>
+        <source>Deletion Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="180"/>
+        <source>Reminder</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="181"/>
+        <source>Reminder Due</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="182"/>
+        <source>Reminder Completed</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="183"/>
+        <source>Source</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="184"/>
+        <source>Source Url</source>
+        <translation type="unfinished">ソースURL</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="185"/>
+        <source>Source Application</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="186"/>
+        <source>Longitude</source>
+        <translation type="unfinished">軽度</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="187"/>
+        <source>Latitude</source>
+        <translation type="unfinished">緯度</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="188"/>
+        <source>Altitude</source>
+        <translation type="unfinished">高度</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="189"/>
+        <source>Has Encryption</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="190"/>
+        <source>Has To-do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="191"/>
+        <source>Sync</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="192"/>
+        <source>Size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="193"/>
+        <source>Thumbnail</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="194"/>
+        <source>Pinned</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/importdata.cpp" line="53"/>
+        <source>Imported Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ReminderButton</name>
+    <message>
+        <location filename="../gui/browserWidgets/reminderbutton.cpp" line="30"/>
+        <source>Mark as Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/reminderbutton.cpp" line="31"/>
+        <source>Change Date</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/browserWidgets/reminderbutton.cpp" line="32"/>
+        <source>Clear Reminder</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ReminderManager</name>
+    <message>
+        <location filename="../reminders/remindermanager.cpp" line="87"/>
+        <source>Reminders Due</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ReminderSetDialog</name>
+    <message>
+        <location filename="../dialog/remindersetdialog.cpp" line="45"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/remindersetdialog.cpp" line="46"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+</context>
+<context>
+    <name>SavedSearchProperties</name>
+    <message>
+        <location filename="../dialog/savedsearchproperties.cpp" line="35"/>
+        <source>Saved Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/savedsearchproperties.cpp" line="42"/>
+        <source>Name</source>
+        <translation type="unfinished">名前</translation>
+    </message>
+    <message>
+        <location filename="../dialog/savedsearchproperties.cpp" line="43"/>
+        <source>Query</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/savedsearchproperties.cpp" line="51"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/savedsearchproperties.cpp" line="53"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/savedsearchproperties.cpp" line="110"/>
+        <source>Add Saved Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SearchPreferences</name>
+    <message>
+        <location filename="../dialog/preferences/searchpreferences.cpp" line="15"/>
+        <source>Minimum Image Recognition Weight</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>SpellCheckDialog</name>
+    <message>
+        <location filename="../dialog/spellcheckdialog.cpp" line="33"/>
         <source>Spell Check</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="529"/>
-        <source>Encrypt Database</source>
+        <location filename="../dialog/spellcheckdialog.cpp" line="48"/>
+        <source>Suggestion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="538"/>
-        <source>Log</source>
-        <translation>ログ</translation>
+        <location filename="../dialog/spellcheckdialog.cpp" line="54"/>
+        <source>Replace</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="543"/>
-        <source>Release Notes</source>
-        <translation>リリースノート</translation>
+        <location filename="../dialog/spellcheckdialog.cpp" line="55"/>
+        <source>Ignore</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="548"/>
-        <source>About</source>
-        <translation>情報</translation>
+        <location filename="../dialog/spellcheckdialog.cpp" line="56"/>
+        <source>Ignore All</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="557"/>
-        <source>&amp;File</source>
-        <translation>ファイル(&amp;F)</translation>
+        <location filename="../dialog/spellcheckdialog.cpp" line="57"/>
+        <source>Add To Dictionary</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="559"/>
-        <source>&amp;Note</source>
-        <translation>ノート(&amp;N)</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="560"/>
-        <source>Notebook</source>
-        <translation>ノートブック</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="561"/>
-        <source>Tag</source>
-        <translation>タグ</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="562"/>
-        <source>Saved Searches</source>
-        <translation>検索の保存</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="575"/>
-        <source>&amp;Edit</source>
-        <translation>編集(&amp;E)</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="588"/>
-        <source>&amp;View</source>
-        <translation>表示(&amp;V)</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="602"/>
-        <source>&amp;Format</source>
-        <translation>フォーマット(&amp;F)</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="614"/>
-        <source>Alignment</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="619"/>
-        <source>Lists</source>
-        <translation>箇条書き</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="622"/>
-        <source>Indent</source>
-        <translation>インデント</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="654"/>
-        <source>&amp;Online</source>
-        <translation>オンライン(&amp;O)</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="660"/>
-        <source>&amp;Tools</source>
-        <translation>ツール(&amp;T)</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/MainMenuBar.java" line="672"/>
-        <source>&amp;Help</source>
-        <translation>ヘルプ(&amp;H)</translation>
+        <location filename="../dialog/spellcheckdialog.cpp" line="64"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
     </message>
 </context>
 <context>
-    <name>cx.fbn.nevernote.gui.SavedSearchTreeWidget</name>
+    <name>SpellChecker</name>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/SavedSearchTreeWidget.java" line="47"/>
-        <source>Saved Searches</source>
-        <translation>検索の保存</translation>
+        <location filename="../utilities/spellchecker.cpp" line="75"/>
+        <source>Unable to find dictionaries.  Is Huntspell installed?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>cx.fbn.nevernote.gui.TableView</name>
+    <name>SyncPreferences</name>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="101"/>
-        <source>Date Created</source>
-        <translation>作成日</translation>
+        <location filename="../dialog/preferences/syncpreferences.cpp" line="31"/>
+        <source>Sync automatically</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="102"/>
-        <source>Tags</source>
-        <translation>タグ</translation>
+        <location filename="../dialog/preferences/syncpreferences.cpp" line="36"/>
+        <source>Every 15 minutes</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="103"/>
-        <source>Guid</source>
-        <translation>Guid</translation>
+        <location filename="../dialog/preferences/syncpreferences.cpp" line="37"/>
+        <source>Every 30 minutes</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="104"/>
-        <source>Notebook</source>
-        <translation>ノートブック</translation>
+        <location filename="../dialog/preferences/syncpreferences.cpp" line="38"/>
+        <source>Every hour</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="105"/>
-        <source>Title</source>
-        <translation>タイトル</translation>
+        <location filename="../dialog/preferences/syncpreferences.cpp" line="39"/>
+        <source>Every day</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="106"/>
-        <source>Date Changed</source>
-        <translation>更新日</translation>
+        <location filename="../dialog/preferences/syncpreferences.cpp" line="41"/>
+        <source>Sync on startup</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="107"/>
-        <source>Author</source>
-        <translation>作者</translation>
+        <location filename="../dialog/preferences/syncpreferences.cpp" line="43"/>
+        <source>Sync on shutdown</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="108"/>
-        <source>Source Url</source>
-        <translation>ソースURL</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="109"/>
-        <source>Subject Date</source>
-        <translation>サブジェクト日付</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="110"/>
-        <source>Synchronized</source>
-        <translation>同期済</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="325"/>
-        <source>Title Color</source>
-        <translation>タイトル色</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="337"/>
-        <source>White</source>
-        <translation>白</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="338"/>
-        <source>Red</source>
-        <translation>赤</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="339"/>
-        <source>Blue</source>
-        <translation>青</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="340"/>
-        <source>Green</source>
-        <translation>緑</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="341"/>
-        <source>Yellow</source>
-        <translation>黄</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="342"/>
-        <source>Black</source>
-        <translation>黒</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="343"/>
-        <source>Gray</source>
-        <translation>灰</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="344"/>
-        <source>Cyan</source>
-        <translation>水色</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TableView.java" line="345"/>
-        <source>Magenta</source>
-        <translation>紫</translation>
+        <location filename="../dialog/preferences/syncpreferences.cpp" line="45"/>
+        <source>Enable sync notifications</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
-    <name>cx.fbn.nevernote.gui.TagTreeWidget</name>
+    <name>SyncRunner</name>
     <message>
-        <location filename="../src/cx/fbn/nevernote/gui/TagTreeWidget.java" line="64"/>
-        <source>Tags</source>
-        <translation>タグ</translation>
-    </message>
-</context>
-<context>
-    <name>cx.fbn.nevernote.threads.SyncRunner</name>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="237"/>
-        <source>Synchronizing with Evernote</source>
-        <translation>Evernoteと同期</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="247"/>
-        <source>User exception getting user account information.  Aborting sync and disconnecting</source>
-        <translation>ユーザアカウント情報を取得する際に例外が発生。同期を中止し、切断します</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="253"/>
-        <source>System error user account information.  Aborting sync and disconnecting!</source>
-        <translation>ユーザアカウント情報でシステムエラー。同期を中止し、切断します!</translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="260"/>
-        <source>Transaction error getting user account information.  Aborting sync and disconnecting!</source>
+        <location filename="../threads/syncrunner.cpp" line="128"/>
+        <source>Beginning Sync</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="275"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="281"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="287"/>
-        <source>Error getting sync state! Aborting sync and disconnecting!</source>
+        <location filename="../threads/syncrunner.cpp" line="136"/>
+        <source>Downloading changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="295"/>
-        <source>Syncronization Error!</source>
+        <location filename="../threads/syncrunner.cpp" line="176"/>
+        <source>Sync Complete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="343"/>
-        <source>Synchronizing complete</source>
+        <location filename="../threads/syncrunner.cpp" line="226"/>
+        <location filename="../threads/syncrunner.cpp" line="255"/>
+        <source>Download </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="345"/>
-        <source>Download syncronization complete.  Uploads have been disabled.</source>
+        <location filename="../threads/syncrunner.cpp" line="226"/>
+        <source>% complete for notebooks, tags, &amp; searches.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="419"/>
-        <source>Synchronizing deleted notes.</source>
+        <location filename="../threads/syncrunner.cpp" line="235"/>
+        <source>Download complete for notebooks, tags, &amp; searches.  Downloading notes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="457"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="532"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="562"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="567"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="572"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="651"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="656"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="661"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="744"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="749"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="754"/>
-        <source>Error: </source>
+        <location filename="../threads/syncrunner.cpp" line="255"/>
+        <source>% complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="467"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="527"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="537"/>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="542"/>
-        <source>Error sending local note: </source>
+        <location filename="../threads/syncrunner.cpp" line="298"/>
+        <source>Download complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="476"/>
-        <source>Sending local notes.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="555"/>
-        <source>Sending local notebooks.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="644"/>
-        <source>Sending local tags.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="737"/>
-        <source>Sending saved searches.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="840"/>
-        <source>Downloading 0% complete.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="925"/>
+        <location filename="../threads/syncrunner.cpp" line="701"/>
         <source>Downloading </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../src/cx/fbn/nevernote/threads/SyncRunner.java" line="925"/>
-        <source>% complete.</source>
+        <location filename="../threads/syncrunner.cpp" line="701"/>
+        <source>% complete for shared notebook </source>
         <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../threads/syncrunner.cpp" line="701"/>
+        <source>.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TableDialog</name>
+    <message>
+        <location filename="../dialog/tabledialog.cpp" line="28"/>
+        <source>Insert Table</source>
+        <translation type="unfinished">表の挿入</translation>
+    </message>
+    <message>
+        <location filename="../dialog/tabledialog.cpp" line="32"/>
+        <source>Percent</source>
+        <translation type="unfinished">パーセント</translation>
+    </message>
+    <message>
+        <location filename="../dialog/tabledialog.cpp" line="33"/>
+        <source>Pixels</source>
+        <translation type="unfinished">ピクセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/tabledialog.cpp" line="49"/>
+        <source>Rows</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/tabledialog.cpp" line="51"/>
+        <source>Columns</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/tabledialog.cpp" line="53"/>
+        <source>Width</source>
+        <translation type="unfinished">幅</translation>
+    </message>
+    <message>
+        <location filename="../dialog/tabledialog.cpp" line="55"/>
+        <source>Unit</source>
+        <translation type="unfinished">単位</translation>
+    </message>
+    <message>
+        <location filename="../dialog/tabledialog.cpp" line="62"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/tabledialog.cpp" line="65"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+</context>
+<context>
+    <name>TagEditorNewTag</name>
+    <message>
+        <location filename="../gui/browserWidgets/tageditornewtag.cpp" line="56"/>
+        <source>Click to add tag...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>TagProperties</name>
+    <message>
+        <location filename="../dialog/tagproperties.cpp" line="36"/>
+        <source>Tag</source>
+        <translation type="unfinished">タグ</translation>
+    </message>
+    <message>
+        <location filename="../dialog/tagproperties.cpp" line="42"/>
+        <source>Name</source>
+        <translation type="unfinished">名前</translation>
+    </message>
+    <message>
+        <location filename="../dialog/tagproperties.cpp" line="48"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/tagproperties.cpp" line="50"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/tagproperties.cpp" line="104"/>
+        <source>Add Tag</source>
+        <translation type="unfinished">タグ追加</translation>
+    </message>
+</context>
+<context>
+    <name>UrlEditor</name>
+    <message>
+        <location filename="../gui/browserWidgets/urleditor.cpp" line="45"/>
+        <source>Click to set source URL...</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WatchFolderAdd</name>
+    <message>
+        <location filename="../dialog/watchfolderadd.cpp" line="47"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderadd.cpp" line="51"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderadd.cpp" line="55"/>
+        <source>Directory</source>
+        <translation type="unfinished">ディレクトリ</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderadd.cpp" line="63"/>
+        <source>Keep</source>
+        <translation type="unfinished">保持</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderadd.cpp" line="64"/>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderadd.cpp" line="88"/>
+        <source>Notebook</source>
+        <translation type="unfinished">ノートブック</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderadd.cpp" line="90"/>
+        <source>After import</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderadd.cpp" line="92"/>
+        <source>Include subdirectories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderadd.cpp" line="99"/>
+        <source>Add Import Folder</source>
+        <translation type="unfinished">取り込むフォルダーの追加</translation>
+    </message>
+</context>
+<context>
+    <name>WatchFolderDialog</name>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="38"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="42"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="50"/>
+        <source>Auto Import Folders</source>
+        <translation type="unfinished">自動取り込みフォルダー</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="62"/>
+        <source>Add</source>
+        <translation type="unfinished">追加</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="66"/>
+        <source>Edit</source>
+        <translation type="unfinished">編集</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="71"/>
+        <location filename="../dialog/watchfolderdialog.cpp" line="161"/>
+        <source>Delete</source>
+        <translation type="unfinished">削除</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="111"/>
+        <source>Directory</source>
+        <translation type="unfinished">ディレクトリ</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="112"/>
+        <source>Target Notebook</source>
+        <translation type="unfinished">対象ノートブック</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="113"/>
+        <location filename="../dialog/watchfolderdialog.cpp" line="158"/>
+        <source>Keep</source>
+        <translation type="unfinished">保持</translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="114"/>
+        <source>Include Subdirectories</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="168"/>
+        <source>Yes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/watchfolderdialog.cpp" line="171"/>
+        <source>No</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>WebcamCaptureDialog</name>
+    <message>
+        <location filename="../dialog/webcamcapturedialog.cpp" line="37"/>
+        <source>Webcam Capture</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/webcamcapturedialog.cpp" line="59"/>
+        <source>Cancel</source>
+        <translation type="unfinished">キャンセル</translation>
+    </message>
+    <message>
+        <location filename="../dialog/webcamcapturedialog.cpp" line="60"/>
+        <source>OK</source>
+        <translation type="unfinished">OK</translation>
     </message>
 </context>
 </TS>
