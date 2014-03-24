@@ -14,7 +14,7 @@ AboutDialog::AboutDialog(QDialog *parent) :
     this->setLayout(mainLayout);
     QWebView *page = new QWebView();
     QPushButton *okButton = new QPushButton();
-    okButton->setText(tr("Ok"));
+    okButton->setText(tr("OK"));
     mainLayout->addWidget(page);
     QHBoxLayout *buttonLayout = new QHBoxLayout();
     QSpacerItem *spacer1 = new QSpacerItem(100000,1, QSizePolicy::Maximum);

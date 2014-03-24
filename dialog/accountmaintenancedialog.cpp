@@ -12,7 +12,7 @@ AccountMaintenanceDialog::AccountMaintenanceDialog(NMainMenuBar *menubar, QWidge
 {
     this->parent = parent;
     this->menuBar = menubar;
-    okButton = new QPushButton(tr("Ok"), this);
+    okButton = new QPushButton(tr("OK"), this);
     closeButton = new QPushButton(tr("Close"),this);
     addButton = new QPushButton(tr("Add"),this);
     renameButton = new QPushButton(tr("Rename"));

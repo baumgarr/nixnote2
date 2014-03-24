@@ -38,7 +38,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     this->setupDebugPanel();
 
     cancelButton = new QPushButton(tr("Cancel"), this);
-    okButton = new QPushButton(tr("Ok"), this);
+    okButton = new QPushButton(tr("OK"), this);
 
     connect(okButton, SIGNAL(clicked()), this, SLOT(okButtonClicked()));
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonClicked()));

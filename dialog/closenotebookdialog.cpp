@@ -39,7 +39,7 @@ CloseNotebookDialog::CloseNotebookDialog(QWidget *parent) :
     okPressed = false;
     openButton.setEnabled(false);
     closeButton.setEnabled(false);
-    okButton.setText(tr("Ok"));
+    okButton.setText(tr("OK"));
     cancelButton.setText(tr("Cancel"));
     connect(&openNotebooks, SIGNAL(itemSelectionChanged()), this, SLOT(openListSelection()));
     connect(&closeNotebooks, SIGNAL(itemSelectionChanged()), this, SLOT(closeListSelection()));

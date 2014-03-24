@@ -36,7 +36,7 @@ AddUserAccountDialog::AddUserAccountDialog(QWidget *parent) :
     newAccountServer = new QComboBox();
     newAccountServerLabel = new QLabel();
     newAccountServerLabel->setText(tr("Server"));
-    okButton->setText(tr("Ok"));
+    okButton->setText(tr("OK"));
     okButton->setEnabled(false);
     cancelButton->setText(tr("Cancel"));
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancelClicked()));

@@ -57,7 +57,7 @@ WebcamCaptureDialog::WebcamCaptureDialog(QWidget *parent) :
     cancelButton = new QPushButton(this);
     okButton = new QPushButton(this);
     cancelButton->setText(tr("Cancel"));
-    okButton->setText(tr("Ok"));
+    okButton->setText(tr("OK"));
     buttonLayout->addSpacerItem(new QSpacerItem(20,0,QSizePolicy::Maximum, QSizePolicy::Minimum));
     buttonLayout->addWidget(okButton);
     buttonLayout->addSpacerItem(new QSpacerItem(20,0,QSizePolicy::Maximum, QSizePolicy::Minimum));
