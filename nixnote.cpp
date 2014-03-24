@@ -107,6 +107,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     counterThread.start(QThread::LowestPriority);
     syncThread.start(QThread::LowPriority);
     indexThread.start(QThread::LowestPriority);
+    this->thread()->setPriority(QThread::HighestPriority);
 
     heartbeatTimer.setInterval(1000);
     heartbeatTimer.setSingleShot(false);

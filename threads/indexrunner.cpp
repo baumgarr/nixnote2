@@ -59,7 +59,9 @@ void IndexRunner::initialize() {
     QLOG_DEBUG() << "Starting IndexRunner";
     db = new DatabaseConnection("indexrunner");
     indexTimer = new QTimer();
-    indexTimer->setInterval(30000);
+    minInterval = 5000;
+    maxInterval = 120000;
+    indexTimer->setInterval(minInterval);
     connect(indexTimer, SIGNAL(timeout()), this, SLOT(index()));
     indexTimer->start();
     textDocument = new QTextDocument();
@@ -74,17 +76,20 @@ void IndexRunner::index() {
         initialize();
 
     indexTimer->stop();   // Stop the timer because we are already working
+    indexTimer->setInterval(minInterval);
 
     QList<qint32> lids;
+
     NoteTable noteTable(&db->conn);
     ResourceTable resourceTable(&db->conn);
     bool endMsgNeeded = false;
+
+    int countPause = 10;
 
     // Get any unindexed notes
     if (keepRunning && noteTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
         endMsgNeeded = true;
         QLOG_DEBUG() << "Unindexed Notes found: " << lids.size();
-
 
         // Index any undindexed note content.
         for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
@@ -92,12 +97,17 @@ void IndexRunner::index() {
             noteTable.get(n, lids[i], false, false);
             indexNote(lids[i],n);
             noteTable.setIndexNeeded(lids[i], false);
+            if (countPause <=0) {
+                indexTimer->start();
+                return;
+            }
+            countPause--;
         }
     }
 
-
     lids.clear();  // Clear out the list so we can start on resources
 
+    countPause = 10;
     // Start indexing resources
     if (keepRunning && resourceTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
         endMsgNeeded = true;
@@ -116,11 +126,17 @@ void IndexRunner::index() {
                     indexAttachment(noteLid, r);
             }
             resourceTable.setIndexNeeded(lids.at(i), false);
+            if (countPause <=0) {
+                indexTimer->start();
+                return;
+            }
+            countPause--;
         }
     }
     if (endMsgNeeded) {
         QLOG_DEBUG() << "Indexing completed";
     }
+    indexTimer->setInterval(maxInterval);
     indexTimer->start();
 
 }

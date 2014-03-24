@@ -47,6 +47,8 @@ class IndexRunner : public QObject
 private:
     QTimer *indexTimer;
     bool init;
+    int minInterval;
+    int maxInterval;
     void indexRecognition(qint32 lid, Resource &r);
     void indexNote(qint32 lid, Note &n);
     void indexPdf(qint32 lid, Resource &r);
