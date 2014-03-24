@@ -386,6 +386,14 @@ void NTableView::refreshData() {
     model()->select();
     while(model()->canFetchMore())
         model()->fetchMore();
+
+    // resort the table.  I'm not sure why, but it doesn't always
+    // do this itself.
+    Qt::SortOrder so = this->tableViewHeader->sortIndicatorOrder();
+    int si = this->tableViewHeader->sortIndicatorSection();
+    this->sortByColumn(si, so);
+
+    // Re-select any notes
     refreshSelection();
     if (this->tableViewHeader->isThumbnailVisible())
         verticalHeader()->setDefaultSectionSize(100);
@@ -605,18 +613,38 @@ bool NTableView::isLidSelected(qint32 lid) {
 qint32 NTableView::selectAnyNoteFromList() {
     QModelIndexList l = selectedIndexes();
     int rowCount = proxy->rowCount(QModelIndex());
-    for (int j=rowCount-1; j>=0; j--) {
-        QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
-        qint32 rowLid = idx.data().toInt();
-        if (rowLid > 0) {
-            QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
-            selectRow(j);
-            this->blockSignals(true);
-            emit openNote(false);
-            this->blockSignals(false);
-            return rowLid;
+    Qt::SortOrder so = this->tableViewHeader->sortIndicatorOrder();
+
+    if (so == Qt::AscendingOrder) {
+        for (int j=rowCount-1; j>=0; j--) {
+            QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
+            qint32 rowLid = idx.data().toInt();
+            if (rowLid > 0) {
+                QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
+                selectRow(j);
+                this->blockSignals(true);
+                emit openNote(false);
+                this->blockSignals(false);
+                return rowLid;
+            }
         }
     }
+
+    if (so == Qt::DescendingOrder) {
+        for (int j=0; j<=rowCount; j++) {
+            QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
+            qint32 rowLid = idx.data().toInt();
+            if (rowLid > 0) {
+                QLOG_DEBUG() << ""  << "Selecting row " << j << "lid: " << rowLid;
+                selectRow(j);
+                this->blockSignals(true);
+                emit openNote(false);
+                this->blockSignals(false);
+                return rowLid;
+            }
+        }
+    }
+
     return -1;
 }
 
