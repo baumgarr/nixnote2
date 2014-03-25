@@ -33,7 +33,7 @@ Edit_Redo			Ctrl+Y		// Redo the last undone change
 Edit_Cut			Ctrl+X		// Cut current selection to the clipboard
 Edit_Copy			Ctrl+C		// Copy the current selection to the clipboard
 Edit_Paste			Ctrl+V		// Paste
-Edit_Paste_Without_Formatting	Ctrl+Shift+P	// Paste as plain text
+Edit_Paste_Without_Formatting	Ctrl+Shift+V	// Paste as plain text
 Edit_Preferences				// Settings dialog box
 Edit_Image_Rotate_Left				// Rotate an image left
 Edit_Image_Rotate_Right				// Rotate an image to the right
