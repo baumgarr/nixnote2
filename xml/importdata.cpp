@@ -29,6 +29,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/usertable.h"
 #include "global.h"
 
+#include <QProgressDialog>
+#include <QMessageBox>
+#include <QPushButton>
+
 extern Global global;
 
 
@@ -40,17 +44,18 @@ extern Global global;
 //* where an import will keep the guid and will obey the
 //* <dirty> tag in the note.
 //***********************************************************
-ImportData::ImportData(bool full)
+ImportData::ImportData(bool full, QObject *parent) : QObject(parent)
 {
     importTags = false;
     importNotebooks = false;
     backup = full;
     createTags = false;
+    stopNow = false;
 
     // get the
     if (!full) {
         NotebookTable t(global.db);
-        QString name = QObject::tr("Imported Notes");
+        QString name = tr("Imported Notes");
         qint32 lid=t.findByName(name);
         if (lid == 0) {
             // We have a new notebook to add
@@ -67,6 +72,8 @@ ImportData::ImportData(bool full)
             t.getGuid(notebookGuid, lid);
         }
     }
+    progress = new QProgressDialog();
+    progress->setVisible(false);
 }
 
 
@@ -82,15 +89,49 @@ void ImportData::import(QString file) {
 
     lastError = 0;
     QFile xmlFile(fileName);
-    if (!xmlFile.open(QIODevice::ReadOnly)) {
+    QFile scanFile(fileName);
+    if (!xmlFile.open(QIODevice::ReadOnly) || !scanFile.open(QIODevice::ReadOnly)) {
         lastError = 16;
         errorMessage = "Cannot open file.";
+        return;
     }
+
+    QTextStream *countReader = new QTextStream(&scanFile);
+
+    int recCnt = 0;
+    QMessageBox mb;
+    mb.setWindowTitle(tr("Scaning File"));
+    mb.setText(QString::number(recCnt) + tr(" notes found."));
+    QPushButton *cancelButton = mb.addButton(QMessageBox::Cancel);
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(canceled()));
+    mb.show();
+    QCoreApplication::processEvents();
+
+    while (!countReader->atEnd() && !stopNow) {
+        QString line = countReader->readLine();
+        if (line.contains("<note")) {
+            recCnt++;
+            mb.setText(QString::number(recCnt) + tr(" notes found."));
+            QCoreApplication::processEvents();
+        }
+    }
+
+
+    progress->setMaximum(recCnt);
+    progress->setMinimum(0);
+    progress->setWindowTitle(tr("Importing Notes"));
+    progress->setLabelText(tr("Importing Notes"));
+    progress->setWindowModality(Qt::ApplicationModal);
+    connect(progress, SIGNAL(canceled()), this, SLOT(canceled()));
+    progress->setVisible(true);
+    mb.close();
+    progress->show();
+    recCnt = 0;
 
     reader = new QXmlStreamReader(&xmlFile);
     NSqlQuery query(*global.db);
     query.exec("begin");
-    while (!reader->atEnd()) {
+    while (!reader->atEnd() && !stopNow) {
         reader->readNext();
         if (reader->hasError()) {
             errorMessage = reader->errorString();
@@ -130,6 +171,8 @@ void ImportData::import(QString file) {
         }
         if (reader->name().toString().toLower() == "note" && reader->isStartElement()) {
             processNoteNode();
+            recCnt++;
+            progress->setValue(recCnt);
         }
         if (reader->name().toString().toLower() == "notebook" && reader->isStartElement() && (backup || importNotebooks)) {
             processNotebookNode();
@@ -981,4 +1024,12 @@ void ImportData::setNotebookGuid(QString g) {
 //***********************************************************
 QString ImportData::getErrorMessage() {
     return errorMessage;
+}
+
+
+//**********************************************************
+//* The "Cancel" button was pressed
+//**********************************************************
+void ImportData::cancel() {
+    stopNow = true;
 }

@@ -88,6 +88,7 @@ public:
     int getNewUnsequencedCount();
     void cleanupLinkedTags();
     void getGuidMap(QHash<QString, QString> &nameMap);
+    void getNameMap(QHash<QString,QString> &nameMap);
 };
 
 #endif // TAGTABLE_H

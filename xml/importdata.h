@@ -34,6 +34,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 using namespace evernote::edam;
 using namespace std;
 
+
+#include <QProgressDialog>
+
 //***********************************************************
 //***********************************************************
 //* This class is used to import or restore data from an
@@ -41,14 +44,16 @@ using namespace std;
 //***********************************************************
 //***********************************************************
 
-class ImportData
+class ImportData : public QObject
 {
+    Q_OBJECT
 
 private:
     QString                 fileName;
     QXmlStreamReader        *reader;
     bool                    backup;
     QString                 notebookGuid;
+    QProgressDialog         *progress;
 
     QHash<QString,QString>		noteMap;
     QHash<QString, NoteMetadata> metaData;
@@ -73,6 +78,7 @@ private:
     double doubleValue();
     bool booleanValue();
     short shortValue();
+    bool stopNow;
 
 public:
     qint32                     lastError;
@@ -80,10 +86,13 @@ public:
     bool                    importTags;
     bool                    importNotebooks;
     bool                    createTags;
-    ImportData(bool full);
+    ImportData(bool full, QObject *parent=0);
     void import(QString file);
     void setNotebookGuid(QString g);
     QString getErrorMessage();
+
+public slots:
+    void cancel();
 };
 
 #endif // IMPORTDATA_H

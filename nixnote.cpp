@@ -72,6 +72,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/nmainmenubar.h"
 #include "dialog/logindialog.h"
 #include "xml/importdata.h"
+#include "xml/importenex.h"
 #include "dialog/aboutdialog.h"
 
 extern Global global;
@@ -1203,7 +1204,11 @@ void NixNote::databaseRestore(bool fullRestore) {
     else
         fd.setWindowTitle(tr("Import Notes"));
 
-    fd.setFilter(tr("NixNote Export (*.nnex);;All Files (*.*)"));
+    if (fullRestore) {
+        fd.setFilter(tr("NixNote Export (*.nnex);;All Files (*.*)"));
+    } else {
+        fd.setFilter(tr("NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)"));
+    }
     fd.setAcceptMode(QFileDialog::AcceptOpen);
     if (saveLastPath == "")
         fd.setDirectory(QDir::homePath());
@@ -1227,20 +1232,27 @@ void NixNote::databaseRestore(bool fullRestore) {
     else
         setMessage(tr("Importing Notes"));
 
+    ImportEnex enexReader;
     ImportData noteReader(fullRestore);
-    noteReader.import(fileNames[0]);
+    if (fileNames[0].endsWith(".nnex") || fullRestore) {
+        noteReader.import(fileNames[0]);
 
-    if (noteReader.lastError != 0) {
-        setMessage(noteReader.getErrorMessage());
-        QLOG_ERROR() <<  "Restore problem: " << noteReader.lastError;
-        waitCursor(false);
-        return;
+        if (noteReader.lastError != 0) {
+            setMessage(noteReader.getErrorMessage());
+            QLOG_ERROR() <<  "Restore problem: " << noteReader.lastError;
+            waitCursor(false);
+            return;
+        }
+    } else {
+        fullRestore = false;
+        enexReader.import(fileNames[0]);
+        QLOG_DEBUG() << "Back from import";
     }
 
     // Finish by filtering & displaying the data
     updateSelectionCriteria();
 
-    if (fullRestore) {
+    if (fullRestore || fileNames[0].endsWith(".enex")) {
         tagTreeView->rebuildTagTreeNeeded = true;
         tagTreeView->loadData();
         searchTreeView->loadData();

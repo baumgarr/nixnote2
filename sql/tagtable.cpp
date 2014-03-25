@@ -610,3 +610,16 @@ void TagTable::getGuidMap(QHash<QString,QString> &guidMap) {
         guidMap.insert(QString::fromStdString(t.guid), QString::fromStdString(t.name));
     }
 }
+
+
+
+void TagTable::getNameMap(QHash<QString,QString> &nameMap) {
+    QList<qint32> tags;
+    Tag t;
+    getAll(tags);
+    nameMap.empty();
+    for (int i=0; i<tags.size(); i++) {
+        get(t,tags[i]);
+        nameMap.insert(QString::fromStdString(t.name), QString::fromStdString(t.guid));
+    }
+}
