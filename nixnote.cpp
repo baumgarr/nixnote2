@@ -619,7 +619,7 @@ void NixNote::setupSearchTree() {
     leftPanel->addWidget(searchTreeView);
     connect(&syncRunner, SIGNAL(searchUpdated(qint32, QString)), searchTreeView, SLOT(searchUpdated(qint32, QString)));
     connect(&syncRunner, SIGNAL(searchExpunged(qint32)), searchTreeView, SLOT(searchExpunged(qint32)));
-    connect(&syncRunner, SIGNAL(syncComplete()),tagTreeView, SLOT(rebuildTree()));
+    connect(&syncRunner, SIGNAL(syncComplete()),searchTreeView, SLOT(rebuildTree()));
     QLOG_TRACE() << "Exiting NixNote.setupSearchTree()";
 }
 
@@ -687,7 +687,7 @@ void NixNote::setupSynchronizedNotebookTree() {
     QLOG_TRACE() << "Starting NixNote.setupSynchronizedNotebookTree()";
     notebookTreeView = new NNotebookView(leftPanel);
     leftPanel->addWidget(notebookTreeView);
-    connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString)),notebookTreeView, SLOT(notebookUpdated(qint32, QString)));
+    connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString,QString, bool, bool)),notebookTreeView, SLOT(notebookUpdated(qint32, QString, QString, bool, bool)));
     connect(&syncRunner, SIGNAL(syncComplete()),notebookTreeView, SLOT(rebuildTree()));
     connect(&syncRunner, SIGNAL(notebookExpunged(qint32)), notebookTreeView, SLOT(notebookExpunged(qint32)));
     connect(&counterRunner, SIGNAL(notebookTotals(qint32,qint32, qint32)), notebookTreeView, SLOT(updateTotals(qint32,qint32, qint32)));

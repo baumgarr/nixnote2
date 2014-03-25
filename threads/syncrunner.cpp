@@ -511,11 +511,17 @@ void SyncRunner::syncRemoteNotebooks(vector<Notebook> books, qint32 account) {
         if (lid > 0) {
             notebookTable.sync(lid, t);
         } else {
-            notebookTable.sync(t);
-            lid = notebookTable.getLid(t.guid);
+            lid = notebookTable.sync(t);
+//            lid = notebookTable.getLid(t.guid);
         }
         changedNotebooks.insert(QString::fromStdString(t.guid), QString::fromStdString(t.name));
-        emit notebookUpdated(lid, QString::fromStdString(t.name));
+        QString stack = "";
+        if (t.__isset.stack)
+            stack = QString::fromStdString(t.stack);
+        bool shared = false;
+        if (t.__isset.sharedNotebookIds || t.__isset.sharedNotebooks)
+            shared = true;
+        emit notebookUpdated(lid, QString::fromStdString(t.name), stack, false, shared);
     }
 
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteNotebooks";
@@ -644,7 +650,9 @@ void SyncRunner::syncRemoteLinkedNotebooksChunk(vector<LinkedNotebook> books) {
     LinkedNotebookTable ltable(&db->conn);
     for (unsigned int i=0; i<books.size(); i++) {
         qint32 lid = ltable.sync(books[i]);
-        emit notebookUpdated(lid, QString::fromStdString(books[i].shareName));
+        LinkedNotebook lbk = books[i];
+        emit notebookUpdated(lid, QString::fromStdString(books[i].shareName),
+                             QString::fromStdString(lbk.username), true, false);
     }
 }
 

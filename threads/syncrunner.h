@@ -148,7 +148,7 @@ signals:
     void setMessage(QString message, int timeout);
     void searchUpdated(qint32 lid, QString name);
     void tagUpdated(qint32 lid, QString name);
-    void notebookUpdated(qint32 lid, QString name);
+    void notebookUpdated(qint32 lid, QString name, QString stack, bool linked, bool shared);
     void noteUpdated(qint32 lid);
     void tagExpunged(qint32 lid);
     void notebookExpunged(qint32 lid);

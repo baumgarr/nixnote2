@@ -81,7 +81,7 @@ signals:
     void updateCounts();
 
 public slots:
-    void notebookUpdated(qint32 lid, QString name);
+    void notebookUpdated(qint32 lid, QString name, QString stackName, bool linked, bool shared);
     void rebuildTree();
     void buildSelection();
     void addRequested();
