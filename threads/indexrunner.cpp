@@ -81,11 +81,13 @@ void IndexRunner::index() {
 
     // Get any unindexed notes
     if (keepRunning && noteTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
+        QApplication::processEvents();
         endMsgNeeded = true;
         QLOG_DEBUG() << "Unindexed Notes found: " << lids.size();
 
         // Index any undindexed note content.
         for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
+            QApplication::processEvents();
             Note n;
             noteTable.get(n, lids[i], false, false);
             indexNote(lids[i],n);
@@ -108,6 +110,7 @@ void IndexRunner::index() {
 
         // Index each resource that is needed.
         for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
+            QApplication::processEvents();
             Resource r;
             resourceTable.get(r, lids.at(i), false);
             qint32 noteLid = noteTable.getLid(r.noteGuid);
@@ -209,6 +212,7 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     int tracelog = 200;
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
     for (unsigned int i=0; i<anchors.length() && keepRunning && !pauseIndexing; i++) {
+        QApplication::processEvents();
         QDomElement enmedia = anchors.at(i).toElement();
         QString weight = enmedia.attribute("w");
         QString text = enmedia.text();
