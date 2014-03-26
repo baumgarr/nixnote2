@@ -57,6 +57,7 @@ public slots:
 signals:
   void focussed(bool hasFocus);
   void titleChanged();
+  void titleUpdated(QString);
 
 protected:
   virtual void focusInEvent(QFocusEvent *e);

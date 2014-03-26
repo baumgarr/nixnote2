@@ -94,6 +94,7 @@ void NTitleEditor::titleChanged(QString text) {
     this->setText(text);
     this->setCursorPosition(cursorPosition);
     this->blockSignals(false);
+    emit(titleUpdated(text));
 
     // Now check that the text has actually changed.  We need to do this because
     // we can also get here when focus is lost.
@@ -136,6 +137,7 @@ void NTitleEditor::setTitleFromContent(QString s) {
     blockSignals(true);
     this->setText(s);
     blockSignals(false);
+    emit(titleUpdated(s));
 }
 
 

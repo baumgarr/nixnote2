@@ -15,6 +15,7 @@ signals:
     
 public slots:
     void closeEvent(QCloseEvent *closeEvent);
+    void setTitle(QString text);
     
 };
 

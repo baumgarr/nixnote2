@@ -112,6 +112,7 @@ private:
     QAction *newNoteButton;
     QAction *newWebcamNoteButton;
     QAction *screenCaptureButton;
+    QAction *newExternalNoteButton;
     QAction *trunkButton;
     QAction *usageButton;
     QAction *toolsAccountAction;
@@ -179,6 +180,7 @@ public slots:
     void databaseRestore(bool fullRestore=true);
     void resetView();
     void newNote();
+    void newExternalNote();
     void setSyncTimer();
     void notesDeleted(QList<qint32> lid);
     void openTrunk();

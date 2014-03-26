@@ -25,3 +25,9 @@ void ExternalBrowse::closeEvent(QCloseEvent *closeEvent) {
     this->setVisible(false);
     closeEvent->ignore();
 }
+
+
+
+void ExternalBrowse::setTitle(QString text) {
+    this->setWindowTitle(tr("NixNote - ") +text);
+}

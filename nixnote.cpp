@@ -382,6 +382,9 @@ void NixNote::setupGui() {
     trayIconContextMenu = new QMenu(this);
     trayIconContextMenu->addAction(newNoteButton);
 
+    newExternalNoteButton = trayIconContextMenu->addAction(tr("Quick Note"));
+    connect(newExternalNoteButton, SIGNAL(triggered()), this, SLOT(newExternalNote()));
+
     screenCaptureButton = new QAction(tr("Screen Capture"), this);
     trayIconContextMenu->addAction(screenCaptureButton);
     connect(screenCaptureButton, SIGNAL(triggered()), this, SLOT(screenCapture()));
@@ -1397,6 +1400,46 @@ void NixNote::newNote() {
 }
 
 
+void NixNote::newExternalNote() {
+    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
+           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
+           QString("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
+
+    Note n;
+    NotebookTable notebookTable(global.db);
+    n.content = newNoteBody.toStdString();
+    n.__isset.content = true;
+    n.title = "Untitled note";
+    QString uuid = QUuid::createUuid();
+    uuid = uuid.mid(1);
+    uuid.chop(1);
+    n.guid = uuid.toStdString();
+    n.__isset.guid = true;
+    n.__isset.title = true;
+    n.__isset.active = true;
+    n.active = true;
+    //QDateTime now;
+    n.created = QDateTime::currentMSecsSinceEpoch();
+    n.updated = n.created;
+    n.__isset.created = true;
+    n.__isset.updated = true;
+    n.updateSequenceNum = 0;
+    n.__isset.updateSequenceNum = true;
+    if (notebookTreeView->selectedItems().size() == 0) {
+        n.notebookGuid = notebookTable.getDefaultNotebookGuid().toStdString();
+    } else {
+        NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
+        QString notebookGuid;
+        notebookTable.getGuid(notebookGuid, item->lid);
+        n.notebookGuid = notebookGuid.toStdString();
+    }
+    n.__isset.notebookGuid = true;
+    NoteTable table(global.db);
+    qint32 lid = table.add(0,n,true);
+    tabWindow->openNote(lid, NTabWidget::ExternalWindow);
+    updateSelectionCriteria();
+
+}
 
 // Slot for when notes have been deleted from the notes list.
 void NixNote::notesDeleted(QList<qint32> lids) {

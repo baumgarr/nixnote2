@@ -126,7 +126,7 @@ NBrowserWindow* NTabWidget::currentBrowser() {
 void NTabWidget::openNote(qint32 lid, OpenNoteMode mode) {
 
     // If the lid < 0, then we just clear it & get out
-    if (lid < 0) {
+    if (lid < 0 && mode != ExternalWindow) {
         currentBrowser()->setContent(-1);
         return;
     }
@@ -177,6 +177,7 @@ void NTabWidget::openNote(qint32 lid, OpenNoteMode mode) {
             setupExternalBrowserConnections(external->browser);
             external->setWindowTitle(tr("NixNote - ") +external->browser->noteTitle.text());
             external->show();
+            connect(external->browser->editor->titleEditor, SIGNAL(titleUpdated(QString)), external, SLOT(setTitle(QString)));
             return;
         }
     }
