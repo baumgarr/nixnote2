@@ -82,7 +82,7 @@ signals:
     void updateCounts();
 
 public slots:
-    void tagUpdated(qint32 lid, QString name);
+    void tagUpdated(qint32 lid, QString name, QString parentGuid, qint32 account);
     void rebuildTree();
     void buildSelection();
     void addNewTag(qint32 lid);

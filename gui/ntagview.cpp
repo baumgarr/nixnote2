@@ -309,44 +309,60 @@ void NTagView::rebuildTree() {
 
 // A tag has been updated.   Things like a sync can cause this to be called
 // because a tag's name may have changed.
-void NTagView::tagUpdated(qint32 lid, QString name) {
+void NTagView::tagUpdated(qint32 lid, QString name, QString parentGuid, qint32 account) {
     this->rebuildTagTreeNeeded = true;
 
+    qint32 parentLid = 0;
+    NTagViewItem *parentWidget = root;
     TagTable tagTable(global.db);
-    qint32 account = tagTable.owningAccount(lid);
-    // Check if it already exists
+
+    // Check if it already exists and if its parent exists
+    NTagViewItem *newWidget = NULL;
     if (this->dataStore.contains(lid)) {
-        Tag tag;
-        tagTable.get(tag, lid);
-        NTagViewItem *newWidget = dataStore.value(lid);
-        newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
-        newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
-        newWidget->parentGuid = QString::fromStdString(tag.parentGuid);
-        newWidget->parentLid = tagTable.getLid(tag.parentGuid);
-        newWidget->account = account;
-        if (account != accountFilter)
-            newWidget->setHidden(true);
-        else
-            newWidget->setHidden(false);
-        root->addChild(newWidget);
+        newWidget = dataStore[lid];
+        newWidget->parent()->removeChild(newWidget);
     } else {
-        Tag tag;
-        tagTable.get(tag, lid);
-        NTagViewItem *newWidget = new NTagViewItem();
-        newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
-        newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
-        newWidget->parentGuid = QString::fromStdString(tag.parentGuid);
-        newWidget->parentLid = tagTable.getLid(tag.parentGuid);
-        newWidget->account = account;
-        this->dataStore.insert(lid, newWidget);
-        if (account != accountFilter)
-            newWidget->setHidden(true);
-        else
-            newWidget->setHidden(false);
-        root->addChild(newWidget);
-        if (this->dataStore.count() == 1) {
-            this->expandAll();
+        newWidget = new NTagViewItem();
+        dataStore.insert(lid, newWidget);
+    }
+    parentLid = tagTable.getLid(parentGuid);
+    if (parentGuid != "") {
+        if (parentLid > 0 && dataStore.contains(parentLid)) {
+            parentWidget = dataStore[parentLid];
+        } else {
+            if (parentLid == 0) {
+                Tag parentTag;
+                parentTag.guid = parentGuid.toStdString();
+                parentTag.__isset.guid = true;
+                parentTag.updateSequenceNum = 0;
+                parentTag.__isset.updateSequenceNum = true;
+                parentTag.name = parentGuid.toStdString();
+                parentTag.__isset.name = true;
+                parentLid = tagTable.add(0, parentTag, false, account);
+            }
+            parentWidget = new NTagViewItem();
+            root->addChild(parentWidget);
+            parentWidget->setData(NAME_POSITION, Qt::UserRole, parentLid);
+            parentWidget->setData(NAME_POSITION, Qt::DisplayRole, parentGuid);
+            dataStore.insert(parentLid, parentWidget);
         }
+    }
+
+    if (account != accountFilter)
+        newWidget->setHidden(true);
+    else
+        newWidget->setHidden(false);
+
+    parentWidget->addChild(newWidget);
+
+    newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
+    newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
+    newWidget->parentGuid = parentGuid;
+    newWidget->parentLid = parentLid;
+    newWidget->account = account;
+
+    if (this->dataStore.count() == 1) {
+        this->expandAll();
     }
     resetSize();
     this->sortByColumn(NAME_POSITION);
@@ -424,7 +440,7 @@ void NTagView::addNewTag(qint32 lid) {
     Tag newTag;
     tagTable.get(newTag, lid);
     if (newTag.__isset.guid) {
-        tagUpdated(lid, QString::fromStdString(newTag.name));
+        tagUpdated(lid, QString::fromStdString(newTag.name), "", 0);
     }
 }
 

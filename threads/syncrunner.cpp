@@ -200,7 +200,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
     //          this except we do it across multiple accounts.
 
     NSqlQuery query(db->conn);
-    query.exec("begin");
+    //query.exec("begin");
 
     int chunkSize = 5000;
     bool more = true;
@@ -218,7 +218,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
             this->communicationErrorHandler();
-            query.exec("commit");
+//            query.exec("commit");
             return false;
         }
         QLOG_DEBUG() << "-(Pass 1)->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
@@ -247,7 +247,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
             QLOG_ERROR() << "Error retrieving chunk";
             error = true;
             this->communicationErrorHandler();
-            query.exec("commit");
+//            query.exec("commit");
             return false;
         }
         QLOG_DEBUG() << "-(Pass 2) ->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
@@ -257,8 +257,8 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
         userTable.updateLastSyncNumber(chunk.chunkHighUSN);
         userTable.updateLastSyncDate(chunk.currentTime);
-        query.exec("commit");
-        query.exec("begin");
+//        query.exec("commit");
+//        query.exec("begin");
 
         updateSequenceNumber = chunk.chunkHighUSN;
         if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount) {
@@ -296,7 +296,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 //    }
 
     emit setMessage(tr("Download complete."), defaultMsgTimeout);
-    query.exec("commit");
+//    query.exec("commit");
     return true;
 }
 
@@ -450,7 +450,10 @@ void SyncRunner::syncRemoteTags(vector<Tag> tags, qint32 account) {
             lid = tagTable.getLid(t.guid);
             changedTags.insert(QString::fromStdString(t.guid), QString::fromStdString(t.name));
         }
-        emit tagUpdated(lid, QString::fromStdString(t.name));
+        QString parentGuid = "";
+        if (t.__isset.parentGuid)
+            parentGuid = QString::fromStdString(t.parentGuid);
+        emit tagUpdated(lid, QString::fromStdString(t.name), parentGuid, account);
     }
 
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteTags";

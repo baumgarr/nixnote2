@@ -619,7 +619,7 @@ void NixNote::setupSearchTree() {
     leftPanel->addWidget(searchTreeView);
     connect(&syncRunner, SIGNAL(searchUpdated(qint32, QString)), searchTreeView, SLOT(searchUpdated(qint32, QString)));
     connect(&syncRunner, SIGNAL(searchExpunged(qint32)), searchTreeView, SLOT(searchExpunged(qint32)));
-    connect(&syncRunner, SIGNAL(syncComplete()),searchTreeView, SLOT(rebuildTree()));
+    //connect(&syncRunner, SIGNAL(syncComplete()),searchTreeView, SLOT(re);
     QLOG_TRACE() << "Exiting NixNote.setupSearchTree()";
 }
 
@@ -635,7 +635,7 @@ void NixNote::setupTagTree() {
     leftPanel->addWidget(lbl);
     tagTreeView = new NTagView(leftPanel);
     leftPanel->addWidget(tagTreeView);
-    connect(&syncRunner, SIGNAL(tagUpdated(qint32, QString)),tagTreeView, SLOT(tagUpdated(qint32, QString)));
+    connect(&syncRunner, SIGNAL(tagUpdated(qint32, QString, QString, qint32)),tagTreeView, SLOT(tagUpdated(qint32, QString, QString, qint32)));
     connect(&syncRunner, SIGNAL(tagExpunged(qint32)), tagTreeView, SLOT(tagExpunged(qint32)));
     connect(&syncRunner, SIGNAL(syncComplete()),tagTreeView, SLOT(rebuildTree()));
     connect(&counterRunner, SIGNAL(tagTotals(qint32,qint32, qint32)), tagTreeView, SLOT(updateTotals(qint32,qint32, qint32)));
