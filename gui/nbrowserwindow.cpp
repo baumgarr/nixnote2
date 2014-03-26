@@ -178,7 +178,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     int expandButton = global.settings->value("ExpandButton", EXPANDBUTTON_1).toInt();
     global.settings->endGroup();
     this->expandButton.setState(expandButton);
-    //changeExpandState(expandButton);
+//    changeExpandState(expandButton);
 }
 
 
@@ -413,6 +413,8 @@ void NBrowserWindow::changeExpandState(int value) {
         tagEditor.show();
         break;
     case EXPANDBUTTON_3:
+        urlEditor.show();
+        tagEditor.show();
         dateEditor.show();
         break;
     }
