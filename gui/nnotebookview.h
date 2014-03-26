@@ -29,7 +29,6 @@ class NNotebookView : public QTreeWidget
 {
     Q_OBJECT
 private:
-    NNotebookViewItem *root;
     virtual void mousePressEvent(QMouseEvent *event);
     int filterPosition;
     QMenu context;
@@ -57,6 +56,7 @@ private slots:
 public:
     explicit NNotebookView(QWidget *parent = 0);
     ~NNotebookView();
+    NNotebookViewItem *root;
     void resetSize();
     void updateSelection();
     void loadData();

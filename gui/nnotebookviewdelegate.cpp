@@ -41,29 +41,37 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
 
     qint32 lid = index.data(Qt::UserRole).toInt();
+    //    if (lid > 0) {
+
+    NNotebookView *tree = NULL;
+    NNotebookViewItem *item = NULL;
+
     if (lid > 0) {
-
-        NNotebookView  *tree = (NNotebookView*)options.widget;
-        NNotebookViewItem *item = tree->dataStore[lid];
-        qint32 total = item->total;
-        qint32 subTotal = item->subTotal;
-        QString countString;
-        if (total == subTotal){
-            countString = QString("(")+QString::number(total) + QString(")");
-        } else {
-            countString = QString("(")+QString::number(subTotal) + QString("/") + QString::number(total) + QString(")");
-        }
-
-        // shift text right to make icon visible
-        QSize iconSize = options.icon.actualSize(options.rect.size());
-        painter->translate(options.rect.left()+iconSize.width(), options.rect.top());
-        QRect clip(0, 0, options.rect.width()+iconSize.width(), options.rect.height());
-
-        painter->setClipRect(clip);
-        QFontMetrics fm = options.fontMetrics;
-        painter->setPen(Qt::darkGray);
-        painter->drawText(6+fm.width(index.data().toString()+QString("   ")),fm.height()-1,countString);
+        tree = (NNotebookView*)options.widget;
+        item = tree->dataStore[lid];
+    } else {
+        tree = (NNotebookView*)options.widget;
+        item = tree->root;
     }
+    qint32 total = item->total;
+    qint32 subTotal = item->subTotal;
+    QString countString;
+    if (total == subTotal){
+        countString = QString("(")+QString::number(total) + QString(")");
+    } else {
+        countString = QString("(")+QString::number(subTotal) + QString("/") + QString::number(total) + QString(")");
+    }
+
+    // shift text right to make icon visible
+    QSize iconSize = options.icon.actualSize(options.rect.size());
+    painter->translate(options.rect.left()+iconSize.width(), options.rect.top());
+    QRect clip(0, 0, options.rect.width()+iconSize.width(), options.rect.height());
+
+    painter->setClipRect(clip);
+    QFontMetrics fm = options.fontMetrics;
+    painter->setPen(Qt::darkGray);
+    painter->drawText(6+fm.width(index.data().toString()+QString("   ")),fm.height()-1,countString);
+
     painter->restore();
 }
 
