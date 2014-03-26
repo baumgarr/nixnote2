@@ -849,6 +849,9 @@ void NNotebookView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
     if (lid == -1) {
         item = root;
     }
+    if (item == NULL)
+        return;
+
     item->subTotal = subTotal;
     item->total = total;
     if (subTotal > maxCount)
