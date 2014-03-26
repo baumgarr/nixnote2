@@ -24,11 +24,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFontMetrics>
 #include <QStyle>
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
 TagViewer::TagViewer(QWidget *parent) :
     QLabel(parent)
 {
@@ -60,10 +55,10 @@ void TagViewer::resizeEvent(QResizeEvent *)
 }
 
 
-void TagViewer::updateCloseButton(const QString& text)
-{
-//    clearButton->setVisible(!text.isEmpty());
-}
+//void TagViewer::updateCloseButton(const QString& text)
+//{
+////    clearButton->setVisible(!text.isEmpty());
+//}
 
 
 void TagViewer::hideEvent(QHideEvent* event) {
@@ -101,6 +96,3 @@ void TagViewer::buttonClicked() {
     emit(closeClicked(text()));
 }
 
-
-
-#pragma GCC diagnostic pop

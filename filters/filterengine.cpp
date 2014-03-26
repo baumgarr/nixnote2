@@ -11,10 +11,6 @@
 
 #include <QtSql>
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
 
 extern Global global;
 
@@ -1826,5 +1822,3 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) 
     }
 }
 
-
-#pragma GCC diagnostic pop

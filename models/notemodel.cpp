@@ -36,11 +36,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
 // Generic constructor
 NoteModel::NoteModel(QObject *parent)
     :QSqlTableModel(parent, *global.db)
@@ -167,6 +162,3 @@ QVariant NoteModel::data (const QModelIndex & index, int role) const {
 //    else
 //        return QPixmap(":notebook_small.png");
 }
-
-
-#pragma GCC diagnostic pop

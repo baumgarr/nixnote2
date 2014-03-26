@@ -35,11 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include <QMessageBox>
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
 #define NAME_POSITION 0
 
 extern Global global;
@@ -904,7 +899,3 @@ void NTagView::drawBranches(QPainter *painter, const QRect &rect, const QModelIn
 
     QTreeView::drawBranches(painter, rect, index);
 }
-
-
-
-#pragma GCC diagnostic pop

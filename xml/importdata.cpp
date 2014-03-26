@@ -327,7 +327,7 @@ void ImportData::processNoteNode() {
 //***********************************************************
 void ImportData::processResource(Resource &resource) {
     bool atEnd = false;
-    bool isDirty = false;
+    //bool isDirty = false;
 
     while(!atEnd) {
         if (reader->isStartElement()) {
@@ -371,8 +371,8 @@ void ImportData::processResource(Resource &resource) {
                 resource.width = shortValue();
                 resource.__isset.width = true;
             }
-            if (name == "dirty")
-                isDirty = booleanValue();
+//            if (name == "dirty")
+//                isDirty = booleanValue();
             if (name == "data") {
                 processData("Data", resource.data);
                 resource.__isset.data = true;
@@ -662,7 +662,7 @@ void ImportData::processSavedSearchNode() {
 //***********************************************************
 void ImportData::processLinkedNotebookNode() {
     LinkedNotebook  linkedNotebook;
-    bool linkedNotebookIsDirty = false;
+//    bool linkedNotebookIsDirty = false;
 
     QLOG_ERROR() << "Linked notebook database support not implemented yet";
 
@@ -698,10 +698,10 @@ void ImportData::processLinkedNotebookNode() {
                 linkedNotebook.username = textValue().toStdString();
                 linkedNotebook.__isset.username = true;
             }
-            if (name == "dirty") {
-                if (booleanValue())
-                    linkedNotebookIsDirty = true;
-            }
+//            if (name == "dirty") {
+//                if (booleanValue())
+//                    linkedNotebookIsDirty = true;
+//            }
         }
         reader->readNext();
         QString endName = reader->name().toString().toLower();
@@ -718,7 +718,7 @@ void ImportData::processLinkedNotebookNode() {
 void ImportData::processSharedNotebookNode() {
 
     SharedNotebook sharedNotebook;
-    bool sharedNotebookIsDirty = false;
+    //bool sharedNotebookIsDirty = false;
 
     QLOG_ERROR() << "Shared notebook database support not implemented yet";
 
@@ -754,12 +754,12 @@ void ImportData::processSharedNotebookNode() {
                 sharedNotebook.serviceCreated = longValue();
                 sharedNotebook.__isset.serviceCreated = true;
             }
-            if (name == "dirty") {
-                if (booleanValue())
-                    sharedNotebookIsDirty = true;
-                else
-                    sharedNotebookIsDirty = false;
-            }
+//            if (name == "dirty") {
+//                if (booleanValue())
+//                    sharedNotebookIsDirty = true;
+//                else
+//                    sharedNotebookIsDirty = false;
+//            }
         }
         reader->readNext();
         QString endName = reader->name().toString().toLower();
@@ -778,7 +778,7 @@ void ImportData::processNotebookNode() {
     Notebook notebook;
     bool notebookIsDirty = false;
     bool notebookIsLocal = false;
-    bool notebookIsReadOnly = false;
+//    bool notebookIsReadOnly = false;
 
 //    notebookIcon = null;
     bool atEnd = false;
@@ -820,10 +820,10 @@ void ImportData::processNotebookNode() {
                     if (booleanValue())
                         notebookIsLocal = true;
                 }
-                if (name == "readonly") {
-                    if (booleanValue())
-                        notebookIsReadOnly = true;
-                }
+//                if (name == "readonly") {
+//                    if (booleanValue())
+//                        notebookIsReadOnly = true;
+//                }
                 if (name == "publishingpublicdescription") {
                     notebook.publishing.publicDescription = textValue().toStdString();
                     notebook.publishing.__isset.publicDescription = true;

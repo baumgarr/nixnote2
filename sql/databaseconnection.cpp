@@ -22,10 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "notetable.h"
 #include "sql/nsqlquery.h"
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
 extern Global global;
 //*****************************************
 //* This class is used to connect to the
@@ -75,5 +71,3 @@ DatabaseConnection::~DatabaseConnection() {
     delete configStore;
     delete dataStore;
 }
-
-#pragma GCC diagnostic pop

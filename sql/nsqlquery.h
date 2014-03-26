@@ -34,7 +34,7 @@ public:
     bool exec();
     bool exec(QString &query);
     bool exec(string query);
-    bool exec(char *query);
+    bool exec(const char *query);
 };
 
 #endif // NSQLQUERY_H

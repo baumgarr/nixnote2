@@ -20,11 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "usertable.h"
 #include "nsqlquery.h"
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
 #define USER_EVERNOTE_ACCOUNT 1   // Unique Evernote account number
 #define USER_EMAIL 2                         // User email registered with Evernote
 #define USER_NAME 3                           // Name of owner of the account
@@ -446,5 +441,3 @@ qlonglong UserTable::getUploadAmt() {
         return 0;
 }
 
-
-#pragma GCC diagnostic pop

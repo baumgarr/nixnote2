@@ -25,10 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QtSql>
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
 CounterRunner::CounterRunner(QObject *parent) :
     QObject(parent)
 {
@@ -139,5 +135,3 @@ void CounterRunner::countTags() {
     // Finally, emit that we are done so unassigned tags can be hidden
     emit(tagCountComplete());
 }
-
-#pragma GCC diagnostic pop

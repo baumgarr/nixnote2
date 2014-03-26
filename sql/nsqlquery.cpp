@@ -39,8 +39,9 @@ bool NSqlQuery::exec() {
             return true;
         if (lastError().number() != DATABASE_LOCKED)
             return false;
-        if (i>10)
+        if (i>10) {
             QLOG_ERROR() << "DB Locked:  Retry #" << i;
+        }
         QTime dieTime= QTime::currentTime().addSecs(1);
         while( QTime::currentTime() < dieTime )
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
@@ -58,8 +59,9 @@ bool NSqlQuery::exec(QString &query) {
         }
         if (lastError().number() != DATABASE_LOCKED)
             return false;
-        if (i>10)
+        if (i>10) {
             QLOG_ERROR() << "DB Locked:  Retry #" << i;
+        }
         QTime dieTime= QTime::currentTime().addSecs(1);
         while( QTime::currentTime() < dieTime )
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
@@ -74,7 +76,7 @@ bool NSqlQuery::exec(string query) {
     return this->exec(q);
 }
 
-bool NSqlQuery::exec(char *query) {
+bool NSqlQuery::exec(const char *query) {
     QString q;
     q = QString::fromStdString(query);
     return this->exec(q);

@@ -34,11 +34,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include "sql/notebooktable.h"
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
 //*****************************************************************
 //* This class overrides QTableView and is used to provide a
 //* list of notes to the user
@@ -1289,6 +1284,3 @@ void NTableView::openNoteNewTabTriggered() {
 void NTableView::createNewNote() {
     emit(newNote());
 }
-
-
-#pragma GCC diagnostic pop

@@ -37,12 +37,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtSql>
 #include <QString>
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
-
 // Default constructor
 NotebookTable::NotebookTable(QSqlDatabase *db)
 {
@@ -927,5 +921,3 @@ void NotebookTable::closeNotebook(qint32 lid) {
     query.exec();
 }
 
-
-#pragma GCC diagnostic pop

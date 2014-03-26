@@ -31,11 +31,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include "sql/nsqlquery.h"
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
 extern Global global;
 
 #define GUID 1;
@@ -109,5 +104,3 @@ qint32 DataStore::getDirtyNoteGuids(QList<QString> &retVal) {
     return 0;
 }
 
-
-#pragma GCC diagnostic pop

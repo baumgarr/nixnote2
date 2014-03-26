@@ -41,11 +41,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #define NAME_POSITION 0
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
 extern Global global;
 
 // Constructor
@@ -955,9 +950,3 @@ void NNotebookView::drawBranches(QPainter *painter, const QRect &rect, const QMo
 
     QTreeView::drawBranches(painter, rect, index);
 }
-
-
-
-
-
-#pragma GCC diagnostic pop

@@ -35,11 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
 // Constructor
 NSearchView::NSearchView(QWidget *parent) :
     QTreeWidget(parent)
@@ -459,5 +454,3 @@ void NSearchView::drawBranches(QPainter *painter, const QRect &rect, const QMode
     QTreeView::drawBranches(painter, rect, index);
 }
 
-
-#pragma GCC diagnostic pop

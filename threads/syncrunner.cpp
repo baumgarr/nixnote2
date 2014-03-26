@@ -36,10 +36,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "communication/communicationerror.h"
 #include "sql/nsqlquery.h"
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
 extern Global global;
 
 SyncRunner::SyncRunner()
@@ -1119,6 +1115,3 @@ void SyncRunner::communicationErrorHandler() {
     }
 
 }
-
-
-#pragma GCC diagnostic pop

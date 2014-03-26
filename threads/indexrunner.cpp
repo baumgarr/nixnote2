@@ -29,13 +29,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 using namespace Poppler;
 
-
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
-
 // Generic constructor
 IndexRunner::IndexRunner()
 {
@@ -305,5 +298,3 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     sql.exec();
 }
 
-
-#pragma GCC diagnostic pop

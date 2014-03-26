@@ -25,11 +25,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-// Suppress C++ string wanings
-#pragma GCC diagnostic ignored "-Wwrite-strings"
-#pragma GCC diagnostic push
-
-
 //**********************
 // Generic constructor.
 //**********************
@@ -140,5 +135,3 @@ bool ConfigStore::getSetting(QByteArray &value, int key) {
     }
     return false;
 }
-
-#pragma GCC diagnostic pop

@@ -42,7 +42,7 @@ signals:
     void closeClicked(QString);
     
 private slots:
-    void updateCloseButton(const QString &text);
+//    void updateCloseButton(const QString &text);
     void buttonClicked();
     
 };
