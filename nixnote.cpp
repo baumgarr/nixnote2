@@ -325,10 +325,13 @@ void NixNote::setupGui() {
     trashTree->resetSize();
 
     // Restore the window state
+    bool startMinimized = false;
     QLOG_TRACE() << "Restoring window state";
     global.settings->beginGroup("Appearance");
     int selectionBehavior = global.settings->value("startupNotebook", AppearancePreferences::UseLastViewedNotebook).toInt();
+    startMinimized = global.settings->value("startMinimized", false).toBool();
     global.settings->endGroup();
+
     global.settings->beginGroup("SaveState");
     restoreState(global.settings->value("WindowState").toByteArray());
     restoreGeometry(global.settings->value("WindowGeometry").toByteArray());
@@ -338,6 +341,7 @@ void NixNote::setupGui() {
         this->setWindowState(Qt::WindowMaximized);
     QString lidListString = global.settings->value("openTabs", "").toString().trimmed();
     global.settings->endGroup();
+
     if (rightPanelSplitter->orientation() == Qt::Vertical)
         viewNoteListWide();
     else
@@ -400,6 +404,14 @@ void NixNote::setupGui() {
     closeAction = trayIconContextMenu->addAction(tr("Close"));
     connect(closeAction, SIGNAL(triggered()), this, SLOT(closeNixNote()));
     connect(showAction, SIGNAL(triggered()), this, SLOT(toggleVisible()));
+
+    // Determine if we should start minimized
+    if (startMinimized) {
+        if (closeToTray)
+            this->hide();
+        else
+            this->setWindowState(Qt::WindowMinimized);
+    }
 
     trayIcon->setContextMenu(trayIconContextMenu);
     trayIcon->setVisible(global.showTrayIcon());

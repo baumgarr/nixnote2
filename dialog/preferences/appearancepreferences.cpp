@@ -33,6 +33,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showPDFs = new QCheckBox(tr("Display PDFs inline"), this);
     showSplashScreen = new QCheckBox(tr("Show splash screen on startup"), this);
     showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
+    startMinimized = new QCheckBox(tr("Always Start minimized"), this);
 
     defaultNotebookOnStartupLabel = new QLabel(tr("Startup Behavior"),this);
     defaultNotebookOnStartup = new QComboBox();
@@ -44,8 +45,9 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(showSplashScreen, 1,0);
     mainLayout->addWidget(showPDFs, 2,0);
     mainLayout->addWidget(showMissedReminders, 3, 0);
-    mainLayout->addWidget(defaultNotebookOnStartupLabel,4,0);
-    mainLayout->addWidget(defaultNotebookOnStartup, 4,1);
+    mainLayout->addWidget(startMinimized, 4, 0);
+    mainLayout->addWidget(defaultNotebookOnStartupLabel,5,0);
+    mainLayout->addWidget(defaultNotebookOnStartup, 5,1);
 
     global.settings->beginGroup("Appearance");
 
@@ -53,6 +55,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
     showSplashScreen->setChecked(global.settings->value("showSplashScreen", false).toBool());
     showMissedReminders->setChecked(global.settings->value("showMissedReminders", false).toBool());
+    startMinimized->setChecked(global.settings->value("startMinimized", false).toBool());
     int defaultNotebook = global.settings->value("startupNotebook", UseLastViewedNotebook).toInt();
     defaultNotebookOnStartup->setCurrentIndex(defaultNotebook);
     global.settings->endGroup();
@@ -65,6 +68,7 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("showPDFs", showPDFs->isChecked());
     global.pdfPreview = showPDFs->isChecked();
     global.settings->setValue("showSplashScreen", showSplashScreen->isChecked());
+    global.settings->setValue("startMinimized", startMinimized->isChecked());
     global.settings->setValue("showMissedReminders", showMissedReminders->isChecked());
     int index = defaultNotebookOnStartup->currentIndex();
     int value = defaultNotebookOnStartup->itemData(index).toInt();

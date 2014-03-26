@@ -42,6 +42,7 @@ public:
     QCheckBox *showPDFs;
     QCheckBox *showSplashScreen;
     QCheckBox *showMissedReminders;
+    QCheckBox *startMinimized;
 
     enum DefaultNotebook {
         UseLastViewedNotebook = 0,
