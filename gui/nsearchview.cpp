@@ -186,9 +186,10 @@ void NSearchView::searchExpunged(qint32 lid) {
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
         NSearchViewItem *item = this->dataStore.value(lid);
-        this->removeItemWidget(item, 0);
+        item->parent()->removeChild(item);
+//        this->removeItemWidget(item, 0);
         this->dataStore.remove(lid);
-        delete item;
+//        delete item;
     }
     this->resetSize();
 }

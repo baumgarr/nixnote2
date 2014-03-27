@@ -484,7 +484,7 @@ void NNotebookView::notebookExpunged(qint32 lid) {
     if (this->dataStore.contains(lid)) {
         NNotebookViewItem *item = this->dataStore.value(lid);
         NNotebookViewItem *parent = (NNotebookViewItem*)item->parent();
-        this->removeItemWidget(item, 0);
+        //this->removeItemWidget(item, 0);
         dataStore.remove(lid);
         if (parent != NULL) {
             parent->removeChild(item);
@@ -492,10 +492,10 @@ void NNotebookView::notebookExpunged(qint32 lid) {
                 this->removeItemWidget(parent, 0);
                 stackStore.remove(parent->stack);
                 dataStore.remove(parent->lid);
-                delete parent;
+                //delete parent;
             }
         }
-        delete item;
+        //delete item;
 
     }
     this->resetSize();
