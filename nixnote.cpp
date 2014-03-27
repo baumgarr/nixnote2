@@ -333,6 +333,14 @@ void NixNote::setupGui() {
     global.settings->endGroup();
 
     global.settings->beginGroup("SaveState");
+    bool showStatusbar = global.settings->value("statusBar", true).toBool();
+    if (showStatusbar) {
+        menuBar->viewStatusbar->setChecked(showStatusbar);
+        statusBar()->setVisible(true);
+    } else {
+        menuBar->viewStatusbar->setChecked(false);
+        statusBar()->setVisible(false);
+    }
     restoreState(global.settings->value("WindowState").toByteArray());
     restoreGeometry(global.settings->value("WindowGeometry").toByteArray());
     mainSplitter->restoreState(global.settings->value("mainSplitter", 0).toByteArray());
@@ -1563,6 +1571,9 @@ void NixNote::toggleStatusbar() {
         statusBar()->hide();
     else
         statusBar()->show();
+    global.settings->beginGroup("saveState");
+    global.settings->setValue("statusBar", statusBar()->isVisible());
+    global.settings->endGroup();
 }
 
 
