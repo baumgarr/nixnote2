@@ -503,6 +503,28 @@ void NixNote::setupGui() {
                 criteriaFound = true;
                 criteria->setTags(items);
             }
+            QString expandedTags = global.settings->value("expandedTags", "").toString();
+            if (expandedTags != "") {
+                QStringList tags = expandedTags.split(" ");
+                for (int i=0; i<tags.size(); i++) {
+                    NTagViewItem *item;
+                    item = tagTreeView->dataStore[tags[i].toInt()];
+                    if (item != NULL)
+                        item->setExpanded(true);
+                }
+            }
+            QString expandedNotebooks = global.settings->value("expandedStacks", "").toString();
+            if (expandedNotebooks != "") {
+                QStringList books = expandedNotebooks.split(" ");
+                for (int i=0; i<books.size(); i++) {
+                    NNotebookViewItem *item;
+                    item = notebookTreeView->dataStore[books[i].toInt()];
+                    if (item != NULL && item->stack != "" && item->parent() != NULL)
+                        item->parent()->setExpanded(true);
+                }
+            }
+
+
             global.settings->endGroup();
         }
 
@@ -824,7 +846,9 @@ void NixNote::closeEvent(QCloseEvent *event) {
 
     global.settings->remove("selectedStack");
     global.settings->remove("selectedNotebook");
+    global.settings->remove("expandedStacks");
     global.settings->remove("selectedTags");
+    global.settings->remove("expandedTags");
     global.settings->remove("selectedSearch");
     global.settings->remove("searchString");
 
@@ -862,6 +886,27 @@ void NixNote::closeEvent(QCloseEvent *event) {
         }
         global.settings->setValue("selectedTags", savedLids.trimmed());
     }
+
+    QHash<qint32, NTagViewItem*>::iterator iterator;
+    savedLids = "";
+    for (iterator=tagTreeView->dataStore.begin(); iterator!=tagTreeView->dataStore.end(); ++iterator) {
+        qint32 saveLid = iterator.value()->data(0, Qt::UserRole).toInt();
+        if (iterator.value()->isExpanded()) {
+            savedLids = savedLids + QString::number(saveLid) + " ";
+        }
+    }
+    global.settings->setValue("expandedTags", savedLids.trimmed());
+
+
+    QHash<qint32, NNotebookViewItem*>::iterator books;
+    savedLids = "";
+    for (books=notebookTreeView->dataStore.begin(); books!=notebookTreeView->dataStore.end(); ++books) {
+        qint32 saveLid = books.value()->data(0, Qt::UserRole).toInt();
+        if (books.value()->stack != "" && books.value()->parent()->isExpanded()) {
+            savedLids = savedLids + QString::number(saveLid) + " ";
+        }
+    }
+    global.settings->setValue("expandedStacks", savedLids.trimmed());
 
     global.settings->endGroup();
 
