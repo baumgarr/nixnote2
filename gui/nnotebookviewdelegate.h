@@ -35,4 +35,6 @@ public slots:
     
 };
 
+//Q_DECLARE_METATYPE(NNotebookViewDelegate)
+
 #endif // NNOTEBOOKVIEWDELEGATE_H

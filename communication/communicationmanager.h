@@ -130,13 +130,13 @@ public:
     bool connect();
     bool getSyncState(string authToken, SyncState &syncState, int errorCount=0);
     bool getSyncChunk(SyncChunk &chunk, int start, int chunkSize, int type, bool fullSync, int errorCount=0);
-    bool authenticateToLinkedNotebookShard(LinkedNotebook book);
-    bool getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook book, int errorCount=0);
-    bool getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook book, int start, int chunkSize, bool fullSync=false, int errorCount=0);
+    bool authenticateToLinkedNotebookShard(LinkedNotebook &book);
+    bool getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook &book, int errorCount=0);
+    bool getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook &book, int start, int chunkSize, int type, bool fullSync, int errorCount=0);
     string getToken();
     void disconnect();
     void disconnectFromLinkedNotebook();
-    bool authenticateToLinkedNotebook(AuthenticationResult &authResult, LinkedNotebook book);
+    bool authenticateToLinkedNotebook(AuthenticationResult &authResult, LinkedNotebook &book);
     bool getUserInfo(User &user, int errorCount=0);
     QList< QPair<QString, QImage*>* > *inkNoteList;
     QList< QPair<QString, QImage*>* > *thumbnailList;
@@ -155,6 +155,7 @@ public:
     qint32 uploadNote(Note &note, int errorCount=0);
     qint32 uploadLinkedNote(Note &note, LinkedNotebook linkedNotebook, int errorCount=0);
     qint32 deleteNote(string guid, int errorCount=0);
+    qint32 deleteLinkedNote(string guid, int errorCount=0);
 
     bool getNotebookList(vector<Notebook> &list, int errorCount=0);
     bool getTagList(vector<Tag> &list, int errorCount=0);

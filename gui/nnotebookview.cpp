@@ -329,6 +329,11 @@ void NNotebookView::notebookUpdated(qint32 lid, QString name, QString stackName,
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
         NNotebookViewItem *newWidget = dataStore[lid];
+        if (newWidget == NULL) {
+            newWidget = new NNotebookViewItem(lid);
+            dataStore.remove(lid);
+            dataStore.insert(lid, newWidget);
+        }
         newWidget->setData(NAME_POSITION, Qt::DisplayRole, name);
         newWidget->setData(NAME_POSITION, Qt::UserRole, lid);
         newWidget->stack = stackName;
@@ -843,19 +848,45 @@ void NNotebookView::sortStackMenu() {
 
 void NNotebookView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
     NNotebookViewItem *item = NULL;
-    if (dataStore.contains(lid)) {
-        item = dataStore[lid];
-    }
+
     if (lid == -1) {
         item = root;
-    }
-    if (item == NULL)
-        return;
+        root->total = 0;
+        root->subTotal = 0;
+        QHash<QString, NNotebookViewItem*>::iterator s;
+        for (s=stackStore.begin(); s!=stackStore.end(); ++s) {
+            s.value()->total = 0;
+            s.value()->subTotal = 0;
+        }
 
-    item->subTotal = subTotal;
-    item->total = total;
-    if (subTotal > maxCount)
-        maxCount = subTotal;
+        QHash<qint32, NNotebookViewItem*>::iterator i;
+        for (i=dataStore.begin(); i!=dataStore.end(); ++i) {
+            root->total += i.value()->total;
+            root->subTotal += i.value()->subTotal;
+            if (i.value()->stack != "") {
+                NNotebookViewItem* stack = stackStore[i.value()->stack];
+                if (stack!=NULL) {
+                    stack->total += i.value()->total;
+                    stack->subTotal += i.value()->subTotal;
+                }
+            }
+        }
+    }
+
+
+    if (lid > 0) {
+        if (dataStore.contains(lid)) {
+            item = dataStore[lid];
+        }
+        if (item == NULL)
+            return;
+
+        item->subTotal = subTotal;
+        item->total = total;
+        if (subTotal > maxCount)
+            maxCount = subTotal;
+    }
+
     repaint();
     return;
 }

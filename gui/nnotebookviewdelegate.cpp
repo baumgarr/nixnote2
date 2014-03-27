@@ -36,12 +36,16 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     QStyleOptionViewItemV4 options = option;
     initStyleOption(&options, index);
 
-    painter->save();
+
 
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
 
     qint32 lid = index.data(Qt::UserRole).toInt();
-    //    if (lid > 0) {
+    QString test = index.data(Qt::UserRole).toString().toLower();
+    if (test == "stack")
+        return;
+
+    painter->save();
 
     NNotebookView *tree = NULL;
     NNotebookViewItem *item = NULL;
@@ -69,8 +73,11 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 
     painter->setClipRect(clip);
     QFontMetrics fm = options.fontMetrics;
+    QFont f = options.font;
+    f.setBold(false);
+    painter->setFont(f);
     painter->setPen(Qt::darkGray);
-    painter->drawText(6+fm.width(index.data().toString()+QString("   ")),fm.height()-1,countString);
+    painter->drawText(6+fm.width(index.data().toString()+QString("   ")),fm.ascent(),countString);
 
     painter->restore();
 }

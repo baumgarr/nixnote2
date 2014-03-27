@@ -530,6 +530,7 @@ void NBrowserWindow::noteContentUpdated() {
     if (editor->isDirty) {
         NoteTable noteTable(global.db);
         noteTable.setDirty(this->lid, true);
+        editor->isDirty = false;
         qint64 dt = QDateTime::currentMSecsSinceEpoch();
         emit(noteUpdated(this->lid));
         emit(updateNoteList(this->lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
@@ -580,6 +581,7 @@ void NBrowserWindow::saveNoteContent() {
 
 
         table.updateNoteContent(lid, formatter.getEnml());
+        editor->isDirty = false;
         if (thumbnailer == NULL)
             thumbnailer = new Thumbnailer(global.db);
         thumbnailer->render(lid);

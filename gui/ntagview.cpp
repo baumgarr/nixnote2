@@ -305,6 +305,7 @@ void NTagView::rebuildTree() {
 // A tag has been updated.   Things like a sync can cause this to be called
 // because a tag's name may have changed.
 void NTagView::tagUpdated(qint32 lid, QString name, QString parentGuid, qint32 account) {
+
     this->rebuildTagTreeNeeded = true;
 
     qint32 parentLid = 0;
@@ -318,12 +319,21 @@ void NTagView::tagUpdated(qint32 lid, QString name, QString parentGuid, qint32 a
         newWidget->parent()->removeChild(newWidget);
     } else {
         newWidget = new NTagViewItem();
+        newWidget->account = account;
         dataStore.insert(lid, newWidget);
     }
     parentLid = tagTable.getLid(parentGuid);
     if (parentGuid != "") {
         if (parentLid > 0 && dataStore.contains(parentLid)) {
             parentWidget = dataStore[parentLid];
+            if (parentWidget == NULL) {
+                parentWidget = new NTagViewItem();
+                parentWidget->account = account;
+                if (account != this->accountFilter)
+                    parentWidget->setHidden(true);
+                dataStore.remove(parentLid);
+                dataStore.insert(parentLid, parentWidget);
+            }
         } else {
             if (parentLid == 0) {
                 Tag parentTag;
@@ -338,7 +348,7 @@ void NTagView::tagUpdated(qint32 lid, QString name, QString parentGuid, qint32 a
             parentWidget = new NTagViewItem();
             root->addChild(parentWidget);
             parentWidget->setData(NAME_POSITION, Qt::UserRole, parentLid);
-            parentWidget->setData(NAME_POSITION, Qt::DisplayRole, parentGuid);
+            parentWidget->setData(NAME_POSITION, Qt::DisplayRole, tr("-<Missing Tag>-"));
             dataStore.insert(parentLid, parentWidget);
         }
     }
@@ -790,9 +800,8 @@ void NTagView::tagExpunged(qint32 lid) {
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
         NTagViewItem *item = this->dataStore.value(lid);
-        this->removeItemWidget(item, 0);
+        item->parent()->removeChild(item);
         this->dataStore.remove(lid);
-        delete item;
     }
     this->resetSize();
 }

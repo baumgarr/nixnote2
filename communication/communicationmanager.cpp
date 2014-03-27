@@ -325,7 +325,7 @@ bool CommunicationManager::getSharedNotebookByAuth(SharedNotebook &sharedNoteboo
 
 
 // Authenticate to a linked notebook
-bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook book) {
+bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &book) {
 
 
     QLOG_DEBUG() << "Inside CommunicationManager::authenticateToLinkedNotebook()";
@@ -388,7 +388,7 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook book
 
 
 // Get a linked notebook's sync state
-bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook linkedNotebook, int errorCount) {
+bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook &linkedNotebook, int errorCount) {
     try {
         linkedNoteStoreClient->getLinkedNotebookSyncState(syncState, linkedAuthToken.authenticationToken, linkedNotebook);
         QLOG_DEBUG() << "New linked notebook count: "<< syncState.updateCount;
@@ -448,7 +448,7 @@ bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, Link
 
 
 // Get a linked notebook's sync chunk
-bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook linkedNotebook, int start, int chunkSize, bool fullSync, int errorCount) {
+bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook &linkedNotebook, int start, int chunkSize, int type, bool fullSync, int errorCount) {
 
     // Get rid of old stuff from last chunk
     while(inkNoteList->size() > 0) {
@@ -458,10 +458,56 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
     }
     inkNoteList->empty();
 
+    bool notebooks = false;
+    bool searches = false;
+    bool tags = false;
+    bool linkedNotebooks = false;
+    bool notes = false;
+    bool resources = false;
+    bool expunged = false;
+
+    notebooks = ((type & SYNC_CHUNK_NOTEBOOKS)>0);
+    searches = ((type & SYNC_CHUNK_SEARCHES)>0);
+    tags = ((type & SYNC_CHUNK_TAGS)>0);
+    linkedNotebooks = ((type & SYNC_CHUNK_LINKED_NOTEBOOKS)>0);
+    notes = ((type & SYNC_CHUNK_NOTES)>0);
+    expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync)>0);
+    resources = ((type & SYNC_CHUNK_RESOURCES) && (!fullSync)>0);
+
     // Try to get the chunk
     QHash<QString,QString> noteList;
     try {
-        linkedNoteStoreClient->getLinkedNotebookSyncChunk(chunk, authToken, linkedNotebook, start, chunkSize, fullSync);
+        SyncChunkFilter filter;
+        filter.__isset.includeExpunged = true;
+        filter.__isset.includeNotes = true;
+        filter.__isset.includeNoteResources = true;
+        filter.__isset.includeNoteAttributes = true;
+        filter.__isset.includeNotebooks = true;
+        filter.__isset.includeTags = true;
+        filter.__isset.includeSearches = true;
+        filter.__isset.includeResources = true;
+        filter.__isset.includeLinkedNotebooks = true;
+        filter.__isset.includeNoteApplicationDataFullMap = true;
+        filter.__isset.includeNoteResourceApplicationDataFullMap = true;
+        filter.__isset.includeNoteResourceApplicationDataFullMap =true;
+
+        filter.includeExpunged = expunged;
+        filter.includeNotes = notes;
+        filter.includeNoteResources = fullSync;
+        filter.includeNoteAttributes = notes;
+        filter.includeNotebooks = notebooks;
+        filter.includeTags = tags;
+        filter.includeSearches = searches;
+        filter.includeResources = resources;
+        filter.includeLinkedNotebooks = linkedNotebooks;
+        filter.includeNoteApplicationDataFullMap = false;
+        filter.includeNoteResourceApplicationDataFullMap = false;
+        filter.includeNoteResourceApplicationDataFullMap = false;
+
+        // This is a failsafe to prevnt loops if nothing passes the filter
+        chunk.chunkHighUSN = chunk.updateCount;
+
+        linkedNoteStoreClient->getFilteredSyncChunk(chunk, linkedAuthToken.authenticationToken, start, chunkSize, filter);
         for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
             QLOG_TRACE() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
             Note n;
@@ -476,9 +522,9 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
             }
             chunk.notes[i] = n;
             if (n.__isset.resources && n.resources.size() > 0) {
-                checkForInkNotes(n.resources, QString::fromStdString(linkedNotebook.shardId), QString::fromStdString(authToken));
+                checkForInkNotes(n.resources, QString::fromStdString(linkedNotebook.shardId), QString::fromStdString(linkedAuthToken.authenticationToken));
             }
-            downloadThumbnail(QString::fromStdString(n.guid), authToken, linkedNotebook.shardId);
+            //downloadThumbnail(QString::fromStdString(n.guid), linkedAuthToken, linkedNotebook.shardId);
         }
 
         // Fetch resources
@@ -492,13 +538,13 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
             for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
                 QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
                 Resource r;
-                noteStoreClient->getResource(r, authToken, chunk.resources[i].guid, true, true, true, true);
+                noteStoreClient->getResource(r, linkedAuthToken.authenticationToken, chunk.resources[i].guid, true, true, true, true);
                 QLOG_TRACE() << "Resource retrieved";
                 chunk.resources[i] = r;
 
                 if (noteTable.getLid(QString::fromStdString(r.noteGuid))<=0 || !noteList.contains(QString::fromStdString(r.noteGuid))) {
                     Note n;
-                    noteStoreClient->getNote(n, authToken, r.noteGuid, true, true, true, true);
+                    noteStoreClient->getNote(n, linkedAuthToken.authenticationToken, r.noteGuid, true, true, true, true);
                     chunk.__isset.notes = true;
                     chunk.notes.push_back(n);
                 }
@@ -1528,6 +1574,74 @@ qint32 CommunicationManager::deleteNote(string note, int errorCount) {
            QLOG_ERROR() << "Reconnecting";
            connect();
            return deleteNote(note, errorCount);
+       }
+       QLOG_ERROR() << "Unhandled exception:" << endl;
+       error.message = tr("Unknown error deleting note");
+       error.type = CommunicationError::Unknown;
+       return 0;
+   }
+}
+
+
+
+
+
+// delete a note in Evernote
+qint32 CommunicationManager::deleteLinkedNote(string note, int errorCount) {
+    // Try upload
+    try {
+        qint32 usn = noteStoreClient->deleteNote(linkedAuthToken.authenticationToken, note);
+        return usn;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = tr("Error deleting note \"") + QString::fromStdString(note) + "\"";
+        error.type = CommunicationError::EDAMUserException;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
+        error.message = tr("Error deleting note \"") + QString::fromStdString(note) + "\". Note not found";
+        error.type = CommunicationError::EDAMNotFoundException;
+        return 0;
+    } catch (TTransportException e) {
+       QLOG_ERROR() << "TTransport error: Type->" << e.getType();
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return deleteLinkedNote(note, errorCount);
+       }
+       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
+       error.message = tr("Transport error deleting note: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::TTransportException;
+       return 0;
+   } catch (std::exception e) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return deleteLinkedNote(note, errorCount);
+       }
+       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
+       error.message = tr("Error deleting note: ") +QString::fromStdString(e.what());
+       error.type = CommunicationError::StdException;
+       return 0;
+   } catch (...) {
+       if (errorCount < 3) {
+           errorCount++;
+           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
+           disconnect();
+           QLOG_ERROR() << "Reconnecting";
+           connect();
+           return deleteLinkedNote(note, errorCount);
        }
        QLOG_ERROR() << "Unhandled exception:" << endl;
        error.message = tr("Unknown error deleting note");

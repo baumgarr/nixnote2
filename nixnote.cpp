@@ -978,6 +978,7 @@ void NixNote::saveNoteColumnWidths() {
 void NixNote::syncTimerExpired() {
     if (!global.accountsManager->oauthTokenFound())
         return;
+    tabWindow->saveAllNotes();
     emit(syncRequested());
 }
 
@@ -1007,6 +1008,7 @@ void NixNote::synchronize() {
 
         global.accountsManager->setOAuthToken(oauthWindow->response);
     }
+    tabWindow->saveAllNotes();
     syncButtonTimer.start(3);
     emit syncRequested();
 }

@@ -623,3 +623,29 @@ void TagTable::getNameMap(QHash<QString,QString> &nameMap) {
         nameMap.insert(QString::fromStdString(t.name), QString::fromStdString(t.guid));
     }
 }
+
+
+
+void TagTable::findMissingParents(QList<qint32> &lids) {
+    NSqlQuery query(*db);
+    query.prepare("select data from datastore where key=:parentKey and data not in (select lid from datastore where key=:guidKey)");
+    query.bindValue(":parentKey", TAG_PARENT_LID);
+    query.bindValue(":guidKey", TAG_GUID);
+    query.exec();
+    lids.clear();
+
+    while (query.next()) {
+        qint32 lid = query.value(0).toInt();
+        lids.append(lid);
+    }
+}
+
+
+
+void TagTable::cleanupMissingParents() {
+    NSqlQuery query(*db);
+    query.prepare("delete from datastore where key=:parentKey and data not in (select lid from datastore where key=:guidKey)");
+    query.bindValue(":parentKey", TAG_PARENT_LID);
+    query.bindValue(":guidKey", TAG_GUID);
+    query.exec();
+}

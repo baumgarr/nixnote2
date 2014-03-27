@@ -89,6 +89,8 @@ public:
     void cleanupLinkedTags();
     void getGuidMap(QHash<QString, QString> &nameMap);
     void getNameMap(QHash<QString,QString> &nameMap);
+    void findMissingParents(QList<qint32> &lids);
+    void cleanupMissingParents();
 };
 
 #endif // TAGTABLE_H

@@ -122,15 +122,13 @@ private:
     void syncRemoteExpungedLinkedNotebooks(vector<string> guids);
     bool syncRemoteLinkedNotebooksActual();
 
-    void updateNoteTableTags();
-    //void updateNoteTableNotebooks();
-
     void checkForInkNotes(vector<Resource> &resources);
 
     qint32 uploadSavedSearches();
     qint32 uploadTags();
     qint32 uploadNotebooks();
     qint32 uploadPersonalNotes();
+    qint32 uploadLinkedNotes(qint32 notebookLid, LinkedNotebook &book);
 
 
 public:

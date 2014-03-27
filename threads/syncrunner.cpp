@@ -168,6 +168,15 @@ void SyncRunner::evernoteSync() {
     }
     userTable.updateSyncState(syncState);
 
+    // Cleanup any missing parent tags
+    QList<qint32> lids;
+    TagTable tagTable(&db->conn);
+    tagTable.findMissingParents(lids);
+    for (int i=0; i<lids.size(); i++) {
+        emit(tagExpunged(lids[i]));
+    }
+    tagTable.cleanupMissingParents();
+
     if (!error)
         emit setMessage(tr("Sync Complete"), defaultMsgTimeout);
     QLOG_TRACE() << "Leaving SyncRunner::evernoteSync()";
@@ -200,12 +209,12 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
     int chunkSize = 5000;
     bool more = true;
-    SyncChunk chunk;
 
     bool rc;
     int startingSequenceNumber = updateSequenceNumber;
 
     while(more && keepRunning)  {
+        SyncChunk chunk;
         rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize,
                                 SYNC_CHUNK_LINKED_NOTEBOOKS | SYNC_CHUNK_NOTEBOOKS |
                                 SYNC_CHUNK_TAGS | SYNC_CHUNK_SEARCHES,
@@ -224,7 +233,8 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         processSyncChunk(chunk);
 
         updateSequenceNumber = chunk.chunkHighUSN;
-        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
+//        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
+        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= chunk.updateCount)
             more = false;
     }
 
@@ -238,6 +248,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 
 
     while(more && keepRunning)  {
+        SyncChunk chunk;
         rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_NOTES | SYNC_CHUNK_RESOURCES, fullSync);
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
@@ -257,39 +268,12 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
 //        query.exec("begin");
 
         updateSequenceNumber = chunk.chunkHighUSN;
-        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount) {
+//        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount) {
+        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= chunk.updateCount) {
             more = false;
             userTable.updateLastSyncNumber(updateCount);
         }
     }
-
-//    more = true;
-//    chunkSize = 150;
-//    updateSequenceNumber = startingSequenceNumber;
-
-//    while(more && keepRunning && !fullSync)  {
-//        rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize, SYNC_CHUNK_RESOURCES, fullSync);
-//        if (!rc) {
-//            QLOG_ERROR() << "Error retrieving chunk";
-//            error = true;
-//            this->communicationErrorHandler();
-//            query.exec("commit");
-//            return false;
-//        }
-//        QLOG_DEBUG() << "-(Pass 3) ->>>>  Old USN:" << updateSequenceNumber << " New USN:" << chunk.chunkHighUSN;
-//        int pct = (updateSequenceNumber-startingSequenceNumber)*100/(updateCount-startingSequenceNumber);
-//        emit setMessage(tr("Download ") +QString::number(pct) + tr("% complete for attachments."), defaultMsgTimeout);
-//        processSyncChunk(chunk);
-
-//        userTable.updateLastSyncNumber(chunk.chunkHighUSN);
-//        userTable.updateLastSyncDate(chunk.currentTime);
-//        query.exec("commit");
-
-//        if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= updateCount)
-//            more = false;
-//        updateSequenceNumber = chunk.chunkHighUSN;
-
-//    }
 
     emit setMessage(tr("Download complete."), defaultMsgTimeout);
 //    query.exec("commit");
@@ -312,19 +296,19 @@ void SyncRunner::processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook) {
         syncRemoteExpungedSavedSearches(chunk.expungedSearches);
     if (chunk.expungedLinkedNotebooks.size() > 0)
         syncRemoteExpungedLinkedNotebooks(chunk.expungedLinkedNotebooks);
+    if (chunk.notebooks.size() > 0)
+        syncRemoteNotebooks(chunk.notebooks, linkedNotebook);
     if (chunk.tags.size() > 0)
         syncRemoteTags(chunk.tags, linkedNotebook);
-    if (chunk.notebooks.size() > 0) {
-        syncRemoteNotebooks(chunk.notebooks, linkedNotebook);
-    }
     if (chunk.searches.size() > 0)
         syncRemoteSearches(chunk.searches);
+    if (chunk.linkedNotebooks.size() > 0)
+        syncRemoteLinkedNotebooksChunk(chunk.linkedNotebooks);
     if (chunk.notes.size() > 0)
         syncRemoteNotes(chunk.notes, linkedNotebook);
     if (chunk.resources.size() > 0)
         syncRemoteResources(chunk.resources);
-    if (chunk.linkedNotebooks.size() > 0)
-        syncRemoteLinkedNotebooksChunk(chunk.linkedNotebooks);
+
 
     chunk.expungedLinkedNotebooks.clear();;
     chunk.expungedNotebooks.clear();
@@ -431,6 +415,7 @@ void SyncRunner::syncRemoteTags(vector<Tag> tags, qint32 account) {
         // as an unsynced remote.  We then merge them.  We'll find it by guid
         // if a note was synchrozied with this tag before a chunk
         // with this tag was downloaded.
+
         qint32 lid = tagTable.findByName(t.name, account);
         if (lid == 0)
             lid = tagTable.getLid(t.guid);
@@ -449,6 +434,11 @@ void SyncRunner::syncRemoteTags(vector<Tag> tags, qint32 account) {
         QString parentGuid = "";
         if (t.__isset.parentGuid)
             parentGuid = QString::fromStdString(t.parentGuid);
+        if (parentGuid != "") {
+            qint32 parentLid = tagTable.getLid(parentGuid);
+            QLOG_ERROR() << "PARENTLID:" << parentLid;
+            QLOG_ERROR() << "PARENT:" << parentGuid << " " << account << " " << lid;
+        }
         emit tagUpdated(lid, QString::fromStdString(t.name), parentGuid, account);
     }
 
@@ -520,9 +510,15 @@ void SyncRunner::syncRemoteNotebooks(vector<Notebook> books, qint32 account) {
         bool shared = false;
         if (t.__isset.sharedNotebookIds || t.__isset.sharedNotebooks)
             shared = true;
+        if (account > 0) {
+            LinkedNotebookTable ltb(&db->conn);
+            LinkedNotebook lbook;
+            ltb.get(lbook, account);
+            if (lbook.__isset.username)
+                stack = QString::fromStdString(username);
+        }
         emit notebookUpdated(lid, QString::fromStdString(t.name), stack, false, shared);
     }
-
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteNotebooks";
 }
 
@@ -580,70 +576,6 @@ void SyncRunner::syncRemoteResources(vector<Resource> resources) {
 
 
 
-// Update the note table with any notebooks or tags that have changed
-void SyncRunner::updateNoteTableTags() {
-//    QHashIterator<QString, QString> keys(changedTags);
-//    NoteTable noteTable(&db->conn);
-//    TagTable tagTable(&db->conn);
-//    QList<qint32> notesChanged;
-//    QHash<QString,QString> tagHash;
-
-//    // Create a list of tags.  We'll use this multiple times to avoid needing
-//    // to do multiple lookups.
-//    QList<qint32> tagLids;
-//    tagTable.getAll(tagLids);
-//    for (qint32 i=0; i<tagLids.size(); i++) {
-//        Tag tag;
-//        tagTable.get(tag, tagLids.at(i));
-//        tagHash.insert(QString::fromStdString(tag.guid), QString::fromStdString(tag.name));
-//    }
-
-//    while (keys.hasNext()) {
-//        keys.next();
-
-//        // Find out which notes need to have the tag names updated
-//        QList<qint32> noteLids;
-//        noteTable.findNotesByTag(noteLids, keys.key());
-
-//        // Go through the list of notes and rebuild the tag name string
-//        for (qint32 i=0; i<noteLids.size(); i++) {
-
-//            // If we haven't already rebuild this note, then we rebuild it now
-//            // If multiple tags for a note changed, we can run into the same
-//            // note twice, but rebuilding it once is all we need.
-//            if (!notesChanged.contains(noteLids[i])) {
-//                notesChanged.append(noteLids[i]);
-//                QMap<QString,QString> tagMap;
-//                Note n;
-//                noteTable.get(n, noteLids[i], false, false);
-//                for (unsigned int j=0; j<n.tagGuids.size(); j++) {
-//                    string noteTag = n.tagGuids.at(j);
-//                    QString tname = tagHash.value(QString::fromStdString(noteTag));
-//                    tagMap.insert(tname.toUpper(), tname);
-//                }
-
-//                //Now we have a map of the possible names, we need to build
-//                // the string for the table
-//                QString tagNames;
-//                QMapIterator<QString,QString> mapI(tagMap);
-//                while (mapI.hasNext()) {
-//                    mapI.next();
-//                    if (tagNames!="") {
-//                        tagNames=tagNames+", ";
-//                    }
-//                    tagNames = tagNames +mapI.value();
-//                }
-//                noteTable.updateNoteListTags(noteLids[i],tagNames);
-
-//            }
-//        }
-//    }
-
-}
-
-
-
-
 // Synchronize remote linked notebooks
 void SyncRunner::syncRemoteLinkedNotebooksChunk(vector<LinkedNotebook> books) {
     LinkedNotebookTable ltable(&db->conn);
@@ -663,13 +595,14 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
     LinkedNotebookTable ltable(&db->conn);
     QList<qint32> lids;
     ltable.getAll(lids);
+    bool fs;
     for (int i=0; i<lids.size(); i++) {
         LinkedNotebook book;
-        bool fs;
         qint32 usn = ltable.getLastUpdateSequenceNumber(lids[i]);
+        qint32 startingUSN = usn;
         ltable.get(book, lids[i]);
-        SyncChunk chunk;
-        int chunkSize = 50;
+
+        int chunkSize = 5000;
         if (!comm->authenticateToLinkedNotebookShard(book)) {
             this->communicationErrorHandler();
             error = true;
@@ -689,8 +622,47 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
             fs = true;
         else
             fs = false;
+
+
+        // ***** STARTING PASS #1
         while (more && keepRunning) {
-            if (!comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, fs)) {
+            SyncChunk chunk;
+            if (!comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, SYNC_CHUNK_LINKED_NOTEBOOKS | SYNC_CHUNK_NOTEBOOKS |
+                                                  SYNC_CHUNK_TAGS | SYNC_CHUNK_SEARCHES,
+                                                  fs)) {
+                more = false;
+                if (comm->error.type == CommunicationError::EDAMNotFoundException) {
+                    ltable.expunge(lids[i]);
+                    emit(notebookExpunged(lids[i]));
+                } else {
+                    this->communicationErrorHandler();
+                    error = true;
+                    return false;
+                }
+            } else {
+                processSyncChunk(chunk, lids[i]);
+                usn = chunk.chunkHighUSN;
+                if (chunk.updateCount > 0 && chunk.updateCount > startingSequenceNumber) {
+                    int pct = (usn-startingSequenceNumber)*100/(chunk.updateCount-startingSequenceNumber);
+                    emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for tags in shared notebook ") +QString::fromStdString(book.shareName) + tr("."), defaultMsgTimeout);
+                }
+                if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= chunk.updateCount)
+                    more = false;
+            }
+        }
+
+        //************* STARTING PASS 2
+
+        usn = startingUSN;
+        more = true;
+        chunkSize = 100;
+        if (error == true)
+            more=false;
+
+        emit setMessage(tr("Downloading notes for shared notebook ") +QString::fromStdString(book.shareName) + tr("."), defaultMsgTimeout);
+        while (more && keepRunning) {
+            SyncChunk chunk;
+            if (!comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, SYNC_CHUNK_NOTES | SYNC_CHUNK_RESOURCES, fs)) {
                 more = false;
                 if (comm->error.type == CommunicationError::EDAMNotFoundException) {
                     ltable.expunge(lids[i]);
@@ -707,46 +679,79 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
                     int pct = (usn-startingSequenceNumber)*100/(chunk.updateCount-startingSequenceNumber);
                     emit setMessage(tr("Downloading ") +QString::number(pct) + tr("% complete for shared notebook ") +QString::fromStdString(book.shareName) + tr("."), defaultMsgTimeout);
                 }
-                if (chunk.chunkHighUSN >= syncState.updateCount) {
+                if (!chunk.__isset.chunkHighUSN || chunk.chunkHighUSN >= chunk.updateCount) {
                     more = false;
                     ltable.setLastUpdateSequenceNumber(lids[i], syncState.updateCount);
                 }
             }
         }
 
-        // Now upload any dirty notes
-        NoteTable ntable(&db->conn);
-        QList<qint32> noteLids;
-        ntable.getAllDirty(noteLids, lids[i]);
-        for (int j=0; j<noteLids.size(); j++) {
-            Note n;
-            qint32 oldUsn = n.updateSequenceNum;
-            ntable.get(n, noteLids[j], true, true);
-            qint32 usn = comm->uploadLinkedNote(n, book);
-            if (usn == 0) {
-                this->communicationErrorHandler();
-                error = true;
-                return false;
-            }
-            if (usn > startingSequenceNumber) {
-                startingSequenceNumber = usn;
-                if (oldUsn == 0)
-                    ntable.updateGuid(noteLids[j], n.guid);
-                ntable.setUpdateSequenceNumber(noteLids[j], usn);
-                ntable.setDirty(noteLids[j], false);
-                emit(noteSynchronized(noteLids[j], false));
-            } else {
-                error = true;
-                return false;
-            }
-        }
-
+        qint32 noteUSN = uploadLinkedNotes(lids[i], book);
+        if (noteUSN > usn)
+            ltable.setLastUpdateSequenceNumber(lids[i], noteUSN);
         comm->disconnectFromLinkedNotebook();
     }
     TagTable tagTable(&db->conn);
     tagTable.cleanupLinkedTags();
     return true;
 }
+
+
+
+// Upload notes that belong to me
+qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid, LinkedNotebook &book) {
+    qint32 usn;
+    qint32 maxUsn = 0;
+    NoteTable noteTable(&db->conn);
+    QList<qint32> lids, validLids, deletedLids;
+    noteTable.getAllDirty(lids, notebookLid);
+
+    // Split the list into deleted and updated notes
+    for (int i=0; i<lids.size(); i++) {
+        if (noteTable.isDeleted(lids[i]))
+            deletedLids.append(lids[i]);
+        else
+            validLids.append(lids[i]);
+    }
+
+    // Start uploading notes
+    for (int i=0; i<validLids.size(); i++) {
+        Note note;
+        noteTable.get(note, validLids[i],true, true);
+        qint32 oldUsn = note.updateSequenceNum;
+        usn = comm->uploadLinkedNote(note, book);
+        if (usn == 0) {
+            this->communicationErrorHandler();
+            error = true;
+            return maxUsn;
+        }
+        if (usn > maxUsn) {
+            maxUsn = usn;
+            if (oldUsn == 0)
+                noteTable.updateGuid(validLids[i], note.guid);
+            noteTable.setUpdateSequenceNumber(validLids[i], usn);
+            noteTable.setDirty(validLids[i], false);
+            emit(noteSynchronized(validLids[i], false));
+        } else {
+            error = true;
+        }
+    }
+
+    // Start deleting notes
+    for (int i=0; i<deletedLids.size(); i++) {
+        QString guid = noteTable.getGuid(deletedLids[i]);
+        noteTable.setDirty(lids[i], false);
+        usn = comm->deleteLinkedNote(guid.toStdString());
+        if (usn > maxUsn) {
+            maxUsn = usn;
+            noteTable.setUpdateSequenceNumber(deletedLids[i], usn);
+            noteTable.setDirty(deletedLids[i], false);
+            emit(noteSynchronized(deletedLids[i], false));
+        }
+    }
+    return maxUsn;
+}
+
 
 
 
