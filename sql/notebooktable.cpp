@@ -79,7 +79,7 @@ qint32 NotebookTable::findByName(QString &name) {
 
 // Given a notebook's lid, we give it a new guid.  This can happen
 // the first time a record is synchronized
-void NotebookTable::updateGuid(qint32 lid, Guid &guid) {
+void NotebookTable::updateGuid(qint32 lid, string &guid) {
     NSqlQuery query(*db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", QString::fromStdString(guid));
@@ -919,5 +919,27 @@ void NotebookTable::closeNotebook(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_IS_CLOSED);
     query.exec();
+}
+
+
+void NotebookTable::merge(qint32 source, qint32 target) {
+    this->expunge(source);
+    NSqlQuery query(*db);
+    query.prepare("Update datastore set data=:newLid where key=:key and data=:oldLid");
+    query.bindValue(":newLid", target);
+    query.bindValue(":key", NOTE_NOTEBOOK_LID);
+    query.bindValue(":oldLid", source);
+    query.exec();
+    QLOG_DEBUG() << query.lastError();
+
+
+    query.prepare("Update notetable set notebooklid=:newLid where notebooklid=:oldLid");
+    query.bindValue(":newLid", target);
+    query.bindValue(":oldLid", source);
+    query.exec();
+    QLOG_DEBUG() << query.lastError();
+
+
+
 }
 

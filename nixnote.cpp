@@ -1309,7 +1309,8 @@ void NixNote::databaseRestore(bool fullRestore) {
 
         if (noteReader.lastError != 0) {
             setMessage(noteReader.getErrorMessage());
-            QLOG_ERROR() <<  "Restore problem: " << noteReader.lastError;
+            QLOG_ERROR() <<  "Restore problem: " << noteReader.errorMessage;
+            QMessageBox::critical(this, tr("Error"), noteReader.errorMessage);
             waitCursor(false);
             return;
         }

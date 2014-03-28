@@ -234,19 +234,22 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
         query.bindValue(":key", NOTE_NOTEBOOK_LID);
         NotebookTable notebookTable(db);
         LinkedNotebookTable linkedTable(db);
-        notebookLid = account;
-        if (notebookLid == 0)
+        if (account > 0)
+            notebookLid = account;
+        else
+            notebookLid = 0;
+        if (notebookLid <= 0)
             notebookLid = notebookTable.getLid(QString::fromStdString(t.notebookGuid));
-        if (notebookLid == 0) {
+        if (notebookLid <= 0) {
             notebookLid = linkedTable.getLid(QString::fromStdString(t.notebookGuid));
         }
 
         // If not found, we insert one to avoid problems.  We'll probably get the real data later
-        if (notebookLid == 0) {
+        if (notebookLid <= 0) {
             notebookLid = cs.incrementLidCounter();
             Notebook notebook;
             notebook.guid = t.notebookGuid;
-            notebook.name = "";
+            notebook.name = "<Missing Notebook>";
             notebook.__isset.guid = true;
             notebook.__isset.name = true;
             notebookTable.add(notebookLid, notebook, false, false);

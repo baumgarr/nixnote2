@@ -103,26 +103,31 @@ void ImportData::import(QString file) {
     mb.setWindowTitle(tr("Scaning File"));
     mb.setText(QString::number(recCnt) + tr(" notes found."));
     QPushButton *cancelButton = mb.addButton(QMessageBox::Cancel);
-    connect(cancelButton, SIGNAL(clicked()), this, SLOT(canceled()));
+    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
     mb.show();
     QCoreApplication::processEvents();
 
     while (!countReader->atEnd() && !stopNow) {
         QString line = countReader->readLine();
-        if (line.contains("<note")) {
+        if (line.contains("<note>", Qt::CaseInsensitive)) {
             recCnt++;
             mb.setText(QString::number(recCnt) + tr(" notes found."));
             QCoreApplication::processEvents();
         }
     }
 
-
+    notebookData.clear();
     progress->setMaximum(recCnt);
     progress->setMinimum(0);
-    progress->setWindowTitle(tr("Importing Notes"));
-    progress->setLabelText(tr("Importing Notes"));
+    if (backup) {
+        progress->setWindowTitle(tr("Importing"));
+        progress->setLabelText(tr("Importing Notes"));
+    } else {
+        progress->setWindowTitle(tr("Restore"));
+        progress->setLabelText(tr("Restoring Notes"));
+    }
     progress->setWindowModality(Qt::ApplicationModal);
-    connect(progress, SIGNAL(canceled()), this, SLOT(canceled()));
+    connect(progress, SIGNAL(canceled()), this, SLOT(cancel()));
     progress->setVisible(true);
     mb.close();
     progress->show();
@@ -131,7 +136,13 @@ void ImportData::import(QString file) {
     reader = new QXmlStreamReader(&xmlFile);
     NSqlQuery query(*global.db);
     query.exec("begin");
+    int commitCount = 100;
     while (!reader->atEnd() && !stopNow) {
+        if (commitCount <=  0) {
+            query.exec("commit");
+            commitCount = 100;
+        }
+        commitCount--;
         reader->readNext();
         if (reader->hasError()) {
             errorMessage = reader->errorString();
@@ -158,6 +169,7 @@ void ImportData::import(QString file) {
             if (type.toLower() == "backup" && !backup) {
                 lastError = 4;
                 errorMessage = "This is backup file, not an export file";
+                progress->hide();
                 return;
             }
             if (type.toLower() == "export" && backup) {
@@ -210,7 +222,8 @@ void ImportData::import(QString file) {
             noteTable.updateNoteList(lid, note, dirty, 0);
         }
     }
-
+    query.exec("commit");
+    progress->hide();
 }
 
 
@@ -868,12 +881,17 @@ void ImportData::processNotebookNode() {
     // Check if there is a notebook by this name already.
     // If one exists, we treat this as an update
     qint32 lid = notebookTable.findByName(notebook.name);
-    if (lid == 0)
+    if (lid <= 0) {
         lid = notebookTable.getLid(notebook.guid);
-    if (lid == 0) {
+    }
+    if (lid <= 0) {
         notebookTable.add(lid,notebook,notebookIsDirty, notebookIsLocal);
     } else {
+        qint32 oldLid = notebookTable.getLid(notebook.guid);
+        if (oldLid != lid)
+            notebookTable.merge(oldLid, lid);
         notebookTable.sync(lid, notebook);
+//        notebookTable.updateGuid(lid, notebook.guid);
         notebookTable.setDirty(lid, notebookIsDirty);
     }
     return;
@@ -931,13 +949,18 @@ void ImportData::processTagNode() {
     // Check if we have a tag by this name already.  If we
     // do then we treat this as an update.
     qint32 lid = tagTable.findByName(name,0);
-    if (lid == 0)
+    if (lid <= 0) {
         lid = tagTable.getLid(tag.guid);
-    if (lid == 0)
+    }
+    if (lid <= 0) {
         tagTable.add(0, tag,tagIsDirty, 0);
-    else {
+    } else {
+//        qint32 oldLid = tagTable.getLid(tag.guid);
+//        if (oldLid != lid)
+//            tagTable.merge(oldLid, lid);
         tagTable.sync(lid, tag, 0);
-        tagTable.setDirty(lid,tagIsDirty);
+//        notebookTable.updateGuid(lid, notebook.guid);
+        tagTable.setDirty(lid, tagIsDirty);
     }
     return;
 }

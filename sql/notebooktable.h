@@ -70,7 +70,7 @@ public:
     qint32 getLid(string guid);             // Given a guid, return the lid
     qint32 findByName(string &name);           // Find a notebook given a name
     qint32 findByName(QString &name);          // Find a notebook given a name
-    void updateGuid(qint32 lid, Guid &guid);    // Update a notebook's guid
+    void updateGuid(qint32 lid, string &guid);    // Update a notebook's guid
     qint32 sync(Notebook &notebook);                    // Sync a notebook with a new record
     qint32 sync(qint32 lid, Notebook &notebook);           // Sync a notebook with a new record
     qint32 add(qint32 lid, Notebook &t, bool isDirty, bool isLocal = false); // Add a new notebook
@@ -118,6 +118,7 @@ public:
     void getClosedNotebooks(QList<qint32> &lids);
     void openAllNotebooks();
     void closeNotebook(qint32 lid);
+    void merge(qint32 source, qint32 target);
 };
 
 #endif // NOTEBOOKTABLE_H

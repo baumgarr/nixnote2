@@ -47,6 +47,8 @@ extern Global global;
 NNotebookView::NNotebookView(QWidget *parent) :
     QTreeWidget(parent)
 {
+    stackStore.clear();
+    dataStore.clear();
     QFont f = this->font();
     f.setPointSize(8);
     this->setFont(f);
@@ -228,12 +230,14 @@ void NNotebookView::loadData() {
 
     QHash<qint32, NNotebookViewItem*>::iterator i1;
     for (i1=dataStore.begin(); i1!=dataStore.end(); ++i1) {
-        i1.value()->setHidden(true);
+        if (i1.value() != NULL)
+            i1.value()->setHidden(true);
     }
 
     QHash<QString, NNotebookViewItem*>::iterator i2;
     for (i2=stackStore.begin(); i2!=stackStore.end(); ++i2) {
-        i2.value()->setHidden(true);
+        if (i2.value() != NULL)
+            i2.value()->setHidden(true);
     }
 
     dataStore.clear();
@@ -861,13 +865,15 @@ void NNotebookView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
 
         QHash<qint32, NNotebookViewItem*>::iterator i;
         for (i=dataStore.begin(); i!=dataStore.end(); ++i) {
-            root->total += i.value()->total;
-            root->subTotal += i.value()->subTotal;
-            if (i.value()->stack != "") {
-                NNotebookViewItem* stack = stackStore[i.value()->stack];
-                if (stack!=NULL) {
-                    stack->total += i.value()->total;
-                    stack->subTotal += i.value()->subTotal;
+            if (i.value() != NULL) {
+                root->total += i.value()->total;
+                root->subTotal += i.value()->subTotal;
+                if (i.value()->stack != "") {
+                    NNotebookViewItem* stack = stackStore[i.value()->stack];
+                    if (stack!=NULL) {
+                        stack->total += i.value()->total;
+                        stack->subTotal += i.value()->subTotal;
+                    }
                 }
             }
         }

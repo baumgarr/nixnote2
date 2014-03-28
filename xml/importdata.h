@@ -58,6 +58,7 @@ private:
     QHash<QString,QString>		noteMap;
     QHash<QString, NoteMetadata> metaData;
     QList<QString>              noteList;
+    QHash<QString, qint32>  notebookData;
 
     void processNoteNode();
     void processResource(Resource &resource);
