@@ -9,9 +9,9 @@ LocationDialog::LocationDialog(QWidget *parent) :
     wasOkPressed = false;
     setWindowTitle(tr("Location"));
     //setWindowIcon(new QIcon(iconPath+"password.png"));
-    QGridLayout *grid = new QGridLayout(this);
-    QGridLayout *input = new QGridLayout(this);
-    QGridLayout *button = new QGridLayout(this);
+    QGridLayout *grid = new QGridLayout();
+    QGridLayout *input = new QGridLayout();
+    QGridLayout *button = new QGridLayout();
     setLayout(grid);
 
     input->addWidget(new QLabel(tr("Longitude"), this), 1,1);
