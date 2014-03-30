@@ -66,8 +66,9 @@ AddUserAccountDialog::AddUserAccountDialog(QWidget *parent) :
 
     accountNames = global.accountsManager->nameList();
 
-    newAccountServer->addItem(tr("www.evernote.com"), "www.evernote.com");
-    newAccountServer->addItem(tr("sandbox.evernote.com"), "sandbox.evernote.com");
+    newAccountServer->addItem(tr("Evernote"), "www.evernote.com");
+    newAccountServer->addItem(tr("Yinxiang Biji"), "app.yinxiang.com");
+    newAccountServer->addItem(tr("Evernote Sandbox"), "sandbox.evernote.com");
 }
 
 
