@@ -105,6 +105,8 @@ public:
     QAction *pinNoteAction;
     QAction *unpinNoteAction;
     QAction *spellCheckAction;
+    QAction *openTrunkAction;
+    QAction *openEvernoteSupportAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 

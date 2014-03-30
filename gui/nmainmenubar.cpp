@@ -456,6 +456,22 @@ void NMainMenuBar::setupToolsMenu() {
 
 void NMainMenuBar::setupHelpMenu() {
     helpMenu = this->addMenu(tr("&Help"));
+
+
+    openEvernoteSupportAction = new QAction(tr("Evernote Support"), this);
+    openEvernoteSupportAction->setToolTip(tr("Go to Evernote's support page"));
+    openEvernoteSupportAction->setFont(font);
+    connect(openEvernoteSupportAction, SIGNAL(triggered()), parent, SLOT(openEvernoteSupport()));
+    helpMenu->addAction(openEvernoteSupportAction);
+
+    openTrunkAction = new QAction(tr("Evernote Trunk"), this);
+    openTrunkAction->setToolTip(tr("Go to Evernote Trunk"));
+    openTrunkAction->setFont(font);
+    connect(openTrunkAction, SIGNAL(triggered()), parent, SLOT(openTrunk()));
+    helpMenu->addAction(openTrunkAction);
+
+    helpMenu->addSeparator();
+
     aboutAction = new QAction(tr("About"), this);
     aboutAction->setToolTip(tr("About"));
     aboutAction->setFont(font);

@@ -277,6 +277,7 @@ void NixNote::setupGui() {
 
     toolBar->addSeparator();
     trunkButton = toolBar->addAction(QIcon(":trunk.png"), tr("Trunk"));
+    trunkButton->setVisible(false);
     usageButton = toolBar->addAction(QIcon(":usage.png"), tr("Usage"));
 
 
@@ -1594,6 +1595,15 @@ void NixNote::notesRestored(QList<qint32> lids) {
 // Open the trunk web site
 void NixNote::openTrunk() {
     QDesktopServices::openUrl(QUrl("http://www.evernote.com/trunk"));
+}
+
+
+// Open Evernote support
+void NixNote::openEvernoteSupport() {
+    QString server = "http://www.evernote.com/about/contact/support/";
+    if (global.accountsManager->getServer() == "app.yinxiang.com")
+        server = "https://support.yinxiang.com";
+    QDesktopServices::openUrl(QUrl(server));
 }
 
 void NixNote::openAccount() {

@@ -236,6 +236,7 @@ public slots:
     void spellCheckCurrentNote();
     void openExternalNote(qint32 lid);
     void pauseIndexing();
+    void openEvernoteSupport();
 
 signals:
     void syncRequested();
