@@ -179,13 +179,18 @@
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="69"/>
-        <source>www.evernote.com</source>
-        <translation>www.evernote.com</translation>
+        <source>Evernote</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="70"/>
-        <source>sandbox.evernote.com</source>
-        <translation>sandbox.evernote.com (testování)</translation>
+        <source>Yinxiang Biji</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/adduseraccountdialog.cpp" line="71"/>
+        <source>Evernote Sandbox</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -211,24 +216,36 @@
         <translation>Zobrazovat zmeškané připomínky při spuštění</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="37"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="36"/>
+        <source>Always Start minimized</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="49"/>
         <source>Startup Behavior</source>
         <translation>Chování při spuštění</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="39"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="51"/>
         <source>Restore Selection Criteria</source>
         <translation>Obnovit kritéria výběru</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="40"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="52"/>
         <source>Select Default Notebook</source>
         <translation>Vyberte výchozí poznámkový blok</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="41"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="53"/>
         <source>View All Notebooks</source>
         <translation>Zobrazit všechny poznámkové bloky</translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="62"/>
+        <source>Window Icon
+(may require restart on
+some window managers)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -316,14 +333,14 @@
     <message>
         <location filename="../communication/communicationmanager.cpp" line="271"/>
         <location filename="../communication/communicationmanager.cpp" line="284"/>
-        <location filename="../communication/communicationmanager.cpp" line="818"/>
-        <location filename="../communication/communicationmanager.cpp" line="831"/>
+        <location filename="../communication/communicationmanager.cpp" line="864"/>
+        <location filename="../communication/communicationmanager.cpp" line="877"/>
         <source>Error getting sync chunk: </source>
         <translation>Chyba při získávání části synchronizace: </translation>
     </message>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="297"/>
-        <location filename="../communication/communicationmanager.cpp" line="844"/>
+        <location filename="../communication/communicationmanager.cpp" line="890"/>
         <source>Unknown error getting sync chunk</source>
         <translation>Neznámá chyba při získávání části synchronizace</translation>
     </message>
@@ -343,277 +360,282 @@
         <translation>Neznámá chyba při získávání stavu poznámkového bloku</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="511"/>
+        <location filename="../communication/communicationmanager.cpp" line="557"/>
         <source>Shared notebook EDAMUserException </source>
         <translation>Uživatelská chyba protokolu EDAM pro sdílený poznámkový blok </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="534"/>
+        <location filename="../communication/communicationmanager.cpp" line="580"/>
         <source>Shared notebook </source>
         <translation>Sdílený poznámkový blok </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="534"/>
+        <location filename="../communication/communicationmanager.cpp" line="580"/>
         <source> not found.</source>
         <translation>nenalezen.</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="540"/>
+        <location filename="../communication/communicationmanager.cpp" line="586"/>
         <source>Shared notebook TException </source>
         <translation>Chyba přenosu pro sdílený poznámkový blok </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="949"/>
-        <location filename="../communication/communicationmanager.cpp" line="958"/>
+        <location filename="../communication/communicationmanager.cpp" line="995"/>
+        <location filename="../communication/communicationmanager.cpp" line="1004"/>
         <source>Error uploading saved search </source>
         <translation>Chyba při nahrávání uloženého hledání </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="971"/>
+        <location filename="../communication/communicationmanager.cpp" line="1017"/>
         <source>Transport error uploading saved search &quot;</source>
         <translation>Chyba přenosu při nahrávání uloženého hledání &quot;</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="984"/>
+        <location filename="../communication/communicationmanager.cpp" line="1030"/>
         <source>Std error uploading saved search &quot;</source>
         <translation>Chyba při nahrávání uloženého hledání &quot;</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="997"/>
+        <location filename="../communication/communicationmanager.cpp" line="1043"/>
         <source>Unknown error uploading saved search &quot;</source>
         <translation>Neznámá chyba při nahrávání uloženého hledání &quot;</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1035"/>
+        <location filename="../communication/communicationmanager.cpp" line="1081"/>
         <source>Transport error deleting saved search: </source>
         <translation>Chyba přenosu při mazání uloženého hledání: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1048"/>
+        <location filename="../communication/communicationmanager.cpp" line="1094"/>
         <source>Error deleting saved search: </source>
         <translation>Chyba při mazání uloženého hledání: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1061"/>
+        <location filename="../communication/communicationmanager.cpp" line="1107"/>
         <source>Unknown error getting expunging saved search</source>
         <translation>Neznámá chyba při získávání smazaných uložených hledání</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1083"/>
-        <location filename="../communication/communicationmanager.cpp" line="1092"/>
+        <location filename="../communication/communicationmanager.cpp" line="1129"/>
+        <location filename="../communication/communicationmanager.cpp" line="1138"/>
         <source>Error uploading tag </source>
         <translation>Chyba při nahrávání štítku </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1105"/>
+        <location filename="../communication/communicationmanager.cpp" line="1151"/>
         <source>Transport error uploading tag: </source>
         <translation>Chyba přenosu při nahrávání štítku: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1118"/>
+        <location filename="../communication/communicationmanager.cpp" line="1164"/>
         <source>Error uploading tag: </source>
         <translation>Chyba při nahrávání štítku: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1131"/>
+        <location filename="../communication/communicationmanager.cpp" line="1177"/>
         <source>Unknown error uploading tag</source>
         <translation>Neznámá chyba při nahrávání štítku</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1168"/>
-        <location filename="../communication/communicationmanager.cpp" line="1181"/>
+        <location filename="../communication/communicationmanager.cpp" line="1214"/>
+        <location filename="../communication/communicationmanager.cpp" line="1227"/>
         <source>Error expunging tag: </source>
         <translation>Chyba při mazání štítku: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1194"/>
+        <location filename="../communication/communicationmanager.cpp" line="1240"/>
         <source>Unknown error expunging tag</source>
         <translation>Neznámá chyba při mazání štítku</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1215"/>
-        <location filename="../communication/communicationmanager.cpp" line="1224"/>
+        <location filename="../communication/communicationmanager.cpp" line="1261"/>
+        <location filename="../communication/communicationmanager.cpp" line="1270"/>
         <source>Error uploading notebook </source>
         <translation>Chyba při nahrávání poznámkového bloku </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1237"/>
+        <location filename="../communication/communicationmanager.cpp" line="1283"/>
         <source>Transport error uploading notebook: </source>
         <translation>Chyba přenosu při nahrávání poznámkového bloku: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1250"/>
+        <location filename="../communication/communicationmanager.cpp" line="1296"/>
         <source>Error uploading notebook: </source>
         <translation>Chyba při nahrávání poznámkového bloku: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1263"/>
+        <location filename="../communication/communicationmanager.cpp" line="1309"/>
         <source>Unknown error uploading notebook</source>
         <translation>Neznámá chyba při nahrávání poznámkového bloku</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1300"/>
+        <location filename="../communication/communicationmanager.cpp" line="1346"/>
         <source>Transport error expunging notebook: </source>
         <translation>Chyba přenosu při mazání poznámkového bloku: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1313"/>
+        <location filename="../communication/communicationmanager.cpp" line="1359"/>
         <source>Error expunging notebook: </source>
         <translation>Chyba při mazání poznámkového bloku: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1326"/>
+        <location filename="../communication/communicationmanager.cpp" line="1372"/>
         <source>Unknown error expunging notebook</source>
         <translation>Neznámá chyba při mazání poznámkového bloku</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1348"/>
-        <location filename="../communication/communicationmanager.cpp" line="1357"/>
-        <location filename="../communication/communicationmanager.cpp" line="1418"/>
-        <location filename="../communication/communicationmanager.cpp" line="1427"/>
+        <location filename="../communication/communicationmanager.cpp" line="1394"/>
+        <location filename="../communication/communicationmanager.cpp" line="1403"/>
+        <location filename="../communication/communicationmanager.cpp" line="1464"/>
+        <location filename="../communication/communicationmanager.cpp" line="1473"/>
         <source>Error uploading note &quot;</source>
         <translation>Chyba při nahrávání poznámky &quot;</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1357"/>
-        <location filename="../communication/communicationmanager.cpp" line="1427"/>
+        <location filename="../communication/communicationmanager.cpp" line="1403"/>
+        <location filename="../communication/communicationmanager.cpp" line="1473"/>
         <source>&quot;. Note not found</source>
         <translation>&quot;. Poznámka nenalezena</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1370"/>
+        <location filename="../communication/communicationmanager.cpp" line="1416"/>
         <source>Transport error uploading note: </source>
         <translation>Chyba přenosu při nahrávání poznámky: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1383"/>
+        <location filename="../communication/communicationmanager.cpp" line="1429"/>
         <source>Error uploading note: </source>
         <translation>Chyba při nahrávání poznámky: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1396"/>
+        <location filename="../communication/communicationmanager.cpp" line="1442"/>
         <source>Unknown error uploading note</source>
         <translation>Neznámá chyba při nahrávání poznámky</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1441"/>
+        <location filename="../communication/communicationmanager.cpp" line="1487"/>
         <source>Transport error uploading linked note: </source>
         <translation>Chyba přenosu při nahrávání propojené poznámky: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1455"/>
+        <location filename="../communication/communicationmanager.cpp" line="1501"/>
         <source>Error uploading linked note: </source>
         <translation>Chyba při nahrávání propojené poznámky:</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1468"/>
+        <location filename="../communication/communicationmanager.cpp" line="1514"/>
         <source>Unknown uploading linked note</source>
         <translation>Neznámá chyba při nahrávání propojené poznámky</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1484"/>
-        <location filename="../communication/communicationmanager.cpp" line="1493"/>
+        <location filename="../communication/communicationmanager.cpp" line="1530"/>
+        <location filename="../communication/communicationmanager.cpp" line="1539"/>
+        <location filename="../communication/communicationmanager.cpp" line="1598"/>
+        <location filename="../communication/communicationmanager.cpp" line="1607"/>
         <source>Error deleting note &quot;</source>
         <translation>Chyba při mazání poznámky &quot;</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1507"/>
+        <location filename="../communication/communicationmanager.cpp" line="1553"/>
+        <location filename="../communication/communicationmanager.cpp" line="1621"/>
         <source>Transport error deleting note: </source>
         <translation>Chyba přenosu při mazání poznámky: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1520"/>
+        <location filename="../communication/communicationmanager.cpp" line="1566"/>
+        <location filename="../communication/communicationmanager.cpp" line="1634"/>
         <source>Error deleting note: </source>
         <translation>Chyba při mazání poznámky: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1533"/>
+        <location filename="../communication/communicationmanager.cpp" line="1579"/>
+        <location filename="../communication/communicationmanager.cpp" line="1647"/>
         <source>Unknown error deleting note</source>
         <translation>Neznámá chyba při mazání poznámky</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1640"/>
+        <location filename="../communication/communicationmanager.cpp" line="1754"/>
         <source>Transport error getting note versions: </source>
         <translation>Chyba přenosu při získávání verzí poznámek: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1653"/>
+        <location filename="../communication/communicationmanager.cpp" line="1767"/>
         <source>Error getting note versions: </source>
         <translation>Chyba při získávání verzí poznámek: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1666"/>
+        <location filename="../communication/communicationmanager.cpp" line="1780"/>
         <source>Unknown error getting note versions</source>
         <translation>Neznámá chyba při získávání verzí poznámky</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1701"/>
+        <location filename="../communication/communicationmanager.cpp" line="1815"/>
         <source>Transport error getting note version: </source>
         <translation>Chyba přenosu při získávání verze poznámky: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1714"/>
+        <location filename="../communication/communicationmanager.cpp" line="1828"/>
         <source>Error getting note version: </source>
         <translation>Chyba při získávání verze poznámky: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1727"/>
+        <location filename="../communication/communicationmanager.cpp" line="1841"/>
         <source>Unknown error getting note version</source>
         <translation>Neznámá chyba při získávání verze poznámky</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1759"/>
+        <location filename="../communication/communicationmanager.cpp" line="1873"/>
         <source>Transport error getting notebook list: </source>
         <translation>Chyba přenosu při získávání seznamu poznámkových bloků: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1772"/>
+        <location filename="../communication/communicationmanager.cpp" line="1886"/>
         <source>Error getting notebook list: </source>
         <translation>Chyba při získávání seznamu poznámkových bloků: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1785"/>
+        <location filename="../communication/communicationmanager.cpp" line="1899"/>
         <source>Unknown error getting notebook list</source>
         <translation>Neznámá chyba při získávání seznamu poznámkových bloků</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1820"/>
+        <location filename="../communication/communicationmanager.cpp" line="1934"/>
         <source>Transport error getting tag list: </source>
         <translation>Chyba přenosu při získávání seznamu štítků: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1833"/>
+        <location filename="../communication/communicationmanager.cpp" line="1947"/>
         <source>Error getting tag list: </source>
         <translation>Chyba při získávání seznamu štítků: </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1846"/>
+        <location filename="../communication/communicationmanager.cpp" line="1960"/>
         <source>Unknown error getting tag list</source>
         <translation>Neznámá chyba při získávání seznamu štítků</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1872"/>
-        <location filename="../communication/communicationmanager.cpp" line="1874"/>
+        <location filename="../communication/communicationmanager.cpp" line="1986"/>
+        <location filename="../communication/communicationmanager.cpp" line="1988"/>
         <source>API rate limit exceeded.  Please try again in </source>
         <translation>Překročen limit rychlosti API.  Prosím zkuste to znovu za </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1872"/>
+        <location filename="../communication/communicationmanager.cpp" line="1986"/>
         <source> minutes.</source>
         <translation> minut(y).</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1874"/>
+        <location filename="../communication/communicationmanager.cpp" line="1988"/>
         <source> minute.</source>
         <translation> minutu.</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1877"/>
+        <location filename="../communication/communicationmanager.cpp" line="1991"/>
         <source>EDAMSystemException </source>
         <translation>Systémová chyba protokolu EDAM </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1898"/>
+        <location filename="../communication/communicationmanager.cpp" line="2012"/>
         <source>EDAMNotFoundException: Note not found</source>
         <translation>Chyba protokolu EDAM (nenalezeno): Poznámka nenalezena</translation>
     </message>
@@ -989,11 +1011,69 @@
     </message>
 </context>
 <context>
+    <name>ExportData</name>
+    <message>
+        <location filename="../xml/exportdata.cpp" line="53"/>
+        <source>Cannot open file.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/exportdata.cpp" line="60"/>
+        <source>Export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/exportdata.cpp" line="77"/>
+        <source>Backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/exportdata.cpp" line="106"/>
+        <source>Tags</source>
+        <translation type="unfinished">Štítky</translation>
+    </message>
+    <message>
+        <location filename="../xml/exportdata.cpp" line="140"/>
+        <source>Notebooks</source>
+        <translation type="unfinished">Poznámkové bloky</translation>
+    </message>
+    <message>
+        <location filename="../xml/exportdata.cpp" line="343"/>
+        <source>Searches</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/exportdata.cpp" line="385"/>
+        <source>Linked Notebooks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/exportdata.cpp" line="425"/>
+        <source>Shared Notebooks</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/exportdata.cpp" line="477"/>
+        <source>Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/exportdata.cpp" line="700"/>
+        <source>Backup Canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ExternalBrowse</name>
     <message>
-        <location filename="../gui/externalbrowse.cpp" line="9"/>
+        <location filename="../gui/externalbrowse.cpp" line="12"/>
         <source>NixNote</source>
         <translation>NixNote</translation>
+    </message>
+    <message>
+        <location filename="../gui/externalbrowse.cpp" line="35"/>
+        <source>NixNote - </source>
+        <translation type="unfinished">NixNote - </translation>
     </message>
 </context>
 <context>
@@ -1022,6 +1102,70 @@
         <location filename="../gui/findreplace.cpp" line="55"/>
         <source>Replace all</source>
         <translation>Nahradit vše</translation>
+    </message>
+</context>
+<context>
+    <name>ImportData</name>
+    <message>
+        <location filename="../xml/importdata.cpp" line="58"/>
+        <source>Imported Notes</source>
+        <translation type="unfinished">Naimportované poznámky</translation>
+    </message>
+    <message>
+        <location filename="../xml/importdata.cpp" line="103"/>
+        <source>Scaning File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/importdata.cpp" line="104"/>
+        <location filename="../xml/importdata.cpp" line="114"/>
+        <source> notes found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/importdata.cpp" line="123"/>
+        <source>Importing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/importdata.cpp" line="124"/>
+        <source>Importing Notes</source>
+        <translation type="unfinished">Import poznámek</translation>
+    </message>
+    <message>
+        <location filename="../xml/importdata.cpp" line="126"/>
+        <source>Restore</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/importdata.cpp" line="127"/>
+        <source>Restoring Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>ImportEnex</name>
+    <message>
+        <location filename="../xml/importenex.cpp" line="40"/>
+        <source>Imported Notes</source>
+        <translation type="unfinished">Naimportované poznámky</translation>
+    </message>
+    <message>
+        <location filename="../xml/importenex.cpp" line="85"/>
+        <source>Scaning File</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/importenex.cpp" line="86"/>
+        <location filename="../xml/importenex.cpp" line="96"/>
+        <source> notes found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../xml/importenex.cpp" line="103"/>
+        <location filename="../xml/importenex.cpp" line="104"/>
+        <source>Importing Notes</source>
+        <translation type="unfinished">Import poznámek</translation>
     </message>
 </context>
 <context>
@@ -1453,45 +1597,45 @@
 <context>
     <name>NBrowserWindow</name>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="329"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2208"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="322"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2205"/>
         <source>Today</source>
         <translation>Dnes</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="331"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2210"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="324"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2207"/>
         <source>Tomorrow</source>
         <translation>Zítra</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="333"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2212"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="326"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2209"/>
         <source>Yesterday</source>
         <translation>Včera</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="567"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="563"/>
         <source>Unable to Save</source>
         <translation>Uložení selhalo</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="567"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="563"/>
         <source>Unable to save this note.  Either tidy isn&apos;t installed or the note is too complex to save.</source>
         <translation>Nepodařilo se uložit tuto poznámku. Buď není nainstalován balíček &quot;tidy&quot; nebo je poznámka příliš složitá pro uložení.</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1320"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1317"/>
         <source>Insert Link</source>
         <translation>Vložit odkaz</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1493"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1490"/>
         <source>Unable Open</source>
         <translation>Otevření selhalo</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1493"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1490"/>
         <source>This is an ink note.
 Ink notes are not supported since Evernote has not
  published any specifications on them
@@ -1502,61 +1646,61 @@ INK poznámky nejsou podporovány, jelikož Evernote nezveřejnil
 aby to zjišťoval metodou pokus omyl.</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1634"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1631"/>
         <source>Edit Link</source>
         <translation>Upravit odkaz</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1694"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1691"/>
         <source>Unable to create LaTeX image</source>
         <translation>Nepodařilo se vytvořit LaTeX obrázek</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1695"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1692"/>
         <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
         <translation>Nepodařilo se vytvořit LaTeX obrázek. Jste si jistí, že &quot;mimetex&quot; je nainstalován?</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1952"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1949"/>
         <source>Error loading document for printing.
 Printing aborted.</source>
         <translation>Chyba při nahrávání dokumentu pro tisk.
 Tisk zrušen.</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1953"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1950"/>
         <source>Print Error</source>
         <translation>Chyba tisku</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2252"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2249"/>
         <source>Decryption Error</source>
         <translation>Chyba dešifrování</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2253"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2250"/>
         <source>Unknown encryption method.
 Unable to decrypt.</source>
         <translation>Neznámá šifrovací medota.
 Dešifrování selhalo.</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2356"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2353"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2357"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2354"/>
         <source>Error Encrypting String.  Please verify you have Java installed.</source>
         <translation>Chyba při šifrování řetězce. Ověřte prosím, že &quot;Java&quot; je nainstalovaná.</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2489"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2486"/>
         <source>Spell Check Complete</source>
         <translation>Kontrola pravopisu dokončena</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2489"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2486"/>
         <source>Spell Check Complete.</source>
         <translation>Kontrola pravopisu dokončena.</translation>
     </message>
@@ -1580,296 +1724,356 @@ Dešifrování selhalo.</translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="66"/>
+        <source>Backup Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="67"/>
+        <source>Backup database to a file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="73"/>
         <source>Restore Database</source>
         <translation>Obnovení databáze</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="67"/>
+        <location filename="../gui/nmainmenubar.cpp" line="74"/>
         <source>Restore from a backup</source>
         <translation>Obnovit databázi ze zálohy</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="73"/>
-        <source>Import from Export File</source>
-        <translation>Import poznámek z exportního souboru</translation>
+        <location filename="../gui/nmainmenubar.cpp" line="82"/>
+        <source>Export Notes</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="74"/>
+        <location filename="../gui/nmainmenubar.cpp" line="83"/>
+        <source>Export selected notes to a file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="89"/>
+        <source>Import Notes</source>
+        <translation type="unfinished">Import poznámek</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="90"/>
         <source>Import notes from an export file</source>
         <translation>Naimportuje poznámky z exportního souboru</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="98"/>
+        <location filename="../gui/nmainmenubar.cpp" line="113"/>
         <source>Switch to </source>
         <translation>Přepnout na </translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="105"/>
+        <location filename="../gui/nmainmenubar.cpp" line="120"/>
         <source>Add Another User...</source>
         <translation>Přidat dalšího uživatele...</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="110"/>
+        <location filename="../gui/nmainmenubar.cpp" line="125"/>
         <source>User Account Maintenance</source>
         <translation>Správa uživatelských účtů</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="117"/>
-        <location filename="../gui/nmainmenubar.cpp" line="118"/>
+        <location filename="../gui/nmainmenubar.cpp" line="132"/>
+        <location filename="../gui/nmainmenubar.cpp" line="133"/>
         <source>Open/Close Notebooks</source>
         <translation>Otevřít/zavřít poznámkové bloky</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="126"/>
+        <location filename="../gui/nmainmenubar.cpp" line="141"/>
         <source>Exit</source>
         <translation>Ukončit</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="127"/>
-        <location filename="../gui/nmainmenubar.cpp" line="384"/>
+        <location filename="../gui/nmainmenubar.cpp" line="142"/>
+        <location filename="../gui/nmainmenubar.cpp" line="399"/>
         <source>Close the program</source>
         <translation>Ukončí běh této aplikace</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="145"/>
+        <location filename="../gui/nmainmenubar.cpp" line="160"/>
         <source>&amp;Edit</source>
         <translation>Ú&amp;pravy</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="147"/>
+        <location filename="../gui/nmainmenubar.cpp" line="162"/>
         <source>Undo</source>
         <translation>Zpět (vrátit akci)</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="152"/>
+        <location filename="../gui/nmainmenubar.cpp" line="167"/>
         <source>Redo</source>
         <translation>Znovu (opakovat akci)</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="159"/>
+        <location filename="../gui/nmainmenubar.cpp" line="174"/>
         <source>Cut</source>
         <translation>Vyjmout</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="164"/>
+        <location filename="../gui/nmainmenubar.cpp" line="179"/>
         <source>Copy</source>
         <translation>Kopírovat</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="169"/>
+        <location filename="../gui/nmainmenubar.cpp" line="184"/>
         <source>Paste</source>
         <translation>Vložit</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="174"/>
+        <location filename="../gui/nmainmenubar.cpp" line="189"/>
         <source>Paste as Unformatted Text</source>
         <translation>Vložit jako neformátovaný text</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="179"/>
+        <location filename="../gui/nmainmenubar.cpp" line="194"/>
         <source>Remove Formatting</source>
         <translation>Odstranit formátování</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="186"/>
+        <location filename="../gui/nmainmenubar.cpp" line="201"/>
         <source>Select All</source>
         <translation>Vybrat vše</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="193"/>
+        <location filename="../gui/nmainmenubar.cpp" line="208"/>
         <source>Find and Replace</source>
         <translation>Najít a nahradit</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="196"/>
+        <location filename="../gui/nmainmenubar.cpp" line="211"/>
         <source>Search Notes</source>
         <translation>Hledat v poznámkách</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="202"/>
+        <location filename="../gui/nmainmenubar.cpp" line="217"/>
         <source>Reset Search</source>
         <translation>Obnovit hledání</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="210"/>
+        <location filename="../gui/nmainmenubar.cpp" line="225"/>
         <source>Find in Note</source>
         <translation>Najít v poznámce</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="217"/>
+        <location filename="../gui/nmainmenubar.cpp" line="232"/>
         <source>Find Next</source>
         <translation>Najdi další</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="223"/>
+        <location filename="../gui/nmainmenubar.cpp" line="238"/>
         <source>Find Previous</source>
         <translation>Najdi předchozí</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="231"/>
+        <location filename="../gui/nmainmenubar.cpp" line="246"/>
         <source>Replace Within Note...</source>
         <translation>Nahradit v poznámce...</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="239"/>
+        <location filename="../gui/nmainmenubar.cpp" line="254"/>
         <source>Preferences</source>
         <translation>Předvolby</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="248"/>
+        <location filename="../gui/nmainmenubar.cpp" line="263"/>
         <source>&amp;View</source>
         <translation>&amp;Zobrazit</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="250"/>
+        <location filename="../gui/nmainmenubar.cpp" line="265"/>
         <source>Wide Note List</source>
         <translation>Seznam poznámek na šířku</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="256"/>
+        <location filename="../gui/nmainmenubar.cpp" line="271"/>
         <source>Narrow Note List</source>
         <translation>Seznam poznámek na výšku</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="264"/>
+        <location filename="../gui/nmainmenubar.cpp" line="279"/>
         <source>Show Source</source>
         <translation>Zobrazit zdroj</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="269"/>
+        <location filename="../gui/nmainmenubar.cpp" line="284"/>
         <source>Note History</source>
         <translation>Historie poznámky</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="276"/>
+        <location filename="../gui/nmainmenubar.cpp" line="291"/>
         <source>Show Left Panel</source>
         <translation>Zobrazit levý panel</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="284"/>
+        <location filename="../gui/nmainmenubar.cpp" line="299"/>
         <source>Show Note List</source>
         <translation>Zobrazit seznam poznámek</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="292"/>
+        <location filename="../gui/nmainmenubar.cpp" line="307"/>
         <source>Show Note Panel</source>
         <translation>Zobrazit poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="302"/>
+        <location filename="../gui/nmainmenubar.cpp" line="317"/>
         <source>View Note Info</source>
         <translation>Zobrazit detaily poznámky</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="307"/>
+        <location filename="../gui/nmainmenubar.cpp" line="322"/>
         <source>View Toolbar</source>
         <translation>Zobrazit nástrojovou lištu</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="315"/>
+        <location filename="../gui/nmainmenubar.cpp" line="330"/>
         <source>View Statusbar</source>
         <translation>Zobrazit stavovou lištu</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="328"/>
+        <location filename="../gui/nmainmenubar.cpp" line="343"/>
         <source>&amp;Note</source>
         <translation>Poz&amp;námka</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="330"/>
+        <location filename="../gui/nmainmenubar.cpp" line="345"/>
         <source>New Note</source>
         <translation>Nová poznámka</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="336"/>
+        <location filename="../gui/nmainmenubar.cpp" line="351"/>
         <source>New Webcam Note</source>
         <translation>Nová poznámka z Webkamery</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="342"/>
+        <location filename="../gui/nmainmenubar.cpp" line="357"/>
         <source>Duplicate Note</source>
         <translation>Duplikovat poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="348"/>
+        <location filename="../gui/nmainmenubar.cpp" line="363"/>
         <source>Delete</source>
         <translation>Smazat poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="356"/>
+        <location filename="../gui/nmainmenubar.cpp" line="371"/>
         <source>Spell Check</source>
         <translation>Kontrola pravopisu</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="365"/>
+        <location filename="../gui/nmainmenubar.cpp" line="380"/>
         <source>Pin Note</source>
         <translation>Připnout poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="371"/>
+        <location filename="../gui/nmainmenubar.cpp" line="386"/>
         <source>UnPin Note</source>
         <translation>Odepnout poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="381"/>
+        <location filename="../gui/nmainmenubar.cpp" line="396"/>
         <source>&amp;Tools</source>
         <translation>&amp;Nástroje</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="383"/>
+        <location filename="../gui/nmainmenubar.cpp" line="398"/>
         <source>Synchronize</source>
         <translation>Synchronizovat</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="390"/>
+        <location filename="../gui/nmainmenubar.cpp" line="405"/>
         <source>Disconnect</source>
         <translation>Odpojit</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="391"/>
+        <location filename="../gui/nmainmenubar.cpp" line="406"/>
         <source>Disconnect from Evernote</source>
         <translation>Odpojit od Evernote</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="399"/>
+        <location filename="../gui/nmainmenubar.cpp" line="414"/>
+        <source>Pause Indexing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="415"/>
+        <source>Temporarily pause indexng</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="422"/>
         <source>Account</source>
         <translation>Účet</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="400"/>
+        <location filename="../gui/nmainmenubar.cpp" line="423"/>
         <source>Account information</source>
         <translation>Informace o účtu</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="408"/>
-        <location filename="../gui/nmainmenubar.cpp" line="409"/>
+        <location filename="../gui/nmainmenubar.cpp" line="431"/>
+        <location filename="../gui/nmainmenubar.cpp" line="432"/>
         <source>Database Status</source>
         <translation>Stav databáze</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="415"/>
+        <location filename="../gui/nmainmenubar.cpp" line="438"/>
         <source>Reindex Database</source>
         <translation>Zindexovat databázi</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="416"/>
+        <location filename="../gui/nmainmenubar.cpp" line="439"/>
         <source>Reindex all notes</source>
         <translation>Zindexovat všechny poznámky</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="424"/>
-        <location filename="../gui/nmainmenubar.cpp" line="425"/>
+        <location filename="../gui/nmainmenubar.cpp" line="447"/>
+        <location filename="../gui/nmainmenubar.cpp" line="448"/>
         <source>Import Folders</source>
         <translation>Složky s automatickým importem</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="435"/>
+        <location filename="../gui/nmainmenubar.cpp" line="458"/>
         <source>&amp;Help</source>
         <translation>N&amp;ápověda</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="436"/>
-        <location filename="../gui/nmainmenubar.cpp" line="437"/>
+        <location filename="../gui/nmainmenubar.cpp" line="461"/>
+        <source>Evernote Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="462"/>
+        <source>Go to Evernote&apos;s support page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="464"/>
+        <source>Yinxiang Biji Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="465"/>
+        <source>Go to Yinxiang Biji&apos;s support page</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="471"/>
+        <source>Evernote Trunk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="472"/>
+        <source>Go to Evernote Trunk</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="479"/>
+        <location filename="../gui/nmainmenubar.cpp" line="480"/>
         <source>About</source>
         <translation>O aplikaci</translation>
     </message>
@@ -1877,62 +2081,62 @@ Dešifrování selhalo.</translation>
 <context>
     <name>NNotebookView</name>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="73"/>
+        <location filename="../gui/nnotebookview.cpp" line="70"/>
         <source>Notebooks</source>
         <translation>Poznámkové bloky</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="90"/>
+        <location filename="../gui/nnotebookview.cpp" line="87"/>
         <source>Create New Notebook</source>
         <translation>Vytvořit nový poznámkový blok</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="99"/>
+        <location filename="../gui/nnotebookview.cpp" line="96"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="107"/>
+        <location filename="../gui/nnotebookview.cpp" line="104"/>
         <source>Add to stack</source>
         <translation>Přidat do skupiny</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="120"/>
+        <location filename="../gui/nnotebookview.cpp" line="117"/>
         <source>New stack</source>
         <translation>Nová skupina</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="123"/>
+        <location filename="../gui/nnotebookview.cpp" line="120"/>
         <source>Remove from stack</source>
         <translation>Odebrat ze skupiny</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="127"/>
+        <location filename="../gui/nnotebookview.cpp" line="124"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="135"/>
+        <location filename="../gui/nnotebookview.cpp" line="132"/>
         <source>Properties</source>
         <translation>Vlastnosti</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="596"/>
+        <location filename="../gui/nnotebookview.cpp" line="614"/>
         <source>Are you sure you want to delete this notebook?</source>
         <translation>Opravdu chcete smazat tento poznámkový blok?</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="597"/>
+        <location filename="../gui/nnotebookview.cpp" line="615"/>
         <source>Verify Delete</source>
         <translation>Potvrzení smazání</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="751"/>
+        <location filename="../gui/nnotebookview.cpp" line="769"/>
         <source>New Stack (</source>
         <translation>Nová skupina (</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="751"/>
+        <location filename="../gui/nnotebookview.cpp" line="769"/>
         <source>)</source>
         <translation>)</translation>
     </message>
@@ -1940,37 +2144,37 @@ Dešifrování selhalo.</translation>
 <context>
     <name>NSearchView</name>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="67"/>
+        <location filename="../gui/nsearchview.cpp" line="62"/>
         <source>Saved Searches</source>
         <translation>Uložená hledání</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="79"/>
+        <location filename="../gui/nsearchview.cpp" line="74"/>
         <source>Create Saved Search</source>
         <translation>Vytvořit nové hledání</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="89"/>
+        <location filename="../gui/nsearchview.cpp" line="84"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="97"/>
+        <location filename="../gui/nsearchview.cpp" line="92"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="106"/>
+        <location filename="../gui/nsearchview.cpp" line="101"/>
         <source>Properties</source>
         <translation>Vlastnosti</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="388"/>
+        <location filename="../gui/nsearchview.cpp" line="384"/>
         <source>Are you sure you want to delete this saved search?</source>
         <translation>Opravdu chcete smazat toto uložené hledání?</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="389"/>
+        <location filename="../gui/nsearchview.cpp" line="385"/>
         <source>Verify Delete</source>
         <translation>Potvrzení smazání</translation>
     </message>
@@ -1979,7 +2183,7 @@ Dešifrování selhalo.</translation>
     <name>NTabWidget</name>
     <message>
         <location filename="../gui/ntabwidget.cpp" line="178"/>
-        <location filename="../gui/ntabwidget.cpp" line="242"/>
+        <location filename="../gui/ntabwidget.cpp" line="243"/>
         <source>NixNote - </source>
         <translation>NixNote - </translation>
     </message>
@@ -1987,87 +2191,87 @@ Dešifrování selhalo.</translation>
 <context>
     <name>NTableView</name>
     <message>
-        <location filename="../gui/ntableview.cpp" line="200"/>
+        <location filename="../gui/ntableview.cpp" line="195"/>
         <source>Open Note</source>
         <translation>Otevřít poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="206"/>
+        <location filename="../gui/ntableview.cpp" line="201"/>
         <source>Open Note In New Tab</source>
         <translation>Otevřít poznámku v novém panelu</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="212"/>
+        <location filename="../gui/ntableview.cpp" line="207"/>
         <source>Open Note In New Window</source>
         <translation>Otevřít poznámku v novém okně</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="219"/>
+        <location filename="../gui/ntableview.cpp" line="214"/>
         <source>Add Note</source>
         <translation>Přidat poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="224"/>
+        <location filename="../gui/ntableview.cpp" line="219"/>
         <source>Delete Note</source>
         <translation>Smazat poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="229"/>
+        <location filename="../gui/ntableview.cpp" line="224"/>
         <source>Restore Note</source>
         <translation>Obnovit poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="235"/>
+        <location filename="../gui/ntableview.cpp" line="230"/>
         <source>Copy Note Link</source>
         <translation>Kopírovat odkaz na poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="240"/>
+        <location filename="../gui/ntableview.cpp" line="235"/>
         <source>Duplicate Note</source>
         <translation>Duplikovat poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="245"/>
+        <location filename="../gui/ntableview.cpp" line="240"/>
         <source>Pin Note</source>
         <translation>Připnout poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="250"/>
+        <location filename="../gui/ntableview.cpp" line="245"/>
         <source>Unpin Note</source>
         <translation>Odepnout poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="255"/>
+        <location filename="../gui/ntableview.cpp" line="250"/>
         <source>Merge Notes</source>
         <translation>Sloučit poznámky</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="533"/>
+        <location filename="../gui/ntableview.cpp" line="528"/>
         <source>Delete </source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="536"/>
+        <location filename="../gui/ntableview.cpp" line="531"/>
         <source>Permanently delete </source>
         <translation>Trvale smazat </translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="542"/>
+        <location filename="../gui/ntableview.cpp" line="537"/>
         <source>selected note?</source>
         <translation>označenou poznámku?</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="547"/>
+        <location filename="../gui/ntableview.cpp" line="542"/>
         <source>Verify Delete</source>
         <translation>Potvrzení smazání</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="760"/>
+        <location filename="../gui/ntableview.cpp" line="755"/>
         <source>Unsynchronized Note</source>
         <translation>Nesynchronizovaná poznámka</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="761"/>
+        <location filename="../gui/ntableview.cpp" line="756"/>
         <source>This note has never been synchronized.
 Using this in a note link can cause problems unless you synchronize it first.</source>
         <translation>Poznámka nebyla nikdy synchronizována.
@@ -2185,63 +2389,68 @@ Použití odkazu na tuto poznámku může způsobit problémy pokud poznámku p�
 <context>
     <name>NTagView</name>
     <message>
-        <location filename="../gui/ntagview.cpp" line="72"/>
-        <location filename="../gui/ntagview.cpp" line="164"/>
+        <location filename="../gui/ntagview.cpp" line="67"/>
+        <location filename="../gui/ntagview.cpp" line="159"/>
         <source>Tags from Personal</source>
         <translation>Vlastní štítky</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="96"/>
+        <location filename="../gui/ntagview.cpp" line="91"/>
         <source>Create New Tag</source>
         <translation>Vytvořit nový štítek</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="105"/>
+        <location filename="../gui/ntagview.cpp" line="100"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="112"/>
+        <location filename="../gui/ntagview.cpp" line="107"/>
         <source>Rename</source>
         <translation>Přejmenovat</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="115"/>
+        <location filename="../gui/ntagview.cpp" line="110"/>
         <source>Merge</source>
         <translation>Sloučit</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="122"/>
+        <location filename="../gui/ntagview.cpp" line="117"/>
         <source>Hide Unassigned</source>
         <translation>Skryj nepřiřazené</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="128"/>
+        <location filename="../gui/ntagview.cpp" line="123"/>
         <source>Properties</source>
         <translation>Vlastnosti</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="162"/>
+        <location filename="../gui/ntagview.cpp" line="157"/>
         <source>Tags from </source>
         <translation>Štítky z </translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="664"/>
+        <location filename="../gui/ntagview.cpp" line="351"/>
+        <source>-&lt;Missing Tag&gt;-</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntagview.cpp" line="685"/>
         <source>Are you sure you want to merge these tags?</source>
         <translation>Opravdu chcete sloučity tyto štítky?</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="665"/>
+        <location filename="../gui/ntagview.cpp" line="686"/>
         <source>Verify Merge</source>
         <translation>Potvrzení sloučení</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="711"/>
+        <location filename="../gui/ntagview.cpp" line="732"/>
         <source>Are you sure you want to delete this tag?</source>
         <translation>Opravdu chcete smazat tento štítek?</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="712"/>
+        <location filename="../gui/ntagview.cpp" line="733"/>
         <source>Verify Delete</source>
         <translation>Potvrzení smazání</translation>
     </message>
@@ -2249,13 +2458,13 @@ Použití odkazu na tuto poznámku může způsobit problémy pokud poznámku p�
 <context>
     <name>NTitleEditor</name>
     <message>
-        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="116"/>
-        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="131"/>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="117"/>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="132"/>
         <source>Untitled note</source>
         <translation>Nová poznámka</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="128"/>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="129"/>
         <source>untitled note</source>
         <translation>nová poznámka</translation>
     </message>
@@ -2476,102 +2685,102 @@ Použití odkazu na tuto poznámku může způsobit problémy pokud poznámku p�
 <context>
     <name>NixNote</name>
     <message>
-        <location filename="../nixnote.cpp" line="188"/>
+        <location filename="../nixnote.cpp" line="191"/>
         <source>Tidy Not Found</source>
         <translation>Tidy nenalezeno</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="188"/>
+        <location filename="../nixnote.cpp" line="191"/>
         <source>Tidy is not found on this system.
 Until tidy is installed you cannot save any notes.</source>
         <translation>Program tidy nebyl nalezen v tomto počítači.
 Dokud nebude tidy nainstalován, nebude možné ukládat žádné poznámky.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="244"/>
+        <location filename="../nixnote.cpp" line="247"/>
         <source>ToolBar</source>
         <translation>Nástrojová lišta</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="254"/>
+        <location filename="../nixnote.cpp" line="257"/>
         <source>Back</source>
         <translation>Zpět</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="255"/>
+        <location filename="../nixnote.cpp" line="258"/>
         <source>Next</source>
         <translation>Vpřed</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="265"/>
+        <location filename="../nixnote.cpp" line="268"/>
         <source>All Notes</source>
         <translation>Všechny poznámky</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="267"/>
+        <location filename="../nixnote.cpp" line="270"/>
         <source>Sync</source>
         <translation>Synchronizováno</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="270"/>
+        <location filename="../nixnote.cpp" line="273"/>
         <source>Print</source>
         <translation>Tisk</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="271"/>
+        <location filename="../nixnote.cpp" line="274"/>
         <source>New Text Note</source>
         <translation>Nová poznámka</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="272"/>
+        <location filename="../nixnote.cpp" line="275"/>
         <source>New Webcam Note</source>
         <translation>Nová poznámka z Webkamery</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="273"/>
+        <location filename="../nixnote.cpp" line="276"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="276"/>
+        <location filename="../nixnote.cpp" line="279"/>
         <source>Trunk</source>
         <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
         <translation>Trunk TODO</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="277"/>
+        <location filename="../nixnote.cpp" line="281"/>
         <source>Usage</source>
         <translation>Kvóta</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="379"/>
-        <location filename="../nixnote.cpp" line="1926"/>
+        <location filename="../nixnote.cpp" line="398"/>
+        <location filename="../nixnote.cpp" line="2146"/>
         <source>Screen Capture</source>
         <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
         <translation>Snímat obrazovku</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="384"/>
+        <location filename="../nixnote.cpp" line="403"/>
         <source>Show/Hide</source>
         <translation>Zobrazit/Skrýt</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="385"/>
+        <location filename="../nixnote.cpp" line="404"/>
         <source>Minimize to tray</source>
         <translation>Minimalizovat do systémové části</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="388"/>
+        <location filename="../nixnote.cpp" line="407"/>
         <source>Close to tray</source>
         <translation>Zavřít do systémové části</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="398"/>
+        <location filename="../nixnote.cpp" line="417"/>
         <source>Close</source>
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1179"/>
+        <location filename="../nixnote.cpp" line="1333"/>
         <source>This is used to restore a database from backups.
 It is HIGHLY recommened that this only be used to populate
 an empty database.  Restoring into a database that
@@ -2586,147 +2795,200 @@ data, může způsobit nevratné problémy a ztrátu dat.
 Opravdu chcete pokračovat?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1182"/>
+        <location filename="../nixnote.cpp" line="1336"/>
         <source>Confirm Restore</source>
         <translation>Potvrzení obnovení</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1199"/>
+        <location filename="../nixnote.cpp" line="1353"/>
         <source>Restore Database</source>
         <translation>Obnovení databáze</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1201"/>
+        <location filename="../nixnote.cpp" line="1355"/>
         <source>Import Notes</source>
         <translation>Import poznámek</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1203"/>
+        <location filename="../nixnote.cpp" line="1268"/>
+        <location filename="../nixnote.cpp" line="1358"/>
         <source>NixNote Export (*.nnex);;All Files (*.*)</source>
         <translation>NeverNote Export (*.nnex);;Všechny soubory (*.*)</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1223"/>
+        <location filename="../nixnote.cpp" line="395"/>
+        <source>Quick Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1256"/>
+        <location filename="../nixnote.cpp" line="1300"/>
+        <location filename="../nixnote.cpp" line="1393"/>
+        <source>Error</source>
+        <translation type="unfinished">Chyba</translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1256"/>
+        <source>No notes selected.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1265"/>
+        <source>Backup Database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1267"/>
+        <source>Export Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1288"/>
+        <source>Performing backup</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1290"/>
+        <source>Performing export</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1307"/>
+        <source>Database backup complete.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1309"/>
+        <source>Note extract complete.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1360"/>
+        <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1381"/>
         <source>Restoring database</source>
         <translation>Obnovuji databázi</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1225"/>
+        <location filename="../nixnote.cpp" line="1383"/>
         <source>Importing Notes</source>
         <translation>Import poznámek</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1249"/>
+        <location filename="../nixnote.cpp" line="1415"/>
         <source>Database has been restored.</source>
         <translation>Databáze byla obnovena.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1251"/>
+        <location filename="../nixnote.cpp" line="1417"/>
         <source>Notes have been imported.</source>
         <translation>Poznámky byly naimportovány.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1281"/>
+        <location filename="../nixnote.cpp" line="1447"/>
         <source>Sync Error</source>
         <translation>Chyba synchronizace</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1281"/>
+        <location filename="../nixnote.cpp" line="1447"/>
         <source>Sync completed with errors.</source>
         <translation>Synchronizace dokončena s chybami.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1283"/>
+        <location filename="../nixnote.cpp" line="1449"/>
         <source>Sync Complete</source>
         <translation>Synchronizace dokončena</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1283"/>
+        <location filename="../nixnote.cpp" line="1449"/>
         <source>Sync completed successfully.</source>
         <translation>Synchronizace úspěšně dokončena.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1475"/>
+        <location filename="../nixnote.cpp" line="1693"/>
         <source>This feature is only available to premium users.</source>
         <translation>Tato funkce je dostupná pouze pro prémiové uživatele.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1476"/>
+        <location filename="../nixnote.cpp" line="1694"/>
         <source>Premium Feature</source>
         <translation>Prémiová funkce</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1495"/>
+        <location filename="../nixnote.cpp" line="1713"/>
         <source>Error retrieving note.</source>
         <translation>Chyba při stahování poznámky.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1496"/>
+        <location filename="../nixnote.cpp" line="1714"/>
         <source>Error retrieving note</source>
         <translation>Chyba při stahování poznámky</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1513"/>
+        <location filename="../nixnote.cpp" line="1731"/>
         <source>Note restored</source>
         <translation>Poznámka obnovena</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1517"/>
+        <location filename="../nixnote.cpp" line="1735"/>
         <source>No versions of this note can be found.</source>
         <translation>Nenalezeny žádné verze této poznámky.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1518"/>
+        <location filename="../nixnote.cpp" line="1736"/>
         <source>Note Not Found</source>
         <translation>Poznámka nenalezena</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1823"/>
+        <location filename="../nixnote.cpp" line="2043"/>
         <source>Switch to </source>
         <translation>Přepnout na </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1997"/>
+        <location filename="../nixnote.cpp" line="2217"/>
         <source>Reindex Database</source>
         <translation>Zindexovat databázi</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1997"/>
+        <location filename="../nixnote.cpp" line="2217"/>
         <source>Reindex the entire database?</source>
         <translation>Zindexovat celou databázi?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2006"/>
+        <location filename="../nixnote.cpp" line="2226"/>
         <source>Notes will be reindexed.</source>
         <translation>Poznámky budou zindexovány.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2028"/>
+        <location filename="../nixnote.cpp" line="2248"/>
         <source>Unable to find webcam or capture image.</source>
         <translation>Nemohu nalézt webkameru nebo se nepovedlo získat obraz.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2029"/>
+        <location filename="../nixnote.cpp" line="2249"/>
         <source>Webcam Error</source>
         <translation>Chyba webkamery</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2161"/>
+        <location filename="../nixnote.cpp" line="2381"/>
         <source>Delete </source>
         <translation>Smazat </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2164"/>
+        <location filename="../nixnote.cpp" line="2384"/>
         <source>Permanently delete </source>
         <translation>Trvale smazat </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2168"/>
+        <location filename="../nixnote.cpp" line="2388"/>
         <source>this note?</source>
         <translation> tuto poznámku?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2171"/>
+        <location filename="../nixnote.cpp" line="2391"/>
         <source>Verify Delete</source>
         <translation>Potvrzení smazání</translation>
     </message>
@@ -2914,124 +3176,119 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../gui/ntableview.cpp" line="172"/>
+        <location filename="../gui/ntableview.cpp" line="167"/>
         <source>Title</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="173"/>
+        <location filename="../gui/ntableview.cpp" line="168"/>
         <source>Author</source>
         <translation>Autor</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="174"/>
+        <location filename="../gui/ntableview.cpp" line="169"/>
         <source>Notebook</source>
         <translation>Poznámkový blok</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="175"/>
+        <location filename="../gui/ntableview.cpp" line="170"/>
         <source>Tags</source>
         <translation>Štítky</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="176"/>
+        <location filename="../gui/ntableview.cpp" line="171"/>
         <source>Date Created</source>
         <translation>Datum vytvoření</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="177"/>
+        <location filename="../gui/ntableview.cpp" line="172"/>
         <source>Date Updated</source>
         <translation>Datum změny</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="178"/>
+        <location filename="../gui/ntableview.cpp" line="173"/>
         <source>Subject Date</source>
         <translation>Datum předmětu</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="179"/>
+        <location filename="../gui/ntableview.cpp" line="174"/>
         <source>Deletion Date</source>
         <translation>Datum smazání</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="180"/>
+        <location filename="../gui/ntableview.cpp" line="175"/>
         <source>Reminder</source>
         <translation>Upomínka</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="181"/>
+        <location filename="../gui/ntableview.cpp" line="176"/>
         <source>Reminder Due</source>
         <translation>Termín upomínky</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="182"/>
+        <location filename="../gui/ntableview.cpp" line="177"/>
         <source>Reminder Completed</source>
         <translation>Upomínka splněna</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="183"/>
+        <location filename="../gui/ntableview.cpp" line="178"/>
         <source>Source</source>
         <translation>Zdroj poznámky</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="184"/>
+        <location filename="../gui/ntableview.cpp" line="179"/>
         <source>Source Url</source>
         <translation>Zdrojová URL</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="185"/>
+        <location filename="../gui/ntableview.cpp" line="180"/>
         <source>Source Application</source>
         <translation>Zdrojová aplikace</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="186"/>
+        <location filename="../gui/ntableview.cpp" line="181"/>
         <source>Longitude</source>
         <translation>Zeměpisná délka</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="187"/>
+        <location filename="../gui/ntableview.cpp" line="182"/>
         <source>Latitude</source>
         <translation>Zeměpisná šířka</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="188"/>
+        <location filename="../gui/ntableview.cpp" line="183"/>
         <source>Altitude</source>
         <translation>Nadmořská výška</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="189"/>
+        <location filename="../gui/ntableview.cpp" line="184"/>
         <source>Has Encryption</source>
         <translation>Obsahuje zašifrovaný text</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="190"/>
+        <location filename="../gui/ntableview.cpp" line="185"/>
         <source>Has To-do</source>
         <translation>Obsahuje úkoly (TODO)</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="191"/>
+        <location filename="../gui/ntableview.cpp" line="186"/>
         <source>Sync</source>
         <translation>Synchronizováno</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="192"/>
+        <location filename="../gui/ntableview.cpp" line="187"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="193"/>
+        <location filename="../gui/ntableview.cpp" line="188"/>
         <source>Thumbnail</source>
         <translation>Náhled</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="194"/>
+        <location filename="../gui/ntableview.cpp" line="189"/>
         <source>Pinned</source>
         <translation>Připnuto</translation>
-    </message>
-    <message>
-        <location filename="../xml/importdata.cpp" line="53"/>
-        <source>Imported Notes</source>
-        <translation>Naimportované poznámky</translation>
     </message>
 </context>
 <context>
@@ -3206,58 +3463,71 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
 <context>
     <name>SyncRunner</name>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="128"/>
+        <location filename="../threads/syncrunner.cpp" line="124"/>
         <source>Beginning Sync</source>
         <translation>Zahajuji synchronizaci</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="136"/>
+        <location filename="../threads/syncrunner.cpp" line="132"/>
         <source>Downloading changes</source>
         <translation>Stahuji změny</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="176"/>
+        <location filename="../threads/syncrunner.cpp" line="181"/>
         <source>Sync Complete</source>
         <translation>Synchronizace dokončena</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="226"/>
-        <location filename="../threads/syncrunner.cpp" line="255"/>
+        <location filename="../threads/syncrunner.cpp" line="231"/>
+        <location filename="../threads/syncrunner.cpp" line="262"/>
         <source>Download </source>
         <translation>Stahování </translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="226"/>
+        <location filename="../threads/syncrunner.cpp" line="231"/>
         <source>% complete for notebooks, tags, &amp; searches.</source>
         <translation>% hotovo pro poznámkové bloky, štítky a hledání.</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="235"/>
+        <location filename="../threads/syncrunner.cpp" line="241"/>
         <source>Download complete for notebooks, tags, &amp; searches.  Downloading notes.</source>
         <translation>Stahování dokončeno pro poznámkové bloky, štítky a hledání. Stahuji poznámky.</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="255"/>
+        <location filename="../threads/syncrunner.cpp" line="262"/>
         <source>% complete.</source>
         <translation>% hotovo.</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="298"/>
+        <location filename="../threads/syncrunner.cpp" line="278"/>
         <source>Download complete.</source>
         <translation>Stahování dokončeno.</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="701"/>
+        <location filename="../threads/syncrunner.cpp" line="647"/>
+        <location filename="../threads/syncrunner.cpp" line="680"/>
         <source>Downloading </source>
         <translation>Stahování </translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="701"/>
+        <location filename="../threads/syncrunner.cpp" line="647"/>
+        <source>% complete for tags in shared notebook </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../threads/syncrunner.cpp" line="662"/>
+        <source>Downloading notes for shared notebook </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../threads/syncrunner.cpp" line="680"/>
         <source>% complete for shared notebook </source>
         <translation>% hotovo pro sdílený poznámkový blok </translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="701"/>
+        <location filename="../threads/syncrunner.cpp" line="647"/>
+        <location filename="../threads/syncrunner.cpp" line="662"/>
+        <location filename="../threads/syncrunner.cpp" line="680"/>
         <source>.</source>
         <translation>.</translation>
     </message>
