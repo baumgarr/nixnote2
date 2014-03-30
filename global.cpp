@@ -388,6 +388,13 @@ bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
      return s1.toLower() < s2.toLower();
  }
 
+QString Global::getWindowIcon() {
+    settings->beginGroup("Appearance");
+    QString value = settings->value("windowIcon", ":windowIcon0.png").toString();
+    settings->endGroup();
+    return value;
+}
+
 
 
 Global global;

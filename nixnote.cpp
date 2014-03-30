@@ -236,7 +236,7 @@ void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
     //statusBar();    setWindowTitle(tr("NixNote 2"));
-    setWindowIcon(QIcon(":windowIcon.png"));
+    setWindowIcon(QIcon(global.getWindowIcon()));
 
     //QLOG_TRACE() << "Setting up menu bar";
     searchText = new LineEdit();
@@ -388,7 +388,7 @@ void NixNote::setupGui() {
     minimizeToTray = global.settings->value("minimizeToTray", false).toBool();
     closeToTray = global.settings->value("closeToTray", false).toBool();
     global.settings->endGroup();
-    trayIcon = new QSystemTrayIcon(QIcon(":windowIcon.png"), this);
+    trayIcon = new QSystemTrayIcon(QIcon(global.getWindowIcon()), this);
     trayIconContextMenu = new QMenu(this);
     trayIconContextMenu->addAction(newNoteButton);
 
@@ -1928,6 +1928,8 @@ void NixNote::openPreferences() {
     if (prefs.okButtonPressed) {
         setSyncTimer();
         bool showTrayIcon = global.showTrayIcon();
+        setWindowIcon(QIcon(global.getWindowIcon()));
+        trayIcon->setIcon(QIcon(global.getWindowIcon()));
         if (!showTrayIcon) {
             trayIconBehavior();
             if (!this->isVisible())

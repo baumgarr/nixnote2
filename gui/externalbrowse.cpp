@@ -1,13 +1,16 @@
 #include "externalbrowse.h"
 #include <QGridLayout>
 #include <QLayout>
+#include "global.h";
+
+extern Global global;
 
 ExternalBrowse::ExternalBrowse(qint32 lid, QWidget *parent) :
     QMdiSubWindow(parent)
 {
     setAttribute(Qt::WA_QuitOnClose, false);
     this->setWindowTitle(tr("NixNote"));
-    setWindowIcon(QIcon(":windowIcon.png"));
+    setWindowIcon(QIcon(global.getWindowIcon()));
 
     browser = new NBrowserWindow(this);
     setWidget(browser);

@@ -33,6 +33,7 @@ class AppearancePreferences : public QWidget
 private:
     QGridLayout *mainLayout;
     QComboBox *defaultNotebookOnStartup;
+    QComboBox *windowIconChooser;
     QLabel *defaultNotebookOnStartupLabel;
 
 public:

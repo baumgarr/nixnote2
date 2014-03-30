@@ -460,6 +460,10 @@ void NMainMenuBar::setupHelpMenu() {
 
     openEvernoteSupportAction = new QAction(tr("Evernote Support"), this);
     openEvernoteSupportAction->setToolTip(tr("Go to Evernote's support page"));
+    if (global.accountsManager->getServer() == "app.yinxiang.com") {
+        openEvernoteSupportAction = new QAction(tr("Yinxiang Biji Support"), this);
+        openEvernoteSupportAction->setToolTip(tr("Go to Yinxiang Biji's support page"));
+    }
     openEvernoteSupportAction->setFont(font);
     connect(openEvernoteSupportAction, SIGNAL(triggered()), parent, SLOT(openEvernoteSupport()));
     helpMenu->addAction(openEvernoteSupportAction);

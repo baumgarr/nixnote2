@@ -34,6 +34,17 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showSplashScreen = new QCheckBox(tr("Show splash screen on startup"), this);
     showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
     startMinimized = new QCheckBox(tr("Always Start minimized"), this);
+    windowIconChooser = new QComboBox();
+    windowIconChooser->addItem(QIcon(":windowIcon0.png"), "", ":windowIcon0.png");
+    windowIconChooser->addItem(QIcon(":windowIcon1.png"), "", ":windowIcon1.png");
+    windowIconChooser->addItem(QIcon(":windowIcon2.png"), "", ":windowIcon2.png");
+    windowIconChooser->addItem(QIcon(":windowIcon3.png"), "", ":windowIcon3.png");
+    windowIconChooser->addItem(QIcon(":windowIcon4.png"), "", ":windowIcon4.png");
+    windowIconChooser->addItem(QIcon(":windowIcon5.png"), "", ":windowIcon5.png");
+    windowIconChooser->addItem(QIcon(":windowIcon6.png"), "", ":windowIcon6.png");
+   // windowIconChooser->setSizePolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+    windowIconChooser->adjustSize();
+    windowIconChooser->setIconSize(QSize(80,80));
 
     defaultNotebookOnStartupLabel = new QLabel(tr("Startup Behavior"),this);
     defaultNotebookOnStartup = new QComboBox();
@@ -48,6 +59,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(startMinimized, 4, 0);
     mainLayout->addWidget(defaultNotebookOnStartupLabel,5,0);
     mainLayout->addWidget(defaultNotebookOnStartup, 5,1);
+    mainLayout->addWidget(new QLabel(tr("Window Icon")), 6,0);
+    mainLayout->addWidget(windowIconChooser, 6,1);
 
     global.settings->beginGroup("Appearance");
 
@@ -59,6 +72,9 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     int defaultNotebook = global.settings->value("startupNotebook", UseLastViewedNotebook).toInt();
     defaultNotebookOnStartup->setCurrentIndex(defaultNotebook);
     global.settings->endGroup();
+    QString windowIcon = global.getWindowIcon();
+    int index = windowIconChooser->findData(windowIcon);
+    windowIconChooser->setCurrentIndex(index);
 }
 
 
@@ -73,5 +89,7 @@ void AppearancePreferences::saveValues() {
     int index = defaultNotebookOnStartup->currentIndex();
     int value = defaultNotebookOnStartup->itemData(index).toInt();
     global.settings->setValue("startupNotebook", value);
+    index = windowIconChooser->currentIndex();
+    global.settings->setValue("windowIcon", windowIconChooser->itemData(index).toString());
     global.settings->endGroup();
 }

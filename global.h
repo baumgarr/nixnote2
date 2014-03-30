@@ -149,6 +149,7 @@ public:
     QHash< QString, QPair <QString, QString> > passwordSafe;  // Saved passwords
     void appendFilter(FilterCriteria *criteria);
     void setupDateTimeFormat();
+    QString getWindowIcon();
 
     ReminderManager *reminderManager;
 };

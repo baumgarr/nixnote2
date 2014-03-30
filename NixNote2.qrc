@@ -12,7 +12,6 @@
         <file alias="attributes.png">images/attribute.png</file>
         <file alias="up_arrow_small.png">images/up_arrow_small.png</file>
         <file alias="down_arrow_small.png">images/down_arrow_small.png</file>
-        <file alias="windowIcon.png">images/window_icon.png</file>
         <file alias="undo.png">images/undo.png</file>
         <file alias="redo.png">images/redo.png</file>
         <file alias="bold.png">images/bold.png</file>
@@ -58,5 +57,12 @@
         <file>images/gps.png</file>
         <file>images/notebook_old.png</file>
         <file>images/notebook_small_old.png</file>
+        <file alias="windowIcon0.png">images/window_icon0.png</file>
+        <file alias="windowIcon1.png">images/window_icon1.png</file>
+        <file alias="windowIcon2.png">images/window_icon2.png</file>
+        <file alias="windowIcon3.png">images/window_icon3.png</file>
+        <file alias="windowIcon4.png">images/window_icon4..png</file>
+        <file alias="windowIcon5.png">images/window_icon5.png</file>
+        <file alias="windowIcon6.png">images/window_icon6.png</file>
     </qresource>
 </RCC>
