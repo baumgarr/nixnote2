@@ -73,6 +73,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/logindialog.h"
 #include "xml/importdata.h"
 #include "xml/importenex.h"
+#include "xml/exportdata.h"
 #include "dialog/aboutdialog.h"
 
 extern Global global;
@@ -1235,6 +1236,85 @@ void NixNote::leftButtonTriggered() {
 //**************************************************
 // Import notes menu option chosen
 //**************************************************
+void NixNote::noteExport() {
+    databaseBackup(false);
+}
+
+
+
+//**************************************************
+//* Backup (or export) notes
+//**************************************************
+void NixNote::databaseBackup(bool backup) {
+    QLOG_TRACE() << "Entering databaseBackup()";
+    ExportData noteReader(backup);
+
+    if (!backup) {
+        noteTableView->getSelectedLids(noteReader.lids);
+        if (noteReader.lids.size() == 0) {
+            QMessageBox::critical(this, tr("Error"), tr("No notes selected."));
+            return;
+        }
+    }
+
+    QFileDialog fd;
+    fd.setFileMode(QFileDialog::AnyFile);
+    fd.setConfirmOverwrite(true);
+    if (backup)
+        fd.setWindowTitle(tr("Backup Database"));
+    else
+        fd.setWindowTitle(tr("Export Notes"));
+    fd.setFilter(tr("NixNote Export (*.nnex);;All Files (*.*)"));
+    fd.setAcceptMode(QFileDialog::AcceptSave);
+    if (saveLastPath == "")
+        fd.setDirectory(QDir::homePath());
+    else
+        fd.setDirectory(saveLastPath);
+    if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
+        QLOG_DEBUG() << "Database restore canceled in file dialog.";
+        return;
+    }
+
+    waitCursor(true);
+    QStringList fileNames;
+    fileNames = fd.selectedFiles();
+    saveLastPath = fileNames[0];
+    int pos = saveLastPath.lastIndexOf("/");
+    if (pos > 0)
+        saveLastPath.truncate(pos);
+
+    if (backup)
+        setMessage(tr("Performing backup"));
+    else
+        setMessage(tr("Performing export"));
+
+    if (!fileNames[0].endsWith(".nnex")) {
+        fileNames[0].append(".nnex");
+    }
+        noteReader.backupData(fileNames[0]);
+
+    if (noteReader.lastError != 0) {
+        setMessage(noteReader.errorMessage);
+        QLOG_ERROR() <<  "Restore problem: " << noteReader.errorMessage;
+        QMessageBox::critical(this, tr("Error"), noteReader.errorMessage);
+        waitCursor(false);
+        return;
+    }
+
+
+    if (backup)
+        setMessage(tr("Database backup complete."));
+    else
+        setMessage(tr("Note extract complete."));
+
+    waitCursor(false);
+
+}
+
+
+//**************************************************
+// Import notes menu option chosen
+//**************************************************
 void NixNote::noteImport() {
     databaseRestore(false);
 }
@@ -1242,9 +1322,8 @@ void NixNote::noteImport() {
 
 
 //**************************************************
-//* Restore (or import) notest
+//* Restore (or import) notes
 //**************************************************
-
 void NixNote::databaseRestore(bool fullRestore) {
     QLOG_TRACE() << "Entering databaseRestore()";
 

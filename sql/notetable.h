@@ -170,6 +170,7 @@ public:
     void getAllReminders(QList< QPair<qint32, qlonglong>* > *reminders);  // Get all notes with un-completed reminders
     qint32 getThumbnailsNeededCount();
     qint32 addStub(QString noteGuid);                     // Add a stub.  Used if a resource appears before the owning note
+    void getAll(QList<qint32> &lids);
 };
 
 

@@ -531,7 +531,7 @@ qint32 TagTable::findChildren(QList<qint32> &list, QString parentGuid) {
 qint32 TagTable::getAllDirty(QList<qint32> &lids) {
     NSqlQuery query(*db);
     lids.clear();
-    query.prepare("Select lid from DataStore where key=:key");
+    query.prepare("Select lid from DataStore where key=:key and data='true'");
     query.bindValue(":key", TAG_ISDIRTY);
     query.exec();
     while(query.next()) {

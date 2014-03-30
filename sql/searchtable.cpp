@@ -36,6 +36,17 @@ SearchTable::SearchTable(QSqlDatabase *db)
 
 
 
+void SearchTable::getAll(QList<qint32> &lids) {
+    lids.empty();
+    NSqlQuery query(*db);
+    query.prepare("Select lid from datastore where key=:key");
+    query.bindValue(":key", SEARCH_GUID);
+    query.exec();
+    while (query.next()) {
+        lids.append(query.value(0).toInt());
+    }
+}
+
 // Given a record's name as a std::string, we return the lid
 qint32 SearchTable::findByName(string &name) {
     QLOG_TRACE() << "Entering SearchTable::findByName()";
@@ -382,7 +393,7 @@ bool SearchTable::isDeleted(qint32 lid) {
 qint32 SearchTable::getAllDirty(QList<qint32> &lids) {
     NSqlQuery query(*db);
     lids.clear();
-    query.prepare("Select lid from DataStore where key=:key");
+    query.prepare("Select lid from DataStore where key=:key and data='true'");
     query.bindValue(":key", SEARCH_ISDIRTY);
     query.exec();
     while(query.next()) {

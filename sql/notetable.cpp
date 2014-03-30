@@ -1988,3 +1988,17 @@ void NoteTable::pinNote(string guid, bool value) {
     QString g(QString::fromStdString(guid));
     pinNote(g, value);
 }
+
+
+// Get all lids
+void NoteTable::getAll(QList<qint32> &lids) {
+    NSqlQuery query(*db);
+    lids.empty();
+    query.prepare("Select lid from DataStore where key=:guid");
+    query.bindValue(":guid", NOTE_GUID);
+    query.exec();
+    while(query.next()) {
+        lids.append(query.value(0).toInt());
+
+    }
+}

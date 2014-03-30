@@ -177,7 +177,9 @@ public slots:
     void rightButtonTriggered();
     void openNote(bool newWindow);
     void noteImport();
+    void noteExport();
     void databaseRestore(bool fullRestore=true);
+    void databaseBackup(bool backup=true);
     void resetView();
     void newNote();
     void newExternalNote();

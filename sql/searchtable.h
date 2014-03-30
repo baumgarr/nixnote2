@@ -81,6 +81,7 @@ public:
     bool isDeleted(qint32 lid);
     void setUpdateSequenceNumber(qint32 lid, qint32 usn);
     string getGuid(qint32 lid);
+    void getAll(QList<qint32> &lids);
 };
 
 #endif // SEARCHTABLE_H

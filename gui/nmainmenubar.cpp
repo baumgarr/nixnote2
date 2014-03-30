@@ -63,6 +63,13 @@ void NMainMenuBar::setupFileMenu() {
 
     fileMenu->addSeparator();
 
+    backupDatabaseAction = new QAction(tr("Backup Database"), this);
+    backupDatabaseAction->setToolTip(tr("Backup database to a file"));
+    backupDatabaseAction->setFont(f);
+    connect(backupDatabaseAction, SIGNAL(triggered()), parent, SLOT(databaseBackup()));
+    setupShortcut(backupDatabaseAction, QString("File_Backup_Database"));
+    fileMenu->addAction(backupDatabaseAction);
+
     restoreDatabaseAction = new QAction(tr("Restore Database"), this);
     restoreDatabaseAction->setToolTip(tr("Restore from a backup"));
     restoreDatabaseAction->setFont(f);
@@ -70,13 +77,21 @@ void NMainMenuBar::setupFileMenu() {
     setupShortcut(restoreDatabaseAction, QString("File_Restore_Database"));
     fileMenu->addAction(restoreDatabaseAction);
 
-    importNoteAction = new QAction(tr("Import from Export File"), this);
+    fileMenu->addSeparator();
+
+    exportNoteAction = new QAction(tr("Export Notes"), this);
+    exportNoteAction->setToolTip(tr("Export selected notes to a file"));
+    exportNoteAction->setFont(f);
+    connect(exportNoteAction, SIGNAL(triggered()), parent, SLOT(noteExport()));
+    setupShortcut(exportNoteAction, QString("File_Note_Export"));
+    fileMenu->addAction(exportNoteAction);
+
+    importNoteAction = new QAction(tr("Import Notes"), this);
     importNoteAction->setToolTip(tr("Import notes from an export file"));
     importNoteAction->setFont(f);
     connect(importNoteAction, SIGNAL(triggered()), parent, SLOT(noteImport()));
     setupShortcut(importNoteAction, QString("File_Note_Import"));
     fileMenu->addAction(importNoteAction);
-
 
     fileMenu->addSeparator();
     // Start adding the user accounts

@@ -106,7 +106,6 @@ void IndexRunner::index() {
     // Start indexing resources
     if (keepRunning && resourceTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
         endMsgNeeded = true;
-        QLOG_DEBUG() << "Unindexed Resources found: " << lids.size();
 
         // Index each resource that is needed.
         for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {

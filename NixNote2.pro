@@ -175,7 +175,8 @@ SOURCES += main.cpp\
     gui/externalbrowse.cpp \
     sql/nsqlquery.cpp \
     dialog/aboutdialog.cpp \
-    xml/importenex.cpp
+    xml/importenex.cpp \
+    xml/exportdata.cpp
 
 
 
@@ -318,7 +319,8 @@ HEADERS  += nixnote.h \
     gui/externalbrowse.h \
     sql/nsqlquery.h \
     dialog/aboutdialog.h \
-    xml/importenex.h
+    xml/importenex.h \
+    xml/exportdata.h
 
 
 INCLUDEPATH += /usr/local/include/thrift \
