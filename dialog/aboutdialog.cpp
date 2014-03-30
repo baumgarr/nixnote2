@@ -27,6 +27,6 @@ AboutDialog::AboutDialog(QDialog *parent) :
     QString file = "file://" + global.fileManager.getProgramDirPath("") + "/help/about.html";
     page->load(file);
     connect(okButton, SIGNAL(clicked()), this, SLOT(close()));
-    this->resize(600,400);
+    this->resize(600,500);
 }
 

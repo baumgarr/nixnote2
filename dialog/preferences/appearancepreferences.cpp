@@ -59,7 +59,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(startMinimized, 4, 0);
     mainLayout->addWidget(defaultNotebookOnStartupLabel,5,0);
     mainLayout->addWidget(defaultNotebookOnStartup, 5,1);
-    mainLayout->addWidget(new QLabel(tr("Window Icon")), 6,0);
+    mainLayout->addWidget(new QLabel(tr("Window Icon\n(may require restart on\nsome window managers)")), 6,0);
     mainLayout->addWidget(windowIconChooser, 6,1);
 
     global.settings->beginGroup("Appearance");
