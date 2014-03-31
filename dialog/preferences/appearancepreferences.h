@@ -43,6 +43,7 @@ public:
     QCheckBox *showPDFs;
     QCheckBox *showSplashScreen;
     QCheckBox *showMissedReminders;
+    QCheckBox *autoStart;
     QCheckBox *startMinimized;
 
     enum DefaultNotebook {

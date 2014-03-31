@@ -32,6 +32,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showTrayIcon = new QCheckBox(tr("Show tray icon"), this);
     showPDFs = new QCheckBox(tr("Display PDFs inline"), this);
     showSplashScreen = new QCheckBox(tr("Show splash screen on startup"), this);
+    autoStart = new QCheckBox(tr("Start automatically at login"), this);
     showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
     startMinimized = new QCheckBox(tr("Always Start minimized"), this);
     windowIconChooser = new QComboBox();
@@ -52,15 +53,17 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     defaultNotebookOnStartup->addItem(tr("Select Default Notebook"), UseDefaultNotebook);
     defaultNotebookOnStartup->addItem(tr("View All Notebooks"), UseAllNotebooks);
 
-    mainLayout->addWidget(showTrayIcon,0,0);
-    mainLayout->addWidget(showSplashScreen, 1,0);
-    mainLayout->addWidget(showPDFs, 2,0);
-    mainLayout->addWidget(showMissedReminders, 3, 0);
-    mainLayout->addWidget(startMinimized, 4, 0);
-    mainLayout->addWidget(defaultNotebookOnStartupLabel,5,0);
-    mainLayout->addWidget(defaultNotebookOnStartup, 5,1);
-    mainLayout->addWidget(new QLabel(tr("Window Icon\n(may require restart on\nsome window managers)")), 6,0);
-    mainLayout->addWidget(windowIconChooser, 6,1);
+    int row=0;
+    mainLayout->addWidget(showTrayIcon,row++,0);
+    mainLayout->addWidget(showSplashScreen, row++,0);
+    mainLayout->addWidget(showPDFs, row++,0);
+    mainLayout->addWidget(showMissedReminders, row++, 0);
+    mainLayout->addWidget(startMinimized, row++, 0);
+    mainLayout->addWidget(autoStart, row++, 0);
+    mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
+    mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
+    mainLayout->addWidget(new QLabel(tr("Window Icon\n(may require restart on\nsome window managers)")), row,0);
+    mainLayout->addWidget(windowIconChooser, row++,1);
 
     global.settings->beginGroup("Appearance");
 
@@ -69,6 +72,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showSplashScreen->setChecked(global.settings->value("showSplashScreen", false).toBool());
     showMissedReminders->setChecked(global.settings->value("showMissedReminders", false).toBool());
     startMinimized->setChecked(global.settings->value("startMinimized", false).toBool());
+    autoStart->setChecked(global.settings->value("autoStart", false).toBool());
     int defaultNotebook = global.settings->value("startupNotebook", UseLastViewedNotebook).toInt();
     defaultNotebookOnStartup->setCurrentIndex(defaultNotebook);
     global.settings->endGroup();
@@ -128,6 +132,48 @@ void AppearancePreferences::saveValues() {
         }
         userIni.close();
     }
+
+    // Setup if the user wants to start NixNote the next time they login.
+    global.settings->setValue("autoStart", autoStart->isChecked());
+    QString startFile =  QDir::homePath()+"/.config/autostart/nixnote2.desktop";
+    QDir dir;
+    dir.remove(startFile);
+    if (autoStart->isChecked()) {
+        //Copy the nixnote2.desktop to the ~/.config/autostart directory
+        QString systemFile = "/usr/share/applications/nixnote2.desktop";
+        QFile systemIni(systemFile);
+        QStringList desktopData;
+
+        if (systemIni.open(QIODevice::ReadOnly)) {
+            QTextStream data(&systemIni);
+            QString line = data.readLine();
+            while (!line.isNull()) {
+                if (line.startsWith("Icon=")) {
+                    line = "Icon=" +global.fileManager.getProgramDirPath("")+"images/"+userIcon.mid(1);
+                }
+                desktopData.append(line);
+                line = data.readLine();
+            }
+        }
+        systemIni.close();
+
+        // Now, write it back out
+        QString userFile =  QDir::homePath()+"/.config/autostart/nixnote2.desktop";
+        QFile userIni(userFile);
+        if (userIni.open(QIODevice::WriteOnly)) {
+            QTextStream data(&userIni);
+            for (int i=0; i<desktopData.size(); i++) {
+                data << desktopData[i] << "\n";
+            }
+            data << "X-GNOME-Autostart-enabled=true";
+        }
+        userIni.close();
+    }
+
+
+
+
+
     global.settings->endGroup();
 
 }
