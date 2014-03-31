@@ -89,7 +89,52 @@ void AppearancePreferences::saveValues() {
     int index = defaultNotebookOnStartup->currentIndex();
     int value = defaultNotebookOnStartup->itemData(index).toInt();
     global.settings->setValue("startupNotebook", value);
+
+    // See if the user has overridden the window icon
     index = windowIconChooser->currentIndex();
-    global.settings->setValue("windowIcon", windowIconChooser->itemData(index).toString());
+    QString userIcon = windowIconChooser->itemData(index).toString();
+    if (userIcon != global.getWindowIcon()) {
+        global.settings->setValue("windowIcon", userIcon);
+
+        //Copy the nixnote2.desktop so we can override the app icon
+        // Ideally, we could use QSettings since it is ini format, but
+        // it puts [Desktop Entry] as [Desktop%20Enry], which screws
+        // things up.
+        QString systemFile = "/usr/share/applications/nixnote2.desktop";
+        QFile systemIni(systemFile);
+        QStringList desktopData;
+
+        if (systemIni.open(QIODevice::ReadOnly)) {
+            QTextStream data(&systemIni);
+            QString line = data.readLine();
+            while (!line.isNull()) {
+                if (line.startsWith("Icon=")) {
+                    line = "Icon=" +global.fileManager.getProgramDirPath("")+"images/"+userIcon.mid(1);
+                }
+                desktopData.append(line);
+                line = data.readLine();
+            }
+        }
+        systemIni.close();
+
+        // Now, write it back out
+        QString userFile =  QDir::homePath()+"/.local/share/applications/nixnote2.desktop";
+        QFile userIni(userFile);
+        if (userIni.open(QIODevice::WriteOnly)) {
+            QTextStream data(&userIni);
+            for (int i=0; i<desktopData.size(); i++) {
+                data << desktopData[i] << "\n";
+            }
+        }
+        userIni.close();
+    }
     global.settings->endGroup();
+
 }
+
+
+
+
+
+
+

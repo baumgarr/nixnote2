@@ -57,12 +57,12 @@
         <file>images/gps.png</file>
         <file>images/notebook_old.png</file>
         <file>images/notebook_small_old.png</file>
-        <file alias="windowIcon0.png">images/window_icon0.png</file>
-        <file alias="windowIcon1.png">images/window_icon1.png</file>
-        <file alias="windowIcon2.png">images/window_icon2.png</file>
-        <file alias="windowIcon3.png">images/window_icon3.png</file>
-        <file alias="windowIcon4.png">images/window_icon4..png</file>
-        <file alias="windowIcon5.png">images/window_icon5.png</file>
-        <file alias="windowIcon6.png">images/window_icon6.png</file>
+        <file alias="windowIcon0.png">images/windowIcon0.png</file>
+        <file alias="windowIcon1.png">images/windowIcon1.png</file>
+        <file alias="windowIcon2.png">images/windowIcon2.png</file>
+        <file alias="windowIcon3.png">images/windowIcon3.png</file>
+        <file alias="windowIcon4.png">images/windowIcon4.png</file>
+        <file alias="windowIcon5.png">images/windowIcon5.png</file>
+        <file alias="windowIcon6.png">images/windowIcon6.png</file>
     </qresource>
 </RCC>
