@@ -1296,7 +1296,7 @@ void NixNote::databaseBackup(bool backup) {
 
     if (noteReader.lastError != 0) {
         setMessage(noteReader.errorMessage);
-        QLOG_ERROR() <<  "Restore problem: " << noteReader.errorMessage;
+        QLOG_ERROR() <<  "Backup problem: " << noteReader.errorMessage;
         QMessageBox::critical(this, tr("Error"), noteReader.errorMessage);
         waitCursor(false);
         return;

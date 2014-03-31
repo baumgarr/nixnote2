@@ -44,7 +44,6 @@ private:
     void createNode(QString nodeName, string value);
     void createNode(QString nodeName, qlonglong value);
     void createNode(QString nodeName, qint32 value);
-    void createBinaryNode(QString nodeName, QString value);
     void createBinaryNode(QString nodeName, string value);
     void createNode(QString nodeName, Timestamp value);
     void createNode(QString nodeName, bool value);
@@ -57,7 +56,7 @@ private:
     void writeSharedNotebooks();
     void writeNotes();
     void writeUser(User user);
-    void writeData(Data data);
+    void writeData(QString name, Data data);
     void writeResource(Resource r);
     QProgressDialog *progress;
 

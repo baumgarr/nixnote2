@@ -90,7 +90,7 @@ void ExportData::backupData(QString filename) {
     writeNotes();
     writer->writeEndElement();
     writer->writeEndDocument();
-    progress->close();
+    progress->hide();
     xmlFile.close();
 }
 
@@ -322,12 +322,17 @@ void ExportData::writeUser(User user) {
 }
 
 
-void ExportData::writeData(Data data) {
-    writer->writeStartElement("Data");
+void ExportData::writeData(QString name, Data data) {
+    writer->writeStartElement(name);
     if (data.__isset.body)
         createBinaryNode("Body", data.body);
-    if (data.__isset.bodyHash)
-        createNode("BodyHash", data.bodyHash);
+    if (data.__isset.bodyHash) {
+        createBinaryNode("BodyHash", data.bodyHash);
+        QByteArray ba;
+        ba.append(data.bodyHash.c_str(), data.bodyHash.size());
+        QLOG_DEBUG() << ba.toHex();
+        QByteArray b2 = QByteArray::fromHex(ba);
+    }
     if (data.__isset.size)
         createNode("Size", data.size);
     writer->writeEndElement();
@@ -494,7 +499,7 @@ void ExportData::writeNotes() {
             writer->writeEndElement();
         }
         if (n.__isset.contentHash)
-            createNode("ContentHash", n.contentHash);
+            createBinaryNode("ContentHash", n.contentHash);
         if (n.__isset.contentLength)
             createNode("ContentLength", n.contentLength);
         if (n.__isset.created)
@@ -569,13 +574,13 @@ void ExportData::writeNotes() {
 
 
 void ExportData::writeResource(Resource r) {
-    writer->writeStartElement("Resource");
+    writer->writeStartElement("NoteResource");
     if (r.__isset.guid)
         createNode("Guid", r.guid);
     if (r.__isset.noteGuid)
         createNode("NoteGuid", r.noteGuid);
     if (r.__isset.data)
-        writeData(r.data);
+        writeData("Data", r.data);
     if (r.__isset.mime)
         createNode("Mime", r.mime);
     if (r.__isset.width)
@@ -586,8 +591,9 @@ void ExportData::writeResource(Resource r) {
         createNode("Duration", r.duration);
     if (r.__isset.active)
         createNode("Active", r.active);
-    if (r.__isset.recognition)
-        writeData(r.recognition);
+    if (r.__isset.recognition)  {
+        writeData("Recognition", r.recognition);
+    }
     if (r.__isset.attributes) {
         writer->writeStartElement("ResourceAttributes");
         if (r.attributes.__isset.sourceURL)
@@ -615,7 +621,7 @@ void ExportData::writeResource(Resource r) {
     if (r.__isset.updateSequenceNum)
         createNode("UpdateSequenceNumber", r.updateSequenceNum);
     if (r.__isset.alternateData)
-        writeData(r.alternateData);
+        writeData("AlternateData", r.alternateData);
     writer->writeEndElement();
 }
 
@@ -653,19 +659,12 @@ void ExportData::createNode(QString nodeName, QBool value) {
 
 
 
-void ExportData::createBinaryNode(QString nodeName, QString value) {
-    writer->writeStartElement(nodeName);
-    writer->writeCharacters(value);
-    writer->writeEndElement();
-    return;
-}
-
-
-
 void ExportData::createBinaryNode(QString nodeName, string value) {
-    QByteArray body;
-    body.append(value.c_str(), value.length());
-    createBinaryNode(nodeName, body.toHex());
+    QByteArray ba;
+    ba.append(value.data(), value.length());
+    QString sa;
+    sa.append(ba.toHex());
+    createNode(nodeName, sa);
     return;
 }
 

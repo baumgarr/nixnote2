@@ -279,6 +279,17 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
         return;
 
     QString file = global.fileManager.getDbaDirPath() + QString::number(reslid) +extension;
+    QFile dataFile(file);
+    if (!dataFile.exists()) {
+        QDir dir(global.fileManager.getDbaDirPath());
+        QStringList filterList;
+        filterList.append(QString::number(lid)+".*");
+        QStringList list= dir.entryList(filterList, QDir::Files);
+        if (list.size() > 0) {
+            file = global.fileManager.getDbaDirPath()+list[0];
+        }
+    }
+
     QString outFile = global.fileManager.getDbaDirPath() + QString::number(reslid) + "-index.txt";
 
     QProcess sofficeProcess;
@@ -290,14 +301,11 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     QLOG_DEBUG() << "soffice Errors:" << sofficeProcess.readAllStandardError();
     QLOG_DEBUG() << "soffice Output:" << sofficeProcess.readAllStandardOutput();
 
-    return;
-
-
-    NSqlQuery sql(db->conn);
-    sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
-    sql.bindValue(":lid", lid);
-    sql.bindValue(":weight", 100);
-    QLOG_DEBUG() << "Adding note resource to index DB";
-    sql.exec();
+//    NSqlQuery sql(db->conn);
+//    sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
+//    sql.bindValue(":lid", lid);
+//    sql.bindValue(":weight", 100);
+//    QLOG_DEBUG() << "Adding note resource to index DB";
+//    sql.exec();
 }
 

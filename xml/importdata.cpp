@@ -231,6 +231,7 @@ void ImportData::import(QString file) {
 //* Process a <note> tag
 //***********************************************************
 void ImportData::processNoteNode() {
+    QLOG_DEBUG() << "Processing Note Node";
     Note note;
     QUuid uuid;
     QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
@@ -339,6 +340,8 @@ void ImportData::processNoteNode() {
 //* Process a <noteresource> node.
 //***********************************************************
 void ImportData::processResource(Resource &resource) {
+    QLOG_DEBUG() << "Processing Resource Node";
+
     bool atEnd = false;
     //bool isDirty = false;
 
@@ -416,29 +419,45 @@ void ImportData::processResource(Resource &resource) {
 //* Process any type of data node
 //***********************************************************
 void ImportData::processData(QString nodeName, Data &data) {
+    QLOG_DEBUG() << "Processing Data Node";
     nodeName.toLower();
     bool atEnd = false;
     while(!atEnd) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
-            if (name == "size") {
-                data.size = intValue();
-                data.__isset.size = true;
-            }
+//            if (name == "size") {
+//                data.size = intValue();
+//                data.__isset.size = true;
+//            }
             if (name == "body") {
                 QString x = textValue();
                 QByteArray bin = QByteArray::fromHex(x.toLocal8Bit());
                 data.body.clear();
                 data.body.append(bin.data(), bin.size());
                 data.__isset.body = true;
-            }
-            if (name == "bodyhash") {
-               QByteArray hexData = textValue().toLocal8Bit();
-                QByteArray binData = QByteArray::fromHex(hexData);
+
+                QCryptographicHash md5hash(QCryptographicHash::Md5);
+                QByteArray hash = md5hash.hash(bin, QCryptographicHash::Md5);
+                QLOG_DEBUG() << "Actual:" << hash.toHex();
+
                 data.bodyHash.clear();
-                data.bodyHash.append(binData.data(), binData.size());
+                data.bodyHash.append(hash.data(), hash.size());
                 data.__isset.bodyHash = true;
+
+                data.size = bin.size();
+                data.__isset.size = true;
             }
+//            if (name == "bodyhash") {
+//                QByteArray hexData = textValue().toLocal8Bit();
+//                QLOG_DEBUG() << hexData;
+//                //QByteArray hexData;
+//                //hexData.append(textValue());
+//                QByteArray binData = QByteArray::fromHex(hexData);
+//                QLOG_DEBUG() << QByteArray::fromHex(hexData);
+//                data.bodyHash.clear();
+//                data.bodyHash.append(binData.data(), binData.size());
+//                data.__isset.bodyHash = true;
+//            }
         }
         reader->readNext();
         QString nName = reader->name().toString().toLower();
@@ -453,6 +472,8 @@ void ImportData::processData(QString nodeName, Data &data) {
 //* Process a node that has the <noteresourceattribute>
 //***********************************************************
 void ImportData::processResourceAttributes(ResourceAttributes &attributes) {
+    QLOG_DEBUG() << "Processing Resource Attributes Node";
+
     bool atEnd = false;
     while(!atEnd) {
         if (reader->isStartElement()) {
@@ -551,6 +572,8 @@ void ImportData::processNoteTagList(QStringList &guidList, QStringList &names) {
 //* Process an <attributes> node
 //***********************************************************
 void ImportData::processNoteAttributes(NoteAttributes &attributes) {
+    QLOG_DEBUG() << "Processing Note Attribute Node";
+
 
     bool atEnd = false;
     while(!atEnd) {
@@ -603,6 +626,8 @@ void ImportData::processNoteAttributes(NoteAttributes &attributes) {
 //* Process a <synchronization> node
 //***********************************************************
 void ImportData::processSynchronizationNode() {
+    QLOG_DEBUG() << "Processing Synchronization Node";
+
     bool atEnd = false;
     UserTable userTable(global.db);
     while(!atEnd) {
@@ -627,6 +652,8 @@ void ImportData::processSynchronizationNode() {
 //* Process a <savedsearch> node.
 //***********************************************************
 void ImportData::processSavedSearchNode() {
+    QLOG_DEBUG() << "Processing Saved Search Node";
+
     SavedSearch search;
     bool searchIsDirty = false;
     SearchTable searchTable(global.db);
@@ -674,6 +701,8 @@ void ImportData::processSavedSearchNode() {
 //* Process a shared notebook
 //***********************************************************
 void ImportData::processLinkedNotebookNode() {
+    QLOG_DEBUG() << "Processing Linked Notebook Node";
+
     LinkedNotebook  linkedNotebook;
 //    bool linkedNotebookIsDirty = false;
 
@@ -729,6 +758,8 @@ void ImportData::processLinkedNotebookNode() {
 //* Import a shared notebook
 //***********************************************************
 void ImportData::processSharedNotebookNode() {
+    QLOG_DEBUG() << "Processing Shared Notebook Node";
+
 
     SharedNotebook sharedNotebook;
     //bool sharedNotebookIsDirty = false;
@@ -787,6 +818,8 @@ void ImportData::processSharedNotebookNode() {
 //* Process a <notebook> node
 //***********************************************************
 void ImportData::processNotebookNode() {
+    QLOG_DEBUG() << "Processing Notebook Node";
+
 
     Notebook notebook;
     bool notebookIsDirty = false;
@@ -903,6 +936,8 @@ void ImportData::processNotebookNode() {
 //* This will take a <tag> node and parse out the values.
 //***********************************************************
 void ImportData::processTagNode() {
+    QLOG_DEBUG() << "Processing Tag Node";
+
     Tag tag;
     bool tagIsDirty = false;
     bool atEnd = false;
