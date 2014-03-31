@@ -69,14 +69,11 @@ int main(int argc, char *argv[])
     // Setup the QLOG functions for debugging & messages
     QsLogging::Logger& logger = QsLogging::Logger::instance();
     logger.setLoggingLevel(QsLogging::TraceLevel);
-    const QString sLogPath(a->applicationDirPath());
+//    const QString sLogPath(a->applicationDirPath());
 
-    QsLogging::DestinationPtr fileDestination(
-                QsLogging::DestinationFactory::MakeFileDestination(sLogPath) );
     QsLogging::DestinationPtr debugDestination(
                 QsLogging::DestinationFactory::MakeDebugOutputDestination() );
     logger.addDestination(debugDestination.get());
-    logger.addDestination(fileDestination.get());
 
     // Begin setting up the environment
     StartupConfig startupConfig;
@@ -93,13 +90,21 @@ int main(int argc, char *argv[])
         }
     }
 
+    startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
+    startupConfig.name = "NixNote";
+    global.setup(startupConfig);
+
+    QString logPath = global.fileManager.getLogsDirPath("")+"messages.log";
+    QsLogging::DestinationPtr fileDestination(
+                 QsLogging::DestinationFactory::MakeFileDestination(logPath) ) ;
+    logger.addDestination(fileDestination.get());
+
+
     // Show Qt version.  This is useful for debugging
     QLOG_INFO() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
     QLOG_INFO() << "Thrift version: " << PACKAGE_VERSION;
 
-    startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
-    startupConfig.name = "NixNote";
-    global.setup(startupConfig);
+
 
     // Create a shared memory region.  We use this to communicate
     // with any other instance that may be running.  If another instance

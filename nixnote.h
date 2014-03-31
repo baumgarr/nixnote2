@@ -237,6 +237,7 @@ public slots:
     void openExternalNote(qint32 lid);
     void pauseIndexing();
     void openEvernoteSupport();
+    void openMessageLog();
 
 signals:
     void syncRequested();

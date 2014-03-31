@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/webcamcapturedialog.h"
 #include "sql/resourcetable.h"
 #include "sql/nsqlquery.h"
+#include "dialog/logviewer.h"
 
 #include <QThread>
 #include <QLabel>
@@ -2459,4 +2460,10 @@ void NixNote::pauseIndexing() {
     indexRunner.pauseIndexing = false;
     if (menuBar->pauseIndexingAction->isChecked())
        indexRunner.pauseIndexing = true;
+}
+
+
+void NixNote::openMessageLog() {
+    LogViewer viewer;
+    viewer.exec();
 }

@@ -176,7 +176,8 @@ SOURCES += main.cpp\
     sql/nsqlquery.cpp \
     dialog/aboutdialog.cpp \
     xml/importenex.cpp \
-    xml/exportdata.cpp
+    xml/exportdata.cpp \
+    dialog/logviewer.cpp
 
 
 
@@ -320,7 +321,8 @@ HEADERS  += nixnote.h \
     sql/nsqlquery.h \
     dialog/aboutdialog.h \
     xml/importenex.h \
-    xml/exportdata.h
+    xml/exportdata.h \
+    dialog/logviewer.h
 
 
 INCLUDEPATH += /usr/local/include/thrift \

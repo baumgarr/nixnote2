@@ -80,6 +80,7 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
 
     logsDir.setPath(homeDirPath+"logs-" +QString::number(id));
     createDirOrCheckWriteable(logsDir);
+    logsDirPath = slashTerminatePath(logsDir.path());
 
     tmpDir.setPath(homeDirPath+"tmp-" +QString::number(id));
     createDirOrCheckWriteable(tmpDir);
@@ -232,6 +233,10 @@ QString FileManager::getJavaDirPath(QString relativePath) {
 QDir FileManager::getLogsDirFile(QString relativePath) {
     return QDir(logsDir.dirName() + toPlatformPathSeparator(relativePath));
 }
+QString FileManager::getLogsDirPath(QString relativePath) {
+    return logsDirPath + toPlatformPathSeparator(relativePath);
+}
+
 /*
 QString FileManager::getQssDirPath(QString relativePath) {
     return qssDirPath + toPlatformPathSeparator(relativePath);

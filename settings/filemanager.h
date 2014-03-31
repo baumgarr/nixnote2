@@ -49,6 +49,7 @@ private:
     QDir dbDir;
 
     QDir logsDir;
+    QString logsDirPath;
 
     QString imagesDirPath;
     QDir imagesDir;
@@ -114,6 +115,7 @@ public:
     QDir getJavaDirFile(QString relativePath);
     QString getJavaDirPath(QString relativePath);
     QDir getLogsDirFile(QString relativePath);
+    QString getLogsDirPath(QString relativePath);
     //QString getQssDirPath(QString relativePath);
     QString getQssDirPathUser(QString relativePath);
     QString getTmpDirPath();

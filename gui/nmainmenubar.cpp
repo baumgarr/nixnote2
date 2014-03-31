@@ -458,6 +458,13 @@ void NMainMenuBar::setupHelpMenu() {
     helpMenu = this->addMenu(tr("&Help"));
 
 
+    openMessageLogAction = new QAction(tr("Message Log"), this);
+    openMessageLogAction->setToolTip(tr("View current program messages"));
+    openMessageLogAction->setFont(font);
+    connect(openMessageLogAction, SIGNAL(triggered()), parent, SLOT(openMessageLog()));
+    helpMenu->addAction(openMessageLogAction);
+
+
     openEvernoteSupportAction = new QAction(tr("Evernote Support"), this);
     openEvernoteSupportAction->setToolTip(tr("Go to Evernote's support page"));
     if (global.accountsManager->getServer() == "app.yinxiang.com") {

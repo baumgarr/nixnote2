@@ -107,6 +107,7 @@ public:
     QAction *spellCheckAction;
     QAction *openTrunkAction;
     QAction *openEvernoteSupportAction;
+    QAction *openMessageLogAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 
