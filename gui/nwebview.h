@@ -63,6 +63,7 @@ public:
     QAction *rotateImageRightAction;
     QAction *rotateImageLeftAction;
     QAction *insertLinkAction;
+    QAction *removeLinkAction;
     QAction *insertLatexAction;
     QAction *attachFileAction;
     QAction *insertTableAction;

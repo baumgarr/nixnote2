@@ -1,7 +1,7 @@
 #include "externalbrowse.h"
 #include <QGridLayout>
 #include <QLayout>
-#include "global.h";
+#include "global.h"
 
 extern Global global;
 

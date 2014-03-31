@@ -183,6 +183,7 @@ public slots:
     void decryptText(QString id, QString text, QString hint,  QString cipher="RC2", int len=64);
     void insertLinkButtonPressed();
     void insertQuickLinkButtonPressed();
+    void removeLinkButtonPressed();
     void insertLatexButtonPressed();
     void insertTableButtonPressed();
     void insertTableRowButtonPressed();

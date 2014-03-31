@@ -1050,6 +1050,35 @@ void NBrowserWindow::insertLinkButtonPressed() {
 }
 
 
+
+
+
+void NBrowserWindow::removeLinkButtonPressed() {
+    // Remove URL
+    QString js = QString( "function getCursorPos() {")
+            + QString("var cursorPos;")
+            + QString("if (window.getSelection) {")
+            + QString("   var selObj = window.getSelection();")
+            + QString("   var selRange = selObj.getRangeAt(0);")
+            + QString("   var workingNode = window.getSelection().anchorNode.parentNode;")
+            + QString("   while(workingNode != null) { ")
+            + QString("      if (workingNode.nodeName.toLowerCase()=='a') { ")
+            + QString("         workingNode.removeAttribute('href');")
+            + QString("         workingNode.removeAttribute('title');")
+            + QString("         var text = document.createTextNode(workingNode.innerText);")
+            + QString("         workingNode.parentNode.insertBefore(text, workingNode);")
+            + QString("         workingNode.parentNode.removeChild(workingNode);")
+            + QString("      }")
+            + QString("      workingNode = workingNode.parentNode;")
+            + QString("   }")
+            + QString("}")
+            + QString("} getCursorPos();");
+        editor->page()->mainFrame()->evaluateJavaScript(js);
+        contentChanged();
+}
+
+
+
 void NBrowserWindow::insertQuickLinkButtonPressed() {
     QString text = editor->selectedText();
     if (text.trimmed() == "")
@@ -1315,6 +1344,7 @@ void NBrowserWindow::attachFile() {
      editor->deleteTableRowAction->setEnabled(false);
      editor->deleteTableColumnAction->setEnabled(false);
      editor->insertLinkAction->setText(tr("Insert Link"));
+     editor->removeLinkAction->setEnabled(false);
      editor->insertQuickLinkAction->setEnabled(true);
      editor->rotateImageRightAction->setEnabled(false);
      editor->rotateImageLeftAction->setEnabled(false);
@@ -1629,6 +1659,7 @@ void NBrowserWindow::setInsideTable() {
 void NBrowserWindow::setInsideLink(QString link) {
     currentHyperlink = link;
     editor->insertLinkAction->setText(tr("Edit Link"));
+    editor->removeLinkAction->setEnabled(true);
     currentHyperlink = link;
     insertHyperlink = false;
 }

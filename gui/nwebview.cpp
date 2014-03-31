@@ -133,12 +133,17 @@ NWebView::NWebView(NBrowserWindow *parent) :
     insertLinkAction = new QAction(tr("Insert Hyperlink"), this);
     contextMenu->addAction(insertLinkAction);
     this->setupShortcut(insertLinkAction, "Edit_InsertHyperlink");
-    connect(insertLinkAction, SIGNAL(triggered()),parent, SLOT(insertLinkButtonPressed()));
+    connect(insertLinkAction, SIGNAL(triggered()),parent, SLOT(insertLinkButtonPressed()));    
 
     insertQuickLinkAction = new QAction(tr("Quick Link"), this);
     contextMenu->addAction(insertQuickLinkAction);
     this->setupShortcut(insertQuickLinkAction, "Edit_InsertQuickLink");
     connect(insertQuickLinkAction, SIGNAL(triggered()),parent, SLOT(insertQuickLinkButtonPressed()));
+
+    removeLinkAction = new QAction(tr("Remove Hyperlink"), this);
+    contextMenu->addAction(removeLinkAction);
+    this->setupShortcut(removeLinkAction, "Edit_RemoveHyperlink");
+    connect(removeLinkAction, SIGNAL(triggered()),parent, SLOT(removeLinkButtonPressed()));
 
     attachFileAction = new QAction(tr("Attach File"), this);
     contextMenu->addAction(attachFileAction);
