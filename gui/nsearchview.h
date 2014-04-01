@@ -52,6 +52,8 @@ private:
     QShortcut *addShortcut;
     QShortcut *deleteShortcut;
     TreeWidgetEditor *editor;
+    QImage *expandedImage;
+    QImage *collapsedImage;
 
 
 private slots:

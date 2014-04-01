@@ -46,6 +46,8 @@ private:
     QHash<QString, QAction*> menuData;
     int maxCount;
     void sortStackMenu();
+    QImage *collapsedImage;
+    QImage *expandedImage;
 
 
 private slots:

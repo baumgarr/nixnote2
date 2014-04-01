@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtSql>
 #include <QAction>
 #include <QMessageBox>
+#include <QPainter>
 
 #define NAME_POSITION 0
 
@@ -111,6 +112,9 @@ NSearchView::NSearchView(QWidget *parent) :
     connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     this->setFrameShape(QFrame::NoFrame);
+
+    expandedImage = new QImage(":expanded.png");
+    collapsedImage = new QImage(":collapsed.png");
 
 }
 
@@ -449,9 +453,18 @@ QSize NSearchView::sizeHint() {
 
 
 void NSearchView::drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const {
-    if (index.data(Qt::UserRole).toString() == "root")
+    if (!index.child(0,0).isValid())
         return;
 
-    QTreeView::drawBranches(painter, rect, index);
+    painter->save();
+    if (isExpanded(index)) {
+        int offset = rect.width()-expandedImage->width()-1;
+        painter->drawImage(offset, rect.y(),*expandedImage);
+    } else {
+        int offset = rect.width()-collapsedImage->width()-1;
+        painter->drawImage(offset, rect.y(),*collapsedImage);
+    }
+    painter->restore();
+    return;
 }
 

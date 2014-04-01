@@ -47,6 +47,8 @@ private:
     QShortcut *deleteShortcut;
     TreeWidgetEditor *editor;
     qint32 accountFilter;
+    QImage *expandedImage;
+    QImage *collapsedImage;
 
 private slots:
     int calculateHeightRec(QTreeWidgetItem * item);

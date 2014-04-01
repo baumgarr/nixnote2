@@ -155,6 +155,8 @@ private:
     QTreeWidgetItem *sourceAnotherApplication;
 
     int filterPosition;
+    QImage *collapsedImage;
+    QImage *expandedImage;
 
 
 public:

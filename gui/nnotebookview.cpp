@@ -29,6 +29,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTextDocument>
 #include <QFontMetrics>
 
+#include <QWindowsStyle>
+#include <QMotifStyle>
+#include <QPlastiqueStyle>
+#include <QCleanlooksStyle>
+
 #include "sql/notebooktable.h"
 #include "sql/linkednotebooktable.h"
 #include "sql/sharednotebooktable.h"
@@ -42,6 +47,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NAME_POSITION 0
 
 extern Global global;
+
+
 
 // Constructor
 NNotebookView::NNotebookView(QWidget *parent) :
@@ -62,8 +69,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
     this->setRootIsDecorated(true);
     this->setSortingEnabled(false);
     this->header()->setVisible(false);
-//    this->setStyleSheet("QTreeWidget { border-image: none; border:none; background-color: transparent; }");
-
+    this->setStyleSheet("QTreeView {border-image:none; image:none;} ");
     root = new NNotebookViewItem(0);
     root->setType(NNotebookViewItem::Stack);
     root->setData(NAME_POSITION, Qt::UserRole, "rootsynchronized");
@@ -146,6 +152,16 @@ NNotebookView::NNotebookView(QWidget *parent) :
     root->setExpanded(true);
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     this->setFrameShape(QFrame::NoFrame);
+
+
+    //setStyle(new MyStyle("QTreeView"));
+//    setStyle(new QCleanlooksStyle);
+    //setStyleSheet("::branches {image: url(:right-arrow.png);}");
+
+//    setStyleSheet("QTreeView::branch { image: url(:right-arrow.png); }");
+
+    expandedImage = new QImage(":expanded.png");
+    collapsedImage = new QImage(":collapsed.png");
 }
 
 
@@ -990,8 +1006,23 @@ QSize NNotebookView::sizeHint() {
 
 
 void NNotebookView::drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const {
-    if (index.data(Qt::UserRole).toString() == "rootsynchronized")
+    if (!index.child(0,0).isValid())
         return;
 
-    QTreeView::drawBranches(painter, rect, index);
+    painter->save();
+    if (isExpanded(index)) {
+        int offset = rect.width()-expandedImage->width()-1;
+        painter->drawImage(offset, rect.y(),*expandedImage);
+    } else {
+        int offset = rect.width()-collapsedImage->width()-1;
+        painter->drawImage(offset, rect.y(),*collapsedImage);
+    }
+    painter->restore();
+    return;
+
+
+//    if (index.data(Qt::UserRole).toString() == "rootsynchronized")
+//        return;
+
+//    QTreeView::drawBranches(painter, rect, index);
 }

@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notebooktable.h"
 #include "sql/notetable.h"
 #include <QMessageBox>
+#include <QPainter>
 
 #define NAME_POSITION 0
 
@@ -134,6 +135,8 @@ NTagView::NTagView(QWidget *parent) :
     this->setItemDelegate(new NTagViewDelegate());
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     this->setFrameShape(QFrame::NoFrame);
+    expandedImage = new QImage(":expanded.png");
+    collapsedImage = new QImage(":collapsed.png");
 }
 
 
@@ -902,9 +905,22 @@ QSize NTagView::sizeHint() {
 
 
 void NTagView::drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const {
-    if (index.data(Qt::UserRole).toString() == "root") {
+    if (!index.child(0,0).isValid())
         return;
+    painter->save();
+    if (isExpanded(index)) {
+        int offset = rect.width()-expandedImage->width()-1;
+        painter->drawImage(offset, rect.y(),*expandedImage);
+    } else {
+        int offset = rect.width()-collapsedImage->width()-1;
+        painter->drawImage(offset, rect.y(),*collapsedImage);
     }
+    painter->restore();
+    return;
 
-    QTreeView::drawBranches(painter, rect, index);
+//    if (index.data(Qt::UserRole).toString() == "root") {
+//        return;
+//    }
+
+//    QTreeView::drawBranches(painter, rect, index);
 }

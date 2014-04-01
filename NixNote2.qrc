@@ -64,5 +64,7 @@
         <file alias="windowIcon4.png">images/windowIcon4.png</file>
         <file alias="windowIcon5.png">images/windowIcon5.png</file>
         <file alias="windowIcon6.png">images/windowIcon6.png</file>
+        <file alias="expanded.png">images/expanded.png</file>
+        <file alias="collapsed.png">images/collapsed.png</file>
     </qresource>
 </RCC>
