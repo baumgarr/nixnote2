@@ -278,10 +278,16 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
         int i = extension.indexOf(".");
         extension = extension.mid(i);
     }
-    if (extension == ".exe" || extension == ".dll" || extension == ".zip" ||
-            extension == ".bz" || extension == ".tar.gz" || extension == ".tar" ||
-            extension == ".bz2" || extension == ".so")
-        return;
+    if (extension != ".doc"  && extension != ".xls"  && extension != ".ppt" &&
+        extension != ".docx" && extension != ".xlsx" && extension != ".pptx" &&
+        extension != ".pps"  && extension != ".pdf"  && extension != ".odt"  &&
+        extension != ".odf"  && extension != ".ott"  && extension != ".odm"  &&
+        extension != ".html" && extension != ".txt"  && extension != ".oth"  &&
+        extension != ".ods"  && extension != ".ots"  && extension != ".odg"  &&
+        extension != ".otg"  && extension != ".odp"  && extension != ".otp"  &&
+        extension != ".odb"  && extension != ".oxt"  && extension != ".htm"  &&
+        extension != ".docm")
+                return;
 
     QString file = global.fileManager.getDbaDirPath() + QString::number(reslid) +extension;
 //    QString file = global.fileManager.getDbaDirPath() + "191" +extension;
