@@ -66,5 +66,6 @@
         <file alias="windowIcon6.png">images/windowIcon6.png</file>
         <file alias="expanded.png">images/expanded.png</file>
         <file alias="collapsed.png">images/collapsed.png</file>
+        <file alias="htmlentities.png">images/htmlentities.png</file>
     </qresource>
 </RCC>

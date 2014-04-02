@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/nnotebookview.h"
 #include "threads/syncrunner.h"
 #include "gui/externalbrowse.h"
+#include "dialog/htmlentitiesdialog.h"
 
 #include <QTabBar>
 #include <QStackedWidget>
@@ -41,6 +42,7 @@ private:
     NTagView *tagTreeView;
     NNotebookView *notebookTreeView;
     SyncRunner *syncThread;
+    HtmlEntitiesDialog *htmlEntities;
 
 public:
     explicit NTabWidget(SyncRunner *s, NNotebookView *n, NTagView *t);
@@ -90,6 +92,8 @@ public slots:
     void refreshNoteContent(qint32 lid);  // refresh a note's contents
     void updateNoteListSignaled(qint32, int, QVariant); // A note was edited so we update the note list
     void noteContentEdited(QString uuid, qint32 lid, QString content);
+    void showHtmlEntities();
+    void htmlEntitiesClicked(QString entity);
 
 };
 

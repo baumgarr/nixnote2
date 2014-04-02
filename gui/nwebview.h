@@ -73,6 +73,7 @@ public:
     QAction *deleteTableRowAction;
     QAction *openAction;
     QAction *insertQuickLinkAction;
+    QAction *insertHtmlEntitiesAction;
 
     bool isDirty;
     NWebPage *editorPage;

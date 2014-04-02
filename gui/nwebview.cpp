@@ -125,6 +125,15 @@ NWebView::NWebView(NBrowserWindow *parent) :
     this->setupShortcut(todoAction, "Edit_Insert_Todo");
     connect(todoAction, SIGNAL(triggered()), parent, SLOT(todoButtonPressed()));
 
+    contextMenu->addSeparator();
+
+    insertHtmlEntitiesAction = new QAction(tr("HTML Entities"),this);
+    contextMenu->addAction(insertHtmlEntitiesAction);
+    this->setupShortcut(insertHtmlEntitiesAction, "Edit_Insert_Html_Entities");
+    connect(insertHtmlEntitiesAction, SIGNAL(triggered()), parent, SLOT(insertHtmlEntities()));
+
+    contextMenu->addSeparator();
+
     encryptAction = new QAction(tr("Encrypted Selected Text"), this);
     contextMenu->addAction(encryptAction);
     this->setupShortcut(encryptAction, "Edit_EncryptText");

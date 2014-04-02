@@ -58,6 +58,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     todoVisible = contextMenu->addAction(tr("Todo"));
     spellCheckButtonVisible = contextMenu->addAction(tr("Spell Check"));
     insertTableButtonVisible = contextMenu->addAction(tr("Insert Table"));
+    htmlEntitiesButtonVisible = contextMenu->addAction(tr("HTML Entities"));
 
     undoVisible->setCheckable(true);
     redoVisible->setCheckable(true);
@@ -86,6 +87,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     spellCheckButtonVisible->setCheckable(true);
     spellCheckButtonVisible->setChecked(true);
     insertTableButtonVisible->setCheckable(true);
+    htmlEntitiesButtonVisible->setCheckable(true);
 
     connect(undoVisible, SIGNAL(triggered()), this, SLOT(toggleUndoButtonVisible()));
     connect(redoVisible, SIGNAL(triggered()), this, SLOT(toggleRedoButtonVisible()));
@@ -112,6 +114,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(fontColorVisible, SIGNAL(triggered()), this, SLOT(toggleFontColorVisible()));
     connect(insertTableButtonVisible, SIGNAL(triggered()), this, SLOT(toggleInsertTableButtonVisible()));
     connect(spellCheckButtonVisible, SIGNAL(triggered()), this, SLOT(toggleSpellCheckButtonVisible()));
+    connect(htmlEntitiesButtonVisible, SIGNAL(triggered()), this, SLOT(toggleHtmlEntitiesButtonVisible()));
 
 
   undoButtonAction = this->addAction(QIcon(":undo.png"), tr("Undo"));
@@ -205,6 +208,9 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
   insertTableButtonAction = this->addAction(QIcon(":grid.png"), tr("Insert Table"));
   this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
+
+  htmlEntitiesButtonAction = this->addAction(QIcon(":htmlentities.png"), tr("Insert HTML Entities"));
+//  this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
 }
 
 
@@ -316,6 +322,9 @@ void EditorButtonBar::saveVisibleButtons() {
     value = spellCheckButtonAction->isVisible();
     global.settings->setValue("spellCheckButtonVisible", value);
 
+    value = htmlEntitiesButtonAction->isVisible();
+    global.settings->setValue("htmlEntitiesButtonVisible", value);
+
     global.settings->endGroup();
 }
 
@@ -397,6 +406,11 @@ void EditorButtonBar::setupVisibleButtons() {
 
     spellCheckButtonAction->setVisible(global.settings->value("spelLCheckButtonVisible", true).toBool());
     spellCheckButtonVisible->setChecked(spellCheckButtonAction->isVisible());
+
+    if (htmlEntitiesButtonVisible->isVisible()) {
+        htmlEntitiesButtonAction->setVisible(global.settings->value("htmlEntitiesButtonVisible", true).toBool());
+        htmlEntitiesButtonVisible->setChecked(htmlEntitiesButtonAction->isVisible());
+    }
 
     global.settings->endGroup();
 }
@@ -501,6 +515,10 @@ void EditorButtonBar::toggleInsertTableButtonVisible() {
 }
 void EditorButtonBar::toggleSpellCheckButtonVisible() {
     spellCheckButtonAction->setVisible(spellCheckButtonVisible->isChecked());
+    saveVisibleButtons();
+}
+void EditorButtonBar::toggleHtmlEntitiesButtonVisible() {
+    htmlEntitiesButtonAction->setVisible(htmlEntitiesButtonVisible->isChecked());
     saveVisibleButtons();
 }
 

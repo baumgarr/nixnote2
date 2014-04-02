@@ -86,6 +86,8 @@ public:
     QAction *insertTableButtonAction;
     QAction *spellCheckButtonAction;
     QAction *spellCheckButtonVisible;
+    QAction *htmlEntitiesButtonAction;
+    QAction *htmlEntitiesButtonVisible;
     QComboBox *fontNames;
     QComboBox *fontSizes;
 
@@ -134,6 +136,7 @@ public slots:
     void toggleRemoveFormatVisible();
     void toggleHighlightColorVisible();
     void toggleInsertTableButtonVisible();
+    void toggleHtmlEntitiesButtonVisible();
     void loadFontSizeComboBox(QString font);
     void loadFontNames();
     

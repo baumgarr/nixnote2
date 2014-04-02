@@ -215,6 +215,7 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
     connect(buttonBar->insertTableButtonAction, SIGNAL(triggered()), this, SLOT(insertTableButtonPressed()));
+    connect(buttonBar->htmlEntitiesButtonAction, SIGNAL(triggered()), this, SLOT(insertHtmlEntities()));
 }
 
 
@@ -936,6 +937,13 @@ void NBrowserWindow::fontSizeSelected(int index) {
     microFocusChanged();
 }
 
+
+
+void NBrowserWindow::insertHtml(QString html) {
+    QString script = QString("document.execCommand('insertHtml', false, '"+html+"');");
+    editor->page()->mainFrame()->evaluateJavaScript(script);
+    microFocusChanged();
+}
 
 
 // The font name list was selected
@@ -2520,6 +2528,20 @@ void NBrowserWindow::spellCheckPressed() {
 }
 
 
+
+void NBrowserWindow::insertHtmlEntities() {
+    emit showHtmlEntities();
+}
+
+
+
+void NBrowserWindow::hideHtmlEntities() {
+    buttonBar->htmlEntitiesButtonVisible->setVisible(false);
+    buttonBar->htmlEntitiesButtonAction->setVisible(false);
+    editor->insertHtmlEntitiesAction->setVisible(false);
+}
+
+
 // This is used to notify the tab window that the contents of a
 // note have changed.  It avoids some of the overhead that happens
 // when a note is first edited, but it is signaled on every change.
@@ -2529,3 +2551,8 @@ void NBrowserWindow::spellCheckPressed() {
 void NBrowserWindow::noteContentEdited() {
     emit noteContentEditedSignal(uuid, lid, editor->editorPage->mainFrame()->documentElement().toOuterXml());
 }
+
+
+
+
+

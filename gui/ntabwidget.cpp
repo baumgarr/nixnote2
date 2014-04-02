@@ -60,9 +60,13 @@ NTabWidget::NTabWidget(SyncRunner *s, NNotebookView *n, NTagView *t)
     connect(tabBar, SIGNAL(tabMoved(int, int)),
                  this, SLOT(moveTab(int, int)));
     this->layout()->setMargin(0);
+    htmlEntities = new HtmlEntitiesDialog();
+    htmlEntities->setHidden(true);
+    connect(htmlEntities, SIGNAL(entityClicked(QString)), this, SLOT(htmlEntitiesClicked(QString)));
 }
 
 NTabWidget::~NTabWidget() {
+    htmlEntities->close();
     delete browserList;
 }
 
@@ -80,6 +84,8 @@ void NTabWidget::addBrowser(NBrowserWindow *v, QString title) {
         tabBar->setHidden(true);
     else
         tabBar->setHidden(false);
+
+    connect(v, SIGNAL(showHtmlEntities()), this, SLOT(showHtmlEntities()));
     return;
 }
 
@@ -116,7 +122,8 @@ NBrowserWindow* NTabWidget::currentBrowser() {
     }
 
     // If no external window has focus then we return any current
-    // tab.  This really shouldn't happen.
+    // tab.  This can happen if a user clicks on an html entities dialog
+    // from an external window.
     return this->browserList->at(tabBar->currentIndex());
 }
 
@@ -382,6 +389,9 @@ void NTabWidget::setupExternalBrowserConnections(NBrowserWindow *newBrowser) {
     connect(syncThread, SIGNAL(noteUpdated(qint32)), this, SLOT(noteSyncSignaled(qint32)));
     connect(newBrowser, SIGNAL(noteContentEditedSignal(QString,qint32,QString)), this,  SLOT(noteContentEdited(QString,qint32,QString)));
     connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool)), this, SLOT(evernoteLinkClicked(qint32, bool)));
+
+    // Hide the html entities dialog since it doesn't work.
+    newBrowser->hideHtmlEntities();
 }
 
 
@@ -421,4 +431,14 @@ void NTabWidget::saveAllNotes() {
     for (int i=0; i<externalList->size(); i++) {
         externalList->at(i)->browser->saveNoteContent();
     }
+}
+
+
+void NTabWidget::showHtmlEntities() {
+    htmlEntities->setVisible(true);
+}
+
+
+void NTabWidget::htmlEntitiesClicked(QString entity) {
+    currentBrowser()->insertHtml(entity);
 }

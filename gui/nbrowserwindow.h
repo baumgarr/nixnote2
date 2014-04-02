@@ -132,6 +132,8 @@ public:
     void contentChanged();
     void printNote();
     void updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash);
+    void insertHtml(QString html);
+    void hideHtmlEntities();
 
 signals:
     void noteUpdated(qint32);
@@ -139,6 +141,7 @@ signals:
     void evernoteLinkClicked(qint32 lid, bool newWindow);
     void updateNoteList(qint32 lid, int column, QVariant data);
     void noteContentEditedSignal(QString uuid, qint32 lid, QString content);
+    void showHtmlEntities();
 
 public slots:
     void changeExpandState(int value);
@@ -220,6 +223,7 @@ public slots:
     void removeEncryption(QString id, QString plainText, bool permanent, QString slot);
     void spellCheckPressed();
     void noteContentEdited();
+    void insertHtmlEntities();
 
 private slots:
     void sendTitleUpdateSignal();
