@@ -59,10 +59,7 @@ void UrlEditor::setActiveColor() {
 void UrlEditor::setUrl(qint32 lid, QString text) {
     currentLid = lid;
     blockSignals(true);
-    if (text.trimmed() == "")
-        return;
-    else
-        setText(text);
+    setText(text);
     blockSignals(false);
     initialText = text;
     priorText = text;

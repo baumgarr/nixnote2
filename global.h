@@ -128,6 +128,8 @@ public:
     int getColumnPosition(QString col);
     int getColumnWidth(QString col);
     int getMinimumRecognitionWeight();
+    void setSynchronizeAttachments(bool value);
+    bool synchronizeAttachments();
     qlonglong getLastReminderTime();
     void setLastReminderTime(qlonglong value);
     void setMinimumRecognitionWeight(int weight);

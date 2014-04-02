@@ -3,12 +3,14 @@
 
 #include <QWidget>
 #include <QSpinBox>
+#include <QCheckBox>
 
 class SearchPreferences : public QWidget
 {
     Q_OBJECT
 private:
     QSpinBox *weight;
+    QCheckBox *syncAttachments;
 
 public:
     explicit SearchPreferences(QWidget *parent = 0);

@@ -1600,6 +1600,10 @@ void NBrowserWindow::clear() {
     authorEditor.setText("");
     authorEditor.blockSignals(false);
 
+    urlEditor.blockSignals(true);
+    urlEditor.setUrl(-1, "");
+    urlEditor.blockSignals(false);
+
 //    dateEditor.setEnabled(false);
 //    editor->page()->setContentEditable(false);
 

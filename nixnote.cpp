@@ -1948,6 +1948,7 @@ void NixNote::openPreferences() {
             closeToTray = global.closeToTray();
             trayIconBehavior();
         }
+        indexRunner.officeFound = global.synchronizeAttachments();
     }
     setDebugLevel();
 }

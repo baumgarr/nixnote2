@@ -49,7 +49,6 @@ private:
     bool init;
     int minInterval;
     int maxInterval;
-    int officeFound;
     void indexRecognition(qint32 lid, Resource &r);
     void indexNote(qint32 lid, Note &n);
     void indexPdf(qint32 lid, Resource &r);
@@ -61,6 +60,7 @@ public:
     bool keepRunning;
     bool pauseIndexing;
     void initialize();
+    bool officeFound;
     IndexRunner();
     ~IndexRunner();
 

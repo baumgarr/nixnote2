@@ -259,6 +259,26 @@ void Global::setMinimumRecognitionWeight(int weight) {
 }
 
 
+
+
+
+bool Global::synchronizeAttachments() {
+    settings->beginGroup("Search");
+    bool value = settings->value("synchronizeAttachments", true).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+
+void Global::setSynchronizeAttachments(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("synchronizeAttachments", value);
+    settings->endGroup();
+}
+
+
+
 qlonglong Global::getLastReminderTime() {
     settings->beginGroup("Reminders");
     qlonglong value = settings->value("lastReminderTime", 0).toLongLong();
