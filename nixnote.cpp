@@ -1195,6 +1195,7 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
     global.filterCriteria[global.filterPosition]->getSelectedNotes(selectedNotes);
     if (selectedNotes.size() == 0) {
         tabWindow->currentBrowser()->clear();
+        tabWindow->currentBrowser()->setReadOnly(true);
     }
     if (selectedNotes.size() > 0 && !afterSync) {
         tabWindow->currentBrowser()->setContent(selectedNotes.at(0));

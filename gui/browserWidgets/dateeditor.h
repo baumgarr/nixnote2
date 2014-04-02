@@ -48,6 +48,7 @@ public:
     explicit DateEditor(QWidget *parent = 0);
     void setNote(qint32 lid, Note n);
     void setUpdateDate(qint64 value);
+    void clear();
     
 signals:
     void valueChanged();

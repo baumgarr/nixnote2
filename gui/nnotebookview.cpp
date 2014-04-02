@@ -510,11 +510,10 @@ void NNotebookView::notebookExpunged(qint32 lid) {
         dataStore.remove(lid);
         if (parent != NULL) {
             parent->removeChild(item);
-            if (parent->childCount() == 0) {
-                this->removeItemWidget(parent, 0);
+            if (parent->childCount() == 0 && parent->parent() != NULL) {
+               parent->parent()->removeChild(parent);
                 stackStore.remove(parent->stack);
                 dataStore.remove(parent->lid);
-                //delete parent;
             }
         }
         //delete item;

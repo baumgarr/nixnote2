@@ -626,7 +626,8 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
                                                   SYNC_CHUNK_TAGS | SYNC_CHUNK_SEARCHES,
                                                   fs)) {
                 more = false;
-                if (comm->error.type == CommunicationError::EDAMNotFoundException) {
+                if (comm->error.type == CommunicationError::EDAMNotFoundException ||
+                        (comm->error.type == CommunicationError::EDAMUserException && comm->error.code == EDAMErrorCode::PERMISSION_DENIED)) {
                     ltable.expunge(lids[i]);
                     emit(notebookExpunged(lids[i]));
                 } else {

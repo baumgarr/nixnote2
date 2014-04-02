@@ -235,9 +235,11 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     //hammer->timer.stop();
     // First, make sure we have a valid lid
-    if (lid == -1) {       
-        editor->page()->setContentEditable(false);
+    if (lid == -1) {
+        blockSignals(true);
+        setReadOnly(true);
         clear();
+        blockSignals(false);
         return;
     }
 
@@ -378,22 +380,26 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
     if (readOnly) {
         noteTitle.setFocusPolicy(Qt::NoFocus);
         tagEditor.setEnabled(false);
+        tagEditor.setFocusPolicy(Qt::NoFocus);
         authorEditor.setFocusPolicy(Qt::NoFocus);
         locationEditor.setFocusPolicy(Qt::NoFocus);
         urlEditor.setFocusPolicy(Qt::NoFocus);
         notebookMenu.setEnabled(false);
         dateEditor.setEnabled(false);
         editor->page()->setContentEditable(false);
+        alarmButton.setEnabled(false);
         return;
     }
     noteTitle.setFocusPolicy(Qt::StrongFocus);
     tagEditor.setEnabled(true);
+    tagEditor.setFocusPolicy(Qt::StrongFocus);
     authorEditor.setFocusPolicy(Qt::StrongFocus);
     locationEditor.setFocusPolicy(Qt::StrongFocus);
     urlEditor.setFocusPolicy(Qt::StrongFocus);
     notebookMenu.setEnabled(true);
     dateEditor.setEnabled(true);
     editor->page()->setContentEditable(true);
+    alarmButton.setEnabled(true);
 
 }
 
@@ -1571,15 +1577,33 @@ void NBrowserWindow::toggleSource() {
 
 // Clear out the window's contents
 void NBrowserWindow::clear() {
+
     sourceEdit->blockSignals(true);
     editor->blockSignals(true);
     sourceEdit->setPlainText("");
-    editor->setContent("<html><body></body></html>");
+    editor->setContent("<html><body></body></html>"); 
     sourceEdit->setReadOnly(true);
     editor->page()->setContentEditable(false);
     lid = -1;
     editor->blockSignals(false);
     sourceEdit->blockSignals(false);
+
+    noteTitle.blockSignals(true);
+    noteTitle.setTitle(-1, "", "");
+    noteTitle.blockSignals(false);
+
+    tagEditor.blockSignals(true);
+    tagEditor.clear();
+    tagEditor.blockSignals(false);
+
+    authorEditor.blockSignals(true);
+    authorEditor.setText("");
+    authorEditor.blockSignals(false);
+
+//    dateEditor.setEnabled(false);
+//    editor->page()->setContentEditable(false);
+
+    dateEditor.clear();
 }
 
 

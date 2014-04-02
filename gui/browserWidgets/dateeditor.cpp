@@ -115,3 +115,19 @@ void DateEditor::setUpdateDate(qint64 value) {
     updatedDate.setDate(value);
     this->blockSignals(false);
 }
+
+
+
+void DateEditor::clear() {
+    blockSignals(true);
+    subjectDate.blockSignals(true);
+    subjectDate.setDateTime(QDateTime::currentDateTime());
+    subjectDate.blockSignals(false);
+    updatedDate.blockSignals(true);
+    updatedDate.setDateTime(QDateTime::currentDateTime());
+    updatedDate.blockSignals(false);
+    createdDate.blockSignals(true);
+    createdDate.setDateTime(QDateTime::currentDateTime());
+    createdDate.blockSignals(false);
+    blockSignals(false);
+}
