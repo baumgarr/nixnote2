@@ -317,12 +317,14 @@ void NTagView::tagUpdated(qint32 lid, QString name, QString parentGuid, qint32 a
 
     // Check if it already exists and if its parent exists
     NTagViewItem *newWidget = NULL;
-    if (this->dataStore.contains(lid)) {
+    if (this->dataStore.contains(lid) && dataStore[lid] != NULL) {
         newWidget = dataStore[lid];
-        newWidget->parent()->removeChild(newWidget);
+        if (newWidget->parent() != NULL)
+            newWidget->parent()->removeChild(newWidget);
     } else {
         newWidget = new NTagViewItem();
         newWidget->account = account;
+        dataStore.remove(lid);
         dataStore.insert(lid, newWidget);
     }
     parentLid = tagTable.getLid(parentGuid);

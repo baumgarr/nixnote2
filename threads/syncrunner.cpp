@@ -434,11 +434,6 @@ void SyncRunner::syncRemoteTags(vector<Tag> tags, qint32 account) {
         QString parentGuid = "";
         if (t.__isset.parentGuid)
             parentGuid = QString::fromStdString(t.parentGuid);
-        if (parentGuid != "") {
-            qint32 parentLid = tagTable.getLid(parentGuid);
-            QLOG_ERROR() << "PARENTLID:" << parentLid;
-            QLOG_ERROR() << "PARENT:" << parentGuid << " " << account << " " << lid;
-        }
         emit tagUpdated(lid, QString::fromStdString(t.name), parentGuid, account);
     }
 

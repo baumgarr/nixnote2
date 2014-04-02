@@ -33,6 +33,7 @@ using namespace Poppler;
 IndexRunner::IndexRunner()
 {
     init = false;
+    officeFound = true;
 }
 
 
@@ -263,22 +264,27 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
 // Index any PDFs that are attached.  Basically it turns the PDF into text and adds it the same
 // way as a note's body
 void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
-    return;
+    if (!officeFound)
+        return;
+    QLOG_DEBUG() << "indexing attachment to note " << lid;
     ResourceTable rtable(&db->conn);
     qint32 reslid = rtable.getLid(r.guid);
     if (lid <= 0 || !keepRunning || pauseIndexing)
         return;
+    QLOG_DEBUG() << "Resource " << reslid;
     QString extension = "";
     if (r.__isset.attributes && r.attributes.__isset.fileName) {
         extension = QString::fromStdString(r.attributes.fileName);
         int i = extension.indexOf(".");
         extension = extension.mid(i);
     }
-    if (extension == ".exe" || extension == ".dlL" || extension == ".zip" ||
-            extension == ".bz" || extension == ".tar.gz" || extension == ".tar")
+    if (extension == ".exe" || extension == ".dll" || extension == ".zip" ||
+            extension == ".bz" || extension == ".tar.gz" || extension == ".tar" ||
+            extension == ".bz2" || extension == ".so")
         return;
 
     QString file = global.fileManager.getDbaDirPath() + QString::number(reslid) +extension;
+//    QString file = global.fileManager.getDbaDirPath() + "191" +extension;
     QFile dataFile(file);
     if (!dataFile.exists()) {
         QDir dir(global.fileManager.getDbaDirPath());
@@ -290,22 +296,43 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
         }
     }
 
-    QString outFile = global.fileManager.getDbaDirPath() + QString::number(reslid) + "-index.txt";
+    QString outDir = global.fileManager.getTmpDirPath();
 
     QProcess sofficeProcess;
-    sofficeProcess.start("soffice --headless --convert-to txt:\"text\" "+file,
+    QString cmd = "soffice --headless --convert-to txt:\"Text\" --outdir "
+                    +outDir + " "
+                    +file;
+
+    sofficeProcess.start(cmd,
                          QIODevice::ReadWrite|QIODevice::Unbuffered);
 
-    QLOG_DEBUG() << "Starting soffice " << sofficeProcess.waitForStarted();
-    QLOG_DEBUG() << "Stopping soffice " << sofficeProcess.waitForFinished() << " Return Code: " << sofficeProcess.state();
+    QLOG_DEBUG() << "Starting soffice ";
+    sofficeProcess.waitForStarted();
+    QLOG_DEBUG() << "Waiting for completion";
+    sofficeProcess.waitForFinished();
+    int rc = sofficeProcess.exitCode();
     QLOG_DEBUG() << "soffice Errors:" << sofficeProcess.readAllStandardError();
     QLOG_DEBUG() << "soffice Output:" << sofficeProcess.readAllStandardOutput();
-
-//    NSqlQuery sql(db->conn);
-//    sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
-//    sql.bindValue(":lid", lid);
-//    sql.bindValue(":weight", 100);
-//    QLOG_DEBUG() << "Adding note resource to index DB";
-//    sql.exec();
+    QLOG_DEBUG() << "return code:" << rc;
+    if (rc == 255) {
+        QLOG_ERROR() << "soffice not found.  Disabling attachment indexing.";
+        this->officeFound = false;
+        return;
+    }
+    QFile txtFile(outDir+QString::number(reslid) +".txt");
+    if (txtFile.open(QIODevice::ReadOnly)) {
+        QString text;
+        text = txtFile.readAll();
+        NSqlQuery sql(db->conn);
+        sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
+        sql.bindValue(":lid", lid);
+        sql.bindValue(":weight", 100);
+        sql.bindValue(":content", text);
+        QLOG_DEBUG() << "Adding note resource to index DB";
+        sql.exec();
+        txtFile.close();
+    }
+    QDir dir;
+    dir.remove(outDir+QString::number(reslid) +".txt");
 }
 

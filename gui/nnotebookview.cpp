@@ -307,24 +307,26 @@ void NNotebookView::rebuildTree() {
     while (i.hasNext()) {
         i.next();
         NNotebookViewItem *widget = i.value();
-        if (closedLids.contains(widget->lid))
-            widget->setHidden(true);
-        else
-            widget->setHidden(false);
-        if (i.value()->stack != "") {
-            NNotebookViewItem *stackWidget = NULL;
-            if (stackStore.contains(i.value()->stack)) {
-                stackWidget = stackStore[i.value()->stack];
-            } else {
-                NNotebookViewItem *stackWidget = new NNotebookViewItem(0);
-                stackWidget->setData(NAME_POSITION, Qt::DisplayRole, i.value()->stack);
-                stackWidget->setData(NAME_POSITION, Qt::UserRole, "STACK");
-                stackStore.insert(widget->stack, stackWidget);
-                root->addChild(stackWidget);
+        if (widget != NULL) {
+            if (closedLids.contains(widget->lid))
+                widget->setHidden(true);
+            else
+                widget->setHidden(false);
+            if (i.value()->stack != "") {
+                NNotebookViewItem *stackWidget = NULL;
+                if (stackStore.contains(i.value()->stack)) {
+                    stackWidget = stackStore[i.value()->stack];
+                } else {
+                    NNotebookViewItem *stackWidget = new NNotebookViewItem(0);
+                    stackWidget->setData(NAME_POSITION, Qt::DisplayRole, i.value()->stack);
+                    stackWidget->setData(NAME_POSITION, Qt::UserRole, "STACK");
+                    stackStore.insert(widget->stack, stackWidget);
+                    root->addChild(stackWidget);
+                }
+                i.value()->parent()->removeChild(i.value());
+                stackWidget->childrenLids.append(i.key());
+                stackWidget->addChild(i.value());
             }
-            i.value()->parent()->removeChild(i.value());
-            stackWidget->childrenLids.append(i.key());
-            stackWidget->addChild(i.value());
         }
     }
 
