@@ -39,3 +39,6 @@ nixnote2
 
 #compiled translations
 translations/*.qm
+
+#KDE workfile
+.directory
