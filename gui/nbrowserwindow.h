@@ -224,6 +224,7 @@ public slots:
     void spellCheckPressed();
     void noteContentEdited();
     void insertHtmlEntities();
+    void handleUrls(const QMimeData *mime);
 
 private slots:
     void sendTitleUpdateSignal();

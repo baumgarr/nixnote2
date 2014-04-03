@@ -483,3 +483,12 @@ void NWebView::downloadRequested(QNetworkRequest req) {
 
     }
 }
+
+
+
+void NWebView::dropEvent(QDropEvent *e) {
+        setFocus();
+        const QMimeData *mime = e->mimeData();
+        parent->handleUrls(mime);
+        parent->contentChanged();
+}

@@ -110,6 +110,7 @@ private slots:
     void exposeToJavascript();
     void setDefaultTitle();
     void downloadRequested(QNetworkRequest);
+    void dropEvent(QDropEvent *e);
 
 
 };
