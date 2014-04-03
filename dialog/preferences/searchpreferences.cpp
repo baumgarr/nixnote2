@@ -12,7 +12,7 @@ SearchPreferences::SearchPreferences(QWidget *parent) :
     QGridLayout *mainLayout = new QGridLayout(this);
     setLayout(mainLayout);
 
-    syncAttachments = new QCheckBox(tr("Synchronize Attachments"));
+    syncAttachments = new QCheckBox(tr("Index Attachments"));
     mainLayout->addWidget(syncAttachments,0,0);
     syncAttachments->setChecked(global.synchronizeAttachments());
 
