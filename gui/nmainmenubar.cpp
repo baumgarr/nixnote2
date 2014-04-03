@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include <QAbstractAnimation>
 #include <QFileIconProvider>
+#include <QDesktopServices>
 
 extern Global global;
 
@@ -457,6 +458,12 @@ void NMainMenuBar::setupToolsMenu() {
 void NMainMenuBar::setupHelpMenu() {
     helpMenu = this->addMenu(tr("&Help"));
 
+    openManualAction = new QAction(tr("User's Guide"), this);
+    openManualAction->setToolTip(tr("Open the user manual."));
+    openManualAction->setFont(font);
+    connect(openManualAction, SIGNAL(triggered()),
+            this, SLOT(openManual()));
+    helpMenu->addAction(openManualAction);
 
     openMessageLogAction = new QAction(tr("Message Log"), this);
     openMessageLogAction->setToolTip(tr("View current program messages"));
@@ -464,6 +471,7 @@ void NMainMenuBar::setupHelpMenu() {
     connect(openMessageLogAction, SIGNAL(triggered()), parent, SLOT(openMessageLog()));
     helpMenu->addAction(openMessageLogAction);
 
+    helpMenu->addSeparator();
 
     openEvernoteSupportAction = new QAction(tr("Evernote Support"), this);
     openEvernoteSupportAction->setToolTip(tr("Go to Evernote's support page"));
@@ -495,4 +503,11 @@ void NMainMenuBar::setupShortcut(QAction *action, QString text) {
         return;
     QKeySequence key(global.shortcutKeys->getShortcut(&text));
     action->setShortcut(key);
+}
+
+
+
+void NMainMenuBar::openManual() {
+    QDesktopServices::openUrl(QString("file://") +
+                              global.getProgramDirPath()+"/help/UserDocumentation.pdf");
 }

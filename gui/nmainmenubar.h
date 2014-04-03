@@ -106,6 +106,7 @@ public:
     QAction *unpinNoteAction;
     QAction *spellCheckAction;
     QAction *openTrunkAction;
+    QAction *openManualAction;
     QAction *openEvernoteSupportAction;
     QAction *openMessageLogAction;
 
@@ -116,6 +117,7 @@ public:
 signals:
 
 public slots:
+    void openManual();
 
 };
 
