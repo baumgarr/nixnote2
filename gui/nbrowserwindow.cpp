@@ -2580,39 +2580,6 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
         if (file.toLower().startsWith("file://"))
             attachFileSelected(file.mid(7));
     }
-//    MimeReference ref;
-
-//    QList<QUrl> urlList = mime->urls();
-//    QString url;
-//    QString script_start(
-//            "document.execCommand('createLink', false, '");
-//    QString script_end("');");
-
-//    for (int i = 0; i < urlList.size(); i++) {
-//        url = urlList[i].toString();
-//        // Find out what type of file we have
-//        QString extension = url.section(".",2,2);
-//        QString mimeType = ref.getMimeFromExtension("."+extension);
-
-//        // Check if we have an image or some other type of file
-//        if (url.toLower().startsWith("file:")
-//                && mimeType.startsWith("image")) {
-//            //handleLocalImageURLPaste(mime, mimeType);
-//            return;
-//        }
-
-//        //bool smallEnough = checkFileAttachmentSize(url);
-//        bool smallEnough = true;
-//        if (smallEnough
-//                && url.toLower().startsWith("file:")
-//                && !mimeType.startsWith("image")) {
-//            //handleLocalAttachment(mime, mimeType);
-//            return;
-//        }
-//        editor->page()->mainFrame()->evaluateJavaScript(
-//                script_start + url + script_end);
-//    }
-//    return;
 }
 
 
