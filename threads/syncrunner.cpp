@@ -932,19 +932,62 @@ qint32 SyncRunner::uploadPersonalNotes() {
     NotebookTable notebookTable(&db->conn);
     LinkedNotebookTable linkedNotebookTable(&db->conn);
     NoteTable noteTable(&db->conn);
-    QList<qint32> lids, validLids, deletedLids;
+    QList<qint32> lids, validLids, deletedLids, movedLids;
     noteTable.getAllDirty(lids);
 
     // Get a list of all notes that are both dirty and in an account we own and isn't deleted
     for (int i=0; i<lids.size(); i++) {
         qint32 notebookLid = noteTable.getNotebookLid(lids[i]);
-        if (!linkedNotebookTable.exists(notebookLid) && !notebookTable.isLocal(notebookLid)) {
-            if (noteTable.isDeleted(lids[i]))
-                deletedLids.append(lids[i]);
-            else
-                validLids.append(lids[i]);
+        if (!linkedNotebookTable.exists(notebookLid)) {
+            if (!notebookTable.isLocal(notebookLid)) {
+                if (noteTable.isDeleted(lids[i]))
+                    deletedLids.append(lids[i]);
+                else
+                    validLids.append(lids[i]);
+            } else {
+                // We have a note that is local.  Check if it was once
+                // synchronized.  If so, it was moved to a local notebook
+                // and now needs to be deleted on the remote end
+                Note n;
+                noteTable.get(n, lids[i], false, false);
+                if (n.__isset.updateSequenceNum && n.updateSequenceNum > 0) {
+                    movedLids.append(lids[i]);
+                }
+            }
         }
     }
+
+    // Start deleting notes
+    for (int i=0; i<deletedLids.size(); i++) {
+        QString guid = noteTable.getGuid(deletedLids[i]);
+        noteTable.setDirty(lids[i], false);
+        usn = comm->deleteNote(guid.toStdString());
+        if (usn > maxUsn) {
+            maxUsn = usn;
+            noteTable.setUpdateSequenceNumber(deletedLids[i], usn);
+            noteTable.setDirty(deletedLids[i], false);
+            emit(noteSynchronized(deletedLids[i], false));
+        }
+    }
+
+    // Start handling notes moved to a local notebook.  What
+    // we do is to delete the note on Evernote, then give the
+    // note in the local notebook a new GUID & set the
+    // update sequence number to 0.
+    for (int i=0; i<movedLids.size(); i++) {
+        QUuid uuid;
+        Guid newGuid = uuid.createUuid().toString().replace("{","").replace("}","").toStdString();
+        QString guid = noteTable.getGuid(movedLids[i]);
+        noteTable.setDirty(movedLids[i], false);
+        noteTable.updateGuid(movedLids[i], newGuid);
+        noteTable.setUpdateSequenceNumber(movedLids[0], 0);
+        usn = comm->deleteNote(guid.toStdString());
+        if (usn > maxUsn) {
+            maxUsn = usn;
+        }
+        emit(noteSynchronized(movedLids[i], false));
+    }
+
 
     // Start uploading notes
     for (int i=0; i<validLids.size(); i++) {
@@ -969,18 +1012,6 @@ qint32 SyncRunner::uploadPersonalNotes() {
         }
     }
 
-    // Start deleting notes
-    for (int i=0; i<deletedLids.size(); i++) {
-        QString guid = noteTable.getGuid(deletedLids[i]);
-        noteTable.setDirty(lids[i], false);
-        usn = comm->deleteNote(guid.toStdString());
-        if (usn > maxUsn) {
-            maxUsn = usn;
-            noteTable.setUpdateSequenceNumber(deletedLids[i], usn);
-            noteTable.setDirty(deletedLids[i], false);
-            emit(noteSynchronized(deletedLids[i], false));
-        }
-    }
     return maxUsn;
 }
 
