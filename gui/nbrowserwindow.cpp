@@ -1439,7 +1439,7 @@ void NBrowserWindow::attachFile() {
                  "   var tableRows = nodes.length;"
                  "   nodes = nodes[0].getElementsByTagName('td');"
                  "   var tableColumns = nodes.length;"
-                 "   window.jambi.setTableCursorPositionTab(rowCount, colCount, tableRows, tableColumns);"
+                 "   window.browserWindow.setTableCursorPositionTab(rowCount, colCount, tableRows, tableColumns);"
                  "} getCursorPosition();";
          editor->page()->mainFrame()->evaluateJavaScript(js);
      }
@@ -1476,11 +1476,34 @@ void NBrowserWindow::attachFile() {
                  "   var tableRows = nodes.length;"
                  "   nodes = nodes[0].getElementsByTagName('td');"
                  "   var tableColumns = nodes.length;"
-                 "   window.jambi.setTableCursorPositionBackTab(rowCount, colCount, tableRows, tableColumns);"
+                 "   window.browserWindow.setTableCursorPositionBackTab(rowCount, colCount, tableRows, tableColumns);"
                  "} getCursorPosition();";
          editor->page()->mainFrame()->evaluateJavaScript(js);
      }
  }
+
+
+
+ // If a user presses backtab from within a table
+void NBrowserWindow::setTableCursorPositionBackTab(int currentRow, int currentCol, int tableRows, int tableColumns) {
+     if (currentRow  == 1 && currentCol == 1) {
+         return;
+     }
+     QKeyEvent *up = new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+     QCoreApplication::postEvent(editor->editorPage, up);
+}
+
+
+
+// If a user presses backtab from within a table
+void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, int tableRows, int tableColumns) {
+    if (currentRow  == tableRows && currentCol == tableColumns) {
+        return;
+    }
+    QKeyEvent *down = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+    QCoreApplication::postEvent(editor->editorPage, down);
+}
+
 
 
 // Set the backgroud color of a note

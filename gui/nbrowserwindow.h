@@ -225,6 +225,8 @@ public slots:
     void noteContentEdited();
     void insertHtmlEntities();
     void handleUrls(const QMimeData *mime);
+    void setTableCursorPositionTab(int currentRow, int currentCol, int tableRows, int tableColumns);
+    void setTableCursorPositionBackTab(int currentRow, int currentCol, int tableRows, int tableColumns);
 
 private slots:
     void sendTitleUpdateSignal();

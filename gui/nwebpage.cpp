@@ -47,3 +47,4 @@ void NWebPage::javaScriptConsoleMessage(QString message, int lineNumber, QString
 void NWebPage::editAlert() {
     isDirty = true;
 }
+
