@@ -117,6 +117,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setColumnHidden(NOTE_TABLE_HAS_ENCRYPTION_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_SOURCE_APPLICATION_POSITION, true);
     this->setColumnHidden(NOTE_TABLE_PINNED_POSITION, true);
+    this->setColumnHidden(NOTE_TABLE_COLOR_POSITION, true);
 
     blockSignals(true);
     if (!isColumnHidden(NOTE_TABLE_DATE_CREATED_POSITION))
@@ -252,7 +253,39 @@ NTableView::NTableView(QWidget *parent) :
     mergeNotesAction->setFont(font);
     connect(mergeNotesAction, SIGNAL(triggered()), this, SLOT(mergeNotes()));
 
-    repositionColumns();
+    contextMenu->addSeparator();
+    colorMenu = new QMenu(tr("Title Color"));
+    contextMenu->addMenu(colorMenu);
+
+    noteTitleColorWhiteAction = new QAction(tr("White"), colorMenu);
+    colorMenu->addAction(noteTitleColorWhiteAction);
+    connect(noteTitleColorWhiteAction, SIGNAL(triggered()), this, SLOT(setTitleColorWhite()));
+    noteTitleColorRedAction = new QAction(tr("Red"), colorMenu);
+    colorMenu->addAction(noteTitleColorRedAction);
+    connect(noteTitleColorRedAction, SIGNAL(triggered()), this, SLOT(setTitleColorRed()));
+    noteTitleColorBlueAction = new QAction(tr("Blue"), colorMenu);
+    colorMenu->addAction(noteTitleColorBlueAction);
+    connect(noteTitleColorBlueAction, SIGNAL(triggered()), this, SLOT(setTitleColorBlue()));
+    noteTitleColorGreenAction = new QAction(tr("Green"), colorMenu);
+    colorMenu->addAction(noteTitleColorGreenAction);
+    connect(noteTitleColorGreenAction, SIGNAL(triggered()), this, SLOT(setTitleColorGreen()));
+    noteTitleColorYellowAction = new QAction(tr("Yellow"), colorMenu);
+    colorMenu->addAction(noteTitleColorYellowAction);
+    connect(noteTitleColorYellowAction, SIGNAL(triggered()), this, SLOT(setTitleColorYellow()));
+    noteTitleColorBlackAction = new QAction(tr("Black"), colorMenu);
+    colorMenu->addAction(noteTitleColorBlackAction);
+    connect(noteTitleColorBlackAction, SIGNAL(triggered()), this, SLOT(setTitleColorBlack()));
+    noteTitleColorGrayAction = new QAction(tr("Gray"), colorMenu);
+    colorMenu->addAction(noteTitleColorGrayAction);
+    connect(noteTitleColorGrayAction, SIGNAL(triggered()), this, SLOT(setTitleColorGray()));
+    noteTitleColorCyanAction = new QAction(tr("Cyan"), colorMenu);
+    colorMenu->addAction(noteTitleColorCyanAction);
+    connect(noteTitleColorCyanAction, SIGNAL(triggered()), this, SLOT(setTitleColorCyan()));
+    noteTitleColorMagentaAction = new QAction(tr("Magenta"), colorMenu);
+    colorMenu->addAction(noteTitleColorMagentaAction);
+    connect(noteTitleColorMagentaAction, SIGNAL(triggered()), this, SLOT(setTitleColorMagenta()));
+
+     repositionColumns();
     resizeColumns();
     setColumnsVisible();
     if (!isColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION) && global.listView == Global::ListViewWide)
@@ -1284,3 +1317,28 @@ void NTableView::openNoteNewTabTriggered() {
 void NTableView::createNewNote() {
     emit(newNote());
 }
+
+
+
+void NTableView::setTitleColorWhite() { setTitleColor("white"); }
+void NTableView::setTitleColorRed() { setTitleColor("red"); }
+void NTableView::setTitleColorBlue() { setTitleColor("blue"); }
+void NTableView::setTitleColorGreen() { setTitleColor("green"); }
+void NTableView::setTitleColorYellow() { setTitleColor("yellow"); }
+void NTableView::setTitleColorBlack() { setTitleColor("black"); }
+void NTableView::setTitleColorGray() { setTitleColor("gray"); }
+void NTableView::setTitleColorCyan() { setTitleColor("cyan"); }
+void NTableView::setTitleColorMagenta() { setTitleColor("magenta"); }
+void NTableView::setTitleColor(QString color) {
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    QString value = color;
+    if (color == "white")
+        value = "";
+    NoteTable ntable(global.db);
+    for(int i=0; i<lids.size(); i++) {
+        refreshCell(lids[i], NOTE_TABLE_COLOR_POSITION, value);
+        ntable.setTitleColor(lids[i], value);
+    }
+}
+

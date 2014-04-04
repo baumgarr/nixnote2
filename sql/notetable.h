@@ -171,6 +171,7 @@ public:
     qint32 getThumbnailsNeededCount();
     qint32 addStub(QString noteGuid);                     // Add a stub.  Used if a resource appears before the owning note
     void getAll(QList<qint32> &lids);
+    void setTitleColor(qint32 lid, QString color);
 };
 
 

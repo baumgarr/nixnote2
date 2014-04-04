@@ -89,6 +89,7 @@ void NoteModel::createTable() {
                   QString("reminderTime real default null,") +
                   QString("reminderDoneTime real default null,") +
                   QString("isPinned integer default null,") +
+                  QString("titleColor text default null,") +
                   QString("thumbnail default null") +
                   QString(")"));
     if (!sql.exec(command) ||
@@ -153,12 +154,20 @@ Qt::ItemFlags NoteModel::flags(const QModelIndex &index) const
 
 
 QVariant NoteModel::data (const QModelIndex & index, int role) const {
-//    if (index.column() != NOTE_TABLE_IS_DIRTY_POSITION || role != Qt::DisplayRole)
-        return QSqlTableModel::data(index,role);
+    if (role == Qt::ForegroundRole) {
+        QString color = index.sibling(index.row(), NOTE_TABLE_COLOR_POSITION).data().toString();
+        if (color != "") {
+            if (color == "blue" || color == "black")
+                return QColor("white");
+        }
+    }
 
-//    QVariant v = QSqlTableModel::data(index, role);
-//    if (v.toBool())
-//        return QVariant(QPixmap(":notebook_small.png"));
-//    else
-//        return QPixmap(":notebook_small.png");
+    if (role == Qt::BackgroundRole) {
+        QString color = index.sibling(index.row(), NOTE_TABLE_COLOR_POSITION).data().toString();
+        if (color != "") {
+            return QColor(color);
+        }
+    }
+    return QSqlTableModel::data(index,role);
+
 }

@@ -61,6 +61,7 @@ public:
     void keyPressEvent(QKeyEvent *event);
 
     QMenu *contextMenu;
+    QMenu *colorMenu;
     QAction *addNoteAction;
     QAction *deleteNoteAction;
     QAction *restoreNoteAction;
@@ -72,6 +73,16 @@ public:
     QAction *pinNoteAction;
     QAction *unpinNoteAction;
     QAction *mergeNotesAction;
+
+    QAction *noteTitleColorWhiteAction;
+    QAction *noteTitleColorRedAction;
+    QAction *noteTitleColorBlueAction;
+    QAction *noteTitleColorGreenAction;
+    QAction *noteTitleColorYellowAction;
+    QAction *noteTitleColorBlackAction;
+    QAction *noteTitleColorGrayAction;
+    QAction *noteTitleColorCyanAction;
+    QAction *noteTitleColorMagentaAction;
 
     void getSelectedLids(QList<qint32> &lids);
     bool isLidSelected(qint32 lid);
@@ -113,6 +124,18 @@ public slots:
     void dragLeaveEvent(QDragLeaveEvent *event);
     void dropEvent(QDropEvent *event);
     void mousePressEvent(QMouseEvent *event);
+
+    void setTitleColorWhite();
+    void setTitleColorRed();
+    void setTitleColorBlue();
+    void setTitleColorGreen();
+    void setTitleColorYellow();
+    void setTitleColorBlack();
+    void setTitleColorGray();
+    void setTitleColorCyan();
+    void setTitleColorMagenta();
+    void setTitleColor(QString color);
+
 
 };
 

@@ -2002,3 +2002,15 @@ void NoteTable::getAll(QList<qint32> &lids) {
 
     }
 }
+
+
+
+// Get all lids
+void NoteTable::setTitleColor(qint32 lid, QString color) {
+    NSqlQuery query(*db);
+    query.prepare("Update NoteTable set titleColor=:color where lid=:lid");
+    query.bindValue(":color", color);
+    query.bindValue(":lid", lid);
+    query.exec();
+}
+
