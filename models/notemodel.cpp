@@ -169,5 +169,4 @@ QVariant NoteModel::data (const QModelIndex & index, int role) const {
         }
     }
     return QSqlTableModel::data(index,role);
-
 }

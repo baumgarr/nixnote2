@@ -2008,9 +2008,27 @@ void NoteTable::getAll(QList<qint32> &lids) {
 // Get all lids
 void NoteTable::setTitleColor(qint32 lid, QString color) {
     NSqlQuery query(*db);
+    QString c = color;
+    if (c == "white")
+        c = "";
     query.prepare("Update NoteTable set titleColor=:color where lid=:lid");
-    query.bindValue(":color", color);
+    query.bindValue(":color", c);
     query.bindValue(":lid", lid);
     query.exec();
+
+    query.prepare("Delete from DataStore where key=:key and lid=:lid");
+    query.bindValue(":key", NOTE_TITLE_COLOR);
+    query.bindValue(":lid", lid);
+    query.exec();
+    QLOG_DEBUG() << query.lastError();
+
+    if (c == "")
+        return;
+    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :value)");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_TITLE_COLOR);
+    query.bindValue(":value", c);
+    query.exec();
+    QLOG_DEBUG() << query.lastError();
 }
 
