@@ -660,7 +660,8 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
             SyncChunk chunk;
             if (!comm->getLinkedNotebookSyncChunk(chunk,book, usn, chunkSize, SYNC_CHUNK_NOTES | SYNC_CHUNK_RESOURCES, fs)) {
                 more = false;
-                if (comm->error.type == CommunicationError::EDAMNotFoundException) {
+                if (comm->error.type == CommunicationError::EDAMNotFoundException ||
+                    (comm->error.type == CommunicationError::EDAMUserException && comm->error.code == EDAMErrorCode::PERMISSION_DENIED)) {
                     ltable.expunge(lids[i]);
                     emit(notebookExpunged(lids[i]));
                 } else {
