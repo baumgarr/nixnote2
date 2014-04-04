@@ -465,6 +465,12 @@ void NMainMenuBar::setupHelpMenu() {
             this, SLOT(openManual()));
     helpMenu->addAction(openManualAction);
 
+    openUserForumAction = new QAction(tr("User Forum"), this);
+    openUserForumAction->setToolTip(tr("Go to the support forum."));
+    openUserForumAction->setFont(font);
+    connect(openUserForumAction, SIGNAL(triggered()), this, SLOT(openUserForum()));
+    helpMenu->addAction(openUserForumAction);
+
     openMessageLogAction = new QAction(tr("Message Log"), this);
     openMessageLogAction->setToolTip(tr("View current program messages"));
     openMessageLogAction->setFont(font);
@@ -510,4 +516,10 @@ void NMainMenuBar::setupShortcut(QAction *action, QString text) {
 void NMainMenuBar::openManual() {
     QDesktopServices::openUrl(QString("file://") +
                               global.getProgramDirPath()+"/help/UserDocumentation.pdf");
+}
+
+
+
+void NMainMenuBar::openUserForum() {
+    QDesktopServices::openUrl(QUrl("https://sourceforge.net/apps/phpbb/nevernote/?source=navbar"));
 }

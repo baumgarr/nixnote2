@@ -109,6 +109,7 @@ public:
     QAction *openManualAction;
     QAction *openEvernoteSupportAction;
     QAction *openMessageLogAction;
+    QAction *openUserForumAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 
@@ -118,6 +119,7 @@ signals:
 
 public slots:
     void openManual();
+    void openUserForum();
 
 };
 
