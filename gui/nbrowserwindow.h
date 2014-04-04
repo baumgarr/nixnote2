@@ -227,6 +227,9 @@ public slots:
     void handleUrls(const QMimeData *mime);
     void setTableCursorPositionTab(int currentRow, int currentCol, int tableRows, int tableColumns);
     void setTableCursorPositionBackTab(int currentRow, int currentCol, int tableRows, int tableColumns);
+    void changeDisplayFontSize(QString size);
+    void changeDisplayFontName(QString name);
+    void printNodeName(QString node);
 
 private slots:
     void sendTitleUpdateSignal();

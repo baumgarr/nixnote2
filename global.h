@@ -140,6 +140,8 @@ public:
     QString timeFormat;
     QSqlDatabase *db;
     bool javaFound;
+    QString defaultFont;
+    int defaultFontSize;
 
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;

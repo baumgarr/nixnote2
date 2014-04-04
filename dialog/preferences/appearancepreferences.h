@@ -34,7 +34,12 @@ private:
     QGridLayout *mainLayout;
     QComboBox *defaultNotebookOnStartup;
     QComboBox *windowIconChooser;
+    QComboBox *defaultFontChooser;
+    QComboBox *defaultFontSizeChooser;
     QLabel *defaultNotebookOnStartupLabel;
+    bool webSettingsChanged;
+    void loadFontNames();
+
 
 public:
     explicit AppearancePreferences(QWidget *parent = 0);
@@ -56,6 +61,8 @@ public:
 signals:
     
 public slots:
+    void loadFontSizes(QString font);
+    void fontSizeChanged(QString name);
     
 };
 

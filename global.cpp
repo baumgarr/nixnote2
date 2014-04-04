@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <string>
 #include <limits.h>
 #include <unistd.h>
+#include <QWebSettings>
 
 
 //******************************************
@@ -112,7 +113,16 @@ void Global::setup(StartupConfig startupConfig) {
 
     settings->beginGroup("Appearance");
     pdfPreview = settings->value("showPDFs", true).toBool();
+    defaultFont = settings->value("defaultFont","").toString();
+    defaultFontSize = settings->value("defaultFontSize",12).toInt();
     settings->endGroup();
+
+    if (defaultFont != "" && defaultFontSize > 0) {
+        QWebSettings *settings = QWebSettings::globalSettings();
+        settings->setFontFamily(QWebSettings::StandardFont, defaultFont);
+        settings->setFontSize(QWebSettings::DefaultFontSize, defaultFontSize);
+    }
+
 }
 
 

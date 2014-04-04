@@ -957,12 +957,6 @@ void NBrowserWindow::insertHtml(QString html) {
 
 // The font name list was selected
 void NBrowserWindow::fontNameSelected(int index) {
-
-    QString s = "window.alert(\"hello\");";
-    editor->page()->mainFrame()->evaluateJavaScript(s);
-    return;
-
-
     QString font = buttonBar->fontNames->itemData(index).toString();
     buttonBar->fontSizes->blockSignals(true);
     buttonBar->loadFontSizeComboBox(font);
@@ -1411,8 +1405,22 @@ void NBrowserWindow::attachFile() {
         +QString("}")
         +QString("}  getCursorPos();");
     editor->page()->mainFrame()->evaluateJavaScript(js);
+
+
+    QString js2 = QString("function getFontSize() {") +
+                  QString("    var node = document.getSelection().anchorNode;") +
+                  QString("    var anchor = (node.nodeType == 3 ? node.parentNode : node);") +
+                  QString("      var size = window.getComputedStyle(anchor,null)[\"fontSize\"];") +
+                  QString("      var font = window.getComputedStyle(anchor,null)[\"fontFamily\"];") +
+                  QString("      window.browserWindow.changeDisplayFontSize(size);") +
+                  QString("      window.browserWindow.changeDisplayFontName(font);") +
+                  QString("} getFontSize();");
+    editor->page()->mainFrame()->evaluateJavaScript(js2);
 }
 
+ void NBrowserWindow::printNodeName(QString v) {
+     QLOG_DEBUG() << v;
+ }
 
 
  // Tab button pressed
@@ -2631,4 +2639,25 @@ void NBrowserWindow::noteContentEdited() {
 
 
 
+void NBrowserWindow::changeDisplayFontSize(QString size) {
+    size.chop(2);  // Remove px from the end
+    int idx = buttonBar->fontSizes->findData(size, Qt::UserRole);
+    if (idx > 0) {
+        buttonBar->fontSizes->blockSignals(true);
+        buttonBar->fontSizes->setCurrentIndex(idx);
+        buttonBar->fontSizes->blockSignals(false);
+    }
+}
 
+
+void NBrowserWindow::changeDisplayFontName(QString name) {
+    if (name.startsWith("'")) {
+            name = name.mid(1);
+            name.chop(1);
+    }
+    buttonBar->fontNames->blockSignals(true);
+    int idx = buttonBar->fontNames->findData(name, Qt::UserRole);
+    if (idx >=0)
+        buttonBar->fontNames->setCurrentIndex(idx);
+    buttonBar->fontNames->blockSignals(false);
+}

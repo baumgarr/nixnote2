@@ -28,6 +28,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //* QWebPage to be able to edit notes.
 //*******************************************************
 
+extern Global global;
+
 NWebPage::NWebPage(QWidget *parent) :
     QWebPage(parent)
 {

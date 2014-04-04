@@ -20,6 +20,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "appearancepreferences.h"
 #include "global.h"
 
+#include <QFontDatabase>
+#include <QWebSettings>
+
 extern Global global;
 
 AppearancePreferences::AppearancePreferences(QWidget *parent) :
@@ -35,6 +38,12 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     autoStart = new QCheckBox(tr("Start automatically at login"), this);
     showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
     startMinimized = new QCheckBox(tr("Always Start minimized"), this);
+
+    defaultFontChooser = new QComboBox();
+    defaultFontSizeChooser = new QComboBox();
+    connect(defaultFontChooser, SIGNAL(currentIndexChanged(QString)), this, SLOT(loadFontSizes(QString)));
+    loadFontNames();
+
     windowIconChooser = new QComboBox();
     windowIconChooser->addItem(QIcon(":windowIcon0.png"), "", ":windowIcon0.png");
     windowIconChooser->addItem(QIcon(":windowIcon1.png"), "", ":windowIcon1.png");
@@ -62,6 +71,13 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(autoStart, row++, 0);
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
+
+    mainLayout->addWidget(new QLabel(tr("Default Editor Font")), row, 0);
+    mainLayout->addWidget(defaultFontChooser, row++, 1);
+
+    mainLayout->addWidget(new QLabel("Default Editor Font Size"), row, 0);
+    mainLayout->addWidget(defaultFontSizeChooser, row++, 1);
+
     mainLayout->addWidget(new QLabel(tr("Window Icon\n(may require restart on\nsome window managers)")), row,0);
     mainLayout->addWidget(windowIconChooser, row++,1);
 
@@ -93,6 +109,21 @@ void AppearancePreferences::saveValues() {
     int index = defaultNotebookOnStartup->currentIndex();
     int value = defaultNotebookOnStartup->itemData(index).toInt();
     global.settings->setValue("startupNotebook", value);
+
+    //  Save default font & size
+    if (webSettingsChanged) {
+        int idx = defaultFontChooser->currentIndex();
+        global.defaultFont = defaultFontChooser->itemData(idx, Qt::UserRole).toString();
+        idx = defaultFontSizeChooser->currentIndex();
+        global.defaultFontSize = defaultFontSizeChooser->itemData(idx, Qt::UserRole).toInt();
+        global.settings->setValue("defaultFont", global.defaultFont);
+        global.settings->setValue("defaultFontSize", global.defaultFontSize);
+
+        QWebSettings *settings = QWebSettings::globalSettings();
+        settings->setFontFamily(QWebSettings::StandardFont, global.defaultFont);
+        settings->setFontSize(QWebSettings::DefaultFontSize, global.defaultFontSize);
+    }
+
 
     // See if the user has overridden the window icon
     index = windowIconChooser->currentIndex();
@@ -181,6 +212,44 @@ void AppearancePreferences::saveValues() {
 
 
 
+
+// Load the list of font names
+void AppearancePreferences::loadFontNames() {
+    QFontDatabase fonts;
+    QStringList fontFamilies = fonts.families();
+    for (int i = 0; i < fontFamilies.size(); i++) {
+        defaultFontChooser->addItem(fontFamilies[i], fontFamilies[i]);
+    }
+    int idx = defaultFontChooser->findData(global.defaultFont, Qt::UserRole);
+    if (idx >=0) {
+        defaultFontChooser->setCurrentIndex(idx);
+    } else
+        defaultFontChooser->setCurrentIndex(0);
+}
+
+
+
+
+// Load the list of font sizes
+void AppearancePreferences::loadFontSizes(QString name) {
+    webSettingsChanged =true;
+    QFontDatabase fdb;
+    defaultFontSizeChooser->clear();
+    QList<int> sizes = fdb.pointSizes(name);
+    for (int i=0; i<sizes.size(); i++) {
+        defaultFontSizeChooser->addItem(QString::number(sizes[i]), sizes[i]);
+    }
+    int idx = defaultFontSizeChooser->findData(global.defaultFontSize, Qt::UserRole);
+    if (idx >=0) {
+        defaultFontSizeChooser->setCurrentIndex(idx);
+    } else
+        defaultFontSizeChooser->setCurrentIndex(0);
+}
+
+
+void AppearancePreferences::fontSizeChanged(QString name) {
+    webSettingsChanged = true;
+}
 
 
 

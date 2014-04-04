@@ -527,6 +527,8 @@ void EditorButtonBar::toggleHtmlEntitiesButtonVisible() {
 void EditorButtonBar::loadFontNames() {
     QFontDatabase fonts;
     QStringList fontFamilies = fonts.families();
+    fontFamilies.append(tr("Times"));
+    fontFamilies.sort();
     for (int i = 0; i < fontFamilies.size(); i++) {
         fontNames->addItem(fontFamilies[i], fontFamilies[i]);
         if (i == 0) {
