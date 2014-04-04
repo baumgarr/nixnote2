@@ -931,6 +931,9 @@ void NBrowserWindow::todoButtonPressed() {
 void NBrowserWindow::fontSizeSelected(int index) {
     int size = buttonBar->fontSizes->itemData(index).toInt();
 
+    if (size <= 0)
+        return;
+
     QString text = editor->selectedText();
     if (text.trimmed() == "")
         return;
@@ -954,8 +957,16 @@ void NBrowserWindow::insertHtml(QString html) {
 
 // The font name list was selected
 void NBrowserWindow::fontNameSelected(int index) {
+
+    QString s = "window.alert(\"hello\");";
+    editor->page()->mainFrame()->evaluateJavaScript(s);
+    return;
+
+
     QString font = buttonBar->fontNames->itemData(index).toString();
+    buttonBar->fontSizes->blockSignals(true);
     buttonBar->loadFontSizeComboBox(font);
+    buttonBar->fontSizes->blockSignals(false);
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('fontName', false, '"+font+"');");
     editor->setFocus();
