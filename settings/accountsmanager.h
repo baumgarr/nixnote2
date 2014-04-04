@@ -43,6 +43,7 @@ public:
     QStringList nameList();
     QString getOAuthToken();
     void setOAuthToken(QString token);
+    void setOAuthToken(int id, QString token);
     void setName(QString name, int id=0);
     QString getServer();
     QString getName();

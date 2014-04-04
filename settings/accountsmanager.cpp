@@ -224,3 +224,10 @@ int AccountsManager::getNewIdNumber() {
         if (!numbers.contains(i))
             return i;
 }
+
+
+
+void AccountsManager::setOAuthToken(int id, QString token) {
+    AccountsManager manager(id);
+    manager.setOAuthToken(token);
+}

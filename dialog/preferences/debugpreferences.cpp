@@ -84,7 +84,7 @@ void DebugPreferences::saveValues() {
     global.settings->setValue("showLids", showLidColumn->isChecked());
 
     // If the disable uploads is different than the defaults or if it has changed, we save it.
-    if (!disableUploads->isChecked() || disableUploads->isChecked() != global.disableUploads)
+    if (disableUploads->isChecked() || disableUploads->isChecked() != global.disableUploads)
         global.settings->setValue("disableUploads", disableUploads->isChecked());
 
     global.settings->endGroup();

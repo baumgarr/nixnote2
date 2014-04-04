@@ -17,6 +17,7 @@ AccountMaintenanceDialog::AccountMaintenanceDialog(NMainMenuBar *menubar, QWidge
     addButton = new QPushButton(tr("Add"),this);
     renameButton = new QPushButton(tr("Rename"));
     deleteButton = new QPushButton(tr("Delete"));
+    removeAuthButton = new QPushButton("Remove Authorization");
     nameList = new QListWidget(this);
     buttonLayout1 = new QVBoxLayout();
     buttonLayout2 = new QHBoxLayout();
@@ -27,6 +28,7 @@ AccountMaintenanceDialog::AccountMaintenanceDialog(NMainMenuBar *menubar, QWidge
     displayLayout->addLayout(buttonLayout1);
     buttonLayout1->addWidget(addButton);
     buttonLayout1->addWidget(renameButton);
+    buttonLayout1->addWidget(removeAuthButton);
     buttonLayout1->addWidget(deleteButton);
     buttonLayout1->addSpacerItem(new QSpacerItem(0,0,QSizePolicy::Minimum, QSizePolicy::Maximum));
     buttonLayout1->setStretch(4,100);
@@ -45,6 +47,7 @@ AccountMaintenanceDialog::AccountMaintenanceDialog(NMainMenuBar *menubar, QWidge
     connect(okButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(closeButton, SIGNAL(clicked()), this, SLOT(close()));
     connect(addButton, SIGNAL(clicked()), this, SLOT(addAccount()));
+    connect(removeAuthButton, SIGNAL(clicked()), this, SLOT(removeOAuth()));
     connect(deleteButton,SIGNAL(clicked()), this, SLOT(deleteAccount()));
     connect(renameButton, SIGNAL(clicked()), this, SLOT(renameAccount()));
     this->loadData();
@@ -193,4 +196,17 @@ bool AccountMaintenanceDialog:: removeDir(const QString & dirName)  {
         result = dir.rmdir(dirName);
     }
     return result;
+}
+
+
+void AccountMaintenanceDialog::removeOAuth() {
+    if (nameList->selectedItems().count() <= 0)
+        return;
+    QString name = nameList->selectedItems()[0]->text();
+    for (int i=0; i<names.size(); i++) {
+        if (names[i] == name) {
+            global.accountsManager->setOAuthToken(ids[i], "");
+        }
+    }
+    loadData();
 }

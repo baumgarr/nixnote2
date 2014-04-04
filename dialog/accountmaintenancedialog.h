@@ -19,6 +19,7 @@ private:
     QPushButton *closeButton;
     QPushButton *addButton;
     QPushButton *renameButton;
+    QPushButton *removeAuthButton;
     QPushButton *deleteButton;
     QListWidget *nameList;
     QVBoxLayout *buttonLayout1;
@@ -40,6 +41,7 @@ public slots:
     void addAccount();
     void deleteAccount();
     void renameAccount();
+    void removeOAuth();
     
 };
 

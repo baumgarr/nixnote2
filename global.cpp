@@ -105,7 +105,7 @@ void Global::setup(StartupConfig startupConfig) {
     }
 
     settings->beginGroup("Debugging");
-    disableUploads = settings->value("disableUploads", true).toBool();
+    disableUploads = settings->value("disableUploads", false).toBool();
     settings->endGroup();
 
     setupDateTimeFormat();
