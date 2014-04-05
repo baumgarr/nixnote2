@@ -17,6 +17,7 @@ CONFIG(debug, debug|release) {
         MOC_DIR = build/debug
 }
 
+CONFIG += debug_and_release
 
 TRANSLATIONS = \
     translations/nixnote2_cs_CZ.ts \
