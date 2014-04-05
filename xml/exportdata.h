@@ -42,13 +42,14 @@ private:
     bool quitNow;
     void createNode(QString nodeName, QString value);
     void createNode(QString nodeName, string value);
-    void createNode(QString nodeName, qlonglong value);
+    void createLongLongNode(QString nodeName, qlonglong value);
     void createNode(QString nodeName, qint32 value);
     void createBinaryNode(QString nodeName, string value);
-    void createNode(QString nodeName, Timestamp value);
+    void createTimestampNode(QString nodeName, Timestamp value);
     void createNode(QString nodeName, bool value);
     void createNode(QString nodeName, QBool value);
     void createNode(QString nodeName, double value);
+    void createNode(QString nodename, int64_t value);
     void writeTags();
     void writeNotebooks();
     void writeSavedSearches();

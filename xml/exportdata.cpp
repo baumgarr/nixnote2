@@ -159,9 +159,9 @@ void ExportData::writeNotebooks() {
             if (book.__isset.published)
                 createNode("Published", book.published);
             if (book.__isset.serviceCreated)
-                createNode("ServiceCreated", book.serviceCreated);
+                createTimestampNode("ServiceCreated", book.serviceCreated);
             if (book.__isset.serviceUpdated)
-                createNode("ServiceUpdated", book.serviceUpdated);
+                createTimestampNode("ServiceUpdated", book.serviceUpdated);
             if (book.__isset.updateSequenceNum)
                 createNode("UpdateSequenceNumber", book.updateSequenceNum);
             createNode("Dirty",dirtyLids.contains(lids[i]));
@@ -222,11 +222,11 @@ void ExportData::writeUser(User user) {
     if (user.__isset.privilege)
         createNode("Privilege", user.privilege);
     if (user.__isset.created)
-        createNode("Created", user.created);
+        createTimestampNode("Created", user.created);
     if (user.__isset.updated)
-        createNode("Created", user.updated);
+        createTimestampNode("Created", user.updated);
     if (user.__isset.deleted)
-        createNode("Deleted", user.deleted);
+        createTimestampNode("Deleted", user.deleted);
     if (user.__isset.active)
         createNode("Active", user.active);
     if (user.__isset.shardId)
@@ -246,7 +246,7 @@ void ExportData::writeUser(User user) {
         if (user.attributes.__isset.comments)
             createNode("comments", user.attributes.comments);
         if (user.attributes.__isset.dateAgreedToTermsOfService)
-            createNode("DateAgreedToTermsOfService", user.attributes.dateAgreedToTermsOfService);
+            createTimestampNode("DateAgreedToTermsOfService", user.attributes.dateAgreedToTermsOfService);
         if (user.attributes.__isset.maxReferrals)
             createNode("MaxReferrals", user.attributes.maxReferrals);
         if (user.attributes.__isset.referralCount)
@@ -254,15 +254,15 @@ void ExportData::writeUser(User user) {
         if (user.attributes.__isset.refererCode)
             createNode("ReferrerCode", user.attributes.refererCode);
         if (user.attributes.__isset.sentEmailDate)
-            createNode("SentEmailDate", user.attributes.sentEmailDate);
+            createTimestampNode("SentEmailDate", user.attributes.sentEmailDate);
         if (user.attributes.__isset.sentEmailCount)
             createNode("SentEmailCount", user.attributes.sentEmailCount);
         if (user.attributes.__isset.dailyEmailLimit)
             createNode("DailyEmailLimit", user.attributes.dailyEmailLimit);
         if (user.attributes.__isset.emailOptOutDate)
-            createNode("EmailOptOutDate", user.attributes.emailOptOutDate);
+            createTimestampNode("EmailOptOutDate", user.attributes.emailOptOutDate);
         if (user.attributes.__isset.partnerEmailOptInDate)
-            createNode("PartnerEmailOptInDate", user.attributes.partnerEmailOptInDate);
+            createTimestampNode("PartnerEmailOptInDate", user.attributes.partnerEmailOptInDate);
         if (user.attributes.__isset.preferredCountry)
             createNode("PreferredCountry", user.attributes.preferredCountry);
         if (user.attributes.__isset.preferredLanguage)
@@ -296,7 +296,7 @@ void ExportData::writeUser(User user) {
     if (user.__isset.premiumInfo) {
         writer->writeStartElement("PremiumInfo");
         if (user.premiumInfo.__isset.premiumExpirationDate)
-            createNode("PremiumExpirationDate",user.premiumInfo.premiumExpirationDate);
+            createTimestampNode("PremiumExpirationDate",user.premiumInfo.premiumExpirationDate);
         if (user.premiumInfo.__isset.premiumUpgradable)
             createNode("PremiumUpgradable", user.premiumInfo.premiumUpgradable);
         if (user.premiumInfo.__isset.sponsoredGroupName)
@@ -464,9 +464,9 @@ void ExportData::writeSharedNotebooks() {
         if (s.__isset.requireLogin)
             createNode("RequireLogin", s.requireLogin);
         if (s.__isset.serviceCreated)
-            createNode("ServiceCreated", s.serviceCreated);
+            createTimestampNode("ServiceCreated", s.serviceCreated);
         if (s.__isset.serviceUpdated)
-            createNode("ServiceUpdated", s.serviceUpdated);
+            createTimestampNode("ServiceUpdated", s.serviceUpdated);
         writer->writeEndElement();
     }
 
@@ -503,11 +503,11 @@ void ExportData::writeNotes() {
         if (n.__isset.contentLength)
             createNode("ContentLength", n.contentLength);
         if (n.__isset.created)
-            createNode("Created", n.created);
+            createTimestampNode("Created", n.created);
         if (n.__isset.updated)
-            createNode("Updated", n.updated);
+            createTimestampNode("Updated", n.updated);
         if (n.__isset.deleted)
-            createNode("Deleted", n.deleted);
+            createTimestampNode("Deleted", n.deleted);
         if (n.__isset.active)
             createNode("Active", n.active);
         if (n.__isset.updateSequenceNum)
@@ -531,7 +531,7 @@ void ExportData::writeNotes() {
         if (n.__isset.attributes) {
             writer->writeStartElement("Attributes");
             if (n.attributes.__isset.subjectDate)
-                createNode("SubjectDate", n.attributes.subjectDate);
+                createTimestampNode("SubjectDate", n.attributes.subjectDate);
             if (n.attributes.__isset.latitude)
                 createNode("Latitude", n.attributes.latitude);
             if (n.attributes.__isset.longitude)
@@ -547,7 +547,7 @@ void ExportData::writeNotes() {
             if (n.attributes.__isset.sourceURL)
                 createNode("SourceUrl", n.attributes.sourceURL);
             if (n.attributes.__isset.shareDate)
-                createNode("ShareDate", n.attributes.shareDate);
+                createTimestampNode("ShareDate", n.attributes.shareDate);
             if (n.attributes.__isset.reminderOrder)
                 createNode("ReminderOrder",n.attributes.reminderOrder);
             if (n.attributes.__isset.reminderDoneTime)
@@ -673,7 +673,7 @@ void ExportData::createNode(QString nodename, string value) {
 }
 
 
-void ExportData::createNode(QString nodename, qlonglong value) {
+void ExportData::createLongLongNode(QString nodename, qlonglong value) {
     createNode(nodename, QString::number(value));
 }
 
@@ -685,7 +685,7 @@ void ExportData::createNode(QString nodename, qint32 value) {
 
 
 
-void ExportData::createNode(QString nodename, Timestamp value) {
+void ExportData::createTimestampNode(QString nodename, Timestamp value) {
     createNode(nodename, QString::number(value));
 }
 
@@ -693,6 +693,12 @@ void ExportData::createNode(QString nodename, Timestamp value) {
 void ExportData::createNode(QString nodename, double value) {
     createNode(nodename, QString::number(value));
 }
+
+
+void ExportData::createNode(QString nodename, int64_t value) {
+    createNode(nodename, QString::number(value));
+}
+
 
 void ExportData::abortBackup() {
     quitNow = true;
