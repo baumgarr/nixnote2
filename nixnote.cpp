@@ -2031,7 +2031,7 @@ void NixNote::switchUser() {
         global.globalSettings->endGroup();
         closeAction->trigger();
         global.sharedMemory->detach();
-        QProcess::startDetached(global.fileManager.getProgramDirPath("")+"nixnote");
+        QProcess::startDetached(QCoreApplication::applicationFilePath());
         return;
     }
 }

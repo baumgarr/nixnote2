@@ -6,7 +6,7 @@
 
 QT       += core gui webkit sql network xml
 
-TARGET = nixnote
+TARGET = nixnote2
 TEMPLATE = app
 RESOURCES = NixNote2.qrc
 

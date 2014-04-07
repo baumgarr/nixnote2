@@ -61,7 +61,7 @@ cp $source_dir/*.txt $package_dir/nixnote2/usr/share/nixnote2/
 cp $source_dir/*.html $package_dir/nixnote2/usr/share/nixnote2/
 cp $source_dir/nixnote2.desktop $package_dir/nixnote2/usr/share/applications/
 cp $source_dir/copyright $package_dir/nixnote2/usr/share/doc/nixnote2/
-strip --strip-all $source_dir/nixnote -o $package_dir/nixnote2/usr/bin/nixnote2
+strip --strip-all $source_dir/nixnote2 -o $package_dir/nixnote2/usr/bin/nixnote2
 gzip -c -9 $source_dir/man/nixnote2.1 > $package_dir/nixnote2/usr/share/man/man1/nixnote2.1.gz
 cp $source_dir/changelog.txt $package_dir/nixnote2/usr/share/doc/nixnote2/changelog.Debian
 gzip -c -9 $package_dir/nixnote2/usr/share/doc/nixnote2/changelog.Debian > $package_dir/nixnote2/usr/share/doc/nixnote2/changelog.Debian.gz
