@@ -142,6 +142,8 @@ public:
     bool javaFound;
     QString defaultFont;
     int defaultFontSize;
+    bool forceNoStartMimized;
+    bool syncAndExit;
 
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;

@@ -402,25 +402,25 @@ void NixNote::setupGui() {
 
 
     showAction = trayIconContextMenu->addAction(tr("Show/Hide"));
-    minimizeToTrayAction = trayIconContextMenu->addAction(tr("Minimize to tray"));
-    minimizeToTrayAction->setCheckable(true);
-    minimizeToTrayAction->setChecked(minimizeToTray);
-    closeToTrayAction = trayIconContextMenu->addAction(tr("Close to tray"));
-    closeToTrayAction->setCheckable(true);
-    closeToTrayAction->setChecked(closeToTray);
-    if (!global.showTrayIcon()) {
+    //minimizeToTrayAction = trayIconContextMenu->addAction(tr("Minimize to tray"));
+    //minimizeToTrayAction->setCheckable(true);
+    //minimizeToTrayAction->setChecked(minimizeToTray);
+    //closeToTrayAction = trayIconContextMenu->addAction(tr("Close to tray"));
+    //closeToTrayAction->setCheckable(true);
+    //closeToTrayAction->setChecked(closeToTray);
+    if (!global.showTrayIcon() || global.forceNoStartMimized || !QSystemTrayIcon::isSystemTrayAvailable()) {
         closeToTray = false;
         minimizeToTray = false;
     }
-    connect(minimizeToTrayAction, SIGNAL(triggered()), this, SLOT(trayIconBehavior()));
-    connect(closeToTrayAction, SIGNAL(triggered()), this, SLOT(trayIconBehavior()));
+    //connect(minimizeToTrayAction, SIGNAL(triggered()), this, SLOT(trayIconBehavior()));
+    //connect(closeToTrayAction, SIGNAL(triggered()), this, SLOT(trayIconBehavior()));
     trayIconContextMenu->addSeparator();
     closeAction = trayIconContextMenu->addAction(tr("Close"));
     connect(closeAction, SIGNAL(triggered()), this, SLOT(closeNixNote()));
     connect(showAction, SIGNAL(triggered()), this, SLOT(toggleVisible()));
 
     // Determine if we should start minimized
-    if (startMinimized) {
+    if (startMinimized && !global.forceNoStartMimized && QSystemTrayIcon::isSystemTrayAvailable()) {
         if (closeToTray)
             this->hide();
         else
@@ -1825,6 +1825,7 @@ void NixNote::heartbeatTimerTriggered() {
     global.sharedMemory->unlock();
 
     QByteArray data = QByteArray::fromRawData(buffer, global.sharedMemory->size());
+    //QLOG_DEBUG() << "Shared memory data: " << data;
     if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
         QLOG_ERROR() << "Immediate shutdown requested by shared memory segment.";
         this->closeNixNote();
@@ -1903,16 +1904,16 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 }
 
 
-void NixNote::trayIconBehavior()  {
-    closeToTray = closeToTrayAction->isChecked();
-    minimizeToTray = minimizeToTrayAction->isChecked();
+//void NixNote::trayIconBehavior()  {
+//    //closeToTray = closeToTrayAction->isChecked();
+//    //minimizeToTray = minimizeToTrayAction->isChecked();
 
-    global.settings->beginGroup("SaveState");
-    global.settings->setValue("closeToTray", closeToTray);
-    global.settings->setValue("minimizeToTray",  minimizeToTray);
-    global.settings->endGroup();
+//    global.settings->beginGroup("SaveState");
+//    global.settings->setValue("closeToTray", closeToTray);
+//    global.settings->setValue("minimizeToTray",  minimizeToTray);
+//    global.settings->endGroup();
 
-}
+//}
 
 
 void NixNote::changeEvent(QEvent *e) {
@@ -1937,7 +1938,7 @@ void NixNote::openPreferences() {
         setWindowIcon(QIcon(global.getWindowIcon()));
         trayIcon->setIcon(QIcon(global.getWindowIcon()));
         if (!showTrayIcon) {
-            trayIconBehavior();
+            //trayIconBehavior();
             if (!this->isVisible())
                 this->show();
             trayIcon->setVisible(false);
@@ -1946,7 +1947,7 @@ void NixNote::openPreferences() {
             trayIcon->setVisible(true);
             minimizeToTray = global.minimizeToTray();
             closeToTray = global.closeToTray();
-            trayIconBehavior();
+            //trayIconBehavior();
         }
         indexRunner.officeFound = global.synchronizeAttachments();
     }

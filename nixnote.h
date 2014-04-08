@@ -118,8 +118,8 @@ private:
     QAction *toolsAccountAction;
 
     QAction *showAction;
-    QAction *minimizeToTrayAction;
-    QAction *closeToTrayAction;
+    //QAction *minimizeToTrayAction;
+    //QAction *closeToTrayAction;
     QAction *closeAction;
     bool minimizeToTray;
     bool closeToTray;
@@ -211,7 +211,7 @@ public slots:
     void fastPrintNote();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void toggleVisible();
-    void trayIconBehavior();
+    //void trayIconBehavior();
     void changeEvent(QEvent *e);
     void openPreferences();
     void notifySyncComplete();

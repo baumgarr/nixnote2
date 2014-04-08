@@ -50,6 +50,8 @@ public:
     QCheckBox *showMissedReminders;
     QCheckBox *autoStart;
     QCheckBox *startMinimized;
+    QCheckBox *minimizeToTray;
+    QCheckBox *closeToTray;
 
     enum DefaultNotebook {
         UseLastViewedNotebook = 0,
@@ -63,6 +65,7 @@ signals:
 public slots:
     void loadFontSizes(QString font);
     void fontSizeChanged(QString name);
+    void showTrayIconChanged(bool value);
     
 };
 

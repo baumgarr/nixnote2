@@ -63,7 +63,15 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     defaultNotebookOnStartup->addItem(tr("View All Notebooks"), UseAllNotebooks);
 
     int row=0;
+    minimizeToTray = NULL;
+    closeToTray = NULL;
     mainLayout->addWidget(showTrayIcon,row++,0);
+    if (QSystemTrayIcon::isSystemTrayAvailable()) {
+        minimizeToTray = new QCheckBox(tr("Minimize to tray"));
+        closeToTray = new QCheckBox(tr("Close to tray"));
+        mainLayout->addWidget(minimizeToTray, row++, 0);
+        mainLayout->addWidget(closeToTray, row++, 0);
+    }
     mainLayout->addWidget(showSplashScreen, row++,0);
     mainLayout->addWidget(showPDFs, row++,0);
     mainLayout->addWidget(showMissedReminders, row++, 0);
@@ -95,6 +103,18 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     QString windowIcon = global.getWindowIcon();
     int index = windowIconChooser->findData(windowIcon);
     windowIconChooser->setCurrentIndex(index);
+    connect(showTrayIcon, SIGNAL(clicked(bool)), this, SLOT(showTrayIconChanged(bool)));
+
+    if (minimizeToTray != NULL) {
+        minimizeToTray->setChecked(global.minimizeToTray());
+        if (!showTrayIcon->isChecked())
+            minimizeToTray->setEnabled(false);
+    }
+    if (closeToTray != NULL) {
+        closeToTray->setChecked(global.closeToTray());
+        if (!showTrayIcon->isChecked())
+            closeToTray->setEnabled(false);
+    }
 }
 
 
@@ -103,6 +123,14 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
     global.settings->setValue("showPDFs", showPDFs->isChecked());
     global.pdfPreview = showPDFs->isChecked();
+    if (minimizeToTray!= NULL)
+        global.settings->setValue("minimizeToTray", minimizeToTray->isChecked());
+    else
+        global.settings->remove("minimizeToTray");
+    if (closeToTray != NULL)
+        global.settings->setValue("closeToTray", closeToTray->isChecked());
+    else
+        global.settings->remove("closeToTray");
     global.settings->setValue("showSplashScreen", showSplashScreen->isChecked());
     global.settings->setValue("startMinimized", startMinimized->isChecked());
     global.settings->setValue("showMissedReminders", showMissedReminders->isChecked());
@@ -162,6 +190,7 @@ void AppearancePreferences::saveValues() {
             }
         }
         userIni.close();
+
     }
 
     // Setup if the user wants to start NixNote the next time they login.
@@ -200,9 +229,6 @@ void AppearancePreferences::saveValues() {
         }
         userIni.close();
     }
-
-
-
 
 
     global.settings->endGroup();
@@ -249,6 +275,19 @@ void AppearancePreferences::loadFontSizes(QString name) {
 
 void AppearancePreferences::fontSizeChanged(QString name) {
     webSettingsChanged = true;
+}
+
+
+void AppearancePreferences::showTrayIconChanged(bool value) {
+    if (value) {
+        minimizeToTray->setEnabled(true);
+        closeToTray->setEnabled(true);
+    } else {
+        minimizeToTray->setChecked(false);
+        closeToTray->setChecked(false);
+        minimizeToTray->setEnabled(false);
+        closeToTray->setEnabled(false);
+    }
 }
 
 

@@ -29,6 +29,8 @@ public:
     QString name;
     QString homeDirPath;
     QString programDirPath;
+    bool forceNoStartMinimized;
+    bool syncAndExit;
     int accountId;
 };
 

@@ -77,6 +77,7 @@ void Global::setup(StartupConfig startupConfig) {
 
     QString key = "1b73cc55-9a2f-441b-877a-ca1d0131cd2"+
             QString::number(accountId);
+    QLOG_DEBUG() << "Shared memory key: " << key;
     sharedMemory = new QSharedMemory(key);
 
 
@@ -84,6 +85,8 @@ void Global::setup(StartupConfig startupConfig) {
 
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
+    this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
+    this->syncAndExit = startupConfig.syncAndExit;
     startupConfig.accountId = accountId;
     accountsManager = new AccountsManager(startupConfig.accountId);
 

@@ -88,6 +88,14 @@ int main(int argc, char *argv[])
             parm = parm.mid(12);
             startupConfig.accountId = parm.toInt();
         }
+        if (parm.startsWith("--dontStartMinimized", Qt::CaseSensitive)) {
+            parm = parm.mid(12);
+            startupConfig.forceNoStartMinimized = true;
+        }
+        if (parm.startsWith("--syncAndExit", Qt::CaseSensitive)) {
+            parm = parm.mid(12);
+            startupConfig.syncAndExit = true;
+        }
     }
 
     startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
