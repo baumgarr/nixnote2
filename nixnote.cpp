@@ -88,7 +88,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
     splashScreen = new QSplashScreen(this, QPixmap(":splash_logo.png"));
     global.settings->beginGroup("Appearance");
-    if(global.settings->value("showSplashScreen", false).toBool()) {
+    if(global.settings->value("showSplashScreen", false).toBool() && !global.syncAndExit) {
         splashScreen->show();
         QTimer::singleShot(2500, splashScreen, SLOT(close()));
     }
@@ -1473,6 +1473,8 @@ void NixNote::notifySyncComplete() {
         trayIcon->showMessage(tr("Sync Error"), tr("Sync completed with errors."));
     } else
         trayIcon->showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
+    if (global.syncAndExit)
+        this->closeNixNote();
 }
 
 //*******************************************************

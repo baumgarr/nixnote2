@@ -87,16 +87,24 @@ int main(int argc, char *argv[])
 
     for (int i=1; i<=argc; i++) {
         QString parm(argv[i]);
+        if (parm == "--help" || parm == "-?") {
+            printf("\n\n");
+            printf("NixNote command line options:\n");
+            printf("  --help or -?            Show this message\n");
+            printf("  --accountId=<id>        Start with specified user account\n");
+            printf("  --dontStartMinimized    Override option to start minimized\n");
+            printf("  --syncAndExit           Synchronize and exit the program.\n");
+            printf("\n\n");
+            return 0;
+        }
         if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
             parm = parm.mid(12);
             startupConfig.accountId = parm.toInt();
         }
-        if (parm.startsWith("--dontStartMinimized", Qt::CaseSensitive)) {
-            parm = parm.mid(12);
+        if (parm == "--dontStartMinimized") {
             startupConfig.forceNoStartMinimized = true;
         }
-        if (parm.startsWith("--syncAndExit", Qt::CaseSensitive)) {
-            parm = parm.mid(12);
+        if (parm == "--syncAndExit") {
             startupConfig.syncAndExit = true;
         }
     }
@@ -156,9 +164,13 @@ int main(int argc, char *argv[])
     global.clipboard = QApplication::clipboard();
 
     NixNote *w = new NixNote();
-    //QMainWindow *w = new QMainWindow();
     w->setAttribute(Qt::WA_QuitOnClose);
-    w->show();
+    if (!global.syncAndExit)
+        w->show();
+    else {
+        w->hide();
+        w->synchronize();
+    }
 
     int rc = a->exec();
     QLOG_DEBUG() << "Unlocking memory";
