@@ -351,6 +351,23 @@ void NixNote::setupGui() {
     if (global.settings->value("isMaximized", false).toBool())
         this->setWindowState(Qt::WindowMaximized);
     QString lidListString = global.settings->value("openTabs", "").toString().trimmed();
+    bool value = global.settings->value("leftPanelVisible", true).toBool();
+    if (!value) {
+        menuBar->viewLeftPanel->setChecked(false);
+        leftScroll->setVisible(false);
+    }
+    value = global.settings->value("noteListVisible", true).toBool();
+    if (!value) {
+        menuBar->viewNoteList->setChecked(false);
+        topRightWidget->setVisible(false);
+    }
+    value = global.settings->value("tabWindowVisible", true).toBool();
+    if (!value) {
+        menuBar->viewNotePanel->setChecked(false);
+        tabWindow->setVisible(false);
+    }
+
+
     global.settings->endGroup();
 
     if (rightPanelSplitter->orientation() == Qt::Vertical)
@@ -1617,26 +1634,48 @@ void NixNote::openAbout() {
 
 
 void NixNote::toggleLeftPanel() {
-    if (leftPanel->isVisible())
+    bool visible;
+    if (leftPanel->isVisible()) {
         leftScroll->hide();
-    else
+        visible = false;
+    } else {
+        visible = true;
         leftScroll->show();
+    }
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("leftPanelVisible", visible);
+    global.settings->endGroup();
 }
 
 
 void NixNote::toggleNoteList() {
-    if (topRightWidget->isVisible())
+    bool value;
+    if (topRightWidget->isVisible()) {
         topRightWidget->hide();
-    else
+        value = false;
+    } else {
+        value = true;
         topRightWidget->show();
+    }
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("noteListVisible", value);
+    global.settings->endGroup();
 }
 
 
 void NixNote::toggleTabWindow() {
-    if (tabWindow->isVisible())
+    bool value;
+    if (tabWindow->isVisible()) {
         tabWindow->hide();
-    else
+        value = false;
+    } else {
         tabWindow->show();
+        value = true;
+    }
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("tabWindowVisible", value);
+    global.settings->endGroup();
+
 }
 
 
