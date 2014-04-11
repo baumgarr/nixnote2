@@ -119,11 +119,9 @@ void TagEditor::addTag(QString text) {
     tagLid = tagTable.findByName(text, account);
     if (tagLid <=0) {
         QUuid uuid;
-        newTag.name = text.toStdString();
+        newTag.name = text;
         QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
-        newTag.guid = newGuid.toStdString();
-        newTag.__isset.name = true;
-        newTag.__isset.guid = true;
+        newTag.guid = newGuid;
         tagTable.add(0, newTag, true, account);
         tagLid = tagTable.getLid(newTag.guid);
         emit(newTagCreated(tagLid));
@@ -158,8 +156,11 @@ void TagEditor::reloadTags() {
     Note n;
     noteTable.get(n, currentLid, false, false);
     QStringList names;
-    for (unsigned int i=0; i<n.tagNames.size(); i++) {
-        names << QString::fromStdString(n.tagNames[i]);
+    QList<QString> tagNames;
+    if (n.tagNames.isSet())
+        tagNames = n.tagNames;
+    for (int i=0; i<tagNames.size(); i++) {
+        names << tagNames[i];
     }
     setTags(names);
 }
@@ -168,7 +169,7 @@ void TagEditor::reloadTags() {
 //* Signal received that a tag name has been changed
 //*******************************************************
 void TagEditor::tagRenamed(qint32 lid, QString oldName, QString newName) {
-    lid=lid;  // suppress unuesd
+    Q_UNUSED(lid);  // suppress unuesd
     tagNames.removeOne(oldName);
     tagNames << newName;
     loadTags();
@@ -246,7 +247,7 @@ void TagEditor::clear() {
 //* Hide this window
 //*******************************************************
 void TagEditor::hideEvent(QHideEvent* event) {
-    event=event;  // suppress unused
+    Q_UNUSED(event);  // suppress unused
     tagIcon.hide();
     newTag.hide();
     for (qint32 i=0; i<MAX_TAGS; i++) {
@@ -260,7 +261,7 @@ void TagEditor::hideEvent(QHideEvent* event) {
 //* Show this window
 //*******************************************************
 void TagEditor::showEvent(QShowEvent* event) {
-    event=event;  // suppress unused
+    Q_UNUSED(event);  // suppress unused
     tagIcon.show();
     newTag.show();
     for (qint32 i=0; i<tagNames.size(); i++)

@@ -60,13 +60,11 @@ ImportData::ImportData(bool full, QObject *parent) : QObject(parent)
         if (lid == 0) {
             // We have a new notebook to add
             Notebook book;
-            book.name = name.toStdString();
+            book.name = name;
             bool isSynchronized = true;
             QUuid uuid;
             notebookGuid =  uuid.createUuid().toString().replace("{","").replace("}","");
-            book.guid = notebookGuid.toStdString();
-            book.__isset.name = true;
-            book.__isset.guid = true;
+            book.guid = notebookGuid;
             t.add(0,book,true, !isSynchronized);
         } else {
             t.getGuid(notebookGuid, lid);
@@ -235,53 +233,43 @@ void ImportData::processNoteNode() {
     Note note;
     QUuid uuid;
     QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
-    note.guid = newGuid.toStdString();
+    note.guid = newGuid;
     NoteMetaData meta;
-    note.__isset.guid = true;
     bool noteIsDirty = false;
 
     bool atEnd = false;
     while(!atEnd) {
         QString name = reader->name().toString().toLower();
         if (name == "guid" && !reader->isEndElement() && backup) {
-            note.guid = textValue().toStdString();
-            note.__isset.guid = true;
-            noteList.append(QString::fromStdString(note.guid));
+            note.guid = textValue();
+            noteList.append(note.guid);
         }
         if (name == "updatesequencenumber" && !reader->isEndElement()) {
             note.updateSequenceNum = textValue().toLong();
-            note.__isset.updateSequenceNum = true;
         }
         if (name == "title" && !reader->isEndElement()) {
-            note.title = textValue().toStdString();
-            note.__isset.title = true;
+            note.title = textValue();
         }
         if (name == "created" && !reader->isEndElement()) {
             note.created = longLongValue();
-            note.__isset.created = true;
         }
         if (name == "updated" && !reader->isEndElement()) {
             note.updated = longLongValue();
-            note.__isset.updated = true;
         }
         if (name == "deleted" && !reader->isEndElement()) {
             note.deleted = longLongValue();
-            note.__isset.deleted = true;
         }
         if (name == "active" && !reader->isEndElement()) {
             note.active = booleanValue();
-            note.__isset.active = true;
         }
         if (name == "notebookguid" && !reader->isEndElement()) {
-            note.notebookGuid = textValue().toStdString();
-            note.__isset.notebookGuid = true;
+            note.notebookGuid = textValue();
         }
         if (name == "dirty" && !reader->isEndElement()) {
             noteIsDirty = booleanValue();
         }
         if (name == "content" && !reader->isEndElement()) {
-            note.content = textValue().toStdString();
-            note.__isset.content = true;
+            note.content = textValue();
         }
         if (name == "titlecolor" && !reader->isEndElement()) {
             meta.setColor(intValue());
@@ -289,16 +277,17 @@ void ImportData::processNoteNode() {
         if (name == "notetags" && (createTags || backup) && !reader->isEndElement()) {
             QStringList names, guids;
             processNoteTagList(guids, names);
+            QList<QString> tagGuids;
+            QList<QString> tagNames;
             for (qint32 i=0; i<guids.size(); i++) {
-                note.tagGuids.push_back(guids[i].toStdString());
-                note.tagNames.push_back(names[i].toStdString());
-                note.__isset.tagGuids = true;
-                note.__isset.tagNames = true;
+                tagGuids.append(guids[i]);
+                tagNames.append(names[i]);
             }
+            note.tagNames = tagNames;
+            note.tagGuids = tagGuids;
         }
         if (name == "noteattributes" && !reader->isEndElement()) {
             processNoteAttributes(note.attributes);
-            note.__isset.attributes = true;
         }
         if (name == "noteresource" && !reader->isEndElement()) {
             Resource newRes;
@@ -306,8 +295,11 @@ void ImportData::processNoteNode() {
             newRes.noteGuid = note.guid;
             if (!backup)
                 newRes.updateSequenceNum = 0;
-            note.resources.push_back(newRes);
-            note.__isset.resources = true;
+            QList<Resource> resources;
+            if (note.resources.isSet())
+                resources = note.resources;
+            resources.append(newRes);
+            note.resources = resources;
         }
         reader->readNext();
         QString endName = reader->name().toString().toLower();
@@ -317,18 +309,22 @@ void ImportData::processNoteNode() {
 
     // Loop through the resources & make sure they all have the
     // proper guid for this note
-    for (unsigned int i=0; i<note.resources.size(); i++) {
-        note.resources[i].noteGuid = note.guid;
+    QList<Resource> resources;
+    if (note.resources.isSet())
+        resources = note.resources;
+    for (int i=0; i<resources.size(); i++) {
+        resources[i].noteGuid = note.guid;
     }
+    note.resources = resources;
     NoteTable noteTable(global.db);
     if (backup)
         noteTable.add(0,note, noteIsDirty);
     else {
         note.updateSequenceNum = 0;
         if (notebookGuid != NULL)
-            note.notebookGuid = notebookGuid.toStdString();
+            note.notebookGuid = notebookGuid;
         noteTable.add(0,note, true);
-        if (metaData.contains(QString(note.guid.c_str()))) {
+        if (metaData.contains(note.guid)) {
             QLOG_ERROR() << "ERROR IN IMPORTING DATA:  Metadata not yet supported";
         }
     }
@@ -349,61 +345,48 @@ void ImportData::processResource(Resource &resource) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
             if (name == "guid") {
-                resource.guid = textValue().toStdString();
-                resource.__isset.guid = true;
+                resource.guid = textValue();
             }
             if (!backup) {
                 QUuid uuid;
                 QString g =  uuid.createUuid().toString().replace("{","").replace("}","");
-                resource.guid = g.toStdString();
-                resource.__isset.guid = true;
+                resource.guid = g;
             }
             if (name == "noteguid") {
                 QString tx = textValue();
-                resource.noteGuid = tx.toStdString();
-                resource.__isset.noteGuid = true;
+                resource.noteGuid = tx;
             }
             if (name == "updatesequencenumber") {
                 resource.updateSequenceNum = intValue();
-                resource.__isset.updateSequenceNum = true;
             }
             if (name == "active") {
                 resource.active =  booleanValue();
-                resource.__isset.active = true;
             }
             if (name == "mime") {
-                resource.mime = textValue().toStdString();
-                resource.__isset.mime = true;
+                resource.mime = textValue();
             }
             if (name == "duration") {
                 resource.duration = shortValue();
-                resource.__isset.duration =true;
             }
             if (name == "height") {
                 resource.height = shortValue();
-                resource.__isset.height = true;
             }
             if (name == "width") {
                 resource.width = shortValue();
-                resource.__isset.width = true;
             }
 //            if (name == "dirty")
 //                isDirty = booleanValue();
             if (name == "data") {
                 processData("Data", resource.data);
-                resource.__isset.data = true;
             }
             if (name == "alternatedata") {
                 processData("AlternateData", resource.data);
-                resource.__isset.alternateData = true;
             }
             if (name == "recognitiondata") {
                 processData("RecognitionData", resource.recognition);
-                resource.__isset.recognition = true;
             }
             if (name == "noteresourceattributes") {
                 processResourceAttributes(resource.attributes);
-                resource.__isset.attributes = true;
             }
         }
         reader->readNext();
@@ -433,19 +416,17 @@ void ImportData::processData(QString nodeName, Data &data) {
                 QString x = textValue();
                 QByteArray bin = QByteArray::fromHex(x.toLocal8Bit());
                 data.body.clear();
-                data.body.append(bin.data(), bin.size());
-                data.__isset.body = true;
+                data.body = bin;
 
                 QCryptographicHash md5hash(QCryptographicHash::Md5);
                 QByteArray hash = md5hash.hash(bin, QCryptographicHash::Md5);
                 QLOG_DEBUG() << "Actual:" << hash.toHex();
 
                 data.bodyHash.clear();
-                data.bodyHash.append(hash.data(), hash.size());
-                data.__isset.bodyHash = true;
+                data.bodyHash = hash;
+
 
                 data.size = bin.size();
-                data.__isset.size = true;
             }
 //            if (name == "bodyhash") {
 //                QByteArray hexData = textValue().toLocal8Bit();
@@ -479,48 +460,37 @@ void ImportData::processResourceAttributes(ResourceAttributes &attributes) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
             if (name == "cameramake") {
-                attributes.cameraMake = textValue().toStdString();
-                attributes.__isset.cameraMake = true;
+                attributes.cameraMake = textValue();
             }
             if (name == "cameramodel") {
-                attributes.cameraModel = textValue().toStdString();
-                attributes.__isset.cameraModel =true;
+                attributes.cameraModel = textValue();
             }
             if (name == "filename") {
-                attributes.fileName = textValue().toStdString();
-                attributes.__isset.fileName = true;
+                attributes.fileName = textValue();
             }
             if (name == "recotype") {
-                attributes.recoType = textValue().toStdString();
-                attributes.__isset.fileName = true;
+                attributes.recoType = textValue();
             }
             if (name  == "sourceurl") {
-                attributes.sourceURL = textValue().toStdString();
-                attributes.__isset.sourceURL = true;
+                attributes.sourceURL = textValue();
             }
             if (name == "altitude") {
                 attributes.altitude = doubleValue();
-                attributes.__isset.altitude = true;
             }
             if (name == "longitude") {
                 attributes.longitude = doubleValue();
-                attributes.__isset.longitude = true;
             }
             if (name == "altitude") {
                 attributes.latitude = doubleValue();
-                attributes.__isset.latitude = true;
             }
             if (name == "timestamp") {
                 attributes.timestamp = longValue();
-                attributes.__isset.timestamp = true;
             }
             if (name == "attachment") {
                 attributes.attachment = booleanValue();
-                attributes.__isset.attachment = true;
             }
             if (name == "clientwillindex") {
                 attributes.clientWillIndex = booleanValue();
-                attributes.__isset.clientWillIndex =true;
             }
         }
         reader->readNext();
@@ -553,16 +523,14 @@ void ImportData::processNoteTagList(QStringList &guidList, QStringList &names) {
         qint32 lid = tagTable.getLid(guidList[i]);
         if (lid == 0) {
             Tag newTag;
-            newTag.guid = guidList[i].toStdString();
+            newTag.guid = guidList[i];
             newTag.name = "newtag";
-            newTag.__isset.name = true;
-            newTag.__isset.guid = true;
             tagTable.add(0, newTag, false, 0);
-            names.push_back(QString::fromStdString(newTag.name));
+            names.append(newTag.name);
         } else {
             Tag tag;
             tagTable.get(tag, lid);
-            names.push_back(QString::fromStdString(tag.name));
+            names.append(tag.name);
         }
     }
 }
@@ -580,36 +548,28 @@ void ImportData::processNoteAttributes(NoteAttributes &attributes) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
             if (name == "author" && !reader->isEndElement()) {
-                attributes.author = textValue().toStdString();
-                attributes.__isset.author = true;
+                attributes.author = textValue();
             }
             if (name == "sourceurl" && !reader->isEndElement()) {
-                attributes.sourceURL = textValue().toStdString();
-                attributes.__isset.sourceURL = true;
+                attributes.sourceURL = textValue();
             }
             if (name == "source" && !reader->isEndElement()) {
-                attributes.source = textValue().toStdString();
-                attributes.__isset.source = true;
+                attributes.source = textValue();
             }
             if (name == "sourceapplication" && !reader->isEndElement()) {
-                attributes.sourceApplication = textValue().toStdString();
-                attributes.__isset.sourceApplication = true;
+                attributes.sourceApplication = textValue();
             }
             if (name == "altitude" && !reader->isEndElement()) {
                 attributes.altitude = doubleValue();
-                attributes.__isset.altitude = true;
             }
             if (name == "longitude" && !reader->isEndElement()) {
                 attributes.longitude = doubleValue();
-                attributes.__isset.longitude = true;
             }
             if (name == "latitude" && !reader->isEndElement()) {
                 attributes.latitude = doubleValue();
-                attributes.__isset.latitude = true;
             }
             if (name == "subjectdate" && !reader->isEndElement()) {
                 attributes.subjectDate = longLongValue();
-                attributes.__isset.subjectDate = true;
             }
         }
         reader->readNext();
@@ -665,20 +625,16 @@ void ImportData::processSavedSearchNode() {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
             if (name == "guid")  {
-                search.guid = textValue().toStdString();
-                search.__isset.guid = true;
+                search.guid = textValue();
             }
             if (name == "name") {
-                search.name = textValue().toStdString();
-                search.__isset.name = true;
+                search.name = textValue();
             }
             if (name == "updatesequencenumber") {
                 search.updateSequenceNum = intValue();
-                search.__isset.updateSequenceNum = true;
             }
             if (name == "query") {
-                search.query = textValue().toStdString();
-                search.__isset.query = true;
+                search.query = textValue();
             }
             if (name == "dirty") {
                 if (booleanValue())
@@ -713,37 +669,26 @@ void ImportData::processLinkedNotebookNode() {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
             if (name == "guid") {
-                linkedNotebook.guid = textValue().toStdString();
-                linkedNotebook.__isset.guid = true;
+                linkedNotebook.guid = textValue();
             }
             if (name == "shardid") {
-                linkedNotebook.shardId = textValue().toStdString();
-                linkedNotebook.__isset.shardId = true;
+                linkedNotebook.shardId = textValue();
             }
             if (name == "updatesequencenumber") {
                 linkedNotebook.updateSequenceNum = intValue();
-                linkedNotebook.__isset.updateSequenceNum = true;
             }
             if (name == "sharekey") {
-                linkedNotebook.shareKey = textValue().toStdString();
-                linkedNotebook.__isset.shareKey = true;
+                linkedNotebook.shareKey = textValue();
             }
             if (name == "sharename") {
-                linkedNotebook.shareName = textValue().toStdString();
-                linkedNotebook.__isset.shareName = true;
+                linkedNotebook.shareName = textValue();
             }
             if (name == "uri") {
-                linkedNotebook.uri = textValue().toStdString();
-                linkedNotebook.__isset.uri = true;
+                linkedNotebook.uri = textValue();
             }
             if (name == "username") {
-                linkedNotebook.username = textValue().toStdString();
-                linkedNotebook.__isset.username = true;
+                linkedNotebook.username = textValue();
             }
-//            if (name == "dirty") {
-//                if (booleanValue())
-//                    linkedNotebookIsDirty = true;
-//            }
         }
         reader->readNext();
         QString endName = reader->name().toString().toLower();
@@ -772,38 +717,25 @@ void ImportData::processSharedNotebookNode() {
             QString name = reader->name().toString().toLower();
             if (name == "id") {
                 sharedNotebook.id = intValue();
-                sharedNotebook.__isset.id = true;
             }
             if (name == "userid") {
                 sharedNotebook.userId = intValue();
-                sharedNotebook.__isset.userId = true;
             }
             if (name == "email") {
-                sharedNotebook.email = textValue().toStdString();
-                sharedNotebook.__isset.email =true;
+                sharedNotebook.email = textValue();
             }
             if (name == "notebookguid") {
-                sharedNotebook.notebookGuid = textValue().toStdString();
-                sharedNotebook.__isset.notebookGuid = true;
+                sharedNotebook.notebookGuid = textValue();
             }
             if (name == "sharekey") {
-                sharedNotebook.shareKey = textValue().toStdString();
-                sharedNotebook.__isset.shareKey = true;
+                sharedNotebook.shareKey = textValue();
             }
             if (name == "username") {
-                sharedNotebook.username = textValue().toStdString();
-                sharedNotebook.__isset.username = true;
+                sharedNotebook.username = textValue();
             }
             if (name == "servicecreated") {
                 sharedNotebook.serviceCreated = longValue();
-                sharedNotebook.__isset.serviceCreated = true;
             }
-//            if (name == "dirty") {
-//                if (booleanValue())
-//                    sharedNotebookIsDirty = true;
-//                else
-//                    sharedNotebookIsDirty = false;
-//            }
         }
         reader->readNext();
         QString endName = reader->name().toString().toLower();
@@ -824,6 +756,7 @@ void ImportData::processNotebookNode() {
     Notebook notebook;
     bool notebookIsDirty = false;
     bool notebookIsLocal = false;
+    Publishing publishing;
 //    bool notebookIsReadOnly = false;
 
 //    notebookIcon = null;
@@ -835,28 +768,22 @@ void ImportData::processNotebookNode() {
             if (reader->isStartElement()) {
                 QString name = reader->name().toString().toLower();
                 if (name == "guid") {
-                    notebook.guid = textValue().toStdString();
-                    notebook.__isset.guid = true;
+                    notebook.guid = textValue();
                 }
                 if (name == "name") {
-                    notebook.name = textValue().toStdString();
-                    notebook.__isset.name = true;
+                    notebook.name = textValue();
                 }
                 if (name == "updatesequencenumber") {
                     notebook.updateSequenceNum = intValue();
-                    notebook.__isset.updateSequenceNum = true;
                 }
                 if (name == "servicecreated") {
                     notebook.serviceCreated = longValue();
-                    notebook.__isset.serviceCreated = true;
                 }
                 if (name == "serviceupdated") {
                     notebook.serviceUpdated = longValue();
-                    notebook.__isset.serviceUpdated = true;
                 }
                 if (name == "defaultnotebook") {
                     notebook.defaultNotebook = booleanValue();
-                    notebook.__isset.defaultNotebook = true;
                 }
                 if (name == "dirty") {
                     if (booleanValue())
@@ -866,17 +793,11 @@ void ImportData::processNotebookNode() {
                     if (booleanValue())
                         notebookIsLocal = true;
                 }
-//                if (name == "readonly") {
-//                    if (booleanValue())
-//                        notebookIsReadOnly = true;
-//                }
                 if (name == "publishingpublicdescription") {
-                    notebook.publishing.publicDescription = textValue().toStdString();
-                    notebook.publishing.__isset.publicDescription = true;
+                    publishing.publicDescription = textValue();
                 }
                 if (name == "publishinguri") {
-                    notebook.publishing.uri = textValue().toStdString();
-                    notebook.publishing.__isset.uri = true;
+                    publishing.uri = textValue();
                 }
                 if (name == "publishingorder") {
                     //notebook->publishing.order =
@@ -885,10 +806,9 @@ void ImportData::processNotebookNode() {
                 }
                 if (name == "PublishingAscending") {
                     if (booleanValue())
-                        notebook.publishing.ascending = true;
+                        publishing.ascending = true;
                     else
-                        notebook.publishing.ascending = false;
-                    notebook.publishing.__isset.ascending = true;
+                        publishing.ascending = false;
                 }
                 if (name == "icon") {
                     //byte[] b = textValue().getBytes();   // data binary
@@ -897,8 +817,7 @@ void ImportData::processNotebookNode() {
                     //notebookIcon = new QIcon(QPixmap.fromImage(QImage.fromData(binData)));
                 }
                 if (name == "stack") {
-                    notebook.stack = textValue().toStdString();
-                    notebook.__isset.stack = true;
+                    notebook.stack = textValue();
                 }
             }
         }
@@ -907,6 +826,7 @@ void ImportData::processNotebookNode() {
         if (endName == "notebook" && reader->isEndElement())
             atEnd = true;
     }
+    notebook.publishing = publishing;
 
     // We are at the end.  We should have a valid notebook now
     NotebookTable notebookTable(global.db);
@@ -948,20 +868,16 @@ void ImportData::processTagNode() {
             if (reader->isStartElement()) {
                 QString name = reader->name().toString().toLower();
                 if (name == "guid") {
-                    tag.guid = textValue().toStdString();
-                    tag.__isset.guid = true;
+                    tag.guid = textValue();
                 }
                 if (name == "name") {
-                    tag.name = textValue().toStdString();
-                    tag.__isset.name = true;
+                    tag.name = textValue();
                 }
                 if (name == "updatesequencenumber") {
                     tag.updateSequenceNum = intValue();
-                    tag.__isset.updateSequenceNum =true;
                 }
                 if (name == "parentguid") {
-                    tag.parentGuid = textValue().toStdString();
-                    tag.__isset.parentGuid = true;
+                    tag.parentGuid = textValue();
                 }
                 if (name == "Dirty") {
                     if (booleanValue())
@@ -979,7 +895,7 @@ void ImportData::processTagNode() {
 
     // We have a good tag, now let's save it to the database
     TagTable tagTable(global.db);
-    QString name(tag.name.c_str());
+    QString name(tag.name);
 
     // Check if we have a tag by this name already.  If we
     // do then we treat this as an update.

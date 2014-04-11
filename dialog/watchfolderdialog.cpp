@@ -149,7 +149,7 @@ void WatchFolderDialog::addRow(qint32 lid, int row, QString folder, qint32 noteb
     bookTable.get(n, notebookLid);
 
     QTableWidgetItem *book = new QTableWidgetItem();
-    book->setText(QString::fromStdString(n.name));
+    book->setText(n.name);
     book->setData(Qt::UserRole, notebookLid);
     table->setItem(row, 1, book);
 

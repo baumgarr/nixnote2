@@ -11,12 +11,9 @@
 #include <QVector>
 #include <QtXml>
 
+#include "qevercloud/include/QEverCloud.h"
+using namespace qevercloud;
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
-
-using namespace apache::thrift;
-using namespace evernote::edam;
 using namespace std;
 
 

@@ -75,16 +75,13 @@ void FileWatcher::saveFile(QString file) {
     QByteArray hash = md5hash.hash(data, QCryptographicHash::Md5);
 
     // * Start setting up the new note
-    newNote.guid = QString::number(lid).toStdString();
-    newNote.__isset.guid = true;
-    newNote.title = file.toStdString();
-    newNote.__isset.title = true;
+    newNote.guid = QString::number(lid);
+    newNote.title = file;
 
     NotebookTable bookTable(global.db);
     QString notebook;
     bookTable.getGuid(notebook, notebookLid);
-    newNote.notebookGuid = notebook.toStdString();
-    newNote.__isset.notebookGuid = true;
+    newNote.notebookGuid = notebook;
 
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
            QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
@@ -96,20 +93,14 @@ void FileWatcher::saveFile(QString file) {
             +QString(" type=\"" +mime +"\" ")
             +QString("/>");
     newNoteBody.append(enMedia + QString("</en-note>"));
-    newNote.content = newNoteBody.toStdString();
-    newNote.__isset.content = true;
+    newNote.content = newNoteBody;
     newNote.active = true;
-    newNote.__isset.active = true;
     newNote.created = QDateTime::currentMSecsSinceEpoch();;
-    newNote.__isset.created = true;
     newNote.updated = newNote.created;
-    newNote.__isset.updated = true;
     newNote.updateSequenceNum = 0;
-    newNote.__isset.updateSequenceNum = true;
-    newNote.attributes.sourceURL = "file://" + file.toStdString();
-    newNote.attributes.__isset.sourceURL = true;
-    newNote.__isset.attributes = true;
-
+    NoteAttributes na;
+    na.sourceURL = "file://" + file;
+    newNote.attributes = na;
 
     qint32 noteLid = lid;
     ntable.add(lid, newNote, true);
@@ -119,33 +110,22 @@ void FileWatcher::saveFile(QString file) {
 
     // Start creating the new resource
     Resource newRes;
-    string bodystring(data.constData(), data.size());
-    newRes.data.body = bodystring;
-    string hashstring(hash.constData(), hash.size());
-    newRes.data.bodyHash = hashstring;
-    newRes.data.size = data.size();
-    newRes.data.__isset.body = true;
-    newRes.data.__isset.bodyHash = true;
-    newRes.data.__isset.size = true;
-    newRes.__isset.data = true;
-    newRes.mime = mime.toStdString();
-    newRes.__isset.mime = true;
-    newRes.attributes.fileName = file.toStdString();
-    newRes.attributes.__isset.fileName = true;
-    newRes.__isset.attributes = true;
+    Data d;
+    d.body = data;
+    d.bodyHash = hash;
+    d.size = data.size();
+    newRes.data = d;
+    newRes.mime = mime;
+    ResourceAttributes ra;
+    ra.fileName = file;
     if (mime.startsWith("image", Qt::CaseInsensitive) || mime.endsWith("pdf", Qt::CaseInsensitive))
-        newRes.attributes.attachment = false;
+        ra.attachment = false;
     else
-        newRes.attributes.attachment = true;
-    newRes.attributes.__isset.attachment = true;
+        ra.attachment = true;
     newRes.active = true;
-    newRes.__isset.active = true;
-    newRes.guid = QString::number(lid).toStdString();
-    newRes.__isset.guid = true;
-    newRes.noteGuid = noteGuid.toStdString();
-    newRes.__isset.noteGuid = true;
+    newRes.guid = QString::number(lid);
+    newRes.noteGuid = noteGuid;
     newRes.updateSequenceNum = 0;
-    newRes.__isset.updateSequenceNum = 0;
     ResourceTable restable(global.db);
     restable.add(lid, newRes, true, noteLid);
 

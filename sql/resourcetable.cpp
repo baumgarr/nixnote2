@@ -47,7 +47,7 @@ void ResourceTable::updateGuid(qint32 lid, Guid &guid) {
 
     NSqlQuery query(*db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
-    query.bindValue(":data", QString::fromStdString(guid));
+    query.bindValue(":data", guid);
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_GUID);
     query.exec();
@@ -168,22 +168,24 @@ bool ResourceTable::get(Resource &resource, qint32 lid, bool withBinary) {
 
     // Now read the binary data from the disk
     if (withBinary) {
-        QString mimetype = QString::fromStdString(resource.mime);
+        QString mimetype = resource.mime;
         MimeReference ref;
         QString filename;
-        if (resource.__isset.attributes && resource.attributes.__isset.fileName)
-            filename = QString::fromStdString(resource.attributes.fileName);
+        ResourceAttributes attributes;
+        if (resource.attributes.isSet())
+            attributes = resource.attributes;
+        if (attributes.fileName.isSet())
+            filename = attributes.fileName;
         QString fileExt = ref.getExtensionFromMime(mimetype, filename);
         QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
         tfile.open(QIODevice::ReadOnly);
         QByteArray b = tfile.readAll();
-        resource.data.body.clear();
-        resource.data.body.append(b.data(), b.size());
+        Data d;
+        if (resource.data.isSet())
+            d = resource.data;
+        d.body = b;
+        resource.data = d;
         tfile.close();
-        if (resource.data.body.size() > 0) {
-            resource.data.__isset.body = true;
-            resource.__isset.data = true;
-        }
     }
 
     return true;
@@ -191,143 +193,119 @@ bool ResourceTable::get(Resource &resource, qint32 lid, bool withBinary) {
 
 void ResourceTable::mapResource(NSqlQuery &query, Resource &resource) {
     NoteTable ntable(db);
-    QByteArray byteArray;
+    Data d, rd, ad;
+    ResourceAttributes attributes;
+    if (resource.data.isSet())
+        d = resource.data;
+    if (resource.recognition.isSet())
+        rd = resource.recognition;
+    if (resource.alternateData.isSet())
+        ad = resource.alternateData;
+    if (resource.attributes.isSet())
+        attributes = resource.attributes;
     qint32 key = query.value(0).toInt();
     switch (key) {
     case (RESOURCE_GUID):
-        resource.guid = query.value(1).toString().toStdString();
-        resource.__isset.guid = true;
+        resource.guid = query.value(1).toString();
         break;
     case (RESOURCE_NOTE_LID):
-        resource.noteGuid = ntable.getGuid(query.value(1).toInt()).toStdString();
-        resource.__isset.noteGuid = true;
+        resource.noteGuid = ntable.getGuid(query.value(1).toInt());
         break;
     case (RESOURCE_DATA_BODY):
           break;
     case (RESOURCE_DATA_HASH):
-        byteArray.clear();
-        byteArray.append(query.value(1).toByteArray());
-        resource.data.bodyHash = QString(QByteArray::fromHex(byteArray)).toStdString();
-        resource.__isset.data = true;
-        resource.data.__isset.bodyHash = true;
+        d.bodyHash = QByteArray::fromHex(query.value(1).toByteArray());
+        resource.data = d;
         break;
     case (RESOURCE_DATA_SIZE):
-        resource.data.size = query.value(1).toInt();
-        resource.__isset.recognition = true;
-        resource.data.__isset.size = true;
+        d.size = query.value(1).toInt();
+        resource.data = d;
         break;
     case (RESOURCE_MIME):
-        resource.mime = query.value(1).toString().toStdString();
-        resource.__isset.mime = true;
+        resource.mime = query.value(1).toString();
         break;
     case (RESOURCE_ACTIVE):
         resource.active = query.value(1).toBool();
-        resource.__isset.active = true;
         break;
     case (RESOURCE_HEIGHT):
         resource.height = query.value(1).toString().toInt();
-        resource.__isset.height = true;
         break;
     case (RESOURCE_WIDTH):
         resource.width = query.value(1).toString().toInt();
-        resource.__isset.width = true;
         break;
     case (RESOURCE_DURATION):
         resource.duration = query.value(1).toString().toInt();
-        resource.__isset.duration = true;
         break;
     case (RESOURCE_RECOGNITION_BODY):
-        resource.recognition.body = query.value(1).toString().toStdString();
-        resource.__isset.recognition = true;
-        resource.recognition.__isset.body = true;
+        rd.body = query.value(1).toByteArray();
+        resource.recognition = rd;
         break;
     case (RESOURCE_RECOGNITION_HASH):
-        byteArray.clear();
-        byteArray.append(query.value(1).toByteArray());
-        resource.recognition.bodyHash = QString(QByteArray::fromHex(byteArray)).toStdString();
-        resource.__isset.recognition = true;
-        resource.recognition.__isset.bodyHash = true;
+        rd.bodyHash = query.value(1).toByteArray();
+        resource.recognition = rd;
         break;
     case (RESOURCE_RECOGNITION_SIZE):
-        resource.recognition.size = query.value(1).toInt();
-        resource.__isset.recognition = true;
-        resource.recognition.__isset.size = true;
+        rd.size = query.value(1).toInt();
+        resource.recognition = rd;
         break;
     case (RESOURCE_UPDATE_SEQUENCE_NUMBER):
         resource.duration = query.value(1).toString().toInt();
-        resource.__isset.duration = true;
         break;
     case (RESOURCE_ALTERNATE_BODY):
-        resource.alternateData.body = query.value(1).toString().toStdString();
-        resource.__isset.alternateData = true;
-        resource.alternateData.__isset.body = true;
+        ad.body = query.value(1).toByteArray();
+        resource.alternateData = ad;
         break;
     case (RESOURCE_ALTERNATE_HASH):
-        byteArray.clear();
-        byteArray.append(query.value(1).toByteArray());
-        resource.alternateData.bodyHash = QString(QByteArray::fromHex(byteArray)).toStdString();
-        resource.__isset.alternateData = true;
-        resource.alternateData.__isset.bodyHash = true;
+        ad.bodyHash = query.value(1).toByteArray();
+        resource.alternateData = ad;
         break;
     case (RESOURCE_ALTERNATE_SIZE):
-        resource.alternateData.size = query.value(1).toInt();
-        resource.__isset.alternateData = true;
-        resource.alternateData.__isset.size = true;
+        ad.size = query.value(1).toInt();
+        resource.alternateData = ad;
         break;
     case (RESOURCE_SOURCE_URL):
-        resource.attributes.sourceURL = query.value(1).toString().toStdString();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.sourceURL = true;
+        attributes.sourceURL = query.value(1).toString();
+        resource.attributes = attributes;
         break;
     case (RESOURCE_CAMERA_MAKE):
-        resource.attributes.cameraMake = query.value(1).toString().toStdString();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.cameraMake = true;
+        attributes.cameraMake = query.value(1).toString();
+        resource.attributes = attributes;
         break;
     case (RESOURCE_CAMERA_MODEL):
-        resource.attributes.cameraModel = query.value(1).toString().toStdString();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.cameraModel = true;
+        attributes.cameraModel = query.value(1).toString();
+        resource.attributes = attributes;
         break;
     case (RESOURCE_ALTITUDE):
-        resource.attributes.altitude = query.value(1).toString().toDouble();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.altitude = true;
+        attributes.altitude = query.value(1).toString().toDouble();
+        resource.attributes = attributes;
         break;
     case (RESOURCE_LONGITUDE):
-        resource.attributes.longitude = query.value(1).toString().toDouble();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.longitude = true;
+        attributes.longitude = query.value(1).toString().toDouble();
+        resource.attributes = attributes;
         break;
     case (RESOURCE_LATITUDE):
-        resource.attributes.latitude = query.value(1).toString().toDouble();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.latitude = true;
+        attributes.latitude = query.value(1).toString().toDouble();
+        resource.attributes = attributes;
         break;
     case (RESOURCE_RECO_TYPE):
-        resource.attributes.recoType = query.value(1).toString().toStdString();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.recoType = true;
+        attributes.recoType = query.value(1).toString();
+        resource.attributes = attributes;
         break;
     case (RESOURCE_ATTACHMENT):
-        resource.attributes.attachment = query.value(1).toBool();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.attachment = true;
+        attributes.attachment = query.value(1).toBool();
+        resource.attributes = attributes;
         break;
     case (RESOURCE_FILENAME):
-        resource.attributes.fileName = query.value(1).toString().toStdString();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.fileName = true;
+        attributes.fileName = query.value(1).toString();
+        resource.attributes = attributes;
         break;
     case (RESOURCE_CLIENT_WILL_INDEX):
-        resource.attributes.clientWillIndex = query.value(1).toBool();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.clientWillIndex = true;
+        attributes.clientWillIndex = query.value(1).toBool();
+        resource.attributes = attributes;
         break;
     case (RESOURCE_TIMESTAMP):
-        resource.attributes.timestamp = query.value(1).toDouble();
-        resource.__isset.attributes = true;
-        resource.attributes.__isset.timestamp = true;
+        attributes.timestamp = query.value(1).toDouble();
+        resource.attributes = attributes;
         break;
     }
 }
@@ -420,10 +398,13 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
     NSqlQuery query(*db);
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
 
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", RESOURCE_GUID);
-    query.bindValue(":data", QString::fromStdString(t.guid));
-    query.exec();
+    if (t.guid.isSet()) {
+        QString guid = t.guid;
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", RESOURCE_GUID);
+        query.bindValue(":data", guid);
+        query.exec();
+    }
 
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
@@ -434,7 +415,7 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
         NoteTable noteTable(db);
         noteLid = noteTable.getLid(t.noteGuid);
         if (noteLid <=0) {
-            noteLid = noteTable.addStub(QString::fromStdString(t.noteGuid));
+            noteLid = noteTable.addStub(t.noteGuid);
         }
     }
     query.bindValue(":lid", lid);
@@ -447,206 +428,235 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
     query.bindValue(":data", isDirty);
     query.exec();
 
-    if (t.__isset.data) {
-        if (t.data.__isset.size) {
+    if (t.data.isSet()) {
+        Data d = t.data;
+        if (d.size.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_DATA_SIZE);
-            query.bindValue(":data", t.data.size);
+            qint32 size = d.size;
+            query.bindValue(":data", size);
             query.exec();
         }
 
-        if (t.data.__isset.bodyHash) {
+        if (d.bodyHash.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_DATA_HASH);
             QByteArray b;
-            b.append(t.data.bodyHash.data(),t.data.bodyHash.size());
+            b.append(d.bodyHash);
             query.bindValue(":data", b.toHex());
             query.exec();
         }
 
-        if (t.data.__isset.body) {
-            QString mimetype = QString::fromStdString(t.mime);
+        if (d.body.isSet()) {
+            QString mimetype = t.mime;
             QString filename;
             MimeReference ref;
-            if (t.__isset.attributes && t.attributes.__isset.fileName)
-                filename = QString::fromStdString(t.attributes.fileName);
+            ResourceAttributes attributes;
+            if (t.attributes.isSet())
+                attributes = t.attributes;
+            if (attributes.fileName.isSet())
+                filename = attributes.fileName;
             QString fileExt = ref.getExtensionFromMime(mimetype, filename);
             QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
             tfile.open(QIODevice::WriteOnly);
-            if (t.data.size > 0)
-                tfile.write(t.data.body.data(),t.data.size);
+            if (d.size > 0)
+                tfile.write(d.body);
             tfile.close();
         }
     }
 
-    if (t.__isset.mime) {
+    if (t.mime.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", RESOURCE_MIME);
-        query.bindValue(":data", QString::fromStdString(t.mime));
+        QString mime = t.mime;
+        query.bindValue(":data", mime);
         query.exec();
     }
 
-    if (t.__isset.width) {
+    if (t.width.isSet()) {
+        qint16 width = t.width;
         query.bindValue(":lid", lid);
         query.bindValue(":key", RESOURCE_WIDTH);
-        query.bindValue(":data", t.width);
+        query.bindValue(":data", width);
         query.exec();
     }
 
-    if (t.__isset.height) {
+    if (t.height.isSet()) {
+        qint16 height = t.height;
         query.bindValue(":lid", lid);
         query.bindValue(":key", RESOURCE_HEIGHT);
-        query.bindValue(":data", t.height);
+        query.bindValue(":data", height);
         query.exec();
     }
 
-    if (t.__isset.duration) {
+    if (t.duration.isSet()) {
+        qint16 duration = t.duration;
         query.bindValue(":lid", lid);
         query.bindValue(":key", RESOURCE_DURATION);
-        query.bindValue(":data", t.duration);
+        query.bindValue(":data", duration);
         query.exec();
     }
 
-    if (t.__isset.active) {
+    if (t.active.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", RESOURCE_ACTIVE);
-        query.bindValue(":data", t.active);
+        bool active = t.active;
+        query.bindValue(":data", active);
         query.exec();
     }
 
-    if (t.__isset.recognition) {
-        if (t.recognition.__isset.size) {
+    if (t.recognition.isSet()) {
+        Data r = t.recognition;
+        if (r.size.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_RECOGNITION_SIZE);
-            query.bindValue(":data", t.recognition.size);
+            qint32 size = r.size;
+            query.bindValue(":data", size);
             query.exec();
         }
 
-        if (t.recognition.__isset.bodyHash) {
+        if (r.bodyHash.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_RECOGNITION_HASH);
             QByteArray b;
-            b.append(t.recognition.bodyHash.data());
+            b.append(r.bodyHash);
             query.bindValue(":data", b.toHex());
             query.exec();
         }
 
-        if (t.recognition.__isset.body) {
+        if (r.body.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_RECOGNITION_BODY);
-            query.bindValue(":data", QString::fromStdString(t.recognition.body));
+            QByteArray body = r.body;
+            query.bindValue(":data", body);
             query.exec();
         }
     }
 
-    if (t.__isset.updateSequenceNum) {
+    if (t.updateSequenceNum.isSet()) {
+        qint32 usn =t.updateSequenceNum;
         query.bindValue(":key", RESOURCE_UPDATE_SEQUENCE_NUMBER);
-        query.bindValue(":data", t.updateSequenceNum);
+        query.bindValue(":data", usn);
         query.exec();
     }
 
 
-    if (t.__isset.alternateData) {
-        if (t.alternateData.__isset.size) {
+    if (t.alternateData.isSet()) {
+        Data ad = t.alternateData;
+        if (ad.size.isSet()) {
+            qint32 size = ad.size;
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_ALTERNATE_SIZE);
-            query.bindValue(":data", t.alternateData.size);
+            query.bindValue(":data", size);
             query.exec();
         }
 
-        if (t.alternateData.__isset.bodyHash) {
+        if (ad.bodyHash.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_ALTERNATE_HASH);
             QByteArray b;
-            b.append(t.alternateData.bodyHash.data());
+            b.append(ad.bodyHash);
             query.bindValue(":data", b.toHex());
             query.exec();
         }
 
-        if (t.alternateData.__isset.body) {
+        if (ad.body.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_ALTERNATE_BODY);
-            query.bindValue(":data", QString::fromStdString(t.alternateData.body));
+            QByteArray body = ad.body;
+            query.bindValue(":data", body);
             query.exec();
         }
     }
 
 
-    if (t.__isset.attributes) {
-        if (t.attributes.__isset.sourceURL) {
+    if (t.attributes.isSet()) {
+        ResourceAttributes ra = t.attributes;
+        if (ra.sourceURL.isSet()) {
             query.bindValue(":lid", lid);
+            QString url = ra.sourceURL;
             query.bindValue(":key", RESOURCE_SOURCE_URL);
-            query.bindValue(":data", QString::fromStdString(t.attributes.sourceURL));
+            query.bindValue(":data", url);
             query.exec();
         }
 
-        if (t.attributes.__isset.timestamp) {
+        if (ra.timestamp.isSet()) {
+            qlonglong ts = ra.timestamp;
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_TIMESTAMP);
-            query.bindValue(":data", QVariant::fromValue(t.attributes.timestamp));
+            query.bindValue(":data", ts);
             query.exec();
         }
 
-        if (t.attributes.__isset.latitude) {
+        if (ra.latitude.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_LATITUDE);
-            query.bindValue(":data", t.attributes.latitude);
+            double lat = ra.latitude;
+            query.bindValue(":data", lat);
             query.exec();
         }
 
-        if (t.attributes.__isset.longitude) {
+        if (ra.longitude.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_LONGITUDE);
-            query.bindValue(":data", t.attributes.longitude);
+            double lon = ra.longitude;
+            query.bindValue(":data", lon);
             query.exec();
         }
 
-        if (t.attributes.__isset.altitude) {
+        if (ra.altitude.isSet()) {
+            double alt = ra.altitude;
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_ALTITUDE);
-            query.bindValue(":data", t.attributes.altitude);
+            query.bindValue(":data", alt);
             query.exec();
         }
 
-        if (t.attributes.__isset.cameraMake) {
+        if (ra.cameraMake.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_CAMERA_MAKE);
-            query.bindValue(":data", QString::fromStdString(t.attributes.cameraMake));
+            QString cameramake = ra.cameraMake;
+            query.bindValue(":data", cameramake);
             query.exec();
         }
 
-        if (t.attributes.__isset.cameraModel) {
+        if (ra.cameraModel.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_CAMERA_MODEL);
-            query.bindValue(":data", QString::fromStdString(t.attributes.cameraModel));
+            QString model = ra.cameraModel;
+            query.bindValue(":data", model);
             query.exec();
         }
 
-        if (t.attributes.__isset.clientWillIndex) {
+        if (ra.clientWillIndex.isSet()) {
+            bool cwi = ra.clientWillIndex;
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_CLIENT_WILL_INDEX);
-            query.bindValue(":data", t.attributes.clientWillIndex);
+            query.bindValue(":data", cwi);
             query.exec();
         }
 
-        if (t.attributes.__isset.recoType) {
+        if (ra.recoType.isSet()) {
+            QString reco = ra.recoType;
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_RECO_TYPE);
-            query.bindValue(":data", QString::fromStdString(t.attributes.recoType));
+            query.bindValue(":data", reco);
             query.exec();
         }
 
-        if (t.attributes.__isset.fileName) {
+        if (ra.fileName.isSet()) {
+            QString filename = ra.fileName;
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_FILENAME);
-            query.bindValue(":data", QString::fromStdString(t.attributes.fileName));
+            query.bindValue(":data", filename);
             query.exec();
         }
 
-        if (t.attributes.__isset.attachment) {
+        if (ra.attachment.isSet()) {
+            bool attachment = ra.attachment;
             query.bindValue(":lid", lid);
             query.bindValue(":key", RESOURCE_ATTACHMENT);
-            query.bindValue(":data", t.attributes.attachment);
+            query.bindValue(":data", attachment);
             query.exec();
         }
     }
@@ -667,24 +677,21 @@ bool ResourceTable::getResourceRecognition(Resource &resource, qint32 lid) {
     query.exec();
     if (query.size() == 0)
         return false;
+    Data d;
+    if (resource.recognition.isSet())
+        d = resource.recognition;
     while (query.next()) {
         if (query.value(0).toInt() == RESOURCE_RECOGNITION_HASH) {
-            resource.recognition.bodyHash = query.value(1).toString().toStdString();
-            resource.__isset.recognition = true;
-            resource.recognition.__isset.bodyHash = true;
+            d.bodyHash = query.value(1).toByteArray();
         }
         if (query.value(0).toInt() == RESOURCE_RECOGNITION_SIZE) {
-            resource.recognition.size = query.value(1).toLongLong();
-            resource.__isset.recognition = true;
-            resource.recognition.__isset.size = true;
+            d.size = query.value(1).toLongLong();
         }
         if (query.value(0).toInt() == RESOURCE_RECOGNITION_BODY) {
-            resource.recognition.body = query.value(1).toString().toStdString();
-            resource.__isset.recognition = true;
-            resource.recognition.__isset.body = true;
+            d.body = query.value(1).toByteArray();
         }
     }
-
+    resource.recognition = d;
     return true;
 }
 
@@ -809,7 +816,7 @@ void ResourceTable::expunge(qint32 lid) {
 
 
 // Permanently delete a resource
-void ResourceTable::expunge(string guid) {
+void ResourceTable::expunge(QString guid) {
     int lid = this->getLid(guid);
     this->expunge(lid);
 }
@@ -937,7 +944,7 @@ void ResourceTable::updateNoteLid(qint32 resourceLid, qint32 newNoteLid) {
     query.exec();
 }
 
-void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, QString guid) {
+void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash< qint32, Resource > &resourceMap, QString guid) {
     NoteTable ntable(db);
     qint32 lid = ntable.getLid(guid);
     this->getResourceMap(map, resourceMap, lid);
@@ -984,9 +991,8 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
                     hashMap.insert(hash, prevLid);
                     if (r == NULL)
                         r = new Resource();
-                    if (!r->__isset.noteGuid) {
-                        r->noteGuid = noteGuid.toStdString();
-                        r->__isset.noteGuid = true;
+                    if (!r->noteGuid.isSet()) {
+                        r->noteGuid = noteGuid;
                     }
                     resourceMap.insert(prevLid, *r);
                     delete r;
@@ -1007,8 +1013,8 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
 }
 
 void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary) {
-    NoteTable ntable(db);
-    QString noteGuid = ntable.getGuid(noteLid);
+    //NoteTable ntable(db);
+    //QString noteGuid = ntable.getGuid(noteLid);
     NSqlQuery query(*db);
     QHash<qint32, Resource*> lidMap;
     if (fullLoad){
@@ -1041,11 +1047,14 @@ void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool 
         if (withBinary && fullLoad) {
             Resource *r = i.value();
             qint32 lid = i.key();
-            QString mimetype = QString::fromStdString(r->mime);
+            QString mimetype = r->mime;
             MimeReference ref;
             QString filename;
-            if (r->__isset.attributes && r->attributes.__isset.fileName)
-                filename = QString::fromStdString(r->attributes.fileName);
+            ResourceAttributes attributes;
+            if (r->attributes.isSet())
+                attributes = r->attributes;
+            if (attributes.fileName.isSet())
+                filename = attributes.fileName;
             QString fileExt = ref.getExtensionFromMime(mimetype, filename);
             QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
             if (!tfile.open(QIODevice::ReadOnly)) {
@@ -1059,13 +1068,12 @@ void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool 
                 }
             }
             QByteArray b = tfile.readAll();
-            r->data.body.clear();
-            r->data.body.append(b.data(), b.size());
+            Data d;
+            if (r->data.isSet())
+                d = r->data;
+            d.body = b;
+            r->data = d;
             tfile.close();
-            if (r->data.body.size() > 0) {
-                r->data.__isset.body = true;
-                r->__isset.data = true;
-            }
         }
         list.append(*i.value());
     }

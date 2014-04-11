@@ -62,13 +62,13 @@ void TagViewer::resizeEvent(QResizeEvent *)
 
 
 void TagViewer::hideEvent(QHideEvent* event) {
-    event=event;  // suppress unused
+    Q_UNUSED(event);  // suppress unused
     hide();
     clearButton->hide();
 }
 
 void TagViewer::showEvent(QShowEvent* event) {
-    event=event;  // suppress unused
+    Q_UNUSED(event);  // suppress unused
     show();
     clearButton->show();
 }

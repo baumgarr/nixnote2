@@ -74,8 +74,8 @@ qint32 SharedNotebookTable::sync(qint32 l, SharedNotebook sharedNotebook){
 
 
 
-qint32 SharedNotebookTable::add(qint32 l, SharedNotebook &t, bool isDirty){
-    isDirty=isDirty;  //suppress unused
+qint32 SharedNotebookTable::add(qint32 l, const SharedNotebook &t, bool isDirty){
+    Q_UNUSED(isDirty);  //suppress unused
     ConfigStore cs(db);
     qint32 lid = l;
     if (lid == 0)
@@ -83,70 +83,95 @@ qint32 SharedNotebookTable::add(qint32 l, SharedNotebook &t, bool isDirty){
 
     NSqlQuery query(*db);
 
-    if (t.__isset.email) {
+    if (t.email.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_EMAIL);
-        query.bindValue(":data", QString::fromStdString(t.email));
+        QString email = t.email;
+        query.bindValue(":data",email);
         query.exec();
     }
 
-    if (t.__isset.id) {
+    if (t.id.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_ID);
-        query.bindValue(":data", QVariant::fromValue(t.id));
+        qint64 id = t.id;
+        query.bindValue(":data", id);
         query.exec();
     }
 
-    if (t.__isset.notebookGuid) {
+    if (t.notebookGuid.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_NOTEBOOK_GUID);
-        query.bindValue(":data", QString::fromStdString(t.notebookGuid));
+        QString notebookGuid = t.notebookGuid;
+        query.bindValue(":data", notebookGuid);
         query.exec();
     }
 
-    if (t.__isset.notebookModifiable) {
+    if (t.notebookModifiable.isSet()) {
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", SHAREDNOTEBOOK_MODIFIABLE);
+        bool mod = t.notebookModifiable;
+        query.bindValue(":data", mod);
+        query.exec();
+    }
+    if (t.privilege.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_PRIVILEGE);
-        query.bindValue(":data", t.privilege);
+        qint32 priv = t.privilege;
+        query.bindValue(":data", priv);
         query.exec();
     }
-    if (t.__isset.requireLogin) {
+    if (t.requireLogin.isSet()) {
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", SHAREDNOTEBOOK_REQUIRE_LOGIN);
+        bool login = t.requireLogin;
+        query.bindValue(":data", login);
+        query.exec();
+    }
+    if (t.allowPreview.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_ALLOW_PREVIEW);
-        query.bindValue(":data", t.allowPreview);
+        bool preview = t.allowPreview;
+        query.bindValue(":data", preview);
         query.exec();
     }
-    if (t.__isset.serviceCreated) {
+    if (t.serviceCreated.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_SERVICE_CREATED);
-        query.bindValue(":data", QVariant::fromValue(t.serviceCreated));
+        qlonglong date = t.serviceCreated;
+        query.bindValue(":data", date);
         query.exec();
     }
-    if (t.__isset.shareKey) {
+    if (t.shareKey.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_SHARE_KEY);
-        query.bindValue(":data", QString::fromStdString(t.shareKey));
+        QString key = t.shareKey;
+        query.bindValue(":data", key);
         query.exec();
     }
-    if (t.__isset.userId) {
+    if (t.userId.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_USERID);
-        query.bindValue(":data", t.userId);
+        int userid = t.userId;
+        query.bindValue(":data", userid);
         query.exec();
     }
-    if (t.__isset.username) {
+    if (t.username.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SHAREDNOTEBOOK_USERNAME);
-        query.bindValue(":data", QString::fromStdString(t.username));
+        QString username = t.username;
+        query.bindValue(":data", username);
         query.exec();
     }
     return lid;
@@ -164,8 +189,7 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
         qint32 key = query.value(0).toInt();
         switch (key) {
         case (SHAREDNOTEBOOK_EMAIL):
-            notebook.email = query.value(1).toString().toStdString();
-            notebook.__isset.email = true;
+            notebook.email = query.value(1).toString();
             returnVal = true;
             break;
         case (SHAREDNOTEBOOK_ISDIRTY):
@@ -173,7 +197,6 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
             break;
         case (SHAREDNOTEBOOK_SERVICE_CREATED):
             notebook.serviceCreated = query.value(1).toLongLong();
-            notebook.__isset.serviceCreated = true;
             returnVal = true;
             break;
         case (SHAREDNOTEBOOK_SERVICE_UPDATED):
@@ -181,17 +204,22 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
             break;
         case (SHAREDNOTEBOOK_ALLOW_PREVIEW):
             notebook.allowPreview = query.value(1).toBool();
-            notebook.__isset.allowPreview = true;
             returnVal = true;
             break;
         case (SHAREDNOTEBOOK_ID):
             notebook.id = query.value(1).toLongLong();
-            notebook.__isset.id = true;
             returnVal = true;
             break;
         case (SHAREDNOTEBOOK_NOTEBOOK_GUID):
-            notebook.notebookGuid = query.value(1).toString().toStdString();
-            notebook.__isset.notebookGuid = true;
+            notebook.notebookGuid = query.value(1).toString();
+            returnVal = true;
+            break;
+        case (SHAREDNOTEBOOK_MODIFIABLE):
+            notebook.notebookModifiable = query.value(1).toBool();
+            returnVal = true;
+            break;
+        case (SHAREDNOTEBOOK_REQUIRE_LOGIN):
+            notebook.requireLogin = query.value(1).toBool();
             returnVal = true;
             break;
         case (SHAREDNOTEBOOK_PRIVILEGE): {
@@ -207,23 +235,19 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
                 notebook.privilege = SharedNotebookPrivilegeLevel::MODIFY_NOTEBOOK_PLUS_ACTIVITY;
             if (priv == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
                 notebook.privilege = SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY;
-            notebook.__isset.privilege = true;
             returnVal = true;
             break;
         }
         case (SHAREDNOTEBOOK_USERID):
             notebook.userId = query.value(1).toInt();
-            notebook.__isset.userId = true;
             returnVal = true;
             break;
         case (SHAREDNOTEBOOK_SHARE_KEY):
-            notebook.shareKey = query.value(1).toString().toStdString();
-            notebook.__isset.shareKey = true;
+            notebook.shareKey = query.value(1).toString();
             returnVal = true;
             break;
         case (SHAREDNOTEBOOK_USERNAME):
-            notebook.username = query.value(1).toString().toStdString();
-            notebook.__isset.username = true;
+            notebook.username = query.value(1).toString();
             returnVal =true;
             break;
         }

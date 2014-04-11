@@ -282,7 +282,7 @@ void NSearchView::buildSelection() {
         SearchTable stable(global.db);
         SavedSearch search;
         if (stable.get(search, lid))
-            newFilter->setSearchString(QString::fromStdString(search.query));
+            newFilter->setSearchString(search.query);
     }
 
     newFilter->resetAttribute = true;
@@ -427,9 +427,12 @@ void NSearchView::editComplete() {
     qint32 check = table.findByName(text);
     if (check != 0) {
         NSearchViewItem *item = dataStore[lid];
-        item->setData(NAME_POSITION, Qt::DisplayRole, QString::fromStdString(s.name));
+        QString name = "";
+        if (s.name.isSet())
+            name = s.name;
+        item->setData(NAME_POSITION, Qt::DisplayRole,name);
     } else {
-        s.name = text.toStdString();
+        s.name = text;
         table.update(lid, s, true);
     }
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);

@@ -24,10 +24,7 @@
 #define SCREENCAPTURE_H
 
 #include <QDialog>
-#include "config.h"
-
 #include <QtGui/QDialog>
-
 #include <QtGui/QMouseEvent>
 #include <QtGui/QPainter>
 #include <QtGui/QPixmap>

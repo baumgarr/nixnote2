@@ -43,14 +43,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlTableModel>
 #include <QtSql>
 #include <QString>
-
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
 #include "global.h"
 
 extern Global global;
 
-using namespace evernote::edam  ;
 using namespace std;
 
 class LinkedNotebookTable : public QObject

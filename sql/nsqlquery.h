@@ -32,8 +32,8 @@ class NSqlQuery : public QSqlQuery
 public:
     explicit NSqlQuery(QSqlDatabase db);
     bool exec();
-    bool exec(QString &query);
-    bool exec(string query);
+    bool exec(const QString &query);
+    bool exec(const string query);
     bool exec(const char *query);
 };
 

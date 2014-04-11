@@ -115,7 +115,10 @@ void NNotebookViewItem::setIconType() {
 
     Notebook notebook;
     bookTable.get(notebook, lid);
-    if (QString::fromStdString(notebook.name).startsWith("Conflict", Qt::CaseInsensitive)) {
+    QString notebookname = "";
+    if (notebook.name.isSet())
+        notebookname = notebook.name;
+    if (notebookname.startsWith("Conflict", Qt::CaseInsensitive)) {
         this->setType(Conflict);
         return;
     }

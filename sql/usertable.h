@@ -20,11 +20,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef USERTABLE_H
 #define USERTABLE_H
 #include <Q_LONG>
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include <QSqlDatabase>
+#include <qevercloud/include/QEverCloud.h>
 
-using namespace evernote::edam;
+
+using namespace qevercloud;
 
 class UserTable
 {

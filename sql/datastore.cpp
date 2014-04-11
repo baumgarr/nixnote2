@@ -22,8 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QString>
 #include <QList>
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include "configstore.h"
 #include "searchtable.h"
 #include "tagtable.h"
@@ -93,14 +91,14 @@ void DataStore::createTable() {
     NotebookTable table(db);
     notebook.name = "My Notebook";
     notebook.defaultNotebook = true;
-    notebook.__isset.name = true;
-    notebook.__isset.defaultNotebook = true;
+    QUuid uuid;
+    notebook.guid =  uuid.createUuid().toString().replace("{","").replace("}","");
     table.add(0,notebook,true,false);
 }
 
 
 qint32 DataStore::getDirtyNoteGuids(QList<QString> &retVal) {
-    retVal = retVal;  /* suppress unused warning */
+    Q_UNUSED(retVal);  /* suppress unused warning */
     return 0;
 }
 

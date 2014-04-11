@@ -136,7 +136,7 @@ void NoteModel::createTable() {
 // }
 
 int NoteModel::columnCount(const QModelIndex &parent) const {
-    parent.isValid();  // Suppress unused variable
+    Q_UNUSED(parent);  // Suppress unused variable
 //    parent.column();
     return NOTE_TABLE_COLUMN_COUNT;
 }

@@ -284,6 +284,10 @@ QSize NTrashTree::sizeHint() {
 
 
 void NTrashTree::drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const {
+    // suppress unused
+    Q_UNUSED(painter);
+    Q_UNUSED(rect);
+    Q_UNUSED(index);
     return;
 }
 

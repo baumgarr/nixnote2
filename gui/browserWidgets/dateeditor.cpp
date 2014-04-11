@@ -67,29 +67,34 @@ DateEditor::DateEditor(QWidget *parent) :
 void DateEditor::setNote(qint32 lid, Note n) {
     createdDate.setNote(lid, n.created, NOTE_CREATED_DATE);
     updatedDate.setNote(lid, n.updated, NOTE_UPDATED_DATE);
-    if (n.__isset.attributes && n.attributes.__isset.subjectDate && n.attributes.subjectDate > 0)
-        subjectDate.setNote(lid, n.attributes.subjectDate, NOTE_ATTRIBUTE_SUBJECT_DATE);
+    NoteAttributes attributes;
+    if (n.attributes.isSet())
+        attributes = n.attributes;
+    if (attributes.subjectDate.isSet() && attributes.subjectDate > 0)
+        subjectDate.setNote(lid, attributes.subjectDate, NOTE_ATTRIBUTE_SUBJECT_DATE);
     else
         subjectDate.setNote(lid, n.updated, NOTE_ATTRIBUTE_SUBJECT_DATE);
 
-    if (n.__isset.attributes && n.attributes.__isset.author && n.attributes.author != "")
-        authorEditor.setAuthor(lid, QString::fromStdString(n.attributes.author));
-    else
-        authorEditor.setAuthor(lid, "");
+    QString author;
+    if (attributes.author.isSet())
+        author = attributes.author;
+    authorEditor.setAuthor(lid, author.trimmed());
 
-    if (n.__isset.attributes && n.attributes.__isset.longitude) {
-        QString placeName;
-        if (n.attributes.__isset.placeName)
-                placeName = QString::fromStdString(n.attributes.placeName);
-        locationEditor.setGeography(lid, n.attributes.longitude,
-            n.attributes.latitude,n.attributes.altitude, placeName);
-    } else {
-        locationEditor.setGeography(lid, 0,0,0,"");
-    }
+    double longitude=0, altitude=0, latitude=0;
+    QString placeName = "";
+    if (attributes.longitude.isSet())
+        longitude = attributes.longitude;
+    if (attributes.latitude.isSet())
+        latitude = attributes.latitude;
+    if (attributes.altitude.isSet())
+        altitude = attributes.altitude;
+    if (attributes.placeName.isSet())
+        placeName = attributes.placeName;
+    locationEditor.setGeography(lid, longitude,latitude, altitude, placeName);
 }
 
 void DateEditor::hideEvent(QHideEvent* event) {
-    event=event;  // suppress unused
+    Q_UNUSED(event);  // suppress unused
     createdDate.hide();
     subjectDate.hide();
     updatedDate.hide();
@@ -98,7 +103,7 @@ void DateEditor::hideEvent(QHideEvent* event) {
 }
 
 void DateEditor::showEvent(QShowEvent* event) {
-    event=event;  // suppress unused
+    Q_UNUSED(event);  // suppress unused
     createdDate.show();
     subjectDate.show();
     updatedDate.show();

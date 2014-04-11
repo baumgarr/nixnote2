@@ -21,12 +21,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef NOTECACHE_H
 #define NOTECACHE_H
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
+#include "qevercloud/include/QEverCloud.h"
 #include <QObject>
 
 
-using namespace evernote::edam  ;
+using namespace qevercloud  ;
 
 
 class NoteCache : public QObject

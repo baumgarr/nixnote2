@@ -28,39 +28,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QHash>
 #include <QVector>
 #include <QTimer>
-
-
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
-
-#include <protocol/TBinaryProtocol.h>
-#include <server/TSimpleServer.h>
-#include <server/TThreadedServer.h>
-#include <server/TThreadPoolServer.h>
-
-#include <transport/TServerSocket.h>
-#include <transport/TBufferTransports.h>
-#include <transport/TSocket.h>
-#include <transport/TBufferTransports.h>
-#include <transport/TSSLServerSocket.h>
-#include <transport/TSSLSocket.h>
-#include <transport/THttpClient.h>
-//#include "java/javamachine.h"
 #include "communication/communicationmanager.h"
 #include "sql/databaseconnection.h"
-
-#include <protocol/TBinaryProtocol.h>
 
 #include <iostream>
 #include <string>
 #include <stdio.h>
 
-using namespace apache::thrift;
-using namespace apache::thrift::protocol;
-using namespace boost;
-using namespace apache::thrift::transport;
-using namespace evernote::edam;
-using namespace std;
+#include "qevercloud/include/QEverCloud.h"
+using namespace qevercloud;
+
+
+//using namespace apache::thrift;
+//using namespace apache::thrift::protocol;
+//using namespace boost;
+//using namespace apache::thrift::transport;
+//using namespace evernote::edam;
+//using namespace std;
 
 class SyncRunner : public QObject
 {
@@ -87,13 +71,13 @@ private:
     string username;
     string password;
 
-    shared_ptr<THttpClient> userStoreHttpClient;
-    shared_ptr<UserStoreClient> userStoreClient;
-    shared_ptr<THttpClient> noteStoreHttpClient;
-    shared_ptr<NoteStoreClient> noteStoreClient;
-    AuthenticationResult authResult;
-    shared_ptr<AuthenticationResult> linkedAuthResult;
-    shared_ptr<User> user;
+//    shared_ptr<THttpClient> userStoreHttpClient;
+//    shared_ptr<UserStoreClient> userStoreClient;
+//    shared_ptr<THttpClient> noteStoreHttpClient;
+//    shared_ptr<NoteStoreClient> noteStoreClient;
+//    evernote::edam::AuthenticationResult authResult;
+//    shared_ptr<evernote::edam::AuthenticationResult> linkedAuthResult;
+//    shared_ptr<evernote::edam::User> user;
 
     long authTimeRemaining;
     long authRefreshTime;
@@ -107,28 +91,28 @@ private:
 
     void evernoteSync();
     bool syncRemoteToLocal(qint32 highSequence);
-    void syncRemoteExpungedNotes(vector<string> guids);
-    void syncRemoteExpungedNotebooks(vector<string> guids);
+    void syncRemoteExpungedNotes(QList<Guid> guids);
+    void syncRemoteExpungedNotebooks(QList<Guid> guids);
     void processSyncChunk(SyncChunk &chunk, qint32 linkedNotebook=0);
-    void syncRemoteExpungedTags(vector<string> guids);
-    void syncRemoteExpungedSavedSearches(vector<string> guid);
+    void syncRemoteExpungedTags(QList<Guid> guids);
+    void syncRemoteExpungedSavedSearches(QList<Guid> guid);
 
-    void syncRemoteTags(vector<Tag> tag, qint32 account=0);
-    void syncRemoteSearches(vector<SavedSearch> searches);
-    void syncRemoteNotebooks(vector<Notebook> books, qint32 account=0);
-    void syncRemoteNotes(vector<Note> notes, qint32 account=0);
-    void syncRemoteResources(vector<Resource> resources);
-    void syncRemoteLinkedNotebooksChunk(vector<LinkedNotebook> books);
-    void syncRemoteExpungedLinkedNotebooks(vector<string> guids);
+    void syncRemoteTags(QList<Tag> tag, qint32 account=0);
+    void syncRemoteSearches(QList<SavedSearch> searches);
+    void syncRemoteNotebooks(QList<Notebook> books, qint32 account=0);
+    void syncRemoteNotes(QList<Note> notes, qint32 account=0);
+    void syncRemoteResources(QList<Resource> resources);
+    void syncRemoteLinkedNotebooksChunk(QList<LinkedNotebook> books);
+    void syncRemoteExpungedLinkedNotebooks(QList<Guid> guids);
     bool syncRemoteLinkedNotebooksActual();
 
-    void checkForInkNotes(vector<Resource> &resources);
+    //void checkForInkNotes(QList<Resource> &resources);
 
     qint32 uploadSavedSearches();
     qint32 uploadTags();
     qint32 uploadNotebooks();
     qint32 uploadPersonalNotes();
-    qint32 uploadLinkedNotes(qint32 notebookLid, LinkedNotebook &book);
+    qint32 uploadLinkedNotes(qint32 notebookLid);
 
 
 public:

@@ -66,10 +66,10 @@ void NoteHistorySelect::cancelButtonPressed() {
 }
 
 
-void NoteHistorySelect::loadData(vector<NoteVersionId> &versions) {
+void NoteHistorySelect::loadData(QList<NoteVersionId> &versions) {
 
     this->versions = &versions;
-    for (unsigned int i=0; i<versions.size(); i++) {
+    for (int i=0; i<versions.size(); i++) {
         QListWidgetItem *item = new QListWidgetItem(&list);
         item->setData(Qt::UserRole, versions.at(i).updateSequenceNum);
         QString text;
@@ -82,7 +82,7 @@ void NoteHistorySelect::loadData(vector<NoteVersionId> &versions) {
             text = tr("Yesterday") +" " + timestamp.time().toString(Qt::SystemLocaleShortDate);
         text = timestamp.toString(global.dateFormat + " " +global.timeFormat);
 
-        text = text + " : "+ QString::fromStdString(versions.at(i).title);
+        text = text + " : "+ versions.at(i).title;
         item->setText(text);
         list.addItem(item);
     }

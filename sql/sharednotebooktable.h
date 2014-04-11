@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef SHAREDNOTEBOOKTABLE_H
 #define SHAREDNOTEBOOKTABLE_H
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include "global.h"
 
 #include <iostream>
@@ -42,10 +40,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define SHAREDNOTEBOOK_SERVICE_UPDATED       3307
 #define SHAREDNOTEBOOK_SHARE_KEY             3308
 #define SHAREDNOTEBOOK_USERNAME              3309
+#define SHAREDNOTEBOOK_MODIFIABLE            3310
+#define SHAREDNOTEBOOK_REQUIRE_LOGIN         3311
 #define SHAREDNOTEBOOK_ISDIRTY               3399
 
-
-using namespace evernote::edam  ;
 using namespace std;
 
 class SharedNotebookTable
@@ -58,7 +56,7 @@ public:
     qint32 getLid(qlonglong id);               // given a guid, return the lid
     qint32 sync(SharedNotebook &sharedNotebook); // Sync a notebook with a new record
     qint32 sync(qint32 lid, SharedNotebook sharedNotebook); // Sync a notebook with a new record
-    qint32 add(qint32 lid, SharedNotebook &t, bool isDirty); // Add a new record
+    qint32 add(qint32 lid, const SharedNotebook &t, bool isDirty); // Add a new record
     bool get(SharedNotebook &notebook, qint32 lid);           // Get a shared notebook given a lid
     bool isDirty(qint32 lid);                  // Check if a shared notebook is dirty
     bool exists(qint32 lid);                   // Does this shared notebook exist?

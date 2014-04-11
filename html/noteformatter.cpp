@@ -62,7 +62,13 @@ void NoteFormatter::setNote(Note n, bool pdfPreview) {
     this->enableHighlight = true;
     readOnly = false;
     inkNote = false;
-    if (note.__isset.attributes && note.attributes.__isset.contentClass && note.attributes.contentClass != "")
+    NoteAttributes attributes;
+    if (note.attributes.isSet())
+        attributes = note.attributes;
+    QString contentClass;
+    if (attributes.contentClass.isSet())
+        contentClass = attributes.contentClass;
+    if (contentClass != "")
         readOnly = true;
 }
 
@@ -107,7 +113,9 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QWebPage page;
     QEventLoop loop;
     QLOG_TRACE() << "Before preHTMLFormat";
-    QString html = preHtmlFormat(QString::fromStdString(note.content));
+    QString html = "<body></body>";
+    if (note.content.isSet())
+        html = preHtmlFormat(note.content);
     html.replace("<en-note", "<body");
     html.replace("</en-note>", "</body>");
     QByteArray htmlPage;
@@ -119,9 +127,9 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QLOG_TRACE() << "Starting to modify tags";
     modifyTags(page);
     QLOG_TRACE() << "Done modifying tags";
-    note.content = page.mainFrame()->toHtml().toStdString();
+    note.content = page.mainFrame()->toHtml();
     content.clear();
-    content.append(QString::fromStdString(note.content));
+    content.append(note.content);
 
     qint32 index = content.indexOf("<body");
     content.remove(0,index);
@@ -136,7 +144,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
         if (ntable.isReadOnly(notebookLid))
             readOnly = true;
     }
-    if (note.__isset.active && !note.active)
+    if (note.active.isSet() && !note.active)
         readOnly = true;
     QLOG_TRACE() << "Done rebuiling HTML";
     return content;
@@ -279,15 +287,19 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     ResourceTable resTable(global.db);
     Resource recoResource;
     resTable.getResourceRecognition(recoResource, resLid);
-    if (!recoResource.__isset.recognition || !recoResource.recognition.__isset.size || !recoResource.recognition.__isset.body ||
-            recoResource.recognition.size == 0) {
+    Data recognition;
+    if (recoResource.recognition.isSet())
+        recognition = recoResource.recognition;
+    if (!recognition.size.isSet() || !recognition.body.isSet() ||
+            recognition.size == 0) {
         return "";
     }
 
     QString filename = global.fileManager.getTmpDirPath() + QString::number(resLid) + ".png";
     // Now we have the recognition data.  We need to go through it
     QByteArray recoData;
-    recoData.append(QString::fromStdString(recoResource.recognition.body));
+    if (recognition.body.isSet())
+        recoData = recognition.body;
     QString xml(recoData);
 
     // Create a transparent pixmap.  The only non transparent piece is teh
@@ -375,21 +387,32 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
         QLOG_TRACE() << "resource retrieved";
         MimeReference ref;
         QString filename;
-        if (r.__isset.attributes && r.attributes.__isset.fileName)
-            filename = QString::fromStdString(r.attributes.fileName);
+        ResourceAttributes attributes;
+        if (r.attributes.isSet())
+            attributes = r.attributes;
+        if (attributes.fileName.isSet())
+            filename = attributes.fileName;
         QString type = ref.getExtensionFromMime(mimetype, filename);
 
-        if (r.__isset.data && r.data.__isset.size && r.data.size > 0) {
+        Data data;
+        if (r.data.isSet())
+            data = r.data;
+        if (data.size.isSet() && data.size > 0) {
             QString imgfile = "file:///"+global.fileManager.getDbDirPath(QString("dba/") +QString::number(resLid) +type);
             enMedia.setAttribute("src", imgfile);
             // Check if this is a LaTeX image
-            if (r.__isset.attributes && r.attributes.__isset.sourceURL &&
-                QString::fromStdString(r.attributes.sourceURL).toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
+            ResourceAttributes attributes;
+            if (r.attributes.isSet())
+                attributes = r.attributes;
+            QString sourceUrl = "";
+            if (attributes.sourceURL.isSet())
+                sourceUrl = attributes.sourceURL;
+            if (sourceUrl.toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
                 enMedia.appendInside("<img/>");
                 QWebElement newText = enMedia.lastChild();
                 enMedia.setAttribute("en-tag", "en-latex");
                 newText.setAttribute("onMouseOver", "style.cursor='pointer'");
-                newText.setAttribute("title", QString::fromStdString(r.attributes.sourceURL));
+                newText.setAttribute("title", sourceUrl);
                 newText.setAttribute("href", "latex://"+QString::number(resLid));
             }
             enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
@@ -427,21 +450,24 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
     }
     ResourceTable resTable(global.db);
     QString contextFileName;
-    qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
+    qint32 resLid = resTable.getLidByHashHex(note.guid, hash);
     Resource r;
     resTable.get(r, resLid, false);
-    if (!r.__isset.data)
+    if (!r.data.isSet())
         resourceError = true;
     else {
 
         // If we are running the formatter and we are not generating a thumbnail
-        if (r.mime == "application/pdf" && pdfPreview && !thumbnail) {
+        QString mimetype = "";
+        if (r.mime.isSet())
+            mimetype = r.mime;
+        if (mimetype == "application/pdf" && pdfPreview && !thumbnail) {
            modifyPdfTags(resLid, enmedia);
            return;
         }
 
         // If we are running the formatter so we can generate a thumbnail and it is a PDF
-        if (r.mime == "application/pdf" && pdfPreview && thumbnail) {
+        if (mimetype == "application/pdf" && pdfPreview && thumbnail) {
             QString printImageFile = global.fileManager.getTmpDirPath() + QString::number(resLid) +QString("-print.jpg");
             QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) +".pdf";
             Poppler::Document *doc;
@@ -462,9 +488,11 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
         }
         QString fileDetails = "";
         MimeReference ref;
-        if (r.__isset.attributes && r.attributes.__isset.fileName)
-            fileDetails = QString::fromStdString(r.attributes.fileName);
-        fileDetails = ref.getExtensionFromMime(QString::fromStdString(r.mime), fileDetails);
+        ResourceAttributes attributes;
+        if (r.attributes.isSet())
+            attributes = r.attributes;
+        if (attributes.fileName.isSet())
+            fileDetails = ref.getExtensionFromMime(r.mime, fileDetails);
 
         enmedia.setAttribute("href", QString("nnres:") +global.fileManager.getDbaDirPath()+QString::number(resLid)
                              +fileDetails);
@@ -481,15 +509,21 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
 
         // Build an icon of the image
         QString fileExt;
-        if (r.__isset.attributes && r.attributes.__isset.fileName)
-            fileExt = QString::fromStdString(r.attributes.fileName);
+        if (attributes.fileName.isSet())
+            fileExt = attributes.fileName;
         else
             fileExt = appl;
-        fileExt = ref.getExtensionFromMime(r.mime, r.attributes.fileName);
+        QString fn;
+        QString mime;
+        if (attributes.fileName.isSet())
+            fn = attributes.fileName;
+        if (r.mime.isSet())
+            mime = r.mime;
+        fileExt = ref.getExtensionFromMime(mime, fn);
         QString icon = findIcon(resLid, r, fileExt);
         newText.setAttribute("src", "file:///"+icon);
-        if (r.__isset.attributes && r.attributes.__isset.fileName)
-            newText.setAttribute("title",QString::fromStdString(r.attributes.fileName));
+        if (attributes.fileName.isSet())
+            newText.setAttribute("title",attributes.fileName);
         newText.setAttribute("en-tag", "temporary");
         //Rename the tag to a <a> link
         enmedia.setOuterXml(enmedia.toOuterXml().replace("<en-media","<a"));
@@ -511,8 +545,11 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 
     // Build a string name for the display
     QString displayName;
-    if (r.__isset.attributes && r.attributes.__isset.fileName)
-        displayName = QString::fromStdString(r.attributes.fileName);
+    ResourceAttributes attributes;
+    if (r.attributes.isSet())
+        attributes = r.attributes;
+    if (attributes.fileName.isSet())
+        displayName = attributes.fileName;
     else
         displayName =  appl.toUpper() +" " +QString(tr("File"));
 
@@ -590,7 +627,7 @@ void NoteFormatter::modifyTodoTags(QWebElement &todo) {
 bool NoteFormatter::buildInkNote(QWebElement &docElem, QString &hash) {
 
     ResourceTable resTable(global.db);
-    qint32 resLid = resTable.getLidByHashHex(QString::fromStdString(note.guid), hash);
+    qint32 resLid = resTable.getLidByHashHex(note.guid, hash);
     if (resLid <= 0)
         return false;
     docElem.setAttribute("en-tag", "en-media");

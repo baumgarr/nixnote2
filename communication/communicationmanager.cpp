@@ -1,3 +1,22 @@
+/*********************************************************************************
+NixNote - An open-source client for the Evernote service.
+Copyright (C) 2013 Randy Baumgarte
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+***********************************************************************************/
+
 
 #include "communicationmanager.h"
 #include "oauth/oauthtokenizer.h"
@@ -7,12 +26,10 @@
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
-#include "evernote/UserStore_constants.h"
 #include "sql/resourcetable.h"
 #include "sql/tagtable.h"
 #include <sql/usertable.h>
 #include <sql/notetable.h>
-#include <QObject>
 #include <QPainter>
 
 #include <stdio.h>
@@ -30,50 +47,36 @@ extern Global global;
 // Generic constructor
 CommunicationManager::CommunicationManager(QSqlDatabase *db)
 {
-    initComplete = false;
     this->db = db;
-    evernoteHost = global.server.toStdString();
+    evernoteHost = global.server;
     userStorePath = "/edam/user";
     clientName = "NixNote/Linux";
-    networkAccessManager = new QNetworkAccessManager();
     inkNoteList = new QList< QPair<QString, QImage*>* >();
     thumbnailList = new QList< QPair<QString, QImage*>* >();
-
-    sslSocketFactory = shared_ptr<TSSLSocketFactory>(new TSSLSocketFactory());
-
-    // Load certificates
-    QDir myDir(global.getProgramDirPath()+"/certs");
-    QStringList filter;
-    filter.append("*.pem");
-    QStringList list = myDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
-    for (int i=0; i<list.size(); i++) {
-        sslSocketFactory->loadTrustedCertificates((global.getProgramDirPath()+"/certs/"+list[i]).toStdString().c_str());
-    }
-
-//    QString pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
-//    sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-//    pgmDir = global.getProgramDirPath() + "/certs/thawte.pem";
-//    sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-    sslSocketFactory->authenticate(true);
     postData = new QUrl();
     tagGuidMap = new QHash<QString,QString>;
+    initComplete = false;
+    noteStore = NULL;
+    myNoteStore = NULL;
+    linkedNoteStore = NULL;
 }
 
 
 
 // Destructor
 CommunicationManager::~CommunicationManager() {
-    if (sslSocketUserStore != NULL) {
-        sslSocketUserStore->setRecvTimeout(10);
-        sslSocketUserStore->close();
-    }
-    if (sslSocketNoteStore != NULL) {
-        sslSocketNoteStore->setRecvTimeout(10);
-        sslSocketNoteStore->close();
-    }
     delete postData;
     delete tagGuidMap;
 }
+
+
+
+//***********************************************************************
+//***********************************************************************
+//*** Init & default user connection routines                         ***
+//***********************************************************************
+//***********************************************************************
+
 
 
 // Connect to Evernote
@@ -82,538 +85,10 @@ bool CommunicationManager::connect() {
     OAuthTokenizer tokenizer;
     QString data = global.accountsManager->getOAuthToken();
     tokenizer.tokenize(data);
-    authToken = tokenizer.oauth_token.toStdString();
+    authToken = tokenizer.oauth_token;
     return init();
 }
 
-
-// Get the current sync state
-bool CommunicationManager::getSyncState(string token, SyncState &syncState, int errorCount) {
-    if (token == "")
-        token = authToken;
-    try {
-        noteStoreClient->getSyncState(syncState, token);
-        QLOG_DEBUG() << "New count: "<< syncState.updateCount;
-        return true;
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return getSyncState(token, syncState, errorCount);
-        }
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        error.message = tr("Transport error getting sync state: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return false;
-    } catch (std::exception e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return getSyncState(token, syncState, errorCount);
-        }
-        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-        error.message = tr("Std Error getting sync state: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::StdException;
-        return false;
-    } catch (...) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return getSyncState(token, syncState, errorCount);
-        }
-        QLOG_ERROR() << "Unhandled exception:" << endl;
-        error.message = tr("Unknown error getting sync state");
-        error.type = CommunicationError::Unknown;
-        return false;
-    }
-    return true;
-}
-
-
-// Get a sync chunk
-bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, int type, bool fullSync, int errorCount) {
-    // Get rid of old stuff from last chunk
-    while(inkNoteList->size() > 0) {
-        QPair<QString, QImage*> *pair = inkNoteList->takeLast();
-        delete pair->second;
-        delete pair;
-    }
-    inkNoteList->empty();
-
-    bool notebooks = false;
-    bool searches = false;
-    bool tags = false;
-    bool linkedNotebooks = false;
-    bool notes = false;
-    bool resources = false;
-    bool expunged = false;
-
-    notebooks = ((type & SYNC_CHUNK_NOTEBOOKS)>0);
-    searches = ((type & SYNC_CHUNK_SEARCHES)>0);
-    tags = ((type & SYNC_CHUNK_TAGS)>0);
-    linkedNotebooks = ((type & SYNC_CHUNK_LINKED_NOTEBOOKS)>0);
-    notes = ((type & SYNC_CHUNK_NOTES)>0);
-    expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync)>0);
-    resources = ((type & SYNC_CHUNK_RESOURCES) && (!fullSync)>0);
-
-    // Try to get the chunk
-    try {
-        SyncChunkFilter filter;
-        filter.__isset.includeExpunged = true;
-        filter.__isset.includeNotes = true;
-        filter.__isset.includeNoteResources = true;
-        filter.__isset.includeNoteAttributes = true;
-        filter.__isset.includeNotebooks = true;
-        filter.__isset.includeTags = true;
-        filter.__isset.includeSearches = true;
-        filter.__isset.includeResources = true;
-        filter.__isset.includeLinkedNotebooks = true;
-        filter.__isset.includeNoteApplicationDataFullMap = true;
-        filter.__isset.includeNoteResourceApplicationDataFullMap = true;
-        filter.__isset.includeNoteResourceApplicationDataFullMap =true;
-
-        filter.includeExpunged = expunged;
-        filter.includeNotes = notes;
-        filter.includeNoteResources = fullSync;
-        filter.includeNoteAttributes = notes;
-        filter.includeNotebooks = notebooks;
-        filter.includeTags = tags;
-        filter.includeSearches = searches;
-        filter.includeResources = resources;
-        filter.includeLinkedNotebooks = linkedNotebooks;
-        filter.includeNoteApplicationDataFullMap = false;
-        filter.includeNoteResourceApplicationDataFullMap = false;
-        filter.includeNoteResourceApplicationDataFullMap = false;
-
-        // This is a failsafe to prevnt loops if nothing passes the filter
-        chunk.chunkHighUSN = chunk.updateCount;
-
-        // Get the actual chunk.
-        noteStoreClient->getFilteredSyncChunk(chunk, authToken, start, chunkSize, filter);
-
-        QHash<QString,QString> noteList;
-        for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
-            QLOG_TRACE() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
-            Note n;
-            noteList.insert(QString::fromStdString(n.guid),"");
-            noteStoreClient->getNote(n, authToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
-            QLOG_TRACE() << "Note Retrieved";
-
-            // Load up the tag names because Evernote doesn't give them.
-            for (unsigned int j=0; j<n.tagGuids.size(); j++) {
-                QString tagGuid = QString::fromStdString(n.tagGuids[j]);
-                if (tagGuidMap->contains(tagGuid)) {
-                    QString tagName = tagGuidMap->value(tagGuid);
-                    n.tagNames.push_back(tagName.toStdString());
-                }
-            }
-            chunk.notes[i] = n;
-            if (n.__isset.resources && n.resources.size() > 0) {
-                QLOG_TRACE() << "Checking for ink note";
-                checkForInkNotes(n.resources, "", QString::fromStdString(authToken));
-            }
-//            QLOG_TRACE() << "Downloading thumbnail";
-//            downloadThumbnail(QString::fromStdString(n.guid), authToken,"");
-        }
-
-
-        QLOG_DEBUG() << "All notes retrieved.  Getting resources";
-//        NoteTable noteTable(db);
-        for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
-            QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
-            Resource r;
-            noteStoreClient->getResource(r, authToken, chunk.resources[i].guid, true, true, true, true);
-            QLOG_TRACE() << "Resource retrieved";
-            chunk.resources[i] = r;
-        }
-        QLOG_DEBUG() << "Getting ink notes";
-        if (chunk.__isset.resources && chunk.resources.size()>0) {
-            QLOG_TRACE() << "Checking for ink notes";
-            checkForInkNotes(chunk.resources,"", QString::fromStdString(authToken));
-        }
-    } catch (EDAMUserException e) {
-        error.message = tr("EDAMUserException ") + QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMUserException;
-        error.code = -1;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return getSyncChunk(chunk, start, chunkSize, fullSync, errorCount);
-        }
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        error.message = tr("Error getting sync chunk: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return false;
-    } catch (std::exception e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return getSyncChunk(chunk, start, chunkSize, fullSync, errorCount);
-        }
-        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-        error.message = tr("Error getting sync chunk: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::StdException;
-        return false;
-    } catch (...) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return getSyncChunk(chunk, start, chunkSize, fullSync, errorCount);
-        }
-        QLOG_ERROR() << "Unhandled exception:" << endl;
-        error.message = tr("Unknown error getting sync chunk");
-        error.type = CommunicationError::Unknown;
-        return false;
-    }
-    QLOG_DEBUG() << "Chunk complete";
-    return true;
-}
-
-
-
-// Get a shared notebook by authentication token
-bool CommunicationManager::getSharedNotebookByAuth(SharedNotebook &sharedNotebook) {
-    try {
-        linkedNoteStoreClient->getSharedNotebookByAuth(sharedNotebook, linkedAuthToken.authenticationToken);
-        return true;
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        return false;
-    }
-}
-
-
-// Authenticate to a linked notebook
-bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &book) {
-
-
-    QLOG_DEBUG() << "Inside CommunicationManager::authenticateToLinkedNotebook()";
-
-    disconnectFromLinkedNotebook();
-
-    // This is a bit of a workaround.  If the notebook is a privately shared notebook, then
-    // we can use https to connect.  If it is a public notebook then we use unencrypted
-    // http.
-    //
-    // For public notebooks we don't need to call the authenticateToSharedNotebook function.
-    //
-    // If I try to use an https connection for a public notebook, the function
-    // getLinkedNotebookSyncState will fail with some bizzaro SSL error.  I have no
-    // idea why.  This same connection works using http.  Since this is a "public"
-    // notebook we should be o.k. with an unencrypted connection.
-
-    try {
-        if (book.shareKey != "") {
-
-            linkedSslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
-            shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(linkedSslSocketNoteStore));
-
-            linkedNoteStorePath = "/edam/note/" +book.shardId;
-            linkedNoteStoreHttpClient = shared_ptr<TTransport>(new THttpClient(bufferedTransport, evernoteHost, linkedNoteStorePath));
-
-            linkedNoteStoreHttpClient->open();
-
-            shared_ptr<TProtocol> noteStoreProtocol(new TBinaryProtocol(linkedNoteStoreHttpClient));
-            linkedNoteStoreClient = shared_ptr<NoteStoreClient>(new NoteStoreClient(noteStoreProtocol));
-
-            linkedNoteStoreClient->authenticateToSharedNotebook(linkedAuthToken, book.shareKey, authToken);
-        } else {
-            // This is a workaround to force an http connection for public notebooks to avoid errors
-            // getting the sync state.
-            string path = linkedNoteStorePath = "/edam/note/" +book.shardId;
-            shared_ptr<THttpClient> client(new THttpClient(evernoteHost, 80, path));
-            client->open();
-
-            shared_ptr<TProtocol> noteStoreProtocol(new TBinaryProtocol(client));
-            linkedNoteStoreClient = shared_ptr<NoteStoreClient>(new NoteStoreClient(noteStoreProtocol));
-        }
-
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.what() << endl;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        return false;
-    }
-    QLOG_DEBUG() << "Leaving CommunicationManager::authenticateToLinkedNotebookShard()";
-    return true;
-}
-
-
-
-// Get a linked notebook's sync state
-bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook &linkedNotebook, int errorCount) {
-    try {
-        linkedNoteStoreClient->getLinkedNotebookSyncState(syncState, linkedAuthToken.authenticationToken, linkedNotebook);
-        QLOG_DEBUG() << "New linked notebook count: "<< syncState.updateCount;
-        return true;
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (TTransportException e) {
-       QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           authenticateToLinkedNotebookShard(linkedNotebook);
-           return getLinkedNotebookSyncState(syncState, linkedNotebook, errorCount);
-       }
-       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-       error.message = tr("Transport error getting linked notebook state: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::TTransportException;
-       return 0;
-   } catch (std::exception e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           authenticateToLinkedNotebookShard(linkedNotebook);
-           return getLinkedNotebookSyncState(syncState, linkedNotebook, errorCount);
-       }
-       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-       error.message = tr("Error getting linked notebook state: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::StdException;
-       return 0;
-   } catch (...) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return getLinkedNotebookSyncState(syncState, linkedNotebook, errorCount);
-       }
-       QLOG_ERROR() << "Unhandled exception:" << endl;
-       error.message = tr("Unknown error getting linked notebook state");
-       error.type = CommunicationError::Unknown;
-       return 0;
-   }
-}
-
-
-
-// Get a linked notebook's sync chunk
-bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook &linkedNotebook, int start, int chunkSize, int type, bool fullSync, int errorCount) {
-
-    // Get rid of old stuff from last chunk
-    while(inkNoteList->size() > 0) {
-        QPair<QString, QImage*> *pair = inkNoteList->takeLast();
-        delete pair->second;
-        delete pair;
-    }
-    inkNoteList->empty();
-
-    bool notebooks = false;
-    bool searches = false;
-    bool tags = false;
-    bool linkedNotebooks = false;
-    bool notes = false;
-    bool resources = false;
-    bool expunged = false;
-
-    notebooks = ((type & SYNC_CHUNK_NOTEBOOKS)>0);
-    searches = ((type & SYNC_CHUNK_SEARCHES)>0);
-    tags = ((type & SYNC_CHUNK_TAGS)>0);
-    linkedNotebooks = ((type & SYNC_CHUNK_LINKED_NOTEBOOKS)>0);
-    notes = ((type & SYNC_CHUNK_NOTES)>0);
-    expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync)>0);
-    resources = ((type & SYNC_CHUNK_RESOURCES) && (!fullSync)>0);
-
-    // Try to get the chunk
-    QHash<QString,QString> noteList;
-    try {
-        SyncChunkFilter filter;
-        filter.__isset.includeExpunged = true;
-        filter.__isset.includeNotes = true;
-        filter.__isset.includeNoteResources = true;
-        filter.__isset.includeNoteAttributes = true;
-        filter.__isset.includeNotebooks = true;
-        filter.__isset.includeTags = true;
-        filter.__isset.includeSearches = true;
-        filter.__isset.includeResources = true;
-        filter.__isset.includeLinkedNotebooks = true;
-        filter.__isset.includeNoteApplicationDataFullMap = true;
-        filter.__isset.includeNoteResourceApplicationDataFullMap = true;
-        filter.__isset.includeNoteResourceApplicationDataFullMap =true;
-
-        filter.includeExpunged = expunged;
-        filter.includeNotes = notes;
-        filter.includeNoteResources = fullSync;
-        filter.includeNoteAttributes = notes;
-        filter.includeNotebooks = notebooks;
-        filter.includeTags = tags;
-        filter.includeSearches = searches;
-        filter.includeResources = resources;
-        filter.includeLinkedNotebooks = linkedNotebooks;
-        filter.includeNoteApplicationDataFullMap = false;
-        filter.includeNoteResourceApplicationDataFullMap = false;
-        filter.includeNoteResourceApplicationDataFullMap = false;
-
-        // This is a failsafe to prevnt loops if nothing passes the filter
-        chunk.chunkHighUSN = chunk.updateCount;
-
-        linkedNoteStoreClient->getFilteredSyncChunk(chunk, linkedAuthToken.authenticationToken, start, chunkSize, filter);
-        for (unsigned int i=0; chunk.__isset.notes && i<chunk.notes.size(); i++) {
-            QLOG_TRACE() << "Fetching chunk item: " << i << ": " << QString::fromStdString(chunk.notes[i].title);
-            Note n;
-            linkedNoteStoreClient->getNote(n, linkedAuthToken.authenticationToken, chunk.notes[i].guid, true, fullSync, fullSync, fullSync);
-           // n.notebookGuid = linkedNotebook.guid;
-            noteList.insert(QString::fromStdString(n.guid),"");
-            TagTable tagTable(db);
-            for (unsigned int j=0; j<n.tagGuids.size(); j++) {
-                Tag tag;
-                if (tagTable.get(tag, n.tagGuids[j]))
-                    n.tagNames.push_back(tag.name);
-            }
-            chunk.notes[i] = n;
-            if (n.__isset.resources && n.resources.size() > 0) {
-                checkForInkNotes(n.resources, QString::fromStdString(linkedNotebook.shardId), QString::fromStdString(linkedAuthToken.authenticationToken));
-            }
-            //downloadThumbnail(QString::fromStdString(n.guid), linkedAuthToken, linkedNotebook.shardId);
-        }
-
-        // Fetch resources
-        for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
-            QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
-            Resource r;
-            linkedNoteStoreClient->getResource(r, linkedAuthToken.authenticationToken, chunk.resources[i].guid, true, true, true, true);
-            chunk.resources[i] = r;
-
-            NoteTable noteTable(db);
-            for (unsigned int i=0; chunk.__isset.resources && i<chunk.resources.size(); i++) {
-                QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << QString::fromStdString(chunk.resources[i].guid);
-                Resource r;
-                noteStoreClient->getResource(r, linkedAuthToken.authenticationToken, chunk.resources[i].guid, true, true, true, true);
-                QLOG_TRACE() << "Resource retrieved";
-                chunk.resources[i] = r;
-
-                if (noteTable.getLid(QString::fromStdString(r.noteGuid))<=0 || !noteList.contains(QString::fromStdString(r.noteGuid))) {
-                    Note n;
-                    noteStoreClient->getNote(n, linkedAuthToken.authenticationToken, r.noteGuid, true, true, true, true);
-                    chunk.__isset.notes = true;
-                    chunk.notes.push_back(n);
-                }
-            }
-        }
-        if (chunk.__isset.resources && chunk.resources.size()>0)
-            checkForInkNotes(chunk.resources, QString::fromStdString(linkedNotebook.shardId), QString::fromStdString(linkedAuthToken.authenticationToken));
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.message = tr("Shared notebook EDAMUserException ") + QString::number(e.errorCode);
-        error.type = CommunicationError::EDAMUserException;
-        error.code = e.errorCode;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying linked notebook";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            authenticateToLinkedNotebookShard(linkedNotebook);
-            return getLinkedNotebookSyncChunk(chunk, linkedNotebook, start,  chunkSize, fullSync, errorCount);
-        }
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.identifier) << ":" << QString::fromStdString(e.key) << endl;
-        error.message = tr("Shared notebook ") + QString::fromStdString(e.key) + tr(" not found.");
-        error.type = CommunicationError::EDAMNotFoundException;
-        error.code = -1;
-        return false;
-    } catch (TException e) {
-        QLOG_ERROR() << "TException:" << e.what();
-        error.message = tr("Shared notebook TException ") + QString::fromStdString(e.what());
-        error.type = CommunicationError::TException;
-        error.code = -1;
-        return false;
-    } catch (std::exception e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying linked notebook";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            authenticateToLinkedNotebookShard(linkedNotebook);
-            return getLinkedNotebookSyncChunk(chunk, linkedNotebook, start,  chunkSize, fullSync, errorCount);
-        }
-        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-        return false;
-    } catch (...) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying linked notebook";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            authenticateToLinkedNotebookShard(linkedNotebook);
-            return getLinkedNotebookSyncChunk(chunk, linkedNotebook, start,  chunkSize, fullSync, errorCount);
-        }
-        QLOG_ERROR() << "Unhandled exception:" << endl;
-        return false;
-    }
-    return true;
-}
 
 
 
@@ -630,143 +105,20 @@ bool CommunicationManager::init() {
 
 
 
-
-// helper function to get an auth token
-string CommunicationManager::getToken() {
-    //return authenticationResult->authenticationToken;
-    return authToken;
-}
-
-
-// Initialize the user store (contains user account information)
-bool CommunicationManager::initUserStore() {
-    QLOG_DEBUG() << "Inside CommunicationManager::initUserStore()";
-    try {
-        sslSocketUserStore = sslSocketFactory->createSocket(evernoteHost, 443);
-        //sslSocketUserStore->setNoDelay(true);
-        SOCKET s = sslSocketUserStore->getSocketFD();
-        this->setSocketOptions(s);
-
-        shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(sslSocketUserStore));
-        userStoreHttpClient = shared_ptr<TTransport>(new THttpClient(bufferedTransport, evernoteHost, userStorePath));
-
-        userStoreHttpClient->open();
-        shared_ptr<TProtocol> iprot(new TBinaryProtocol(userStoreHttpClient));
-        userStoreClient = shared_ptr<UserStoreClient>(new UserStoreClient(iprot));
-        UserStoreConstants version;
-        if (!userStoreClient->checkVersion(clientName, version.EDAM_VERSION_MAJOR, version.EDAM_VERSION_MINOR)) {
-                QLOG_ERROR() << "Incompatible Evernote API version";
-                return false;
-        }
-
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMUserException;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return false;
-    }
-    QLOG_DEBUG() << "Leaving CommunicationManager::initUserStore()";
-    return true;
-}
-
-
-
-void CommunicationManager::setSocketOptions(SOCKET s) {
-    int optval;
-
-    socklen_t optlen = sizeof(optval);
-    getsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, &optlen);
-    optval = 1;
-    setsockopt(s, SOL_SOCKET, SO_KEEPALIVE, &optval, optlen);
-
-    getsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, &optlen);
-    optval=9;
-    setsockopt(s, IPPROTO_TCP, TCP_KEEPCNT, &optval, optlen);
-
-    getsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, &optlen);
-    optval=1200;
-    setsockopt(s, IPPROTO_TCP, TCP_KEEPIDLE, &optval, optlen);
-
-    getsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, &optlen);
-    optval=60;
-    setsockopt(s, IPPROTO_TCP, TCP_KEEPINTVL, &optval, optlen);
-}
-
 // Initialize the note store
 bool CommunicationManager::initNoteStore() {
+    using namespace qevercloud;
     QLOG_DEBUG() << "Inside CommunicationManager::initNoteStore()";
 
-    try {
-        shared_ptr<TSSLSocketFactory> sslSocketFactory(new TSSLSocketFactory());
-
-        // Load certificates
-        QDir myDir(global.getProgramDirPath()+"/certs");
-        QStringList filter;
-        filter.append("*.pem");
-        QStringList list = myDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
-        for (int i=0; i<list.size(); i++) {
-            sslSocketFactory->loadTrustedCertificates((global.getProgramDirPath()+"/certs/"+list[i]).toStdString().c_str());
-        }
-
-//        QString pgmDir = global.getProgramDirPath() + "/certs/thawte.pem";
-//        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-//       pgmDir = global.getProgramDirPath() + "/certs/verisign_certs.pem";
-//        sslSocketFactory->loadTrustedCertificates(pgmDir.toStdString().c_str());
-        sslSocketFactory->authenticate(true);
-
-        sslSocketNoteStore = sslSocketFactory->createSocket(evernoteHost, 443);
-        //sslSocketNoteStore->setNoDelay(true);
-        SOCKET s = sslSocketNoteStore->getSocketFD();
-        this->setSocketOptions(s);
-
-        shared_ptr<TBufferedTransport> bufferedTransport(new TBufferedTransport(sslSocketNoteStore));
-        User user;
-        if (!getUserInfo(user))
-            return false;
-        noteStorePath = "/edam/note/" +user.shardId;
-        noteStoreHttpClient = shared_ptr<TTransport>(new THttpClient(bufferedTransport, evernoteHost, noteStorePath));
-
-        noteStoreHttpClient->open();
-        shared_ptr<TProtocol> noteStoreProtocol(new TBinaryProtocol(noteStoreHttpClient));
-        noteStoreClient = shared_ptr<NoteStoreClient>(new NoteStoreClient(noteStoreProtocol));
-
-        SyncState syncState;
-        noteStoreClient->getSyncState(syncState, authToken);
-
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMUserException;
+    User user;
+    if (!getUserInfo(user))
         return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMNotFoundException;
-        return false;
-    } catch (TTransportException e) {
-        QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-        QLOG_ERROR() << "\n\nTTransportException:" << e.what() << endl;
-        error.message = QString(e.what());
-        error.message = QString::fromStdString(e.what());
-        return false;
-    }
-    QLOG_DEBUG() << "Leaving CommunicationManager::initNoteStore()";
+    noteStorePath = "/edam/note/" +user.shardId;
+
+    QString noteStoreUrl = QString("https://")+evernoteHost+noteStorePath;
+    QLOG_DEBUG() << noteStoreUrl;
+    myNoteStore = new NoteStore(noteStoreUrl, authToken, this);
+    noteStore = myNoteStore;
     return true;
 }
 
@@ -774,121 +126,42 @@ bool CommunicationManager::initNoteStore() {
 
 // Disconnect from Evernote's servers (for private notebooks)
 void CommunicationManager::disconnect() {
-
-    QLOG_DEBUG() << "Disconnecting";
-    try {
-        if (noteStoreHttpClient != NULL && noteStoreHttpClient->isOpen()) {
-                noteStoreHttpClient->flush();
-            noteStoreHttpClient->close();
-        }
-    } catch (std::exception e) {
-        QLOG_DEBUG() << "Std exception disconnecting from notestore. " << e.what();
-    } catch (...) {
-        QLOG_DEBUG() << "Unknown exception disconnecting from notestore. ";
-    }
-    disconnectFromLinkedNotebook();
-    initComplete=false;
-}
-
-// Disconnect from the user store
-void CommunicationManager::disconnectUserStore() {
-    try {
-        if (userStoreHttpClient != NULL && userStoreHttpClient->isOpen()) {
-                userStoreHttpClient->flush();
-            userStoreHttpClient->close();
-        }
-    } catch (std::exception e) {
-        QLOG_DEBUG() << "Std exception disconnecting from userstore. " << e.what();
-    } catch (...) {
-        QLOG_DEBUG() << "Unknown exception disconnecting from userstore. ";
-    }
-}
-
-
-
-// Disconnect from Evernote's servers (for linked notebooks)
-void  CommunicationManager::disconnectFromLinkedNotebook() {
-    QLOG_DEBUG() << "Disconnecting from linked notebook";
-    try {
-        if (linkedNoteStoreHttpClient != NULL && linkedNoteStoreHttpClient->isOpen()) {
-            linkedNoteStoreHttpClient->flush();
-            linkedNoteStoreHttpClient->close();
-        }
-    } catch (std::exception e) {
-        QLOG_DEBUG() << "Std exception disconnecting from linked notebook. " << e.what();
-    } catch (...) {
-        QLOG_DEBUG() << "Unknown exception disconnecting from linked notebook. ";
-    }
+    //noteStore->disconnect();
+    userStore->disconnect();
+    if (linkedNoteStore != NULL)
+        linkedNoteStore->disconnect();
+    if (myNoteStore != NULL)
+        myNoteStore->disconnect();
 }
 
 
 
 
 // Get a user's information
-bool CommunicationManager::getUserInfo(User &user, int errorCount) {
+bool CommunicationManager::getUserInfo(User &user) {
     QLOG_DEBUG() << "Inside CommunicationManager::getUserInfo";
+    userStore = new UserStore(evernoteHost, authToken);
     try {
-       //this->refreshConnection();
-        if (!initUserStore())
-            return false;
-       userStoreClient->getUser(user, authToken);
-       disconnectUserStore();
+        User u = userStore->getUser();
+        user = u;
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.what());
         error.type = CommunicationError::EDAMUserException;
-        disconnectUserStore();
+        error.code = e.errorCode;
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
         handleEDAMSystemException(e);
-        disconnectUserStore();
         return false;
     } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMNotFoundException;
-        disconnectUserStore();
-        return false;
-    } catch (TTransportException e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return getUserInfo(user, errorCount);
-        }
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        error.message = tr("Error getting sync chunk: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return false;
-    } catch (std::exception e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return getUserInfo(user, errorCount);
-        }
-        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-        error.message = tr("Error getting sync chunk: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::StdException;
-        return false;
-    } catch (...) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return getUserInfo(user, errorCount);
-        }
-        QLOG_ERROR() << "Unhandled exception:" << endl;
-        error.message = tr("Unknown error getting sync chunk");
-        error.type = CommunicationError::Unknown;
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
         return false;
     }
     return true;
@@ -897,12 +170,698 @@ bool CommunicationManager::getUserInfo(User &user, int errorCount) {
 
 
 
+
+
+//***********************************************************************
+//***********************************************************************
+//*** Sync state & sync functions - non linked                        ***
+//***********************************************************************
+//***********************************************************************
+
+
+
+
+// Get the current sync state
+bool CommunicationManager::getSyncState(QString token, SyncState &syncState) {
+    if (token == "")
+        token = authToken;
+    try {
+        if (token == authToken)
+            noteStore = myNoteStore;
+        else
+            noteStore = linkedNoteStore;
+        syncState = noteStore->getSyncState(authToken);
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.type = CommunicationError::EDAMUserException;
+        error.code = e.errorCode;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    }
+    return true;
+}
+
+
+// Get a sync chunk
+bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSize, int type, bool fullSync, QString token) {
+    if (token == "")
+        token = authToken;
+    noteStore = myNoteStore;
+    // Get rid of old stuff from last chunk
+    while(inkNoteList->size() > 0) {
+        QPair<QString, QImage*> *pair = inkNoteList->takeLast();
+        delete pair->second;
+        delete pair;
+    }
+    inkNoteList->empty();
+
+    bool notebooks = false;
+    bool searches = false;
+    bool tags = false;
+    bool linkedNotebooks = false;
+    bool notes = false;
+    bool resources = false;
+    bool expunged = false;
+
+    notebooks = ((type & SYNC_CHUNK_NOTEBOOKS)>0);
+    searches = ((type & SYNC_CHUNK_SEARCHES)>0);
+    tags = ((type & SYNC_CHUNK_TAGS)>0);
+    linkedNotebooks = ((type & SYNC_CHUNK_LINKED_NOTEBOOKS)>0);
+    notes = ((type & SYNC_CHUNK_NOTES)>0);
+    expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync)>0);
+    resources = ((type & SYNC_CHUNK_RESOURCES) && (!fullSync)>0);
+
+    // Try to get the chunk
+    SyncChunkFilter filter;
+
+    filter.includeExpunged = expunged;
+    filter.includeNotes = notes;
+    filter.includeNoteResources = fullSync;
+    filter.includeNoteAttributes = notes;
+    filter.includeNotebooks = notebooks;
+    filter.includeTags = tags;
+    filter.includeSearches = searches;
+    filter.includeResources = resources;
+    filter.includeLinkedNotebooks = linkedNotebooks;
+    filter.includeNoteApplicationDataFullMap = false;
+    filter.includeNoteResourceApplicationDataFullMap = false;
+    filter.includeNoteResourceApplicationDataFullMap = false;
+
+    // This is a failsafe to prevnt loops if nothing passes the filter
+    chunk.chunkHighUSN = chunk.updateCount;
+    try {
+        chunk = myNoteStore->getFilteredSyncChunk(start, chunkSize, filter, token);
+        processSyncChunk(chunk, token);
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+    return true;
+}
+
+
+
+
+
+// Upload a new/changed saved search
+qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
+    try {
+        if (search.updateSequenceNum > 0)
+            return myNoteStore->updateSearch(search, authToken);
+        else
+            search = myNoteStore->createSearch(search, authToken);
+        return search.updateSequenceNum;
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return 0;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+}
+
+
+
+// Permanently delete a saved search
+qint32 CommunicationManager::expungeSavedSearch(Guid guid) {
+    try {
+        return myNoteStore->expungeSearch(guid, authToken);
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return 0;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return 0;
+    } catch (EDAMNotFoundException) {
+        return 1;
+    }
+}
+
+
+
+// Upload a new/changed tag to Evernote
+qint32 CommunicationManager::uploadTag(Tag &tag) {
+    try {
+        if (tag.updateSequenceNum > 0)
+            return myNoteStore->updateTag(tag, authToken);
+        else {
+            tag = myNoteStore->createTag(tag, authToken);
+            return tag.updateSequenceNum;
+        }
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return 0;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return 0;
+    }
+}
+
+
+// Permanently delete a tag from Evernote
+qint32 CommunicationManager::expungeTag(Guid guid) {
+    try {
+        return myNoteStore->expungeTag(guid, authToken);
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return 0;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return 0;
+    } catch (EDAMNotFoundException) {
+        return 1;
+    }
+}
+
+
+
+// Upload a notebook to Evernote
+qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
+    try {
+        if (notebook.updateSequenceNum > 0)
+            return myNoteStore->updateNotebook(notebook, authToken);
+        else {
+            notebook = myNoteStore->createNotebook(notebook, authToken);
+            return notebook.updateSequenceNum;
+        }
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return 0;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+}
+
+
+// Permanently delete a notebook from Evernote
+qint32 CommunicationManager::expungeNotebook(Guid guid) {
+    try {
+        return myNoteStore->expungeNotebook(guid, authToken);
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return 0;
+    }  catch (EDAMNotFoundException) {
+        return 1;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return 0;
+    }
+}
+
+
+
+// Upload a note to Evernote
+qint32 CommunicationManager::uploadNote(Note &note, QString token) {
+    if (token == "")
+        token = authToken;
+    if (token == authToken)
+        noteStore = myNoteStore;
+    else
+        noteStore = linkedNoteStore;
+    try {
+        if (note.updateSequenceNum > 0)
+            note = noteStore->updateNote(note, token);
+        else
+            note = noteStore->createNote(note, token);
+        return note.updateSequenceNum;
+
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return 0;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return 0;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return 0;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+}
+
+
+
+// delete a note in Evernote
+qint32 CommunicationManager::deleteNote(Guid note, QString token) {
+    if (token == "")
+        token = authToken;
+    if (token == authToken)
+        noteStore = myNoteStore;
+    else
+        noteStore = linkedNoteStore;
+
+    try {
+        return noteStore->deleteNote(note, token);
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return 0;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return 0;
+    } catch (EDAMNotFoundException) {
+        return 1;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return 0;
+    }
+}
+
+
+
+
+
+
+//***********************************************************************
+//***********************************************************************
+//*** Linked Notebook function                                        ***
+//***********************************************************************
+//***********************************************************************
+
+// delete a note in Evernote
+qint32 CommunicationManager::deleteLinkedNote(Guid note) {
+  return deleteNote(note, linkedAuthToken);
+}
+
+
+
+// Upload a note to Evernote
+qint32 CommunicationManager::uploadLinkedNote(Note &note) {
+    return uploadNote(note, linkedAuthToken);
+}
+
+
+
+// Get a shared notebook by authentication token
+bool CommunicationManager::getSharedNotebookByAuth(SharedNotebook &sharedNotebook) {
+    try {
+        sharedNotebook = noteStore->getSharedNotebookByAuth(linkedAuthToken);
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    }  catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+    return true;
+}
+
+
+// Authenticate to a linked notebook
+bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &book) {
+
+    if (!book.noteStoreUrl.isSet()) {
+        QLOG_ERROR() << tr("Linked notebook notestore URL missing.");
+        return false;
+    }
+
+    try {
+        if (linkedNoteStore != NULL)
+            delete linkedNoteStore;
+
+        // Connect to the proper shard
+        linkedNoteStore = new NoteStore(book.noteStoreUrl, authToken);
+        linkedAuthToken = "<Public Notebook>";
+        noteStore = linkedNoteStore;
+
+        // Now, authenticate to the book.  Books
+        // without a sharekey are public, so authentication
+        // isn't needed
+        if (!book.shareKey.isSet())
+            return true;
+
+        // We have a share key, so authenticate
+        linkedAuth = noteStore->authenticateToSharedNotebook(book.shareKey, authToken);
+        linkedAuthToken = linkedAuth.authenticationToken;
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+    return true;
+}
+
+
+
+// Get a linked notebook's sync state
+bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook &linkedNotebook) {
+    try {
+        syncState = linkedNoteStore->getLinkedNotebookSyncState(linkedNotebook, linkedAuthToken);
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+    return true;
+}
+
+
+
+// Get a linked notebook's sync chunk
+bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook &book, int start, int chunkSize, bool fullSync) {
+    try {
+        chunk = linkedNoteStore->getLinkedNotebookSyncChunk(book, start, chunkSize, fullSync, authToken);
+        processSyncChunk(chunk, linkedAuthToken);
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+    return true;
+}
+
+
+
+
+
+
+
+//***********************************************************************
+//***********************************************************************
+//*** Get earlier versions of a note                                  ***
+//***********************************************************************
+//***********************************************************************
+
+
+
+
+// get a list of all prior versions of a note
+bool CommunicationManager::listNoteVersions(QList<NoteVersionId> &list, QString guid) {
+    try {
+        list = noteStore->listNoteVersions(guid, authToken);
+        return true;
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+}
+
+
+
+// Get a prior version of a notebook
+bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData, bool withResourceRecognition, bool withResourceAlternateData) {
+    try {
+        note = noteStore->getNoteVersion(guid, usn,
+                withResourceData, withResourceRecognition, withResourceAlternateData, authToken);
+        return true;
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+}
+
+
+
+
+
+
+
+
+
+//***********************************************************************
+//***********************************************************************
+//*** General listing functions.  Get notebooks & tags                ***
+//***********************************************************************
+//***********************************************************************
+
+
+
+// get a list of all notebooks
+bool CommunicationManager::getNotebookList(QList<Notebook> &list) {
+    QList<Notebook> retval;
+    try {
+        retval = noteStore->listNotebooks(authToken);
+        list = retval;
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.type = CommunicationError::EDAMUserException;
+        error.code = e.errorCode;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+    return true;
+}
+
+
+
+
+
+// get a list of all Tags
+bool CommunicationManager::getTagList(QList<Tag> &list) {
+    QList<Tag> retval;
+    try {
+        retval = noteStore->listTags(authToken);
+        list = retval;
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.type = CommunicationError::EDAMUserException;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+    return true;
+}
+
+
+
+
+//***********************************************************************
+//***********************************************************************
+//*** Ink note routines                                               ***
+//***********************************************************************
+//***********************************************************************
+
+
 // See if there are any ink notes in this list of resources
-void CommunicationManager::checkForInkNotes(vector<Resource> &resources, QString shard, QString authToken) {
-    for (unsigned int i=0; i<resources.size(); i++) {
+void CommunicationManager::checkForInkNotes(QList<Resource> &resources, QString shard, QString authToken) {
+    for (int i=0; i<resources.size(); i++) {
         Resource *r = &resources[i];
-        if (r->__isset.mime && r->mime == "application/vnd.evernote.ink") {
-            downloadInkNoteImage(QString::fromStdString(r->guid), r, shard, authToken);
+        QString mime = "";
+        if (r->mime.isSet())
+            mime = r->mime;
+        if (mime == "application/vnd.evernote.ink") {
+            downloadInkNoteImage(r->guid, r, shard, authToken);
         }
     }
 }
@@ -915,8 +874,8 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
     User u;
     userTable.getUser(u);
     if (shard == "")
-        shard = QString::fromStdString(u.shardId);
-    QString urlBase = QString::fromStdString("https://")+QString::fromStdString(evernoteHost)
+        shard = u.shardId;
+    QString urlBase = QString("https://")+evernoteHost
             +QString("/shard/")
             +shard
             +QString("/res/")
@@ -977,992 +936,77 @@ int CommunicationManager::inkNoteReady(QImage *img, QImage *replyImage, int posi
 }
 
 
+//***********************************************************************
+//***********************************************************************
+//* Take a sync chunk & get all the missing stuff
+//***********************************************************************
+//***********************************************************************
+void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
+    QHash<QString,QString> noteList;
+    QList<Note> notes;
+    if (chunk.notes.isSet())
+        notes = chunk.notes;
+    for (int i=0; i<notes.size(); i++) {
+        QLOG_TRACE() << "Fetching chunk item: " << i << ": " << notes[i].title;
+        Note n = notes[i];
+        noteList.insert(n.guid,"");
+        n = noteStore->getNote(notes[i].guid, true, true, true, true, token);
+        QLOG_TRACE() << "Note Retrieved";
 
-
-// Upload a new/changed saved search
-qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search, int errorCount) {
-    // Try upload
-    try {
-        if (search.updateSequenceNum > 0)
-            return noteStoreClient->updateSearch(authToken, search);
-        else {
-            noteStoreClient->createSearch(search, authToken, search);
-            return search.updateSequenceNum;
+        // Load up the tag names because Evernote doesn't give them.
+        QList<QString> tagNames;
+        QList<QString> tagGuids;
+        if (n.tagGuids.isSet())
+            tagGuids = n.tagGuids;
+        for (int j=0; j<tagGuids.size(); j++) {
+            QString tagGuid = tagGuids[j];
+            if (tagGuidMap->contains(tagGuid)) {
+                QString tagName = tagGuidMap->value(tagGuid);
+                tagNames.append(tagName);
+            }
+            n.tagNames = tagNames;
         }
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = tr("Error uploading saved search ") + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMUserException;
-        return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = tr("Error uploading saved search ") + QString::fromStdString(search.name) + " : " +QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMNotFoundException;
-        return 0;
-    } catch (TTransportException e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return uploadSavedSearch(search, errorCount);
+        QList<Resource> resources;
+        if (n.resources.isSet())
+            resources = n.resources;
+        if (resources.size() > 0) {
+            QLOG_TRACE() << "Checking for ink note";
+            checkForInkNotes(n.resources, "", authToken);
         }
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        error.message = tr("Transport error uploading saved search \"") +QString::fromStdString(search.name) +"\" " +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return 0;
-    } catch (std::exception e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return uploadSavedSearch(search, errorCount);
-        }
-        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-        error.message = tr("Std error uploading saved search \"") +QString::fromStdString(search.name) +"\" " +QString::fromStdString(e.what());
-        error.type = CommunicationError::StdException;
-        return 0;
-    } catch (...) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return uploadSavedSearch(search, errorCount);
-        }
-        QLOG_ERROR() << "Unhandled exception:" << endl;
-        error.message = tr("Unknown error uploading saved search \"") +QString::fromStdString(search.name) +"\"";
-        error.type = CommunicationError::Unknown;
-        return 0;
+        notes[i] = n;
     }
-    return true;}
+    if (chunk.notes.isSet())
+        chunk.notes = notes;
 
-
-
-// Permanently delete a saved search
-qint32 CommunicationManager::expungeSavedSearch(string guid, int errorCount) {
-    // Try upload
-    try {
-        return noteStoreClient->expungeSearch(authToken, guid);
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMUserException;
-        return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMNotFoundException;
-        return 0;
-    } catch (TTransportException e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return expungeSavedSearch(guid, errorCount);
-        }
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        error.message = tr("Transport error deleting saved search: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return false;
-    } catch (std::exception e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Standard error deleting saved search #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return expungeSavedSearch(guid, errorCount);
-        }
-        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-        error.message = tr("Error deleting saved search: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::StdException;
-        return false;
-    } catch (...) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Unhandled exception deleting saved search #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return expungeSavedSearch(guid, errorCount);
-        }
-        QLOG_ERROR() << "Unhandled exception:" << endl;
-        error.message = tr("Unknown error getting expunging saved search");
-        error.type = CommunicationError::Unknown;
-        return false;
+    QList<Resource> resourceData;
+    QLOG_DEBUG() << "All notes retrieved.  Getting resources";
+    QList<Resource> resources;
+    if (chunk.resources.isSet())
+        resources = chunk.resources;
+    for (int i=0; i<resources.size(); i++) {
+        QLOG_TRACE() << "Fetching chunk resource item: " << i << ": " << resources[i].guid;
+        Resource r;
+        r = noteStore->getResource(resources[i].guid, true, true, true, true, token);
+        QLOG_TRACE() << "Resource retrieved";
+        resourceData.append(r);
     }
-    return true;
-}
-
-
-
-// Upload a new/changed tag to Evernote
-qint32 CommunicationManager::uploadTag(Tag &tag, int errorCount) {
-    // Try upload
-    try {
-        if (tag.updateSequenceNum > 0)
-            return noteStoreClient->updateTag(authToken, tag);
-        else {
-            noteStoreClient->createTag(tag, authToken, tag);
-            return tag.updateSequenceNum;
-        }
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException: " << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = tr("Error uploading tag ") + QString::fromStdString(tag.name) + " : " +QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMUserException;
-        return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = tr("Error uploading tag ") + QString::fromStdString(tag.name) + " : "+ QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMNotFoundException;
-        return 0;
-    } catch (TTransportException e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return uploadTag(tag, errorCount);
-        }
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        error.message = tr("Transport error uploading tag: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return 0;
-    } catch (std::exception e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return uploadTag(tag, errorCount);
-        }
-        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-        error.message = tr("Error uploading tag: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::StdException;
-        return 0;
-    } catch (...) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return uploadTag(tag, errorCount);
-        }
-        QLOG_ERROR() << "Unhandled exception:" << endl;
-        error.message = tr("Unknown error uploading tag");
-        error.type = CommunicationError::Unknown;
-        return 0;
-    }
-}
-
-
-// Permanently delete a tag from Evernote
-qint32 CommunicationManager::expungeTag(string guid, int errorCount) {
-    // Try upload
-    try {
-        return noteStoreClient->expungeTag(authToken, guid);
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMUserException;
-        return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMNotFoundException;
-        return 0;
-    } catch (TTransportException e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return expungeTag(guid, errorCount);
-        }
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        error.message = tr("Error expunging tag: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return 0;
-    } catch (std::exception e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return expungeTag(guid, errorCount);
-        }
-        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-        error.message = tr("Error expunging tag: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::StdException;
-        return 0;
-    } catch (...) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return expungeTag(guid, errorCount);
-        }
-        QLOG_ERROR() << "Unhandled exception:" << endl;
-        error.message = tr("Unknown error expunging tag");
-        error.type = CommunicationError::Unknown;
-        return 0;
+    if (chunk.resources.isSet())
+        chunk.resources  = resourceData;
+    QLOG_DEBUG() << "Getting ink notes";
+    if (resources.size()>0) {
+        QLOG_TRACE() << "Checking for ink notes";
+        checkForInkNotes(resources,"", token);
     }
 }
 
 
 
-// Upload a notebook to Evernote
-qint32 CommunicationManager::uploadNotebook(Notebook &notebook, int errorCount) {
-    // Try upload
-    try {
-        if (notebook.updateSequenceNum > 0)
-            return noteStoreClient->updateNotebook(authToken, notebook);
-        else {
-            noteStoreClient->createNotebook(notebook, authToken, notebook);
-            return notebook.updateSequenceNum;
-        }
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = tr("Error uploading notebook ") + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMUserException;
-        return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = tr("Error uploading notebook ") + QString::fromStdString(notebook.name) + " : " +QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMNotFoundException;
-        return 0;
-     } catch (TTransportException e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return uploadNotebook(notebook, errorCount);
-        }
-        QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-        error.message = tr("Transport error uploading notebook: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::TTransportException;
-        return 0;
-    } catch (std::exception e) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return uploadNotebook(notebook, errorCount);
-        }
-        QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-        error.message = tr("Error uploading notebook: ") +QString::fromStdString(e.what());
-        error.type = CommunicationError::StdException;
-        return 0;
-    } catch (...) {
-        if (errorCount < 3) {
-            errorCount++;
-            QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-            disconnect();
-            QLOG_ERROR() << "Reconnecting";
-            connect();
-            return uploadNotebook(notebook, errorCount);
-        }
-        QLOG_ERROR() << "Unhandled exception:" << endl;
-        error.message = tr("Unknown error uploading notebook");
-        error.type = CommunicationError::Unknown;
-        return 0;
-    }
-}
 
-
-// Permanently delete a notebook from Evernote
-qint32 CommunicationManager::expungeNotebook(string guid, int errorCount) {
-    // Try upload
-    try {
-        return noteStoreClient->expungeNotebook(authToken, guid);
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMUserException;
-        return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = QString::fromStdString(e.what());
-        error.type = CommunicationError::EDAMNotFoundException;
-        return 0;
-    } catch (TTransportException e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return expungeNotebook(guid, errorCount);
-       }
-       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-       error.message = tr("Transport error expunging notebook: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::TTransportException;
-       return 0;
-   } catch (std::exception e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return expungeNotebook(guid, errorCount);
-       }
-       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-       error.message = tr("Error expunging notebook: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::StdException;
-       return 0;
-   } catch (...) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return expungeNotebook(guid, errorCount);
-       }
-       QLOG_ERROR() << "Unhandled exception:" << endl;
-       error.message = tr("Unknown error expunging notebook");
-       error.type = CommunicationError::Unknown;
-       return 0;
-   }
-}
-
-
-
-// Upload a note to Evernote
-qint32 CommunicationManager::uploadNote(Note &note, int errorCount) {
-    // Try upload
-    try {
-        if (note.updateSequenceNum > 0) {
-            noteStoreClient->updateNote(note, authToken, note);
-            return note.updateSequenceNum;
-        } else {
-            noteStoreClient->createNote(note, authToken, note);
-            return note.updateSequenceNum;
-        }
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = tr("Error uploading note \"") + QString::fromStdString(note.title) + "\"";
-        error.type = CommunicationError::EDAMUserException;
-        return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = tr("Error uploading note \"") + QString::fromStdString(note.title) + tr("\". Note not found");
-        error.type = CommunicationError::EDAMNotFoundException;
-        return 0;
-    } catch (TTransportException e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return uploadNote(note, errorCount);
-       }
-       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-       error.message = tr("Transport error uploading note: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::TTransportException;
-       return 0;
-   } catch (std::exception e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return uploadNote(note, errorCount);
-       }
-       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-       error.message = tr("Error uploading note: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::StdException;
-       return 0;
-   } catch (...) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return uploadNote(note, errorCount);
-       }
-       QLOG_ERROR() << "Unhandled exception:" << endl;
-       error.message = tr("Unknown error uploading note");
-       error.type = CommunicationError::Unknown;
-       return 0;
-   }
-}
-
-
-
-// Upload a note to Evernote
-qint32 CommunicationManager::uploadLinkedNote(Note &note, LinkedNotebook linkedNotebook, int errorCount) {
-    // Try upload
-    try {
-        if (note.updateSequenceNum > 0) {
-            linkedNoteStoreClient->updateNote(note, linkedAuthToken.authenticationToken, note);
-            return note.updateSequenceNum;
-        } else {
-            linkedNoteStoreClient->createNote(note, linkedAuthToken.authenticationToken, note);
-            return note.updateSequenceNum;
-        }
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = tr("Error uploading note \"") + QString::fromStdString(note.title) + "\"";
-        error.type = CommunicationError::EDAMUserException;
-        return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = tr("Error uploading note \"") + QString::fromStdString(note.title) + tr("\". Note not found");
-        error.type = CommunicationError::EDAMNotFoundException;
-        return 0;
-    } catch (TTransportException e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           authenticateToLinkedNotebookShard(linkedNotebook);
-           return uploadLinkedNote(note, linkedNotebook, errorCount);
-       }
-       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-       error.message = tr("Transport error uploading linked note: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::TTransportException;
-       return 0;
-   } catch (std::exception e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           authenticateToLinkedNotebookShard(linkedNotebook);
-           return uploadLinkedNote(note, linkedNotebook, errorCount);
-       }
-       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-       error.message = tr("Error uploading linked note: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::StdException;
-       return 0;
-   } catch (...) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return uploadLinkedNote(note, linkedNotebook, errorCount);
-       }
-       QLOG_ERROR() << "Unhandled exception:" << endl;
-       error.message = tr("Unknown uploading linked note");
-       error.type = CommunicationError::Unknown;
-       return 0;
-   }
-}
-
-
-// delete a note in Evernote
-qint32 CommunicationManager::deleteNote(string note, int errorCount) {
-    // Try upload
-    try {
-        qint32 usn = noteStoreClient->deleteNote(authToken, note);
-        return usn;
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = tr("Error deleting note \"") + QString::fromStdString(note) + "\"";
-        error.type = CommunicationError::EDAMUserException;
-        return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = tr("Error deleting note \"") + QString::fromStdString(note) + "\". Note not found";
-        error.type = CommunicationError::EDAMNotFoundException;
-        return 0;
-    } catch (TTransportException e) {
-       QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return deleteNote(note, errorCount);
-       }
-       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-       error.message = tr("Transport error deleting note: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::TTransportException;
-       return 0;
-   } catch (std::exception e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return deleteNote(note, errorCount);
-       }
-       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-       error.message = tr("Error deleting note: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::StdException;
-       return 0;
-   } catch (...) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return deleteNote(note, errorCount);
-       }
-       QLOG_ERROR() << "Unhandled exception:" << endl;
-       error.message = tr("Unknown error deleting note");
-       error.type = CommunicationError::Unknown;
-       return 0;
-   }
-}
-
-
-
-
-
-// delete a note in Evernote
-qint32 CommunicationManager::deleteLinkedNote(string note, int errorCount) {
-    // Try upload
-    try {
-        qint32 usn = noteStoreClient->deleteNote(linkedAuthToken.authenticationToken, note);
-        return usn;
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        error.code = e.errorCode;
-        error.message = tr("Error deleting note \"") + QString::fromStdString(note) + "\"";
-        error.type = CommunicationError::EDAMUserException;
-        return 0;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return 0;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException:" << QString::fromStdString(e.what()) << endl;
-        error.message = tr("Error deleting note \"") + QString::fromStdString(note) + "\". Note not found";
-        error.type = CommunicationError::EDAMNotFoundException;
-        return 0;
-    } catch (TTransportException e) {
-       QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return deleteLinkedNote(note, errorCount);
-       }
-       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-       error.message = tr("Transport error deleting note: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::TTransportException;
-       return 0;
-   } catch (std::exception e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return deleteLinkedNote(note, errorCount);
-       }
-       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-       error.message = tr("Error deleting note: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::StdException;
-       return 0;
-   } catch (...) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return deleteLinkedNote(note, errorCount);
-       }
-       QLOG_ERROR() << "Unhandled exception:" << endl;
-       error.message = tr("Unknown error deleting note");
-       error.type = CommunicationError::Unknown;
-       return 0;
-   }
-}
-
-
-
-
-
-// Download a thumbnail of the note from Evernote's servers
-void CommunicationManager::downloadThumbnail(QString guid, string authToken, string shard) {
-    UserTable userTable(db);
-    if (shard == "") {
-        User u;
-        userTable.getUser(u);
-        shard = u.shardId;
-    }
-    QString urlBase = QString::fromStdString("https://")+QString::fromStdString(evernoteHost)
-            +QString("/shard/")
-            +QString::fromStdString(shard)
-            +QString("/thm/note/")
-            +guid;
-    postData->clear();
-    postData->addQueryItem("auth", QString::fromStdString(authToken));
-
-    QSize size(300,300);
-    QEventLoop loop;
-    QObject::connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
-
-    int position = 0;
-    QImage *newImage = NULL;
-    QUrl url(urlBase);
-
-    QNetworkRequest request(url);
-
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    QNetworkReply *reply = networkAccessManager->post(request,postData->encodedQuery());
-
-    // Execute the event loop here, now we will wait here until readyRead() signal is emitted
-    // which in turn will trigger event loop quit.
-    loop.exec();
-    QImage replyImage(size, QImage::Format_ARGB32);
-    replyImage.loadFromData(reply->readAll());
-    newImage= new QImage(size, QImage::Format_ARGB32);
-    newImage->fill(Qt::transparent);
-    position = thumbnailReady(newImage, &replyImage, position);
-    if (position == -1) {
-        QLOG_ERROR() << "Error fetching thumbnail " << reply->errorString();
-    }
-
-    QPair<QString, QImage*> *newPair = new QPair<QString, QImage*>();
-    newPair->first = guid;
-    newPair->second = newImage;
-    thumbnailList->append(newPair);
-
-    QObject::disconnect(&loop, SLOT(quit()));
-}
-
-
-
-// A thumbnail is ready for retrieval from Evernote
-int CommunicationManager::thumbnailReady(QImage *img, QImage *replyImage, int position) {
-    int priorPosition = position;
-    position = position+replyImage->height();
-    if (!replyImage->isNull()) {
-        QPainter p(img);
-        p.setCompositionMode(QPainter::CompositionMode_Clear);
-        p.fillRect(0,0,img->width(),img->height(), Qt::transparent);
-        img->fill(Qt::transparent);
-        p.setCompositionMode(QPainter::CompositionMode_SourceOver);
-        p.drawImage(QRect(0,priorPosition, replyImage->width(), position), *replyImage);
-        p.end();
-        return position;
-    }
-    return -1;
-}
-
-
-
-
-
-// get a list of all prior versions of a note
-bool CommunicationManager::listNoteVersions(vector<NoteVersionId> &list, QString guid, int errorCount) {
-    try {
-        noteStoreClient->listNoteVersions(list, authToken, guid.toStdString());
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
-        handleEDAMNotFoundException(e);
-        return false;
-    } catch (TTransportException e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return listNoteVersions(list, guid, errorCount);
-       }
-       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-       error.message = tr("Transport error getting note versions: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::TTransportException;
-       return false;
-   } catch (std::exception e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return listNoteVersions(list, guid, errorCount);
-       }
-       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-       error.message = tr("Error getting note versions: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::StdException;
-       return false;
-   } catch (...) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return listNoteVersions(list, guid, errorCount);
-       }
-       QLOG_ERROR() << "Unhandled exception:" << endl;
-       error.message = tr("Unknown error getting note versions");
-       error.type = CommunicationError::Unknown;
-       return false;
-   }
-   return true;
-}
-
-
-
-// Get a prior version of a notebook
-bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData, bool withResourceRecognition, bool withResourceAlternateData, int errorCount) {
-    try {
-        noteStoreClient->getNoteVersion(note, authToken, guid.toStdString(), usn,
-                                        withResourceData, withResourceRecognition, withResourceAlternateData);
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (EDAMNotFoundException e) {
-        QLOG_ERROR() << "EDAMNotFoundException";
-        handleEDAMNotFoundException(e);
-        return false;
-    } catch (TTransportException e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return getNoteVersion(note, guid, usn, withResourceData, withResourceRecognition, withResourceAlternateData, errorCount);
-       }
-       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-       error.message = tr("Transport error getting note version: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::TTransportException;
-       return false;
-   } catch (std::exception e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return getNoteVersion(note, guid, usn, withResourceData, withResourceRecognition, withResourceAlternateData, errorCount);
-       }
-       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-       error.message = tr("Error getting note version: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::StdException;
-       return false;
-   } catch (...) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return getNoteVersion(note, guid, usn, withResourceData, withResourceRecognition, withResourceAlternateData, errorCount);
-       }
-       QLOG_ERROR() << "Unhandled exception:" << endl;
-       error.message = tr("Unknown error getting note version");
-       error.type = CommunicationError::Unknown;
-       return false;
-   }
-   return true;
-}
-
-
-
-// get a list of all notebooks
-bool CommunicationManager::getNotebookList(vector<Notebook> &list, int errorCount) {
-
-    // Try to get the chunk
-    try {
-        noteStoreClient->listNotebooks(list, authToken);
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (TTransportException e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return getNotebookList(list, errorCount);
-       }
-       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-       error.message = tr("Transport error getting notebook list: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::TTransportException;
-       return false;
-   } catch (std::exception e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return getNotebookList(list, errorCount);
-       }
-       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-       error.message = tr("Error getting notebook list: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::StdException;
-       return false;
-   } catch (...) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return getNotebookList(list, errorCount);
-       }
-       QLOG_ERROR() << "Unhandled exception:" << endl;
-       error.message = tr("Unknown error getting notebook list");
-       error.type = CommunicationError::Unknown;
-       return false;
-   }
-   return true;
-}
-
-
-
-
-
-// get a list of all notebooks
-bool CommunicationManager::getTagList(vector<Tag> &list, int errorCount) {
-
-    // Try to get the chunk
-    try {
-        noteStoreClient->listTags(list, authToken);
-    } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
-        return false;
-    } catch (EDAMSystemException e) {
-        QLOG_ERROR() << "EDAMSystemException";
-        handleEDAMSystemException(e);
-        return false;
-    } catch (TTransportException e) {
-       QLOG_ERROR() << "TTransport error: Type->" << e.getType();
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "TTransport error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return getTagList(list, errorCount);
-       }
-       QLOG_ERROR() << "TTransportException:" << e.what() << endl;
-       error.message = tr("Transport error getting tag list: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::TTransportException;
-       return false;
-   } catch (std::exception e) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Standard exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return getTagList(list, errorCount);
-       }
-       QLOG_ERROR() << "Standard exception:" << e.what() << endl;
-       error.message = tr("Error getting tag list: ") +QString::fromStdString(e.what());
-       error.type = CommunicationError::StdException;
-       return false;
-   } catch (...) {
-       if (errorCount < 3) {
-           errorCount++;
-           QLOG_ERROR() << "Unhandled exception error #" << errorCount << ".  Retrying";
-           disconnect();
-           QLOG_ERROR() << "Reconnecting";
-           connect();
-           return getTagList(list, errorCount);
-       }
-       QLOG_ERROR() << "Unhandled exception:" << endl;
-       error.message = tr("Unknown error getting tag list");
-       error.type = CommunicationError::Unknown;
-       return false;
-   }
-   return true;
-}
+//***********************************************************************
+//***********************************************************************
+//*** Exception Handling. Print trace information & return            ***
+//***********************************************************************
+//***********************************************************************
 
 
 void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
@@ -1976,9 +1020,13 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
     fprintf(stderr, "EDAM System Exception backtrace");
     backtrace_symbols_fd(array, size, 2);
 
-    QLOG_ERROR() << "EDAMSystemException:" << QString::fromStdString(e.message) << endl;
+    if (e.message.isSet()) {
+        QLOG_ERROR() << "EDAMSystemException:" << e.message << endl;
+    }
     QLOG_ERROR() << "EDAMSystemException Error Code:" << e.errorCode << endl;
-    QLOG_ERROR() << "EDAMSystemException Rate Limit:" << e.rateLimitDuration << endl;
+    if (e.rateLimitDuration.isSet()) {
+        QLOG_ERROR() << "EDAMSystemException Rate Limit:" << e.rateLimitDuration << endl;
+    }
     if (e.errorCode == EDAMErrorCode::RATE_LIMIT_REACHED) {
         int duration = e.rateLimitDuration/60+1;
         error.type = CommunicationError::RateLimitExceeded;
@@ -1988,7 +1036,10 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
             error.message = tr("API rate limit exceeded.  Please try again in ") +QString::number(duration)+ tr(" minute.");
         return;
     }
-    error.message = tr("EDAMSystemException ") + QString::fromStdString(e.message);
+    if (e.message.isSet())
+        error.message = tr("EDAMSystemException ") + e.message;
+    else
+        error.message = tr("EDAMSystemException: Unknown error");
     error.type = CommunicationError::EDAMSystemException;
     error.code = e.errorCode;
 }
@@ -1996,7 +1047,7 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
 
 
 void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) {
-    e=e;   // suppress unused variable message
+    Q_UNUSED(e);   // suppress unused variable message
     void *array[30];
     size_t size;
 

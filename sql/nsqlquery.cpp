@@ -51,7 +51,7 @@ bool NSqlQuery::exec() {
 
 
 
-bool NSqlQuery::exec(QString &query) {
+bool NSqlQuery::exec(const QString &query) {
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec(query);
         if (rc) {
@@ -70,7 +70,7 @@ bool NSqlQuery::exec(QString &query) {
 }
 
 
-bool NSqlQuery::exec(string query) {
+bool NSqlQuery::exec(const string query) {
     QString q;
     q = QString::fromStdString(query);
     return this->exec(q);

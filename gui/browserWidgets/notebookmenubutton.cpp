@@ -57,16 +57,19 @@ void NotebookMenuButton::setCurrentNotebook(int lid, Note note) {
     notebookTable.get(notebook, note.notebookGuid);
     if (currentAction < actions.size())
         actions[currentAction]->setChecked(false);
-    this->setText(QString::fromStdString(notebook.name));
+    this->setText(notebook.name);
     for (int i=0; i<actions.size(); i++) {
         actions[i]->setChecked(false);
-        if (actions[i]->text().toLower().trimmed() == QString::fromStdString(notebook.name).toLower().trimmed()) {
+        QString notebookname = "";
+        if (notebook.name.isSet())
+            notebookname = notebook.name;
+        if (actions[i]->text().toLower().trimmed() == notebookname.toLower().trimmed()) {
             currentAction = i;
             actions[currentAction]->setChecked(true);
         }
     }
     notebookLid = notebookTable.getLid(note.notebookGuid);
-    notebookName = QString::fromStdString(notebook.name);
+    notebookName = notebook.name;
     blockSignals(false);
 }
 
@@ -88,7 +91,7 @@ void NotebookMenuButton::loadData() {
 
             QAction *action = new QAction(this);
             actions.append(action);
-            action->setText(QString::fromStdString(book.name));
+            action->setText(book.name);
             action->setCheckable(true);
             connect(action, SIGNAL(triggered()), this, SLOT(notebookSelected()));
             QFont f = action->font();
@@ -98,13 +101,16 @@ void NotebookMenuButton::loadData() {
 
             addNotebookMenuItem(currentMenu, action);
 
-            if (currentNotebookName == "" && book.__isset.defaultNotebook &&
+            if (currentNotebookName == "" && book.defaultNotebook.isSet() &&
                     book.defaultNotebook) {
-                currentNotebookName = QString::fromStdString(book.name);
+                currentNotebookName = book.name;
                 setText(currentNotebookName);
                 currentAction = actions.size()-1;
             }
-            if (QString::fromStdString(book.name) == currentNotebookName) {
+            QString bookname = "";
+            if (book.name.isSet())
+                bookname = book.name;
+            if (bookname == currentNotebookName) {
                 action->setChecked(true);
             }
         }
@@ -145,10 +151,13 @@ void NotebookMenuButton::addNotebookMenuItem(QMenu *menu, QAction *action) {
 // Search through the list of known stack menu items & find the menu for
 // this notebook's stack.  If one doesn't exist we add it.
 QMenu* NotebookMenuButton::findStack(Notebook n) {
-    if (!n.__isset.stack || QString::fromStdString(n.stack).trimmed() == "")
+    QString stack = "";
+    if (n.stack.isSet())
+        stack = n.stack;
+    stack = stack.trimmed();
+    if (stack == "")
         return &rootMenu;
 
-    QString stack = QString::fromStdString(n.stack).trimmed();
     for (int i=0; i<stackMenus.size(); i++) {
         if (stackMenus.at(i)->title().toLower() == stack.toLower())
             return stackMenus.at(i);
@@ -215,25 +224,26 @@ void NotebookMenuButton::reloadData() {
     loadData();
 
     // Restore the proper notebook selection
+    if (currentNoteLid > 0) {
+        Note n;
+        NoteTable noteTable(global.db);
+        NotebookTable notebookTable(global.db);
+        noteTable.get(n, currentNoteLid, false, false);
+        QString notebookGuid = n.notebookGuid;
+        QList<qint32> bookList;
+        notebookTable.getAll(bookList);
+        QString bookName;
 
-    Note n;
-    NoteTable noteTable(global.db);
-    NotebookTable notebookTable(global.db);
-    noteTable.get(n, currentNoteLid, false, false);
-    QString notebookGuid = QString::fromStdString(n.notebookGuid);
-    QList<qint32> bookList;
-    notebookTable.getAll(bookList);
-    QString bookName;
-
-    for (int i=0; i<bookList.size(); i++) {
-        Notebook book;
-        notebookTable.get(book, bookList[i]);
-        if (notebookGuid == QString::fromStdString(book.guid)) {
-            bookName = QString::fromStdString(book.name);
-            i=bookList.size();
+        for (int i=0; i<bookList.size(); i++) {
+            Notebook book;
+            notebookTable.get(book, bookList[i]);
+            if (notebookGuid == book.guid) {
+                bookName = book.name;
+                i=bookList.size();
+            }
         }
+        setCurrentNotebook(currentNoteLid, n);
     }
-    setCurrentNotebook(currentNoteLid, n);
     return;
 }
 

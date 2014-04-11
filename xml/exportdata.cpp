@@ -112,13 +112,13 @@ void ExportData::writeTags() {
         Tag tag;
         if (ttable.get(tag, tags[i])) {
             writer->writeStartElement("Tag");
-            if (tag.__isset.guid)
+            if (tag.guid.isSet())
                 createNode("Guid", tag.guid);
-            if (tag.__isset.name)
+            if (tag.name.isSet())
                 createNode("Name", tag.name);
-            if (tag.__isset.parentGuid)
+            if (tag.parentGuid.isSet())
                 createNode("ParentGuid", tag.parentGuid);
-            if (tag.__isset.updateSequenceNum)
+            if (tag.updateSequenceNum.isSet())
                 createNode("UpdateSequenceNumber", tag.updateSequenceNum);
 
             createNode("Dirty", dirtyTags.contains(tags[i]));
@@ -148,56 +148,56 @@ void ExportData::writeNotebooks() {
 
         if (table.get(book, lids[i])) {
             writer->writeStartElement("Notebook");
-            if (book.__isset.guid)
+            if (book.guid.isSet())
                 createNode("Guid", book.guid);
-            if (book.__isset.name)
+            if (book.name.isSet())
                 createNode("Name", book.name);
-            if (book.__isset.updateSequenceNum)
+            if (book.updateSequenceNum.isSet())
                 createNode("UpdateSequenceNumber",book.updateSequenceNum);
-            if (book.__isset.defaultNotebook)
+            if (book.defaultNotebook.isSet())
                 createNode("DefaultNotebook", book.defaultNotebook);
-            if (book.__isset.published)
+            if (book.published.isSet())
                 createNode("Published", book.published);
-            if (book.__isset.serviceCreated)
+            if (book.serviceCreated.isSet())
                 createTimestampNode("ServiceCreated", book.serviceCreated);
-            if (book.__isset.serviceUpdated)
+            if (book.serviceUpdated.isSet())
                 createTimestampNode("ServiceUpdated", book.serviceUpdated);
-            if (book.__isset.updateSequenceNum)
+            if (book.updateSequenceNum.isSet())
                 createNode("UpdateSequenceNumber", book.updateSequenceNum);
             createNode("Dirty",dirtyLids.contains(lids[i]));
 
-            if (book.__isset.businessNotebook) {
+            if (book.businessNotebook.isSet()) {
                 writer->writeStartElement("BusinessNotebook");
-                if (book.businessNotebook.__isset.notebookDescription)
-                    createNode("NotebookDescription", book.businessNotebook.notebookDescription);
-                if (book.businessNotebook.__isset.privilege)
-                    createNode("NotebookDescription", book.businessNotebook.privilege);
-                if (book.businessNotebook.__isset.recommended)
-                    createNode("NotebookDescription", book.businessNotebook.recommended);
+                if (book.businessNotebook.value().notebookDescription.isSet())
+                    createNode("NotebookDescription", book.businessNotebook.value().notebookDescription);
+                if (book.businessNotebook.value().privilege.isSet())
+                    createNode("NotebookDescription", book.businessNotebook.value().privilege);
+                if (book.businessNotebook.value().recommended.isSet())
+                    createNode("NotebookDescription", book.businessNotebook.value().recommended);
                 writer->writeEndElement();
             }
 
-            if (book.__isset.publishing) {
+            if (book.publishing.isSet()) {
                 writer->writeStartElement("Publishing");
-                if (book.publishing.__isset.uri)
-                    createNode("Uri", book.publishing.uri);
-                if (book.publishing.__isset.publicDescription)
-                    createNode("PublicDescription", book.publishing.publicDescription);
-                if (book.publishing.__isset.ascending)
-                    createNode("Ascending", book.publishing.ascending);
-                if (book.publishing.__isset.order)
-                    createNode("Uri", QString::number(book.publishing.order));
+                if (book.publishing.value().uri.isSet())
+                    createNode("Uri", book.publishing.value().uri);
+                if (book.publishing.value().publicDescription.isSet())
+                    createNode("PublicDescription", book.publishing.value().publicDescription);
+                if (book.publishing.value().ascending.isSet())
+                    createNode("Ascending", book.publishing.value().ascending);
+                if (book.publishing.value().order.isSet())
+                    createNode("Uri", QString::number(book.publishing.value().order));
                 writer->writeEndElement();
             }
 
-            if (book.__isset.sharedNotebookIds && book.sharedNotebookIds.size() > 0) {
+            if (book.sharedNotebookIds.isSet() && book.sharedNotebookIds.value().size() > 0) {
                 writer->writeStartElement("SharedNotebookIds");
-                for (unsigned int i=0; i<book.sharedNotebookIds.size(); i++) {
-                    createNode("Id", QString::number(book.sharedNotebookIds.at(i)));
+                for (int i=0; i<book.sharedNotebookIds.value().size(); i++) {
+                    createNode("Id", QString::number(book.sharedNotebookIds.value().at(i)));
                 }
                 writer->writeEndElement();
             }
-            if (book.__isset.contact) {
+            if (book.contact.isSet()) {
                 writeUser(book.contact);
             }
             writer->writeEndElement();
@@ -209,112 +209,112 @@ void ExportData::writeNotebooks() {
 
 void ExportData::writeUser(User user) {
     writer->writeStartElement("User");
-    if (user.__isset.id)
+    if (user.id.isSet())
         createNode("Id", user.id);
-    if (user.__isset.username)
+    if (user.username.isSet())
         createNode("Username", user.username);
-    if (user.__isset.email)
+    if (user.email.isSet())
         createNode("Username", user.email);
-    if (user.__isset.name)
+    if (user.name.isSet())
         createNode("Name", user.name);
-    if (user.__isset.timezone)
+    if (user.timezone.isSet())
         createNode("Timezone", user.timezone);
-    if (user.__isset.privilege)
+    if (user.privilege.isSet())
         createNode("Privilege", user.privilege);
-    if (user.__isset.created)
+    if (user.created.isSet())
         createTimestampNode("Created", user.created);
-    if (user.__isset.updated)
+    if (user.updated.isSet())
         createTimestampNode("Created", user.updated);
-    if (user.__isset.deleted)
+    if (user.deleted.isSet())
         createTimestampNode("Deleted", user.deleted);
-    if (user.__isset.active)
+    if (user.active.isSet())
         createNode("Active", user.active);
-    if (user.__isset.shardId)
+    if (user.shardId.isSet())
         createNode("Timezone", user.shardId);
-    if (user.__isset.attributes) {
+    if (user.attributes.isSet()) {
         writer->writeStartElement("UserAttributes");
-        if (user.attributes.__isset.defaultLocationName)
-            createNode("DefaultLocationName", user.attributes.defaultLocationName);
-        if (user.attributes.__isset.defaultLatitude)
-            createNode("DefaultLatitude", user.attributes.defaultLatitude);
-        if (user.attributes.__isset.defaultLongitude)
-            createNode("DefaultLongitude", user.attributes.defaultLongitude);
-        if (user.attributes.__isset.preactivation)
-            createNode("Preactivation", user.attributes.preactivation);
-        if (user.attributes.__isset.incomingEmailAddress)
-            createNode("IncomingEmailAddress", user.attributes.incomingEmailAddress);
-        if (user.attributes.__isset.comments)
-            createNode("comments", user.attributes.comments);
-        if (user.attributes.__isset.dateAgreedToTermsOfService)
-            createTimestampNode("DateAgreedToTermsOfService", user.attributes.dateAgreedToTermsOfService);
-        if (user.attributes.__isset.maxReferrals)
-            createNode("MaxReferrals", user.attributes.maxReferrals);
-        if (user.attributes.__isset.referralCount)
-            createNode("ReferralCount", user.attributes.referralCount);
-        if (user.attributes.__isset.refererCode)
-            createNode("ReferrerCode", user.attributes.refererCode);
-        if (user.attributes.__isset.sentEmailDate)
-            createTimestampNode("SentEmailDate", user.attributes.sentEmailDate);
-        if (user.attributes.__isset.sentEmailCount)
-            createNode("SentEmailCount", user.attributes.sentEmailCount);
-        if (user.attributes.__isset.dailyEmailLimit)
-            createNode("DailyEmailLimit", user.attributes.dailyEmailLimit);
-        if (user.attributes.__isset.emailOptOutDate)
-            createTimestampNode("EmailOptOutDate", user.attributes.emailOptOutDate);
-        if (user.attributes.__isset.partnerEmailOptInDate)
-            createTimestampNode("PartnerEmailOptInDate", user.attributes.partnerEmailOptInDate);
-        if (user.attributes.__isset.preferredCountry)
-            createNode("PreferredCountry", user.attributes.preferredCountry);
-        if (user.attributes.__isset.preferredLanguage)
-            createNode("PreferredLanguage", user.attributes.preferredLanguage);
-        if (user.attributes.__isset.clipFullPage)
-            createNode("ClipFullPage", user.attributes.clipFullPage);
-        if (user.attributes.__isset.twitterUserName)
-            createNode("TwitterUserName", user.attributes.twitterUserName);
-        if (user.attributes.__isset.twitterId)
-            createNode("TwitterId", user.attributes.twitterId);
-        if (user.attributes.__isset.groupName)
-            createNode("GroupName", user.attributes.groupName);
-        if (user.attributes.__isset.recognitionLanguage)
-            createNode("recognitionLanguage", user.attributes.recognitionLanguage);
-        if (user.attributes.__isset.referralProof)
-            createNode("ReferralProof", user.attributes.referralProof);
-        if (user.attributes.__isset.educationalDiscount)
-            createNode("EducationalDiscount", user.attributes.educationalDiscount);
-        if (user.attributes.__isset.businessAddress)
-            createNode("BusinessAddress", user.attributes.businessAddress);
-        if (user.attributes.__isset.hideSponsorBilling)
-            createNode("HideSponsorBilling", user.attributes.hideSponsorBilling);
-        if (user.attributes.__isset.taxExempt)
-            createNode("TaxExempt", user.attributes.taxExempt);
-        if (user.attributes.__isset.useEmailAutoFiling)
-            createNode("UseEmailAutoFiling", user.attributes.useEmailAutoFiling);
-        if (user.attributes.__isset.reminderEmailConfig)
-            createNode("ReminderEmailConfig", user.attributes.reminderEmailConfig);
+        if (user.attributes.value().defaultLocationName.isSet())
+            createNode("DefaultLocationName", user.attributes.value().defaultLocationName);
+        if (user.attributes.value().defaultLatitude.isSet())
+            createNode("DefaultLatitude", user.attributes.value().defaultLatitude);
+        if (user.attributes.value().defaultLongitude.isSet())
+            createNode("DefaultLongitude", user.attributes.value().defaultLongitude);
+        if (user.attributes.value().preactivation.isSet())
+            createNode("Preactivation", user.attributes.value().preactivation);
+        if (user.attributes.value().incomingEmailAddress.isSet())
+            createNode("IncomingEmailAddress", user.attributes.value().incomingEmailAddress);
+        if (user.attributes.value().comments.isSet())
+            createNode("comments", user.attributes.value().comments);
+        if (user.attributes.value().dateAgreedToTermsOfService.isSet())
+            createTimestampNode("DateAgreedToTermsOfService", user.attributes.value().dateAgreedToTermsOfService);
+        if (user.attributes.value().maxReferrals.isSet())
+            createNode("MaxReferrals", user.attributes.value().maxReferrals);
+        if (user.attributes.value().referralCount.isSet())
+            createNode("ReferralCount", user.attributes.value().referralCount);
+        if (user.attributes.value().refererCode.isSet())
+            createNode("ReferrerCode", user.attributes.value().refererCode);
+        if (user.attributes.value().sentEmailDate.isSet())
+            createTimestampNode("SentEmailDate", user.attributes.value().sentEmailDate);
+        if (user.attributes.value().sentEmailCount.isSet())
+            createNode("SentEmailCount", user.attributes.value().sentEmailCount);
+        if (user.attributes.value().dailyEmailLimit.isSet())
+            createNode("DailyEmailLimit", user.attributes.value().dailyEmailLimit);
+        if (user.attributes.value().emailOptOutDate.isSet())
+            createTimestampNode("EmailOptOutDate", user.attributes.value().emailOptOutDate);
+        if (user.attributes.value().partnerEmailOptInDate.isSet())
+            createTimestampNode("PartnerEmailOptInDate", user.attributes.value().partnerEmailOptInDate);
+        if (user.attributes.value().preferredCountry.isSet())
+            createNode("PreferredCountry", user.attributes.value().preferredCountry);
+        if (user.attributes.value().preferredLanguage.isSet())
+            createNode("PreferredLanguage", user.attributes.value().preferredLanguage);
+        if (user.attributes.value().clipFullPage.isSet())
+            createNode("ClipFullPage", user.attributes.value().clipFullPage);
+        if (user.attributes.value().twitterUserName.isSet())
+            createNode("TwitterUserName", user.attributes.value().twitterUserName);
+        if (user.attributes.value().twitterId.isSet())
+            createNode("TwitterId", user.attributes.value().twitterId);
+        if (user.attributes.value().groupName.isSet())
+            createNode("GroupName", user.attributes.value().groupName);
+        if (user.attributes.value().recognitionLanguage.isSet())
+            createNode("recognitionLanguage", user.attributes.value().recognitionLanguage);
+        if (user.attributes.value().referralProof.isSet())
+            createNode("ReferralProof", user.attributes.value().referralProof);
+        if (user.attributes.value().educationalDiscount.isSet())
+            createNode("EducationalDiscount", user.attributes.value().educationalDiscount);
+        if (user.attributes.value().businessAddress.isSet())
+            createNode("BusinessAddress", user.attributes.value().businessAddress);
+        if (user.attributes.value().hideSponsorBilling.isSet())
+            createNode("HideSponsorBilling", user.attributes.value().hideSponsorBilling);
+        if (user.attributes.value().taxExempt.isSet())
+            createNode("TaxExempt", user.attributes.value().taxExempt);
+        if (user.attributes.value().useEmailAutoFiling.isSet())
+            createNode("UseEmailAutoFiling", user.attributes.value().useEmailAutoFiling);
+        if (user.attributes.value().reminderEmailConfig.isSet())
+            createNode("ReminderEmailConfig", user.attributes.value().reminderEmailConfig);
         writer->writeEndElement();
     }
-    if (user.__isset.premiumInfo) {
+    if (user.premiumInfo.isSet()) {
         writer->writeStartElement("PremiumInfo");
-        if (user.premiumInfo.__isset.premiumExpirationDate)
-            createTimestampNode("PremiumExpirationDate",user.premiumInfo.premiumExpirationDate);
-        if (user.premiumInfo.__isset.premiumUpgradable)
-            createNode("PremiumUpgradable", user.premiumInfo.premiumUpgradable);
-        if (user.premiumInfo.__isset.sponsoredGroupName)
-            createNode("SponsorGroupName", user.premiumInfo.sponsoredGroupName);
-        if (user.premiumInfo.__isset.sponsoredGroupRole)
-            createNode("SponsorGroupRole", user.premiumInfo.sponsoredGroupRole);
+        if (user.premiumInfo.value().premiumExpirationDate.isSet())
+            createTimestampNode("PremiumExpirationDate",user.premiumInfo.value().premiumExpirationDate);
+        if (user.premiumInfo.value().premiumUpgradable.isSet())
+            createNode("PremiumUpgradable", user.premiumInfo.value().premiumUpgradable);
+        if (user.premiumInfo.value().sponsoredGroupName.isSet())
+            createNode("SponsorGroupName", user.premiumInfo.value().sponsoredGroupName);
+        if (user.premiumInfo.value().sponsoredGroupRole.isSet())
+            createNode("SponsorGroupRole", user.premiumInfo.value().sponsoredGroupRole);
         writer->writeEndElement();
     }
-    if (user.__isset.businessUserInfo) {
+    if (user.businessUserInfo.isSet()) {
         writer->writeStartElement("BusinessUserInfo");
-        if (user.businessUserInfo.__isset.businessId)
-            createNode("BusenessId", user.businessUserInfo.businessId);
-        if (user.businessUserInfo.__isset.businessName)
-            createNode("BusinessName", user.businessUserInfo.businessName);
-        if (user.businessUserInfo.__isset.email)
-            createNode("Email", user.businessUserInfo.email);
-        if (user.businessUserInfo.__isset.role)
-            createNode("Role", user.businessUserInfo.role);
+        if (user.businessUserInfo.value().businessId.isSet())
+            createNode("BusenessId", user.businessUserInfo.value().businessId);
+        if (user.businessUserInfo.value().businessName.isSet())
+            createNode("BusinessName", user.businessUserInfo.value().businessName);
+        if (user.businessUserInfo.value().email.isSet())
+            createNode("Email", user.businessUserInfo.value().email);
+        if (user.businessUserInfo.value().role.isSet())
+            createNode("Role", user.businessUserInfo.value().role);
         writer->writeEndElement();
 
     }
@@ -324,16 +324,14 @@ void ExportData::writeUser(User user) {
 
 void ExportData::writeData(QString name, Data data) {
     writer->writeStartElement(name);
-    if (data.__isset.body)
-        createBinaryNode("Body", data.body);
-    if (data.__isset.bodyHash) {
-        createBinaryNode("BodyHash", data.bodyHash);
+    if (data.body.isSet())
+        createNode("Body", data.body.value());
+    if (data.bodyHash.isSet()) {
+        createNode("BodyHash", data.bodyHash);
         QByteArray ba;
-        ba.append(data.bodyHash.c_str(), data.bodyHash.size());
-        QLOG_DEBUG() << ba.toHex();
-        QByteArray b2 = QByteArray::fromHex(ba);
+        ba.append(data.bodyHash);
     }
-    if (data.__isset.size)
+    if (data.size.isSet())
         createNode("Size", data.size);
     writer->writeEndElement();
 }
@@ -356,24 +354,24 @@ void ExportData::writeSavedSearches() {
         QCoreApplication::processEvents();
         table.get(s,lids[i]);
         writer->writeStartElement("SavedSearch");
-        if (s.__isset.guid)
+        if (s.guid.isSet())
             createNode("Guid", s.guid);
-        if (s.__isset.name)
+        if (s.name.isSet())
             createNode("Name", s.name);
-        if (s.__isset.query)
+        if (s.query.isSet())
             createNode("Query", s.query);
-        if (s.__isset.format)
+        if (s.format.isSet())
             createNode("Format", s.format);
-        if (s.__isset.updateSequenceNum)
+        if (s.updateSequenceNum.isSet())
             createNode("UpdateSequenceNumber", s.updateSequenceNum);
-        if (s.__isset.scope) {
+        if (s.scope.isSet()) {
             writer->writeStartElement("Scope");
-            if (s.scope.__isset.includeAccount)
-                createNode("IncludeAccount", s.scope.includeAccount);
-            if (s.scope.__isset.includeBusinessLinkedNotebooks)
-                createNode("IncludeBusinessLinkedNotebooks", s.scope.includeBusinessLinkedNotebooks);
-            if (s.scope.__isset.includePersonalLinkedNotebooks)
-                createNode("IncludePersonalLinkedNotebooks", s.scope.includePersonalLinkedNotebooks);
+            if (s.scope.value().includeAccount.isSet())
+                createNode("IncludeAccount", s.scope.value().includeAccount);
+            if (s.scope.value().includeBusinessLinkedNotebooks.isSet())
+                createNode("IncludeBusinessLinkedNotebooks", s.scope.value().includeBusinessLinkedNotebooks);
+            if (s.scope.value().includePersonalLinkedNotebooks.isSet())
+                createNode("IncludePersonalLinkedNotebooks", s.scope.value().includePersonalLinkedNotebooks);
             writer->writeEndElement();
         }
         writer->writeEndElement();
@@ -397,23 +395,23 @@ void ExportData::writeLinkedNotebooks() {
         LinkedNotebook s;
         table.get(s,lids[i]);
         writer->writeStartElement("LinkedNotebook");
-        if (s.__isset.guid)
+        if (s.guid.isSet())
             createNode("Guid", s.guid);
-        if (s.__isset.businessId)
+        if (s.businessId.isSet())
             createNode("BusinessId", s.businessId);
-        if (s.__isset.shardId)
+        if (s.shardId.isSet())
             createNode("ShardId", s.shardId);
-        if (s.__isset.shareKey)
+        if (s.shareKey.isSet())
             createNode("ShareKey", s.shareKey);
-        if (s.__isset.updateSequenceNum)
+        if (s.updateSequenceNum.isSet())
             createNode("UpdateSequenceNumber", s.updateSequenceNum);
-        if (s.__isset.shareName)
+        if (s.shareName.isSet())
             createNode("ShareName", s.shareName);
-        if (s.__isset.stack)
+        if (s.stack.isSet())
             createNode("Stack", s.stack);
-        if (s.__isset.uri)
+        if (s.uri.isSet())
             createNode("Uri", s.uri);
-        if (s.__isset.username)
+        if (s.username.isSet())
             createNode("UserName", s.username);
         writer->writeEndElement();
     }
@@ -437,35 +435,35 @@ void ExportData::writeSharedNotebooks() {
         SharedNotebook s;
         table.get(s,lids[i]);
         writer->writeStartElement("SharedNotebook");
-        if (s.__isset.allowPreview)
+        if (s.allowPreview.isSet())
             createNode("AllowPreview", s.allowPreview);
-        if (s.__isset.email)
+        if (s.email.isSet())
             createNode("Email", s.email);
-        if (s.__isset.id)
-            createNode("Id", s.id);
-        if (s.__isset.notebookGuid)
+        if (s.id.isSet())
+            createNode("Id", QString::number(s.id));
+        if (s.notebookGuid.isSet())
             createNode("NotebookGuid", s.notebookGuid);
-        if (s.__isset.notebookModifiable)
+        if (s.notebookModifiable.isSet())
             createNode("NotebookModifiable", s.notebookModifiable);
-        if (s.__isset.privilege)
+        if (s.privilege.isSet())
             createNode("Privilege", s.privilege);
-        if (s.__isset.recipientSettings) {
+        if (s.recipientSettings.isSet()) {
             writer->writeStartElement("RecipientSettings");
-            if (s.recipientSettings.__isset.reminderNotifyEmail)
-                createNode("ReminderNotifyEmail", s.recipientSettings.reminderNotifyEmail);
-            if (s.recipientSettings.__isset.reminderNotifyInApp)
-                createNode("ReminderNotifyInApp", s.recipientSettings.reminderNotifyInApp);
+            if (s.recipientSettings.value().reminderNotifyEmail.isSet())
+                createNode("ReminderNotifyEmail", s.recipientSettings.value().reminderNotifyEmail);
+            if (s.recipientSettings.value().reminderNotifyInApp.isSet())
+                createNode("ReminderNotifyInApp", s.recipientSettings.value().reminderNotifyInApp);
             writer->writeEndElement();
         }
-        if (s.__isset.username)
+        if (s.username.isSet())
             createNode("Username", s.username);
-        if (s.__isset.username)
+        if (s.username.isSet())
             createNode("UserId", s.userId);
-        if (s.__isset.requireLogin)
+        if (s.requireLogin.isSet())
             createNode("RequireLogin", s.requireLogin);
-        if (s.__isset.serviceCreated)
+        if (s.serviceCreated.isSet())
             createTimestampNode("ServiceCreated", s.serviceCreated);
-        if (s.__isset.serviceUpdated)
+        if (s.serviceUpdated.isSet())
             createTimestampNode("ServiceUpdated", s.serviceUpdated);
         writer->writeEndElement();
     }
@@ -489,81 +487,81 @@ void ExportData::writeNotes() {
         Note n;
         table.get(n,lids[i], true,true);
         writer->writeStartElement("Note");
-        if (n.__isset.guid)
+        if (n.guid.isSet())
             createNode("Guid", n.guid);
-        if (n.__isset.title)
+        if (n.title.isSet())
             createNode("Title", n.title);
-        if (n.__isset.content) {
+        if (n.content.isSet()) {
             writer->writeStartElement("Content");
-            writer->writeCDATA(QString::fromStdString(n.content));
+            writer->writeCDATA(n.content);
             writer->writeEndElement();
         }
-        if (n.__isset.contentHash)
-            createBinaryNode("ContentHash", n.contentHash);
-        if (n.__isset.contentLength)
+        if (n.contentHash.isSet())
+            createNode("ContentHash", n.contentHash);
+        if (n.contentLength.isSet())
             createNode("ContentLength", n.contentLength);
-        if (n.__isset.created)
+        if (n.created.isSet())
             createTimestampNode("Created", n.created);
-        if (n.__isset.updated)
+        if (n.updated.isSet())
             createTimestampNode("Updated", n.updated);
-        if (n.__isset.deleted)
+        if (n.deleted.isSet())
             createTimestampNode("Deleted", n.deleted);
-        if (n.__isset.active)
+        if (n.active.isSet())
             createNode("Active", n.active);
-        if (n.__isset.updateSequenceNum)
+        if (n.updateSequenceNum.isSet())
             createNode("UpdateSequenceNumber", n.updateSequenceNum);
-        if (n.__isset.notebookGuid)
+        if (n.notebookGuid.isSet())
             createNode("NotebookGuid", n.notebookGuid);
-        if (n.__isset.tagGuids && n.__isset.tagNames && n.tagNames.size() == n.tagGuids.size()) {
-            for (unsigned int j=0; j<n.tagGuids.size(); j++) {
+        if (n.tagGuids.isSet() && n.tagNames.isSet() && n.tagNames.value().size() == n.tagGuids.value().size()) {
+            for (int j=0; j<n.tagGuids.value().size(); j++) {
                 writer->writeStartElement("Tag");
-                createNode("Guid", n.tagGuids[j]);
-                createNode("Name", n.tagNames[j]);
+                createNode("Guid", n.tagGuids.value()[j]);
+                createNode("Name", n.tagNames.value()[j]);
                 writer->writeEndElement();
             }
 
         }
-        if (n.__isset.resources) {
-            for (unsigned int j=0; j<n.resources.size(); j++) {
-                writeResource(n.resources[j]);
+        if (n.resources.isSet()) {
+            for (int j=0; j<n.resources.value().size(); j++) {
+                writeResource(n.resources.value()[j]);
             }
         }
-        if (n.__isset.attributes) {
+        if (n.attributes.isSet()) {
             writer->writeStartElement("Attributes");
-            if (n.attributes.__isset.subjectDate)
-                createTimestampNode("SubjectDate", n.attributes.subjectDate);
-            if (n.attributes.__isset.latitude)
-                createNode("Latitude", n.attributes.latitude);
-            if (n.attributes.__isset.longitude)
-                createNode("Longitude",n.attributes.longitude);
-            if (n.attributes.__isset.altitude)
-                createNode("Altitude", n.attributes.altitude);
-            if (n.attributes.__isset.author)
-                createNode("Author", n.attributes.author);
-            if (n.attributes.__isset.source)
-                createNode("Source", n.attributes.source);
-            if (n.attributes.__isset.sourceApplication)
-                createNode("SourceApplication", n.attributes.sourceApplication);
-            if (n.attributes.__isset.sourceURL)
-                createNode("SourceUrl", n.attributes.sourceURL);
-            if (n.attributes.__isset.shareDate)
-                createTimestampNode("ShareDate", n.attributes.shareDate);
-            if (n.attributes.__isset.reminderOrder)
-                createNode("ReminderOrder",n.attributes.reminderOrder);
-            if (n.attributes.__isset.reminderDoneTime)
-                createNode("ReminderDoneTime", n.attributes.reminderDoneTime);
-            if (n.attributes.__isset.reminderTime)
-                createNode("ReminderTime", n.attributes.reminderTime);
-            if (n.attributes.__isset.placeName)
-                createNode("PlaceName", n.attributes.placeName);
-            if (n.attributes.__isset.contentClass)
-                createNode("ContentClass",n.attributes.contentClass);
-            if (n.attributes.__isset.lastEditedBy)
-                createNode("LastEditedBy", n.attributes.lastEditedBy);
-            if (n.attributes.__isset.creatorId)
-                createNode("CreatorId", n.attributes.creatorId);
-            if (n.attributes.__isset.lastEditorId)
-                createNode("LastEditorId", n.attributes.lastEditorId);
+            if (n.attributes.value().subjectDate.isSet())
+                createTimestampNode("SubjectDate", n.attributes.value().subjectDate);
+            if (n.attributes.value().latitude.isSet())
+                createNode("Latitude", n.attributes.value().latitude);
+            if (n.attributes.value().longitude.isSet())
+                createNode("Longitude",n.attributes.value().longitude);
+            if (n.attributes.value().altitude.isSet())
+                createNode("Altitude", n.attributes.value().altitude);
+            if (n.attributes.value().author.isSet())
+                createNode("Author", n.attributes.value().author);
+            if (n.attributes.value().source.isSet())
+                createNode("Source", n.attributes.value().source);
+            if (n.attributes.value().sourceApplication.isSet())
+                createNode("SourceApplication", n.attributes.value().sourceApplication);
+            if (n.attributes.value().sourceURL.isSet())
+                createNode("SourceUrl", n.attributes.value().sourceURL);
+            if (n.attributes.value().shareDate.isSet())
+                createTimestampNode("ShareDate", n.attributes.value().shareDate);
+            if (n.attributes.value().reminderOrder.isSet())
+                createNode("ReminderOrder",QString::number(n.attributes.value().reminderOrder));
+            if (n.attributes.value().reminderDoneTime.isSet())
+                createNode("ReminderDoneTime", QString::number(n.attributes.value().reminderDoneTime));
+            if (n.attributes.value().reminderTime.isSet())
+                createNode("ReminderTime", QString::number(n.attributes.value().reminderTime));
+            if (n.attributes.value().placeName.isSet())
+                createNode("PlaceName", n.attributes.value().placeName);
+            if (n.attributes.value().contentClass.isSet())
+                createNode("ContentClass",n.attributes.value().contentClass);
+            if (n.attributes.value().lastEditedBy.isSet())
+                createNode("LastEditedBy", n.attributes.value().lastEditedBy);
+            if (n.attributes.value().creatorId.isSet())
+                createNode("CreatorId", n.attributes.value().creatorId);
+            if (n.attributes.value().lastEditorId.isSet())
+                createNode("LastEditorId", n.attributes.value().lastEditorId);
             writer->writeEndElement();
         }
         createNode("Dirty", dirtyLids.contains(lids[i]));
@@ -575,52 +573,52 @@ void ExportData::writeNotes() {
 
 void ExportData::writeResource(Resource r) {
     writer->writeStartElement("NoteResource");
-    if (r.__isset.guid)
+    if (r.guid.isSet())
         createNode("Guid", r.guid);
-    if (r.__isset.noteGuid)
+    if (r.noteGuid.isSet())
         createNode("NoteGuid", r.noteGuid);
-    if (r.__isset.data)
+    if (r.data.isSet())
         writeData("Data", r.data);
-    if (r.__isset.mime)
+    if (r.mime.isSet())
         createNode("Mime", r.mime);
-    if (r.__isset.width)
+    if (r.width.isSet())
         createNode("Width", r.width);
-    if (r.__isset.height)
+    if (r.height.isSet())
         createNode("Height",r.height);
-    if (r.__isset.duration)
+    if (r.duration.isSet())
         createNode("Duration", r.duration);
-    if (r.__isset.active)
+    if (r.active.isSet())
         createNode("Active", r.active);
-    if (r.__isset.recognition)  {
+    if (r.recognition.isSet())  {
         writeData("Recognition", r.recognition);
     }
-    if (r.__isset.attributes) {
+    if (r.attributes.isSet()) {
         writer->writeStartElement("ResourceAttributes");
-        if (r.attributes.__isset.sourceURL)
-            createNode("SourceUrl", r.attributes.sourceURL);
-        if (r.attributes.__isset.timestamp)
-            createNode("Timestamp", r.attributes.timestamp);
-        if (r.attributes.__isset.latitude)
-            createNode("Latitude", r.attributes.latitude);
-        if (r.attributes.__isset.longitude)
-            createNode("Longitude", r.attributes.longitude);
-        if (r.attributes.__isset.altitude)
-            createNode("Altitude", r.attributes.altitude);
-        if (r.attributes.__isset.cameraMake)
-            createNode("CameraMake", r.attributes.cameraMake);
-        if (r.attributes.__isset.cameraModel)
-            createNode("CameraModel", r.attributes.cameraModel);
-        if (r.attributes.__isset.recoType)
-            createNode("RecoType", r.attributes.recoType);
-        if (r.attributes.__isset.fileName)
-            createNode("FileName", r.attributes.fileName);
-        if (r.attributes.__isset.attachment)
-            createNode("Attachment", r.attributes.attachment);
+        if (r.attributes.value().sourceURL.isSet())
+            createNode("SourceUrl", r.attributes.value().sourceURL);
+        if (r.attributes.value().timestamp.isSet())
+            createNode("Timestamp", QString::number(r.attributes.value().timestamp));
+        if (r.attributes.value().latitude.isSet())
+            createNode("Latitude", r.attributes.value().latitude);
+        if (r.attributes.value().longitude.isSet())
+            createNode("Longitude", r.attributes.value().longitude);
+        if (r.attributes.value().altitude.isSet())
+            createNode("Altitude", r.attributes.value().altitude);
+        if (r.attributes.value().cameraMake.isSet())
+            createNode("CameraMake", r.attributes.value().cameraMake);
+        if (r.attributes.value().cameraModel.isSet())
+            createNode("CameraModel", r.attributes.value().cameraModel);
+        if (r.attributes.value().recoType.isSet())
+            createNode("RecoType", r.attributes.value().recoType);
+        if (r.attributes.value().fileName.isSet())
+            createNode("FileName", r.attributes.value().fileName);
+        if (r.attributes.value().attachment.isSet())
+            createNode("Attachment", r.attributes.value().attachment);
         writer->writeEndElement();
     }
-    if (r.__isset.updateSequenceNum)
+    if (r.updateSequenceNum.isSet())
         createNode("UpdateSequenceNumber", r.updateSequenceNum);
-    if (r.__isset.alternateData)
+    if (r.alternateData.isSet())
         writeData("AlternateData", r.alternateData);
     writer->writeEndElement();
 }
@@ -645,6 +643,11 @@ void ExportData::createNode(QString nodeName, bool value) {
 }
 
 
+
+void ExportData::createNode(QString nodeName, QByteArray value) {
+    writer->writeTextElement(nodeName, value.toHex());
+    return;
+}
 
 
 

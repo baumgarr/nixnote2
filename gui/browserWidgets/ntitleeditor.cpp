@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QPalette>
 
+using namespace qevercloud;
+
 extern Global global;
 
 NTitleEditor::NTitleEditor(QWidget *parent) :
@@ -117,9 +119,8 @@ QString NTitleEditor::cleanupTitle(QString text) {
         text = tr("Untitled note");
     }
 
-    LimitsConstants limits;
-    if (text.length() > limits.EDAM_NOTE_TITLE_LEN_MAX)
-        text = text.mid(0,limits.EDAM_NOTE_TITLE_LEN_MAX-1);
+    if (text.length() > EDAM_NOTE_TITLE_LEN_MAX)
+        text = text.mid(0,EDAM_NOTE_TITLE_LEN_MAX-1);
 
     return text;
 }

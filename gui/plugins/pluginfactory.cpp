@@ -48,7 +48,7 @@ QObject *PluginFactory::create(const QString &mimeType, const QUrl &url,
                             const QStringList &argumentNames,
                             const QStringList &argumentValues) const
 {
-    url.isEmpty();  // suppress unused variable warning
+    Q_UNUSED(url);  // suppress unused variable warning
     if (mimeType == "application/pdf") {
         PopplerViewer *view;
         view = new PopplerViewer(argumentValues[argumentNames.indexOf("type")],

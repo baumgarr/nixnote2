@@ -25,7 +25,7 @@ NumberDelegate::NumberDelegate(Format f)
 }
 
 QString NumberDelegate::displayText(const QVariant &value, const QLocale &locale) const {
-    locale.name();  // Suppress unused variable
+    Q_UNUSED(locale);  // Suppress unused variable
     // If we should hide zero values...
     if (value.toLongLong() == 0 && fmt == BlankNumber)
         return "";

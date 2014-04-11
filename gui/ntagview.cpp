@@ -157,7 +157,7 @@ void NTagView::notebookSelectionChanged(qint32 notebookLid) {
         NotebookTable notebookTable(global.db);
         Notebook notebook;
         notebookTable.get(notebook, notebookLid);
-        root->setData(NAME_POSITION, Qt::DisplayRole, tr("Tags from ")+QString::fromStdString(notebook.name));
+        root->setData(NAME_POSITION, Qt::DisplayRole, tr("Tags from ")+notebook.name);
     } else {
         root->setData(NAME_POSITION, Qt::DisplayRole, tr("Tags from Personal"));
         accountFilter = 0;
@@ -342,12 +342,9 @@ void NTagView::tagUpdated(qint32 lid, QString name, QString parentGuid, qint32 a
         } else {
             if (parentLid == 0) {
                 Tag parentTag;
-                parentTag.guid = parentGuid.toStdString();
-                parentTag.__isset.guid = true;
+                parentTag.guid = parentGuid;
                 parentTag.updateSequenceNum = 0;
-                parentTag.__isset.updateSequenceNum = true;
-                parentTag.name = parentGuid.toStdString();
-                parentTag.__isset.name = true;
+                parentTag.name = parentGuid;
                 parentLid = tagTable.add(0, parentTag, false, account);
             }
             parentWidget = new NTagViewItem();
@@ -449,8 +446,8 @@ void NTagView::addNewTag(qint32 lid) {
     TagTable tagTable(global.db);
     Tag newTag;
     tagTable.get(newTag, lid);
-    if (newTag.__isset.guid) {
-        tagUpdated(lid, QString::fromStdString(newTag.name), "", 0);
+    if (newTag.guid.isSet()) {
+        tagUpdated(lid, newTag.name, "", 0);
     }
 }
 
@@ -556,8 +553,7 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
         tagTable.get(tag, lid);
         QString guid;
         tagTable.getGuid(guid, newParentLid);
-        tag.parentGuid = guid.toStdString();
-        tag.__isset.parentGuid = true;
+        tag.parentGuid = guid;
         tagTable.update(tag, true);
 
         if (newParentLid>0) {
@@ -565,7 +561,7 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
             parent_ptr->addChild(item);
             parent_ptr->childrenLids.append(lid);
             item->parentLid = newParentLid;
-            item->parentGuid = QString::fromStdString(tag.guid);
+            item->parentGuid = tag.guid;
         } else {
             item->parentLid = 0;
             item->parentGuid = "";
@@ -780,16 +776,19 @@ void NTagView::editComplete() {
     TagTable table(global.db);
     Tag tag;
     table.get(tag, lid);
-    QString oldName = QString::fromStdString(tag.name);
+    QString oldName = tag.name;
 
     // Check that this tag doesn't already exist
     // if it exists, we go back to the original name
     qint32 check = table.findByName(text, accountFilter);
     if (check != 0) {
         NTagViewItem *item = dataStore[lid];
-        item->setData(NAME_POSITION, Qt::DisplayRole, QString::fromStdString(tag.name));
+        QString tagname = "";
+        if (tag.name.isSet())
+            tagname = tag.name;
+        item->setData(NAME_POSITION, Qt::DisplayRole, tagname);
     } else {
-        tag.name = text.toStdString();
+        tag.name = text;
         table.update(tag, true);
     }
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);

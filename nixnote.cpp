@@ -1217,7 +1217,9 @@ void NixNote::checkReadOnlyNotebook() {
     NoteTable ntable(global.db);
     NotebookTable btable(global.db);
     ntable.get(n, lid, false, false);
-    qint32 notebookLid = btable.getLid(n.notebookGuid);
+    qint32 notebookLid = 0;
+    if (n.notebookGuid.isSet())
+        notebookLid = btable.getLid(n.notebookGuid);
     if (btable.isReadOnly(notebookLid)) {
         newNoteButton->setEnabled(false);
         menuBar->deleteNoteAction->setEnabled(false);
@@ -1431,13 +1433,14 @@ void NixNote::databaseRestore(bool fullRestore) {
 //* Set wait cursor
 //*********************************************************
 void NixNote::waitCursor(bool value) {
-    value=value; /* suppress warning of unused */
+    Q_UNUSED(value); /* suppress warning of unused */
 }
 
 
 // Show a message in the status bar
 void NixNote::setMessage(QString text, int timeout) {
     statusBar()->showMessage(text, timeout);
+    QLOG_INFO() << text;
 }
 
 
@@ -1501,33 +1504,25 @@ void NixNote::newNote() {
 
     Note n;
     NotebookTable notebookTable(global.db);
-    n.content = newNoteBody.toStdString();
-    n.__isset.content = true;
+    n.content = newNoteBody;
     n.title = "Untitled note";
     QString uuid = QUuid::createUuid();
     uuid = uuid.mid(1);
     uuid.chop(1);
-    n.guid = uuid.toStdString();
-    n.__isset.guid = true;
-    n.__isset.title = true;
-    n.__isset.active = true;
+    n.guid = uuid;
     n.active = true;
     //QDateTime now;
     n.created = QDateTime::currentMSecsSinceEpoch();
     n.updated = n.created;
-    n.__isset.created = true;
-    n.__isset.updated = true;
     n.updateSequenceNum = 0;
-    n.__isset.updateSequenceNum = true;
     if (notebookTreeView->selectedItems().size() == 0) {
-        n.notebookGuid = notebookTable.getDefaultNotebookGuid().toStdString();
+        n.notebookGuid = notebookTable.getDefaultNotebookGuid();
     } else {
         NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
         QString notebookGuid;
         notebookTable.getGuid(notebookGuid, item->lid);
-        n.notebookGuid = notebookGuid.toStdString();
+        n.notebookGuid = notebookGuid;
     }
-    n.__isset.notebookGuid = true;
     NoteTable table(global.db);
     qint32 lid = table.add(0,n,true);
 
@@ -1549,33 +1544,25 @@ void NixNote::newExternalNote() {
 
     Note n;
     NotebookTable notebookTable(global.db);
-    n.content = newNoteBody.toStdString();
-    n.__isset.content = true;
+    n.content = newNoteBody;
     n.title = "Untitled note";
     QString uuid = QUuid::createUuid();
     uuid = uuid.mid(1);
     uuid.chop(1);
-    n.guid = uuid.toStdString();
-    n.__isset.guid = true;
-    n.__isset.title = true;
-    n.__isset.active = true;
+    n.guid = uuid;
     n.active = true;
     //QDateTime now;
     n.created = QDateTime::currentMSecsSinceEpoch();
     n.updated = n.created;
-    n.__isset.created = true;
-    n.__isset.updated = true;
     n.updateSequenceNum = 0;
-    n.__isset.updateSequenceNum = true;
     if (notebookTreeView->selectedItems().size() == 0) {
-        n.notebookGuid = notebookTable.getDefaultNotebookGuid().toStdString();
+        n.notebookGuid = notebookTable.getDefaultNotebookGuid();
     } else {
         NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
         QString notebookGuid;
         notebookTable.getGuid(notebookGuid, item->lid);
-        n.notebookGuid = notebookGuid.toStdString();
+        n.notebookGuid = notebookGuid;
     }
-    n.__isset.notebookGuid = true;
     NoteTable table(global.db);
     qint32 lid = table.add(0,n,true);
     tabWindow->openNote(lid, NTabWidget::ExternalWindow);
@@ -1704,7 +1691,7 @@ void NixNote::viewNoteHistory() {
     NoteHistorySelect dialog;
     CommunicationManager comm(global.db);
     if (comm.connect()) {
-        vector<NoteVersionId> versions;
+        QList<NoteVersionId> versions;
         NoteTable ntable(global.db);
         QString guid = ntable.getGuid(tabWindow->currentBrowser()->lid);
         comm.listNoteVersions(versions, guid);
@@ -1722,16 +1709,21 @@ void NixNote::viewNoteHistory() {
                 return;
             }
             note.updateSequenceNum = 0;
-            note.__isset.active = true;
             note.active = true;
             QUuid uuid;
             QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
-            note.guid = newGuid.toStdString();
-            for (unsigned int i=0; note.__isset.resources && i<note.resources.size(); i++) {
-                note.resources.at(i).updateSequenceNum = 0;
+            note.guid = newGuid;
+            QList<Resource> resources;
+            if (note.resources.isSet())
+                resources = note.resources;
+            for (int i=0;i<resources.size(); i++) {
+                Resource r = resources[i];
+                r.updateSequenceNum = 0;
                 newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
-                note.resources.at(i).guid = newGuid.toStdString();
+                r.guid = newGuid;
+                resources[i] = r;
             }
+            note.resources = resources;
             ntable.add(0,note,true);
             updateSelectionCriteria();
             setMessage(tr("Note restored"));
@@ -2149,16 +2141,13 @@ void NixNote::screenCapture() {
 
     // * Start setting up the new note
     Note newNote;
-    newNote.guid = QString::number(lid).toStdString();
-    newNote.__isset.guid = true;
-    newNote.title = tr("Screen Capture").toStdString();
-    newNote.__isset.title = true;
+    newNote.guid = QString::number(lid);
+    newNote.title = tr("Screen Capture");
 
     NotebookTable bookTable(global.db);
     QString notebook;
     notebook = bookTable.getDefaultNotebookGuid();
-    newNote.notebookGuid = notebook.toStdString();
-    newNote.__isset.notebookGuid = true;
+    newNote.notebookGuid = notebook;
 
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
            QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
@@ -2169,16 +2158,11 @@ void NixNote::screenCapture() {
             +QString(" type=\"" +mime +"\" ")
             +QString("/>");
     newNoteBody.append(enMedia + QString("</en-note>"));
-    newNote.content = newNoteBody.toStdString();
-    newNote.__isset.content = true;
+    newNote.content = newNoteBody;
     newNote.active = true;
-    newNote.__isset.active = true;
     newNote.created = QDateTime::currentMSecsSinceEpoch();;
-    newNote.__isset.created = true;
     newNote.updated = newNote.created;
-    newNote.__isset.updated = true;
     newNote.updateSequenceNum = 0;
-    newNote.__isset.updateSequenceNum = true;
 
     NoteTable ntable(global.db);
     ntable.add(lid, newNote, true);
@@ -2189,28 +2173,19 @@ void NixNote::screenCapture() {
 
     // Start creating the new resource
     Resource newRes;
-    string bodystring(data.constData(), data.size());
-    newRes.data.body = bodystring;
-    string hashstring(hash.constData(), hash.size());
-    newRes.data.bodyHash = hashstring;
-    newRes.data.size = data.size();
-    newRes.data.__isset.body = true;
-    newRes.data.__isset.bodyHash = true;
-    newRes.data.__isset.size = true;
-    newRes.__isset.data = true;
-    newRes.mime = mime.toStdString();
-    newRes.__isset.mime = true;
-    newRes.__isset.attributes = true;
-    newRes.attributes.attachment = false;
-    newRes.attributes.__isset.attachment = true;
+    Data d;
+    d.body = data;
+    d.bodyHash = hash;
+    d.size = data.size();
+    newRes.mime = mime;
+    ResourceAttributes attributes;
+    attributes.attachment = false;
     newRes.active = true;
-    newRes.__isset.active = true;
-    newRes.guid = QString::number(lid).toStdString();
-    newRes.__isset.guid = true;
-    newRes.noteGuid = noteGuid.toStdString();
-    newRes.__isset.noteGuid = true;
+    newRes.guid = QString::number(lid);
+    newRes.noteGuid = noteGuid;
     newRes.updateSequenceNum = 0;
-    newRes.__isset.updateSequenceNum = 0;
+    newRes.data = d;
+    newRes.attributes = attributes;
     ResourceTable restable(global.db);
     restable.add(lid, newRes, true, noteLid);
 
@@ -2291,21 +2266,18 @@ void NixNote::newWebcamNote() {
     QByteArray hash = md5hash.hash(data, QCryptographicHash::Md5);
 
     // * Start setting up the new note
-    newNote.guid = QString::number(lid).toStdString();
-    newNote.__isset.guid = true;
+    newNote.guid = QString::number(lid);
     newNote.title = "Webcam Note";
-    newNote.__isset.title = true;
 
     NotebookTable notebookTable(global.db);
     if (notebookTreeView->selectedItems().size() == 0) {
-        newNote.notebookGuid = notebookTable.getDefaultNotebookGuid().toStdString();
+        newNote.notebookGuid = notebookTable.getDefaultNotebookGuid();
     } else {
         NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
         QString notebookGuid;
         notebookTable.getGuid(notebookGuid, item->lid);
-        newNote.notebookGuid = notebookGuid.toStdString();
+        newNote.notebookGuid = notebookGuid;
     }
-    newNote.__isset.notebookGuid = true;
 
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
            QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
@@ -2316,18 +2288,11 @@ void NixNote::newWebcamNote() {
             +QString(" type=\"image/png\" ")
             +QString("/>");
     newNoteBody.append(enMedia + QString("</en-note>"));
-    newNote.content = newNoteBody.toStdString();
-    newNote.__isset.content = true;
+    newNote.content = newNoteBody;
     newNote.active = true;
-    newNote.__isset.active = true;
     newNote.created = QDateTime::currentMSecsSinceEpoch();;
-    newNote.__isset.created = true;
     newNote.updated = newNote.created;
-    newNote.__isset.updated = true;
     newNote.updateSequenceNum = 0;
-    newNote.__isset.updateSequenceNum = true;
-    newNote.attributes.__isset.sourceURL = false;
-    newNote.__isset.attributes = true;
 
 
     qint32 noteLid = lid;
@@ -2338,30 +2303,20 @@ void NixNote::newWebcamNote() {
 
     // Start creating the new resource
     Resource newRes;
-    string bodystring(data.constData(), data.size());
-    newRes.data.body = bodystring;
-    string hashstring(hash.constData(), hash.size());
-    newRes.data.bodyHash = hashstring;
-    newRes.data.size = data.size();
-    newRes.data.__isset.body = true;
-    newRes.data.__isset.bodyHash = true;
-    newRes.data.__isset.size = true;
-    newRes.__isset.data = true;
+    Data d;
+    ResourceAttributes attributes;
+    d.body = data;
+    d.bodyHash = hash;
+    d.size = data.size();
     newRes.mime = "image/png";
-    newRes.__isset.mime = true;
-    newRes.attributes.fileName = "";
-    newRes.attributes.__isset.fileName = false;
-    newRes.__isset.attributes = true;
-    newRes.attributes.attachment = false;
-    newRes.attributes.__isset.attachment = true;
+    attributes.fileName = "";
+    attributes.attachment = false;
     newRes.active = true;
-    newRes.__isset.active = true;
-    newRes.guid = QString::number(lid).toStdString();
-    newRes.__isset.guid = true;
-    newRes.noteGuid = noteGuid.toStdString();
-    newRes.__isset.noteGuid = true;
+    newRes.guid = QString::number(lid);
+    newRes.noteGuid = noteGuid;
     newRes.updateSequenceNum = 0;
-    newRes.__isset.updateSequenceNum = 0;
+    newRes.data = d;
+    newRes.attributes = attributes;
     ResourceTable restable(global.db);
     restable.add(lid, newRes, true, noteLid);
 

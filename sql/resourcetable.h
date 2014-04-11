@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef RESOURCETABLE_H
 #define RESOURCETABLE_H
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include "sql/nsqlquery.h"
 #include "global.h"
 
@@ -66,8 +64,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #define RESOURCE_INDEX_NEEDED            6999
 
-
-using namespace evernote::edam  ;
 using namespace std;
 
 
@@ -102,7 +98,6 @@ public:
     void setIndexNeeded(qint32 lid, bool indexNeeded);    // flag if a resource needs reindexing
     void expunge(int lid);                                // erase a resource
     void expunge(QString guid);                           // erase a resource
-    void expunge(string guid);                            // erase a resource
     qint32 getIndexNeeded(QList<qint32> &lids);           // Get a list of all resources needing indexing
     bool getResourceList(QList<qint32> &resourceList, qint32 noteLid);  // Get resources for a note
     void updateResourceHash(qint32 lid, QByteArray newhash);

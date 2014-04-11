@@ -71,7 +71,7 @@ void ReminderManager::checkReminders() {
                 global.getLastReminderTime() == 0) {
             if (event->time <= now.currentMSecsSinceEpoch()) {
               ntable.get(note, event->lid, false, false);
-              QString title = QString::fromStdString(note.title);
+              QString title = note.title;
               msg = msg+title+"\n";
               delete reminders[i];
               reminders.removeAt(i);

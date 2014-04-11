@@ -66,10 +66,8 @@ void SavedSearchProperties::okButtonPressed() {
         SavedSearch s;
         SearchTable table(global.db);
         table.get(s, lid);
-        s.name = this->name.text().trimmed().toStdString();
-        s.__isset.name = true;
-        s.query = this->query.text().trimmed().toStdString();
-        s.__isset.query = true;
+        s.name = this->name.text().trimmed();
+        s.query = this->query.text().trimmed();
         table.update(lid, s, true);
         close();
         return;
@@ -77,14 +75,11 @@ void SavedSearchProperties::okButtonPressed() {
 
     // We have a new tag to add
     SavedSearch s;
-    s.name = name.text().trimmed().toStdString();
-    s.query = query.text().trimmed().toStdString();
+    s.name = name.text().trimmed();
+    s.query = query.text().trimmed();
     QUuid uuid;
     QString g =  uuid.createUuid().toString().replace("{","").replace("}","");
-    s.guid = g.toStdString();
-    s.__isset.name = true;
-    s.__isset.query = true;
-    s.__isset.guid = true;
+    s.guid = g;
     SearchTable t(global.db);
     t.add(0,s,true);
     close();
@@ -101,9 +96,9 @@ void SavedSearchProperties::setLid(qint32 lid) {
         SavedSearch s;
         SearchTable table(global.db);
         table.get(s, lid);
-        originalName = QString::fromStdString(s.name).trimmed();
-        name.setText(originalName);
-        query.setText(QString::fromStdString(s.query));
+        originalName = s.name;
+        name.setText(originalName.trimmed());
+        query.setText(s.query);
         return;
     }
     this->lid = 0;

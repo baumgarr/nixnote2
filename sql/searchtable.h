@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef SEARCHTABLE_H
 #define SEARCHTABLE_H
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include "global.h"
 
 #include <iostream>
@@ -32,7 +30,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtSql>
 #include <QString>
 
-using namespace evernote::edam;
 using namespace std;
 
 #define SEARCH_GUID                    2000
@@ -80,7 +77,7 @@ public:
     void setDirty(qint32 lid, bool dirty);
     bool isDeleted(qint32 lid);
     void setUpdateSequenceNumber(qint32 lid, qint32 usn);
-    string getGuid(qint32 lid);
+    QString getGuid(qint32 lid);
     void getAll(QList<qint32> &lids);
 };
 

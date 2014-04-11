@@ -30,7 +30,7 @@ DateDelegate::DateDelegate(QObject *parent) :
 
 
 QString DateDelegate::displayText(const QVariant &value, const QLocale &locale) const {
-    locale.name(); // suppress unused variable
+    Q_UNUSED(locale); // suppress unused variable
 
     if (value.toLongLong() == 0)
         return "";

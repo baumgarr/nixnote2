@@ -27,16 +27,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "html/noteformatter.h"
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 
-using namespace apache::thrift;
-using namespace evernote::edam;
-using namespace std;
-
-
+#include "qevercloud/include/QEverCloud.h"
+using namespace qevercloud;
 
 using namespace std;
+
 
 class Thumbnailer : public QObject
 {

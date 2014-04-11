@@ -68,10 +68,10 @@ qint32 LinkedNotebookTable::sync(qint32 lid, LinkedNotebook &notebook) {
     NotebookTable ntable(db);
     SharedNotebookTable stable(db);
 
-    if (lid == 0 && notebook.__isset.shareKey) {
+    if (lid == 0 && notebook.shareKey.isSet()) {
         lid = stable.findByShareKey(notebook.shareKey);
     }
-    if (lid == 0 && notebook.__isset.uri) {
+    if (lid == 0 && notebook.uri.isSet()) {
         lid = ntable.findByUri(notebook.uri);
     }
 
@@ -95,24 +95,14 @@ qint32 LinkedNotebookTable::sync(qint32 lid, LinkedNotebook &notebook) {
             // Build the dummy notebook entry
             Notebook book;
             book.guid = notebook.guid;
-            book.__isset.guid = true;
-
             book.name = notebook.shareName;
-            book.__isset.name = true;
-
             book.updateSequenceNum = notebook.updateSequenceNum;
-            book.__isset.updateSequenceNum = true;
-
             book.published = true;
-            book.published = true;
+            Publishing publishing;
+            publishing.uri = notebook.uri;
+            book.publishing = publishing;
 
-            book.publishing.uri = notebook.uri;
-            book.publishing.__isset.uri = true;
-            book.__isset.published = true;
-            book.__isset.publishing = true;
-
-            if (notebook.__isset.stack) {
-                book.__isset.stack = true;
+            if (notebook.stack.isSet()) {
                 book.stack = notebook.stack;
             }
 
@@ -167,87 +157,100 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
 
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_GUID);
-    query.bindValue(":data", QString::fromStdString(t.guid));
+    QString linkedguid = "";
+    if (t.guid.isSet())
+        linkedguid = t.guid;
+    query.bindValue(":data", linkedguid);
     query.exec();
 
-    if (t.__isset.username) {
+    if (t.username.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", LINKEDNOTEBOOK_USERNAME);
-        query.bindValue(":data", QString::fromStdString(t.username));
+        QString username = t.username;
+        query.bindValue(":data",username);
         query.exec();
     }
 
-    if (t.__isset.shardId) {
+    if (t.shardId.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", LINKEDNOTEBOOK_SHARD_ID);
-        query.bindValue(":data", QString::fromStdString(t.shardId));
+        QString shardid = t.shardId;
+        query.bindValue(":data",shardid);
         query.exec();
     }
 
-    if (t.__isset.shareKey) {
+    if (t.shareKey.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", LINKEDNOTEBOOK_SHARE_KEY);
-        query.bindValue(":data", QString::fromStdString(t.shareKey));
+        QString sharekey = t.shareKey;
+        query.bindValue(":data", sharekey);
         query.exec();
     }
 
-    if (t.__isset.uri) {
+    if (t.uri.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", LINKEDNOTEBOOK_URI);
-        query.bindValue(":data", QString::fromStdString(t.uri));
+        QString uri = t.uri;
+        query.bindValue(":data", uri);
         query.exec();
     }
 
-    if (t.__isset.updateSequenceNum) {
+    if (t.updateSequenceNum.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", LINKEDNOTEBOOK_UPDATE_SEQUENCE_NUMBER);
-        query.bindValue(":data", t.updateSequenceNum);
+        qint32 usn = t.updateSequenceNum;
+        query.bindValue(":data", usn);
         query.exec();
     }
 
-    if (t.__isset.noteStoreUrl) {
+    if (t.noteStoreUrl.isSet()) {
+        QString url = t.noteStoreUrl;
         query.bindValue(":lid", lid);
         query.bindValue(":key", LINKEDNOTEBOOK_NOTE_STORE_URL);
-        query.bindValue(":data", QString::fromStdString(t.noteStoreUrl));
+        query.bindValue(":data", url);
         query.exec();
     }
 
-    if (t.__isset.webApiUrlPrefix) {
+    if (t.webApiUrlPrefix.isSet()) {
         query.bindValue(":lid", lid);
+        QString api = t.webApiUrlPrefix;
         query.bindValue(":key", LINKEDNOTEBOOK_WEB_API_URL_PREFIX);
-        query.bindValue(":data", QString::fromStdString(t.webApiUrlPrefix));
+        query.bindValue(":data", api);
         query.exec();
     }
 
-    if (t.__isset.stack) {
+    if (t.stack.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", LINKEDNOTEBOOK_STACK);
-        query.bindValue(":data", QString::fromStdString(t.stack));
+        QString stack = t.stack;
+        query.bindValue(":data", stack);
         query.exec();
     }
 
-    if (t.__isset.businessId) {
+    if (t.businessId.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", LINKEDNOTEBOOK_BUSINESS_ID);
-        query.bindValue(":data", t.businessId);
+        qint32 businessid = t.businessId;
+        query.bindValue(":data", businessid);
         query.exec();
     }
 
-    if (t.__isset.shareName) {
+    if (t.shareName.isSet()) {
         query.bindValue(":lid", lid);
+        QString sharename = t.shareName;
         query.bindValue(":key", LINKEDNOTEBOOK_SHARE_NAME);
-        query.bindValue(":data", QString::fromStdString(t.shareName));
+        query.bindValue(":data", sharename);
         query.exec();
 
         NSqlQuery query2(*db);
         query2.prepare("Update datastore set data=:name where key=:key and lid=:lid");
-        query2.bindValue(":name", QString::fromStdString(t.shareName));
+        query2.bindValue(":name", sharename);
         query2.bindValue(":key", NOTEBOOK_NAME);
         query2.bindValue(":lid", lid);
         query2.exec();
 
         query2.prepare("Update notetable set notebook=:name where lid=:lid");
-        query2.bindValue(":name", QString::fromStdString(t.shareName));
+        query2.bindValue(":name", sharename);
         query2.bindValue(":lid", lid);
         query2.exec();
     }
@@ -275,48 +278,37 @@ bool LinkedNotebookTable::get(LinkedNotebook &notebook, qint32 lid) {
         qint32 key = query.value(0).toInt();
         switch (key) {
         case (LINKEDNOTEBOOK_GUID):
-            notebook.guid = query.value(1).toString().toStdString();
-            notebook.__isset.guid = true;
+            notebook.guid = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_UPDATE_SEQUENCE_NUMBER):
             notebook.updateSequenceNum = query.value(1).toInt();
-            notebook.__isset.updateSequenceNum = true;
             break;
         case (LINKEDNOTEBOOK_SHARE_NAME):
-            notebook.shareName = query.value(1).toString().toStdString();
-            notebook.__isset.shareName = true;
+            notebook.shareName = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_SHARE_KEY):
-            notebook.shareKey = query.value(1).toString().toStdString();
-            notebook.__isset.shareKey = true;
+            notebook.shareKey = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_USERNAME):
-            notebook.username = query.value(1).toString().toStdString();
-            notebook.__isset.username = true;
+            notebook.username = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_SHARD_ID):
-            notebook.shardId = query.value(1).toString().toStdString();
-            notebook.__isset.shardId = true;
+            notebook.shardId = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_URI):
-            notebook.uri = query.value(1).toString().toStdString();
-            notebook.__isset.uri = true;
+            notebook.uri = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_NOTE_STORE_URL):
-            notebook.noteStoreUrl = query.value(1).toString().toStdString();
-            notebook.__isset.noteStoreUrl = true;
+            notebook.noteStoreUrl = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_WEB_API_URL_PREFIX):
-            notebook.webApiUrlPrefix = query.value(1).toString().toStdString();
-            notebook.__isset.webApiUrlPrefix = true;
+            notebook.webApiUrlPrefix = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_STACK):
-            notebook.stack = query.value(1).toString().toStdString();
-            notebook.__isset.stack = true;
+            notebook.stack = query.value(1).toString();
             break;
         case (LINKEDNOTEBOOK_BUSINESS_ID):
             notebook.businessId = query.value(1).toInt();
-            notebook.__isset.businessId = true;
             break;
         }
     }
@@ -406,10 +398,16 @@ bool LinkedNotebookTable::update(LinkedNotebook &notebook, bool isDirty) {
     expunge(lid);
     add(lid, notebook, isDirty);
     // Rename anything in the note list
-    if (notebook.shareName != oldBook.shareName) {
+    QString oldname = "";
+    QString newname = "";
+    if (notebook.shareName.isSet())
+        newname = notebook.shareName;
+    if (oldBook.shareName.isSet())
+        oldname = oldBook.shareName;
+    if (oldname != newname) {
         NSqlQuery query(*db);
         query.prepare("Update notetable set notebook=:name where notebooklid=:lid");
-        query.bindValue(":name", QString::fromStdString(notebook.shareName));
+        query.bindValue(":name", newname);
         query.bindValue(":lid", lid);
         query.exec();
     }

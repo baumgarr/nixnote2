@@ -39,8 +39,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "gui/nwebview.h"
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
+#include "qevercloud/include/QEverCloud.h"
 #include "gui/browserWidgets/ntitleeditor.h"
 #include "gui/browserWidgets/notebookmenubutton.h"
 #include "gui/plugins/pluginfactory.h"
@@ -60,7 +59,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class ToolbarWidgetAction;
 
-using namespace evernote::edam  ;
+using namespace qevercloud;
 
 class NWebView;
 class NBrowserWindow;

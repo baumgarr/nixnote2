@@ -28,13 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QGroupBox>
 #include <QPushButton>
 
-
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
-
 extern Global global;
-
-using namespace evernote::edam;
 
 AccountDialog::AccountDialog(QWidget *parent) :
     QDialog(parent)
@@ -48,7 +42,7 @@ AccountDialog::AccountDialog(QWidget *parent) :
     User user;
     UserTable userTable(global.db);
     userTable.getUser(user);
-    if (user.__isset.privilege) {
+    if (user.privilege.isSet()) {
         if (user.privilege == PrivilegeLevel::PREMIUM)
             premium->setText(tr("Premium"));
         if (user.privilege == PrivilegeLevel::MANAGER)
@@ -59,16 +53,19 @@ AccountDialog::AccountDialog(QWidget *parent) :
             premium->setText(tr("Admin"));
     }
     QString username = "*unknown*";
-    if (user.__isset.username)
-        username = QString::fromStdString(user.username);
+    if (user.username.isSet())
+        username = user.username;
     qlonglong uploadAmt = 0;
     qlonglong uploadLimit = 0;
     qlonglong uploadLimitEnd = 0;
     int pct;
-    if (user.__isset.accounting && user.accounting.__isset.uploadLimit)
-        uploadLimit = user.accounting.uploadLimit;
-    if (user.__isset.accounting && user.accounting.__isset.uploadLimitEnd)
-        uploadLimitEnd = user.accounting.uploadLimitEnd;
+    Accounting accounting;
+    if (user.accounting.isSet())
+        accounting = user.accounting;
+    if (accounting.uploadLimit.isSet())
+        uploadLimit = accounting.uploadLimit;
+    if (accounting.uploadLimitEnd.isSet())
+        uploadLimitEnd = accounting.uploadLimitEnd;
     uploadAmt = userTable.getUploadAmt();
     if (uploadLimit > 0)
         pct = uploadAmt*100/uploadLimit;

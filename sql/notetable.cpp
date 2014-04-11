@@ -47,7 +47,7 @@ void NoteTable::updateGuid(qint32 lid, Guid &guid) {
 
     NSqlQuery query(*db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
-    query.bindValue(":data", QString::fromStdString(guid));
+    query.bindValue(":data", guid);
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_GUID);
     query.exec();
@@ -68,7 +68,7 @@ void NoteTable::sync(Note &note, qint32 account) {
 
 // Synchronize a new note with what is in the database.  We basically
 // just delete the old one & give it a new entry
-void NoteTable::sync(qint32 lid, Note &note, qint32 account) {
+void NoteTable::sync(qint32 lid, const Note &note, qint32 account) {
    // QLOG_TRACE() << "Entering NoteTable::sync()";
 
     if (lid > 0) {
@@ -134,7 +134,7 @@ qint32 NoteTable::getLid(string guid) {
 
 
 // Add a new note to the database
-qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
+qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     ResourceTable resTable(db);
     ConfigStore cs(db);
     NSqlQuery query(*db);
@@ -148,51 +148,61 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
     if (lid <= 0)
         lid = cs.incrementLidCounter();
 
-    QLOG_DEBUG() << "Adding note("<<lid<<") " << QString::fromStdString(t.title);
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_GUID);
-    query.bindValue(":data", QString::fromStdString(t.guid));
-    query.exec();
+    QLOG_DEBUG() << "Adding note("<<lid<<") " << t.title;
+    if (t.guid.isSet()) {
+        QString guid = t.guid;
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_GUID);
+        query.bindValue(":data", guid);
+        query.exec();
+    }
 
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.bindValue(":data", true);
     query.exec();
 
-    if (t.__isset.title) {
+    if (t.title.isSet()) {
         query.bindValue(":lid", lid);
+        QString title = t.title;
         query.bindValue(":key", NOTE_TITLE);
-        query.bindValue(":data", QString::fromStdString(t.title.c_str()));
+        query.bindValue(":data", title);
         query.exec();
     }
 
-    if (t.__isset.content) {
+    if (t.content.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_CONTENT);
         QByteArray b;
-        b.append(QString::fromStdString(t.content).toAscii());
+        QString content = t.content;
+        b.append(content.toAscii());
         query.bindValue(":data", b);
         query.exec();
     }
 
-    if (t.__isset.contentHash) {
+    if (t.contentHash.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_CONTENT_HASH);
-        query.bindValue(":data", QString::fromStdString(t.contentHash));
+        QByteArray contentHash = t.contentHash;
+        query.bindValue(":data", contentHash);
         query.exec();
     }
 
-    if (t.__isset.contentLength) {
+    if (t.contentLength.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_CONTENT_LENGTH);
-        query.bindValue(":data", t.contentLength);
+        qint32 len = t.contentLength;
+        query.bindValue(":data", len);
         query.exec();
     }
 
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", NOTE_UPDATE_SEQUENCE_NUMBER);
-    query.bindValue(":data", t.updateSequenceNum);
-    query.exec();
+    if (t.updateSequenceNum.isSet()) {
+        query.bindValue(":lid", lid);
+        qint32 usn = t.updateSequenceNum;
+        query.bindValue(":key", NOTE_UPDATE_SEQUENCE_NUMBER);
+        query.bindValue(":data", usn);
+        query.exec();
+    }
 
     if (isDirty) {
         query.bindValue(":lid", lid);
@@ -201,35 +211,39 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
         query.exec();
     }
 
-    if (t.__isset.created) {
+    if (t.created.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_CREATED_DATE);
-        query.bindValue(":data", QVariant::fromValue(t.created));
+        qlonglong date = t.created;
+        query.bindValue(":data",date);
         query.exec();
     }
 
-    if (t.__isset.updated) {
+    if (t.updated.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_UPDATED_DATE);
-        query.bindValue(":data", QVariant::fromValue(t.updated));
+        qlonglong date = t.updated;
+        query.bindValue(":data", date);
         query.exec();
     }
 
-    if (t.__isset.deleted) {
+    if (t.deleted.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_DELETED_DATE);
-        query.bindValue(":data", QVariant::fromValue(t.deleted));
+        qlonglong date = t.deleted;
+        query.bindValue(":data", date);
         query.exec();
     }
 
-    if (t.__isset.active) {
+    if (t.active.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_ACTIVE);
-        query.bindValue(":data", QVariant::fromValue(t.active));
+        bool active = t.active;
+        query.bindValue(":data", active);
         query.exec();
     }
 
-    if (t.__isset.notebookGuid) {
+    if (t.notebookGuid.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_NOTEBOOK_LID);
         NotebookTable notebookTable(db);
@@ -239,9 +253,9 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
         else
             notebookLid = 0;
         if (notebookLid <= 0)
-            notebookLid = notebookTable.getLid(QString::fromStdString(t.notebookGuid));
+            notebookLid = notebookTable.getLid(t.notebookGuid);
         if (notebookLid <= 0) {
-            notebookLid = linkedTable.getLid(QString::fromStdString(t.notebookGuid));
+            notebookLid = linkedTable.getLid(t.notebookGuid);
         }
 
         // If not found, we insert one to avoid problems.  We'll probably get the real data later
@@ -250,24 +264,23 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
             Notebook notebook;
             notebook.guid = t.notebookGuid;
             notebook.name = "<Missing Notebook>";
-            notebook.__isset.guid = true;
-            notebook.__isset.name = true;
             notebookTable.add(notebookLid, notebook, false, false);
         }
         query.bindValue(":data", notebookLid);
         query.exec();
     }
 
-    for (unsigned int i=0; t.__isset.tagGuids && i<t.tagGuids.size(); i++) {
+    QList<QString> tagGuids;
+    if (t.tagGuids.isSet())
+        tagGuids = t.tagGuids;
+    for (int i=0; i<tagGuids.size(); i++) {
         TagTable tagTable(db);
-        qint32 tagLid = tagTable.getLid(t.tagGuids.at(i));
+        qint32 tagLid = tagTable.getLid(tagGuids[i]);
         if (tagLid == 0) {
             // create a dummy tag to avoid later problems
             Tag newTag;
-            newTag.guid = t.tagGuids.at(i);
+            newTag.guid = tagGuids[i];
             newTag.name = "";
-            newTag.__isset.guid = true;
-            newTag.__isset.name = true;
             tagLid = cs.incrementLidCounter();
             tagTable.add(tagLid, newTag, false, 0);
         }
@@ -278,18 +291,21 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
         query.exec();
     }
 
-    for (unsigned int i=0; t.__isset.resources && i<t.resources.size(); i++) {
+    QList<Resource> resources;
+    if (t.resources.isSet())
+        resources = t.resources;
+    for (int i=0; i<resources.size(); i++) {
         qint32 resLid;
         resLid = 0;
-        Resource *r;
-        r = &t.resources[i];
-        resLid = resTable.getLid(t.guid,t.resources[i].guid);
+        Resource r;
+        r = resources[i];
+        resLid = resTable.getLid(t.guid,resources[i].guid);
         if (resLid == 0)
             resLid = cs.incrementLidCounter();
-        resTable.add(resLid, t.resources[i], isDirty, lid);
+        resTable.add(resLid, r, isDirty, lid);
 
-        if (r->__isset.mime) {
-            QString mime = QString::fromStdString(r->mime);
+        if (r.mime.isSet()) {
+            QString mime = r.mime;
             if (!mime.startsWith("image/") && mime != "vnd.evernote.ink") {
                 query.bindValue(":lid", lid);
                 query.bindValue(":key", NOTE_HAS_ATTACHMENT);
@@ -299,89 +315,104 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
         }
     }
 
-    if (t.__isset.attributes) {
-        if (t.attributes.__isset.subjectDate) {
+    if (t.attributes.isSet()) {
+        NoteAttributes na = t.attributes;
+        if (na.subjectDate.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_SUBJECT_DATE);
-            query.bindValue(":data", QVariant::fromValue(t.attributes.subjectDate));
+            qlonglong ts = na.subjectDate;
+            query.bindValue(":data",ts);
             query.exec();
         }
-        if (t.attributes.__isset.latitude) {
+        if (na.latitude.isSet()) {
+            double lat = na.latitude;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_LATITUDE);
-            query.bindValue(":data", QVariant::fromValue(t.attributes.latitude));
+            query.bindValue(":data", lat);
             query.exec();
         }
-        if (t.attributes.__isset.latitude) {
+        if (na.longitude.isSet()) {
+            double lon = na.longitude;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_LONGITUDE);
-            query.bindValue(":data", QVariant::fromValue(t.attributes.longitude));
+            query.bindValue(":data", lon);
             query.exec();
         }
-        if (t.attributes.__isset.altitude) {
+        if (na.altitude.isSet()) {
+            double alt = na.altitude;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_ALTITUDE);
-            query.bindValue(":data", QVariant::fromValue(t.attributes.altitude));
+            query.bindValue(":data", alt);
             query.exec();
         }
-        if (t.attributes.__isset.author) {
+        if (na.author.isSet()) {
+            QString author = na.author;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
-            query.bindValue(":data", QString::fromStdString(t.attributes.author));
+            query.bindValue(":data", author);
             query.exec();
         }
-        if (t.attributes.__isset.source) {
+        if (na.source.isSet()) {
+            QString source = na.source;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
-            query.bindValue(":data", QString::fromStdString(t.attributes.source));
+            query.bindValue(":data", source);
             query.exec();
         }
-        if (t.attributes.__isset.sourceURL) {
+        if (na.sourceURL.isSet()) {
+            QString sourceURL = na.sourceURL;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_URL);
-            query.bindValue(":data", QString::fromStdString(t.attributes.sourceURL));
+            query.bindValue(":data", sourceURL);
             query.exec();
         }
-        if (t.attributes.__isset.sourceApplication) {
+        if (na.sourceApplication.isSet()) {
+            QString sourceApplication = na.sourceApplication;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
-            query.bindValue(":data", QString::fromStdString(t.attributes.sourceApplication));
+            query.bindValue(":data", sourceApplication);
             query.exec();
         }
-        if (t.attributes.__isset.shareDate) {
+        if (na.shareDate.isSet()) {
+            double date = na.shareDate;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_SHARE_DATE);
-            query.bindValue(":data",QVariant::fromValue(t.attributes.shareDate));
+            query.bindValue(":data",date);
             query.exec();
         }
-        if (t.attributes.__isset.placeName) {
+        if (na.placeName.isSet()) {
+            QString placename = na.placeName;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_PLACE_NAME);
-            query.bindValue(":data", QString::fromStdString(t.attributes.placeName));
+            query.bindValue(":data", placename);
             query.exec();
         }
-        if (t.attributes.__isset.contentClass) {
+        if (na.contentClass.isSet()) {
+            QString cc = na.contentClass;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
-            query.bindValue(":data", QString::fromStdString(t.attributes.contentClass));
+            query.bindValue(":data", cc);
             query.exec();
         }
-        if (t.attributes.__isset.reminderTime) {
+        if (na.reminderTime.isSet()) {
+            double rt = na.reminderTime;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
-            query.bindValue(":data",QVariant::fromValue(t.attributes.reminderTime));
+            query.bindValue(":data",rt);
             query.exec();
         }
-        if (t.attributes.__isset.reminderDoneTime) {
+        if (na.reminderDoneTime.isSet()) {
+            double rt = na.reminderDoneTime;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
-            query.bindValue(":data",QVariant::fromValue(t.attributes.reminderDoneTime));
+            query.bindValue(":data", rt);
             query.exec();
         }
-        if (t.attributes.__isset.reminderOrder) {
+        if (na.reminderOrder.isSet()) {
+            bool rt = na.reminderOrder;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_ORDER);
-            query.bindValue(":data",QVariant::fromValue(t.attributes.reminderOrder));
+            query.bindValue(":data", rt);
             query.exec();
         }
     }
@@ -389,8 +420,8 @@ qint32 NoteTable::add(qint32 l, Note &t, bool isDirty, qint32 account) {
     // No determine some attributes of the note based upon the content
     // This should probably happen every time a note changes? Or at least something simular:
     QString content;
-    if (t.__isset.content)
-        content = QString::fromStdString(t.content);
+    if (t.content.isSet())
+        content = t.content;
     else
         content = "";
 
@@ -441,10 +472,11 @@ qint32 NoteTable::addStub(QString noteGuid) {
     query.bindValue(":key", NOTE_GUID);
     query.bindValue(":data", noteGuid);
     query.exec();
+    return lid;
 }
 
 
-bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty, qint32 notebook) {
+bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 notebook) {
 
     if (lid <= 0)
         return false;
@@ -463,11 +495,11 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty, qint32 noteboo
             account = notebookLid;
     }
     if (notebookLid <=0)
-        notebookLid = notebookTable.addStub(QString::fromStdString(t.notebookGuid));
+        notebookLid = notebookTable.addStub(t.notebookGuid);
     else {
         Notebook notebook;
         notebookTable.get(notebook, notebookLid);
-        notebookName = QString::fromStdString(notebook.name);
+        notebookName = notebook.name;
     }
     // Now let's update the user table
     NSqlQuery query(*db);
@@ -485,94 +517,136 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty, qint32 noteboo
 
     query.bindValue(":lid", lid);
 
-    if (t.__isset.title)
-        query.bindValue(":title", QString::fromStdString(t.title));
-    else
-        query.bindValue(":title", "");
-    if (t.__isset.attributes && t.attributes.__isset.author)
-        query.bindValue(":author", QString::fromStdString(t.attributes.author));
-    else
-        query.bindValue(":author", "");
-    if (t.__isset.created)
-        query.bindValue(":dateCreated", QVariant::fromValue(t.created));
-    else
-        query.bindValue(":dateCreated", 0);
-    if (t.__isset.updated)
-        query.bindValue(":dateUpdated", QVariant::fromValue(t.updated));
-    else
-        query.bindValue(":dateUpdated", 0);
-    if (t.__isset.attributes && t.attributes.__isset.subjectDate)
-        query.bindValue(":dateSubject", QVariant::fromValue(t.attributes.subjectDate));
-    else
-        query.bindValue(":dateSubject", 0);
-    if (t.__isset.deleted)
-        query.bindValue(":dateDeleted", QVariant::fromValue(t.deleted));
-    else
-        query.bindValue(":dateDeleted", 0);
-    if (t.__isset.attributes && t.attributes.__isset.source)
-        query.bindValue(":source", QString::fromStdString(t.attributes.source));
-    else
-        query.bindValue(":source", "");
-    if (t.__isset.attributes && t.attributes.__isset.sourceURL)
-        query.bindValue(":sourceUrl", QString::fromStdString(t.attributes.sourceURL));
-    else
-        query.bindValue(":sourceUrl", "");
-    if (t.__isset.attributes && t.attributes.__isset.sourceApplication)
-        query.bindValue(":sourceApplication", QString::fromStdString(t.attributes.sourceApplication));
-    else
-        query.bindValue(":sourceApplication", "");
-    if (t.__isset.attributes && t.attributes.__isset.latitude)
-        query.bindValue(":latitude", QVariant::fromValue(t.attributes.latitude));
-    else
-        query.bindValue(":latitude", 0);
-    if (t.__isset.attributes && t.attributes.__isset.longitude)
-        query.bindValue(":longitude", QVariant::fromValue(t.attributes.longitude));
-    else
-        query.bindValue(":longitude", 0);
-    if (t.__isset.attributes && t.attributes.__isset.altitude)
-        query.bindValue(":altitude", QVariant::fromValue(t.attributes.altitude));
-    else
-        query.bindValue(":altitude", 0);
-    if (t.__isset.attributes && t.attributes.__isset.reminderOrder)
-        query.bindValue(":reminderOrder", QVariant::fromValue(t.attributes.reminderOrder));
-    else
-        query.bindValue(":reminderOrder", 0);
-    if (t.__isset.attributes && t.attributes.__isset.reminderTime)
-        query.bindValue(":reminderTime", QVariant::fromValue(t.attributes.reminderTime));
-    else
-        query.bindValue(":reminderTime", 0);
-    if (t.__isset.attributes && t.attributes.__isset.reminderDoneTime)
-        query.bindValue(":reminderDoneTime", QVariant::fromValue(t.attributes.reminderDoneTime));
-    else
-        query.bindValue(":reminderDoneTime", 0);
+    QString title = "";
+    if (t.title.isSet())
+        title = t.title;
+    query.bindValue(":title", title);
 
+    if (t.attributes.isSet()) {
+        NoteAttributes na = t.attributes;
+        if (na.author.isSet()) {
+            QString author = na.author;
+            query.bindValue(":author",author);
+        } else {
+            query.bindValue(":author", "");
+        }
+        if (na.subjectDate.isSet()) {
+            double sd = na.subjectDate;
+            query.bindValue(":dateSubject", sd);
+        } else {
+            query.bindValue(":dateSubject", 0);
+        }
+        if (na.source.isSet()) {
+            QString source = na.source;
+            query.bindValue(":source", source);
+        } else {
+            query.bindValue(":source", "");
+        }
+        if (na.sourceURL.isSet()) {
+            QString url = na.sourceURL;
+            query.bindValue(":sourceUrl", url);
+        } else {
+            query.bindValue(":sourceUrl", "");
+        }
+        if (na.sourceApplication.isSet()) {
+            QString sa = na.sourceApplication;
+            query.bindValue(":sourceApplication", sa);
+        } else {
+            query.bindValue(":sourceApplication", "");
+        }
+        if (na.latitude.isSet()) {
+            double lat = na.latitude;
+            query.bindValue(":latitude", lat);
+        } else {
+            query.bindValue(":latitude", 0);
+        }
+        if (na.longitude.isSet()) {
+            double lon = na.longitude;
+            query.bindValue(":longitude",lon);
+        } else {
+            query.bindValue(":longitude", 0);
+        }
+        if (na.altitude.isSet()) {
+            double alt = na.altitude;
+            query.bindValue(":altitude", alt);
+        } else {
+            query.bindValue(":altitude", 0);
+        }
+        if (na.reminderOrder.isSet()) {
+            qint64 order = na.reminderOrder;
+            query.bindValue(":reminderOrder", order);
+        } else {
+            query.bindValue(":reminderOrder", 0);
+        }
+        if (na.reminderTime.isSet()) {
+            qlonglong rt = na.reminderTime;
+            query.bindValue(":reminderTime", rt);
+        } else {
+            query.bindValue(":reminderTime", 0);
+        }
+        if (na.reminderDoneTime.isSet()) {
+            qlonglong rt = na.reminderDoneTime;
+            query.bindValue(":reminderDoneTime", rt);
+        } else {
+            query.bindValue(":reminderDoneTime", 0);
+        }
+
+    }
+
+    qlonglong created = 0;
+    qlonglong updated = 0;
+    qlonglong deleted = 0;
+    if (t.created.isSet())
+        created = t.created;
+    query.bindValue(":dateCreated", created);
+
+    if (t.updated.isSet())
+        updated = t.updated;
+    query.bindValue(":dateUpdated", updated);
+
+    if (t.deleted.isSet())
+        deleted = t.deleted;
+    query.bindValue(":dateDeleted", deleted);
 
     bool hasEncryption;
-    if (t.content.find("<en-crypt") != string::npos)
+    QString content;
+    if (t.content.isSet())
+        content = t.content;
+    if (content.indexOf("<en-crypt") > 0)
         hasEncryption = true;
     else
         hasEncryption = false;
     query.bindValue(":hasEncryption", hasEncryption);
     bool hasTodo;
-    if (t.content.find("<en-todo") != string::npos)
+    if (content.indexOf("<en-todo") > 0)
         hasTodo = true;
     else
         hasTodo = false;
     query.bindValue(":hasTodo", hasTodo);
     query.bindValue(":isDirty", isDirty);
-    qlonglong size = t.content.length();
-    for (unsigned int i=0; i<t.resources.size(); i++) {
-        size+=t.resources[i].data.size;
+    qlonglong size = content.length();
+
+    QList<Resource> reslist;
+    if (t.resources.isSet())
+        reslist = t.resources;
+    for (int i=0; i<reslist.size(); i++) {
+        if (reslist[i].data.isSet()) {
+        Data d = reslist[i].data;
+        if (d.size.isSet())
+            size+=d.size;
+        }
     }
     query.bindValue(":size", size);
-
     query.bindValue(":notebook", notebookName);
     query.bindValue(":notebookLid", notebookLid);
 
-    QString tagNames;
+    QString tagName;
     QStringList sortedNames;
-    for (unsigned int i=0; i<t.tagNames.size(); i++) {
-        sortedNames.append(QString::fromStdString(t.tagNames.at(i)).toLower());
+    QList<QString> tagNames;
+    if (t.tagNames.isSet())
+        tagNames = t.tagNames;
+    for (int i=0; i<tagNames.size(); i++) {
+        sortedNames.append(tagNames[i].toLower());
     }
     sortedNames.sort();
 
@@ -583,14 +657,14 @@ bool NoteTable::updateNoteList(qint32 lid, Note &t, bool isDirty, qint32 noteboo
     // to case.  Now, for the note list we need the correct case
     for (int i=0; i<sortedNames.size(); i++) {
         if (i>0)
-            tagNames = tagNames+", ";
+            tagName = tagName+", ";
         Tag currentTag;
         qint32 tagLid = tagTable.findByName(sortedNames[i], account);
         tagTable.get(currentTag, tagLid);
-        tagNames = tagNames + QString::fromStdString(currentTag.name);
+        tagName = tagName + currentTag.name;
     }
 
-    query.bindValue(":tags", tagNames);
+    query.bindValue(":tags", tagName);
 
     if (!query.exec()) {
         QLOG_ERROR() << "Error inserting into NoteTable: " << query.lastError();
@@ -617,143 +691,125 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadBinary) 
     NSqlQuery query(*db);
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
-
+    NoteAttributes na;
+    QList<QString> tagGuids;
+    QList<QString> tagNames;
+    if (note.attributes.isSet()) {
+        na = note.attributes;
+    }
     query.exec();
     while (query.next()) {
         qint32 key = query.value(0).toInt();
         switch (key) {
         case (NOTE_GUID):
-            note.guid = query.value(1).toString().toStdString();
-            note.__isset.guid = true;
+            note.guid = query.value(1).toString();
             break;
         case (NOTE_UPDATE_SEQUENCE_NUMBER):
             note.updateSequenceNum = query.value(1).toInt();
-            note.__isset.updateSequenceNum = true;
             break;
         case (NOTE_ACTIVE):
             note.active = query.value(1).toBool();
-            note.__isset.active = true;
             break;
         case (NOTE_DELETED_DATE):
             note.active = query.value(1).toLongLong();
-            note.__isset.deleted = true;
             break;
         case (NOTE_ATTRIBUTE_SOURCE_URL):
-            note.attributes.sourceURL = query.value(1).toString().toStdString();
-            note.__isset.attributes = true;
-            note.attributes.__isset.sourceURL = true;
+            na.sourceURL = query.value(1).toString();
+            note.attributes = na;
             break;
         case (NOTE_ATTRIBUTE_SOURCE_APPLICATION):
-            note.attributes.sourceApplication = query.value(1).toString().toStdString();
-            note.__isset.attributes = true;
-            note.attributes.__isset.sourceApplication = true;
+            na.sourceApplication = query.value(1).toString();
+            note.attributes = na;
             break;
         case (NOTE_CONTENT_LENGTH):
             note.contentLength = query.value(1).toLongLong();
-            note.__isset.contentLength = true;
             break;
         case (NOTE_ATTRIBUTE_LONGITUDE):
-            note.attributes.longitude = query.value(1).toFloat();
-            note.__isset.attributes = true;
-            note.attributes.__isset.longitude = true;
+            na.longitude = query.value(1).toFloat();
+            note.attributes = na;
             break;
         case (NOTE_TITLE):
-            note.title = query.value(1).toString().toStdString();
-            note.__isset.title = true;
+            note.title = query.value(1).toString();
             break;
         case (NOTE_ATTRIBUTE_SOURCE):
-            note.attributes.source = query.value(1).toString().toStdString();
-            note.__isset.attributes = true;
-            note.attributes.__isset.source = true;
+            na.source = query.value(1).toString();
+            note.attributes = na;
             break;
         case (NOTE_ATTRIBUTE_ALTITUDE):
-            note.attributes.altitude = query.value(1).toFloat();
-            note.__isset.attributes = true;
-            note.attributes.__isset.altitude = true;
+            na.altitude = query.value(1).toFloat();
+            note.attributes = na;
             break;
         case (NOTE_NOTEBOOK_LID): {
             qint32 notebookLid = query.value(1).toInt();
             NotebookTable ntable(db);
             QString notebookGuid;
             ntable.getGuid(notebookGuid, notebookLid);
-            note.notebookGuid = notebookGuid.toStdString();
-            note.__isset.notebookGuid = true;
+            note.notebookGuid = notebookGuid;
             break;
         }
         case (NOTE_UPDATED_DATE):
             note.updated = query.value(1).toLongLong();
-            note.__isset.updated = true;
             break;
         case (NOTE_CREATED_DATE):
             note.created = query.value(1).toLongLong();
-            note.__isset.created = true;
             break;
         case (NOTE_ATTRIBUTE_SUBJECT_DATE):
-            note.attributes.subjectDate = query.value(1).toLongLong();
-            note.__isset.attributes = true;
-            note.attributes.__isset.subjectDate = true;
+            na.subjectDate = query.value(1).toLongLong();
+            note.attributes = na;
             break;
         case (NOTE_ATTRIBUTE_LATITUDE):
-            note.attributes.latitude = query.value(1).toFloat();
-            note.__isset.attributes = true;
-            note.attributes.__isset.latitude = true;
+            na.latitude = query.value(1).toFloat();
+            note.attributes = na;
             break;
         case (NOTE_CONTENT):
             note.content = query.value(1).toByteArray().data();
-            note.__isset.content = true;
             break;
         case (NOTE_CONTENT_HASH):
-            note.contentHash = query.value(1).toString().toStdString();
-            note.__isset.contentHash = true;
+            note.contentHash = query.value(1).toByteArray();
             break;
         case (NOTE_ATTRIBUTE_AUTHOR):
-            note.attributes.author = query.value(1).toString().toStdString();
-            note.__isset.attributes = true;
-            note.attributes.__isset.author = true;
+            na.author = query.value(1).toString();
+            note.attributes = na;
             break;
         case (NOTE_ISDIRTY):
             break;
         case (NOTE_ATTRIBUTE_SHARE_DATE) :
-            note.attributes.shareDate = query.value(1).toLongLong();
-            note.__isset.attributes = true;
-            note.attributes.__isset.shareDate = true;
+            na.shareDate = query.value(1).toLongLong();
+            note.attributes = na;
             break;
         case (NOTE_ATTRIBUTE_PLACE_NAME) :
-            note.attributes.placeName = query.value(1).toString().toStdString();
-            note.__isset.attributes = true;
-            note.attributes.__isset.placeName = true;
+            na.placeName = query.value(1).toString();
+            note.attributes = na;
             break;
         case (NOTE_ATTRIBUTE_CONTENT_CLASS) :
-            note.attributes.contentClass = query.value(1).toString().toStdString();
-            note.__isset.attributes = true;
-            note.attributes.__isset.contentClass = true;
+            na.contentClass = query.value(1).toString();
+            note.attributes = na;
             break;
         case (NOTE_ATTRIBUTE_REMINDER_ORDER) :
-            note.attributes.reminderOrder = query.value(1).toLongLong();
-            note.__isset.attributes = true;
-            note.attributes.__isset.reminderOrder = true;
+            na.reminderOrder = query.value(1).toLongLong();
+            note.attributes = na;
             break;
         case (NOTE_ATTRIBUTE_REMINDER_DONE_TIME) :
-            note.attributes.reminderDoneTime = query.value(1).toLongLong();
-            note.__isset.attributes = true;
-            note.attributes.__isset.reminderDoneTime = true;
+            na.reminderDoneTime = query.value(1).toLongLong();
+            note.attributes = na;
             break;
         case (NOTE_ATTRIBUTE_REMINDER_TIME) :
-            note.attributes.reminderTime = query.value(1).toLongLong();
-            note.__isset.attributes = true;
-            note.attributes.__isset.reminderTime = true;
+            na.reminderTime = query.value(1).toLongLong();
+            note.attributes = na;
             break;
         case (NOTE_TAG_LID) :
             TagTable tagTable(db);
             qint32 tagLid = query.value(1).toInt();
             Tag tag;
             tagTable.get(tag, tagLid);
-            note.__isset.tagGuids = true;
-            note.__isset.tagNames = true;
-            note.tagGuids.push_back(tag.guid);
-            note.tagNames.push_back(tag.name);
+            tagGuids.append(tag.guid);
+            tagNames.append(tag.name);
             break;
         }
+    }
+    if (tagGuids.size() > 0) {
+        note.tagGuids = tagGuids;
+        note.tagNames = tagNames;
     }
 
 //    QLOG_DEBUG() << "***************** PERFORMANCE DRAG ***************";
@@ -763,36 +819,10 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadBinary) 
 
     QList<Resource> resources;
     resTable.getAllResources(resources, lid, loadResources, loadBinary);
-    for (int i=0; i<resources.size(); i++) {
-        note.__isset.resources = true;
-        note.resources.push_back(resources[i]);
-    }
+    note.resources = resources;
+        QLOG_TRACE() << "Fetched resources";
 
-
-//    if (resTable.getResourceList(resList, lid)) {
-//        for (int i=0; i<resList.size(); i++) {
-//            Resource resource;
-//            if (loadResources) {
-//                resTable.get(resource, resList[i], loadBinary);
-//            } else {
-//                QString resGuid = resTable.getGuid(resList[i]);
-//                resource.guid = resGuid.toStdString();
-//                resource.__isset.guid = true;
-//            }
-//            note.__isset.resources = true;
-//            note.resources.push_back(resource);
-//        }
-//    }
-    QLOG_TRACE() << "Fetched resources";
-
-    /*
-    TagScanner test;
-    test.setData(QString::fromStdString(note.content));
-    QList<TagScannerRecord> retval;
-    int k = test.findAll(retval, QString("en-note"));
-    */
-
-    if (note.__isset.guid)
+    if (note.guid.isSet())
         return true;
     else
         return false;
@@ -974,7 +1004,7 @@ void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDir
     NotebookTable notebookTable(db);
     notebookTable.get(book, notebookLid);
 
-    if (book.__isset.guid) {
+    if (book.guid.isSet()) {
         NSqlQuery query(*db);
         query.prepare("Update DataStore set data=:notebookLid where lid=:lid and key=:key;");
         query.bindValue(":notebookLid", notebookLid);
@@ -986,7 +1016,7 @@ void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDir
             setDirty(noteLid, setAsDirty);
         }
 
-        QString bookName = QString::fromStdString(book.name);
+        QString bookName = book.name;
         query.prepare("Update NoteTable set notebook=:name where lid=:lid");
         query.bindValue(":name", bookName);
         query.bindValue(":lid", noteLid);
@@ -1076,7 +1106,7 @@ void NoteTable::updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty = 
 
     NSqlQuery query(*db);
     query.prepare("Update DataStore set data=:ts where lid=:lid and key=:key;");
-    query.bindValue(":ts", QVariant::fromValue(ts));
+    query.bindValue(":ts",ts);
     query.bindValue(":lid", lid);
     query.bindValue(":key",key);
     query.exec();
@@ -1195,7 +1225,7 @@ void NoteTable::rebuildNoteListTags(qint32 lid) {
         qint32 tagLid = query.value(0).toInt();
         Tag t;
         tagTable.get(t, tagLid);
-        tagNames.append(QString::fromStdString(t.name));
+        tagNames.append(t.name);
     }
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
     QString tagCol;
@@ -1395,9 +1425,11 @@ void NoteTable::expunge(qint32 lid) {
     Note note;
     this->get(note, lid, true, false);
     ResourceTable resTable(db);
-    for (unsigned int i=0; note.__isset.resources && i<note.resources.size(); i++) {
-        Resource r = note.resources[i];
-        resTable.expunge(r.guid);
+    QList<Resource> resources;
+    if (note.resources.isSet())
+        resources = note.resources;
+    for (int i=0; resources.size(); i++) {
+        resTable.expunge(resources[i].guid);
     }
 
     NSqlQuery query(*db);

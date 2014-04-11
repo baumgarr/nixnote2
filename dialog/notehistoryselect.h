@@ -27,11 +27,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QListWidget>
-#include <evernote/NoteStore.h>
-#include <evernote/UserStore.h>
+
+#include "qevercloud/include/QEverCloud.h"
+using namespace qevercloud;
 
 using namespace std;
-using namespace evernote::edam;
 
 class NoteHistorySelect : public QDialog
 {
@@ -39,14 +39,14 @@ class NoteHistorySelect : public QDialog
 private:
     QPushButton cancelButton;
     QPushButton importButton;
-    vector<NoteVersionId> *versions;
+    QList<NoteVersionId> *versions;
     QListWidget list;
 
 public:
     explicit NoteHistorySelect(QWidget *parent = 0);
     bool importPressed;
     qint32 usn;
-    void loadData(vector<NoteVersionId> &versions);
+    void loadData(QList<NoteVersionId> &versions);
 
 signals:
     

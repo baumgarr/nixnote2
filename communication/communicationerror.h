@@ -37,7 +37,8 @@ public:
         StdException = 6,
         TSSLException = 7,
         TException = 8,
-        RateLimitExceeded = 9
+        RateLimitExceeded = 9,
+        ThriftException = 10
     };
 
     CommunicationErrorType type;

@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef TAGTABLE_H
 #define TAGTABLE_H
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include "global.h"
 
 #include <iostream>
@@ -41,7 +39,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define TAG_ISDELETED               1005
 #define TAG_OWNING_ACCOUNT          1006
 
-using namespace evernote::edam  ;
 using namespace std;
 
 class TagTable

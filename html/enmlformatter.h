@@ -33,12 +33,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QVector>
 #include <QtXml>
 
-
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
-
-using namespace apache::thrift;
-using namespace evernote::edam;
 using namespace std;
 
 

@@ -275,13 +275,13 @@ void NWebView::exposeToJavascript() {
 
 void NWebView::decryptText(QString id, QString text, QString hint) {
     /* Suppress unused */
-    id=id;
-    text=text;
-    hint=hint;
+    Q_UNUSED(id);
+    Q_UNUSED(text);
+    Q_UNUSED(hint);
 
 
-    EnCrypt crypt;
-    QString plainText;
+//    EnCrypt crypt;
+//    QString plainText;
 /*
 //    // First, try to decrypt with any keys we already have
     for (int i=0; i<global.passwordRemember.size(); i++) {
@@ -439,8 +439,11 @@ void NWebView::downloadRequested(QNetworkRequest req) {
         Resource r;
         resTable.get(r, lid, false);
         QString filename;
-        if (r.__isset.attributes && r.attributes.__isset.fileName)
-            filename = QString::fromStdString(r.attributes.fileName);
+        ResourceAttributes attributes;
+        if (r.attributes.isSet())
+            attributes = r.attributes;
+        if (attributes.fileName.isSet())
+            filename = attributes.fileName;
         else
             filename = urlString + QString(".") + extension;
 
@@ -456,7 +459,16 @@ void NWebView::downloadRequested(QNetworkRequest req) {
             filename = fd.selectedFiles()[0];
             QFile newFile(filename);
             newFile.open(QIODevice::WriteOnly);
-            newFile.write(r.data.body.c_str(), r.data.size);
+            Data d;
+            if (r.data.isSet())
+                d = r.data;
+            QByteArray body;
+            if (d.body.isSet())
+                body = d.body;
+            int size = 0;
+            if (d.size.isSet())
+                size = d.size;
+            newFile.write(body, size);
             newFile.close();
             return;
         }

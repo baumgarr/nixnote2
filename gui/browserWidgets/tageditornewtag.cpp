@@ -79,7 +79,7 @@ void TagEditorNewTag::loadCompleter() {
         QString guid;
         tagTable.getGuid(guid, tagList[i]);
         tagTable.get(t, guid);
-        QString name = QString::fromStdString(t.name);
+        QString name = t.name;
         qint32 tagAccount = tagTable.owningAccount(tagList[i]);
         if (!currentTags.contains(name) && tagAccount == account)
             tagNames << name;

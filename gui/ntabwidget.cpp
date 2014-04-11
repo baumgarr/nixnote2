@@ -172,12 +172,15 @@ void NTabWidget::openNote(qint32 lid, OpenNoteMode mode) {
     // if we want a new window AND it isn't already open, create a new tab
     if (mode == NewTab && !found) {
         view = new NBrowserWindow();
-        addBrowser(view, QString::fromStdString(n.title));
+        addBrowser(view, n.title);
         setupConnections(view);
     } else {
         if (mode == CurrentTab) {
             view = currentBrowser();
-            tabBar->setTabText(tabBar->currentIndex(), QString::fromStdString(n.title));
+            if (n.title.isSet())
+                tabBar->setTabText(tabBar->currentIndex(), n.title);
+            else
+                tabBar->setTabText(tabBar->currentIndex(), tr("Untitled Note"));
         } else {
             ExternalBrowse *external = new ExternalBrowse(lid);
             externalList->append(external);
@@ -214,7 +217,8 @@ void NTabWidget::noteUpdateSignaled(qint32 lid) {
     noteTable.get(n, lid, false, false);
     for (int i=0;i<browserList->size(); i++) {
         if (browserList->at(i)->lid == lid) {
-            setTitle(i, QString::fromStdString(n.title));
+            if (n.title.isSet())
+                setTitle(i, n.title);
             return;
         }
     }
@@ -237,7 +241,7 @@ void NTabWidget::noteSyncSignaled(qint32 lid) {
     noteTable.get(n, lid, false, false);
     for (int i=0;i<browserList->size(); i++) {
         if (browserList->at(i)->lid == lid && !browserList->at(i)->editor->isDirty) {
-            setTitle(i, QString::fromStdString(n.title));
+            setTitle(i, n.title);
             browserList->at(i)->blockSignals(true);
             browserList->at(i)->clear();
             browserList->at(i)->setContent(lid);
@@ -247,7 +251,7 @@ void NTabWidget::noteSyncSignaled(qint32 lid) {
     }
     for (int i=0;i<externalList->size(); i++) {
         if (externalList->at(i)->browser->lid == lid && !externalList->at(i)->browser->editor->isDirty) {
-            externalList->at(i)->setWindowTitle(tr("NixNote - ")+ QString::fromStdString(n.title));
+            externalList->at(i)->setWindowTitle(tr("NixNote - ")+ n.title);
             externalList->at(i)->browser->blockSignals(true);
             externalList->at(i)->browser->clear();
             externalList->at(i)->browser->setContent(lid);

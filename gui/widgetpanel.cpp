@@ -50,6 +50,8 @@ void WidgetPanel::addWidget(QWidget *widget) {
 
 void WidgetPanel::paintEvent(QPaintEvent *e)
  {
+    //Suppress unused
+    Q_UNUSED(e);
     return;
      QStyleOption opt;
      opt.init(this);

@@ -26,12 +26,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QHash>
 #include <QtXml>
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include "sql/notemetadata.h"
 #include "global.h"
 
-using namespace evernote::edam;
 using namespace std;
 
 

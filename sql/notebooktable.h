@@ -20,8 +20,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef NOTEBOOKTABLE_H
 #define NOTEBOOKTABLE_H
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include "global.h"
 
 #include <iostream>
@@ -52,10 +50,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTEBOOK_PUBLISHING_DESCRIPTION     3104
 #define NOTEBOOK_IS_DELETED                 3105
 
-
-
-
-using namespace evernote::edam  ;
 using namespace std;
 
 class NotebookTable
@@ -70,7 +64,7 @@ public:
     qint32 getLid(string guid);             // Given a guid, return the lid
     qint32 findByName(string &name);           // Find a notebook given a name
     qint32 findByName(QString &name);          // Find a notebook given a name
-    void updateGuid(qint32 lid, string &guid);    // Update a notebook's guid
+    void updateGuid(qint32 lid, Guid &guid);    // Update a notebook's guid
     qint32 sync(Notebook &notebook);                    // Sync a notebook with a new record
     qint32 sync(qint32 lid, Notebook &notebook);           // Sync a notebook with a new record
     qint32 add(qint32 lid, Notebook &t, bool isDirty, bool isLocal = false); // Add a new notebook

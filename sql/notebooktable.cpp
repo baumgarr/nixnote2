@@ -19,8 +19,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include "notebooktable.h"
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include "sql/configstore.h"
 #include "sql/notetable.h"
 #include "sql/sharednotebooktable.h"
@@ -79,10 +77,10 @@ qint32 NotebookTable::findByName(QString &name) {
 
 // Given a notebook's lid, we give it a new guid.  This can happen
 // the first time a record is synchronized
-void NotebookTable::updateGuid(qint32 lid, string &guid) {
+void NotebookTable::updateGuid(qint32 lid, Guid &guid) {
     NSqlQuery query(*db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
-    query.bindValue(":data", QString::fromStdString(guid));
+    query.bindValue(":data", guid);
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_GUID);
     query.exec();
@@ -112,7 +110,7 @@ qint32 NotebookTable::sync(qint32 lid, Notebook &notebook) {
     if (lid > 0) {
         NSqlQuery query(*db);
         NoteTable noteTable(db);
-        noteTable.updateNotebookName(lid, QString::fromStdString(notebook.name));
+        noteTable.updateNotebookName(lid, notebook.name);
 
         // Delete the old record
         query.prepare("Delete from DataStore where lid=:lid and key>=3000 and key<3200");
@@ -184,25 +182,37 @@ qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
         LinkedNotebookTable ltable(db);
         LinkedNotebook lbook;
         if (ltable.get(lbook, lid)) {
-            if (lbook.__isset.shareName && lbook.shareName != "") {
+            QString sharename = "";
+            if (lbook.shareName.isSet())
+                sharename = lbook.shareName;
+            if (sharename != "") {
                 t.name = lbook.shareName;
             }
         }
     }
 
+    QString guid = "";
+    if (t.guid.isSet())
+        guid = t.guid;
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_GUID);
-    query.bindValue(":data", QString::fromStdString(t.guid));
+    query.bindValue(":data", guid);
     query.exec();
 
+    QString name = "";
+    if (t.name.isSet())
+        name = t.name;
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_NAME);
-    query.bindValue(":data", QString::fromStdString(t.name));
+    query.bindValue(":data", name);
     query.exec();
 
+    qint32 usn = 0;
+    if (t.updateSequenceNum.isSet())
+        usn = t.updateSequenceNum;
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_UPDATE_SEQUENCE_NUMBER);
-    query.bindValue(":data", t.updateSequenceNum);
+    query.bindValue(":data", usn);
     query.exec();
 
     query.bindValue(":lid", lid);
@@ -210,17 +220,19 @@ qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
     query.bindValue(":data", isLocal);
     query.exec();
 
-    if (t.__isset.defaultNotebook) {
+    if (t.defaultNotebook.isSet()) {
+        bool defaultNotebook = t.defaultNotebook;
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTEBOOK_IS_DEFAULT);
-        query.bindValue(":data", t.defaultNotebook);
+        query.bindValue(":data", defaultNotebook);
         query.exec();
     }
 
-    if (t.__isset.stack) {
+    if (t.stack.isSet()) {
+        QString stack = t.stack;
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTEBOOK_STACK);
-        query.bindValue(":data", QString::fromStdString(t.stack));
+        query.bindValue(":data", stack);
         query.exec();
     }
 
@@ -229,67 +241,77 @@ qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
     query.bindValue(":data", isDirty);
     query.exec();
 
-    if (t.__isset.serviceCreated) {
+    if (t.serviceCreated.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTEBOOK_SERVICE_CREATED);
-        query.bindValue(":data", QVariant::fromValue(t.serviceCreated));
+        qlonglong created = t.serviceCreated;
+        query.bindValue(":data", created);
         query.exec();
     }
 
-    if (t.__isset.serviceUpdated) {
+    if (t.serviceUpdated.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTEBOOK_SERVICE_UPDATED);
-        query.bindValue(":data", QVariant::fromValue(t.serviceUpdated));
+        qlonglong updated = t.serviceUpdated;
+        query.bindValue(":data", updated);
         query.exec();
     }
 
-    if (t.__isset.published) {
+    if (t.published.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTEBOOK_PUBLISHED);
-        query.bindValue(":data", t.published);
+        bool published = t.published;
+        query.bindValue(":data", published);
         query.exec();
     }
 
-    if (t.__isset.publishing) {
-
-        if (t.publishing.__isset.uri) {
+    if (t.publishing.isSet()) {
+        Publishing publishing = t.publishing;
+        if (publishing.uri.isSet()) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTEBOOK_PUBLISHING_URI);
-            query.bindValue(":data", QString::fromStdString(t.publishing.uri));
+            QString uri = publishing.uri;
+            query.bindValue(":data", uri);
             query.exec();
         }
 
-        if (t.publishing.__isset.order) {
+        if (publishing.order.isSet()) {
+            NoteSortOrder::type order = publishing.order;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTEBOOK_PUBLISHING_ORDER);
-            query.bindValue(":data", t.publishing.order);
+            query.bindValue(":data", order);
             query.exec();
         }
 
-        if (t.publishing.__isset.ascending) {
+        if (publishing.ascending.isSet()) {
+            bool ascending = publishing.ascending;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTEBOOK_PUBLISHING_ASCENDING);
-            query.bindValue(":data", t.publishing.ascending);
+            query.bindValue(":data", ascending);
             query.exec();
         }
 
-        if (t.publishing.__isset.publicDescription) {
+        if (publishing.publicDescription.isSet()) {
+            QString desc = publishing.publicDescription;
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTEBOOK_PUBLISHING_DESCRIPTION);
-            query.bindValue(":data", QString::fromStdString(t.publishing.publicDescription));
+            query.bindValue(":data",desc);
             query.exec();
         }
     }
 
-    if (t.__isset.sharedNotebooks) {
+    if (t.sharedNotebooks.isSet()) {
         SharedNotebookTable sharedTable(db);
-        for (unsigned int i=0; i<t.sharedNotebooks.size(); i++) {
-            sharedTable.add(lid, t.sharedNotebooks[i], isDirty);
+        QList<SharedNotebook> sharedNotebooks;
+        if (t.sharedNotebooks.isSet())
+            sharedNotebooks = t.sharedNotebooks;
+        for (int i=0; i<sharedNotebooks.size(); i++) {
+            sharedTable.add(lid, sharedNotebooks[i], isDirty);
         }
     }
 
     NoteTable noteTable(db);
-    noteTable.updateNotebookName(lid, QString::fromStdString(t.name));
+    noteTable.updateNotebookName(lid, t.name);
     return lid;
 }
 
@@ -300,67 +322,65 @@ bool NotebookTable::get(Notebook &notebook, qint32 lid) {
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
+    Publishing publishing;
     if (query.size() == 0)
         return false;
     while (query.next()) {
         qint32 key = query.value(0).toInt();
         switch (key) {
         case (NOTEBOOK_GUID):
-            notebook.guid = query.value(1).toString().toStdString();
-            notebook.__isset.guid = true;
+            notebook.guid = query.value(1).toString();
             break;
         case (NOTEBOOK_UPDATE_SEQUENCE_NUMBER):
             notebook.updateSequenceNum = query.value(1).toInt();
-            notebook.__isset.updateSequenceNum = true;
             break;
         case (NOTEBOOK_STACK):
-            notebook.stack = query.value(1).toString().toStdString();
-            notebook.__isset.stack =true;
+            notebook.stack = query.value(1).toString();
             break;
         case (NOTEBOOK_NAME):
-            notebook.name = query.value(1).toString().toStdString();
-            notebook.__isset.name = true;
+            notebook.name = query.value(1).toString();
             break;
         case (NOTEBOOK_IS_DEFAULT):
             notebook.defaultNotebook = query.value(1).toBool();
-            notebook.__isset.defaultNotebook = true;
             break;
         case (NOTEBOOK_SERVICE_CREATED):
             notebook.serviceCreated = query.value(1).toLongLong();
-            notebook.__isset.serviceCreated = true;
             break;
         case (NOTEBOOK_SERVICE_UPDATED):
             notebook.serviceUpdated = query.value(1).toLongLong();
-            notebook.__isset.serviceUpdated = true;
             break;
         case (NOTEBOOK_PUBLISHED):
             notebook.published = query.value(1).toBool();
-            notebook.__isset.published = true;
             break;
         case (NOTEBOOK_PUBLISHING_URI):
-            notebook.publishing.uri = query.value(1).toString().toStdString();
-            notebook.__isset.publishing = true;
-            notebook.publishing.__isset.uri = true;
+            if (notebook.publishing.isSet())
+                publishing = notebook.publishing;
+            publishing.uri = query.value(1).toString();
+            notebook.publishing = publishing;
             break;
         case (NOTEBOOK_PUBLISHING_ORDER): {
             qint32 value = query.value(1).toInt();
-            notebook.publishing.order = NoteSortOrder::CREATED;
-            if (value == NoteSortOrder::UPDATED) notebook.publishing.order = NoteSortOrder::UPDATED;
-            if (value == NoteSortOrder::RELEVANCE) notebook.publishing.order = NoteSortOrder::RELEVANCE;
-            if (value == NoteSortOrder::UPDATE_SEQUENCE_NUMBER) notebook.publishing.order = NoteSortOrder::UPDATE_SEQUENCE_NUMBER;
-            if (value == NoteSortOrder::TITLE) notebook.publishing.order = NoteSortOrder::TITLE;
-            notebook.__isset.publishing = true;
-            notebook.publishing.__isset.order = true;
-            break; }
+            if (notebook.publishing.isSet())
+                publishing = notebook.publishing;
+            publishing.order = NoteSortOrder::CREATED;
+            if (value == NoteSortOrder::UPDATED) publishing.order = NoteSortOrder::UPDATED;
+            if (value == NoteSortOrder::RELEVANCE) publishing.order = NoteSortOrder::RELEVANCE;
+            if (value == NoteSortOrder::UPDATE_SEQUENCE_NUMBER) publishing.order = NoteSortOrder::UPDATE_SEQUENCE_NUMBER;
+            if (value == NoteSortOrder::TITLE) publishing.order = NoteSortOrder::TITLE;
+            notebook.publishing = publishing;
+            break;
+        }
         case (NOTEBOOK_PUBLISHING_ASCENDING):
-            notebook.publishing.ascending = query.value(1).toBool();
-            notebook.__isset.publishing = true;
-            notebook.publishing.__isset.ascending = true;
+            if (notebook.publishing.isSet())
+                publishing = notebook.publishing;
+            publishing.ascending = query.value(1).toBool();
+            notebook.publishing = publishing;
             break;
         case (NOTEBOOK_PUBLISHING_DESCRIPTION):
-            notebook.publishing.publicDescription = query.value(1).toString().toStdString();
-            notebook.__isset.publishing = true;
-            notebook.publishing.__isset.publicDescription = true;
+            if (notebook.publishing.isSet())
+                publishing = notebook.publishing;
+            publishing.publicDescription = query.value(1).toString();
+            notebook.publishing = publishing;
             break;
         }
     }
@@ -568,7 +588,7 @@ void NotebookTable::deleteNotebook(qint32 lid) {
     // Now delete the actual notebook
     Notebook notebook;
     get(notebook, lid);
-    if (notebook.__isset.updateSequenceNum && notebook.updateSequenceNum > 0) {
+    if (notebook.updateSequenceNum.isSet() && notebook.updateSequenceNum > 0) {
         NSqlQuery query(*db);
         query.prepare("delete from datastore where lid=:lid and key=:key");
         query.bindValue(":lid", lid);
@@ -611,10 +631,16 @@ bool NotebookTable::update(Notebook &notebook, bool isDirty) {
     expunge(lid);
     add(lid, notebook, isDirty, local);
     // Rename anything in the note list
-    if (notebook.name != oldBook.name) {
+    QString oldname = "";
+    QString newname = "";
+    if (notebook.name.isSet())
+        newname = notebook.name;
+    if (oldBook.name.isSet())
+        oldname = oldBook.name;
+    if (newname != oldname) {
         NSqlQuery query(*db);
         query.prepare("Update notetable set notebook=:name where notebooklid=:lid");
-        query.bindValue(":name", QString::fromStdString(notebook.name));
+        query.bindValue(":name", newname);
         query.bindValue(":lid", lid);
         query.exec();
     }
@@ -748,9 +774,13 @@ bool NotebookTable::isReadOnly(qint32 notebookLid) {
             UserTable userTable(db);
             User user;
             userTable.getUser(user);
-            if (user.__isset.username &&
-                    sharedNotebook.__isset.username &&
-                    user.username == sharedNotebook.username)
+            QString username = "";
+            QString shareusername = "";
+            if (user.username.isSet())
+                username = user.username;
+            if (sharedNotebook.username.isSet())
+                shareusername = sharedNotebook.username;
+            if (shareusername == username)
                 return false;
             if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK)
                 return true;
@@ -760,7 +790,7 @@ bool NotebookTable::isReadOnly(qint32 notebookLid) {
             LinkedNotebookTable ltable(db);
             LinkedNotebook linkedNotebook;
             found = ltable.get(linkedNotebook, notebookLid);
-            if (found && linkedNotebook.__isset.uri)
+            if (found && linkedNotebook.uri.isSet())
               return true;
         }
     }
@@ -785,12 +815,10 @@ qint32 NotebookTable::getConflictNotebook() {
     // If there is no conflict notebook, we create one
     Notebook n;
     if (i>0)
-        n.name = "Conflict-" +QString::number(i).toStdString();
+        n.name = "Conflict-" +QString::number(i);
     else
         n.name = "Conflict";
-    n.__isset.name = true;
     n.updateSequenceNum = 0;
-    n.__isset.updateSequenceNum = true;
     return add(0,n,true,true);
 
 }

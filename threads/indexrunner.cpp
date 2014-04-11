@@ -115,10 +115,13 @@ void IndexRunner::index() {
             resourceTable.get(r, lids.at(i), false);
             qint32 noteLid = noteTable.getLid(r.noteGuid);
             indexRecognition(noteLid, r);
-            if (r.__isset.mime && r.mime == "application/pdf")
+            QString mime = "";
+            if (r.mime.isSet())
+                mime = r.mime;
+            if (mime == "application/pdf")
                 indexPdf(noteLid, r);
             else {
-                if (r.__isset.mime && QString::fromStdString(r.mime).startsWith("application", Qt::CaseInsensitive))
+                if (mime.startsWith("application", Qt::CaseInsensitive))
                     indexAttachment(noteLid, r);
             }
             resourceTable.setIndexNeeded(lids.at(i), false);
@@ -140,8 +143,8 @@ void IndexRunner::index() {
 
 // This indexes the actual note.
 void IndexRunner::indexNote(qint32 lid, Note &n) {
-    QLOG_DEBUG() << "Indexing note: " << QString::fromStdString(n.title);
-    QString content = QString::fromStdString(n.content); //.replace(QString("\n"), QString(" "));
+    QLOG_DEBUG() << "Indexing note: " << n.title;
+    QString content = n.content; //.replace(QString("\n"), QString(" "));
 
 
     // Start looking through the note
@@ -165,7 +168,7 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
 
     // Get the content as an HTML doc.
     textDocument->setHtml(content);
-    content = textDocument->toPlainText() + " " + QString::fromStdString(n.title);
+    content = textDocument->toPlainText() + " " + n.title;
 
     // Delete any old content
     NSqlQuery sql(db->conn);
@@ -177,7 +180,7 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'text', :content)");
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
-    sql.bindValue(":content", QString::fromStdString(n.title) + QString(" " ) +content);
+    sql.bindValue(":content", n.title + QString(" ") +content);
     sql.exec();
 
 }
@@ -188,12 +191,15 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
 void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 
     // Make sure we have something to look through.
-    if (!r.__isset.recognition || !r.recognition.__isset.body)
+    Data recognition;
+    if (r.recognition.isSet())
+        recognition = r.recognition;
+    if (!recognition.body.isSet())
         return;
 
     QDomDocument doc;
     QString emsg;
-    doc.setContent(QString::fromStdString(r.recognition.body), &emsg);
+    doc.setContent(recognition.body, &emsg);
 
     // look for text tags
     QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
@@ -273,8 +279,11 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
         return;
     QLOG_DEBUG() << "Resource " << reslid;
     QString extension = "";
-    if (r.__isset.attributes && r.attributes.__isset.fileName) {
-        extension = QString::fromStdString(r.attributes.fileName);
+    ResourceAttributes attributes;
+    if (r.attributes.isSet())
+        attributes = r.attributes;
+    if (attributes.fileName.isSet()) {
+        extension = attributes.fileName;
         int i = extension.indexOf(".");
         extension = extension.mid(i);
     }

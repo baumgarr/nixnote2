@@ -296,7 +296,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     setReadOnly(readOnly);
 
-    noteTitle.setTitle(lid, QString::fromStdString(n.title), QString::fromStdString(n.title));
+    noteTitle.setTitle(lid, n.title, n.title);
     dateEditor.setNote(lid, n);
     //QLOG_DEBUG() << content;
     //editor->setContent(content,  "application/xhtml+xml");
@@ -308,10 +308,15 @@ void NBrowserWindow::setContent(qint32 lid) {
         editor->page()->setContentEditable(false);
 
     // Setup the alarm
-    if (n.__isset.attributes && n.attributes.__isset.reminderTime) {
-        Timestamp t = n.attributes.reminderTime;
+    NoteAttributes attributes;
+    if (n.attributes.isSet())
+        attributes = n.attributes;
+    if (attributes.reminderTime.isSet()) {
+        Timestamp t;
+        if (attributes.reminderTime.isSet())
+            t = attributes.reminderTime;
         QFont f = alarmText.font();
-        if (n.attributes.__isset.reminderDoneTime) {
+        if (attributes.reminderDoneTime.isSet()) {
             f.setStrikeOut(true);
         } else {
             f.setStrikeOut(false);
@@ -340,8 +345,11 @@ void NBrowserWindow::setContent(qint32 lid) {
     // Set the tag names
     tagEditor.clear();
     QStringList names;
-    for (unsigned int i=0; i<n.tagNames.size(); i++) {
-        names << QString::fromStdString(n.tagNames[i]);
+    QList<QString> tagNames;
+    if (n.tagNames.isSet())
+        tagNames = n.tagNames;
+    for (int i=0; i<tagNames.size(); i++) {
+        names << tagNames[i];
     }
     tagEditor.setTags(names);
     tagEditor.setCurrentLid(lid);
@@ -355,8 +363,11 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     this->lid = lid;
     notebookMenu.setCurrentNotebook(lid, n);
-    if (n.__isset.attributes && n.attributes.__isset.sourceURL)
-        urlEditor.setUrl(lid, QString::fromStdString(n.attributes.sourceURL));
+    NoteAttributes na;
+    if (n.attributes.isSet())
+        na = n.attributes;
+    if (na.sourceURL.isSet())
+        urlEditor.setUrl(lid, na.sourceURL);
     else
         urlEditor.setUrl(lid, "");
     setSource();
@@ -449,7 +460,7 @@ void NBrowserWindow::addTagName(qint32 lid) {
     TagTable table(global.db);
     Tag t;
     table.get(t, lid);
-    tagEditor.addTag(QString::fromStdString(t.name));
+    tagEditor.addTag(t.name);
 }
 
 
@@ -464,7 +475,7 @@ void NBrowserWindow::tagRenamed(qint32 lid, QString oldName, QString newName) {
 
 // Remove a tag in a note
 void NBrowserWindow::tagDeleted(qint32 lid, QString name) {
-    lid = lid;  /* suppress unused */
+    Q_UNUSED(lid);  /* suppress unused */
     tagEditor.removeTag(name);
 }
 
@@ -472,9 +483,9 @@ void NBrowserWindow::tagDeleted(qint32 lid, QString name) {
 
 // A notebook was renamed
 void NBrowserWindow::notebookRenamed(qint32 lid, QString oldName, QString newName) {
-    lid = lid;  /* suppress unused */
-    oldName = oldName;  /* suppress unused */
-    newName = newName;  /* suppress unused */
+    Q_UNUSED(lid);  /* suppress unused */
+    Q_UNUSED(oldName);  /* suppress unused */
+    Q_UNUSED(newName)  /* suppress unused */
     notebookMenu.reloadData();
 }
 
@@ -483,8 +494,8 @@ void NBrowserWindow::notebookRenamed(qint32 lid, QString oldName, QString newNam
 
 // A notebook was deleted
 void NBrowserWindow::notebookDeleted(qint32 lid, QString name) {
-    lid = lid;  /* suppress unused */
-    name=name;  /* suppress unused */
+    Q_UNUSED(lid);  /* suppress unused */
+    Q_UNUSED(name); /* suppress unused */
     notebookMenu.reloadData();
 }
 
@@ -492,8 +503,8 @@ void NBrowserWindow::notebookDeleted(qint32 lid, QString name) {
 
 // A stack was renamed
 void NBrowserWindow::stackRenamed(QString oldName, QString newName) {
-    oldName = oldName;  /* suppress unused */
-    newName = newName;  /* suppress unused */
+    Q_UNUSED(oldName);  /* suppress unused */
+    Q_UNUSED(newName);  /* suppress unused */
     notebookMenu.reloadData();
 }
 
@@ -501,7 +512,7 @@ void NBrowserWindow::stackRenamed(QString oldName, QString newName) {
 
 // A stack was deleted
 void NBrowserWindow::stackDeleted(QString name) {
-    name=name;  /* suppress unused */
+    Q_UNUSED(name);  /* suppress unused */
     notebookMenu.reloadData();
 }
 
@@ -509,7 +520,7 @@ void NBrowserWindow::stackDeleted(QString name) {
 
 // A stack was added
 void NBrowserWindow::stackAdded(QString name) {
-    name=name;  /* suppress unused */
+    Q_UNUSED(name);  /* suppress unused */
     notebookMenu.reloadData();
 }
 
@@ -517,7 +528,7 @@ void NBrowserWindow::stackAdded(QString name) {
 
 // A notebook was added
 void NBrowserWindow::notebookAdded(qint32 lid) {
-    lid = lid;  /* suppress unused */
+    Q_UNUSED(lid);  /* suppress unused */
     notebookMenu.reloadData();
 }
 
@@ -708,8 +719,8 @@ void NBrowserWindow::pasteButtonPressed() {
             // to a normal paste.
             if (goodrc) {
                 QString url = QString("<a href=\"") +global.clipboard->text()
-                        +QString("\" title=") +QString::fromStdString(n.title)
-                        +QString(" >") +QString::fromStdString(n.title) +QString("</a>");
+                        +QString("\" title=") +n.title
+                        +QString(" >") +n.title +QString("</a>");
                 QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
                 editor->page()->mainFrame()->evaluateJavaScript(script);
                 return;
@@ -1119,9 +1130,9 @@ void NBrowserWindow::insertQuickLinkButtonPressed() {
         utable.getUser(user);
 
         QString href = "evernote:///view/" + QString::number(user.id) + QString("/") +
-                QString::fromStdString(user.shardId) +QString("/") +
-                QString::fromStdString(n.guid) +QString("/") +
-                QString::fromStdString(n.guid);
+               user.shardId +QString("/") +
+                n.guid +QString("/") +
+                n.guid;
 
         QString url = QString("<a href=\"") +href
                 +QString("\" title=") +text
@@ -1341,7 +1352,7 @@ void NBrowserWindow::attachFile() {
     fileDialog.setDirectory(QDir::homePath());
     fileDialog.setFileMode(QFileDialog::ExistingFile);
     connect(&fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(attachFileSelected(QString)));
-    int rc = fileDialog.exec();
+    fileDialog.exec();
 }
 
 
@@ -1505,6 +1516,11 @@ void NBrowserWindow::attachFile() {
 
  // If a user presses backtab from within a table
 void NBrowserWindow::setTableCursorPositionBackTab(int currentRow, int currentCol, int tableRows, int tableColumns) {
+    // suppress unused warninsg
+    Q_UNUSED(tableRows);
+    Q_UNUSED(tableColumns);
+
+    // Determine what key to emulate.
      if (currentRow  == 1 && currentCol == 1) {
          return;
      }
@@ -1755,11 +1771,15 @@ void NBrowserWindow::editLatex(QString guid) {
             Resource r;
             ResourceTable resTable(global.db);
             resTable.get(r, guid.toInt(), false);
-            if (r.__isset.attributes && r.attributes.__isset.sourceURL) {
-                QString formula = QString::fromStdString(r.attributes.sourceURL);
-                formula = formula.replace("http://latex.codecogs.com/gif.latex?", "");
-                oldFormula = formula;
-                dialog.setFormula(formula);
+            if (r.attributes.isSet()) {
+                ResourceAttributes attributes;
+                attributes = r.attributes;
+                if (attributes.sourceURL.isSet()) {
+                    QString formula = attributes.sourceURL;
+                    formula = formula.replace("http://latex.codecogs.com/gif.latex?", "");
+                    oldFormula = formula;
+                    dialog.setFormula(formula);
+                }
             }
         }
         dialog.exec();
@@ -1809,45 +1829,33 @@ void NBrowserWindow::editLatex(QString guid) {
     QByteArray data = f.readAll();
     f.close();
     f.open(QIODevice::ReadOnly);
-    r.data.body.resize(data.size());
-    char *dataptr = (char *)&r.data.body.data()[0];
-    f.read(dataptr, r.data.body.size());
-    f.close();
-
-    r.guid = QString::number(newlid).toStdString();
-    r.__isset.guid = true;
-    r.noteGuid = ntable.getGuid(lid).toStdString();
-    r.__isset.guid = true;
-
     QCryptographicHash md5hash(QCryptographicHash::Md5);
     QByteArray hash = md5hash.hash(data, QCryptographicHash::Md5);
 
-    r.__isset.noteGuid = true;
+    Data d;
+    if (r.data.isSet())
+        d = r.data;
+    d.body = f.read(data.size());
+    r.data = d;
+    f.close();
+    d.bodyHash = hash;
+    d.size = data.size();
+    r.data = d;
+
+    r.guid = QString::number(newlid);
+    r.noteGuid = ntable.getGuid(lid);
+
     r.mime = "image/gif";
-    r.__isset.mime = true;
     r.active = true;
-    r.__isset.active = true;
     r.updateSequenceNum = 0;
-    r.__isset.updateSequenceNum = true;
     r.width = 0;
-    r.__isset.width = 0;
     r.height = 0;
-    r.__isset.height = 0;
     r.duration = 0;
-    r.__isset.duration = 0;
 
-    r.__isset.data = true;
-    r.data.__isset.body = true;
-    r.data.bodyHash.append(hash.data(), hash.size());
-    r.data.__isset.bodyHash = true;
-    r.data.size = data.size();
-    r.data.__isset.size = true;
-
-    r.__isset.attributes = true;
-    r.attributes.attachment = false;
-    r.attributes.__isset.attachment = true;
-    r.attributes.sourceURL = "http://latex.codecogs.com/gif.latex?" +text.toStdString();
-    r.attributes.__isset.sourceURL = true;
+    ResourceAttributes a;
+    a.attachment = false;
+    a.sourceURL = "http://latex.codecogs.com/gif.latex?" +text;
+    r.attributes = a;
 
     rtable.add(newlid, r, true, lid);
 
@@ -1950,11 +1958,15 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
 
     // do the actual insert into the note
     QString buffer;
-    QByteArray hash(newRes.data.bodyHash.c_str(), newRes.data.bodyHash.size());
+    Data d;
+    if (newRes.data.isSet())
+        d =newRes.data;
+    QByteArray hash;
+    if (d.bodyHash.isSet())
+         hash = d.bodyHash;
     buffer.append("<img src=\"file://");
     buffer.append(path);
     buffer.append("\" type=\"image/jpeg\" hash=\"");
-    //buffer.append(QString::fromStdString(newRes.data.bodyHash));
     buffer.append(hash.toHex());
     buffer.append("\" onContextMenu=\"window.browser.imageContextMenu(&apos;");
     buffer.append(QString::number(rlid));
@@ -1982,44 +1994,32 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
 
     QString guid =  QString::number(rlid);
     NoteTable noteTable(global.db);
-    r.guid = guid.toStdString();
-    r.__isset.guid = true;
-    r.noteGuid = noteTable.getGuid(lid).toStdString();
-    if (r.noteGuid == "")
+    r.guid = guid;
+    r.noteGuid = noteTable.getGuid(lid);
+    QString noteguid = r.noteGuid;
+    if (noteguid == "")
         return 0;
-    r.__isset.noteGuid = true;
-    r.mime = mime.toStdString();
-    r.__isset.mime = true;
+    r.mime = mime;
     r.active = true;
-    r.__isset.active = true;
     r.updateSequenceNum = sequence;
-    r.__isset.updateSequenceNum = true;
     r.width = 0;
-    r.__isset.width = 0;
     r.height = 0;
-    r.__isset.height = 0;
     r.duration = 0;
-    r.__isset.duration = 0;
+    ResourceAttributes a;
+    if (r.attributes.isSet())
+        a = r.attributes;
+    a.attachment = attachment;
     if (filename != "") {
-        r.attributes.fileName = filename.toStdString();
-        r.__isset.attributes = true;
-        r.attributes.__isset.fileName = true;
+        a.fileName = filename;
     }
 
-    Data *d = &r.data;
-    r.__isset.data = true;
-    d->body.clear();
-    d->body.append(data.data(), data.size());
-    d->__isset.body = true;
-    d->bodyHash.append(hash.data(), hash.size());
-    d->__isset.bodyHash = true;
-    d->size = data.size();
-    d->__isset.size = true;
+    Data d;
+    d.body = data;
+    d.bodyHash = hash;
+    d.size = data.size();
 
-    ResourceAttributes *a = &r.attributes;
-    a->attachment = attachment;
-    a->__isset.attachment = true;
-
+    r.data = d;
+    r.attributes = a;
     ResourceTable resourceTable(global.db);
     resourceTable.add(rlid, r, true, lid);
 
@@ -2180,7 +2180,11 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         attachment = false;
     qint32 rlid = createResource(newRes, 0, ba, mime, attachment, QFileInfo(filename).fileName());
     QByteArray hash;
-    hash.append(newRes.data.bodyHash.data(), newRes.data.bodyHash.size());
+    if (newRes.data.isSet()) {
+        Data d = newRes.data;
+        if (d.bodyHash.isSet())
+            hash = d.bodyHash;
+    }
     if (rlid <= 0)
         return;
 
@@ -2194,7 +2198,12 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
         // do the actual insert into the note
         QString buffer;
-        QByteArray hash(newRes.data.bodyHash.c_str(), newRes.data.bodyHash.size());
+        QByteArray hash = "";
+        if (newRes.data.isSet()) {
+            Data d= newRes.data;
+            if (d.bodyHash.isSet())
+            hash = d.bodyHash;
+        }
         buffer.append("<img src=\"file://");
         buffer.append(path);
         buffer.append("\" type=\"");
@@ -2223,7 +2232,12 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
         // do the actual insert into the note
         QString buffer;
-        QByteArray hash(newRes.data.bodyHash.c_str(), newRes.data.bodyHash.size());
+        QByteArray hash;
+        if (newRes.data.isSet()) {
+            Data data = newRes.data;
+            if (data.bodyHash.isSet())
+                hash = data.bodyHash;
+        }
         buffer.append("<object width=\"100%\" height=\"100%\" lid=\"" +QString::number(rlid) +"\" hash=\"");
         buffer.append(hash.toHex());
         buffer.append("\" type=\"application/pdf\" />");
@@ -2288,9 +2302,12 @@ void NBrowserWindow::alarmSet() {
     Note n;
     NoteTable ntable(global.db);
     ntable.get(n, lid, false, false);
-    if (n.__isset.attributes && n.attributes.__isset.reminderTime) {
+    NoteAttributes attributes;
+    if (n.attributes.isSet())
+        attributes = n.attributes;
+    if (attributes.reminderTime.isSet()) {
         QDateTime dt;
-        dt.setMSecsSinceEpoch(n.attributes.reminderTime);
+        dt.setMSecsSinceEpoch(attributes.reminderTime);
         dialog.time->setTime(dt.time());
         dialog.calendar->setSelectedDate(dt.date());
     } else {

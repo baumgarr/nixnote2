@@ -274,6 +274,9 @@ void AppearancePreferences::loadFontSizes(QString name) {
 
 
 void AppearancePreferences::fontSizeChanged(QString name) {
+    // suppress unused
+    Q_UNUSED(name);
+
     webSettingsChanged = true;
 }
 

@@ -28,11 +28,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QHash>
 #include <QtXml>
 #include <QProgressDialog>
-#include "evernote/UserStore.h"
 
 using namespace std;
-using namespace evernote::edam  ;
 
+#include "qevercloud/include/QEverCloud.h"
+using namespace qevercloud;
 
 
 class ExportData : public QObject
@@ -44,6 +44,7 @@ private:
     void createNode(QString nodeName, string value);
     void createLongLongNode(QString nodeName, qlonglong value);
     void createNode(QString nodeName, qint32 value);
+    void createNode(QString nodeName, QByteArray value);
     void createBinaryNode(QString nodeName, string value);
     void createTimestampNode(QString nodeName, Timestamp value);
     void createNode(QString nodeName, bool value);

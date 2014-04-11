@@ -78,7 +78,7 @@ qint32 SearchTable::findByName(QString &name) {
 void SearchTable::updateGuid(qint32 lid, Guid &guid) {
     NSqlQuery query(*db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
-    query.bindValue(":data", QString::fromStdString(guid));
+    query.bindValue(":data", guid);
     query.bindValue(":lid", lid);
     query.bindValue(":key", SEARCH_GUID);
     query.exec();
@@ -148,24 +148,27 @@ void SearchTable::add(qint32 l, SavedSearch &t, bool isDirty) {
     NSqlQuery query(*db);
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
 
-    if (t.__isset.guid) {
+    if (t.guid.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", SEARCH_GUID);
-        query.bindValue(":data", QString::fromStdString(t.guid));
+        QString guid = t.guid;
+        query.bindValue(":data", guid);
         query.exec();
     }
 
-    if (t.__isset.name) {
+    if (t.name.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", SEARCH_NAME);
-        query.bindValue(":data", QString::fromStdString(t.name));
+        QString name = t.name;
+        query.bindValue(":data", name);
         query.exec();
     }
 
-    if (t.__isset.updateSequenceNum) {
+    if (t.updateSequenceNum.isSet()) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", SEARCH_UPDATE_SEQUENCE_NUMBER);
-        query.bindValue(":data", t.updateSequenceNum);
+        qint32 usn = t.updateSequenceNum;
+        query.bindValue(":data", usn);
         query.exec();
     } else {
         query.bindValue(":lid", lid);
@@ -174,17 +177,19 @@ void SearchTable::add(qint32 l, SavedSearch &t, bool isDirty) {
         query.exec();
     }
 
-    if (t.__isset.format) {
+    if (t.format.isSet()) {
+        int format = t.format;
         query.bindValue(":lid", lid);
         query.bindValue(":key", SEARCH_FORMAT);
-        query.bindValue(":data", t.format);
+        query.bindValue(":data", format);
         query.exec();
     }
 
-    if (t.__isset.query) {
+    if (t.query.isSet()) {
+        QString q= t.query;
         query.bindValue(":lid", lid);
         query.bindValue(":key", SEARCH_QUERY);
-        query.bindValue(":data", QString::fromStdString(t.query));
+        query.bindValue(":data", q);
         query.exec();
     }
 
@@ -210,26 +215,21 @@ bool SearchTable::get(SavedSearch &search ,qint32 lid) {
         qint32 key = query.value(0).toInt();
         switch (key) {
         case (SEARCH_GUID):
-            search.guid = query.value(1).toString().toStdString();
-            search.__isset.guid = true;
+            search.guid = query.value(1).toString();
             break;
         case (SEARCH_UPDATE_SEQUENCE_NUMBER):
             search.updateSequenceNum = query.value(1).toInt();
-            search.__isset.updateSequenceNum = true;
             break;
         case (SEARCH_NAME):
-            search.name = query.value(1).toString().toStdString();
-            search.__isset.name = true;
+            search.name = query.value(1).toString();
             break;
         case (SEARCH_QUERY):
-            search.query = query.value(1).toString().toStdString();
-            search.__isset.query = true;
+            search.query = query.value(1).toString();
             break;
         case (SEARCH_FORMAT):
             qint32 value = query.value(1).toInt();
             search.format = QueryFormat::USER;
             if (value == QueryFormat::SEXP) search.format = QueryFormat::SEXP;
-            search.__isset.format = true;
             break;
         }
     }
@@ -314,7 +314,7 @@ void SearchTable::deleteSearch(qint32 lid) {
         return;
     SavedSearch s;
     get(s, lid);
-    if (s.__isset.updateSequenceNum && s.updateSequenceNum > 0) {
+    if (s.updateSequenceNum.isSet() && s.updateSequenceNum > 0) {
         NSqlQuery query(*db);
         query.prepare("Delet from DataStore where key=:key and lid=:lid");
         query.bindValue(":lid", lid);
@@ -416,14 +416,14 @@ void SearchTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
 
 
 // Get all dirty lids
-string SearchTable::getGuid(qint32 lid) {
+QString SearchTable::getGuid(qint32 lid) {
     NSqlQuery query(*db);
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", SEARCH_GUID);
     query.bindValue(":lid", lid);
     query.exec();
     if(query.next()) {
-        return query.value(0).toString().toStdString();
+        return query.value(0).toString();
     }
     return "";
 }

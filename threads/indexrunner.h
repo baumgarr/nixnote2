@@ -28,9 +28,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QVector>
 #include "sql/databaseconnection.h"
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
-
 #include <iostream>
 #include <string>
 #include <stdio.h>
@@ -38,7 +35,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTimer>
 #include <QTextDocument>
 
-using namespace evernote::edam;
+#include "qevercloud/include/QEverCloud.h"
+using namespace qevercloud;
+
 using namespace std;
 
 class IndexRunner : public QObject

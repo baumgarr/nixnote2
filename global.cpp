@@ -19,8 +19,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "global.h"
 
-//#include <QString>
-//#include <QProxyStyle>
 #include <string>
 #include <limits.h>
 #include <unistd.h>

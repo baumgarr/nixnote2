@@ -68,8 +68,7 @@ void NotebookProperties::okButtonPressed() {
         Notebook book;
         NotebookTable table(global.db);
         table.get(book, lid);
-        book.name = name.text().trimmed().toStdString();
-        book.__isset.name = true;
+        book.name = name.text().trimmed();
         table.update(book, true);
         close();
         return;
@@ -77,13 +76,11 @@ void NotebookProperties::okButtonPressed() {
 
     // We have a new notebook to add
     Notebook book;
-    book.name = name.text().trimmed().toStdString();
+    book.name = name.text().trimmed();
     bool isSynchronized = syncBox.isChecked();
     QUuid uuid;
     QString g =  uuid.createUuid().toString().replace("{","").replace("}","");
-    book.guid = g.toStdString();
-    book.__isset.name = true;
-    book.__isset.guid = true;
+    book.guid = g;
     NotebookTable t(global.db);
     t.add(0,book,true, !isSynchronized);
     close();
@@ -100,8 +97,8 @@ void NotebookProperties::setLid(qint32 lid) {
         Notebook book;
         NotebookTable table(global.db);
         table.get(book, lid);
-        originalName = QString::fromStdString(book.name).trimmed();
-        name.setText(originalName);
+        originalName = book.name;
+        name.setText(originalName.trimmed());
         syncBox.setEnabled(false);
         bool local = table.isLocal(lid);
         syncBox.setChecked(!local);

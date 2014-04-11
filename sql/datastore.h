@@ -22,18 +22,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "global.h"
 #include <QSqlTableModel>
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include <QList>
 
-using namespace apache::thrift;
-using namespace apache::thrift::protocol;
-using namespace apache::thrift::transport;
-using namespace evernote::edam;
 using namespace std;
 
+#include "qevercloud/include/QEverCloud.h"
+using namespace qevercloud;
 
-using namespace evernote::edam;
 
 class DataStore : public QSqlTableModel
 {

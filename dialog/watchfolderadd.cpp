@@ -77,7 +77,7 @@ WatchFolderAdd::WatchFolderAdd(qint32 lid, QWidget *parent) :
     for (int i=0; i<lids.size(); i++) {
         Notebook n;
         ntable.get(n, lids[i]);
-        books->addItem(QString::fromStdString(n.name), lids[i]);
+        books->addItem(n.name, lids[i]);
     }
     books->model()->sort(0);
 

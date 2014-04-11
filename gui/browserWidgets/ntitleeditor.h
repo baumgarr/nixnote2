@@ -21,16 +21,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef NTITLEEDITOR_H
 #define NTITLEEDITOR_H
 
-#include "evernote/UserStore.h"
-#include "evernote/NoteStore.h"
-#include "evernote/Limits_constants.h"
+#include "qevercloud/include/QEverCloud.h"
 
 #include <QtWebKit>
 #include <QLineEdit>
 
+using namespace qevercloud;
 
-using namespace evernote::edam;
-using namespace evernote::limits;
 
 class NTitleEditor : public QLineEdit
 {

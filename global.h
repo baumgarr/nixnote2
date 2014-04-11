@@ -35,8 +35,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "settings/accountsmanager.h"
 #include "reminders/remindermanager.h"
 
-//#include "java/javamachine.h"
-
 #include <string>
 #include <QSharedMemory>
 #include <QSqlDatabase>
@@ -54,7 +52,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTE_TABLE_NOTEBOOK_LID_POSITION 4
 #define NOTE_TABLE_NOTEBOOK_POSITION 5
 #define NOTE_TABLE_TAGS_POSITION 6
-
 #define NOTE_TABLE_AUTHOR_POSITION 7
 #define NOTE_TABLE_DATE_SUBJECT_POSITION 8
 #define NOTE_TABLE_DATE_DELETED_POSITION 9
@@ -68,21 +65,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTE_TABLE_HAS_TODO_POSITION 17
 #define NOTE_TABLE_IS_DIRTY_POSITION 18
 #define NOTE_TABLE_SIZE_POSITION 19
-
 #define NOTE_TABLE_REMINDER_ORDER_POSITION 20
 #define NOTE_TABLE_REMINDER_TIME_POSITION 21
 #define NOTE_TABLE_REMINDER_TIME_DONE_POSITION 22
-
 #define NOTE_TABLE_PINNED_POSITION 23
-
 #define NOTE_TABLE_COLOR_POSITION 24
 #define NOTE_TABLE_THUMBNAIL_POSITION 25
 
-
 #define NOTE_TABLE_COLUMN_COUNT 26
-
-
-//#define MINIMUM_RECOGNITION_WEIGHT 10
 
 using namespace std;
 

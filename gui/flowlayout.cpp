@@ -136,15 +136,17 @@
  QSize FlowLayout::minimumSize() const
  {
      QSize size;
-     QLayoutItem *item;
+     QLayoutItem *item=NULL;
      foreach (item, itemList) {
          if (item->widget()->isVisible())
             size = size.expandedTo(item->minimumSize());
      }
 
-     size = item->minimumSize();
+     if (item != NULL) {
+        size = item->minimumSize();
 
-     size += QSize(2*margin(), 2*margin());
+        size += QSize(2*margin(), 2*margin());
+     }
      return size;
  }
 

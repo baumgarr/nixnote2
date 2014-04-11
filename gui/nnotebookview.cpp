@@ -38,8 +38,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/linkednotebooktable.h"
 #include "sql/sharednotebooktable.h"
 #include "sql/notetable.h"
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
 #include "dialog/notebookproperties.h"
 #include "gui/nnotebookviewdelegate.h"
 #include "sql/nsqlquery.h"
@@ -673,16 +671,16 @@ void NNotebookView::editComplete() {
         NotebookTable table(global.db);
         Notebook notebook;
         table.get(notebook, lid);
-        QString oldName = QString::fromStdString(notebook.name);
+        QString oldName = notebook.name;
 
         // Check that this notebook doesn't already exist
         // if it exists, we go back to the original name
         qint32 check = table.findByName(text);
         if (check != 0) {
             NNotebookViewItem *item = dataStore[lid];
-            item->setData(NAME_POSITION, Qt::DisplayRole, QString::fromStdString(notebook.name));
+            item->setData(NAME_POSITION, Qt::DisplayRole, notebook.name.value());
         } else {
-            notebook.name = text.toStdString();
+            notebook.name = text;
             table.update(notebook, true);
         }
 
@@ -747,8 +745,7 @@ void NNotebookView::moveToStackRequested() {
     Notebook notebook;
     NotebookTable table(global.db);
     table.get(notebook, lid);
-    notebook.stack = action->text().toStdString();
-    notebook.__isset.stack = true;
+    notebook.stack = action->text();
     table.update(notebook, true);
 
     // Now move it in the actual tree
@@ -807,8 +804,7 @@ void NNotebookView::moveToNewStackRequested() {
     qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     Notebook book;
     table.get(book, lid);
-    book.stack = newStackName.toStdString();
-    book.__isset.stack = true;
+    book.stack = newStackName;
     table.update(book, true);
 
     this->sortItems(NAME_POSITION, Qt::AscendingOrder);
@@ -917,8 +913,8 @@ void NNotebookView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
 
 // Handle what happens when something is dropped onto a tag item
 bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData *data, Qt::DropAction action) {
-    index=index; // suppress unused variable
-    action=action; // suppress unused variable
+    Q_UNUSED(index); // suppress unused variable
+    Q_UNUSED(action); // suppress unused variable
 
     // If this is a note-to-tag drop we are assigning tags to a note
     if (data->hasFormat("application/x-nixnote-note")) {
@@ -943,7 +939,7 @@ bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMime
                     qint32 currentNotebook = noteTable.getNotebookLid(noteLid);
                     if (currentNotebook != bookLid) {
                         noteTable.updateNotebook(noteLid, bookLid, true);
-                        emit(updateNoteList(noteLid, NOTE_TABLE_NOTEBOOK_POSITION, QString::fromStdString(notebook.name)));
+                        emit(updateNoteList(noteLid, NOTE_TABLE_NOTEBOOK_POSITION, notebook.name.value()));
                         qint64 dt = QDateTime::currentMSecsSinceEpoch();
                         noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
                         emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));

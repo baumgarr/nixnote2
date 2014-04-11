@@ -27,13 +27,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QAction>
 #include <QActionGroup>
 
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
+#include "qevercloud/include/QEverCloud.h"
 
 
-using namespace evernote::edam  ;
 using namespace std;
-
+using namespace qevercloud;
 
 class NotebookMenuButton : public QPushButton
 {

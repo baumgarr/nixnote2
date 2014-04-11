@@ -21,11 +21,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #ifndef NOTETABLE_H
 #define NOTETABLE_H
 
-
-
-#include <evernote/UserStore.h>
-#include <evernote/NoteStore.h>
-
 #include <iostream>
 #include <string>
 #include <stdio.h>
@@ -33,6 +28,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlTableModel>
 #include <QtSql>
 #include <QString>
+
+#include "qevercloud/include/QEverCloud.h"
+using namespace qevercloud;
+
 
 #define NOTE_GUID                    5000
 #define NOTE_TITLE                   5001
@@ -79,8 +78,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTE_EXPUNGED_FROM_TRASH               5998
 #define NOTE_INDEX_NEEDED                      5999
 
-
-using namespace evernote::edam  ;
 using namespace std;
 
 class NoteTable
@@ -96,8 +93,8 @@ public:
     QString getGuid(int lid);               // given a lid, get the guid
     void updateGuid(qint32 lid, Guid &guid);    // Update a note's guid
     void sync(Note &note, qint32 account=0);                    // Sync a note with a new record
-    void sync(qint32 lid, Note &note, qint32 account=0);           // Sync a note with a new record
-    qint32 add(qint32 lid, Note &t, bool isDirty, qint32 account=0); // Add a new note
+    void sync(qint32 lid, const Note &note, qint32 account=0);           // Sync a note with a new record
+    qint32 add(qint32 lid, const Note &t, bool isDirty, qint32 account=0); // Add a new note
     bool get(Note &note, qint32 lid, bool loadResources, bool loadBinary);           // Get a note given a lid
     bool get(Note &note, QString guid, bool loadResources, bool loadBinary);      // get a note given a guid
     bool get(Note &note, string guid,bool loadResources, bool loadBinary);       // get a note given a guid
@@ -123,7 +120,7 @@ public:
     void setIndexNeeded(qint32 lid, bool indexNeeded);    // flag if a note needs reindexing
     qint32 getIndexNeeded(QList<qint32> &lids);           // Get a list of all notes needing indexing
     bool updateNotebookGuid(QString oldGuid, QString newGuid, QString name);  // Update a notebook's name/guid
-    bool updateNoteList(qint32 lid, Note &t, bool isDirty, qint32 account);  // Update the user viewing list
+    bool updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 account);  // Update the user viewing list
     bool updateNotebookName(qint32 lid, QString name);  // Update a notebook's name in the user listing
     void updateNotebook(qint32 noteLid, qint32 notebookLid);   // Set the current note's notebook
     void setDirty(qint32 lid, bool dirty);

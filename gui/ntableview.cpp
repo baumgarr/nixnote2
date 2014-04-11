@@ -755,7 +755,7 @@ void NTableView::copyNoteLink() {
     bool syncneeded = false;
     QString userid;
 
-    if (user.__isset.id)
+    if (user.id.isSet())
         userid = QVariant(user.id).toString();
     else {
         syncneeded = true;
@@ -763,8 +763,8 @@ void NTableView::copyNoteLink() {
     }
 
     QString shard;
-    if (user.__isset.shardId)
-        shard = QString::fromStdString(user.shardId);
+    if (user.shardId.isSet())
+        shard =user.shardId;
     else {
         syncneeded = true;
         shard = "s0";
@@ -774,9 +774,11 @@ void NTableView::copyNoteLink() {
     NoteTable ntable(global.db);
     ntable.get(note, lids[0], false, false);
 
-    QString guid = QString::fromStdString(note.guid);
+    QString guid = "";
+    if (note.guid.isSet())
+        guid = note.guid;
     QString localid;
-    if (!note.__isset.updateSequenceNum || note.updateSequenceNum == 0) {
+    if (!note.updateSequenceNum.isSet() || note.updateSequenceNum == 0) {
         syncneeded = true;
         localid = QString::number(lids[0]);
     } else
@@ -1160,7 +1162,9 @@ void NTableView::mergeNotes() {
     Note note;
     qint32 lid = lids[0];
     nTable.get(note, lid, false, false);
-    QString content = QString::fromStdString(note.content);
+    QString content = "";
+    if (note.content.isSet())
+        content = note.content;
     content = content.replace("</en-note>","<p/>");
 
     // Duplicate the source notes so we can undelete them later if something
@@ -1175,7 +1179,7 @@ void NTableView::mergeNotes() {
 
         Note oldNote;
         nTable.get(oldNote, lids[i], false, false);
-        QString oldContent = QString::fromStdString(oldNote.content);
+        QString oldContent = oldNote.content;
         oldContent = oldContent.replace("</en-note>", "<p/>");
         int startPos = oldContent.indexOf("<en-note");
         startPos = oldContent.indexOf(">", startPos)+1;

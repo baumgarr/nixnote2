@@ -49,18 +49,18 @@ SOURCES += main.cpp\
     sql/configstore.cpp \
     gui/ntableview.cpp \
     gui/ntableviewheader.cpp \
-    evernote/UserStore_types.cpp \
-    evernote/UserStore_constants.cpp \
-    evernote/UserStore.cpp \
-    evernote/Types_types.cpp \
-    evernote/Types_constants.cpp \
-    evernote/NoteStore_types.cpp \
-    evernote/NoteStore_constants.cpp \
-    evernote/NoteStore.cpp \
-    evernote/Limits_types.cpp \
-    evernote/Limits_constants.cpp \
-    evernote/Errors_types.cpp \
-    evernote/Errors_constants.cpp \
+#    evernote/UserStore_types.cpp \
+#    evernote/UserStore_constants.cpp \
+#    evernote/UserStore.cpp \
+#    evernote/Types_types.cpp \
+#    evernote/Types_constants.cpp \
+#    evernote/NoteStore_types.cpp \
+#    evernote/NoteStore_constants.cpp \
+#    evernote/NoteStore.cpp \
+#    evernote/Limits_types.cpp \
+#    evernote/Limits_constants.cpp \
+#    evernote/Errors_types.cpp \
+#    evernote/Errors_constants.cpp \
     threads/syncrunner.cpp \
     sql/datastore.cpp \
     sql/usertable.cpp \
@@ -179,7 +179,14 @@ SOURCES += main.cpp\
     xml/importenex.cpp \
     xml/exportdata.cpp \
     dialog/logviewer.cpp \
-    dialog/htmlentitiesdialog.cpp
+    dialog/htmlentitiesdialog.cpp \
+    qevercloud/exceptions.cpp \
+    qevercloud/http.cpp \
+    qevercloud/services_nongenerated.cpp \
+    qevercloud/oauth.cpp \
+    qevercloud/generated/constants.cpp \
+    qevercloud/generated/services.cpp \
+    qevercloud/generated/types.cpp
 
 
 
@@ -195,18 +202,18 @@ HEADERS  += nixnote.h \
     sql/configstore.h \
     gui/ntableview.h \
     gui/ntableviewheader.h \
-    evernote/UserStore_types.h \
-    evernote/UserStore_constants.h \
-    evernote/UserStore.h \
-    evernote/Types_types.h \
-    evernote/Types_constants.h \
-    evernote/NoteStore_types.h \
-    evernote/NoteStore_constants.h \
-    evernote/NoteStore.h \
-    evernote/Limits_types.h \
-    evernote/Limits_constants.h \
-    evernote/Errors_types.h \
-    evernote/Errors_constants.h \
+#    evernote/UserStore_types.h \
+#    evernote/UserStore_constants.h \
+#    evernote/UserStore.h \
+#    evernote/Types_types.h \
+#    evernote/Types_constants.h \
+#    evernote/NoteStore_types.h \
+#    evernote/NoteStore_constants.h \
+#    evernote/NoteStore.h \
+#    evernote/Limits_types.h \
+#    evernote/Limits_constants.h \
+#    evernote/Errors_types.h \
+#    evernote/Errors_constants.h \
     threads/syncrunner.h \
     sql/datastore.h \
     sql/usertable.h \
@@ -325,19 +332,33 @@ HEADERS  += nixnote.h \
     xml/importenex.h \
     xml/exportdata.h \
     dialog/logviewer.h \
-    dialog/htmlentitiesdialog.h
+    dialog/htmlentitiesdialog.h \
+    qevercloud/exceptions.h \
+    qevercloud/globals.h \
+    qevercloud/http.h \
+    qevercloud/impl.h \
+    qevercloud/oauth.h \
+    qevercloud/pubilc.h \
+    qevercloud/thrift.h \
+    qevercloud/thumbnail.h \
+    qevercloud/generated/constants.h \
+    qevercloud/generated/services.h \
+    qevercloud/generated/types.h \
+    qevercoud/generated/types_impl.h \
+    qevercloud/include/QEverCloud.h \
+    qevercloud/include/QEverCloudOAuth.h
 
 
-INCLUDEPATH += /usr/local/include/thrift \
-            /usr/include/thrift \
-            /usr/include/poppler/qt4
+#INCLUDEPATH += /usr/local/include/thrift \
+#            /usr/include/thrift \
+INCLUDEPATH += /usr/include/poppler/qt4
 
 #LIBS +=    -Wl,-L./lib -lthrift \
-LIBS +=    -lthrift \
-           -lopencv_core -lopencv_highgui -lopencv_imgproc \
+#LIBS +=    -lthrift \
+LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
            -lhunspell \
-           -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic \
-           -Wl,-rpath=/usr/lib/nixnote2
+           -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
+#           -Wl,-rpath=/usr/lib/nixnote2
 
 #QMAKE_CXXFLAGS += `dpkg-buildflags --get CFLAGS`
 QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security

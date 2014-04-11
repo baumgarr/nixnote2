@@ -45,6 +45,9 @@ void TreeWidgetEditor::setTreeWidgetItem(QTreeWidgetItem *w, int col) {
 }
 
 void TreeWidgetEditor::focusOutEvent(QFocusEvent *e) {
+    // suppress unused
+    Q_UNUSED(e);
+
     originalWidgetItem->setData(0, Qt::DisplayRole, text().trimmed());
     parent->setItemWidget(originalWidgetItem, column, originalWidget);
     emit(editComplete());

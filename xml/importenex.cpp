@@ -42,13 +42,11 @@ ImportEnex::ImportEnex(QObject *parent) : QObject(parent)
     if (lid == 0) {
         // We have a new notebook to add
         Notebook book;
-        book.name = name.toStdString();
+        book.name = name;
         bool isSynchronized = true;
         QUuid uuid;
         notebookGuid =  uuid.createUuid().toString().replace("{","").replace("}","");
-        book.guid = notebookGuid.toStdString();
-        book.__isset.name = true;
-        book.__isset.guid = true;
+        book.guid = notebookGuid;
         t.add(0,book,true, !isSynchronized);
     } else {
         t.getGuid(notebookGuid, lid);
@@ -159,53 +157,44 @@ void ImportEnex::processNoteNode() {
     Note note;
     QUuid uuid;
     QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
-    note.guid = newGuid.toStdString();
-    note.__isset.guid = true;
+    note.guid = newGuid;
     note.active = true;
-    note.__isset.active = true;
+    QList<Resource> resources;
+    QList<QString> tagNames;
 
     bool atEnd = false;
     while(!atEnd) {
         QString name = reader->name().toString().toLower();
         if (name == "title" && !reader->isEndElement()) {
-            note.title = textValue().toStdString();
-            note.__isset.title = true;
+            note.title = textValue();
         }
         if (name == "created" && !reader->isEndElement()) {
             note.created = datetimeValue();
-            note.__isset.created = true;
         }
         if (name == "updated" && !reader->isEndElement()) {
             note.updated = datetimeValue();
-            note.__isset.updated = true;
         }
         if (name == "deleted" && !reader->isEndElement()) {
             note.deleted = datetimeValue();
-            note.__isset.deleted = true;
         }
         if (name == "active" && !reader->isEndElement()) {
             note.active = booleanValue();
-            note.__isset.active = true;
         }
         if (name == "content" && !reader->isEndElement()) {
-            note.content = textValue().toStdString();
-            note.__isset.content = true;
+            note.content = textValue();
         }
         if (name == "note-attributes" && !reader->isEndElement()) {
             processNoteAttributes(note.attributes);
-            note.__isset.attributes = true;
         }
         if (name == "resource" && !reader->isEndElement()) {
             Resource newRes;
             processResource(newRes);
             newRes.noteGuid = note.guid;
             newRes.updateSequenceNum = 0;
-            note.resources.push_back(newRes);
-            note.__isset.resources = true;
+            resources.append(newRes);
         }
         if (name == "tag" && !reader->isEndElement()) {
-           note.__isset.tagNames = true;
-           note.tagNames.push_back(textValue().toStdString());
+           tagNames.append(textValue());
         }
         reader->readNext();
         QString endName = reader->name().toString().toLower();
@@ -213,50 +202,48 @@ void ImportEnex::processNoteNode() {
             atEnd = true;
     }
 
+
     // Loop through the resources & make sure they all have the
     // proper guid for this note
-    for (unsigned int i=0; i<note.resources.size(); i++) {
-        note.resources[i].noteGuid = note.guid;
+    for (int i=0; i<resources.size(); i++) {
+        Resource *r = &resources[i];
+        r->noteGuid = note.guid;
     }
 
     // Loop through the tag names & find any matching tags.
-    if (note.__isset.tagNames) {
-        note.tagGuids.clear();
-        for (unsigned int i=0; i<note.tagNames.size(); i++) {
-            QString tagGuid = tagList[QString::fromStdString(note.tagNames[i])];
+    if (note.tagNames.isSet()) {
+        QList<QString> tagGuids;
+        for (int i=0; i<tagNames.size(); i++) {
+            QString tagGuid = tagList[tagNames[i]];
             if (tagGuid != "") {
-                note.tagGuids.push_back(tagGuid.toStdString());
-                note.__isset.tagGuids = true;
+                tagGuids.append(tagGuid);
             } else {
                 QUuid uuid;
                 QString g =  uuid.createUuid().toString().replace("{","").replace("}","");
                 Tag newTag;
-                newTag.name = note.tagNames[i];
-                newTag.guid = g.toStdString();
-                newTag.__isset.name = true;
-                newTag.__isset.guid = true;
+                newTag.name = tagNames[i];
+                newTag.guid = g;
                 TagTable tt(global.db);
                 tt.add(0, newTag, true, 0);
-                tagList.insert(QString::fromStdString(note.tagNames[i]), g);
+                tagList.insert(tagNames[i], g);
             }
         }
+        note.tagGuids = tagGuids;
     }
+    note.resources = resources;
+    note.tagNames = tagNames;
 
     NoteTable noteTable(global.db);
     note.updateSequenceNum = 0;
-    note.__isset.updateSequenceNum = true;
-    note.notebookGuid = notebookGuid.toStdString();
-    note.__isset.notebookGuid = true;
+    note.notebookGuid = notebookGuid;
 
-    if (note.__isset.created == false) {
+    if (!note.created.isSet() == false) {
         note.created = QDateTime::currentDateTime().toMSecsSinceEpoch();
-        note.__isset.created = true;
     }
-    if (note.__isset.updated == false) {
+    if (note.updated.isSet() == false) {
         note.updated = note.created;
-        note.__isset.updated = true;
     }
-    if (metaData.contains(QString(note.guid.c_str()))) {
+    if (metaData.contains(note.guid)) {
         QLOG_ERROR() << "ERROR IN IMPORTING DATA:  Metadata not yet supported";
     }
 
@@ -278,63 +265,39 @@ void ImportEnex::processResource(Resource &resource) {
     bool atEnd = false;
 
     resource.active = true;
-    resource.__isset.active = true;
 
     while(!atEnd) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
-//            if (name == "guid") {
-//                resource.guid = textValue().toStdString();
-//                resource.__isset.guid = true;
-//            }
             QUuid uuid;
             QString g =  uuid.createUuid().toString().replace("{","").replace("}","");
-            resource.guid = g.toStdString();
-            resource.__isset.guid = true;
-//            if (name == "noteguid") {
-//                QString tx = textValue();
-//                resource.noteGuid = tx.toStdString();
-//                resource.__isset.noteGuid = true;
-//            }
-//            if (name == "updatesequencenumber") {
-//                resource.updateSequenceNum = intValue();
-//                resource.__isset.updateSequenceNum = true;
-//            }
+            resource.guid = g;
             if (name == "active") {
                 resource.active =  booleanValue();
-                resource.__isset.active = true;
             }
             if (name == "mime") {
-                resource.mime = textValue().toStdString();
-                resource.__isset.mime = true;
+                resource.mime = textValue();
             }
             if (name == "duration") {
                 resource.duration = shortValue();
-                resource.__isset.duration =true;
             }
             if (name == "height") {
                 resource.height = shortValue();
-                resource.__isset.height = true;
             }
             if (name == "width") {
                 resource.width = shortValue();
-                resource.__isset.width = true;
             }
             if (name == "data") {
                 processData("Data", resource.data);
-                resource.__isset.data = true;
             }
             if (name == "alternate-data") {
                 processData("AlternateData", resource.data);
-                resource.__isset.alternateData = true;
             }
             if (name == "recognition-data") {
                 processData("RecognitionData", resource.recognition);
-                resource.__isset.recognition = true;
             }
             if (name == "resource-attributes") {
                 processResourceAttributes(resource.attributes);
-                resource.__isset.attributes = true;
             }
         }
         reader->readNext();
@@ -357,17 +320,12 @@ void ImportEnex::processData(QString nodeName, Data &data) {
     ba.append(x);
     QByteArray bin = QByteArray::fromBase64(ba);
     data.body.clear();
-    data.body.append(bin.data(), bin.size());
-    data.__isset.body = true;
-
+    data.body = bin;
     data.size = bin.length();
-    data.__isset.size = true;
 
     QCryptographicHash md5hash(QCryptographicHash::Md5);
     QByteArray hash = md5hash.hash(bin, QCryptographicHash::Md5);
-    string hashstring(hash.constData(), hash.size());
-    data.bodyHash = hashstring;
-    data.__isset.bodyHash = true;
+    data.bodyHash = hash;
 }
 
 
@@ -381,44 +339,34 @@ void ImportEnex::processResourceAttributes(ResourceAttributes &attributes) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
             if (name == "camera-make") {
-                attributes.cameraMake = textValue().toStdString();
-                attributes.__isset.cameraMake = true;
+                attributes.cameraMake = textValue();
             }
             if (name == "camera-model") {
-                attributes.cameraModel = textValue().toStdString();
-                attributes.__isset.cameraModel =true;
+                attributes.cameraModel = textValue();
             }
             if (name == "file-name") {
-                attributes.fileName = textValue().toStdString();
-                attributes.__isset.fileName = true;
+                attributes.fileName = textValue();
             }
             if (name == "reco-type") {
-                attributes.recoType = textValue().toStdString();
-                attributes.__isset.fileName = true;
+                attributes.recoType = textValue();
             }
             if (name  == "source-url") {
-                attributes.sourceURL = textValue().toStdString();
-                attributes.__isset.sourceURL = true;
+                attributes.sourceURL = textValue();
             }
             if (name == "altitude") {
                 attributes.altitude = doubleValue();
-                attributes.__isset.altitude = true;
             }
             if (name == "longitude") {
                 attributes.longitude = doubleValue();
-                attributes.__isset.longitude = true;
             }
             if (name == "altitude") {
                 attributes.latitude = doubleValue();
-                attributes.__isset.latitude = true;
             }
             if (name == "timestamp") {
                 attributes.timestamp = longValue();
-                attributes.__isset.timestamp = true;
             }
             if (name == "attachment") {
                 attributes.attachment = booleanValue();
-                attributes.__isset.attachment = true;
             }
         }
         reader->readNext();
@@ -439,36 +387,28 @@ void ImportEnex::processNoteAttributes(NoteAttributes &attributes) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
             if (name == "author" && !reader->isEndElement()) {
-                attributes.author = textValue().toStdString();
-                attributes.__isset.author = true;
+                attributes.author = textValue();
             }
             if (name == "source-url" && !reader->isEndElement()) {
-                attributes.sourceURL = textValue().toStdString();
-                attributes.__isset.sourceURL = true;
+                attributes.sourceURL = textValue();
             }
             if (name == "source" && !reader->isEndElement()) {
-                attributes.source = textValue().toStdString();
-                attributes.__isset.source = true;
+                attributes.source = textValue();
             }
             if (name == "source-application" && !reader->isEndElement()) {
-                attributes.sourceApplication = textValue().toStdString();
-                attributes.__isset.sourceApplication = true;
+                attributes.sourceApplication = textValue();
             }
             if (name == "altitude" && !reader->isEndElement()) {
                 attributes.altitude = doubleValue();
-                attributes.__isset.altitude = true;
             }
             if (name == "longitude" && !reader->isEndElement()) {
                 attributes.longitude = doubleValue();
-                attributes.__isset.longitude = true;
             }
             if (name == "latitude" && !reader->isEndElement()) {
                 attributes.latitude = doubleValue();
-                attributes.__isset.latitude = true;
             }
             if (name == "subject-date" && !reader->isEndElement()) {
                 attributes.subjectDate = datetimeValue();
-                attributes.__isset.subjectDate = true;
             }
         }
         reader->readNext();

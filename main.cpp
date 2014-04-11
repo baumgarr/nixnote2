@@ -31,11 +31,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSharedMemory>
 #include <execinfo.h>
 #include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 
 #include "application.h"
-#include "thrift/config.h"
 
 
+using namespace std;
 
 //*********************************************
 //* This is the main entry point for NixNote.
@@ -110,7 +113,7 @@ int main(int argc, char *argv[])
 
     // Show Qt version.  This is useful for debugging
     QLOG_INFO() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
-    QLOG_INFO() << "Thrift version: " << PACKAGE_VERSION;
+    //QLOG_INFO() << "Thrift version: " << PACKAGE_VERSION;
 
 
 

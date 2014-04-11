@@ -113,7 +113,7 @@ void TagTable::updateGuid(qint32 lid, Guid &guid) {
 
     NSqlQuery query(*db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
-    query.bindValue(":data", QString::fromStdString(guid));
+    query.bindValue(":data", guid);
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_GUID);
     query.exec();
@@ -213,38 +213,47 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
     NSqlQuery query(*db);
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
 
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", TAG_GUID);
-    query.bindValue(":data", QString::fromStdString(t.guid));
-    query.exec();
+    if (t.guid.isSet()) {
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", TAG_GUID);
+        QString guid = t.guid;
+        query.bindValue(":data", guid);
+        query.exec();
+    }
 
-    query.bindValue(":lid", lid);
-    query.bindValue(":key", TAG_NAME);
-    query.bindValue(":data", QString::fromStdString(t.name));
-    query.exec();
+    if (t.name.isSet()) {
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", TAG_NAME);
+        QString name  = t.name;
+        query.bindValue(":data", name);
+        query.exec();
+    }
 
+    qint32 usn = 0;
+    if (t.updateSequenceNum.isSet())
+        usn = t.updateSequenceNum;
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_UPDATE_SEQUENCE_NUMBER);
-    query.bindValue(":data", t.updateSequenceNum);
+    query.bindValue(":data", usn);
     query.exec();
 
-    if (t.__isset.parentGuid && t.parentGuid != "") {
-        qint32 parentLid = getLid(t.parentGuid);
-        if (parentLid == 0) {
-            Tag tempTag;
-            parentLid = cs.incrementLidCounter();
-            tempTag.guid = t.parentGuid;
-            tempTag.name="<no name>";
-            tempTag.updateSequenceNum = 0;
-            tempTag.__isset.name =true;
-            tempTag.__isset.updateSequenceNum = true;
-            tempTag.__isset.guid = true;
-            add(parentLid, tempTag, false, account);
+    if (t.parentGuid.isSet()) {
+        QString parentGuid = t.parentGuid;
+        if (parentGuid != "") {
+            qint32 parentLid = getLid(t.parentGuid);
+            if (parentLid == 0) {
+                Tag tempTag;
+                parentLid = cs.incrementLidCounter();
+                tempTag.guid = t.parentGuid;
+                tempTag.name="<no name>";
+                tempTag.updateSequenceNum = 0;
+                add(parentLid, tempTag, false, account);
+            }
+            query.bindValue(":lid", lid);
+            query.bindValue(":key", TAG_PARENT_LID);
+            query.bindValue(":data", parentLid);
+            query.exec();
         }
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", TAG_PARENT_LID);
-        query.bindValue(":data", parentLid);
-        query.exec();
     }
 
     query.bindValue(":lid", lid);
@@ -276,25 +285,21 @@ bool TagTable::get(Tag &tag, qint32 lid) {
         qint32 key = query.value(0).toInt();
         switch (key) {
             case (TAG_GUID):
-                tag.guid = query.value(1).toString().toStdString();
-                tag.__isset.guid = true;
+                tag.guid = query.value(1).toString();
                 break;
             case (TAG_UPDATE_SEQUENCE_NUMBER):
                 tag.updateSequenceNum = query.value(1).toInt();
-                tag.__isset.updateSequenceNum = true;
                 break;
             case (TAG_PARENT_LID): {
                 if (query.value(1).toInt() > 0) {
                         QString parentGuid;
                         getGuid(parentGuid, query.value(1).toInt());
-                        tag.parentGuid = parentGuid.toStdString();
-                        tag.__isset.parentGuid =true;
+                        tag.parentGuid = parentGuid;
                         break;
                     }
                 }
             case (TAG_NAME):
-                tag.name = query.value(1).toString().toStdString();
-                tag.__isset.name = true;
+                tag.name = query.value(1).toString();
                 break;
         }
     }
@@ -444,7 +449,7 @@ void TagTable::deleteTag(qint32 lid) {
         qint32 currentLid = list[i];
         NSqlQuery query(*db);
         get(tag, currentLid);
-        if (tag.__isset.updateSequenceNum && tag.updateSequenceNum > 0) {
+        if (tag.updateSequenceNum.isSet() && tag.updateSequenceNum > 0) {
             query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
             query.bindValue(":lid", currentLid);
             query.bindValue(":key", TAG_ISDELETED);
@@ -607,7 +612,13 @@ void TagTable::getGuidMap(QHash<QString,QString> &guidMap) {
     guidMap.empty();
     for (int i=0; i<tags.size(); i++) {
         get(t,tags[i]);
-        guidMap.insert(QString::fromStdString(t.guid), QString::fromStdString(t.name));
+        QString guid = "";
+        QString name = "";
+        if (t.guid.isSet())
+            guid = t.guid;
+        if (t.name.isSet())
+            name = t.name;
+        guidMap.insert(t.guid, t.name);
     }
 }
 
@@ -620,7 +631,7 @@ void TagTable::getNameMap(QHash<QString,QString> &nameMap) {
     nameMap.empty();
     for (int i=0; i<tags.size(); i++) {
         get(t,tags[i]);
-        nameMap.insert(QString::fromStdString(t.name), QString::fromStdString(t.guid));
+        nameMap.insert(t.name, t.guid);
     }
 }
 
