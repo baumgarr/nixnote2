@@ -76,6 +76,12 @@ class NixNote : public QMainWindow
     Q_OBJECT
 
 private:
+    enum NewNoteButtonAction {
+        NewTextNote=1,
+        NewWebcamNote=2,
+        NewScreenNote=3
+    };
+
     DatabaseConnection *db;  // The database connection
     NTableView *noteTableView;
     NSearchView *searchTreeView;
@@ -88,6 +94,7 @@ private:
     WidgetPanel *leftPanel;
     QSplitter *rightPanelSplitter;
     QScrollArea *leftScroll;
+    QToolButton *noteButton;
     QWidget *topRightWidget;
     QVBoxLayout *topRightLayout;
     NAttributeTree *attributeTree;
@@ -182,6 +189,7 @@ public slots:
     void databaseBackup(bool backup=true);
     void resetView();
     void newNote();
+    void noteButtonClicked();
     void newExternalNote();
     void setSyncTimer();
     void notesDeleted(QList<qint32> lid);

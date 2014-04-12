@@ -272,8 +272,25 @@ void NixNote::setupGui() {
 //  syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
     toolBar->addSeparator();
     printNoteButton = toolBar->addAction(QIcon(":printer.png"), tr("Print"));
-    newNoteButton = toolBar->addAction(QIcon(":newNote.png"), tr("New Text Note"));
-    newWebcamNoteButton = toolBar->addAction(QIcon(":webcam.png"), tr("New Webcam Note"));
+    noteButton = new QToolButton();
+    toolBar->addSeparator();
+    newNoteButton = new QAction(noteButton);
+    newNoteButton->setIcon(QIcon(":newNote.png"));
+    newNoteButton->setText(tr("New Text Note"));
+    newWebcamNoteButton = new QAction(noteButton);
+    newWebcamNoteButton->setIcon(QIcon(":webcam.png"));
+    newWebcamNoteButton->setText(tr("New Webcam Note"));
+    noteButton->addAction(newNoteButton);
+    noteButton->addAction(newWebcamNoteButton);
+    noteButton->setText(newNoteButton->text());
+    noteButton->setIcon(newNoteButton->icon());
+    noteButton->setProperty("currentNoteButton", NewTextNote);
+    noteButton->setPopupMode(QToolButton::MenuButtonPopup);
+    noteButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+    connect(noteButton, SIGNAL(clicked()), this, SLOT(noteButtonClicked()));
+    toolBar->addWidget(noteButton);
+    toolBar->addSeparator();
+
     deleteNoteButton = toolBar->addAction(QIcon(":delete.png"), tr("Delete"));
 
     toolBar->addSeparator();
@@ -289,6 +306,7 @@ void NixNote::setupGui() {
     connect(trunkButton, SIGNAL(triggered()), this, SLOT(openTrunk()));
     connect(newNoteButton, SIGNAL(triggered()), this, SLOT(newNote()));
     connect(newWebcamNoteButton, SIGNAL(triggered()), this, SLOT(newWebcamNote()));
+    connect(newNoteButton, SIGNAL(triggered()), this, SLOT(noteButtonClicked()));
     connect(usageButton, SIGNAL(triggered()), this, SLOT(openAccount()));
 
     QLOG_TRACE() << "Adding main splitter";
@@ -415,6 +433,8 @@ void NixNote::setupGui() {
 
     screenCaptureButton = new QAction(tr("Screen Capture"), this);
     trayIconContextMenu->addAction(screenCaptureButton);
+    screenCaptureButton->setIcon(QIcon(":screenCapture.png"));
+    noteButton->addAction(screenCaptureButton);
     connect(screenCaptureButton, SIGNAL(triggered()), this, SLOT(screenCapture()));
 
 
@@ -1517,6 +1537,11 @@ void NixNote::resetView() {
 
 // Create a new note
 void NixNote::newNote() {
+    if (noteButton->property("currentNoteButton").toInt() != NewTextNote) {
+        noteButton->setText(newNoteButton->text());
+        noteButton->setIcon(newNoteButton->icon());
+        noteButton->setProperty("currentNoteButton", NewTextNote);
+    }
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
            QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
            QString("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><br/></en-note>");
@@ -2164,6 +2189,11 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
 
 
 void NixNote::screenCapture() {
+    if (noteButton->property("currentNoteButton").toInt() != NewScreenNote) {
+        noteButton->setText(screenCaptureButton->text());
+        noteButton->setIcon(screenCaptureButton->icon());
+        noteButton->setProperty("currentNoteButton", NewScreenNote);
+    }
     sleep(1);
     ScreenCapture sc;
     sc.exec();
@@ -2267,6 +2297,12 @@ void NixNote::openCloseNotebooks() {
 
 // Capture an image from the webcam and create a new note
 void NixNote::newWebcamNote() {
+    if (noteButton->property("currentNoteButton") != NewWebcamNote) {
+        noteButton->setText(newWebcamNoteButton->text());
+        noteButton->setIcon(newWebcamNoteButton->icon());
+        noteButton->setProperty("currentNoteButton", NewWebcamNote);
+    }
+
     WebcamCaptureDialog dialog;
     QMessageBox msgBox;
     msgBox.setText(tr("Unable to find webcam or capture image."));
@@ -2469,4 +2505,14 @@ void NixNote::pauseIndexing() {
 void NixNote::openMessageLog() {
     LogViewer viewer;
     viewer.exec();
+}
+
+
+void NixNote::noteButtonClicked() {
+    if (noteButton->property("currentNoteButton").toInt() == NewTextNote)
+        newNote();
+    if (noteButton->property("currentNoteButton").toInt() == NewWebcamNote)
+        newWebcamNote();
+    if (noteButton->property("currentNoteButton").toInt() == NewScreenNote)
+        screenCapture();
 }
