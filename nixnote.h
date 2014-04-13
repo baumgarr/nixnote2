@@ -42,12 +42,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/widgetpanel.h"
 #include "gui/nnotebookview.h"
 #include "gui/nmainmenubar.h"
+#include "gui/traymenu.h"
 #include "gui/nattributetree.h"
 #include "gui/ntrashtree.h"
 #include "dialog/accountdialog.h"
 #include "gui/findreplace.h"
 #include "threads/counterrunner.h"
-#include "oauth/oauthwindow.h"
+//#include "oauth/oauthwindow.h"
 #include "html/thumbnailer.h"
 #include "reminders/remindermanager.h"
 
@@ -103,12 +104,12 @@ private:
     QSystemTrayIcon *trayIcon;
     QString saveLastPath;   // Last path viewed in the restore dialog
     FileWatcherManager *importManager;
-    OAuthWindow *oauthWindow;
+//    OAuthWindow *oauthWindow;
     Thumbnailer *hammer;
 
     // Tool & menu bar
     NMainMenuBar *menuBar;
-    QMenu   *trayIconContextMenu;
+    TrayMenu   *trayIconContextMenu;
     QToolBar *toolBar;
     QAction *leftArrowButton;
     QAction *rightArrowButton;

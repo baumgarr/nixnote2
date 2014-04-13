@@ -186,7 +186,8 @@ SOURCES += main.cpp\
     qevercloud/oauth.cpp \
     qevercloud/generated/constants.cpp \
     qevercloud/generated/services.cpp \
-    qevercloud/generated/types.cpp
+    qevercloud/generated/types.cpp \
+    gui/traymenu.cpp
 
 
 
@@ -346,7 +347,8 @@ HEADERS  += nixnote.h \
     qevercloud/generated/types.h \
     qevercoud/generated/types_impl.h \
     qevercloud/include/QEverCloud.h \
-    qevercloud/include/QEverCloudOAuth.h
+    qevercloud/include/QEverCloudOAuth.h \
+    gui/traymenu.h
 
 
 #INCLUDEPATH += /usr/local/include/thrift \

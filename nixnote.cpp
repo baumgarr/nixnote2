@@ -61,8 +61,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filterengine.h"
 #include "global.h"
 #include "html/enmlformatter.h"
-#include "oauth/oauthwindow.h"
-#include "oauth/oauthtokenizer.h"
+//#include "oauth/oauthwindow.h"
+//#include "oauth/oauthtokenizer.h"
 #include "dialog/databasestatus.h"
 #include "dialog/adduseraccountdialog.h"
 #include "dialog/accountmaintenancedialog.h"
@@ -197,7 +197,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     }
 
     // Init OAuth winwod
-    oauthWindow = NULL;
+    //oauthWindow = NULL;
 
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
@@ -429,7 +429,7 @@ void NixNote::setupGui() {
     closeToTray = global.settings->value("closeToTray", false).toBool();
     global.settings->endGroup();
     trayIcon = new QSystemTrayIcon(QIcon(global.getWindowIcon()), this);
-    trayIconContextMenu = new QMenu(this);
+    trayIconContextMenu = new TrayMenu(this);
     trayIconContextMenu->addAction(newNoteButton);
 
     newExternalNoteButton = trayIconContextMenu->addAction(tr("Quick Note"));
@@ -441,20 +441,18 @@ void NixNote::setupGui() {
     noteButton->addAction(screenCaptureButton);
     connect(screenCaptureButton, SIGNAL(triggered()), this, SLOT(screenCapture()));
 
+    trayIconContextMenu->addSeparator();
+    QMenu *pinnedMenu = trayIconContextMenu->addMenu(tr("Pinned Notes"));
+    trayIconContextMenu->setPinnedMenu(pinnedMenu);
+    connect(trayIconContextMenu, SIGNAL(openNote(qint32)), this, SLOT(openExternalNote(qint32)));
+    trayIconContextMenu->addSeparator();
 
     showAction = trayIconContextMenu->addAction(tr("Show/Hide"));
-    //minimizeToTrayAction = trayIconContextMenu->addAction(tr("Minimize to tray"));
-    //minimizeToTrayAction->setCheckable(true);
-    //minimizeToTrayAction->setChecked(minimizeToTray);
-    //closeToTrayAction = trayIconContextMenu->addAction(tr("Close to tray"));
-    //closeToTrayAction->setCheckable(true);
-    //closeToTrayAction->setChecked(closeToTray);
     if (!global.showTrayIcon() || global.forceNoStartMimized || !QSystemTrayIcon::isSystemTrayAvailable()) {
         closeToTray = false;
         minimizeToTray = false;
     }
-    //connect(minimizeToTrayAction, SIGNAL(triggered()), this, SLOT(trayIconBehavior()));
-    //connect(closeToTrayAction, SIGNAL(triggered()), this, SLOT(trayIconBehavior()));
+
     trayIconContextMenu->addSeparator();
     closeAction = trayIconContextMenu->addAction(tr("Close"));
     connect(closeAction, SIGNAL(triggered()), this, SLOT(closeNixNote()));
@@ -1753,18 +1751,22 @@ void NixNote::viewNoteHistory() {
     this->saveContents();
     statusBar()->clearMessage();
     if (!global.accountsManager->oauthTokenFound()) {
-        if (oauthWindow == NULL)
-            oauthWindow = new OAuthWindow(this);
-        oauthWindow->setWindowFlags(Qt::Dialog);
-        oauthWindow->showNormal();
-        if (oauthWindow->error) {
-            setMessage(oauthWindow->errorMessage);
+        QString consumerKey = "baumgarr-3523";
+        QString consumerSecret = "8d5ee175f8a5d3ec";
+        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
+        d.setWindowTitle(tr("Log in to Evernote"));
+        if(d.exec() != QDialog::Accepted) {
+            QMessageBox::critical(0, tr("NixNote"), "Login failed.\n" + d.oauthError());
             return;
         }
-        if (oauthWindow->response == "")
-            return;
+        QString token = QString("oauth_token=") +d.oauthResult().authenticationToken +
+                       QString("&oauth_token_secret=&edam_shard=")+d.oauthResult().shardId  +
+                       QString("&edam_userId=") +QString::number(d.oauthResult().userId) +
+                       QString("&edam_expires=") +QString::number(d.oauthResult().expires) +
+                       QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
+                       QString("&edam_webApiUrlPrefix=") +d.oauthResult().webApiUrlPrefix;
 
-        global.accountsManager->setOAuthToken(oauthWindow->response);
+        global.accountsManager->setOAuthToken(token);
     }
 
     UserTable userTable(global.db);

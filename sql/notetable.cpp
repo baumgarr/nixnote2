@@ -1997,7 +1997,6 @@ void NoteTable::pinNote(qint32 lid, bool value) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_ISPINNED);
     query.exec();
-    QLOG_DEBUG() << query.lastError();
 
     query.prepare("Update NoteTable set isPinned='true' where lid=:lid");
     query.bindValue(":lid", lid);
@@ -2020,6 +2019,26 @@ void NoteTable::pinNote(string guid, bool value) {
     QString g(QString::fromStdString(guid));
     pinNote(g, value);
 }
+
+
+void NoteTable::getAllPinned(QList< QPair< qint32, QString > > &lids) {
+    NSqlQuery query(*db);
+    lids.clear();
+    query.prepare("Select lid, data from DataStore where key=:titlekey and lid in (select lid from datastore where key=:key and data='true') order by data");
+    query.bindValue(":titlekey", NOTE_TITLE);
+    query.bindValue(":key", NOTE_ISPINNED);
+    query.exec();
+    while (query.next()) {
+        QPair<qint32, QString> pair;
+        pair.first = query.value(0).toInt();
+        pair.second = query.value(1).toString();
+        lids.append(pair);
+    }
+    return;
+}
+
+
+
 
 
 // Get all lids
