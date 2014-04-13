@@ -77,6 +77,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "xml/exportdata.h"
 #include "dialog/aboutdialog.h"
 
+#include "qevercloud/include/QEverCloudOAuth.h"
+
+using namespace qevercloud;
+
 extern Global global;
 class SyncRunner;
 
@@ -1083,28 +1087,47 @@ void NixNote::syncTimerExpired() {
 //* User synchronize was requested
 //******************************************************************************
 void NixNote::synchronize() {
-    if (oauthWindow == NULL)
-        oauthWindow = new OAuthWindow(this);
-    else
-        oauthWindow->reset();
+    if (!global.accountsManager->oauthTokenFound()) {
+        QString consumerKey = "baumgarr-3523";
+        QString consumerSecret = "8d5ee175f8a5d3ec";
+        EvernoteOAuthDialog d(consumerKey, consumerSecret, global.server);
+        d.setWindowTitle(tr("Log in to Evernote"));
+        if(d.exec() != QDialog::Accepted) {
+            QMessageBox::critical(0, tr("NixNote"), "Login failed.\n" + d.oauthError());
+            return;
+        }
+        QString token = QString("oauth_token=") +d.oauthResult().authenticationToken +
+                       QString("&oauth_token_secret=&edam_shard=")+d.oauthResult().shardId  +
+                       QString("&edam_userId=") +QString::number(d.oauthResult().userId) +
+                       QString("&edam_expires=") +QString::number(d.oauthResult().expires) +
+                       QString("&edam_noteStoreUrl=") + d.oauthResult().noteStoreUrl +
+                       QString("&edam_webApiUrlPrefix=") +d.oauthResult().webApiUrlPrefix;
+
+        global.accountsManager->setOAuthToken(token);
+    }
+
+//    if (oauthWindow == NULL)
+//        oauthWindow = new OAuthWindow(this);
+//    else
+//        oauthWindow->reset();
+//    if (!global.accountsManager->oauthTokenFound()) {
+//        oauthWindow->setWindowFlags(Qt::Dialog);
+//        oauthWindow->setFocus();  // This fixes a cursor problem.
+//        connect(oauthWindow, SIGNAL(closed()), this, SLOT(synchronize()));
+//        oauthWindow->showNormal();
+//        if (oauthWindow->error) {
+//            setMessage(oauthWindow->errorMessage);
+//            return;
+//        }
+//        if (oauthWindow->response == "") {
+//            return;
+//        }
+
+//        global.accountsManager->setOAuthToken(oauthWindow->response);
+//    }
     this->saveContents();
     statusBar()->clearMessage();
     indexRunner.pauseIndexing = true;
-    if (!global.accountsManager->oauthTokenFound()) {
-        oauthWindow->setWindowFlags(Qt::Dialog);
-        oauthWindow->setFocus();  // This fixes a cursor problem.
-        connect(oauthWindow, SIGNAL(closed()), this, SLOT(synchronize()));
-        oauthWindow->showNormal();
-        if (oauthWindow->error) {
-            setMessage(oauthWindow->errorMessage);
-            return;
-        }
-        if (oauthWindow->response == "") {
-            return;
-        }
-
-        global.accountsManager->setOAuthToken(oauthWindow->response);
-    }
     tabWindow->saveAllNotes();
     syncButtonTimer.start(3);
     emit syncRequested();

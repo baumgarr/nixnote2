@@ -86,6 +86,7 @@ bool CommunicationManager::connect() {
     QString data = global.accountsManager->getOAuthToken();
     tokenizer.tokenize(data);
     authToken = tokenizer.oauth_token;
+//    authToken = global.accountsManager->getOAuthToken();
     return init();
 }
 
