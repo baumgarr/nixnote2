@@ -8,19 +8,26 @@ class TrayMenu : public QMenu
 {
     Q_OBJECT
 private:
-    QList<QAction*> pinnedActions;
+    QList<QAction*> actions;
     QMenu *pinnedMenu;
+    QMenu *recentlyUpdatedMenu;
     QSignalMapper *signalMapper;
+    void buildMenu(QMenu *actionMenu, QList<QPair<qint32, QString> > records);
 
 public:
+    enum ActionMenuType {
+        PinnedMenu,
+        RecentMenu
+    };
+
     explicit TrayMenu(QWidget *parent = 0);
-    void setPinnedMenu(QMenu *menu);
+    void setActionMenu(ActionMenuType type, QMenu *menu);
 
 signals:
     void openNote(qint32);
 
 public slots:
-    void buildPinnedMenu();
+    void buildActionMenu();
     void noteChosen(int note);
 
 };

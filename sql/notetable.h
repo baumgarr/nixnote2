@@ -171,6 +171,7 @@ public:
     void getAll(QList<qint32> &lids);
     void setTitleColor(qint32 lid, QString color);
     void getAllPinned(QList<QPair<qint32, QString> > &lids);
+    void getRecentlyUpdated(QList< QPair< qint32, QString > > &lids);
 };
 
 

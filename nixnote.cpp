@@ -443,7 +443,9 @@ void NixNote::setupGui() {
 
     trayIconContextMenu->addSeparator();
     QMenu *pinnedMenu = trayIconContextMenu->addMenu(tr("Pinned Notes"));
-    trayIconContextMenu->setPinnedMenu(pinnedMenu);
+    trayIconContextMenu->setActionMenu(TrayMenu::PinnedMenu, pinnedMenu);
+    QMenu *recentMenu = trayIconContextMenu->addMenu(tr("Recently Updated Notes"));
+    trayIconContextMenu->setActionMenu(TrayMenu::RecentMenu, recentMenu);
     connect(trayIconContextMenu, SIGNAL(openNote(qint32)), this, SLOT(openExternalNote(qint32)));
     trayIconContextMenu->addSeparator();
 

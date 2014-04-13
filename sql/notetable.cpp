@@ -2038,6 +2038,21 @@ void NoteTable::getAllPinned(QList< QPair< qint32, QString > > &lids) {
 }
 
 
+void NoteTable::getRecentlyUpdated(QList< QPair< qint32, QString > > &lids) {
+    NSqlQuery query(*db);
+    lids.clear();
+    query.prepare("select lid, title from notetable order by dateupdated desc limit 10");
+    query.exec();
+    while (query.next()) {
+        QPair<qint32, QString> pair;
+        pair.first = query.value(0).toInt();
+        pair.second = query.value(1).toString();
+        lids.append(pair);
+    }
+    return;
+}
+
+
 
 
 
