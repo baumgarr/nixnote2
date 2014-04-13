@@ -479,6 +479,12 @@ void NMainMenuBar::setupHelpMenu() {
 
     helpMenu->addSeparator();
 
+    openEvernoteAccountPageAction = new QAction(tr("Evernote Account Page"), this);
+    openEvernoteAccountPageAction->setToolTip(tr("Go to your Evernote account page."));
+    openEvernoteAccountPageAction->setFont(font);
+    connect(openEvernoteAccountPageAction, SIGNAL(triggered()), this, SLOT(openEvernoteAccountPage()));
+    helpMenu->addAction(openEvernoteAccountPageAction);
+
     openEvernoteSupportAction = new QAction(tr("Evernote Support"), this);
     openEvernoteSupportAction->setToolTip(tr("Go to Evernote's support page"));
     if (global.accountsManager->getServer() == "app.yinxiang.com") {
@@ -522,4 +528,10 @@ void NMainMenuBar::openManual() {
 
 void NMainMenuBar::openUserForum() {
     QDesktopServices::openUrl(QUrl("https://sourceforge.net/apps/phpbb/nevernote/?source=navbar"));
+}
+
+
+
+void NMainMenuBar::openEvernoteAccountPage() {
+    QDesktopServices::openUrl(QUrl("https://www.evernote.com/Settings.action"));
 }

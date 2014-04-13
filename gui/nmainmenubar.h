@@ -110,6 +110,7 @@ public:
     QAction *openEvernoteSupportAction;
     QAction *openMessageLogAction;
     QAction *openUserForumAction;
+    QAction *openEvernoteAccountPageAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 
@@ -120,6 +121,7 @@ signals:
 public slots:
     void openManual();
     void openUserForum();
+    void openEvernoteAccountPage();
 
 };
 
