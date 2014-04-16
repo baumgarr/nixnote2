@@ -90,6 +90,7 @@ extern Global global;
      newFilter->resetNotebook = true;
      newFilter->resetTags = true;
      newFilter->resetAttribute = true;
+     newFilter->resetFavorite = true;
      newFilter->resetDeletedOnly = true;
      newFilter->resetSavedSearch = true;
      QList<qint32> oldLids;

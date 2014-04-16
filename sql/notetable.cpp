@@ -802,8 +802,10 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadBinary) 
             qint32 tagLid = query.value(1).toInt();
             Tag tag;
             tagTable.get(tag, tagLid);
-            tagGuids.append(tag.guid);
-            tagNames.append(tag.name);
+            if (tag.guid.isSet())
+                tagGuids.append(tag.guid);
+            if (tag.name.isSet())
+                tagNames.append(tag.name);
             break;
         }
     }
@@ -1225,7 +1227,8 @@ void NoteTable::rebuildNoteListTags(qint32 lid) {
         qint32 tagLid = query.value(0).toInt();
         Tag t;
         tagTable.get(t, tagLid);
-        tagNames.append(t.name);
+        if (t.name.isSet())
+            tagNames.append(t.name);
     }
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
     QString tagCol;

@@ -169,6 +169,7 @@ void NTrashTree::buildSelection() {
     newFilter->resetSavedSearch = true;
     newFilter->resetDeletedOnly = true;
     newFilter->resetAttribute = true;
+    newFilter->resetFavorite = true;
     newFilter->resetNotebook =true;
     newFilter->resetTags = true;
     newFilter->resetSearchString = true;

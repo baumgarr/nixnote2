@@ -461,6 +461,7 @@ void NAttributeTree::buildSelection() {
     newFilter->resetNotebook =true;
     newFilter->resetTags = true;
     newFilter->resetAttribute = true;
+    newFilter->resetFavorite = true;
     newFilter->resetSearchString = true;
 
     emit updateSelectionRequested();

@@ -1,6 +1,6 @@
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2013 Randy Baumgarte
+Copyright (C) 2014 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -17,76 +17,71 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#ifndef NSEARCHVIEW_H
-#define NSEARCHVIEW_H
+
+
+#ifndef FAVORITESVIEW_H
+#define FAVORITESVIEW_H
 
 #include <QTreeWidget>
-#include <QHash>
 #include <QMenu>
-#include <QAction>
+#include <QMouseEvent>
+#include <QImage>
+#include <QPainter>
+#include <QHeaderView>
 #include <QShortcut>
 
-#include "global.h"
-#include "nsearchviewitem.h"
-#include "gui/treewidgeteditor.h"
+#include "gui/favoritesviewitem.h"
 
-//****************************************************
-//* This is the tree for the list of saved searches.
-//****************************************************
-
-
-
-class NSearchView : public QTreeWidget
+class FavoritesView : public QTreeWidget
 {
     Q_OBJECT
 private:
-    NSearchViewItem *root;
-    virtual void mousePressEvent(QMouseEvent *event);
-    int filterPosition;
-    QMenu context;
-    QAction *addAction;
-    QAction *propertiesAction;
-    QAction *deleteAction;
-    QAction *renameAction;
-    QShortcut *renameShortcut;
-    QShortcut *addShortcut;
-    QShortcut *deleteShortcut;
-    TreeWidgetEditor *editor;
-    QImage *expandedImage;
     QImage *collapsedImage;
-
+    QImage *expandedImage;
+    QAction *deleteAction;
+    QShortcut *deleteShortcut;
+    int maxCount;
+    void dropRecord(qint32 lid, FavoritesRecord::FavoritesRecordType type, int row);
+    void buildTreeEntry(FavoritesViewItem *parent, const FavoritesRecord *record);
 
 private slots:
     int calculateHeightRec(QTreeWidgetItem * item);
     void calculateHeight();
-    void editComplete();
 
 public:
-    explicit NSearchView(QWidget *parent = 0);
-    ~NSearchView();
-    QHash<qint32, NSearchViewItem*> dataStore;
+    explicit FavoritesView(QWidget *parent = 0);
+    virtual void mousePressEvent(QMouseEvent *event);
+    int filterPosition;
+    FavoritesViewItem *root;
+    QMenu context;
     void resetSize();
+    void updateSelection();
     void loadData();
+    bool rebuildFavoritesTreeNeeded;
     void contextMenuEvent(QContextMenuEvent *event);
+    QHash<qint32, FavoritesViewItem*> dataStore;
+    QHash<qint32, FavoritesViewItem*> targetStore;
     QSize sizeHint();
+    void dropEvent(QDropEvent *event);
     void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
+    void mouseMoveEvent(QMouseEvent *event);
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dragMoveEvent(QDragMoveEvent *event);
 
 signals:
     void updateSelectionRequested();
-    void searchDeleted(qint32);
+    void updateCounts();
 
 public slots:
-    void searchUpdated(qint32 lid, QString name);
-    void searchExpunged(qint32 lid);
-    void buildSelection();
-    void updateSelection();
-    void addRequested();
-    void propertiesRequested();
     void deleteRequested();
-    void renameRequested();
-    void mouseMoveEvent(QMouseEvent *event);
-
+    void itemRenamed(qint32 lid, QString oldName, QString newName);
+    void buildSelection();
+    void updateTotals(qint32 lid, qint32 subTotal, qint32 total);
+    void itemExpunged(qint32 lid);
+    void itemExpunged(qint32 lid, QString name);
+    void stackExpunged(QString stackname);
+    void stackRenamed(QString oldName, QString newName);
 
 };
 
-#endif // NSEARCHVIEW_H
+#endif // FAVORITESVIEW_H

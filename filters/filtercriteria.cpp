@@ -19,6 +19,9 @@ FilterCriteria::FilterCriteria(QObject *parent) :
     content = -1;
     contentIsSet = false;
 
+    favoriteIsSet = false;
+    favoriteLid = -1;
+    resetFavorite = false;
 
     resetNotebook = false;
     resetTags = false;
@@ -228,7 +231,32 @@ void FilterCriteria::unsetSearchString() {
 
 
 
+
+qint32 FilterCriteria::getFavorite() {
+    return favoriteLid;
+}
+
+void FilterCriteria::setFavorite(qint32 lid) {
+    favoriteLid = lid;
+    favoriteIsSet = true;
+    valueSet = true;
+}
+
+bool FilterCriteria::isFavoriteSet() {
+    return favoriteIsSet;
+}
+
+void FilterCriteria::unsetFavorite() {
+    favoriteIsSet = false;
+}
+
+
+
+
 void FilterCriteria::duplicate(FilterCriteria &newFilter) {
+    if (favoriteIsSet)
+        newFilter.setFavorite(favoriteLid);
+
     if (attributeIsSet)
         newFilter.setAttribute(*attribute);
 
@@ -260,6 +288,7 @@ void FilterCriteria::duplicate(FilterCriteria &newFilter) {
     if (attributeIsSet)
         newFilter.setAttribute(*attribute);
 
+    newFilter.resetFavorite = resetFavorite;
     newFilter.resetNotebook = resetNotebook;
     newFilter.resetTags = resetTags;
     newFilter.resetSavedSearch = resetSavedSearch;

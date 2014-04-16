@@ -49,6 +49,9 @@ private:
     QString searchString;
     bool searchStringIsSet;
 
+    qint32 favoriteLid;
+    bool favoriteIsSet;
+
     bool deletedOnly;
     bool deletedOnlyIsSet;
 
@@ -109,6 +112,12 @@ public:
     bool isSearchStringSet();
     void unsetSearchString();
     bool resetSearchString;
+
+    qint32 getFavorite();
+    void setFavorite(qint32 lid);
+    bool isFavoriteSet();
+    void unsetFavorite();
+    bool resetFavorite;
 
     void duplicate(FilterCriteria &criteria);
 

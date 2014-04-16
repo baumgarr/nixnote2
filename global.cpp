@@ -41,6 +41,7 @@ Global::Global()
     criteria->resetTags = true;
     criteria->resetSavedSearch = true;
     criteria->resetAttribute = true;
+    criteria->resetFavorite = true;
     criteria->resetDeletedOnly = true;
     criteria->setDeletedOnly(false);
     criteria->resetLid = true;

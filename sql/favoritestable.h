@@ -18,39 +18,43 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#include "externalbrowse.h"
-#include <QGridLayout>
-#include <QLayout>
-#include "global.h"
 
-extern Global global;
+#ifndef FAVORITESTABLE_H
+#define FAVORITESTABLE_H
 
-ExternalBrowse::ExternalBrowse(qint32 lid, QWidget *parent) :
-    QMdiSubWindow(parent)
+#include <QObject>
+#include "sql/favoritesrecord.h"
+#include <QSqlDatabase>
+#include <QPair>
+
+#define FAVORITES_TYPE      200
+#define FAVORITES_TARGET    201
+#define FAVORITES_ORDER     202
+#define FAVORITES_PARENT    203
+
+
+
+class FavoritesTable : public QObject
 {
-    setAttribute(Qt::WA_QuitOnClose, false);
-    this->setWindowTitle(tr("NixNote"));
-    setWindowIcon(QIcon(global.getWindowIcon()));
+    Q_OBJECT
+private:
+    QSqlDatabase *db;
 
-    browser = new NBrowserWindow(this);
-    setWidget(browser);
+public:
+    explicit FavoritesTable(QSqlDatabase *db, QObject *parent = 0);
+    void getAll(QList<qint32> &lids);
+    bool get(FavoritesRecord &record, qint32 lid);
+    void expunge(qint32 lid);
+    void setOrder(QList< QPair< qint32, qint32 > > order);
+    qint32 add(const FavoritesRecord &record);
+    qint32 insert(const FavoritesRecord &record);
+    qint32 getLidByTarget(const QVariant &target);
+    bool childrenFound(qint32 lid);
 
-    browser->setContent(lid);
-}
+signals:
 
+public slots:
 
-// We don't really close the window, we just hide it.  This
-// solves problems later on if the user wants to re-open the same
-// note in an external window.
-void ExternalBrowse::closeEvent(QCloseEvent *closeEvent) {
-    if (this->browser->editor->isDirty)
-        this->browser->saveNoteContent();
-    this->setVisible(false);
-    closeEvent->ignore();
-}
+};
 
-
-
-void ExternalBrowse::setTitle(QString text) {
-    this->setWindowTitle(tr("NixNote - ") +text);
-}
+#endif // FAVORITESTABLE_H

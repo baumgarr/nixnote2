@@ -41,6 +41,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "threads/indexrunner.h"
 #include "gui/widgetpanel.h"
 #include "gui/nnotebookview.h"
+#include "gui/favoritesview.h"
 #include "gui/nmainmenubar.h"
 #include "gui/traymenu.h"
 #include "gui/nattributetree.h"
@@ -87,6 +88,7 @@ private:
     NTableView *noteTableView;
     NSearchView *searchTreeView;
     NNotebookView *notebookTreeView;
+    FavoritesView *favoritesTreeView;
     NTrashTree *trashTree;
     NTagView *tagTreeView;
     NTabWidget *tabWindow;
@@ -147,6 +149,7 @@ private:
     void setupSearchTree();
     void setupTagTree();
     void setupAttributeTree();
+    void setupFavoritesTree();
     void setupTrashTree();
     void setupSynchronizedNotebookTree();
     void setupTabWindow();

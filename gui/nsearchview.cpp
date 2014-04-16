@@ -286,6 +286,7 @@ void NSearchView::buildSelection() {
     }
 
     newFilter->resetAttribute = true;
+    newFilter->resetFavorite = true;
     newFilter->resetDeletedOnly = true;
     newFilter->resetNotebook =true;
     newFilter->resetTags = true;
@@ -397,6 +398,7 @@ void NSearchView::deleteRequested() {
     s.deleteSearch(lid);
     items[0]->setHidden(true);
     dataStore.remove(lid);
+    emit searchDeleted(lid);
 }
 
 void NSearchView::renameRequested() {
@@ -471,3 +473,28 @@ void NSearchView::drawBranches(QPainter *painter, const QRect &rect, const QMode
     return;
 }
 
+
+
+void NSearchView::mouseMoveEvent(QMouseEvent *event)
+{
+    if (currentItem() == NULL)
+        return;
+
+    if (!(event->buttons() & Qt::LeftButton))
+        return;
+
+    QDrag *drag = new QDrag(this);
+    QMimeData *mimeData = new QMimeData;
+
+    NSearchViewItem *current = (NSearchViewItem*)currentItem();
+    QByteArray mime = current->data(NAME_POSITION, Qt::UserRole).toByteArray();
+
+    QString userdata = current->data(NAME_POSITION, Qt::UserRole).toString();
+    if (userdata.startsWith("root", Qt::CaseInsensitive))
+        return;
+
+    mimeData->setData("application/x-nixnote-search", mime);
+    drag->setMimeData(mimeData);
+
+    drag->exec(Qt::MoveAction);
+}

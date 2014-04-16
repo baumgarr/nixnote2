@@ -144,6 +144,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     this->openNote(false);
 
     QLOG_TRACE() << "Connecting signals";
+    connect(favoritesTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(tagTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(notebookTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(searchTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
@@ -322,6 +323,7 @@ void NixNote::setupGui() {
     leftPanel = new WidgetPanel();
 
     this->setupNoteList();
+    this->setupFavoritesTree();
     this->setupSynchronizedNotebookTree();
     this->setupTagTree();
     this->setupSearchTree();
@@ -329,6 +331,15 @@ void NixNote::setupGui() {
     this->setupTrashTree();
     this->setupTabWindow();
     leftPanel->vboxLayout->addStretch();
+
+    connect(tagTreeView, SIGNAL(tagDeleted(qint32,QString)), favoritesTreeView, SLOT(itemExpunged(qint32, QString)));
+    connect(searchTreeView, SIGNAL(searchDeleted(qint32)), favoritesTreeView, SLOT(itemExpunged(qint32)));
+    connect(notebookTreeView, SIGNAL(notebookDeleted(qint32,QString)), favoritesTreeView, SLOT(itemExpunged(qint32, QString)));
+    connect(tagTreeView, SIGNAL(tagRenamed(qint32,QString,QString)), favoritesTreeView, SLOT(itemRenamed(qint32, QString, QString)));
+    connect(searchTreeView, SIGNAL(searchDeleted(qint32)), favoritesTreeView, SLOT(itemExpunged(qint32)));
+    connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), favoritesTreeView, SLOT(itemRenamed(qint32, QString, QString)));
+    connect(notebookTreeView, SIGNAL(stackDeleted(QString)), favoritesTreeView, SLOT(stackExpunged(QString)));
+    connect(notebookTreeView, SIGNAL(stackRenamed(QString,QString)), favoritesTreeView, SLOT(stackRenamed(QString, QString)));
 
     QLOG_TRACE() << "Setting up left panel";
     leftPanel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -765,6 +776,32 @@ void NixNote::setupTrashTree() {
     leftPanel->addWidget(trashTree);
     QLOG_TRACE() << "Exiting NixNote.setupTrashTree()";
     connect(&counterRunner, SIGNAL(trashTotals(qint32)), trashTree, SLOT(updateTotals(qint32)));
+}
+
+
+
+//*****************************************************************************
+//* This function sets up the user's synchronized notebook tree
+//*****************************************************************************
+void NixNote::setupFavoritesTree() {
+    QLOG_TRACE() << "Starting NixNote.setupFavoritesdNotebookTree()";
+    favoritesTreeView = new FavoritesView(leftPanel);
+    leftPanel->addWidget(favoritesTreeView);
+
+//    connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString,QString, bool, bool)),notebookTreeView, SLOT(notebookUpdated(qint32, QString, QString, bool, bool)));
+    connect(&syncRunner, SIGNAL(notebookExpunged(qint32)), favoritesTreeView, SLOT(itemExpunged(qint32)));
+    connect(&syncRunner, SIGNAL(tagExpunged(qint32)), favoritesTreeView, SLOT(itemExpunged(qint32)));
+//    connect(&syncRunner, SIGNAL(noteUpdated(qint32)), notebookTreeView, SLOT(itemExpunged(qint32)));
+    connect(&counterRunner, SIGNAL(notebookTotals(qint32,qint32, qint32)), favoritesTreeView, SLOT(updateTotals(qint32,qint32, qint32)));
+    connect(&counterRunner, SIGNAL(tagTotals(qint32,qint32,qint32)), favoritesTreeView, SLOT(updateTotals(qint32,qint32, qint32)));
+    connect(favoritesTreeView, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
+
+    QLabel *lbl = new QLabel();
+    lbl->setTextFormat(Qt::RichText);
+    lbl->setText("<hr>");
+    leftPanel->addWidget(lbl);
+
+    QLOG_TRACE() << "Exiting NixNote.setupFavoritesTree()";
 }
 
 
@@ -1237,6 +1274,7 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
 
     noteTableView->refreshData();
 
+    favoritesTreeView->updateSelection();
     tagTreeView->updateSelection();
     notebookTreeView->updateSelection();
     searchTreeView->updateSelection();
@@ -1541,6 +1579,7 @@ void NixNote::resetView() {
     global.filterCriteria[global.filterPosition]->duplicate(*criteria);
     criteria->resetAttribute = true;
     criteria->resetDeletedOnly =true;
+    criteria->resetFavorite = true;
     criteria->resetNotebook = true;
     criteria->resetSavedSearch = true;
     criteria->resetSearchString = true;

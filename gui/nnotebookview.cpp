@@ -183,8 +183,8 @@ void NNotebookView::calculateHeight()
     }
 
     if(h != 0)   {
-        setMinimumHeight(h+10);
-        setMaximumHeight(h+10);
+        setMinimumHeight(h);
+        setMaximumHeight(h);
     }
     this->setMaximumWidth(this->sizeHint().width());
 }
@@ -455,6 +455,7 @@ void NNotebookView::buildSelection() {
         notebookLid = selectedItems[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     newFilter->resetAttribute = true;
     newFilter->resetDeletedOnly = true;
+    newFilter->resetFavorite = true;
     newFilter->resetNotebook = true;
     newFilter->resetSavedSearch = true;
     newFilter->resetTags = true;
@@ -671,24 +672,26 @@ void NNotebookView::editComplete() {
         NotebookTable table(global.db);
         Notebook notebook;
         table.get(notebook, lid);
-        QString oldName = notebook.name;
+        QString oldName = "";
+        if (notebook.name.isSet())
+            oldName = notebook.name;
 
         // Check that this notebook doesn't already exist
         // if it exists, we go back to the original name
         qint32 check = table.findByName(text);
         if (check != 0) {
             NNotebookViewItem *item = dataStore[lid];
-            item->setData(NAME_POSITION, Qt::DisplayRole, notebook.name.value());
+            item->setData(NAME_POSITION, Qt::DisplayRole, oldName);
         } else {
             notebook.name = text;
             table.update(notebook, true);
+            emit notebookRenamed(lid, oldName, text);
         }
 
         //delete editor;
         this->sortItems(NAME_POSITION, Qt::AscendingOrder);
         resetSize();
         this->sortByColumn(NAME_POSITION);
-        emit(notebookRenamed(lid, oldName, text));
     } else {
         // This is if we are renaming a stack
         QString oldName = editor->stackName;
@@ -872,8 +875,10 @@ void NNotebookView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
         root->subTotal = 0;
         QHash<QString, NNotebookViewItem*>::iterator s;
         for (s=stackStore.begin(); s!=stackStore.end(); ++s) {
-            s.value()->total = 0;
-            s.value()->subTotal = 0;
+            if (s.value() != NULL) {
+                s.value()->total = 0;
+                s.value()->subTotal = 0;
+            }
         }
 
         QHash<qint32, NNotebookViewItem*>::iterator i;
@@ -1023,3 +1028,30 @@ void NNotebookView::drawBranches(QPainter *painter, const QRect &rect, const QMo
 
 //    QTreeView::drawBranches(painter, rect, index);
 }
+
+
+void NNotebookView::mouseMoveEvent(QMouseEvent *event)
+{
+    if (currentItem() == NULL)
+        return;
+
+    if (!(event->buttons() & Qt::LeftButton))
+        return;
+
+    QDrag *drag = new QDrag(this);
+    QMimeData *mimeData = new QMimeData;
+
+    NNotebookViewItem *current = (NNotebookViewItem*)currentItem();
+    QString mime = QString::number(current->type) +QString("/") +QString::number(current->lid) +QString("/") +
+           current->data(NAME_POSITION, Qt::DisplayRole).toString();
+
+    QString userdata = current->data(NAME_POSITION, Qt::UserRole).toString();
+    if (userdata.startsWith("root", Qt::CaseInsensitive))
+        return;
+
+    mimeData->setData("application/x-nixnote-notebook", mime.toUtf8());
+    drag->setMimeData(mimeData);
+
+    drag->exec(Qt::MoveAction);
+}
+

@@ -410,6 +410,7 @@ void NTagView::buildSelection() {
     newFilter->resetAttribute = true;
     newFilter->resetDeletedOnly = true;
     newFilter->resetSavedSearch = true;
+    newFilter->resetFavorite = true;
     newFilter->resetTags = true;
 
     emit updateSelectionRequested();
@@ -446,7 +447,7 @@ void NTagView::addNewTag(qint32 lid) {
     TagTable tagTable(global.db);
     Tag newTag;
     tagTable.get(newTag, lid);
-    if (newTag.guid.isSet()) {
+    if (newTag.name.isSet()) {
         tagUpdated(lid, newTag.name, "", 0);
     }
 }
@@ -519,7 +520,7 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
         if (parent == NULL)
             return false;
 
-//        // Get the lid we are dropping.
+        // Get the lid we are dropping.
         QByteArray d = data->data("application/x-nixnote-tag");
         qint32 lid = d.toInt();
         if (lid == 0)
@@ -596,6 +597,10 @@ void NTagView::mouseMoveEvent(QMouseEvent *event)
 
     QDrag *drag = new QDrag(this);
     QMimeData *mimeData = new QMimeData;
+
+    qint32 lid = currentItem()->data(NAME_POSITION, Qt::UserRole).toInt();
+    if (lid == 0)
+        return;
 
     mimeData->setData("application/x-nixnote-tag", currentItem()->data(NAME_POSITION, Qt::UserRole).toByteArray());
     drag->setMimeData(mimeData);
@@ -776,7 +781,9 @@ void NTagView::editComplete() {
     TagTable table(global.db);
     Tag tag;
     table.get(tag, lid);
-    QString oldName = tag.name;
+    QString oldName = "";
+    if (tag.name.isSet())
+        oldName = tag.name;
 
     // Check that this tag doesn't already exist
     // if it exists, we go back to the original name

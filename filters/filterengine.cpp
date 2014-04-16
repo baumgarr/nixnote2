@@ -8,6 +8,8 @@
 #include "sql/notebooktable.h"
 #include "sql/resourcetable.h"
 #include "sql/nsqlquery.h"
+#include "sql/favoritesrecord.h"
+#include "sql/favoritestable.h"
 
 #include <QtSql>
 
@@ -33,6 +35,8 @@ void FilterEngine::filter() {
 
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
 
+    QLOG_DEBUG() << "Filtering favorite";
+    filterFavorite(criteria);
     QLOG_DEBUG() << "Filtering notebooks";
     filterNotebook(criteria);
     QLOG_DEBUG() << "Filtering tags";
@@ -364,6 +368,57 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
 
 
 
+void FilterEngine::filterFavorite(FilterCriteria *criteria) {
+    if (!criteria->isSet() || !criteria->isFavoriteSet())
+        return;
+
+    FavoritesTable ftable(global.db);
+    FavoritesRecord rec;
+    if (!ftable.get(rec, criteria->getFavorite()))
+        return;
+
+    if (rec.type == FavoritesRecord::ConflictNotebook ||
+        rec.type == FavoritesRecord::LocalNotebook ||
+        rec.type == FavoritesRecord::LinkedNotebook ||
+        rec.type == FavoritesRecord::SharedNotebook ||
+        rec.type == FavoritesRecord::SynchronizedNotebook) {
+        qint32 notebookLid = rec.target.toInt();
+        NotebookTable ntable(global.db);
+        QString guid="";
+        if (ntable.getGuid(guid, notebookLid)) {
+            filterIndividualNotebook(guid);
+        }
+        return;
+    }
+
+    if (rec.type == FavoritesRecord::NotebookStack ||
+        rec.type == FavoritesRecord::LinkedStack) {
+        QString stackname = rec.target.toString();
+        filterStack(stackname);
+        return;
+    }
+
+    if (rec.type == FavoritesRecord::Tag) {
+        NoteTable noteTable(global.db);
+        TagTable tagTable(global.db);
+        NSqlQuery sql(*global.db);
+        sql.exec("create temporary table if not exists goodLids (lid integer)");
+        sql.exec("delete from goodLids");
+        QList<qint32> notes;
+        QString tagGuid="";
+        tagTable.getGuid(tagGuid, rec.target.toInt());
+        noteTable.getNotesWithTag(notes, tagGuid);
+        sql.prepare("insert into goodLids (lid) values (:note)");
+        for (qint32 i=0; i<notes.size(); i++) {
+            sql.bindValue(":note", notes[i]);
+            sql.exec();
+        }
+        sql.exec("delete from filter where lid not in (select lid from goodLids)" );
+
+    }
+
+}
+
 void FilterEngine::filterNotebook(FilterCriteria *criteria) {
     if (!criteria->isSet() || !criteria->isNotebookSet())
         return;
@@ -381,6 +436,9 @@ void FilterEngine::filterNotebook(FilterCriteria *criteria) {
         filterIndividualNotebook(notebook);
     }
 }
+
+
+
 
 // If they only chose one notebook, then delete everything else
 void FilterEngine::filterIndividualNotebook(QString &notebook) {

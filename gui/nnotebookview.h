@@ -99,6 +99,7 @@ public slots:
     void dropEvent(QDropEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
 };
 
 #endif // NNOTEBOOKVIEW_H

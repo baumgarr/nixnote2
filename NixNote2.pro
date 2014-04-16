@@ -187,7 +187,12 @@ SOURCES += main.cpp\
     qevercloud/generated/constants.cpp \
     qevercloud/generated/services.cpp \
     qevercloud/generated/types.cpp \
-    gui/traymenu.cpp
+    gui/traymenu.cpp \
+    gui/favoritesview.cpp \
+    gui/favoritesviewdelegate.cpp \
+    gui/favoritesviewitem.cpp \
+    sql/favoritestable.cpp \
+    sql/favoritesrecord.cpp
 
 
 
@@ -348,7 +353,12 @@ HEADERS  += nixnote.h \
     qevercoud/generated/types_impl.h \
     qevercloud/include/QEverCloud.h \
     qevercloud/include/QEverCloudOAuth.h \
-    gui/traymenu.h
+    gui/traymenu.h \
+    gui/favoritesview.h \
+    gui/favoritesviewdelegate.h \
+    gui/favoritesviewitem.h \
+    sql/favoritestable.h \
+    sql/favoritesrecord.h
 
 
 #INCLUDEPATH += /usr/local/include/thrift \

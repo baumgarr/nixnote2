@@ -27,6 +27,7 @@ class FilterEngine : public QObject
 {
     Q_OBJECT
 private:
+    void filterFavorite(FilterCriteria *criteria);
     void filterNotebook(FilterCriteria *criteria);
     void filterIndividualNotebook(QString &guid);
     void filterStack(QString& stack);

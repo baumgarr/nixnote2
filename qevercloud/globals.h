@@ -1,9 +1,9 @@
 #ifndef QEVERCLOUD_GLOBALS_H
 #define QEVERCLOUD_GLOBALS_H
-
 #include <QDateTime>
 #include <QNetworkAccessManager>
 #include "exceptions.h"
+
 
 /**
  * All the library lives in this namespace.
@@ -125,8 +125,10 @@ public:
      * Note: a reference is returned, not a copy.
      */
     operator T&() {
-        if(!isSet_)
+        if(!isSet_) {
+
             throw EverCloudException("qevercloud::Optional: nonexistent value access2");
+        }
         return value_;
     }
 

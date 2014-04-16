@@ -18,39 +18,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#include "externalbrowse.h"
-#include <QGridLayout>
-#include <QLayout>
-#include "global.h"
 
-extern Global global;
+#include "favoritesrecord.h"
 
-ExternalBrowse::ExternalBrowse(qint32 lid, QWidget *parent) :
-    QMdiSubWindow(parent)
+FavoritesRecord::FavoritesRecord(QObject *parent) :
+    QObject(parent)
 {
-    setAttribute(Qt::WA_QuitOnClose, false);
-    this->setWindowTitle(tr("NixNote"));
-    setWindowIcon(QIcon(global.getWindowIcon()));
-
-    browser = new NBrowserWindow(this);
-    setWidget(browser);
-
-    browser->setContent(lid);
+    lid = 0;
+    displayName = "";
+    order = 0;
+    parent=0;
 }
 
-
-// We don't really close the window, we just hide it.  This
-// solves problems later on if the user wants to re-open the same
-// note in an external window.
-void ExternalBrowse::closeEvent(QCloseEvent *closeEvent) {
-    if (this->browser->editor->isDirty)
-        this->browser->saveNoteContent();
-    this->setVisible(false);
-    closeEvent->ignore();
-}
-
-
-
-void ExternalBrowse::setTitle(QString text) {
-    this->setWindowTitle(tr("NixNote - ") +text);
-}
