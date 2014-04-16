@@ -12,87 +12,87 @@
 <context>
     <name>AccountDialog</name>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="43"/>
+        <location filename="../dialog/accountdialog.cpp" line="37"/>
         <source>Account Information</source>
         <translation type="unfinished">アカウント情報</translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="47"/>
+        <location filename="../dialog/accountdialog.cpp" line="41"/>
         <source>Free</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="53"/>
+        <location filename="../dialog/accountdialog.cpp" line="47"/>
         <source>Premium</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="55"/>
+        <location filename="../dialog/accountdialog.cpp" line="49"/>
         <source>Manager</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="57"/>
+        <location filename="../dialog/accountdialog.cpp" line="51"/>
         <source>Support</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="59"/>
+        <location filename="../dialog/accountdialog.cpp" line="53"/>
         <source>Admin</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="77"/>
+        <location filename="../dialog/accountdialog.cpp" line="74"/>
         <source> Bytes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="81"/>
+        <location filename="../dialog/accountdialog.cpp" line="78"/>
         <source> KB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="85"/>
+        <location filename="../dialog/accountdialog.cpp" line="82"/>
         <source> MB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="92"/>
+        <location filename="../dialog/accountdialog.cpp" line="89"/>
         <source>Account:</source>
         <translation type="unfinished">アカウント:</translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="95"/>
+        <location filename="../dialog/accountdialog.cpp" line="92"/>
         <source>User Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="97"/>
+        <location filename="../dialog/accountdialog.cpp" line="94"/>
         <source>Account Type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="99"/>
+        <location filename="../dialog/accountdialog.cpp" line="96"/>
         <source>Limit:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="101"/>
+        <location filename="../dialog/accountdialog.cpp" line="98"/>
         <source>Uploaded In This Period:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="105"/>
+        <location filename="../dialog/accountdialog.cpp" line="102"/>
         <source>Less than 1MB</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="106"/>
+        <location filename="../dialog/accountdialog.cpp" line="103"/>
         <source>Current Cycle Ends:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/accountdialog.cpp" line="114"/>
+        <location filename="../dialog/accountdialog.cpp" line="111"/>
         <source>OK</source>
         <translation type="unfinished">OK</translation>
     </message>
@@ -222,32 +222,47 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="59"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="41"/>
+        <source>Show notebook and tag totals</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="60"/>
         <source>Startup Behavior</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="61"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="62"/>
         <source>Restore Selection Criteria</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="62"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="63"/>
         <source>Select Default Notebook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="63"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="64"/>
         <source>View All Notebooks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="75"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="71"/>
+        <source>Minimize to tray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="72"/>
+        <source>Close to tray</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="85"/>
         <source>Default Editor Font</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="81"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="91"/>
         <source>Window Icon
 (may require restart on
 some window managers)</source>
@@ -316,331 +331,38 @@ some window managers)</source>
 <context>
     <name>CommunicationManager</name>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="116"/>
-        <source>Transport error getting sync state: </source>
+        <location filename="../communication/communicationmanager.cpp" line="593"/>
+        <source>Linked notebook notestore URL missing.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="129"/>
-        <source>Std Error getting sync state: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="142"/>
-        <source>Unknown error getting sync state</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="252"/>
-        <source>EDAMUserException </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="271"/>
-        <location filename="../communication/communicationmanager.cpp" line="284"/>
-        <location filename="../communication/communicationmanager.cpp" line="864"/>
-        <location filename="../communication/communicationmanager.cpp" line="877"/>
-        <source>Error getting sync chunk: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="297"/>
-        <location filename="../communication/communicationmanager.cpp" line="890"/>
-        <source>Unknown error getting sync chunk</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="415"/>
-        <source>Transport error getting linked notebook state: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="429"/>
-        <source>Error getting linked notebook state: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="442"/>
-        <source>Unknown error getting linked notebook state</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="557"/>
-        <source>Shared notebook EDAMUserException </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="580"/>
-        <source>Shared notebook </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="580"/>
-        <source> not found.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="586"/>
-        <source>Shared notebook TException </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="995"/>
-        <location filename="../communication/communicationmanager.cpp" line="1004"/>
-        <source>Error uploading saved search </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1017"/>
-        <source>Transport error uploading saved search &quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1030"/>
-        <source>Std error uploading saved search &quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1043"/>
-        <source>Unknown error uploading saved search &quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1081"/>
-        <source>Transport error deleting saved search: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1094"/>
-        <source>Error deleting saved search: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1107"/>
-        <source>Unknown error getting expunging saved search</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1129"/>
-        <location filename="../communication/communicationmanager.cpp" line="1138"/>
-        <source>Error uploading tag </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1151"/>
-        <source>Transport error uploading tag: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1164"/>
-        <source>Error uploading tag: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1177"/>
-        <source>Unknown error uploading tag</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1214"/>
-        <location filename="../communication/communicationmanager.cpp" line="1227"/>
-        <source>Error expunging tag: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1240"/>
-        <source>Unknown error expunging tag</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1261"/>
-        <location filename="../communication/communicationmanager.cpp" line="1270"/>
-        <source>Error uploading notebook </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1283"/>
-        <source>Transport error uploading notebook: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1296"/>
-        <source>Error uploading notebook: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1309"/>
-        <source>Unknown error uploading notebook</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1346"/>
-        <source>Transport error expunging notebook: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1359"/>
-        <source>Error expunging notebook: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1372"/>
-        <source>Unknown error expunging notebook</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1394"/>
-        <location filename="../communication/communicationmanager.cpp" line="1403"/>
-        <location filename="../communication/communicationmanager.cpp" line="1464"/>
-        <location filename="../communication/communicationmanager.cpp" line="1473"/>
-        <source>Error uploading note &quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1403"/>
-        <location filename="../communication/communicationmanager.cpp" line="1473"/>
-        <source>&quot;. Note not found</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1416"/>
-        <source>Transport error uploading note: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1429"/>
-        <source>Error uploading note: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1442"/>
-        <source>Unknown error uploading note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1487"/>
-        <source>Transport error uploading linked note: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1501"/>
-        <source>Error uploading linked note: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1514"/>
-        <source>Unknown uploading linked note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1530"/>
-        <location filename="../communication/communicationmanager.cpp" line="1539"/>
-        <location filename="../communication/communicationmanager.cpp" line="1598"/>
-        <location filename="../communication/communicationmanager.cpp" line="1607"/>
-        <source>Error deleting note &quot;</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1553"/>
-        <location filename="../communication/communicationmanager.cpp" line="1621"/>
-        <source>Transport error deleting note: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1566"/>
-        <location filename="../communication/communicationmanager.cpp" line="1634"/>
-        <source>Error deleting note: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1579"/>
-        <location filename="../communication/communicationmanager.cpp" line="1647"/>
-        <source>Unknown error deleting note</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1754"/>
-        <source>Transport error getting note versions: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1767"/>
-        <source>Error getting note versions: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1780"/>
-        <source>Unknown error getting note versions</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1815"/>
-        <source>Transport error getting note version: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1828"/>
-        <source>Error getting note version: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1841"/>
-        <source>Unknown error getting note version</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1873"/>
-        <source>Transport error getting notebook list: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1886"/>
-        <source>Error getting notebook list: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1899"/>
-        <source>Unknown error getting notebook list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1934"/>
-        <source>Transport error getting tag list: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1947"/>
-        <source>Error getting tag list: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1960"/>
-        <source>Unknown error getting tag list</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../communication/communicationmanager.cpp" line="1986"/>
-        <location filename="../communication/communicationmanager.cpp" line="1988"/>
+        <location filename="../communication/communicationmanager.cpp" line="1035"/>
+        <location filename="../communication/communicationmanager.cpp" line="1037"/>
         <source>API rate limit exceeded.  Please try again in </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1986"/>
+        <location filename="../communication/communicationmanager.cpp" line="1035"/>
         <source> minutes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1988"/>
+        <location filename="../communication/communicationmanager.cpp" line="1037"/>
         <source> minute.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1991"/>
+        <location filename="../communication/communicationmanager.cpp" line="1041"/>
         <source>EDAMSystemException </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="2012"/>
+        <location filename="../communication/communicationmanager.cpp" line="1043"/>
+        <source>EDAMSystemException: Unknown error</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../communication/communicationmanager.cpp" line="1064"/>
         <source>EDAMNotFoundException: Note not found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1056,27 +778,27 @@ some window managers)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="348"/>
+        <location filename="../xml/exportdata.cpp" line="346"/>
         <source>Searches</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="390"/>
+        <location filename="../xml/exportdata.cpp" line="388"/>
         <source>Linked Notebooks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="430"/>
+        <location filename="../xml/exportdata.cpp" line="428"/>
         <source>Shared Notebooks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="482"/>
+        <location filename="../xml/exportdata.cpp" line="480"/>
         <source>Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="705"/>
+        <location filename="../xml/exportdata.cpp" line="708"/>
         <source>Backup Canceled</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1084,13 +806,36 @@ some window managers)</source>
 <context>
     <name>ExternalBrowse</name>
     <message>
-        <location filename="../gui/externalbrowse.cpp" line="12"/>
+        <location filename="../gui/externalbrowse.cpp" line="32"/>
         <source>NixNote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/externalbrowse.cpp" line="35"/>
+        <location filename="../gui/externalbrowse.cpp" line="55"/>
         <source>NixNote - </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>FavoritesView</name>
+    <message>
+        <location filename="../gui/favoritesview.cpp" line="68"/>
+        <source>Favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/favoritesview.cpp" line="90"/>
+        <source>Remove from favorites</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/favoritesview.cpp" line="559"/>
+        <source>Are you sure you want to remove this favorite?</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/favoritesview.cpp" line="560"/>
+        <source>Verify Delete</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1164,33 +909,33 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="103"/>
+        <location filename="../xml/importdata.cpp" line="101"/>
         <source>Scaning File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="104"/>
-        <location filename="../xml/importdata.cpp" line="114"/>
+        <location filename="../xml/importdata.cpp" line="102"/>
+        <location filename="../xml/importdata.cpp" line="112"/>
         <source> notes found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="123"/>
+        <location filename="../xml/importdata.cpp" line="121"/>
         <source>Importing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="124"/>
+        <location filename="../xml/importdata.cpp" line="122"/>
         <source>Importing Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="126"/>
+        <location filename="../xml/importdata.cpp" line="124"/>
         <source>Restore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="127"/>
+        <location filename="../xml/importdata.cpp" line="125"/>
         <source>Restoring Notes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1203,19 +948,19 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/importenex.cpp" line="85"/>
+        <location filename="../xml/importenex.cpp" line="83"/>
         <source>Scaning File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/importenex.cpp" line="86"/>
-        <location filename="../xml/importenex.cpp" line="96"/>
+        <location filename="../xml/importenex.cpp" line="84"/>
+        <location filename="../xml/importenex.cpp" line="94"/>
         <source> notes found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../xml/importenex.cpp" line="103"/>
-        <location filename="../xml/importenex.cpp" line="104"/>
+        <location filename="../xml/importenex.cpp" line="101"/>
+        <location filename="../xml/importenex.cpp" line="102"/>
         <source>Importing Notes</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1681,45 +1426,45 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>NBrowserWindow</name>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="325"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2314"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="330"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2334"/>
         <source>Today</source>
         <translation type="unfinished">今日</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="327"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2316"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="332"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2336"/>
         <source>Tomorrow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="329"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2318"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="334"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2338"/>
         <source>Yesterday</source>
         <translation type="unfinished">昨日</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="570"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="584"/>
         <source>Unable to Save</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="570"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="584"/>
         <source>Unable to save this note.  Either tidy isn&apos;t installed or the note is too complex to save.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1365"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1379"/>
         <source>Insert Link</source>
         <translation type="unfinished">リンクの挿入</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1576"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1595"/>
         <source>Unable Open</source>
         <translation type="unfinished">開くのに失敗</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1576"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1595"/>
         <source>This is an ink note.
 Ink notes are not supported since Evernote has not
  published any specifications on them
@@ -1728,59 +1473,59 @@ and I&apos;m too lazy to figure them out by myself.</source>
 インクノートは、Evernoteが仕様を公開しないうちはサポートされません。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1739"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1758"/>
         <source>Edit Link</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1800"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1823"/>
         <source>Unable to create LaTeX image</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1801"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1824"/>
         <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2058"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2061"/>
         <source>Error loading document for printing.
 Printing aborted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2059"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2062"/>
         <source>Print Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2358"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2378"/>
         <source>Decryption Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2359"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2379"/>
         <source>Unknown encryption method.
 Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2462"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2482"/>
         <source>Error</source>
         <translation type="unfinished">エラー</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2463"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2483"/>
         <source>Error Encrypting String.  Please verify you have Java installed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2595"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2615"/>
         <source>Spell Check Complete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2595"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2615"/>
         <source>Spell Check Complete.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2153,37 +1898,47 @@ Unable to decrypt.</source>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="482"/>
-        <source>Evernote Support</source>
+        <source>Evernote Account Page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="483"/>
+        <source>Go to your Evernote account page.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="488"/>
+        <source>Evernote Support</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="489"/>
         <source>Go to Evernote&apos;s support page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="485"/>
+        <location filename="../gui/nmainmenubar.cpp" line="491"/>
         <source>Yinxiang Biji Support</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="486"/>
+        <location filename="../gui/nmainmenubar.cpp" line="492"/>
         <source>Go to Yinxiang Biji&apos;s support page</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="492"/>
+        <location filename="../gui/nmainmenubar.cpp" line="498"/>
         <source>Evernote Trunk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="493"/>
+        <location filename="../gui/nmainmenubar.cpp" line="499"/>
         <source>Go to Evernote Trunk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="500"/>
-        <location filename="../gui/nmainmenubar.cpp" line="501"/>
+        <location filename="../gui/nmainmenubar.cpp" line="506"/>
+        <location filename="../gui/nmainmenubar.cpp" line="507"/>
         <source>About</source>
         <translation type="unfinished">情報</translation>
     </message>
@@ -2191,52 +1946,52 @@ Unable to decrypt.</source>
 <context>
     <name>NNotebookView</name>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="76"/>
+        <location filename="../gui/nnotebookview.cpp" line="74"/>
         <source>Notebooks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="93"/>
+        <location filename="../gui/nnotebookview.cpp" line="91"/>
         <source>Create New Notebook</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="102"/>
+        <location filename="../gui/nnotebookview.cpp" line="100"/>
         <source>Delete</source>
         <translation type="unfinished">削除</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="110"/>
+        <location filename="../gui/nnotebookview.cpp" line="108"/>
         <source>Add to stack</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="123"/>
+        <location filename="../gui/nnotebookview.cpp" line="121"/>
         <source>New stack</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="126"/>
+        <location filename="../gui/nnotebookview.cpp" line="124"/>
         <source>Remove from stack</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="130"/>
+        <location filename="../gui/nnotebookview.cpp" line="128"/>
         <source>Rename</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="138"/>
+        <location filename="../gui/nnotebookview.cpp" line="136"/>
         <source>Properties</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="631"/>
+        <location filename="../gui/nnotebookview.cpp" line="630"/>
         <source>Are you sure you want to delete this notebook?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="632"/>
+        <location filename="../gui/nnotebookview.cpp" line="631"/>
         <source>Verify Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2279,12 +2034,12 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="388"/>
+        <location filename="../gui/nsearchview.cpp" line="389"/>
         <source>Are you sure you want to delete this saved search?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="389"/>
+        <location filename="../gui/nsearchview.cpp" line="390"/>
         <source>Verify Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2292,8 +2047,13 @@ Unable to decrypt.</source>
 <context>
     <name>NTabWidget</name>
     <message>
-        <location filename="../gui/ntabwidget.cpp" line="185"/>
-        <location filename="../gui/ntabwidget.cpp" line="250"/>
+        <location filename="../gui/ntabwidget.cpp" line="183"/>
+        <source>Untitled Note</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntabwidget.cpp" line="188"/>
+        <location filename="../gui/ntabwidget.cpp" line="254"/>
         <source>NixNote - </source>
         <translation type="unfinished"></translation>
     </message>
@@ -2426,12 +2186,12 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="788"/>
+        <location filename="../gui/ntableview.cpp" line="790"/>
         <source>Unsynchronized Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="789"/>
+        <location filename="../gui/ntableview.cpp" line="791"/>
         <source>This note has never been synchronized.
 Using this in a note link can cause problems unless you synchronize it first.</source>
         <translation type="unfinished"></translation>
@@ -2589,27 +2349,27 @@ Using this in a note link can cause problems unless you synchronize it first.</s
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="356"/>
+        <location filename="../gui/ntagview.cpp" line="353"/>
         <source>-&lt;Missing Tag&gt;-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="690"/>
+        <location filename="../gui/ntagview.cpp" line="691"/>
         <source>Are you sure you want to merge these tags?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="691"/>
+        <location filename="../gui/ntagview.cpp" line="692"/>
         <source>Verify Merge</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="737"/>
+        <location filename="../gui/ntagview.cpp" line="738"/>
         <source>Are you sure you want to delete this tag?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="738"/>
+        <location filename="../gui/ntagview.cpp" line="739"/>
         <source>Verify Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2617,13 +2377,13 @@ Using this in a note link can cause problems unless you synchronize it first.</s
 <context>
     <name>NTitleEditor</name>
     <message>
-        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="117"/>
-        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="132"/>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="121"/>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="135"/>
         <source>Untitled note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="129"/>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="132"/>
         <source>untitled note</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2646,12 +2406,12 @@ Using this in a note link can cause problems unless you synchronize it first.</s
         <translation type="unfinished">ゴミ箱を空にする</translation>
     </message>
     <message>
-        <location filename="../gui/ntrashtree.cpp" line="239"/>
+        <location filename="../gui/ntrashtree.cpp" line="240"/>
         <source>Verify Delete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntrashtree.cpp" line="240"/>
+        <location filename="../gui/ntrashtree.cpp" line="241"/>
         <source>Are you sure you want to permanently delete these notes?</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2844,8 +2604,8 @@ Using this in a note link can cause problems unless you synchronize it first.</s
         <translation type="unfinished">添付の保存</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="449"/>
-        <location filename="../gui/nwebview.cpp" line="470"/>
+        <location filename="../gui/nwebview.cpp" line="452"/>
+        <location filename="../gui/nwebview.cpp" line="482"/>
         <source>Save File</source>
         <translation type="unfinished">ファイルの保存</translation>
     </message>
@@ -2853,99 +2613,89 @@ Using this in a note link can cause problems unless you synchronize it first.</s
 <context>
     <name>NixNote</name>
     <message>
-        <location filename="../nixnote.cpp" line="192"/>
+        <location filename="../nixnote.cpp" line="197"/>
         <source>Tidy Not Found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="192"/>
+        <location filename="../nixnote.cpp" line="197"/>
         <source>Tidy is not found on this system.
 Until tidy is installed you cannot save any notes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="248"/>
+        <location filename="../nixnote.cpp" line="253"/>
         <source>ToolBar</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="258"/>
+        <location filename="../nixnote.cpp" line="263"/>
         <source>Back</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="259"/>
+        <location filename="../nixnote.cpp" line="264"/>
         <source>Next</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="269"/>
+        <location filename="../nixnote.cpp" line="274"/>
         <source>All Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="271"/>
+        <location filename="../nixnote.cpp" line="276"/>
         <source>Sync</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="274"/>
+        <location filename="../nixnote.cpp" line="279"/>
         <source>Print</source>
         <translation type="unfinished">印刷</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="275"/>
+        <location filename="../nixnote.cpp" line="284"/>
         <source>New Text Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="276"/>
+        <location filename="../nixnote.cpp" line="287"/>
         <source>New Webcam Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="277"/>
+        <location filename="../nixnote.cpp" line="299"/>
         <source>Delete</source>
         <translation type="unfinished">削除</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="280"/>
+        <location filename="../nixnote.cpp" line="302"/>
         <source>Trunk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="282"/>
+        <location filename="../nixnote.cpp" line="304"/>
         <source>Usage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="399"/>
-        <location filename="../nixnote.cpp" line="2153"/>
+        <location filename="../nixnote.cpp" line="449"/>
+        <location filename="../nixnote.cpp" line="2282"/>
         <source>Screen Capture</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="404"/>
+        <location filename="../nixnote.cpp" line="463"/>
         <source>Show/Hide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="405"/>
-        <source>Minimize to tray</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../nixnote.cpp" line="408"/>
-        <source>Close to tray</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../nixnote.cpp" line="418"/>
+        <location filename="../nixnote.cpp" line="470"/>
         <source>Close</source>
         <translation type="unfinished">閉じる</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1339"/>
+        <location filename="../nixnote.cpp" line="1439"/>
         <source>This is used to restore a database from backups.
 It is HIGHLY recommened that this only be used to populate
 an empty database.  Restoring into a database that
@@ -2959,200 +2709,222 @@ Are you sure you want to continue?</source>
 本当に継続しますか?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1342"/>
+        <location filename="../nixnote.cpp" line="1442"/>
         <source>Confirm Restore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1359"/>
+        <location filename="../nixnote.cpp" line="1459"/>
         <source>Restore Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1361"/>
+        <location filename="../nixnote.cpp" line="1461"/>
         <source>Import Notes</source>
         <translation type="unfinished">ノートの取り込み</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1274"/>
-        <location filename="../nixnote.cpp" line="1364"/>
+        <location filename="../nixnote.cpp" line="1374"/>
+        <location filename="../nixnote.cpp" line="1464"/>
         <source>NixNote Export (*.nnex);;All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="396"/>
+        <location filename="../nixnote.cpp" line="446"/>
         <source>Quick Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1262"/>
-        <location filename="../nixnote.cpp" line="1306"/>
-        <location filename="../nixnote.cpp" line="1399"/>
+        <location filename="../nixnote.cpp" line="456"/>
+        <source>Pinned Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="458"/>
+        <source>Recently Updated Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1131"/>
+        <location filename="../nixnote.cpp" line="1798"/>
+        <source>Log in to Evernote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1133"/>
+        <location filename="../nixnote.cpp" line="1800"/>
+        <source>NixNote</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1362"/>
+        <location filename="../nixnote.cpp" line="1406"/>
+        <location filename="../nixnote.cpp" line="1499"/>
         <source>Error</source>
         <translation type="unfinished">エラー</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1262"/>
+        <location filename="../nixnote.cpp" line="1362"/>
         <source>No notes selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1271"/>
+        <location filename="../nixnote.cpp" line="1371"/>
         <source>Backup Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1273"/>
+        <location filename="../nixnote.cpp" line="1373"/>
         <source>Export Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1294"/>
+        <location filename="../nixnote.cpp" line="1394"/>
         <source>Performing backup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1296"/>
+        <location filename="../nixnote.cpp" line="1396"/>
         <source>Performing export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1313"/>
+        <location filename="../nixnote.cpp" line="1413"/>
         <source>Database backup complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1315"/>
+        <location filename="../nixnote.cpp" line="1415"/>
         <source>Note extract complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1366"/>
+        <location filename="../nixnote.cpp" line="1466"/>
         <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1387"/>
+        <location filename="../nixnote.cpp" line="1487"/>
         <source>Restoring database</source>
         <translation type="unfinished">データベースを復元します</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1389"/>
+        <location filename="../nixnote.cpp" line="1489"/>
         <source>Importing Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1421"/>
+        <location filename="../nixnote.cpp" line="1521"/>
         <source>Database has been restored.</source>
         <translation type="unfinished">データベースは復元されました。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1423"/>
+        <location filename="../nixnote.cpp" line="1523"/>
         <source>Notes have been imported.</source>
         <translation type="unfinished">ノートは取り込まれました。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1453"/>
+        <location filename="../nixnote.cpp" line="1554"/>
         <source>Sync Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1453"/>
+        <location filename="../nixnote.cpp" line="1554"/>
         <source>Sync completed with errors.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1455"/>
+        <location filename="../nixnote.cpp" line="1556"/>
         <source>Sync Complete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1455"/>
+        <location filename="../nixnote.cpp" line="1556"/>
         <source>Sync completed successfully.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1699"/>
+        <location filename="../nixnote.cpp" line="1818"/>
         <source>This feature is only available to premium users.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1700"/>
+        <location filename="../nixnote.cpp" line="1819"/>
         <source>Premium Feature</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1719"/>
+        <location filename="../nixnote.cpp" line="1838"/>
         <source>Error retrieving note.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1720"/>
+        <location filename="../nixnote.cpp" line="1839"/>
         <source>Error retrieving note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1737"/>
+        <location filename="../nixnote.cpp" line="1861"/>
         <source>Note restored</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1741"/>
+        <location filename="../nixnote.cpp" line="1865"/>
         <source>No versions of this note can be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1742"/>
+        <location filename="../nixnote.cpp" line="1866"/>
         <source>Note Not Found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2050"/>
+        <location filename="../nixnote.cpp" line="2175"/>
         <source>Switch to </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2224"/>
+        <location filename="../nixnote.cpp" line="2337"/>
         <source>Reindex Database</source>
         <translation type="unfinished">データベースの再索引</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2224"/>
+        <location filename="../nixnote.cpp" line="2337"/>
         <source>Reindex the entire database?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2233"/>
+        <location filename="../nixnote.cpp" line="2346"/>
         <source>Notes will be reindexed.</source>
         <translation type="unfinished">ノートは再索引されます。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2255"/>
+        <location filename="../nixnote.cpp" line="2374"/>
         <source>Unable to find webcam or capture image.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2256"/>
+        <location filename="../nixnote.cpp" line="2375"/>
         <source>Webcam Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2388"/>
+        <location filename="../nixnote.cpp" line="2487"/>
         <source>Delete </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2391"/>
+        <location filename="../nixnote.cpp" line="2490"/>
         <source>Permanently delete </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2395"/>
+        <location filename="../nixnote.cpp" line="2494"/>
         <source>this note?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2398"/>
+        <location filename="../nixnote.cpp" line="2497"/>
         <source>Verify Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3160,17 +2932,17 @@ Are you sure you want to continue?</source>
 <context>
     <name>NoteFormatter</name>
     <message>
-        <location filename="../html/noteformatter.cpp" line="517"/>
+        <location filename="../html/noteformatter.cpp" line="554"/>
         <source>File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../html/noteformatter.cpp" line="545"/>
+        <location filename="../html/noteformatter.cpp" line="582"/>
         <source>Bytes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../html/noteformatter.cpp" line="549"/>
+        <location filename="../html/noteformatter.cpp" line="586"/>
         <source>KB</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3231,7 +3003,7 @@ Are you sure you want to continue?</source>
         <translation type="unfinished">キャンセル</translation>
     </message>
     <message>
-        <location filename="../dialog/notebookproperties.cpp" line="112"/>
+        <location filename="../dialog/notebookproperties.cpp" line="109"/>
         <source>Add Notebook</source>
         <translation type="unfinished">ノートブックの追加</translation>
     </message>
@@ -3521,7 +3293,7 @@ any key or using the right or middle mouse buttons.</source>
         <translation type="unfinished">キャンセル</translation>
     </message>
     <message>
-        <location filename="../dialog/savedsearchproperties.cpp" line="110"/>
+        <location filename="../dialog/savedsearchproperties.cpp" line="105"/>
         <source>Add Saved Search</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3631,71 +3403,71 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>SyncRunner</name>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="124"/>
+        <location filename="../threads/syncrunner.cpp" line="123"/>
         <source>Beginning Sync</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="132"/>
+        <location filename="../threads/syncrunner.cpp" line="131"/>
         <source>Downloading changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="181"/>
+        <location filename="../threads/syncrunner.cpp" line="180"/>
         <source>Sync Complete</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="231"/>
-        <location filename="../threads/syncrunner.cpp" line="262"/>
+        <location filename="../threads/syncrunner.cpp" line="226"/>
+        <location filename="../threads/syncrunner.cpp" line="255"/>
         <source>Download </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="231"/>
+        <location filename="../threads/syncrunner.cpp" line="226"/>
         <source>% complete for notebooks, tags, &amp; searches.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="241"/>
+        <location filename="../threads/syncrunner.cpp" line="235"/>
         <source>Download complete for notebooks, tags, &amp; searches.  Downloading notes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="262"/>
+        <location filename="../threads/syncrunner.cpp" line="255"/>
         <source>% complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="278"/>
+        <location filename="../threads/syncrunner.cpp" line="268"/>
         <source>Download complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="643"/>
-        <location filename="../threads/syncrunner.cpp" line="677"/>
+        <location filename="../threads/syncrunner.cpp" line="669"/>
+        <location filename="../threads/syncrunner.cpp" line="708"/>
         <source>Downloading </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="643"/>
+        <location filename="../threads/syncrunner.cpp" line="669"/>
         <source>% complete for tags in shared notebook </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="658"/>
+        <location filename="../threads/syncrunner.cpp" line="687"/>
         <source>Downloading notes for shared notebook </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="677"/>
+        <location filename="../threads/syncrunner.cpp" line="708"/>
         <source>% complete for shared notebook </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="643"/>
-        <location filename="../threads/syncrunner.cpp" line="658"/>
-        <location filename="../threads/syncrunner.cpp" line="677"/>
+        <location filename="../threads/syncrunner.cpp" line="669"/>
+        <location filename="../threads/syncrunner.cpp" line="687"/>
+        <location filename="../threads/syncrunner.cpp" line="708"/>
         <source>.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3779,7 +3551,7 @@ any key or using the right or middle mouse buttons.</source>
         <translation type="unfinished">キャンセル</translation>
     </message>
     <message>
-        <location filename="../dialog/tagproperties.cpp" line="104"/>
+        <location filename="../dialog/tagproperties.cpp" line="101"/>
         <source>Add Tag</source>
         <translation type="unfinished">タグ追加</translation>
     </message>

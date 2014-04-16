@@ -6,9 +6,6 @@ arch="amd64"
 package_dir=$(cd `dirname $0` && pwd)
 source_dir=".."
 
-thrift_lib="$source_dir/thrift-source/lib/cpp/.libs"
-thrift="y"
-
 
 ####################################################
 # Make sure we are running as root
@@ -67,13 +64,6 @@ cp $source_dir/changelog.txt $package_dir/nixnote2/usr/share/doc/nixnote2/change
 gzip -c -9 $package_dir/nixnote2/usr/share/doc/nixnote2/changelog.Debian > $package_dir/nixnote2/usr/share/doc/nixnote2/changelog.Debian.gz
 rm $package_dir/nixnote2/usr/share/doc/nixnote2/changelog.Debian
  
-if [ $thrift = "y" ]
-then
-   mkdir $package_dir/nixnote2/usr/lib
-   mkdir $package_dir/nixnote2/usr/lib/nixnote2
-   strip --strip-all $thrift_lib/libthrift-0.9.1.so -o $package_dir/nixnote2/usr/lib/nixnote2/libthrift-0.9.1.so
-fi
-
 
 if [ ! -d $source_dir/spell ] 
 then
@@ -97,10 +87,6 @@ sed -i "s/__VERSION__/$version/" $package_dir/nixnote2/usr/share/nixnote2/help/a
 echo "Resetting ownership & permissions"
 chown -R root:root $package_dir/nixnote2/
 
-if [ "$thrift" = "y" ] 
-then
-  chmod 644 $package_dir/nixnote2/usr/lib/nixnote2/*.*
-fi
 
 # Cleanup
 #echo "Cleaning up"

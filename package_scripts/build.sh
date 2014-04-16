@@ -24,27 +24,13 @@ do
    shift
 done
 
-thrift_lib="$package_dir/../thrift-source/lib/cpp/.libs"
 sl="s"
 
 read -p "Enter version for build: " version
-read -p "Include Thrift? (y/n): " thrift
-if [ "$thrift" = "y" ]
-then
-  echo "Where should I get Thrift from?"
-  echo "    s = $thrift_lib"
-  echo "    l = /usr/local/lib"
-  read -p "(s/l) " sl
-fi 
-
-if [ "$sl" = "l" ] 
-then
-   thrift_lib="/usr/local/lib"
-fi
 
 sudo $package_dir/clean.sh arch=$arch version=$version
 sudo $package_dir/translate.sh arch=$arch version=$version
-sudo $package_dir/copy_files.sh arch=$arch version=$version thrift=$thrift thrift_lib=$thrift_lib
+sudo $package_dir/copy_files.sh arch=$arch version=$version 
 
 read -p "Build tar.gz (y/n): " yn
 if [ "$yn" = "y" ] 
