@@ -40,6 +40,9 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
 
+    if (global.countBehavior == Global::CountNone)
+        return;
+
     qint32 lid = index.data(Qt::UserRole).toInt();
     QString test = index.data(Qt::UserRole).toString().toLower();
     if (test == "stack")

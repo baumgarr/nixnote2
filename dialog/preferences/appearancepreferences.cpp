@@ -38,6 +38,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     autoStart = new QCheckBox(tr("Start automatically at login"), this);
     showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
     startMinimized = new QCheckBox(tr("Always Start minimized"), this);
+    dynamicTotals = new QCheckBox(tr("Show notebook & tag totals"), this);
 
     defaultFontChooser = new QComboBox();
     defaultFontSizeChooser = new QComboBox();
@@ -75,6 +76,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(showSplashScreen, row++,0);
     mainLayout->addWidget(showPDFs, row++,0);
     mainLayout->addWidget(showMissedReminders, row++, 0);
+    mainLayout->addWidget(dynamicTotals, row++, 0);
     mainLayout->addWidget(startMinimized, row++, 0);
     mainLayout->addWidget(autoStart, row++, 0);
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
@@ -96,6 +98,10 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showSplashScreen->setChecked(global.settings->value("showSplashScreen", false).toBool());
     showMissedReminders->setChecked(global.settings->value("showMissedReminders", false).toBool());
     startMinimized->setChecked(global.settings->value("startMinimized", false).toBool());
+    if (global.countBehavior == Global::CountAll)
+        dynamicTotals->setChecked(true);
+    else
+        dynamicTotals->setChecked(false);
     autoStart->setChecked(global.settings->value("autoStart", false).toBool());
     int defaultNotebook = global.settings->value("startupNotebook", UseLastViewedNotebook).toInt();
     defaultNotebookOnStartup->setCurrentIndex(defaultNotebook);
@@ -134,6 +140,13 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("showSplashScreen", showSplashScreen->isChecked());
     global.settings->setValue("startMinimized", startMinimized->isChecked());
     global.settings->setValue("showMissedReminders", showMissedReminders->isChecked());
+    if (dynamicTotals->isChecked()) {
+        global.settings->setValue("countBehavior", 1);
+        global.countBehavior = Global::CountAll;
+    } else {
+        global.settings->setValue("countBehavior", 2);
+        global.countBehavior = Global::CountNone;
+    }
     int index = defaultNotebookOnStartup->currentIndex();
     int value = defaultNotebookOnStartup->itemData(index).toInt();
     global.settings->setValue("startupNotebook", value);

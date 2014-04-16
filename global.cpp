@@ -114,6 +114,11 @@ void Global::setup(StartupConfig startupConfig) {
     setupDateTimeFormat();
 
     settings->beginGroup("Appearance");
+    int countbehavior = settings->value("countBehavior", CountAll).toInt();
+    if (countbehavior==1)
+        countBehavior = CountAll;
+    if (countbehavior==2)
+        countBehavior = CountNone;
     pdfPreview = settings->value("showPDFs", true).toBool();
     defaultFont = settings->value("defaultFont","").toString();
     defaultFontSize = settings->value("defaultFontSize",12).toInt();

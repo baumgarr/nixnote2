@@ -41,6 +41,8 @@ void CounterRunner::initialize() {
 
 
 void CounterRunner::countAll() {
+    if (global.countBehavior == Global::CountNone)
+        return;
     if (!init)
         initialize();
     this->countNotebooks();
@@ -94,22 +96,6 @@ void CounterRunner::countNotebooks() {
     for (int i=0; i<lids.size(); i++)
         emit(notebookTotals(lids[i], 0, allNotebooks[lids[i]]));
 
-//    // Now, get the grand totals
-//    query.prepare("select count(lid) from datastore where key=:key and lid not in (select lid from datastore where data='false' and key=5010);");
-//    query.bindValue(":key", NOTE_NOTEBOOK_LID);
-//    query.exec();
-//    qint32 grandTotal = 0;
-//    if (query.next()) {
-//        grandTotal = query.value(0).toInt();
-//    }
-//    query.prepare("select count(lid) from datastore where key=:key and lid in (select lid from filter) and lid not in (select lid from datastore where data='false' and key=5010);");
-//    query.bindValue(":key", NOTE_NOTEBOOK_LID);
-//    query.exec();
-//    qint32 subTotal = 0;
-//    if (query.next()) {
-//        subTotal = query.value(0).toInt();
-//    }
-//    emit(notebookTotals(-1, subTotal, grandTotal));
     emit(notebookTotals(-1, -1, -1));
 }
 

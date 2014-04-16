@@ -20,8 +20,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "ntagviewdelegate.h"
 #include "ntagview.h"
 #include "ntagviewitem.h"
+#include "global.h"
 
 #include <QPainter>
+
+extern Global global;
 
 NTagViewDelegate::NTagViewDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
@@ -37,6 +40,10 @@ void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     painter->save();
 
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
+
+    if (global.countBehavior == Global::CountNone)
+        return;
+
     qint32 lid = index.data(Qt::UserRole).toInt();
     if (lid > 0) {
 

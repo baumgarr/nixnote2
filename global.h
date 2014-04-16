@@ -79,6 +79,14 @@ using namespace std;
 class Global
 {
 public:
+
+    enum CountBehavior {
+        CountAll = 1,
+        CountNone = 2
+    };
+
+    CountBehavior countBehavior;
+
     bool disableUploads;
     Global();           // Generic constructor
     ~Global();          // destructor

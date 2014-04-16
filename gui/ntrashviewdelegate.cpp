@@ -20,6 +20,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "ntrashviewdelegate.h"
 #include <QPainter>
 #include "ntrashtree.h"
+#include "global.h"
+
+extern Global global;
 
 NTrashViewDelegate::NTrashViewDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
@@ -32,6 +35,9 @@ NTrashViewDelegate::NTrashViewDelegate(QObject *parent) :
 void NTrashViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QStyleOptionViewItemV4 options = option;
     initStyleOption(&options, index);
+
+    if (global.countBehavior == Global::CountNone)
+        return;
 
     painter->save();
 

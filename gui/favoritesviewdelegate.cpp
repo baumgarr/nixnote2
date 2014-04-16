@@ -22,6 +22,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "favoritesviewdelegate.h"
 #include "gui/favoritesview.h"
 #include "gui/favoritesviewitem.h"
+#include "global.h"
+
+extern Global global;
 
 FavoritesViewDelegate::FavoritesViewDelegate(QObject *parent) :
     QStyledItemDelegate(parent)
@@ -43,7 +46,8 @@ void FavoritesViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     initStyleOption(&options, index);
 
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
-
+    if (global.countBehavior == Global::CountNone)
+        return;
     qint32 lid = index.data(Qt::UserRole).toInt();
     QString test = index.data(Qt::UserRole).toString().toLower();
     if (test == "stack")
