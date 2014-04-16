@@ -69,7 +69,7 @@ void NTitleEditor::focusOutEvent(QFocusEvent *e)
 }
 
 
-// Set the title and values.  defaultT is the default title if the user
+// Set the title and values.  default is the default title if the user
 // blanks everything else out.  The default text logic should eventually be
 // moved to the browser editor since it has the actual text of the note
 // we need for the note.
@@ -87,6 +87,8 @@ void NTitleEditor::setTitle(qint32 lid, QString title, QString defaultT) {
 
 // This function gets control whenever the text is edited.
 void NTitleEditor::titleChanged(QString text) {
+    if (currentLid <= 0)
+        return;
     this->blockSignals(true);
 
     // Check that we have some type of title.  If not we go with

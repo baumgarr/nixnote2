@@ -564,10 +564,13 @@ void NBrowserWindow::noteContentUpdated() {
 
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
+    //*** NOTE ***
+    // Focus changing is disabled to try and fix the changing position
+    // when syncing.
     // Do a little bit of focus changing to make sure things are saved properly
-    this->editor->setFocus();
+//    this->editor->setFocus();
     microFocusChanged();
-    this->editor->titleEditor->setFocus();
+//    this->editor->titleEditor->setFocus();
 
 
     if (this->editor->isDirty) {

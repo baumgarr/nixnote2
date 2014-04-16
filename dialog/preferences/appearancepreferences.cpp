@@ -38,7 +38,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     autoStart = new QCheckBox(tr("Start automatically at login"), this);
     showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
     startMinimized = new QCheckBox(tr("Always Start minimized"), this);
-    dynamicTotals = new QCheckBox(tr("Show notebook & tag totals"), this);
+    dynamicTotals = new QCheckBox(tr("Show notebook and tag totals"), this);
 
     defaultFontChooser = new QComboBox();
     defaultFontSizeChooser = new QComboBox();
