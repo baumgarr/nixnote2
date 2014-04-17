@@ -47,7 +47,7 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
     imagesDirPath = slashTerminatePath(imagesDir.path());
 
     javaDir.setPath(programDirPath+"java");
-    checkExistingReadableDir(imagesDir);
+    checkExistingReadableDir(javaDir);
     javaDirPath = slashTerminatePath(javaDir.path());
 
 //    spellDir.setPath(programDirPath+"spell");
@@ -65,6 +65,10 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
     checkExistingReadableDir(translateDir);
     translateDirPath= slashTerminatePath(translateDir.path());
 
+    qssDir.setPath(programDirPath+"qss");
+    checkExistingReadableDir(qssDir);
+    qssDirPath = slashTerminatePath(qssDir.path());
+
 
     // Read/write directories that only we use
 
@@ -77,6 +81,10 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
         globalSettings.endGroup();
         id = accountId;
     }
+
+    qssDirUser.setPath(homeDirPath+"qss");
+    createDirOrCheckWriteable(qssDirUser);
+    qssDirPathUser = slashTerminatePath(qssDirUser.path());
 
     logsDir.setPath(homeDirPath+"logs-" +QString::number(id));
     createDirOrCheckWriteable(logsDir);
@@ -237,14 +245,14 @@ QString FileManager::getLogsDirPath(QString relativePath) {
     return logsDirPath + toPlatformPathSeparator(relativePath);
 }
 
-/*
+
 QString FileManager::getQssDirPath(QString relativePath) {
     return qssDirPath + toPlatformPathSeparator(relativePath);
 }
 QString FileManager::getQssDirPathUser(QString relativePath) {
     return qssDirPath + toPlatformPathSeparator(relativePath);
 }
-*/
+
 QString FileManager::getTmpDirPath() {
     return tmpDirPath;
 }

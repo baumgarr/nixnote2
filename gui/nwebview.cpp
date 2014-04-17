@@ -227,6 +227,13 @@ NWebView::NWebView(NBrowserWindow *parent) :
     downloadImageAction()->setEnabled(false);
 
     connect(this->page()->mainFrame(), SIGNAL(javaScriptWindowObjectCleared()), this, SLOT(exposeToJavascript()));
+
+        //this->setStyleSheet("QWebView,html,body { background-color : red; foreground-color : white; }");
+    QString qss = global.fileManager.getQssDirPathUser("");
+    if (qss == "")
+        qss = global.fileManager.getQssDirPath("");
+    this->settings()->setUserStyleSheetUrl(QUrl("file://"+qss+"editor.css"));
+
 }
 
 
