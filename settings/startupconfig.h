@@ -30,6 +30,7 @@ public:
     QString homeDirPath;
     QString programDirPath;
     bool forceNoStartMinimized;
+    bool startupNewNote;
     bool syncAndExit;
     int accountId;
 };

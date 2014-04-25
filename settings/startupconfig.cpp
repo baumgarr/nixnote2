@@ -26,4 +26,5 @@ StartupConfig::StartupConfig()
     homeDirPath = QDir().homePath() + QString("/.nixnote/");
     this->forceNoStartMinimized = false;
     this->syncAndExit = false;
+    this->startupNewNote = false;
 }

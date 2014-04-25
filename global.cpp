@@ -85,6 +85,7 @@ void Global::setup(StartupConfig startupConfig) {
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
+    this->startupNewNote = startupConfig.startupNewNote;
     this->syncAndExit = startupConfig.syncAndExit;
     startupConfig.accountId = accountId;
     accountsManager = new AccountsManager(startupConfig.accountId);

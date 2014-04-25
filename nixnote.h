@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSlider>
 #include <QSplashScreen>
 
+#include "filters/remotequery.h"
 #include "watcher/filewatchermanager.h"
 #include "gui/ntabwidget.h"
 #include "gui/lineedit.h"
@@ -52,9 +53,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //#include "oauth/oauthwindow.h"
 #include "html/thumbnailer.h"
 #include "reminders/remindermanager.h"
-
-
-
 
 //****************************************
 //* This is the main NixNote class that
@@ -159,6 +157,7 @@ private:
     void saveNoteColumnPositions();
     void saveNoteColumnWidths();
     QSplashScreen *splashScreen;
+    RemoteQuery *remoteQuery;
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor
@@ -250,6 +249,7 @@ public slots:
     void pauseIndexing();
     void openEvernoteSupport();
     void openMessageLog();
+    void showDesktopUrl(const QUrl &url);
 
 signals:
     void syncRequested();

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui webkit sql network xml
+QT       += core gui webkit sql network xml dbus
 
 TARGET = nixnote2
 TEMPLATE = app
@@ -192,7 +192,8 @@ SOURCES += main.cpp\
     gui/favoritesviewdelegate.cpp \
     gui/favoritesviewitem.cpp \
     sql/favoritestable.cpp \
-    sql/favoritesrecord.cpp
+    sql/favoritesrecord.cpp \
+    filters/remotequery.cpp
 
 
 
@@ -358,7 +359,8 @@ HEADERS  += nixnote.h \
     gui/favoritesviewdelegate.h \
     gui/favoritesviewitem.h \
     sql/favoritestable.h \
-    sql/favoritesrecord.h
+    sql/favoritesrecord.h \
+    filters/remotequery.h
 
 
 #INCLUDEPATH += /usr/local/include/thrift \

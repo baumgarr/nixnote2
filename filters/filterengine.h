@@ -70,7 +70,7 @@ private:
 
 public:
     explicit FilterEngine(QObject *parent = 0);
-    void filter();
+    void filter(FilterCriteria *newCriteria=NULL, QList<qint32> *results=NULL);
     
 signals:
     

@@ -140,6 +140,7 @@ public:
     bool javaFound;
     QString defaultFont;
     int defaultFontSize;
+    bool startupNewNote;
     bool forceNoStartMimized;
     bool syncAndExit;
 

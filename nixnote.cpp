@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/resourcetable.h"
 #include "sql/nsqlquery.h"
 #include "dialog/logviewer.h"
+#include "filters/filtercriteria.h"
+#include "filters/filterengine.h"
 
 #include <QThread>
 #include <QLabel>
@@ -197,8 +199,16 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         mb.critical(this, tr("Tidy Not Found"), tr("Tidy is not found on this system.\nUntil tidy is installed you cannot save any notes."));
     }
 
+    if (global.startupNewNote) {
+        this->showMinimized();
+        this->newExternalNote();
+    }
+
     // Init OAuth winwod
     //oauthWindow = NULL;
+
+    //QDesktopServices::setUrlHandler("evernote", this, "showDesktopUrl");
+    remoteQuery = new RemoteQuery();
 
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
@@ -1949,7 +1959,7 @@ void NixNote::heartbeatTimerTriggered() {
     global.sharedMemory->unlock();
 
     QByteArray data = QByteArray::fromRawData(buffer, global.sharedMemory->size());
-    //QLOG_DEBUG() << "Shared memory data: " << data;
+    //QLOG_ERROR() << "Shared memory data: " << data;
     if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
         QLOG_ERROR() << "Immediate shutdown requested by shared memory segment.";
         this->closeNixNote();
@@ -1959,6 +1969,61 @@ void NixNote::heartbeatTimerTriggered() {
         this->raise();
         this->show();
         return;
+    }
+    if (data.startsWith("QUERY:")) {
+        QList<qint32> results;
+        QString query = data.mid(6);
+        QLOG_DEBUG() << query;
+        FilterCriteria filter;
+        filter.setSearchString(query);
+        FilterEngine engine;
+        engine.filter(&filter, &results);
+        QString response = "RESPONSE:";
+        QString xmlString;
+        QXmlStreamWriter dom(&xmlString);
+        dom.setAutoFormatting(true);
+        dom.writeStartDocument();
+        dom.writeStartElement("response");
+        NoteTable ntable(global.db);
+        for (int i=0; i<results.size(); i++) {
+            dom.writeStartElement("note");
+            dom.writeStartElement("lid");
+            dom.writeCharacters(QString::number(results[i]));
+            dom.writeEndElement();
+            Note n;
+            ntable.get(n, results[i], false, false);
+            if (n.title.isSet()) {
+                dom.writeStartElement("title");
+                dom.writeCharacters(n.title);
+                dom.writeEndElement();
+            }
+            QString filename = global.fileManager.getThumbnailDirPath("")+QString::number(results[i])+".png";
+            QFile file(filename);
+            if (file.exists()) {
+                dom.writeStartElement("preview");
+                dom.writeCharacters(filename);
+                dom.writeEndElement();
+            }
+            dom.writeEndElement();
+        }
+        dom.writeEndElement();
+        dom.writeEndDocument();
+
+        global.sharedMemory->lock();
+        void *memptr = global.sharedMemory->data();
+        response.append(xmlString);
+        memcpy(memptr, response.toStdString().c_str(), response.size());
+        global.sharedMemory->unlock();
+
+    }
+    if (data.startsWith("OPEN_NOTE:")) {
+        QLOG_DEBUG() << data;
+        QString number = data.mid(10);
+        QLOG_DEBUG() << "opennote " << number;
+        this->openExternalNote(number.toInt());
+    }
+    if (data.startsWith("NEW_NOTE")) {
+        this->newExternalNote();
     }
 
     free(buffer); // Fixes memory leak
@@ -2582,3 +2647,10 @@ void NixNote::noteButtonClicked() {
     if (noteButton->property("currentNoteButton").toInt() == NewScreenNote)
         screenCapture();
 }
+
+
+void NixNote::showDesktopUrl(const QUrl &url) {
+    QLOG_DEBUG() << url.toString();
+}
+
+

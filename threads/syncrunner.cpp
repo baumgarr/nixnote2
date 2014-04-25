@@ -49,6 +49,7 @@ SyncRunner::~SyncRunner() {
 void SyncRunner::synchronize() {
     QLOG_DEBUG() << "Starting SyncRunner.synchronize()";
     if (!init) {
+        this->setObjectName("SyncRunnerThread");
         init = true;
         consumerKey = "";
         secret = "";

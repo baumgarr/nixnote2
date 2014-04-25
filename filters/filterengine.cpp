@@ -22,7 +22,9 @@ FilterEngine::FilterEngine(QObject *parent) :
 }
 
 
-void FilterEngine::filter() {
+void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
+
+    bool internalSearch = true;
 
     NSqlQuery sql(*global.db);
     QLOG_DEBUG() << "Purging filters";
@@ -33,7 +35,13 @@ void FilterEngine::filter() {
     sql.exec();
     QLOG_DEBUG() << "Reset complete";
 
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+
+
+    FilterCriteria *criteria = newCriteria;
+    if (criteria == NULL)
+        criteria = global.filterCriteria[global.filterPosition];
+    else
+        internalSearch = false;
 
     QLOG_DEBUG() << "Filtering favorite";
     filterFavorite(criteria);
@@ -64,18 +72,26 @@ void FilterEngine::filter() {
         goodLids.append(query.value(0).toInt());
     }
 
+    if (internalSearch) {
     // Remove any selected notes that are not in the filter.
-    if (global.filterCriteria.size() > 0) {
-        FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
-        QList<qint32> selectedLids;
-        criteria->getSelectedNotes(selectedLids);
-        for (int i=selectedLids.size()-1; i>=0; i--) {
-            if (!goodLids.contains(selectedLids[i]))
-                selectedLids.removeAll(selectedLids[i]);
+        if (global.filterCriteria.size() > 0) {
+            FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+            QList<qint32> selectedLids;
+            criteria->getSelectedNotes(selectedLids);
+            for (int i=selectedLids.size()-1; i>=0; i--) {
+                if (!goodLids.contains(selectedLids[i]))
+                    selectedLids.removeAll(selectedLids[i]);
+            }
+            criteria->setSelectedNotes(selectedLids);
         }
-        criteria->setSelectedNotes(selectedLids);
+    } else {
+        results->clear();
+        for (int i=0; i<goodLids.size(); i++) {
+            if (!results->contains(goodLids[i])) {
+                results->append(goodLids[i]);
+            }
+        }
     }
-
 }
 
 
