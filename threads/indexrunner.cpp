@@ -33,7 +33,7 @@ using namespace Poppler;
 IndexRunner::IndexRunner()
 {
     init = false;
-    officeFound = true;
+    officeFound = false;  // temporarily disabled to test performance impact
 }
 
 
