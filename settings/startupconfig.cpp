@@ -27,4 +27,6 @@ StartupConfig::StartupConfig()
     this->forceNoStartMinimized = false;
     this->syncAndExit = false;
     this->startupNewNote = false;
+    this->forceStartMinimized = false;
+    this->startupNoteLid = 0;
 }

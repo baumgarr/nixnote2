@@ -443,13 +443,20 @@ void NixNote::setupGui() {
         }
     }
 
+    NoteTable noteTable(global.db);
+    if (global.startupNote > 0 && noteTable.exists(global.startupNote)) {
+        openExternalNote(global.startupNote);
+    }
+
     // Setup the tray icon
     closeFlag = false;
     global.settings->beginGroup("SaveState");
     minimizeToTray = global.settings->value("minimizeToTray", false).toBool();
     closeToTray = global.settings->value("closeToTray", false).toBool();
     global.settings->endGroup();
-    trayIcon = new QSystemTrayIcon(QIcon(global.getWindowIcon()), this);
+    QLOG_DEBUG() << global.getWindowIcon();
+    //trayIcon = new QSystemTrayIcon(QIcon(global.getWindowIcon()), this);
+    trayIcon = new QSystemTrayIcon(QIcon(":trayicon.png"), this);
     trayIconContextMenu = new TrayMenu(this);
     trayIconContextMenu->addAction(newNoteButton);
 
@@ -483,6 +490,12 @@ void NixNote::setupGui() {
 
     // Determine if we should start minimized
     if (startMinimized && !global.forceNoStartMimized && QSystemTrayIcon::isSystemTrayAvailable()) {
+        if (closeToTray)
+            this->hide();
+        else
+            this->setWindowState(Qt::WindowMinimized);
+    }
+    if (global.forceStartMinimized) {
         if (closeToTray)
             this->hide();
         else
@@ -2020,7 +2033,10 @@ void NixNote::heartbeatTimerTriggered() {
         QLOG_DEBUG() << data;
         QString number = data.mid(10);
         QLOG_DEBUG() << "opennote " << number;
-        this->openExternalNote(number.toInt());
+        qint32 note = number.toInt();
+        NoteTable noteTable(global.db);
+        if (noteTable.exists(note))
+            this->openExternalNote(note);
     }
     if (data.startsWith("NEW_NOTE")) {
         this->newExternalNote();

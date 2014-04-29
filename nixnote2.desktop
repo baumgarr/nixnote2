@@ -13,5 +13,5 @@ MimeType=x-scheme-handler/evernote;
 Actions=NewNote;
 [Desktop Action NewNote]
 Name=New Note
-Exec=nixnote2 --newNote
+Exec=/usr/bin/nixnote2 --newNote
 OnlyShowIn=Unity;

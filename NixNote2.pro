@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui webkit sql network xml dbus
+QT       += core gui webkit sql network xml
 
 TARGET = nixnote2
 TEMPLATE = app
@@ -49,18 +49,6 @@ SOURCES += main.cpp\
     sql/configstore.cpp \
     gui/ntableview.cpp \
     gui/ntableviewheader.cpp \
-#    evernote/UserStore_types.cpp \
-#    evernote/UserStore_constants.cpp \
-#    evernote/UserStore.cpp \
-#    evernote/Types_types.cpp \
-#    evernote/Types_constants.cpp \
-#    evernote/NoteStore_types.cpp \
-#    evernote/NoteStore_constants.cpp \
-#    evernote/NoteStore.cpp \
-#    evernote/Limits_types.cpp \
-#    evernote/Limits_constants.cpp \
-#    evernote/Errors_types.cpp \
-#    evernote/Errors_constants.cpp \
     threads/syncrunner.cpp \
     sql/datastore.cpp \
     sql/usertable.cpp \
@@ -209,18 +197,6 @@ HEADERS  += nixnote.h \
     sql/configstore.h \
     gui/ntableview.h \
     gui/ntableviewheader.h \
-#    evernote/UserStore_types.h \
-#    evernote/UserStore_constants.h \
-#    evernote/UserStore.h \
-#    evernote/Types_types.h \
-#    evernote/Types_constants.h \
-#    evernote/NoteStore_types.h \
-#    evernote/NoteStore_constants.h \
-#    evernote/NoteStore.h \
-#    evernote/Limits_types.h \
-#    evernote/Limits_constants.h \
-#    evernote/Errors_types.h \
-#    evernote/Errors_constants.h \
     threads/syncrunner.h \
     sql/datastore.h \
     sql/usertable.h \
@@ -345,13 +321,13 @@ HEADERS  += nixnote.h \
     qevercloud/http.h \
     qevercloud/impl.h \
     qevercloud/oauth.h \
-    qevercloud/pubilc.h \
+#    qevercloud/pubilc.h \
     qevercloud/thrift.h \
     qevercloud/thumbnail.h \
     qevercloud/generated/constants.h \
     qevercloud/generated/services.h \
     qevercloud/generated/types.h \
-    qevercoud/generated/types_impl.h \
+#    qevercoud/generated/types_impl.h \
     qevercloud/include/QEverCloud.h \
     qevercloud/include/QEverCloudOAuth.h \
     gui/traymenu.h \

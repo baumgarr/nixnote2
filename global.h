@@ -142,7 +142,9 @@ public:
     int defaultFontSize;
     bool startupNewNote;
     bool forceNoStartMimized;
+    bool forceStartMinimized;
     bool syncAndExit;
+    qint32 startupNote;
 
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;

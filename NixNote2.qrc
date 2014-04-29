@@ -69,5 +69,6 @@
         <file alias="htmlentities.png">images/htmlentities.png</file>
         <file alias="screenCapture.png">images/screenCapture.png</file>
         <file alias="favorites.png">images/favorites.png</file>
+        <file alias="trayicon.png">images/trayicon.png</file>
     </qresource>
 </RCC>

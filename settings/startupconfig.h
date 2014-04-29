@@ -33,6 +33,8 @@ public:
     bool startupNewNote;
     bool syncAndExit;
     int accountId;
+    qint32 startupNoteLid;
+    bool forceStartMinimized;
 };
 
 #endif // STARTUPCONFIG_H

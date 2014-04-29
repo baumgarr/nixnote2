@@ -92,7 +92,9 @@ int main(int argc, char *argv[])
             printf("NixNote command line options:\n");
             printf("  --help or -?            Show this message\n");
             printf("  --accountId=<id>        Start with specified user account\n");
+            printf("  --openNote=<lid>        Open a specific note on startup\n");
             printf("  --dontStartMinimized    Override option to start minimized\n");
+            printf("  --startMinimized        Force a startup with NixNote minimized\n");
             printf("  --syncAndExit           Synchronize and exit the program.\n");
             printf("\n\n");
             return 0;
@@ -101,8 +103,15 @@ int main(int argc, char *argv[])
             parm = parm.mid(12);
             startupConfig.accountId = parm.toInt();
         }
+        if (parm.startsWith("--openNote=", Qt::CaseSensitive)) {
+            parm = parm.mid(11);
+            startupConfig.startupNoteLid = parm.toInt();
+        }
         if (parm == "--dontStartMinimized") {
             startupConfig.forceNoStartMinimized = true;
+        }
+        if (parm == "--startMinimized") {
+            startupConfig.forceStartMinimized = true;
         }
         if (parm == "--newNote") {
             startupConfig.startupNewNote = true;
@@ -137,29 +146,38 @@ int main(int argc, char *argv[])
         global.sharedMemory->attach();
         global.sharedMemory->detach();
         if( !global.sharedMemory->create( 512*1024, QSharedMemory::ReadWrite) ) {
-            if (startupConfig.startupNewNote == false) {
-                global.settings->beginGroup("Debugging");
-                QString startup = global.settings->value("onMultipleInstances", "SHOW_OTHER").toString();
-                global.settings->endGroup();
-                global.sharedMemory->attach();
-                global.sharedMemory->lock();
-                void *dataptr = global.sharedMemory->data();
-                if (startup == "SHOW_OTHER") {
-                    memcpy(dataptr, "SHOW_WINDOW", 11);  // Tell the other guy to show himself
-                    QLOG_INFO() << "Another NixNote was found.  Stopping this instance";
-                    exit(0);  // Exit this one
-                }
-                if (startup == "STOP_OTHER") {
-                    memcpy(dataptr, "IMMEDIATE_SHUTDOWN", 18);  // Tell the other guy to shut down
-                    memInitNeeded = false;
-                }
-            } else {
+            if (startupConfig.startupNewNote) {
                 global.sharedMemory->attach();
                 global.sharedMemory->lock();
                 void *dataptr = global.sharedMemory->data();
                 memcpy(dataptr, "NEW_NOTE", 8);  // Tell the other guy create a new note
                 QLOG_INFO() << "Another NixNote was found.  Requesting it to start another note";
                 exit(0);  // Exit this one
+            }
+            if (startupConfig.startupNoteLid > 0) {
+                global.sharedMemory->attach();
+                global.sharedMemory->lock();
+                void *dataptr = global.sharedMemory->data();
+                QString msg = "OPEN_NOTE:" +QString::number(startupConfig.startupNoteLid) + " ";
+                memcpy(dataptr, msg.toStdString().c_str(), msg.length());  // Tell the other guy to open a note
+                QLOG_INFO() << "Another NixNote was found.  Requesting it to open a note";
+                exit(0);  // Exit this one
+            }
+            // If we've gotten this far, we need to either stop this instance or stop the other
+            global.settings->beginGroup("Debugging");
+            QString startup = global.settings->value("onMultipleInstances", "SHOW_OTHER").toString();
+            global.settings->endGroup();
+            global.sharedMemory->attach();
+            global.sharedMemory->lock();
+            void *dataptr = global.sharedMemory->data();
+            if (startup == "SHOW_OTHER") {
+                memcpy(dataptr, "SHOW_WINDOW", 11);  // Tell the other guy to show himself
+                QLOG_INFO() << "Another NixNote was found.  Stopping this instance";
+                exit(0);  // Exit this one
+            }
+            if (startup == "STOP_OTHER") {
+                memcpy(dataptr, "IMMEDIATE_SHUTDOWN", 18);  // Tell the other guy to shut down
+                memInitNeeded = false;
             }
             global.sharedMemory->unlock();
         }
