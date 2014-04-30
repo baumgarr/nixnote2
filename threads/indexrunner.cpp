@@ -143,8 +143,13 @@ void IndexRunner::index() {
 
 // This indexes the actual note.
 void IndexRunner::indexNote(qint32 lid, Note &n) {
-    QLOG_DEBUG() << "Indexing note: " << n.title;
-    QString content = n.content; //.replace(QString("\n"), QString(" "));
+    if (n.title.isSet()) {
+        QLOG_DEBUG() << "Indexing note: " << n.title;
+    }
+
+    QString content = "";
+    if (n.content.isSet())
+        content = n.content; //.replace(QString("\n"), QString(" "));
 
 
     // Start looking through the note
@@ -168,7 +173,10 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
 
     // Get the content as an HTML doc.
     textDocument->setHtml(content);
-    content = textDocument->toPlainText() + " " + n.title;
+    QString title  = "";
+    if (n.title.isSet())
+        title = n.title;
+    content = textDocument->toPlainText() + " " + title;
 
     // Delete any old content
     NSqlQuery sql(db->conn);
@@ -180,7 +188,7 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'text', :content)");
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
-    sql.bindValue(":content", n.title + QString(" ") +content);
+    sql.bindValue(":content", content);
     sql.exec();
 
 }
