@@ -371,11 +371,11 @@ void NixNote::setupGui() {
     trashTree->resetSize();
 
     // Restore the window state
-    bool startMinimized = false;
+    global.startMinimized = false;
     QLOG_TRACE() << "Restoring window state";
     global.settings->beginGroup("Appearance");
     int selectionBehavior = global.settings->value("startupNotebook", AppearancePreferences::UseLastViewedNotebook).toInt();
-    startMinimized = global.settings->value("startMinimized", false).toBool();
+    global.startMinimized = global.settings->value("startMinimized", false).toBool();
     global.settings->endGroup();
 
     global.settings->beginGroup("SaveState");
@@ -487,20 +487,6 @@ void NixNote::setupGui() {
     closeAction = trayIconContextMenu->addAction(tr("Close"));
     connect(closeAction, SIGNAL(triggered()), this, SLOT(closeNixNote()));
     connect(showAction, SIGNAL(triggered()), this, SLOT(toggleVisible()));
-
-    // Determine if we should start minimized
-    if (startMinimized && !global.forceNoStartMimized && QSystemTrayIcon::isSystemTrayAvailable()) {
-        if (closeToTray)
-            this->hide();
-        else
-            this->setWindowState(Qt::WindowMinimized);
-    }
-    if (global.forceStartMinimized) {
-        if (closeToTray)
-            this->hide();
-        else
-            this->setWindowState(Qt::WindowMinimized);
-    }
 
     trayIcon->setContextMenu(trayIconContextMenu);
     trayIcon->setVisible(global.showTrayIcon());
@@ -648,6 +634,20 @@ void NixNote::setupGui() {
         }
     }
 
+    // Determine if we should start minimized
+    if (global.startMinimized && !global.forceNoStartMimized && QSystemTrayIcon::isSystemTrayAvailable()) {
+        if (minimizeToTray)
+            this->hide();
+        else
+            this->setWindowState(Qt::WindowMinimized);
+    }
+    if (global.forceStartMinimized) {
+        if (minimizeToTray)
+            this->hide();
+        else
+            this->setWindowState(Qt::WindowMinimized);
+    }
+
 }
 
 
@@ -671,7 +671,7 @@ void NixNote::syncThreadStarted() {
     global.settings->beginGroup("Sync");
     bool syncOnStartup = global.settings->value("syncOnStartup", false).toBool();
     global.settings->endGroup();
-    if (syncOnStartup)
+    if (syncOnStartup || global.syncAndExit)
         synchronize();
 }
 

@@ -195,12 +195,17 @@ int main(int argc, char *argv[])
 
     NixNote *w = new NixNote();
     w->setAttribute(Qt::WA_QuitOnClose);
-    if (!global.syncAndExit)
+    bool show = true;
+    if (global.syncAndExit)
+        show = false;
+    if (global.minimizeToTray() && global.startMinimized)
+        show = false;
+    if (show)
         w->show();
-    else {
+    else
         w->hide();
-        w->synchronize();
-    }
+    if (global.startMinimized)
+        w->showMinimized();
 
     int rc = a->exec();
     QLOG_DEBUG() << "Unlocking memory";

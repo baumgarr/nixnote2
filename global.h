@@ -143,6 +143,7 @@ public:
     bool startupNewNote;
     bool forceNoStartMimized;
     bool forceStartMinimized;
+    bool startMinimized;
     bool syncAndExit;
     qint32 startupNote;
 
