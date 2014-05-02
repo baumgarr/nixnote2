@@ -1427,19 +1427,19 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <name>NBrowserWindow</name>
     <message>
         <location filename="../gui/nbrowserwindow.cpp" line="330"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2334"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2337"/>
         <source>Today</source>
         <translation type="unfinished">Сегодня</translation>
     </message>
     <message>
         <location filename="../gui/nbrowserwindow.cpp" line="332"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2336"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2339"/>
         <source>Tomorrow</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/nbrowserwindow.cpp" line="334"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2338"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2341"/>
         <source>Yesterday</source>
         <translation type="unfinished">Вчера</translation>
     </message>
@@ -1501,33 +1501,33 @@ Printing aborted.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2378"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2381"/>
         <source>Decryption Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2379"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2382"/>
         <source>Unknown encryption method.
 Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2482"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2485"/>
         <source>Error</source>
         <translation type="unfinished">Ошибка</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2483"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2486"/>
         <source>Error Encrypting String.  Please verify you have Java installed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2615"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2618"/>
         <source>Spell Check Complete</source>
         <translation type="unfinished">Проверка орфографии завершена</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2615"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2618"/>
         <source>Spell Check Complete.</source>
         <translation type="unfinished"></translation>
     </message>

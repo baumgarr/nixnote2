@@ -2141,7 +2141,7 @@ void NixNote::openPreferences() {
         setSyncTimer();
         bool showTrayIcon = global.showTrayIcon();
         setWindowIcon(QIcon(global.getWindowIcon()));
-        trayIcon->setIcon(QIcon(global.getWindowIcon()));
+        trayIcon->setIcon(QIcon(":trayicon.png"));
         if (!showTrayIcon) {
             //trayIconBehavior();
             if (!this->isVisible())
