@@ -418,7 +418,6 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
 void EnmlFormatter::postXmlFix() {
 
     int pos;
-    content = content.replace("<p>", "<p/>");
     content = content.replace("<hr>", "<hr/>");
 
     // Fix the <br> tags
@@ -469,7 +468,6 @@ void EnmlFormatter::postXmlFix() {
         }
         pos = content.indexOf("<en-media", pos+1);
     }
-
 }
 
 
