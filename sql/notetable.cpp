@@ -148,7 +148,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     if (lid <= 0)
         lid = cs.incrementLidCounter();
 
-    QLOG_DEBUG() << "Adding note("<<lid<<") " << t.title;
+    QLOG_DEBUG() << "Adding note("<<lid<<") " << (t.title.isSet() ? t.title : "title is empty");
     if (t.guid.isSet()) {
         QString guid = t.guid;
         query.bindValue(":lid", lid);
