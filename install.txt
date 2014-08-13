@@ -18,13 +18,18 @@ See release.txt for details of what works and what doesn't work.
 2.) Issue dpkg -i <package> 
 
 
-************************
-*** RPM ased systems ***
-************************
+*************************
+*** RPM based systems ***
+*************************
 --NOTE: I used Alien to create these, so I'm not too sure how usable they are.
 1.) Download the appropriate version (i386 or amd64).
 2.) Issue rpm -ivf <package> 
 
+
+*******************************************
+*** Portage based systems (Gentoo, etc) ***
+*******************************************
+Coming soon to a Portage tree near you...
 
 
 ************************
