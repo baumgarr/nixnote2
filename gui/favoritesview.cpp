@@ -49,7 +49,7 @@ FavoritesView::FavoritesView(QWidget *parent) :
     dataStore.clear();
     targetStore.clear();
     QFont f = this->font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     this->setFont(f);
 
     filterPosition = -1;
@@ -623,7 +623,8 @@ void FavoritesView::buildSelection() {
 
     if (selectedItems.size() > 0) {
         qint32 lid = selectedItems[0]->data(NAME_POSITION, Qt::UserRole).toInt();
-        newFilter->setFavorite(lid);
+        if (lid>0)
+            newFilter->setFavorite(lid);
     }
 
     newFilter->resetAttribute = true;
@@ -657,7 +658,6 @@ void FavoritesView::updateSelection() {
         }
     }
 
-
     if (criteria->isFavoriteSet()) {
         dataStore[criteria->getFavorite()]->setSelected(true);
     }
@@ -683,8 +683,11 @@ void FavoritesView::itemRenamed(qint32 lid, QString oldName, QString newName) {
 }
 
 
-// Update the total counts for the tag.
+// Update the total counts for the shortcut.  *** UNUSED ***
 void FavoritesView::updateTotals(qint32 lid, qint32 subTotal, qint32 total) {
+    subTotal = -1;
+    maxCount = -1;
+    return;
     // This is terribly inefficient, but we shouldn't need to do it too often.
     // We look for a key in the targetStore.
 

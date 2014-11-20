@@ -55,7 +55,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
     stackStore.clear();
     dataStore.clear();
     QFont f = this->font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     this->setFont(f);
 
     filterPosition = -1;

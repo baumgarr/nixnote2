@@ -115,7 +115,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     QFont font;
     font.setFamily("Courier");
     font.setFixedPitch(true);
-    font.setPointSize(10);
+    font.setPointSize(global.defaultGuiFontSize);
     sourceEdit->setFont(font);
     XmlHighlighter *highlighter = new XmlHighlighter(sourceEdit->document());
     highlighter = highlighter;  // Prevents the unused warning

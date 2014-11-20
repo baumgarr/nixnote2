@@ -38,7 +38,7 @@ NMainMenuBar::NMainMenuBar(QWidget *parent) :
     QMenuBar(parent)
 {
     this->parent = (NixNote*)parent;
-    font.setPointSize(8);
+    font.setPointSize(global.defaultGuiFontSize);
 
     setupFileMenu();
     setupEditMenu();
@@ -53,7 +53,7 @@ void NMainMenuBar::setupFileMenu() {
     fileMenu = this->addMenu(tr("&File"));
 
     QFont f;
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
 
     printAction = new QAction(tr("Print Note"), this);
     printAction->setToolTip(tr("Print this note"));

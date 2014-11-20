@@ -37,7 +37,7 @@ NotebookMenuButton::NotebookMenuButton(QWidget *parent) :
     loadData();
     QFont f = rootMenu.font();
     f.setBold(false);
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     rootMenu.setFont(f);
     currentAction = 0;
 }
@@ -170,7 +170,7 @@ QMenu* NotebookMenuButton::findStack(Notebook n) {
     QMenu *newMenu = new QMenu(this);
     newMenu->setTitle(stack);
     QFont f = newMenu->font();
-    f.setPointSize(10);
+    f.setPointSize(global.defaultGuiFontSize+2);
     f.setBold(false);
     newMenu->setFont(f);
     stackMenus.append(newMenu);

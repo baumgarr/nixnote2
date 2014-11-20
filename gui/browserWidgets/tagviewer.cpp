@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFontMetrics>
 #include <QStyle>
 
+extern Global global;
+
 TagViewer::TagViewer(QWidget *parent) :
     QLabel(parent)
 {
@@ -36,7 +38,7 @@ TagViewer::TagViewer(QWidget *parent) :
     connect(clearButton, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 
     QFont f = font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     setFont(f);
 //    int width = this->minimumWidth()+clearButton->minimumWidth()+2;
 //    setMinimumWidth(width);

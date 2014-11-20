@@ -191,7 +191,7 @@ NTableView::NTableView(QWidget *parent) :
 
     contextMenu = new QMenu(this);
     QFont font;
-    font.setPointSize(8);
+    font.setPointSize(global.defaultGuiFontSize);
 
     openNoteAction = new QAction(tr("Open Note"), this);
     contextMenu->addAction(openNoteAction);
@@ -437,6 +437,8 @@ void NTableView::refreshSelection() {
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     QList<qint32> historyList;
     criteria->getSelectedNotes(historyList);
+    if (criteria->isFavoriteSet() && criteria->getFavorite()>0)
+        historyList.append(criteria->getFavorite());
 
     QLOG_TRACE() << "Highlighting selected rows after refresh";
     // Check the highlighted LIDs from the history selection.

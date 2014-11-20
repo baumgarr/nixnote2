@@ -34,7 +34,7 @@ AuthorEditor::AuthorEditor(QWidget *parent) :
     setPalette(pal);
 
     QFont f = font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     setFont(f);
     this->setPlaceholderText(tr("Click to set author"));
 

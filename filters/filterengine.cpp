@@ -430,7 +430,13 @@ void FilterEngine::filterFavorite(FilterCriteria *criteria) {
             sql.exec();
         }
         sql.exec("delete from filter where lid not in (select lid from goodLids)" );
+    }
 
+    if (rec.type == FavoritesRecord::Note) {
+        NSqlQuery sql(*global.db);
+        sql.prepare("delete from filter where lid <> :lid");
+        sql.bindValue(":lid", rec.target);
+        sql.exec();
     }
 
 }

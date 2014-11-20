@@ -34,7 +34,7 @@ UrlEditor::UrlEditor(QWidget *parent) :
     setPalette(pal);
 
     QFont f = font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     setFont(f);
 
     inactiveColor = "QLineEdit {background-color: transparent; border-radius: 0px;} ";

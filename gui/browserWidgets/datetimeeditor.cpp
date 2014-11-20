@@ -34,7 +34,7 @@ DateTimeEditor::DateTimeEditor(QWidget *parent) :
     QDateTimeEdit(parent)
 {
     QFont f = font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     this->setFont(f);
 
     QPalette pal;

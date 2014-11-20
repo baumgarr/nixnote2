@@ -36,6 +36,7 @@ private:
     QComboBox *windowIconChooser;
     QComboBox *defaultFontChooser;
     QComboBox *defaultFontSizeChooser;
+    QComboBox *defaultGuiFontSizeChooser;
     QLabel *defaultNotebookOnStartupLabel;
     bool webSettingsChanged;
     void loadFontNames();

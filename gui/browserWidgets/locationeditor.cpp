@@ -33,7 +33,7 @@ LocationEditor::LocationEditor(QWidget *parent) :
     setPalette(pal);
 
     QFont f = font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     setFont(f);
 
     inactiveColor = "QToolButton {background-color: transparent; border-radius: 0px; border:none; margin 0px; padding: 4px} ";

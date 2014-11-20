@@ -558,7 +558,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 
     // Setup the font
     QFont font; // =p.font() ;
-    font.setPointSize ( 8 );
+    font.setPointSize (global.defaultGuiFontSize);
     font.setFamily("Arial");
     QFontMetrics fm(font);
     int width =  fm.width(displayName);

@@ -30,7 +30,7 @@ QString AttachmentIconBuilder::buildIcon(qint32 lid, QString fileName) {
 
     // Setup the font
     QFont font;
-    font.setPointSize ( 8 );
+    font.setPointSize (global.defaultGuiFontSize);
     font.setFamily("Arial");
     QFontMetrics fm(font);
     int width =  fm.width(displayName);

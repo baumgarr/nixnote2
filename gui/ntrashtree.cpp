@@ -33,7 +33,7 @@ NTrashTree::NTrashTree(QWidget *parent) :
 {
     this->count = 0;
     QFont f = this->font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     this->setFont(f);
 
     filterPosition = -1;

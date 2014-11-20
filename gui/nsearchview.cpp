@@ -41,7 +41,7 @@ NSearchView::NSearchView(QWidget *parent) :
     QTreeWidget(parent)
 {
     QFont f = this->font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     this->setFont(f);
 
     filterPosition = -1;

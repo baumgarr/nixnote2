@@ -24,13 +24,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 
 
+extern Global global;
 
 TreeWidgetEditor::TreeWidgetEditor(QTreeWidget *parent) :
     QLineEdit(parent)
 {
     this->parent = parent;
     QFont f = font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     setFont(f);
     lid = 0;
     stackName = "";

@@ -40,6 +40,20 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     startMinimized = new QCheckBox(tr("Always Start minimized"), this);
     dynamicTotals = new QCheckBox(tr("Show notebook and tag totals"), this);
 
+    defaultGuiFontSizeChooser = new QComboBox();
+    defaultGuiFontSizeChooser->addItem("6", 6);
+    defaultGuiFontSizeChooser->addItem("7", 7);
+    defaultGuiFontSizeChooser->addItem("8", 8);
+    defaultGuiFontSizeChooser->addItem("9", 9);
+    defaultGuiFontSizeChooser->addItem("10", 10);
+    defaultGuiFontSizeChooser->addItem("11", 11);
+    defaultGuiFontSizeChooser->addItem("12", 12);
+    defaultGuiFontSizeChooser->addItem("13", 13);
+    defaultGuiFontSizeChooser->addItem("14", 14);
+    defaultGuiFontSizeChooser->addItem("15", 15);
+    defaultGuiFontSizeChooser->addItem("16", 16);
+    defaultGuiFontSizeChooser->setCurrentIndex(global.defaultGuiFontSize-6);
+
     defaultFontChooser = new QComboBox();
     defaultFontSizeChooser = new QComboBox();
     connect(defaultFontChooser, SIGNAL(currentIndexChanged(QString)), this, SLOT(loadFontSizes(QString)));
@@ -81,6 +95,9 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(autoStart, row++, 0);
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
+
+    mainLayout->addWidget(new QLabel(tr("Default GUI Font Size (Requires Restart)")), row, 0);
+    mainLayout->addWidget(defaultGuiFontSizeChooser, row++, 1);
 
     mainLayout->addWidget(new QLabel(tr("Default Editor Font")), row, 0);
     mainLayout->addWidget(defaultFontChooser, row++, 1);
@@ -157,8 +174,11 @@ void AppearancePreferences::saveValues() {
         global.defaultFont = defaultFontChooser->itemData(idx, Qt::UserRole).toString();
         idx = defaultFontSizeChooser->currentIndex();
         global.defaultFontSize = defaultFontSizeChooser->itemData(idx, Qt::UserRole).toInt();
+        idx = defaultGuiFontSizeChooser->currentIndex();
+        global.defaultGuiFontSize = defaultGuiFontSizeChooser->itemData(idx, Qt::UserRole).toInt();
         global.settings->setValue("defaultFont", global.defaultFont);
         global.settings->setValue("defaultFontSize", global.defaultFontSize);
+        global.settings->setValue("defaultGuiFontSize", global.defaultGuiFontSize);
 
         QWebSettings *settings = QWebSettings::globalSettings();
         settings->setFontFamily(QWebSettings::StandardFont, global.defaultFont);

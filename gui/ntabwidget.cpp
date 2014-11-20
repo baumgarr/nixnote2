@@ -36,7 +36,7 @@ NTabWidget::NTabWidget(SyncRunner *s, NNotebookView *n, NTagView *t)
     tagTreeView = t;
 
     QFont f = this->font();
-    f.setPointSize(8);
+    f.setPointSize(global.defaultGuiFontSize);
     this->setFont(f);
 
     tabBar = new QTabBar(this);
