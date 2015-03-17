@@ -51,6 +51,7 @@ void ResourceTable::updateGuid(qint32 lid, Guid &guid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_GUID);
     query.exec();
+    query.finish();
 
     QLOG_TRACE() << "Leaving ResourceTable::updateGuid()";
 }
@@ -80,6 +81,8 @@ void ResourceTable::sync(qint32 lid, Resource &resource) {
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
         query.exec();
+        query.finish();
+
     } else {
         ConfigStore cs(db);
         lid = cs.incrementLidCounter();
@@ -105,10 +108,11 @@ qint32 ResourceTable::getLid(QString noteGuid, QString guid) {
     query.bindValue(":key2", RESOURCE_NOTE_LID);
     query.bindValue(":noteLid", noteLid);
     query.exec();
+    qint32 retval = 0;
     if (query.next())
-        return query.value(0).toInt();
-    else
-        return 0;
+        retval = query.value(0).toInt();
+    query.finish();
+    return retval;
 }
 
 
@@ -133,10 +137,11 @@ qint32 ResourceTable::getLid(QString resourceGuid) {
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":data", resourceGuid);
     query.exec();
+    qint32 retval = 0;
     if (query.next())
-        return query.value(0).toInt();
-    else
-        return 0;
+        retval = query.value(0).toInt();
+    query.finish();
+    return retval;
 }
 
 
@@ -147,10 +152,11 @@ QString ResourceTable::getGuid(int lid) {
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":lid", lid);
     query.exec();
+    QString retval = "";
     if (query.next())
-        return query.value(0).toString();
-    else
-        return "";
+        retval = query.value(0).toString();
+    query.finish();
+    return retval;
 }
 
 // Return a resource structure given the LID
@@ -165,6 +171,7 @@ bool ResourceTable::get(Resource &resource, qint32 lid, bool withBinary) {
     while (query.next()) {
         mapResource(query, resource);
     }
+    query.finish();
 
     // Now read the binary data from the disk
     if (withBinary) {
@@ -336,10 +343,11 @@ bool ResourceTable::isDirty(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_ISDIRTY);
     query.exec();
+    bool retval = false;
     if (query.next())
-        return query.value(0).toBool();
-    else
-        return false;
+        retval = query.value(0).toBool();
+    query.finish();
+    return retval;
 }
 
 
@@ -365,10 +373,11 @@ bool ResourceTable::exists(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_GUID);
     query.exec();
+    bool retval = false;
     if (query.next())
-        return true;
-    else
-        return false;
+        retval = true;
+    query.finish();
+    return retval;
 }
 
 
@@ -660,6 +669,7 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
             query.exec();
         }
     }
+    query.finish();
     return lid;
 }
 
@@ -691,6 +701,8 @@ bool ResourceTable::getResourceRecognition(Resource &resource, qint32 lid) {
             d.body = query.value(1).toByteArray();
         }
     }
+    query.finish();
+
     resource.recognition = d;
     return true;
 }
@@ -751,6 +763,7 @@ void ResourceTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
         query.bindValue(":data", indexNeeded);
         query.exec();
     }
+    query.finish();
 }
 
 
@@ -764,6 +777,7 @@ qint32 ResourceTable::getIndexNeeded(QList<qint32> &lids) {
     while (query.next()) {
         lids.append(query.value(0).toInt());
     }
+    query.finish();
     return lids.size();
 }
 
@@ -782,6 +796,8 @@ bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid)
         int resLid = query.value(0).toInt();
         resourceList.append(resLid);
     }
+    query.finish();
+
     if (resourceList.size() > 0)
         return true;
     else
@@ -795,6 +811,8 @@ void ResourceTable::expunge(qint32 lid) {
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
+    query.finish();
+
 
     // Delete the physical files (resource)
     QDir myDir(global.fileManager.getDbaDirPath());
@@ -833,6 +851,8 @@ void ResourceTable::expungeByNote(qint32 notebookLid) {
         qint32 lid = query.value(0).toInt();
         expunge(lid);
     }
+    query.finish();
+
 }
 
 
@@ -844,6 +864,8 @@ void ResourceTable::updateResourceHash(qint32 lid, QByteArray newhash) {
     query.bindValue(":key", RESOURCE_DATA_HASH);
     query.bindValue(":lid", lid);
     query.exec();
+    query.finish();
+
 }
 
 
@@ -857,9 +879,11 @@ qint32 ResourceTable::getCount() {
     query.prepare("Select count(lid) from DataStore where key=:key;");
     query.bindValue(":key", RESOURCE_GUID);
     query.exec();
+    qint32 retval = 0;
     if (query.next())
-        return query.value(0).toInt();
-    return 0;
+        retval = query.value(0).toInt();
+    query.finish();
+    return retval;
 }
 
 
@@ -869,9 +893,11 @@ qint32 ResourceTable::getUnindexedCount() {
     query.prepare("Select count(lid) from DataStore where key=:key and data='true'");
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
     query.exec();
+    qint32 retval =0;
     if (query.next())
-        return query.value(0).toInt();
-    return 0;
+        retval= query.value(0).toInt();
+    query.finish();
+    return retval;
 }
 
 
@@ -888,6 +914,8 @@ qint32 ResourceTable::addStub(qint32 resLid, qint32 noteLid) {
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":data", QString::number(resLid));
     query.exec();
+    query.finish();
+
     return resLid;
 }
 
@@ -930,6 +958,8 @@ void ResourceTable::reindexAllResources() {
     query.bindValue(":indexKey", RESOURCE_INDEX_NEEDED);
     query.bindValue(":key", RESOURCE_GUID);
     query.exec();
+    query.finish();
+
 }
 
 
@@ -942,6 +972,8 @@ void ResourceTable::updateNoteLid(qint32 resourceLid, qint32 newNoteLid) {
     query.bindValue(":lid", resourceLid);
     query.bindValue(":key", RESOURCE_NOTE_LID);
     query.exec();
+    query.finish();
+
 }
 
 void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash< qint32, Resource > &resourceMap, QString guid) {
@@ -1008,6 +1040,8 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
         }
         mapResource(query, *r);
     }
+    query.finish();
+
     if (r != NULL)
         delete r;
 }
@@ -1039,6 +1073,7 @@ void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool 
         }
         mapResource(query, *r);
     }
+    query.finish();
 
     // if we need binary data, read it in.  Then add to the list
     QHash<qint32, Resource*>::iterator i;

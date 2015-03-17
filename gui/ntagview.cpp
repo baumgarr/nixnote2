@@ -272,6 +272,7 @@ void NTagView::loadData() {
         newWidget->parentLid = tagTable.getLid(parentGid);
         root->addChild(newWidget);
     }
+    query.finish();
     this->rebuildTree();
 }
 

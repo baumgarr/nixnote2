@@ -134,6 +134,10 @@ void Global::setup(StartupConfig startupConfig) {
         settings->setFontSize(QWebSettings::DefaultFontSize, defaultFontSize);
     }
 
+    minIndexInterval = 5000;
+    maxIndexInterval = 120000;
+    indexResourceCountPause=2;
+    indexNoteCountPause=100;
 }
 
 

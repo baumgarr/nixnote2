@@ -45,6 +45,7 @@ NoteModel::NoteModel(QObject *parent)
     sql.exec("Select *  from sqlite_master where type='table' and name='NoteTable';");
     if (!sql.next())
         this->createTable();
+    sql.finish();
     this->setEditStrategy(QSqlTableModel::OnFieldChange);
 
     this->setTable("NoteTable");
@@ -117,6 +118,7 @@ void NoteModel::createTable() {
        ) {
         QLOG_ERROR() << "Creation of NoteTable table failed: " << sql.lastError();
     }
+    sql.finish();
 }
 
 

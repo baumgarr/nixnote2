@@ -83,6 +83,7 @@ qint32 LinkedNotebookTable::sync(qint32 lid, LinkedNotebook &notebook) {
         query.prepare("Delete from DataStore where lid=:lid and key>=3200 and key<3300");
         query.bindValue(":lid", lid);
         query.exec();
+        query.finish();
     }
 
     if (lid == 0) {
@@ -129,10 +130,11 @@ qint32 LinkedNotebookTable::getLid(QString guid) {
     query.bindValue(":data", guid);
     query.bindValue(":key", LINKEDNOTEBOOK_GUID);
     query.exec();
+    qint32 retval = 0;
     if (query.next())
-        return query.value(0).toInt();
-    else
-        return 0;
+        retval = query.value(0).toInt();
+    query.finish();
+    return retval;
 }
 
 
@@ -253,6 +255,7 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
         query2.bindValue(":name", sharename);
         query2.bindValue(":lid", lid);
         query2.exec();
+        query2.finish();
     }
     if (isDirty) {
         query.bindValue(":lid", lid);
@@ -261,7 +264,7 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
         query.exec();
     }
 
-
+    query.finish();
     return lid;
 }
 
@@ -312,7 +315,7 @@ bool LinkedNotebookTable::get(LinkedNotebook &notebook, qint32 lid) {
             break;
         }
     }
-
+    query.finish();
     return true;
 }
 
@@ -343,7 +346,7 @@ qint32 LinkedNotebookTable::getAll(QList<qint32> &books) {
     while (query.next()) {
         books.append(query.value(0).toInt());
     }
-
+    query.finish();
     return books.size();
 }
 
@@ -358,7 +361,7 @@ qint32 LinkedNotebookTable::getStack(QList<qint32> &retval, QString &stack){
     while (query.next()) {
         retval.append(query.value(0).toInt());
     }
-
+    query.finish();
     return retval.size();
 
 }
@@ -374,9 +377,10 @@ bool LinkedNotebookTable::getGuid(QString &retval, qint32 lid){
     query.exec();
     while (query.next()) {
         retval = query.value(0).toString();
+        query.finish();
         return true;
     }
-
+    query.finish();
     return false;
 
 }
@@ -410,6 +414,7 @@ bool LinkedNotebookTable::update(LinkedNotebook &notebook, bool isDirty) {
         query.bindValue(":name", newname);
         query.bindValue(":lid", lid);
         query.exec();
+        query.finish();
     }
     return true;
 }
@@ -419,6 +424,7 @@ void LinkedNotebookTable::expunge(qint32 lid) {
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
+    query.finish();
 }
 
 
@@ -442,6 +448,7 @@ void LinkedNotebookTable::renameStack(QString oldName, QString newName) {
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.bindValue(":oldName", oldName);
     query.exec();
+    query.finish();
 
 //    for (qint32 i=0; i<lids.size(); i++)
 //        setDirty(lids[i], true);
@@ -457,6 +464,7 @@ void LinkedNotebookTable::findByStack(QList<qint32> &lids, QString stackName) {
     while(query.next()) {
         lids.append(query.value(0).toInt());
     }
+    query.finish();
 }
 
 
@@ -474,6 +482,7 @@ void LinkedNotebookTable::getStacks(QStringList &stacks) {
     while (query.next()) {
         stacks.append(query.value(0).toString());
     }
+    query.finish();
 }
 
 
@@ -483,10 +492,11 @@ bool LinkedNotebookTable::isStacked(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.exec();
+    bool retval = false;
     if (query.next())
-        return true;
-    else
-        return false;
+        retval = true;
+    query.finish();
+    return retval;
 }
 
 
@@ -496,6 +506,7 @@ void LinkedNotebookTable::removeFromStack(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.exec();
+    query.finish();
 }
 
 
@@ -506,10 +517,12 @@ qint32 LinkedNotebookTable::getLastUpdateSequenceNumber(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
     query.exec();
+    qint32 retval = 0;
     if (query.next()) {
-        return query.value(0).toInt();
+        retval = query.value(0).toInt();
     }
-    return 0;
+    query.finish();
+    return retval;
 }
 
 
@@ -526,6 +539,7 @@ void LinkedNotebookTable::setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN
     query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
     query.bindValue(":data", lastUSN);
     query.exec();
+    query.finish();
 }
 
 
@@ -535,8 +549,9 @@ bool LinkedNotebookTable::exists(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_SHARE_NAME);
     query.exec();
+    bool retval = false;
     if (query.next())
-        return true;
-    else
-        return false;
+        retval = true;
+    query.finish();
+    return retval;
 }

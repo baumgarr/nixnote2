@@ -40,20 +40,34 @@ using namespace qevercloud;
 
 using namespace std;
 
+
+class IndexRecord : public QObject
+{
+    Q_OBJECT
+public:
+    qint32 lid;
+    qint32 weight;
+    QString source;
+    QString content;
+};
+
+
+
+
 class IndexRunner : public QObject
 {
     Q_OBJECT
 private:
     QTimer *indexTimer;
+    QHash<qint32, IndexRecord*> *indexHash;
     bool init;
-    int minInterval;
-    int maxInterval;
     void indexRecognition(qint32 lid, Resource &r);
     void indexNote(qint32 lid, Note &n);
     void indexPdf(qint32 lid, Resource &r);
     void indexAttachment(qint32 lid, Resource &r);
     QTextDocument *textDocument;
     DatabaseConnection *db;
+    void flushCache();
 
 public:
     bool keepRunning;

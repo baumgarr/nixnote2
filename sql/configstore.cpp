@@ -37,6 +37,7 @@ ConfigStore::ConfigStore(QSqlDatabase *conn)
     sql.exec("Select * from sqlite_master where type='table' and name='ConfigStore';");
     if (!sql.next())
         this->createTable();
+    sql.finish();
 }
 
 
@@ -59,6 +60,7 @@ void ConfigStore::createTable() {
         // insert default values into the new table
         this->initTable();
     }
+    sql.finish();
 }
 
 
@@ -77,6 +79,7 @@ void ConfigStore::initTable() {
     if (!sql.exec()) {
         QLOG_ERROR() << "Insertion of initial counter failed: " << sql.lastError();
     }
+    sql.finish();
 }
 
 
@@ -104,9 +107,11 @@ qint32 ConfigStore::incrementLidCounter() {
         if (!sql.exec()) {
             QLOG_ERROR() << "Error updating sequence number: " << sql.lastError();
         }
+        sql.finish();
         // Return the next lid to the caller
         return sequence;
     }
+    sql.finish();
     return -1;
 }
 
@@ -121,6 +126,7 @@ void ConfigStore::saveSetting(int key, QByteArray value) {
     sql.bindValue(":key", key);
     sql.bindValue(":value", value);
     sql.exec();
+    sql.finish();
 }
 
 
@@ -131,7 +137,9 @@ bool ConfigStore::getSetting(QByteArray &value, int key) {
     sql.exec();
     while (sql.next()) {
         value = sql.value(0).toByteArray();
+        sql.finish();
         return true;
     }
+    sql.finish();
     return false;
 }

@@ -44,6 +44,7 @@ void FavoritesTable::getAll(QList<qint32> &lids) {
     while (query.next()) {
         lids.append(query.value(0).toInt());
     }
+    query.finish();
 }
 
 
@@ -74,6 +75,7 @@ bool FavoritesTable::get(FavoritesRecord &record, qint32 lid) {
             record.parent = query.value(1).toInt();
         }
     }
+    query.finish();
     switch (type) {
     case FavoritesRecord::Note :
         record.type = FavoritesRecord::Note;
@@ -160,6 +162,7 @@ void FavoritesTable::setOrder(QList< QPair< qint32, qint32 > > order) {
         query.bindValue(":data", order[i].second);
         query.exec();
     }
+    query.finish();
 }
 
 
@@ -168,6 +171,7 @@ void FavoritesTable::expunge(qint32 lid) {
     query.prepare("delete from datastore where lid=:key");
     query.bindValue(":lid", lid);
     query.exec();
+    query.finish();
 }
 
 
@@ -180,6 +184,7 @@ qint32 FavoritesTable::getLidByTarget(const QVariant &target) {
     query.exec();
     if (query.next())
         result = query.value(0).toInt();
+    query.finish();
     return result;
 }
 
@@ -218,6 +223,7 @@ qint32 FavoritesTable::add(const FavoritesRecord &record) {
     query.bindValue(":key", FAVORITES_PARENT);
     query.bindValue(":data", record.parent);
     query.exec();
+    query.finish();
     return lid;
 }
 
@@ -243,6 +249,7 @@ qint32 FavoritesTable::insert(const FavoritesRecord &record) {
         subQuery.exec();
         newOrder++;
     }
+    query.finish();
     return add(record);
 }
 
@@ -253,7 +260,10 @@ bool FavoritesTable::childrenFound(qint32 lid) {
     query.bindValue(":key", FAVORITES_PARENT);
     query.bindValue(":lid", lid);
     query.exec();
-    if (query.next())
+    if (query.next()) {
+        query.finish();
         return true;
+    }
+    query.finish();
     return false;
 }

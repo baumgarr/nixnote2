@@ -410,6 +410,7 @@ void NTableView::refreshData() {
     while(sql.next()) {
         proxy->lidMap->insert(sql.value(0).toInt(), 0);
     }
+    sql.finish();
     QLOG_DEBUG() << "Valid LIDs retrieved.  Refreshing selection";
     model()->select();
     while(model()->canFetchMore())
@@ -543,6 +544,7 @@ void NTableView::restoreSelectedNotes() {
         sql.bindValue(":lid", lids[i]);
         sql.exec();
     }
+    sql.finish();
     //transaction.exec("commit");
     emit(notesRestored(lids));
 }
@@ -598,6 +600,7 @@ void NTableView::deleteSelectedNotes() {
         global.cache.remove(lids[i]);
     }
     //transaction.exec("commit");
+    sql.finish();
     emit(notesDeleted(lids, expunged));
 }
 

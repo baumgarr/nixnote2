@@ -57,10 +57,12 @@ qint32 NotebookTable::findByName(string &name) {
     query.bindValue(":key", NOTEBOOK_ALIAS);
     query.bindValue(":name", QString::fromStdString(name));
     query.exec();
+    qint32 retval = 0;
     if (query.next())
-        return query.value(0).toInt();
+        retval = query.value(0).toInt();
 
-    return 0;
+    query.finish();
+    return retval;
 }
 
 
@@ -84,6 +86,7 @@ void NotebookTable::updateGuid(qint32 lid, Guid &guid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_GUID);
     query.exec();
+    query.finish();
 }
 
 
@@ -116,6 +119,7 @@ qint32 NotebookTable::sync(qint32 lid, Notebook &notebook) {
         query.prepare("Delete from DataStore where lid=:lid and key>=3000 and key<3200");
         query.bindValue(":lid", lid);
         query.exec();
+        query.finish();
     } else {
         ConfigStore cs(db);
         lid = cs.incrementLidCounter();
@@ -142,10 +146,11 @@ qint32 NotebookTable::getLid(QString guid) {
     query.bindValue(":data", guid);
     query.bindValue(":key", SHAREDNOTEBOOK_NOTEBOOK_GUID);
     query.exec();
+    qint32 retval = 0;
     if (query.next())
-        return query.value(0).toInt();
-
-    return 0;
+        retval = query.value(0).toInt();
+    query.finish();
+    return retval;
 }
 
 
@@ -165,6 +170,7 @@ qint32 NotebookTable::addStub(QString guid) {
     query.bindValue(":key", NOTEBOOK_GUID);
     query.bindValue(":data", guid);
     query.exec();
+    query.finish();
     return lid;
 }
 
@@ -309,6 +315,7 @@ qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
             sharedTable.add(lid, sharedNotebooks[i], isDirty);
         }
     }
+    query.finish();
 
     NoteTable noteTable(db);
     noteTable.updateNotebookName(lid, t.name);
@@ -384,7 +391,7 @@ bool NotebookTable::get(Notebook &notebook, qint32 lid) {
             break;
         }
     }
-
+    query.finish();
     return true;
 }
 
@@ -413,10 +420,11 @@ bool NotebookTable::isDirty(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_ISDIRTY);
     query.exec();
+    bool retval = false;
     if (query.next())
-        return query.value(0).toBool();
-    else
-        return false;
+        retval = query.value(0).toBool();
+    query.finish();
+    return retval;
 }
 
 
@@ -454,7 +462,9 @@ bool NotebookTable::setDirty(qint32 lid, bool dirty) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_ISDIRTY);
     query.bindValue(":data", dirty);
-    return query.exec();
+    bool retval = query.exec();
+    query.finish();
+    return retval;
 }
 
 // Does this notebook exist?
@@ -464,10 +474,11 @@ bool NotebookTable::exists(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_GUID);
     query.exec();
+    bool retval = false;
     if (query.next())
-        return true;
-    else
-        return false;
+        retval = true;
+    query.finish();
+    return retval;
 }
 
 
@@ -495,7 +506,7 @@ qint32 NotebookTable::getAll(QList<qint32> &books) {
     while (query.next()) {
         books.append(query.value(0).toInt());
     }
-
+    query.finish();
     return books.size();
 }
 
@@ -510,7 +521,7 @@ qint32 NotebookTable::getAllOrderByName(QList<qint32> &books) {
     while (query.next()) {
         books.append(query.value(0).toInt());
     }
-
+    query.finish();
     return books.size();
 }
 
@@ -525,7 +536,7 @@ qint32 NotebookTable::getStack(QList<qint32> &retval, QString &stack){
     while (query.next()) {
         retval.append(query.value(0).toInt());
     }
-
+    query.finish();
     return retval.size();
 
 }
@@ -541,9 +552,10 @@ bool NotebookTable::getGuid(QString &retval, qint32 lid){
     query.exec();
     while (query.next()) {
         retval = query.value(0).toString();
+        query.finish();
         return true;
     }
-
+    query.finish();
     return false;
 
 }
@@ -560,9 +572,10 @@ bool NotebookTable::findGuidByName(QString &retval, QString &guid) {
     QLOG_DEBUG() << query.lastError();
     while (query.next()) {
         retval = query.value(0).toString();
+        query.finish();
         return true;
     }
-
+    query.finish();
     return false;
 }
 
@@ -600,6 +613,7 @@ void NotebookTable::deleteNotebook(qint32 lid) {
         query.bindValue(":key", NOTEBOOK_IS_DELETED);
         query.bindValue(":data", true);
         query.exec();
+        query.finish();
 
         setDirty(lid, true);
     } else {
@@ -614,10 +628,11 @@ bool NotebookTable::isLocal(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_IS_LOCAL);
     query.exec();
+    bool retval = false;
     if (query.next())
-        return query.value(0).toBool();
-    else
-        return false;
+        retval = query.value(0).toBool();
+    query.finish();
+    return retval;
 }
 
 
@@ -643,6 +658,7 @@ bool NotebookTable::update(Notebook &notebook, bool isDirty) {
         query.bindValue(":name", newname);
         query.bindValue(":lid", lid);
         query.exec();
+        query.finish();
     }
     return true;
 }
@@ -652,6 +668,7 @@ void NotebookTable::expunge(qint32 lid) {
     query.prepare("delete from DataStore where lid=:lid and key>=3000 and key<3200");
     query.bindValue(":lid", lid);
     query.exec();
+    query.finish();
 }
 
 
@@ -675,6 +692,7 @@ void NotebookTable::renameStack(QString oldName, QString newName) {
     query.bindValue(":key", NOTEBOOK_STACK);
     query.bindValue(":oldName", oldName);
     query.exec();
+    query.finish();
 
     for (qint32 i=0; i<lids.size(); i++)
         setDirty(lids[i], true);
@@ -690,6 +708,7 @@ void NotebookTable::findByStack(QList<qint32> &lids, QString stackName) {
     while(query.next()) {
         lids.append(query.value(0).toInt());
     }
+    query.finish();
 }
 
 
@@ -700,10 +719,12 @@ bool NotebookTable::isDeleted(qint32 lid) {
     query.bindValue(":key", NOTEBOOK_IS_DELETED);
     query.bindValue(":value", true);
     query.exec();
+    bool retval = false;
     if (query.next()) {
-        return true;
+        retval = true;
     }
-    return false;
+    query.finish();
+    return retval;
 }
 
 
@@ -715,6 +736,7 @@ void NotebookTable::getStacks(QStringList &stacks) {
     while (query.next()) {
         stacks.append(query.value(0).toString());
     }
+    query.finish();
 }
 
 
@@ -724,10 +746,11 @@ bool NotebookTable::isStacked(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_STACK);
     query.exec();
+    bool retval = false;
     if (query.next())
-        return true;
-    else
-        return false;
+        retval = true;
+    query.finish();
+    return retval;
 }
 
 
@@ -737,22 +760,25 @@ void NotebookTable::removeFromStack(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_STACK);
     query.exec();
+    query.finish();
 }
 
 
 
 qint32 NotebookTable::getDefaultNotebookLid() {
     NSqlQuery query(*db);
+    qint32 retval = 0;
     query.exec("Select lid from datastore where key=3007 and data='true'");
     if (query.next()) {
-        return query.value(0).toInt();
+        retval = query.value(0).toInt();
     } else {
         query.exec("Select lid from datastore where key=3001");
         if (query.next()) {
-            return query.value(0).toInt();
+            retval = query.value(0).toInt();
         }
     }
-    return 0;
+    query.finish();
+    return retval;
 }
 
 QString NotebookTable::getDefaultNotebookGuid() {
@@ -811,6 +837,7 @@ qint32 NotebookTable::getConflictNotebook() {
             return lid;
         i++;
     }
+    query.finish();
 
     // If there is no conflict notebook, we create one
     Notebook n;
@@ -832,10 +859,12 @@ int NotebookTable::getNewUnsequencedCount() {
     query.bindValue(":key", NOTEBOOK_UPDATE_SEQUENCE_NUMBER);
     query.bindValue(":localKey", NOTEBOOK_IS_LOCAL);
     query.exec();
+    qint32 retval = 0;
     while(query.next()) {
-        return query.value(0).toInt();
+        retval = query.value(0).toInt();
     }
-    return 0;
+    query.finish();
+    return retval;
 }
 
 
@@ -850,6 +879,7 @@ qint32 NotebookTable::getAllDirty(QList<qint32> &lids) {
     while(query.next()) {
         lids.append(query.value(0).toInt());
     }
+    query.finish();
     return lids.size();
 }
 
@@ -863,6 +893,7 @@ void NotebookTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_UPDATE_SEQUENCE_NUMBER);
     query.exec();
+    query.finish();
 }
 
 // Linked notebooks are not uploaded, so we reset the dirty flags in case
@@ -873,6 +904,7 @@ void NotebookTable::resetLinkedNotebooksDirty() {
     query.bindValue(":key", NOTEBOOK_ISDIRTY);
     query.bindValue(":linkedkey", LINKEDNOTEBOOK_GUID);
     query.exec();
+    query.finish();
 }
 
 
@@ -883,10 +915,11 @@ qint32 NotebookTable::findByUri(QString uri) {
     query.bindValue(":key", NOTEBOOK_PUBLISHING_URI);
     query.bindValue(":data", uri);
     query.exec();
+    qint32 retval = 0;
     if (query.next())
-        return query.value(0).toInt();
-    else
-        return 0;
+        retval = query.value(0).toInt();
+    query.finish();
+    return retval;
 }
 
 qint32 NotebookTable::findByUri(string uri) {
@@ -905,6 +938,7 @@ void NotebookTable::getClosedNotebooks(QList<qint32> &lids) {
     while (query.next()) {
         lids.append(query.value(0).toInt());
     }
+    query.finish();
 }
 
 // Get a list of any notebooks that are open and
@@ -920,6 +954,7 @@ void NotebookTable::getOpenNotebooks(QList<qint32> &lids) {
         qint32 lid = query.value(0).toInt();
         lids.append(lid);
     }
+    query.finish();
 }
 
 
@@ -931,6 +966,7 @@ void NotebookTable::openAllNotebooks() {
     query.prepare("delete from DataStore where key=:key");
     query.bindValue(":key", NOTEBOOK_IS_CLOSED);
     query.exec();
+    query.finish();
 }
 
 
@@ -947,6 +983,7 @@ void NotebookTable::closeNotebook(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_IS_CLOSED);
     query.exec();
+    query.finish();
 }
 
 
@@ -960,14 +997,12 @@ void NotebookTable::merge(qint32 source, qint32 target) {
     query.exec();
     QLOG_DEBUG() << query.lastError();
 
-
     query.prepare("Update notetable set notebooklid=:newLid where notebooklid=:oldLid");
     query.bindValue(":newLid", target);
     query.bindValue(":oldLid", source);
     query.exec();
     QLOG_DEBUG() << query.lastError();
 
-
-
+    query.finish();
 }
 

@@ -48,6 +48,7 @@ DataStore::DataStore(QSqlDatabase *db)
   this->setTable("DataStore");
   this->select();
   this->setEditStrategy(QSqlTableModel::OnFieldChange);
+  sql.finish();
 }
 
 
@@ -86,7 +87,7 @@ void DataStore::createTable() {
     if (!sql.exec("Create virtual table SearchIndex using fts4 (lid int, weight int, source text, content text)")) {
         QLOG_ERROR() << "Creation of SearchIndex table failed: " << sql.lastError();
     }
-
+    sql.finish();
     Notebook notebook;
     NotebookTable table(db);
     notebook.name = "My Notebook";

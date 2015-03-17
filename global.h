@@ -148,6 +148,11 @@ public:
     bool syncAndExit;
     qint32 startupNote;
 
+    qint32 minIndexInterval;
+    qint32 maxIndexInterval;
+    qint32 indexResourceCountPause;
+    qint32 indexNoteCountPause;
+
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;
     qint32 filterPosition;

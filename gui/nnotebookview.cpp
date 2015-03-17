@@ -283,6 +283,7 @@ void NNotebookView::loadData() {
             }
         }
     }
+    query.finish();
     this->rebuildTree();
     this->resetSize();
 }

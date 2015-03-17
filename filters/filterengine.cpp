@@ -33,6 +33,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
     sql.prepare("Insert into filter (lid) select lid from NoteTable where notebooklid not in (select lid from datastore where key=:closedNotebooks)");
     sql.bindValue(":closedNotebooks", NOTEBOOK_IS_CLOSED);
     sql.exec();
+    sql.finish();
     QLOG_DEBUG() << "Reset complete";
 
 
@@ -71,6 +72,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
     while (query.next()) {
         goodLids.append(query.value(0).toInt());
     }
+    query.finish();
 
     if (internalSearch) {
     // Remove any selected notes that are not in the filter.
@@ -380,6 +382,7 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
     }
 
     sql.exec();
+    sql.finish();
 }
 
 
@@ -430,6 +433,7 @@ void FilterEngine::filterFavorite(FilterCriteria *criteria) {
             sql.exec();
         }
         sql.exec("delete from filter where lid not in (select lid from goodLids)" );
+        sql.finish();
     }
 
     if (rec.type == FavoritesRecord::Note) {
@@ -437,6 +441,7 @@ void FilterEngine::filterFavorite(FilterCriteria *criteria) {
         sql.prepare("delete from filter where lid <> :lid");
         sql.bindValue(":lid", rec.target);
         sql.exec();
+        sql.finish();
     }
 
 }
@@ -472,6 +477,7 @@ void FilterEngine::filterIndividualNotebook(QString &notebook) {
     sql.bindValue(":type", NOTE_NOTEBOOK_LID);
     sql.bindValue(":notebookLid", notebookLid);
     sql.exec();
+    sql.finish();
 }
 
 void FilterEngine::filterStack(QString &stack) {
@@ -491,6 +497,7 @@ void FilterEngine::filterStack(QString &stack) {
             sql.exec();
         }
     }
+    sql.finish();
 }
 
 
@@ -527,6 +534,7 @@ void FilterEngine::filterTags(FilterCriteria *criteria) {
         sql.exec();
     }
     sql.exec("delete from filter where lid not in (select lid from goodLids)" );
+    sql.finish();
 }
 
 
@@ -539,6 +547,7 @@ void FilterEngine::filterTrash(FilterCriteria *criteria) {
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:type and data='true')");
         sql.bindValue(":type", NOTE_ACTIVE);
         sql.exec();
+        sql.finish();
         return;
     }
     if (!criteria->getDeletedOnly())
@@ -549,6 +558,7 @@ void FilterEngine::filterTrash(FilterCriteria *criteria) {
     sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:type and data='false')");
     sql.bindValue(":type", NOTE_ACTIVE);
     sql.exec();
+    sql.finish();
 }
 
 
@@ -719,6 +729,7 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             }
         }
     }
+    sql.finish();
 }
 
 
@@ -742,6 +753,7 @@ void FilterEngine::filterSearchStringIntitleAll(QString string) {
         tagSql.bindValue(":data", string);
 
         tagSql.exec();
+        tagSql.finish();
     } else {
         string.remove(0,9);
         if (string == "")
@@ -756,6 +768,7 @@ void FilterEngine::filterSearchStringIntitleAll(QString string) {
         tagSql.bindValue(":data", string);
 
         tagSql.exec();
+        tagSql.finish();
     }
 }
 
@@ -779,6 +792,7 @@ void FilterEngine::filterSearchStringCoordinatesAll(QString string, int key) {
         sql.bindValue(":key", key);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "0";
@@ -788,6 +802,7 @@ void FilterEngine::filterSearchStringCoordinatesAll(QString string, int key) {
         sql.bindValue(":key", key);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -813,6 +828,7 @@ void FilterEngine::filterSearchStringAuthorAll(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "*";
@@ -826,6 +842,7 @@ void FilterEngine::filterSearchStringAuthorAll(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -853,6 +870,7 @@ void FilterEngine::filterSearchStringSourceAll(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "*";
@@ -866,6 +884,7 @@ void FilterEngine::filterSearchStringSourceAll(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -893,6 +912,7 @@ void FilterEngine::filterSearchStringContentClassAll(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "*";
@@ -906,6 +926,7 @@ void FilterEngine::filterSearchStringContentClassAll(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -931,6 +952,7 @@ void FilterEngine::filterSearchStringPlaceNameAll(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_PLACE_NAME);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "*";
@@ -944,6 +966,7 @@ void FilterEngine::filterSearchStringPlaceNameAll(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_PLACE_NAME);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -971,6 +994,7 @@ void FilterEngine::filterSearchStringSourceApplicationAll(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "*";
@@ -984,6 +1008,7 @@ void FilterEngine::filterSearchStringSourceApplicationAll(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -1009,6 +1034,7 @@ void FilterEngine::filterSearchStringResourceAll(QString string) {
         sql.bindValue(":mimekey", RESOURCE_MIME);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         string.remove(0,10);
         if (string == "")
@@ -1024,6 +1050,7 @@ void FilterEngine::filterSearchStringResourceAll(QString string) {
         sql.bindValue(":mimekey", RESOURCE_MIME);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -1047,6 +1074,7 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAll(QString string) 
         sql.bindValue(":mimekey", RESOURCE_RECO_TYPE);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         string.remove(0,10);
         if (string == "")
@@ -1062,6 +1090,7 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAll(QString string) 
         sql.bindValue(":mimekey", RESOURCE_RECO_TYPE);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -1086,6 +1115,7 @@ void FilterEngine::filterSearchStringTagAll(QString string) {
         tagSql.bindValue(":notetagkey", NOTE_TAG_LID);
 
         tagSql.exec();
+        tagSql.finish();
     } else {
         string.remove(0,5);
         if (string == "")
@@ -1102,6 +1132,7 @@ void FilterEngine::filterSearchStringTagAll(QString string) {
         tagSql.bindValue(":tagnamekey", TAG_NAME);
         tagSql.bindValue(":notetagkey", NOTE_TAG_LID);
         tagSql.exec();
+        tagSql.finish();
     }
 }
 
@@ -1125,6 +1156,8 @@ void FilterEngine::filterSearchStringNotebookAll(QString string) {
 //        notebookSql.bindValue(":type", NOTE_NOTEBOOK_LID);
         notebookSql.bindValue(":notebook", string);
         notebookSql.exec();
+        notebookSql.finish();
+
     } else {
         string.remove(0,10);
         if (string == "")
@@ -1140,6 +1173,7 @@ void FilterEngine::filterSearchStringNotebookAll(QString string) {
         //notebookSql.bindValue(":type", NOTE_NOTEBOOK);
         notebookSql.bindValue(":notebook", string);
         notebookSql.exec();
+        notebookSql.finish();
     }
 }
 
@@ -1167,6 +1201,7 @@ void FilterEngine::filterSearchStringTodoAll(QString string) {
             sql.bindValue(":key1", NOTE_HAS_TODO_UNCOMPLETED);
         }
         sql.exec();
+        sql.finish();
     } else {
         string.remove(0,6);
         if (string == "")
@@ -1187,6 +1222,7 @@ void FilterEngine::filterSearchStringTodoAll(QString string) {
             sql.bindValue(":key1", NOTE_HAS_TODO_UNCOMPLETED);
         }
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -1229,6 +1265,7 @@ void FilterEngine::filterSearchStringDateAll(QString string) {
     sql.bindValue(":key", key);
     sql.bindValue(":data", dt.toMSecsSinceEpoch());
     sql.exec();
+    sql.finish();
 
 }
 
@@ -1418,6 +1455,7 @@ void FilterEngine::filterSearchStringAny(QStringList list) {
     }
 
     sql.exec("delete from filter where lid not in (select lid from anylidsfilter)");
+    sql.finish();
 }
 
 
@@ -1440,6 +1478,7 @@ void FilterEngine::filterSearchStringNotebookAny(QString string) {
         }
         notebookSql.bindValue(":notebook", string);
         notebookSql.exec();
+        notebookSql.finish();
     } else {
         string.remove(0,10);
         if (string == "")
@@ -1454,6 +1493,7 @@ void FilterEngine::filterSearchStringNotebookAny(QString string) {
         }
         notebookSql.bindValue(":notebook", string);
         notebookSql.exec();
+        notebookSql.finish();
     }
 }
 
@@ -1483,6 +1523,7 @@ void FilterEngine::filterSearchStringTodoAny(QString string) {
             sql.bindValue(":key1", NOTE_HAS_TODO_UNCOMPLETED);
         }
         sql.exec();
+        sql.finish();
     } else {
         string.remove(0,6);
         if (string == "")
@@ -1503,6 +1544,7 @@ void FilterEngine::filterSearchStringTodoAny(QString string) {
             sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
         }
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -1529,6 +1571,7 @@ void FilterEngine::filterSearchStringTagAny(QString string) {
         tagSql.bindValue(":notetagkey", NOTE_TAG_LID);
 
         tagSql.exec();
+        tagSql.finish();
     } else {
         string.remove(0,5);
         if (string == "")
@@ -1545,6 +1588,7 @@ void FilterEngine::filterSearchStringTagAny(QString string) {
         tagSql.bindValue(":tagnamekey", TAG_NAME);
         tagSql.bindValue(":notetagkey", NOTE_TAG_LID);
         tagSql.exec();
+        tagSql.finish();
     }
 }
 
@@ -1568,6 +1612,7 @@ void FilterEngine::filterSearchStringIntitleAny(QString string) {
         tagSql.bindValue(":data", string);
 
         tagSql.exec();
+        tagSql.finish();
     } else {
         int pos = string.indexOf(":")+1;
         string = string.mid(pos);
@@ -1583,6 +1628,7 @@ void FilterEngine::filterSearchStringIntitleAny(QString string) {
         tagSql.bindValue(":data", string);
 
         tagSql.exec();
+        tagSql.finish();
     }
 }
 
@@ -1608,6 +1654,7 @@ void FilterEngine::filterSearchStringResourceAny(QString string) {
         sql.bindValue(":data", string);
         sql.exec();
         QLOG_DEBUG() << sql.lastError();
+        sql.finish();
     } else {
         string.remove(0,10);
         if (string == "")
@@ -1624,6 +1671,7 @@ void FilterEngine::filterSearchStringResourceAny(QString string) {
         sql.bindValue(":data", string);
         sql.exec();
         QLOG_DEBUG() << sql.lastError();
+        sql.finish();
     }
 }
 
@@ -1647,6 +1695,7 @@ void FilterEngine::filterSearchStringCoordinatesAny(QString string, int key) {
         sql.bindValue(":key", key);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "0";
@@ -1656,6 +1705,7 @@ void FilterEngine::filterSearchStringCoordinatesAny(QString string, int key) {
         sql.bindValue(":key", key);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -1683,6 +1733,7 @@ void FilterEngine::filterSearchStringAuthorAny(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "*";
@@ -1696,6 +1747,7 @@ void FilterEngine::filterSearchStringAuthorAny(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -1737,6 +1789,7 @@ void FilterEngine::filterSearchStringDateAny(QString string) {
     sql.bindValue(":key", key);
     sql.bindValue(":data", dt.toMSecsSinceEpoch());
     sql.exec();
+    sql.finish();
 
 }
 
@@ -1779,6 +1832,7 @@ void FilterEngine::filterSearchStringSourceAny(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -1806,6 +1860,7 @@ void FilterEngine::filterSearchStringSourceApplicationAny(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "*";
@@ -1819,6 +1874,7 @@ void FilterEngine::filterSearchStringSourceApplicationAny(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_APPLICATION);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -1847,6 +1903,7 @@ void FilterEngine::filterSearchStringContentClassAny(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "*";
@@ -1860,6 +1917,7 @@ void FilterEngine::filterSearchStringContentClassAny(QString string) {
         sql.bindValue(":key", NOTE_ATTRIBUTE_CONTENT_CLASS);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 
@@ -1886,6 +1944,7 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) 
         sql.bindValue(":key", RESOURCE_RECO_TYPE);
         sql.bindValue(":data", string);
         sql.exec();
+        sql.finish();
     } else {
         if (string == "")
             string = "*";
@@ -1899,6 +1958,7 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) 
         sql.bindValue(":key", RESOURCE_RECO_TYPE);
         sql.bindValue(":data", string.toDouble());
         sql.exec();
+        sql.finish();
     }
 }
 

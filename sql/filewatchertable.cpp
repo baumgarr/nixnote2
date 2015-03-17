@@ -53,8 +53,7 @@ qint32 FileWatcherTable::addEntry(qint32 lid, QString baseDir, FileWatcher::Scan
     sql.bindValue(":key", FILE_WATCHER_SUBDIRS);
     sql.bindValue(":data", includeSubdirs);
     sql.exec();
-
-
+    sql.finish();
     return lid;
 }
 
@@ -87,6 +86,7 @@ void FileWatcherTable::get(qint32 lid, QString &baseDir, FileWatcher::ScanType &
             break;
         }
     }
+    sql.finish();
 }
 
 qint32 FileWatcherTable::findLidByDir(QString baseDir) {
@@ -95,10 +95,11 @@ qint32 FileWatcherTable::findLidByDir(QString baseDir) {
     sql.bindValue(":key", FILE_WATCHER_DIR);
     sql.bindValue(":data", baseDir);
     sql.exec();
+    qint32 retval = -1;
     if (sql.next())
-        return sql.value(0).toInt();
-    else
-        return -1;
+       retval = sql.value(0).toInt();
+    sql.finish();
+    return retval;
 }
 
 
@@ -110,6 +111,7 @@ qint32 FileWatcherTable::getAll(QList<qint32> &lids) {
     lids.clear();
     while(sql.next())
         lids.append(sql.value(0).toInt());
+    sql.finish();
     return lids.size();
 }
 
@@ -118,5 +120,6 @@ void FileWatcherTable::expunge(qint32 lid) {
     sql.prepare("Delete from datastore where lid=:lid");
     sql.bindValue(":lid", lid);
     sql.exec();
+    sql.finish();
 }
 

@@ -161,6 +161,7 @@ void NSearchView::loadData() {
             root->addChild(newWidget);
         }
     }
+    query.finish();
 }
 
 void NSearchView::searchUpdated(qint32 lid, QString name) {

@@ -59,6 +59,7 @@ DatabaseConnection::DatabaseConnection(QString connection)
     QLOG_TRACE() << "Addition complete";
     //tempTable.bindValue(":key", NOTE_ACTIVE);
     //tempTable.exec();
+    tempTable.finish();
 
 
 }

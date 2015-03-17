@@ -2592,6 +2592,7 @@ void NixNote::deleteCurrentNote() {
         ntable.expunge(lid);
     sql.bindValue(":lid", lid);
     sql.exec();
+    sql.finish();
     delete global.cache[lid];
     global.cache.remove(lid);
     QList<qint32> lids;
