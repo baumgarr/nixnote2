@@ -1138,7 +1138,7 @@ void NBrowserWindow::insertQuickLinkButtonPressed() {
                 n.guid;
 
         QString url = QString("<a href=\"") +href
-                +QString("\" title=") +text
+                +QString("\" title=\"") +text
                 +QString("\">") +text +QString("</a>");
         QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
         editor->page()->mainFrame()->evaluateJavaScript(script);
