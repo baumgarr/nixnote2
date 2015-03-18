@@ -2167,19 +2167,24 @@ void NixNote::setDebugLevel() {
     int level = global.settings->value("messageLevel", -1).toInt();
     global.settings->endGroup();
 
-
     // Setup the QLOG functions for debugging & messages
     QsLogging::Logger& logger = QsLogging::Logger::instance();
     if (level == QsLogging::TraceLevel)
         logger.setLoggingLevel(QsLogging::TraceLevel);
-    if (level == QsLogging::DebugLevel)
+    else if (level == QsLogging::DebugLevel)
         logger.setLoggingLevel(QsLogging::DebugLevel);
-    if (level == QsLogging::InfoLevel || level == -1)
+    else if (level == QsLogging::InfoLevel || level == -1)
         logger.setLoggingLevel(QsLogging::InfoLevel);
-    if (level == QsLogging::ErrorLevel)
+    else if (level == QsLogging::WarnLevel)
+        logger.setLoggingLevel(QsLogging::WarnLevel);
+    else if (level == QsLogging::ErrorLevel)
         logger.setLoggingLevel(QsLogging::ErrorLevel);
-    if (level == QsLogging::FatalLevel)
+    else if (level == QsLogging::FatalLevel)
         logger.setLoggingLevel(QsLogging::FatalLevel);
+    else {
+        logger.setLoggingLevel(QsLogging::InfoLevel);
+        QLOG_WARN() << "Invalid message logging level " << level;
+    }
 }
 
 
