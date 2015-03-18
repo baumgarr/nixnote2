@@ -23,6 +23,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <limits.h>
 #include <unistd.h>
 #include <QWebSettings>
+#include <QtGui/QDesktopWidget>
+#include <QApplication>
 
 
 //******************************************
@@ -131,7 +133,11 @@ void Global::setup(StartupConfig startupConfig) {
     if (defaultFont != "" && defaultFontSize > 0) {
         QWebSettings *settings = QWebSettings::globalSettings();
         settings->setFontFamily(QWebSettings::StandardFont, defaultFont);
-        settings->setFontSize(QWebSettings::DefaultFontSize, defaultFontSize);
+        // QWebkit DPI is hard coded to 96. Hence, we calculate the correct
+        // font size based on desktop logical DPI.
+        settings->setFontSize(QWebSettings::DefaultFontSize,
+            defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0)
+            );
     }
 
     minIndexInterval = 5000;
