@@ -42,6 +42,7 @@ public:
     ~SyncPreferences();
     void saveValues();
     QCheckBox *enableSyncNotifications;
+    QCheckBox *showGoodSyncMessagesInTray;
     
 signals:
     
@@ -49,6 +50,7 @@ public slots:
 
 private slots:
     void enableSyncStateChange();
+    void enableSuccessfulSyncMessagesInTray();
     
 };
 

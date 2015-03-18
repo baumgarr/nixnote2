@@ -109,6 +109,7 @@ public:
     string password;
     bool connected;
     bool pdfPreview;
+    bool showGoodSyncMessagesInTray;
     QSharedMemory *sharedMemory;
     bool confirmDeletes();
     QString tagBehavior();

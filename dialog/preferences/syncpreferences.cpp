@@ -30,7 +30,6 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
 
     syncAutomatically = new QCheckBox(tr("Sync automatically"), this);
     syncAutomatically->setChecked(true);
-    connect(syncAutomatically, SIGNAL(stateChanged(int)), this, SLOT(enableSyncStateChange()));
 
     syncInterval = new QComboBox(this);
     syncInterval->addItem(tr("Every 15 minutes"), 15);
@@ -43,8 +42,10 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     syncOnShutdown = new QCheckBox(tr("Sync on shutdown"),this);
     //syncOnShutdown->setEnabled(false);
     enableSyncNotifications = new QCheckBox(tr("Enable sync notifications"), this);
+    showGoodSyncMessagesInTray = new QCheckBox(tr("Show successful syncs"), this);
 
     mainLayout->addWidget(enableSyncNotifications,0,0);
+    mainLayout->addWidget(showGoodSyncMessagesInTray, 0,1);
     mainLayout->addWidget(syncOnStartup,1,0);
     mainLayout->addWidget(syncOnShutdown,2,0);
     mainLayout->addWidget(syncAutomatically,3,0);
@@ -58,7 +59,17 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     syncOnShutdown->setChecked(global.settings->value("syncOnShutdown", false).toBool());
     syncOnStartup->setChecked(global.settings->value("syncOnStartup", false).toBool());
     enableSyncNotifications->setChecked(global.settings->value("enableNotification", true).toBool());
+    showGoodSyncMessagesInTray->setChecked(global.showGoodSyncMessagesInTray);
     global.settings->endGroup();
+    global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
+
+    if (enableSyncNotifications->isChecked())
+        showGoodSyncMessagesInTray->setEnabled(true);
+    else
+        showGoodSyncMessagesInTray->setEnabled(false);
+
+    connect(syncAutomatically, SIGNAL(stateChanged(int)), this, SLOT(enableSyncStateChange()));
+    connect(enableSyncNotifications, SIGNAL(toggled(bool)), this, SLOT(enableSuccessfulSyncMessagesInTray()));
 }
 
 
@@ -77,6 +88,13 @@ void SyncPreferences::enableSyncStateChange() {
         syncInterval->setEnabled(false);
 }
 
+void SyncPreferences::enableSuccessfulSyncMessagesInTray() {
+    if (this->enableSyncNotifications->isChecked())
+        this->showGoodSyncMessagesInTray->setEnabled(true);
+    else
+        this->showGoodSyncMessagesInTray->setEnabled(false);
+}
+
 int SyncPreferences::getSyncInterval() {
     int index = syncInterval->currentIndex();
     return syncInterval->itemData(index).toInt();
@@ -90,5 +108,7 @@ void SyncPreferences::saveValues() {
     global.settings->setValue("syncOnStartup", syncOnStartup->isChecked());
     global.settings->setValue("enableNotification", enableSyncNotifications->isChecked());
     global.settings->setValue("syncInterval", getSyncInterval());
+    global.settings->setValue("showGoodSyncMessagesInTray", showGoodSyncMessagesInTray ->isChecked());
     global.settings->endGroup();
+    global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
 }
