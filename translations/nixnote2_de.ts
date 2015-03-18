@@ -6,7 +6,7 @@
     <message>
         <location filename="../dialog/aboutdialog.cpp" line="17"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -14,87 +14,87 @@
     <message>
         <location filename="../dialog/accountdialog.cpp" line="37"/>
         <source>Account Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerkonto Informationen</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="41"/>
         <source>Free</source>
-        <translation type="unfinished"></translation>
+        <translation>Frei</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="47"/>
         <source>Premium</source>
-        <translation type="unfinished"></translation>
+        <translation>Premium</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="49"/>
         <source>Manager</source>
-        <translation type="unfinished"></translation>
+        <translation>Manager</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="51"/>
         <source>Support</source>
-        <translation type="unfinished"></translation>
+        <translation>Unterstützung</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="53"/>
         <source>Admin</source>
-        <translation type="unfinished"></translation>
+        <translation>Administrator</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="74"/>
         <source> Bytes</source>
-        <translation type="unfinished"></translation>
+        <translation>Bytes</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="78"/>
         <source> KB</source>
-        <translation type="unfinished"></translation>
+        <translation>KB</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="82"/>
         <source> MB</source>
-        <translation type="unfinished"></translation>
+        <translation>MB</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="89"/>
         <source>Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>Konto:</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="92"/>
         <source>User Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzername:</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="94"/>
         <source>Account Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Kontotyp:</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="96"/>
         <source>Limit:</source>
-        <translation type="unfinished"></translation>
+        <translation>Begrenzung:</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="98"/>
         <source>Uploaded In This Period:</source>
-        <translation type="unfinished"></translation>
+        <translation>Im Zeitraum hochgeladen:</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="102"/>
         <source>Less than 1MB</source>
-        <translation type="unfinished"></translation>
+        <translation>weniger als 1MB</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="103"/>
         <source>Current Cycle Ends:</source>
-        <translation type="unfinished"></translation>
+        <translation>aktueller Zyklus endet:</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="111"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -102,53 +102,53 @@
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="15"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="16"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließen</translation>
     </message>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="17"/>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinzufügen</translation>
     </message>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="18"/>
         <source>Rename</source>
-        <translation type="unfinished"></translation>
+        <translation>Umbenennen</translation>
     </message>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="19"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="45"/>
         <source>User Account Maintenance</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzerkonto bearbeiten</translation>
     </message>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="80"/>
         <source>Are you sure you want to delete this account?</source>
-        <translation type="unfinished"></translation>
+        <translation>Wollen Sie wirklich dieses Benutzerkonto löschen?  </translation>
     </message>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="81"/>
         <source>Verify Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschung bestätigen</translation>
     </message>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="93"/>
         <source>You cannot delete the active account.</source>
-        <translation type="unfinished"></translation>
+        <translation>Sie können das aktive Konto nicht löschen.</translation>
     </message>
     <message>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="146"/>
         <location filename="../dialog/accountmaintenancedialog.cpp" line="170"/>
         <source>Switch to </source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer wechseln</translation>
     </message>
 </context>
 <context>
@@ -156,37 +156,37 @@
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="38"/>
         <source>Server</source>
-        <translation type="unfinished"></translation>
+        <translation>Server</translation>
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="39"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="41"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>abbrechen</translation>
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="46"/>
         <source>Account Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Name des Benutzerkonto</translation>
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="69"/>
         <source>Evernote</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="70"/>
         <source>Yinxiang Biji</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../dialog/adduseraccountdialog.cpp" line="71"/>
         <source>Evernote Sandbox</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
 </context>
 <context>
