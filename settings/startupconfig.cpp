@@ -28,5 +28,6 @@ StartupConfig::StartupConfig()
     this->syncAndExit = false;
     this->startupNewNote = false;
     this->forceStartMinimized = false;
+    this->disableIndexing = false;
     this->startupNoteLid = 0;
 }

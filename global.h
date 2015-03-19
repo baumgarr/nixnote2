@@ -108,6 +108,7 @@ public:
     string username;
     string password;
     bool connected;
+    bool disableIndexing;
     bool pdfPreview;
     bool showGoodSyncMessagesInTray;
     QSharedMemory *sharedMemory;

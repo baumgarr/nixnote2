@@ -35,6 +35,7 @@ public:
     int accountId;
     qint32 startupNoteLid;
     bool forceStartMinimized;
+    bool disableIndexing;
 };
 
 #endif // STARTUPCONFIG_H

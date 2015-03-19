@@ -53,6 +53,7 @@ void IndexRunner::initialize() {
     //moveToThread(this);
     keepRunning = true;
     pauseIndexing = false;
+    disableIndexing = global.disableIndexing;
     init = true;
     QLOG_DEBUG() << "Starting IndexRunner";
     db = new DatabaseConnection("indexrunner");
@@ -69,6 +70,9 @@ void IndexRunner::initialize() {
 
 // The index timer has expired.  Look for any unindexed notes or resources
 void IndexRunner::index() {
+    if (disableIndexing)
+        return;
+
     if (!init)
         initialize();
 

@@ -92,8 +92,9 @@ int main(int argc, char *argv[])
             printf("NixNote command line options:\n");
             printf("  --help or -?            Show this message\n");
             printf("  --accountId=<id>        Start with specified user account\n");
-            printf("  --openNote=<lid>        Open a specific note on startup\n");
             printf("  --dontStartMinimized    Override option to start minimized\n");
+            printf("  --disablIndexng         Override option to start minimized\n");
+            printf("  --openNote=<lid>        Open a specific note on startup\n");
             printf("  --startMinimized        Force a startup with NixNote minimized\n");
             printf("  --syncAndExit           Synchronize and exit the program.\n");
             printf("\n\n");
@@ -118,6 +119,9 @@ int main(int argc, char *argv[])
         }
         if (parm == "--syncAndExit") {
             startupConfig.syncAndExit = true;
+        }
+        if (parm == "--disableIndexing") {
+            startupConfig.disableIndexing = true;
         }
     }
 
