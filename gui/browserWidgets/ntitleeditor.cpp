@@ -42,6 +42,10 @@ NTitleEditor::NTitleEditor(QWidget *parent) :
     activeColor = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
     this->setStyleSheet(inactiveColor);
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(titleChanged(QString)));
+
+    QFont f = font();
+    f.setPointSize(global.defaultGuiFontSize);
+    setFont(f);
 }
 
 void NTitleEditor::setActiveColor() {

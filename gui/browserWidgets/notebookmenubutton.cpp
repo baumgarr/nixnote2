@@ -39,6 +39,7 @@ NotebookMenuButton::NotebookMenuButton(QWidget *parent) :
     f.setBold(false);
     f.setPointSize(global.defaultGuiFontSize);
     rootMenu.setFont(f);
+    setFont(f);
     currentAction = 0;
 }
 
@@ -143,6 +144,9 @@ void NotebookMenuButton::addNotebookMenuItem(QMenu *menu, QAction *action) {
             return;
         }
     }
+    QFont f = font();
+    f.setPointSize(global.defaultGuiFontSize);
+    action->setFont(f);
     menu->addAction(action);
 }
 

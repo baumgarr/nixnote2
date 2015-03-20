@@ -39,6 +39,7 @@ NMainMenuBar::NMainMenuBar(QWidget *parent) :
 {
     this->parent = (NixNote*)parent;
     font.setPointSize(global.defaultGuiFontSize);
+    setFont(font);
 
     setupFileMenu();
     setupEditMenu();
@@ -159,6 +160,7 @@ void NMainMenuBar::addUserAccount(QAction *action) {
 
 void NMainMenuBar::setupEditMenu() {
     editMenu = this->addMenu(tr("&Edit"));
+    editMenu->setFont(font);
 
     undoAction = new QAction(tr("Undo"), this);
     setupShortcut(undoAction, QString("Edit_Undo"));

@@ -192,6 +192,7 @@ NTableView::NTableView(QWidget *parent) :
     contextMenu = new QMenu(this);
     QFont font;
     font.setPointSize(global.defaultGuiFontSize);
+    setFont(font);
 
     openNoteAction = new QAction(tr("Open Note"), this);
     contextMenu->addAction(openNoteAction);
@@ -426,8 +427,13 @@ void NTableView::refreshData() {
     refreshSelection();
     if (this->tableViewHeader->isThumbnailVisible())
         verticalHeader()->setDefaultSectionSize(100);
-    else
-        verticalHeader()->setDefaultSectionSize(QApplication::fontMetrics().height());
+    else {
+        QFont f = font();
+        f.setPointSize(global.defaultGuiFontSize);
+        QFontMetrics fm(f);
+        verticalHeader()->setDefaultSectionSize(fm.height());
+        //verticalHeader()->setDefaultSectionSize(QApplication::fontMetrics().height()*200);
+    }
 }
 
 

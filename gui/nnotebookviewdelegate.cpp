@@ -80,7 +80,8 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     f.setBold(false);
     painter->setFont(f);
     painter->setPen(Qt::darkGray);
-    painter->drawText(6+fm.width(index.data().toString()+QString("   ")),fm.ascent(),countString);
+    painter->drawText(10+fm.width(index.data().toString()+QString(" ")),fm.ascent(),countString);
+//    painter->drawText(6+fm.width(index.data().toString()+QString("   ")),fm.ascent(),countString);
 
     painter->restore();
 }

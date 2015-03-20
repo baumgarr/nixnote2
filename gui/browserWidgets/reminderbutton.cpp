@@ -22,6 +22,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "reminderbutton.h"
 #include <QMenu>
 #include <QAction>
+#include <QFont>
+
+#include "global.h"
+
+extern Global global;
 
 ReminderButton::ReminderButton(QWidget *parent) :
     QPushButton(parent)
@@ -30,5 +35,8 @@ ReminderButton::ReminderButton(QWidget *parent) :
     doneAction = menu.addAction(tr("Mark as Done"));
     setAction = menu.addAction(tr("Change Date"));
     clearAction = menu.addAction(tr("Clear Reminder"));
+    QFont f = font();
+    f.setPointSize(global.defaultGuiFontSize);
+    menu.setFont(f);
     this->setMenu(&menu);
 }
