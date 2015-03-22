@@ -34,6 +34,8 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
 
     disableUploads = new QCheckBox(tr("Disable uploads to server"),this);
     showLidColumn = new QCheckBox(tr("Show LID column (requires restart)"));
+    nonAsciiSortBug = new QCheckBox(tr("Disable Tag Sorting (usefull for non-ASCII sort bug)"));
+    nonAsciiSortBug->setChecked(global.nonAsciiSortBug);
     global.settings->beginGroup("Debugging");
     disableUploads->setChecked(global.disableUploads);
     showLidColumn->setChecked(global.settings->value("showLids", false).toBool());
@@ -41,6 +43,7 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
 
     mainLayout->addWidget(disableUploads,0,1);
     mainLayout->addWidget(showLidColumn, 1,1);
+    mainLayout->addWidget(nonAsciiSortBug,2,1);
 
     debugLevelLabel = new QLabel(tr("Message Level"), this);
     debugLevelLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
@@ -57,8 +60,8 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     global.settings->endGroup();
     int index = debugLevel->findData(value);
     debugLevel->setCurrentIndex(index);
-    mainLayout->addWidget(debugLevelLabel,2,0);
-    mainLayout->addWidget(debugLevel,2,1);
+    mainLayout->addWidget(debugLevelLabel,3,0);
+    mainLayout->addWidget(debugLevel,3,1);
 
 }
 
@@ -82,6 +85,8 @@ void DebugPreferences::saveValues() {
     global.settings->beginGroup("Debugging");
     global.settings->setValue("messageLevel", value);
     global.settings->setValue("showLids", showLidColumn->isChecked());
+    global.settings->setValue("nonAsciiSortBug", nonAsciiSortBug->isChecked());
+    global.nonAsciiSortBug = nonAsciiSortBug->isChecked();
 
     // If the disable uploads is different than the defaults or if it has changed, we save it.
     if (disableUploads->isChecked() || disableUploads->isChecked() != global.disableUploads)

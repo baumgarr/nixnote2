@@ -170,6 +170,8 @@ public:
     void setupDateTimeFormat();
     QString getWindowIcon();
 
+    bool nonAsciiSortBug;  // Workaround for non-ASCII characters in tag name sorting
+
     ReminderManager *reminderManager;
 };
 

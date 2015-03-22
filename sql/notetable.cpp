@@ -641,27 +641,42 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
     query.bindValue(":notebookLid", notebookLid);
 
     QString tagName;
-    QStringList sortedNames;
     QList<QString> tagNames;
-    if (t.tagNames.isSet())
-        tagNames = t.tagNames;
-    for (int i=0; i<tagNames.size(); i++) {
-        sortedNames.append(tagNames[i].toLower());
-    }
-    sortedNames.sort();
 
-    TagTable tagTable(db);
+    // Normal sort is below.  If user has problems with non-ASCII characters
+    // they can choose to bypass the name sorting
+    if (!global.nonAsciiSortBug) {
+        QStringList sortedNames;
+        if (t.tagNames.isSet())
+            tagNames = t.tagNames;
+        for (int i=0; i<tagNames.size(); i++) {
+            sortedNames.append(tagNames[i].toLower());
+        }
+        sortedNames.sort();
 
-    // We search the table to get the name in the correct case.
-    // We lowercased them above to sort properly without regards
-    // to case.  Now, for the note list we need the correct case
-    for (int i=0; i<sortedNames.size(); i++) {
-        if (i>0)
-            tagName = tagName+", ";
-        Tag currentTag;
-        qint32 tagLid = tagTable.findByName(sortedNames[i], account);
-        tagTable.get(currentTag, tagLid);
-        tagName = tagName + currentTag.name;
+        TagTable tagTable(db);
+
+        // We search the table to get the name in the correct case.
+        // We lowercased them above to sort properly without regards
+        // to case.  Now, for the note list we need the correct case
+        for (int i=0; i<sortedNames.size(); i++) {
+            if (i>0)
+                tagName = tagName+", ";
+            Tag currentTag;
+            qint32 tagLid = tagTable.findByName(sortedNames[i], account);
+            tagTable.get(currentTag, tagLid);
+            tagName = tagName + currentTag.name;
+        }
+    } else {
+        // Users have experienced bugs with the above because of non-ASCII characters.
+        // This enables them to bypass the bug at the cost of not sorting tags.
+        if (t.tagNames.isSet())
+            tagNames = t.tagNames;
+        for (int i=0; i<tagNames.size(); i++) {
+            if (i>0)
+                tagName = tagName+", ";
+            tagName = tagName + tagNames[i];
+        }
     }
 
     query.bindValue(":tags", tagName);

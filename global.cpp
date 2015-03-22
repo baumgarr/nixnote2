@@ -115,6 +115,7 @@ void Global::setup(StartupConfig startupConfig) {
 
     settings->beginGroup("Debugging");
     disableUploads = settings->value("disableUploads", false).toBool();
+    nonAsciiSortBug = settings->value("nonAsciiSortBug", false).toBool();
     settings->endGroup();
 
     setupDateTimeFormat();
