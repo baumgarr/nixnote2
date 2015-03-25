@@ -51,6 +51,7 @@ DatabaseConnection::DatabaseConnection(QString connection)
 //    tempTable.exec("pragma cache_size=8096");
 //    tempTable.exec("pragma page_size=8096");
     tempTable.exec("pragma busy_timeout=50000");
+    tempTable.exec("pragma journal_mode=wal");
 
 //    tempTable.exec("pragma SQLITE_THREADSAFE=2");
     if (connection == "nixnote") {
