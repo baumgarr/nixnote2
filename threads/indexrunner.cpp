@@ -91,6 +91,7 @@ void IndexRunner::index() {
 
     int countPause = global.indexNoteCountPause;
 
+    QList<qint32> finishedLids;
     // Get any unindexed notes
     if (keepRunning && !pauseIndexing && noteTable.getIndexNeeded(lids) > 0) {
         QApplication::processEvents();
@@ -103,16 +104,22 @@ void IndexRunner::index() {
             Note n;
             noteTable.get(n, lids[i], false, false);
             indexNote(lids[i],n);
-            noteTable.setIndexNeeded(lids[i], false);
-            flushCache();
+            finishedLids.append(lids[i]);
             if (countPause <=0) {
+                flushCache();
+                for (int j=0; j<finishedLids.size(); j++)
+                    noteTable.setIndexNeeded(finishedLids[j], false);
                 indexTimer->start();
                 return;
             }
             countPause--;
         }
     }
-    flushCache();
+    if (keepRunning && !pauseIndexing)
+       flushCache();
+    for (int j=0; !pauseIndexing && keepRunning && j<finishedLids.size(); j++)
+        noteTable.setIndexNeeded(finishedLids[j], false);
+
 
     lids.clear();  // Clear out the list so we can start on resources
 
@@ -122,6 +129,7 @@ void IndexRunner::index() {
     }
 
     countPause = global.indexResourceCountPause;
+    finishedLids.clear();
     // Start indexing resources
     if (keepRunning && !pauseIndexing && resourceTable.getIndexNeeded(lids) > 0) {
         endMsgNeeded = true;
@@ -142,9 +150,12 @@ void IndexRunner::index() {
                 if (mime.startsWith("application", Qt::CaseInsensitive))
                     indexAttachment(noteLid, r);
             }
-            resourceTable.setIndexNeeded(lids.at(i), false);
-            flushCache();
+            finishedLids.append(lids[i]);
             if (countPause <=0) {
+                flushCache();
+                for (int j=0; keepRunning && !pauseIndexing && j<finishedLids.size(); j++) {
+                    resourceTable.setIndexNeeded(finishedLids[j], false);
+                }
                 indexTimer->start();
                 return;
             }
@@ -155,10 +166,15 @@ void IndexRunner::index() {
         indexTimer->start();
         return;
     }
+    if (keepRunning && !pauseIndexing)
+        flushCache();
+    for (int j=0; keepRunning && !pauseIndexing && j<finishedLids.size(); j++) {
+        resourceTable.setIndexNeeded(finishedLids[j], false);
+    }
+
     if (endMsgNeeded) {
         QLOG_DEBUG() << "Indexing completed";
     }
-    flushCache();
 
     indexTimer->setInterval(global.maxIndexInterval);
     indexTimer->start();
@@ -183,7 +199,7 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     content.remove(startPos,endPos-startPos);
 
     // Remove encrypted text
-    while (content.indexOf("<en-crypt") > 0) {
+    while (keepRunning && !pauseIndexing && content.indexOf("<en-crypt") > 0) {
         startPos = content.indexOf("<en-crypt");
         endPos = content.indexOf("</en-crypt>") + 11;
         content = content.mid(0,startPos)+content.mid(endPos);
@@ -218,7 +234,6 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
         indexHash->remove(lid);
     }
     indexHash->insert(lid, rec);
-
 }
 
 
@@ -264,7 +279,6 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
             }
             indexHash->insert(lid, rec);
         }
-
     }
 }
 
@@ -347,7 +361,6 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
                 return;
 
     QString file = global.fileManager.getDbaDirPath() + QString::number(reslid) +extension;
-//    QString file = global.fileManager.getDbaDirPath() + "191" +extension;
     QFile dataFile(file);
     if (!dataFile.exists()) {
         QDir dir(global.fileManager.getDbaDirPath());
@@ -403,17 +416,15 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
 void IndexRunner::flushCache() {
     if (indexHash->size() <= 0)
         return;
-    QLOG_DEBUG() << "Flushing Index Cache";
+    QDateTime start = QDateTime::currentDateTimeUtc();
     NSqlQuery sql(db->conn);
     sql.exec("begin");
     QHash<qint32, IndexRecord*>::iterator i;
-//    ResourceTable resourceTable(&db->conn);
-//    NoteTable noteTable(&db->conn);
 
     // Start adding words to the index.  Every 200 sql insertions we do a commit
     int commitCount = 200;
 
-    for (i=indexHash->begin(); i!=indexHash->end(); ++i) {
+    for (i=indexHash->begin(); keepRunning && !pauseIndexing && i!=indexHash->end(); ++i) {
         qint32 lid = i.key();
         IndexRecord *rec = i.value();
         qint32 weight = rec->weight;
@@ -444,6 +455,10 @@ void IndexRunner::flushCache() {
     sql.exec("commit");
 
     sql.finish();
-    QLOG_DEBUG() << "Index Cache Flush Complete";
+    QDateTime finish = QDateTime::currentDateTimeUtc();
+
+    QLOG_DEBUG() << "Index Cache Flush Complete: " <<
+                    finish.toMSecsSinceEpoch() - start.toMSecsSinceEpoch()
+                    << " milliseconds.";
 }
 
