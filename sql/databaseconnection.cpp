@@ -51,8 +51,9 @@ DatabaseConnection::DatabaseConnection(QString connection)
 //    tempTable.exec("pragma cache_size=8096");
 //    tempTable.exec("pragma page_size=8096");
     tempTable.exec("pragma busy_timeout=50000");
+    tempTable.exec("pragma SQLITE_THREADSAFE=2");
     tempTable.exec("pragma COMPILE_OPTIONS");
-    QLOG_DEBUG() << "*** COMPILE OPTIONS ***";
+    QLOG_DEBUG() << "*** SQLITE COMPILE OPTIONS ***";
     while (tempTable.next()) {
         QLOG_DEBUG() << tempTable.value(0).toString();
     }

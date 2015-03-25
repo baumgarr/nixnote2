@@ -1006,11 +1006,15 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
 qint32 NoteTable::getIndexNeeded(QList<qint32> &lids) {
     NSqlQuery query(*db);
     lids.clear();
-    query.prepare("Select lid from DataStore where key=:key and data='true'");
-    query.bindValue(":key", NOTE_INDEX_NEEDED);
+    qlonglong delayTime = QDateTime::currentDateTime().currentMSecsSinceEpoch()-300000;
+    query.prepare("Select lid, data from DataStore where key=:key and lid in (select lid from datastore where key=:key2 and data='true')");
+    query.bindValue(":key", NOTE_UPDATED_DATE);
+    query.bindValue(":key2", NOTE_INDEX_NEEDED);
     query.exec();
     while (query.next()) {
-        lids.append(query.value(0).toInt());
+        qlonglong dt = query.value(1).toLongLong();
+        if (delayTime > dt)
+            lids.append(query.value(0).toInt());
     }
     return lids.size();
 }
