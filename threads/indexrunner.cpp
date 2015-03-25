@@ -73,6 +73,10 @@ void IndexRunner::index() {
     if (disableIndexing)
         return;
 
+    if (!keepRunning || pauseIndexing) {
+        return;
+    }
+
     if (!init)
         initialize();
 
@@ -88,13 +92,13 @@ void IndexRunner::index() {
     int countPause = global.indexNoteCountPause;
 
     // Get any unindexed notes
-    if (keepRunning && noteTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
+    if (keepRunning && !pauseIndexing && noteTable.getIndexNeeded(lids) > 0) {
         QApplication::processEvents();
         endMsgNeeded = true;
         QLOG_DEBUG() << "Unindexed Notes found: " << lids.size();
 
         // Index any undindexed note content.
-        for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
+        for (int i=0; keepRunning && !pauseIndexing && i<lids.size(); i++) {
             QApplication::processEvents();
             Note n;
             noteTable.get(n, lids[i], false, false);
@@ -112,13 +116,18 @@ void IndexRunner::index() {
 
     lids.clear();  // Clear out the list so we can start on resources
 
+    if (!keepRunning || pauseIndexing) {
+        indexTimer->start();
+        return;
+    }
+
     countPause = global.indexResourceCountPause;
     // Start indexing resources
-    if (keepRunning && resourceTable.getIndexNeeded(lids) > 0 && !pauseIndexing) {
+    if (keepRunning && !pauseIndexing && resourceTable.getIndexNeeded(lids) > 0) {
         endMsgNeeded = true;
 
         // Index each resource that is needed.
-        for (int i=0; i<lids.size() && keepRunning && !pauseIndexing; i++) {
+        for (int i=0; keepRunning && !pauseIndexing && i<lids.size(); i++) {
             QApplication::processEvents();
             Resource r;
             resourceTable.get(r, lids.at(i), false);
@@ -141,6 +150,10 @@ void IndexRunner::index() {
             }
             countPause--;
         }
+    }
+    if (!keepRunning || pauseIndexing) {
+        indexTimer->start();
+        return;
     }
     if (endMsgNeeded) {
         QLOG_DEBUG() << "Indexing completed";
@@ -177,11 +190,16 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     }
 
     // Remove any XML tags
-    while (content.indexOf(QChar('<'))>=0 && keepRunning && !pauseIndexing) {
+    while (keepRunning && !pauseIndexing && content.indexOf(QChar('<'))>=0) {
         startPos = content.indexOf(QChar('<'));
         endPos = content.indexOf(QChar('>'),startPos)+1;
         content.remove(startPos,endPos-startPos);
     };
+
+    if (!keepRunning || pauseIndexing) {
+        indexTimer->start();
+        return;
+    }
 
     // Get the content as an HTML doc.
     textDocument->setHtml(content);
@@ -210,6 +228,11 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
 // Index any resources
 void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 
+    if (!keepRunning || pauseIndexing) {
+        indexTimer->start();
+        return;
+    }
+
     // Make sure we have something to look through.
     Data recognition;
     if (r.recognition.isSet())
@@ -224,7 +247,7 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     // look for text tags
     QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
 
-    for (unsigned int i=0; i<anchors.length() && keepRunning && !pauseIndexing; i++) {
+    for (unsigned int i=0; keepRunning && !pauseIndexing && i<anchors.length(); i++) {
         QApplication::processEvents();
         QDomElement enmedia = anchors.at(i).toElement();
         QString weight = enmedia.attribute("w");
@@ -249,17 +272,25 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 // Index any PDFs that are attached.  Basically it turns the PDF into text and adds it the same
 // way as a note's body
 void IndexRunner::indexPdf(qint32 lid, Resource &r) {
+    if (!keepRunning || pauseIndexing) {
+        indexTimer->start();
+        return;
+    }
     ResourceTable rtable(&db->conn);
     qint32 reslid = rtable.getLid(r.guid);
-    if (lid <= 0 || !keepRunning || pauseIndexing)
+    if (lid <= 0) {
+        indexTimer->start();
         return;
+    }
     QString file = global.fileManager.getDbaDirPath() + QString::number(reslid) +".pdf";
 
     QString text = "";
     Poppler::Document *doc = Poppler::Document::load(file);
-    if (doc == NULL)
+    if (doc == NULL) {
+        indexTimer->start();
         return;
-    for (int i=0; i<doc->numPages() && keepRunning && !pauseIndexing; i++) {
+    }
+    for (int i=0; keepRunning && !pauseIndexing && i<doc->numPages(); i++) {
         QRectF rect;
         text = text + doc->page(i)->text(rect) + QString(" ");
     }
@@ -284,10 +315,16 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     if (!officeFound)
         return;
     QLOG_DEBUG() << "indexing attachment to note " << lid;
+    if (!keepRunning || pauseIndexing) {
+        indexTimer->start();
+        return;
+    }
     ResourceTable rtable(&db->conn);
     qint32 reslid = rtable.getLid(r.guid);
-    if (lid <= 0 || !keepRunning || pauseIndexing)
+    if (lid <= 0) {
+        indexTimer->start();
         return;
+    }
     QLOG_DEBUG() << "Resource " << reslid;
     QString extension = "";
     ResourceAttributes attributes;
