@@ -635,6 +635,7 @@ void NixNote::setupGui() {
     }
 
     // Determine if we should start minimized
+    QLOG_DEBUG() << "isSystemTrayAvailable:" << QSystemTrayIcon::isSystemTrayAvailable();
     if (global.startMinimized && !global.forceNoStartMimized && QSystemTrayIcon::isSystemTrayAvailable()) {
         if (minimizeToTray)
             this->hide();
