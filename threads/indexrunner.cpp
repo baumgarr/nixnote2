@@ -99,9 +99,9 @@ void IndexRunner::index() {
             Note n;
             noteTable.get(n, lids[i], false, false);
             indexNote(lids[i],n);
-            //noteTable.setIndexNeeded(lids[i], false);
+            noteTable.setIndexNeeded(lids[i], false);
+            flushCache();
             if (countPause <=0) {
-                flushCache();
                 indexTimer->start();
                 return;
             }
@@ -134,8 +134,8 @@ void IndexRunner::index() {
                     indexAttachment(noteLid, r);
             }
             resourceTable.setIndexNeeded(lids.at(i), false);
+            flushCache();
             if (countPause <=0) {
-                flushCache();
                 indexTimer->start();
                 return;
             }
@@ -370,8 +370,8 @@ void IndexRunner::flushCache() {
     NSqlQuery sql(db->conn);
     sql.exec("begin");
     QHash<qint32, IndexRecord*>::iterator i;
-    ResourceTable resourceTable(&db->conn);
-    NoteTable noteTable(&db->conn);
+//    ResourceTable resourceTable(&db->conn);
+//    NoteTable noteTable(&db->conn);
 
     // Start adding words to the index.  Every 200 sql insertions we do a commit
     int commitCount = 200;
@@ -397,10 +397,6 @@ void IndexRunner::flushCache() {
         sql.bindValue(":source", source);
         sql.bindValue(":content", content);
         sql.exec();
-        if (source == "text")
-            noteTable.setIndexNeeded(lid, false);
-        else
-            resourceTable.setIndexNeeded(lid, false);
         commitCount--;
         if (commitCount <= 0) {
             sql.exec("commit");
@@ -409,6 +405,7 @@ void IndexRunner::flushCache() {
     }
     indexHash->clear();
     sql.exec("commit");
+
     sql.finish();
     QLOG_DEBUG() << "Index Cache Flush Complete";
 }
