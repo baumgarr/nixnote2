@@ -864,6 +864,21 @@ bool NoteTable::get(Note &note, string guid, bool loadResources, bool loadBinary
 
 
 // Return if a note is dirty given its lid
+bool NoteTable::isIndexNeeded(qint32 lid) {
+    NSqlQuery query(*db);
+    query.prepare("Select data from DataStore where key=:key and lid=:lid");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_INDEX_NEEDED);
+    query.exec();
+    if (query.next())
+        return query.value(0).toBool();
+    else
+        return false;
+}
+
+
+
+// Return if a note is dirty given its lid
 bool NoteTable::isDirty(qint32 lid) {
     NSqlQuery query(*db);
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
@@ -987,6 +1002,11 @@ qint32 NoteTable::getNotesWithTag(QList<qint32> &retval, QString tag) {
 
 void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     if (lid <= 0)
+        return;
+
+    // If it is already set to this value, then we don't need to
+    // do anything.
+    if (this->isIndexNeeded(lid) == indexNeeded)
         return;
 
     NSqlQuery query(*db);
@@ -1280,8 +1300,37 @@ QString NoteTable::getNoteListTags(qint32 lid) {
 void NoteTable::setDirty(qint32 lid, bool dirty) {
     if (lid <=0)
         return;
+    qint64 dt = QDateTime::currentMSecsSinceEpoch();
 
     NSqlQuery query(*db);
+
+    // If it is setting it as dirty, we need to update the
+    // update date &  time.
+    if (dirty) {
+        query.prepare("Delete from DataStore where lid=:lid and key=:key");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_UPDATED_DATE);
+        query.exec();
+
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :value)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_UPDATED_DATE);
+        query.bindValue(":value", dt);
+        query.exec();
+
+        query.prepare("Update NoteTable set dateUpdated=:value where lid=:lid");
+        query.bindValue(":lid", lid);
+        query.bindValue(":value", dt);
+        query.exec();
+    }
+
+    // If it is already set to the value, then we don't
+    // need to do anything more.
+    if (isDirty(lid) == dirty)
+        return;
+
+    // If we got here, then the current dirty state doesn't match
+    // what the caller wants.
     query.prepare("Update NoteTable set isDirty=:isDirty where lid=:lid");
     query.bindValue(":isDirty", dirty);
     query.bindValue(":lid", lid);
@@ -1298,26 +1347,6 @@ void NoteTable::setDirty(qint32 lid, bool dirty) {
         query.bindValue(":key", NOTE_ISDIRTY);
         query.bindValue(":data", dirty);
         query.exec();
-        setIndexNeeded(lid, true);
-
-        query.prepare("Delete from DataStore where lid=:lid and key=:key");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_UPDATED_DATE);
-        query.exec();
-
-        qint64 dt = QDateTime::currentMSecsSinceEpoch();
-
-        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :value)");
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTE_UPDATED_DATE);
-        query.bindValue(":value", dt);
-        query.exec();
-
-        query.prepare("Update NoteTable set dateUpdated=:value where lid=:lid");
-        query.bindValue(":lid", lid);
-        query.bindValue(":value", dt);
-        query.exec();
-
         setIndexNeeded(lid, true);
     }
 }
@@ -1832,6 +1861,14 @@ void NoteTable::setGeography(qint32 lid, double longitude, double latitude, doub
 
 
 void NoteTable::setThumbnailNeeded(qint32 lid, bool value) {
+    if (lid >=0)
+        return;
+
+    // If it is already set to this value, then we don't need to
+    // do anything.
+    if (isThumbnailNeeded(lid) == value)
+        return;
+
     NSqlQuery query(*db);
     query.prepare("Delete from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);

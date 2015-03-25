@@ -158,10 +158,11 @@ public:
     void setGeography(qint32 lid, double longitude, double latitude, double altitude, bool isDirty);
     void setThumbnailNeeded(qint32 lid, bool value);       // Do we need t ocreate a thumbnail?
     void setThumbnailNeeded(QString guid, bool value);      // Set if a thumbail is needed
-    void setThumbnailNeeded(string guid, bool value);      // set if a thumbnail is needed
-    bool isThumbnailNeeded(qint32 lid);                    // set if a thumbnail is needed
-    bool isThumbnailNeeded(QString guid);                  // set if a thumbnail is needed
-    bool isThumbnailNeeded(string guid);                   // set if a thumbnail is needed
+    void setThumbnailNeeded(string guid, bool value);      // see if a thumbnail is needed
+    bool isThumbnailNeeded(qint32 lid);                    // see if a thumbnail is needed
+    bool isThumbnailNeeded(QString guid);                  // see if a thumbnail is needed
+    bool isThumbnailNeeded(string guid);                   // see if a thumbnail is needed
+    bool isIndexNeeded(qint32 lid);                        // see if an index is needed
     qint32 getNextThumbnailNeeded();                       // get any note that needs a thumbnail
     void setReminderCompleted(qint32 lid, bool completed);              // Set a note reminder as completed or clear it
     void removeReminder(qint32 lid);                        // Clear any existing reminder
