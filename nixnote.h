@@ -246,7 +246,7 @@ public slots:
     void unpinCurrentNote();
     void spellCheckCurrentNote();
     void openExternalNote(qint32 lid);
-    void pauseIndexing();
+    void pauseIndexing(bool value=true);
     void openEvernoteSupport();
     void openMessageLog();
     void showDesktopUrl(const QUrl &url);

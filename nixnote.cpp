@@ -1148,6 +1148,8 @@ void NixNote::syncTimerExpired() {
 //* User synchronize was requested
 //******************************************************************************
 void NixNote::synchronize() {
+    this->pauseIndexing(true);
+
     if (!global.accountsManager->oauthTokenFound()) {
         QString consumerKey = "baumgarr-3523";
         QString consumerSecret = "8d5ee175f8a5d3ec";
@@ -1167,28 +1169,9 @@ void NixNote::synchronize() {
         global.accountsManager->setOAuthToken(token);
     }
 
-//    if (oauthWindow == NULL)
-//        oauthWindow = new OAuthWindow(this);
-//    else
-//        oauthWindow->reset();
-//    if (!global.accountsManager->oauthTokenFound()) {
-//        oauthWindow->setWindowFlags(Qt::Dialog);
-//        oauthWindow->setFocus();  // This fixes a cursor problem.
-//        connect(oauthWindow, SIGNAL(closed()), this, SLOT(synchronize()));
-//        oauthWindow->showNormal();
-//        if (oauthWindow->error) {
-//            setMessage(oauthWindow->errorMessage);
-//            return;
-//        }
-//        if (oauthWindow->response == "") {
-//            return;
-//        }
-
-//        global.accountsManager->setOAuthToken(oauthWindow->response);
-//    }
     this->saveContents();
     statusBar()->clearMessage();
-    indexRunner.pauseIndexing = true;
+
     tabWindow->saveAllNotes();
     syncButtonTimer.start(3);
     emit syncRequested();
@@ -1202,16 +1185,14 @@ void NixNote::disconnect() {
     global.connected = false;
     menuBar->disconnectAction->setEnabled(false);
     syncButtonTimer.stop();
-    if (!menuBar->pauseIndexingAction->isChecked())
-       indexRunner.pauseIndexing = false;
+    pauseIndexing(false);
 }
 
 
 
 
 void NixNote::syncButtonReset() {
-    if (!menuBar->pauseIndexingAction->isChecked())
-        indexRunner.pauseIndexing = false;
+    pauseIndexing(false);
     if (syncIcons.size() == 0)
         return;
     syncButtonTimer.stop();
@@ -2650,10 +2631,12 @@ void NixNote::spellCheckCurrentNote() {
 }
 
 
-void NixNote::pauseIndexing() {
-    indexRunner.pauseIndexing = false;
-    if (menuBar->pauseIndexingAction->isChecked())
+void NixNote::pauseIndexing(bool value) {
+    if (menuBar->pauseIndexingAction->isChecked()) {
        indexRunner.pauseIndexing = true;
+       return;
+    }
+    indexRunner.pauseIndexing = value;
 }
 
 
