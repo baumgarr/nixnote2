@@ -43,23 +43,15 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     dynamicTotals = new QCheckBox(tr("Show notebook and tag totals"), this);
 
     defaultGuiFontSizeChooser = new QComboBox();
-    defaultGuiFontSizeChooser->addItem("6", 6);
-    defaultGuiFontSizeChooser->addItem("7", 7);
-    defaultGuiFontSizeChooser->addItem("8", 8);
-    defaultGuiFontSizeChooser->addItem("9", 9);
-    defaultGuiFontSizeChooser->addItem("10", 10);
-    defaultGuiFontSizeChooser->addItem("11", 11);
-    defaultGuiFontSizeChooser->addItem("12", 12);
-    defaultGuiFontSizeChooser->addItem("13", 13);
-    defaultGuiFontSizeChooser->addItem("14", 14);
-    defaultGuiFontSizeChooser->addItem("15", 15);
-    defaultGuiFontSizeChooser->addItem("16", 16);
-    defaultGuiFontSizeChooser->setCurrentIndex(global.defaultGuiFontSize-6);
 
     defaultFontChooser = new QComboBox();
     defaultFontSizeChooser = new QComboBox();
     connect(defaultFontChooser, SIGNAL(currentIndexChanged(QString)), this, SLOT(loadFontSizes(QString)));
-    loadFontNames();
+    loadFontNames(defaultFontChooser, global.defaultFont);
+
+    defaultGuiFontChooser = new QComboBox();
+    connect(defaultGuiFontChooser, SIGNAL(currentIndexChanged(QString)), this, SLOT(loadGuiFontSizes(QString)));
+    loadFontNames(defaultGuiFontChooser, global.defaultGuiFont);
 
     windowIconChooser = new QComboBox();
     windowIconChooser->addItem(QIcon(":windowIcon0.png"), "", ":windowIcon0.png");
@@ -98,17 +90,23 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
 
-    mainLayout->addWidget(new QLabel(tr("Default GUI Font Size (Requires Restart)")), row, 0);
+    mainLayout->addWidget(new QLabel(tr("Default GUI Font*")), row, 0);
+    mainLayout->addWidget(defaultGuiFontChooser, row++, 1);
+
+    mainLayout->addWidget(new QLabel(tr("Default GUI Font Size*")), row, 0);
     mainLayout->addWidget(defaultGuiFontSizeChooser, row++, 1);
 
-    mainLayout->addWidget(new QLabel(tr("Default Editor Font")), row, 0);
+    mainLayout->addWidget(new QLabel(tr("Default Editor Font*")), row, 0);
     mainLayout->addWidget(defaultFontChooser, row++, 1);
 
-    mainLayout->addWidget(new QLabel("Default Editor Font Size"), row, 0);
+    mainLayout->addWidget(new QLabel("Default Editor Font Size*"), row, 0);
     mainLayout->addWidget(defaultFontSizeChooser, row++, 1);
 
-    mainLayout->addWidget(new QLabel(tr("Window Icon\n(may require restart on\nsome window managers)")), row,0);
+    mainLayout->addWidget(new QLabel(tr("Window Icon*")), row,0);
     mainLayout->addWidget(windowIconChooser, row++,1);
+
+    mainLayout->addWidget(new QLabel(""), row++, 0);
+    mainLayout->addWidget(new QLabel("* May require restart on some systems."), row++, 0);
 
     global.settings->beginGroup("Appearance");
 
@@ -140,6 +138,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
         if (!showTrayIcon->isChecked())
             closeToTray->setEnabled(false);
     }
+    this->setFont(global.getGuiFont(font()));
 }
 
 
@@ -178,17 +177,24 @@ void AppearancePreferences::saveValues() {
         global.defaultFontSize = defaultFontSizeChooser->itemData(idx, Qt::UserRole).toInt();
         idx = defaultGuiFontSizeChooser->currentIndex();
         global.defaultGuiFontSize = defaultGuiFontSizeChooser->itemData(idx, Qt::UserRole).toInt();
+        idx = defaultGuiFontChooser->currentIndex();
+        global.defaultGuiFont = defaultGuiFontChooser->itemData(idx, Qt::UserRole).toString();
+        if (global.defaultGuiFont == "System Default")
+            global.defaultGuiFont = "";
+        if (global.defaultFont == "System Default")
+            global.defaultFont = "";
         global.settings->setValue("defaultFont", global.defaultFont);
         global.settings->setValue("defaultFontSize", global.defaultFontSize);
+        global.settings->setValue("defaultGuiFont", global.defaultGuiFont);
         global.settings->setValue("defaultGuiFontSize", global.defaultGuiFontSize);
 
         QWebSettings *settings = QWebSettings::globalSettings();
         settings->setFontFamily(QWebSettings::StandardFont, global.defaultFont);
         // QWebkit DPI is hard coded to 96. Hence, we calculate the correct
         // font size based on desktop logical DPI.
-        settings->setFontSize(QWebSettings::DefaultFontSize,
-            global.defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0)
-            );
+        if (global.defaultFontSize > 0) {
+            settings->setFontSize(QWebSettings::DefaultFontSize, global.defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0));
+        }
     }
 
 
@@ -279,19 +285,38 @@ void AppearancePreferences::saveValues() {
 
 
 // Load the list of font names
-void AppearancePreferences::loadFontNames() {
+void AppearancePreferences::loadFontNames(QComboBox *combo, QString defaultFont) {
     QFontDatabase fonts;
     QStringList fontFamilies = fonts.families();
+    combo->addItem(tr("System Default"), "System Default");
     for (int i = 0; i < fontFamilies.size(); i++) {
-        defaultFontChooser->addItem(fontFamilies[i], fontFamilies[i]);
+        combo->addItem(fontFamilies[i], fontFamilies[i]);
     }
-    int idx = defaultFontChooser->findData(global.defaultFont, Qt::UserRole);
+    int idx = combo->findData(defaultFont, Qt::UserRole);
     if (idx >=0) {
-        defaultFontChooser->setCurrentIndex(idx);
+        combo->setCurrentIndex(idx);
     } else
-        defaultFontChooser->setCurrentIndex(0);
+        combo->setCurrentIndex(0);
 }
 
+
+
+// Load the list of font sizes
+void AppearancePreferences::loadGuiFontSizes(QString name) {
+    webSettingsChanged =true;
+    QFontDatabase fdb;
+    defaultGuiFontSizeChooser->clear();
+    defaultGuiFontSizeChooser->addItem(tr("System Default"), 0);
+    QList<int> sizes = fdb.pointSizes(name);
+    for (int i=0; i<sizes.size(); i++) {
+        defaultGuiFontSizeChooser->addItem(QString::number(sizes[i]), sizes[i]);
+    }
+    int idx = defaultGuiFontSizeChooser->findData(global.defaultGuiFontSize, Qt::UserRole);
+    if (idx >=0) {
+        defaultGuiFontSizeChooser->setCurrentIndex(idx);
+    } else
+        defaultGuiFontSizeChooser->setCurrentIndex(0);
+}
 
 
 
@@ -300,6 +325,7 @@ void AppearancePreferences::loadFontSizes(QString name) {
     webSettingsChanged =true;
     QFontDatabase fdb;
     defaultFontSizeChooser->clear();
+    defaultFontSizeChooser->addItem(tr("System Default"), 0);
     QList<int> sizes = fdb.pointSizes(name);
     for (int i=0; i<sizes.size(); i++) {
         defaultFontSizeChooser->addItem(QString::number(sizes[i]), sizes[i]);

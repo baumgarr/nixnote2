@@ -51,6 +51,7 @@ AccountMaintenanceDialog::AccountMaintenanceDialog(NMainMenuBar *menubar, QWidge
     connect(deleteButton,SIGNAL(clicked()), this, SLOT(deleteAccount()));
     connect(renameButton, SIGNAL(clicked()), this, SLOT(renameAccount()));
     this->loadData();
+    this->setFont(global.getGuiFont(font()));
 }
 
 

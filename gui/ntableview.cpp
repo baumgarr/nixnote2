@@ -190,68 +190,66 @@ NTableView::NTableView(QWidget *parent) :
     this->model()->setHeaderData(NOTE_TABLE_PINNED_POSITION, Qt::Horizontal, QObject::tr("Pinned"));
 
     contextMenu = new QMenu(this);
-    QFont font;
-    font.setPointSize(global.defaultGuiFontSize);
-    setFont(font);
+    this->setFont(global.getGuiFont(font()));
 
     openNoteAction = new QAction(tr("Open Note"), this);
     contextMenu->addAction(openNoteAction);
     connect(openNoteAction, SIGNAL(triggered()), this, SLOT(openNoteContextMenuTriggered()));
-    openNoteAction->setFont(font);
+    openNoteAction->setFont(global.getGuiFont(font()));
 
 
     openNoteNewTabAction = new QAction(tr("Open Note In New Tab"), this);
     contextMenu->addAction(openNoteNewTabAction);
     connect(openNoteNewTabAction, SIGNAL(triggered()), this, SLOT(openNoteNewTabTriggered()));
-    openNoteNewTabAction->setFont(font);
+    openNoteNewTabAction->setFont(global.getGuiFont(font()));
 
 
     openNoteExternalWindowAction = new QAction(tr("Open Note In New Window"), this);
     contextMenu->addAction(openNoteExternalWindowAction);
     connect(openNoteExternalWindowAction, SIGNAL(triggered()), this, SLOT(openNoteExternalWindowTriggered()));
-    openNoteExternalWindowAction->setFont(font);
+    openNoteExternalWindowAction->setFont(global.getGuiFont(font()));
 
     contextMenu->addSeparator();
 
     addNoteAction = new QAction(tr("Add Note"), this);
     contextMenu->addAction(addNoteAction);
     connect(addNoteAction, SIGNAL(triggered()), this, SLOT(createNewNote()));
-    addNoteAction->setFont(font);
+    addNoteAction->setFont(global.getGuiFont(font()));
 
     deleteNoteAction = new QAction(tr("Delete Note"), this);
     contextMenu->addAction(deleteNoteAction);
     connect(deleteNoteAction, SIGNAL(triggered()), this, SLOT(deleteSelectedNotes()));
-    deleteNoteAction->setFont(font);
+    deleteNoteAction->setFont(global.getGuiFont(font()));
 
     restoreNoteAction = new QAction(tr("Restore Note"), this);
     contextMenu->addAction(restoreNoteAction);
     connect(restoreNoteAction, SIGNAL(triggered()), this, SLOT(restoreSelectedNotes()));
-    restoreNoteAction->setFont(font);
+    restoreNoteAction->setFont(global.getGuiFont(font()));
     restoreNoteAction->setVisible(false);
 
     copyNoteLinkAction = new QAction(tr("Copy Note Link"), this);
     contextMenu->addAction(copyNoteLinkAction);
-    copyNoteLinkAction->setFont(font);
+    copyNoteLinkAction->setFont(global.getGuiFont(font()));
     connect(copyNoteLinkAction, SIGNAL(triggered()), this, SLOT(copyNoteLink()));
 
     copyNoteAction = new QAction(tr("Duplicate Note"), this);
     contextMenu->addAction(copyNoteAction);
-    copyNoteAction->setFont(font);
+    copyNoteAction->setFont(global.getGuiFont(font()));
     connect(copyNoteAction, SIGNAL(triggered()), this, SLOT(copyNote()));
 
     pinNoteAction = new QAction(tr("Pin Note"), this);
     contextMenu->addAction(pinNoteAction);
-    pinNoteAction->setFont(font);
+    pinNoteAction->setFont(global.getGuiFont(font()));
     connect(pinNoteAction, SIGNAL(triggered()), this, SLOT(pinNote()));
 
     unpinNoteAction = new QAction(tr("Unpin Note"), this);
     contextMenu->addAction(unpinNoteAction);
-    unpinNoteAction->setFont(font);
+    unpinNoteAction->setFont(global.getGuiFont(font()));
     connect(unpinNoteAction, SIGNAL(triggered()), this, SLOT(unpinNote()));
 
     mergeNotesAction = new QAction(tr("Merge Notes"), this);
     contextMenu->addAction(mergeNotesAction);
-    mergeNotesAction->setFont(font);
+    mergeNotesAction->setFont(global.getGuiFont(font()));
     connect(mergeNotesAction, SIGNAL(triggered()), this, SLOT(mergeNotes()));
 
     contextMenu->addSeparator();

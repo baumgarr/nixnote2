@@ -37,9 +37,7 @@ TagViewer::TagViewer(QWidget *parent) :
     setStyleSheet("QFrame{border: 1px solid darkgray; border-radius: 8px;}");
     connect(clearButton, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 
-    QFont f = font();
-    f.setPointSize(global.defaultGuiFontSize);
-    setFont(f);
+    this->setFont(global.getGuiFont(font()));
 //    int width = this->minimumWidth()+clearButton->minimumWidth()+2;
 //    setMinimumWidth(width);
 //    resize();

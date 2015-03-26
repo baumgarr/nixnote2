@@ -18,8 +18,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "tabledialog.h"
-
+#include "global.h"
 #include <QString>
+
+extern Global global;
 
 TableDialog::TableDialog(QWidget *parent) :
         QDialog(parent)
@@ -69,6 +71,7 @@ TableDialog::TableDialog(QWidget *parent) :
     button.addWidget(&cancel, 1,2);
     grid.addLayout(&button, 3, 1);
     this->setLayout(&grid);
+    this->setFont(global.getGuiFont(font()));
 
 }
 

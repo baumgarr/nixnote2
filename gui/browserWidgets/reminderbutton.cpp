@@ -36,7 +36,7 @@ ReminderButton::ReminderButton(QWidget *parent) :
     setAction = menu.addAction(tr("Change Date"));
     clearAction = menu.addAction(tr("Clear Reminder"));
     QFont f = font();
-    f.setPointSize(global.defaultGuiFontSize);
+    this->setFont(f);
     menu.setFont(f);
     this->setMenu(&menu);
 }

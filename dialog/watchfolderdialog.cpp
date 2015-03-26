@@ -89,6 +89,7 @@ WatchFolderDialog::WatchFolderDialog(QWidget *parent) :
     //resize(500, 200);
     //table->resizeColumnsToContents();
     load();
+    this->setFont(global.getGuiFont(font()));
 }
 
 

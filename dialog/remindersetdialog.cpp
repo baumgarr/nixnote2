@@ -19,7 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include "remindersetdialog.h"
+#include "global.h"
 
+extern Global global;
 
 
 ReminderSetDialog::ReminderSetDialog(QWidget *parent) :
@@ -47,6 +49,7 @@ ReminderSetDialog::ReminderSetDialog(QWidget *parent) :
 
     connect(ok, SIGNAL(clicked()), this, SLOT(okButtonPressed()));
     connect(cancel, SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
+    this->setFont(global.getGuiFont(font()));
 }
 
 

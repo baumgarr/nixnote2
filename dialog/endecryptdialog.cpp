@@ -75,6 +75,7 @@ EnDecryptDialog::EnDecryptDialog(QWidget *parent) :
     grid->setSizeConstraint( QLayout::SetFixedSize );
 
     password->setEchoMode(QLineEdit::Password);
+    this->setFont(global.getGuiFont(font()));
 }
 
 

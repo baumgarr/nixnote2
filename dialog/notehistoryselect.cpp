@@ -50,6 +50,7 @@ NoteHistorySelect::NoteHistorySelect(QWidget *parent) :
     buttonLayout->addWidget(&importButton);
     buttonLayout->addWidget(&cancelButton);
     mainLayout->addLayout(buttonLayout);
+    this->setFont(global.getGuiFont(font()));
 
 }
 

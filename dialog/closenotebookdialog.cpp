@@ -106,6 +106,7 @@ CloseNotebookDialog::CloseNotebookDialog(QWidget *parent) :
         closeNotebooks.addItem(item);
     }
     closeNotebooks.sortItems();
+    this->setFont(global.getGuiFont(font()));
 }
 
 

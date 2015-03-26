@@ -48,9 +48,7 @@ FavoritesView::FavoritesView(QWidget *parent) :
 
     dataStore.clear();
     targetStore.clear();
-    QFont f = this->font();
-    f.setPointSize(global.defaultGuiFontSize);
-    this->setFont(f);
+    this->setFont(global.getGuiFont(font()));
 
     filterPosition = -1;
     maxCount = 0;  // Highest count of any notebook.  Used in calculating column width

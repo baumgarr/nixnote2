@@ -268,6 +268,7 @@ void NixNote::setupGui() {
     menuBar->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     toolBar->setFloatable(true);
     toolBar->setMovable(true);
+    toolBar->setFont(global.getGuiFont(toolBar->font()));
     toolBar->setAllowedAreas(Qt::BottomToolBarArea | Qt::TopToolBarArea);
     //toolBar->addSeparator();
     leftArrowButton = toolBar->addAction(QIcon(":left_arrow.png"), tr("Back"));

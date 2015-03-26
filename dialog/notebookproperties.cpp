@@ -57,6 +57,7 @@ NotebookProperties::NotebookProperties(QWidget *parent) :
     buttonGrid.addWidget(&ok, 1, 1);
     buttonGrid.addWidget(&cancel, 1,2);
     grid.addLayout(&buttonGrid,2,1);
+    this->setFont(global.getGuiFont(font()));
 }
 
 

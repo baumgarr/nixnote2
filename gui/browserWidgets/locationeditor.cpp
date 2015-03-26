@@ -32,9 +32,7 @@ LocationEditor::LocationEditor(QWidget *parent) :
     pal.setColor(backgroundRole(), QPalette::Base);
     setPalette(pal);
 
-    QFont f = font();
-    f.setPointSize(global.defaultGuiFontSize);
-    setFont(f);
+    this->setFont(global.getGuiFont(font()));
 
     inactiveColor = "QToolButton {background-color: transparent; border-radius: 0px; border:none; margin 0px; padding: 4px} ";
     this->setCursor(Qt::PointingHandCursor);

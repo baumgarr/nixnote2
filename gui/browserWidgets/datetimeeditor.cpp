@@ -33,9 +33,7 @@ extern Global global;
 DateTimeEditor::DateTimeEditor(QWidget *parent) :
     QDateTimeEdit(parent)
 {
-    QFont f = font();
-    f.setPointSize(global.defaultGuiFontSize);
-    this->setFont(f);
+    this->setFont(global.getGuiFont(font()));
 
     QPalette pal;
     pal.setColor(QPalette::Text, QColor(14,28,209));

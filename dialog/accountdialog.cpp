@@ -114,6 +114,7 @@ AccountDialog::AccountDialog(QWidget *parent) :
     buttonLayout->addWidget(ok);
     buttonLayout->addStretch();
     grid->addLayout(buttonLayout,3,1);
+    this->setFont(global.getGuiFont(font()));
 
 }
 

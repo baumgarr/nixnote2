@@ -20,8 +20,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QGridLayout>
 
-
+#include "global.h"
 #include "spellcheckdialog.h"
+
+extern Global global;
 
 SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, QWidget *parent) :
     QDialog(parent)
@@ -78,6 +80,7 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
     grid->addLayout(buttonGrid, 2,1);
     this->replace->setEnabled(false);
     this->suggestions->addItems(suggestions);
+    this->setFont(global.getGuiFont(font()));
 }
 
 void SpellCheckDialog::cancelButtonPressed() {

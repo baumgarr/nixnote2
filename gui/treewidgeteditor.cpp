@@ -30,9 +30,7 @@ TreeWidgetEditor::TreeWidgetEditor(QTreeWidget *parent) :
     QLineEdit(parent)
 {
     this->parent = parent;
-    QFont f = font();
-    f.setPointSize(global.defaultGuiFontSize);
-    setFont(f);
+    this->setFont(global.getGuiFont(font()));
     lid = 0;
     stackName = "";
     connect(this, SIGNAL(returnPressed()), SLOT(textChanged()));

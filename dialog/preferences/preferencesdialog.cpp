@@ -17,8 +17,11 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
+#include "global.h"
 #include "preferencesdialog.h"
 #include <QSpacerItem>
+
+extern Global global;
 
 PreferencesDialog::PreferencesDialog(QWidget *parent) :
     QDialog(parent)
@@ -30,6 +33,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
 
     tabs = new QTabWidget(this);
     mainLayout->addWidget(tabs);
+    this->setFont(global.getGuiFont(font()));
 
     this->setupAppearancePanel();
     this->setupLocalePanel();

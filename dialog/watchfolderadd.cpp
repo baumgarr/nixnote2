@@ -103,6 +103,7 @@ WatchFolderAdd::WatchFolderAdd(qint32 lid, QWidget *parent) :
     mainLayout->addSpacing(1);
     mainLayout->addLayout(buttonLayout);
     setLayout(mainLayout);
+    this->setFont(global.getGuiFont(font()));
 }
 
 

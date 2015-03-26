@@ -59,6 +59,7 @@ LoginDialog::LoginDialog(QWidget *parent) :
     buttonGrid.addWidget(&cancel, 1,2);
     grid.addLayout(&buttonGrid,2,1);
     grid.setSizeConstraint( QLayout::SetFixedSize );
+    this->setFont(global.getGuiFont(font()));
 }
 
 

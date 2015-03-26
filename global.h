@@ -143,6 +143,7 @@ public:
     QString defaultFont;
     int defaultFontSize;
     int defaultGuiFontSize;
+    QString defaultGuiFont;
     bool startupNewNote;
     bool forceNoStartMimized;
     bool forceStartMinimized;
@@ -169,6 +170,7 @@ public:
     void appendFilter(FilterCriteria *criteria);
     void setupDateTimeFormat();
     QString getWindowIcon();
+    QFont getGuiFont(QFont f);
 
     bool nonAsciiSortBug;  // Workaround for non-ASCII characters in tag name sorting
 

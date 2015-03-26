@@ -43,9 +43,7 @@ NTitleEditor::NTitleEditor(QWidget *parent) :
     this->setStyleSheet(inactiveColor);
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(titleChanged(QString)));
 
-    QFont f = font();
-    f.setPointSize(global.defaultGuiFontSize);
-    setFont(f);
+    this->setFont(global.getGuiFont(font()));
 }
 
 void NTitleEditor::setActiveColor() {

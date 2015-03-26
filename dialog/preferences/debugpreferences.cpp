@@ -62,6 +62,7 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     debugLevel->setCurrentIndex(index);
     mainLayout->addWidget(debugLevelLabel,3,0);
     mainLayout->addWidget(debugLevel,3,1);
+    this->setFont(global.getGuiFont(font()));
 
 }
 

@@ -18,8 +18,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "insertlatexdialog.h"
+#include "global.h"
+
 #include <QGridLayout>
 #include <QLabel>
+
+extern Global global;
 
 InsertLatexDialog::InsertLatexDialog(QWidget *parent) :
     QDialog(parent)
@@ -52,6 +56,7 @@ InsertLatexDialog::InsertLatexDialog(QWidget *parent) :
     connect(&url, SIGNAL(textChanged()), this, SLOT(validateInput()));
 
     //setAttribute(Qt.WidgetAttribute.WA_DeleteOnClose);
+    this->setFont(global.getGuiFont(font()));
 }
 
 

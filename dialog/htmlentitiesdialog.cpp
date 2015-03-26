@@ -105,6 +105,7 @@ HtmlEntitiesDialog::HtmlEntitiesDialog(QWidget *parent) :
     scrollArea->setWidgetResizable(false);
     //layout()->setSizeConstraint( QLayout::SetFixedSize);
     //saveSize = this->size();
+    this->setFont(global.getGuiFont(font()));
 }
 
 

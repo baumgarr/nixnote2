@@ -40,9 +40,7 @@ extern Global global;
 NSearchView::NSearchView(QWidget *parent) :
     QTreeWidget(parent)
 {
-    QFont f = this->font();
-    f.setPointSize(global.defaultGuiFontSize);
-    this->setFont(f);
+    this->setFont(global.getGuiFont(font()));
 
     filterPosition = -1;
 

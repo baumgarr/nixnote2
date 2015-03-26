@@ -25,6 +25,7 @@ extern Global global;
 SyncPreferences::SyncPreferences(QWidget *parent) :
     QWidget(parent)
 {
+    this->setFont(global.getGuiFont(font()));
     QGridLayout *mainLayout = new QGridLayout(this);
     setLayout(mainLayout);
 

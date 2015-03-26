@@ -65,6 +65,7 @@ DatabaseStatus::DatabaseStatus(QWidget *parent) :
 
     vBoxLayout->addLayout(textGrid);
     vBoxLayout->addLayout(buttonLayout);
+    this->setFont(global.getGuiFont(font()));
 }
 
 

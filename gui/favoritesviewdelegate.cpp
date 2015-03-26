@@ -87,7 +87,6 @@ void FavoritesViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     QRect clip(0, 0, options.rect.width()+iconSize.width(), options.rect.height());
 
     painter->setClipRect(clip);
-    QFontMetrics fm = options.fontMetrics;
     QFont f = options.font;
     f.setBold(false);
     painter->setFont(f);

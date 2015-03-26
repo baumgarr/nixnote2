@@ -33,9 +33,7 @@ AuthorEditor::AuthorEditor(QWidget *parent) :
     pal.setColor(backgroundRole(), QPalette::Base);
     setPalette(pal);
 
-    QFont f = font();
-    f.setPointSize(global.defaultGuiFontSize);
-    setFont(f);
+    setFont(global.getGuiFont(font()));
     this->setPlaceholderText(tr("Click to set author"));
 
     inactiveColor = "QLineEdit {background-color: transparent; border-radius: 0px;} ";

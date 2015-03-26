@@ -128,8 +128,9 @@ void Global::setup(StartupConfig startupConfig) {
         countBehavior = CountNone;
     pdfPreview = settings->value("showPDFs", true).toBool();
     defaultFont = settings->value("defaultFont","").toString();
-    defaultFontSize = settings->value("defaultFontSize",12).toInt();
-    defaultGuiFontSize = settings->value("defaultGuiFontSize", 12).toInt();
+    defaultFontSize = settings->value("defaultFontSize",0).toInt();
+    defaultGuiFontSize = settings->value("defaultGuiFontSize", 0).toInt();
+    defaultGuiFont = settings->value("defaultGuiFont","").toString();
     settings->endGroup();
 
     if (defaultFont != "" && defaultFontSize > 0) {
@@ -448,6 +449,14 @@ QString Global::getWindowIcon() {
     return value;
 }
 
+
+QFont Global::getGuiFont(QFont f) {
+    if (defaultGuiFont != "")
+        f.setFamily(defaultGuiFont);
+    if (defaultGuiFontSize > 0)
+        f.setPointSize(defaultGuiFontSize);
+    return f;
+}
 
 
 Global global;

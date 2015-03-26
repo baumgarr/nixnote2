@@ -56,6 +56,7 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     dateFormat->setCurrentIndex(index);
     index = timeFormat->findData(timei);
     timeFormat->setCurrentIndex(index);
+    this->setFont(global.getGuiFont(font()));
 }
 
 

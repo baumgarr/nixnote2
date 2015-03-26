@@ -23,6 +23,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPushButton>
 #include <QLabel>
 
+#include "global.h"
+
+extern Global global;
+
 InsertLinkDialog::InsertLinkDialog(bool insert, QWidget *parent) :
     QDialog(parent)
 {
@@ -55,6 +59,7 @@ InsertLinkDialog::InsertLinkDialog(bool insert, QWidget *parent) :
     connect(url,SIGNAL(textChanged(QString)), this, SLOT(validateInput()));
 
    // setAttribute(Qt::WA_DeleteOnClose);
+    this->setFont(global.getGuiFont(font()));
 
 }
 

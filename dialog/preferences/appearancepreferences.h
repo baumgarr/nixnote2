@@ -37,9 +37,10 @@ private:
     QComboBox *defaultFontChooser;
     QComboBox *defaultFontSizeChooser;
     QComboBox *defaultGuiFontSizeChooser;
+    QComboBox *defaultGuiFontChooser;
     QLabel *defaultNotebookOnStartupLabel;
     bool webSettingsChanged;
-    void loadFontNames();
+    void loadFontNames(QComboBox *combo, QString defaultFont);
 
 
 public:
@@ -66,6 +67,7 @@ signals:
     
 public slots:
     void loadFontSizes(QString font);
+    void loadGuiFontSizes(QString name);
     void fontSizeChanged(QString name);
     void showTrayIconChanged(bool value);
     

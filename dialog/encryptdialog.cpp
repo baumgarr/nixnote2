@@ -18,8 +18,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "encryptdialog.h"
-
+#include "global.h"
 #include <QGridLayout>
+
+extern Global global;
 
 EnCryptDialog::EnCryptDialog(QWidget *parent) :
     QDialog(parent)
@@ -69,6 +71,7 @@ EnCryptDialog::EnCryptDialog(QWidget *parent) :
     connect(&password, SIGNAL(textChanged(QString)), this, SLOT(validateInput()));
     connect(&password2, SIGNAL(textChanged(QString)), this, SLOT(validateInput()));
     connect(&hint, SIGNAL(textChanged(QString)), this, SLOT(validateInput()));
+    this->setFont(global.getGuiFont(font()));
 
 }
 

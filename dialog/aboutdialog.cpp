@@ -28,5 +28,6 @@ AboutDialog::AboutDialog(QDialog *parent) :
     page->load(file);
     connect(okButton, SIGNAL(clicked()), this, SLOT(close()));
     this->resize(600,500);
+    this->setFont(global.getGuiFont(font()));
 }
 

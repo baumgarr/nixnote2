@@ -1,7 +1,11 @@
 #include "locationdialog.h"
+#include "global.h"
+
 #include <QGridLayout>
 #include <QLabel>
 #include <cmath>
+
+extern Global global;
 
 LocationDialog::LocationDialog(QWidget *parent) :
     QDialog(parent)
@@ -42,6 +46,7 @@ LocationDialog::LocationDialog(QWidget *parent) :
     altitudeval.setTop(9999.99);
     altitudeval.setNotation(QDoubleValidator::StandardNotation);
     altitude.setValidator(&altitudeval);
+    this->setFont(global.getGuiFont(font()));
 }
 
 

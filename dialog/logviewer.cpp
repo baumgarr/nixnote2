@@ -34,6 +34,7 @@ LogViewer::LogViewer(QWidget *parent) :
     loadData();
     this->setWindowTitle(tr("Save Logs"));
     this->resize(600,400);
+    this->setFont(global.getGuiFont(font()));
 }
 
 

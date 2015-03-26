@@ -69,6 +69,7 @@ AddUserAccountDialog::AddUserAccountDialog(QWidget *parent) :
     newAccountServer->addItem(tr("Evernote"), "www.evernote.com");
     newAccountServer->addItem(tr("Yinxiang Biji"), "app.yinxiang.com");
     newAccountServer->addItem(tr("Evernote Sandbox"), "sandbox.evernote.com");
+    this->setFont(global.getGuiFont(font()));
 }
 
 

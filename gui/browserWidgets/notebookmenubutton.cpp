@@ -35,11 +35,9 @@ NotebookMenuButton::NotebookMenuButton(QWidget *parent) :
     setIcon(icon);
     currentNotebookName = "";
     loadData();
-    QFont f = rootMenu.font();
-    f.setBold(false);
-    f.setPointSize(global.defaultGuiFontSize);
-    rootMenu.setFont(f);
-    setFont(f);
+
+    rootMenu.setFont(global.getGuiFont(rootMenu.font()));
+    this->setFont(global.getGuiFont(font()));
     currentAction = 0;
 }
 
@@ -144,9 +142,7 @@ void NotebookMenuButton::addNotebookMenuItem(QMenu *menu, QAction *action) {
             return;
         }
     }
-    QFont f = font();
-    f.setPointSize(global.defaultGuiFontSize);
-    action->setFont(f);
+    action->setFont(global.getGuiFont(font()));
     menu->addAction(action);
 }
 
@@ -174,9 +170,8 @@ QMenu* NotebookMenuButton::findStack(Notebook n) {
     QMenu *newMenu = new QMenu(this);
     newMenu->setTitle(stack);
     QFont f = newMenu->font();
-    f.setPointSize(global.defaultGuiFontSize+2);
     f.setBold(false);
-    newMenu->setFont(f);
+    newMenu->setFont(global.getGuiFont(f));
     stackMenus.append(newMenu);
     QAction *placeHolder = new QAction(this);
     placeHolder->setVisible(false);

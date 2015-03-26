@@ -45,9 +45,7 @@ NTagView::NTagView(QWidget *parent) :
     QTreeWidget(parent)
 {
     accountFilter = 0;
-    QFont f = this->font();
-    f.setPointSize(global.defaultGuiFontSize);
-    this->setFont(f);
+    this->setFont(global.getGuiFont(font()));
 
     filterPosition = 0;
     maxCount = 0;

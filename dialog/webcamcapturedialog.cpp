@@ -24,15 +24,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv/cv.h"
+#include "global.h"
+
 #include <QHBoxLayout>
 #include <QSpacerItem>
 
-
+extern Global global;
 
 // Default constructor
 WebcamCaptureDialog::WebcamCaptureDialog(QWidget *parent) :
     QDialog(parent)
 {
+    this->setFont(global.getGuiFont(font()));
     webcamReady = true;
     this->setWindowTitle(tr("Webcam Capture"));
     this->setWindowIcon(QIcon(":webcam.png"));
