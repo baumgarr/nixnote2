@@ -889,6 +889,8 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
     postData->addQueryItem("auth", authToken);
 
     QEventLoop loop;
+    if (networkAccessManager == NULL)
+        networkAccessManager = new QNetworkAccessManager(this);
     QObject::connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
 
     int position = 0;
