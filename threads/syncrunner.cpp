@@ -65,6 +65,12 @@ void SyncRunner::synchronize() {
          comm = new CommunicationManager(&db->conn);
          connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
     }
+
+
+    // If we are already connected, we are already synchronizing so there is nothing more to do
+    if (global.connected == true)
+        return;
+
     error = false;
 
     comm->error.reset();

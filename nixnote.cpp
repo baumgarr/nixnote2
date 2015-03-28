@@ -1140,6 +1140,9 @@ void NixNote::saveNoteColumnWidths() {
 //* The sync timer has expired
 //*****************************************************************************
 void NixNote::syncTimerExpired() {
+    // If we are already connected, we are already synchronizing so there is nothing more to do
+    if (global.connected == true)
+        return;
     if (!global.accountsManager->oauthTokenFound())
         return;
     tabWindow->saveAllNotes();
@@ -1150,6 +1153,10 @@ void NixNote::syncTimerExpired() {
 //* User synchronize was requested
 //******************************************************************************
 void NixNote::synchronize() {
+    // If we are already connected, we are already synchronizing so there is nothing more to do
+    if (global.connected == true)
+        return;
+
     this->pauseIndexing(true);
 
     if (!global.accountsManager->oauthTokenFound()) {
