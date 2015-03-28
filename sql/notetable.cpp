@@ -1479,7 +1479,7 @@ void NoteTable::expunge(qint32 lid) {
     QList<Resource> resources;
     if (note.resources.isSet())
         resources = note.resources;
-    for (int i=0; resources.size(); i++) {
+    for (int i=0; i<resources.size(); i++) {
         resTable.expunge(resources[i].guid);
     }
 
