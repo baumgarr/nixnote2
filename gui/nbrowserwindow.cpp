@@ -247,6 +247,10 @@ void NBrowserWindow::setContent(qint32 lid) {
     if (lid == this->lid)
         return;
 
+    bool hasFocus = false;
+    if (this->editor->hasFocus())
+        hasFocus = true;
+
     if (this->editor->isDirty)
         this->saveNoteContent();
 
@@ -384,6 +388,8 @@ void NBrowserWindow::setContent(qint32 lid) {
     } /*else
         hammer->timer.start(1000);*/
 
+    if (hasFocus)
+        this->editor->setFocus();
 }
 
 
