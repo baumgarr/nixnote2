@@ -67,9 +67,9 @@ public:
     bool isDirty(qint32 lid);                  // Check if a tag is dirty
     bool isDirty(QString guid);             // Check if a tag is dirty
     bool isDirty(string guid);              // Check if a tag is dirty
-    bool setDirty(string guid, bool dirty);  // set the note dirty flag
-    bool setDirty(QString guid, bool dirty); // set the note dirty flag
-    bool setDirty(qint32 lid, bool dirty);      // set the note dirty flag
+    void setDirty(string guid, bool dirty);  // set the note dirty flag
+    void setDirty(QString guid, bool dirty); // set the note dirty flag
+    void setDirty(qint32 lid, bool dirty);      // set the note dirty flag
     bool exists(qint32 lid);                   // Does this tag exist?
     bool exists(QString guid);              // Does this tag exist?
     bool exists(string guid);               // Does this tag exist?

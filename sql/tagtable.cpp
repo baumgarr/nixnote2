@@ -48,9 +48,12 @@ qint32 TagTable::findByName(string &name, qint32 account) {
 
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
-        if (account == 0 || owningAccount(lid) == account)
+        if (account == 0 || owningAccount(lid) == account) {
+            query.finish();
             return lid;
+        }
     }
+    query.finish();
     return 0;
 }
 
@@ -70,22 +73,27 @@ bool TagTable::isLinked(qint32 lid) {
     query.bindValue(":key", TAG_OWNING_ACCOUNT);
     query.bindValue(":lid", lid);
     query.exec();
-    if (query.next())
+    if (query.next()) {
+        query.finish();
         return true;
+    }
+    query.finish();
     return false;
 }
 
 
 // Get the owning account for a lid
 qint32 TagTable::owningAccount(qint32 lid) {
+    qint32 retval = 0;
     NSqlQuery query(*db);
     query.prepare("Select data from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_OWNING_ACCOUNT);
     query.exec();
     if (query.next())
-        return query.value(0).toInt();
-    return 0;
+        retval = query.value(0).toInt();
+    query.finish();
+    return retval;
 }
 
 // Get a list of all tags
@@ -97,7 +105,7 @@ qint32 TagTable::getAll(QList<qint32> &tags) {
     while (query.next()) {
         tags.append(query.value(0).toInt());
     }
-
+    query.finish();
     return tags.size();
 }
 
@@ -117,6 +125,7 @@ void TagTable::updateGuid(qint32 lid, Guid &guid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_GUID);
     query.exec();
+    query.finish();
 }
 
 
@@ -141,6 +150,7 @@ void TagTable::update(Tag &tag, bool dirty=true) {
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
         query.exec();
+        query.finish();
         qint32 account = owningAccount(lid);
         add(lid, tag, dirty,account);
 
@@ -151,9 +161,9 @@ void TagTable::update(Tag &tag, bool dirty=true) {
         for (qint32 i=0; i<noteList.size(); i++) {
             noteTable.rebuildNoteListTags(noteList[i]);
         }
-
     }
 }
+
 
 // Synchronize a newtag with what is in the database.  We basically
 // just delete the old one & give it a new entry
@@ -168,6 +178,7 @@ qint32 TagTable::sync(qint32 l, Tag &tag, qint32 account) {
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
         query.exec();
+        query.finish();
     } else {
         ConfigStore cs(db);
         lid = cs.incrementLidCounter();
@@ -182,16 +193,16 @@ qint32 TagTable::sync(qint32 l, Tag &tag, qint32 account) {
 
 // Given a tag's GUID, we return the LID
 qint32 TagTable::getLid(QString guid) {
-
+    qint32 retval = 0;
     NSqlQuery query(*db);
     query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":data", guid);
     query.bindValue(":key", TAG_GUID);
     query.exec();
     if (query.next())
-        return query.value(0).toInt();
-    else
-        return 0;
+        retval = query.value(0).toInt();
+    query.finish();
+    return retval;
 }
 
 
@@ -267,6 +278,7 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
         query.bindValue(":data", account);
         query.exec();
     }
+    query.finish();
     return lid;
 }
 
@@ -279,8 +291,10 @@ bool TagTable::get(Tag &tag, qint32 lid) {
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
-    if (query.size() == 0)
+    if (query.size() == 0) {
+        query.finish();
         return false;
+    }
     while (query.next()) {
         qint32 key = query.value(0).toInt();
         switch (key) {
@@ -303,7 +317,7 @@ bool TagTable::get(Tag &tag, qint32 lid) {
                 break;
         }
     }
-
+    query.finish();
     return true;
 }
 
@@ -328,14 +342,15 @@ bool TagTable::get(Tag &tag, string guid) {
 // Return if a tag is dirty given its lid
 bool TagTable::isDirty(qint32 lid) {
     NSqlQuery query(*db);
+    bool retval = false;
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_ISDIRTY);
     query.exec();
     if (query.next())
-        return query.value(0).toBool();
-    else
-        return false;
+        retval = query.value(0).toBool();
+    query.finish();
+    return retval;
 }
 
 
@@ -354,31 +369,32 @@ bool TagTable::isDirty(string guid) {
 
 
 // Set a flag dirty or clean
-bool TagTable::setDirty(string guid, bool dirty) {
+void TagTable::setDirty(string guid, bool dirty) {
     qint32 lid = getLid(guid);
     return setDirty(lid, dirty);
 }
 
 
 // Set a flag dirty or clean
-bool TagTable::setDirty(QString guid, bool dirty) {
+void TagTable::setDirty(QString guid, bool dirty) {
     qint32 lid = getLid(guid);
     return setDirty(lid, dirty);
 }
 
 
 // Return if a tag is dirty given its lid
-bool TagTable::setDirty(qint32 lid, bool dirty) {
+void TagTable::setDirty(qint32 lid, bool dirty) {
+    //bool retval = false;
     NSqlQuery query(*db);
     query.prepare("Update DataStore set data=:dirty where key=:key and lid=:lid");
     query.bindValue(":dirty", dirty);
     query.bindValue(":key", TAG_ISDIRTY);
     query.bindValue(":lid", lid);
     query.exec();
-    if (query.next())
-        return query.value(0).toBool();
-    else
-        return false;
+//    if (query.next())
+//        retval = query.value(0).toBool();
+//    query.finish();
+//    return retval;
 }
 
 
@@ -389,10 +405,12 @@ bool TagTable::exists(qint32 lid) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_GUID);
     query.exec();
-    if (query.next())
+    if (query.next()) {
+        query.finish();
         return true;
-    else
-        return false;
+    }
+    query.finish();
+    return false;
 }
 
 
@@ -420,10 +438,11 @@ bool TagTable::getGuid(QString &guid, qint32 lid) {
     query.exec();
     while (query.next()) {
         guid = query.value(0).toString();
+        query.finish();
         return true;
     }
-
-    return true;
+    query.finish();
+    return false;
 }
 
 
@@ -458,6 +477,7 @@ void TagTable::deleteTag(qint32 lid) {
         } else {
             expunge(currentLid);
         }
+        query.finish();
         QList<qint32> noteLids;
         noteTable.findNotesByTag(noteLids, currentLid);
         for (int j=0; j<noteLids.size(); j++) {
@@ -474,6 +494,7 @@ void TagTable::expunge(qint32 lid) {
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
+    query.finish();
 
     NoteTable noteTable(db);
     QList<int> notes;
@@ -502,10 +523,12 @@ bool TagTable::isDeleted(qint32 lid) {
     query.bindValue(":key", TAG_ISDELETED);
     query.bindValue(":data", true);
     query.exec();
-    if (query.next())
+    if (query.next()) {
+        query.finish();
         return true;
-    else
-        return false;
+    }
+    query.finish();
+    return false;
 }
 
 
@@ -525,6 +548,7 @@ qint32 TagTable::findChildren(QList<qint32> &list, QString parentGuid) {
         findChildren(list, nextGuid);
         list.append(nextChild);
     }
+    query.finish();
     return list.size();
 }
 
@@ -542,6 +566,7 @@ qint32 TagTable::getAllDirty(QList<qint32> &lids) {
     while(query.next()) {
         lids.append(query.value(0).toInt());
     }
+    query.finish();
     return lids.size();
 }
 
@@ -555,6 +580,7 @@ void TagTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_UPDATE_SEQUENCE_NUMBER);
     query.exec();
+    query.finish();
 }
 
 // Linked tags are not uploaded, so we reset the dirty flags in case
@@ -565,6 +591,7 @@ void TagTable::resetLinkedTagsDirty() {
     query.bindValue(":key", TAG_ISDIRTY);
     query.bindValue(":linkedkey", TAG_OWNING_ACCOUNT);
     query.exec();
+    query.finish();
 }
 
 
@@ -580,6 +607,7 @@ int TagTable::getNewUnsequencedCount() {
     while(query.next()) {
         return query.value(0).toInt();
     }
+    query.finish();
     return 0;
 }
 
@@ -602,6 +630,7 @@ void TagTable::cleanupLinkedTags() {
     query.bindValue(":owningKey", TAG_OWNING_ACCOUNT);
     query.bindValue(":nameKey", TAG_NAME);
     query.exec();
+    query.finish();
 }
 
 
@@ -649,6 +678,7 @@ void TagTable::findMissingParents(QList<qint32> &lids) {
         qint32 lid = query.value(0).toInt();
         lids.append(lid);
     }
+    query.finish();
 }
 
 
@@ -659,4 +689,5 @@ void TagTable::cleanupMissingParents() {
     query.bindValue(":parentKey", TAG_PARENT_LID);
     query.bindValue(":guidKey", TAG_GUID);
     query.exec();
+    query.finish();
 }

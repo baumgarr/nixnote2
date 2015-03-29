@@ -33,15 +33,16 @@ SharedNotebookTable::SharedNotebookTable(QSqlDatabase *db)
 
 
 qint32 SharedNotebookTable::getLid(qlonglong id){
+    qint32 retval = 0;
     NSqlQuery query(*db);
     query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
     query.bindValue(":data", id);
     query.exec();
     if (query.next())
-        return query.value(0).toInt();
-    else
-        return 0;
+        retval = query.value(0).toInt();
+    query.finish();
+    return retval;
 }
 
 
@@ -64,6 +65,7 @@ qint32 SharedNotebookTable::sync(qint32 l, SharedNotebook sharedNotebook){
         query.prepare("Delete from DataStore where lid=:lid and key>=3300 and key <3400");
         query.bindValue(":lid", lid);
         query.exec();
+        query.finish();
     } else {
        ConfigStore cs(db);
        lid = cs.incrementLidCounter();
@@ -174,6 +176,7 @@ qint32 SharedNotebookTable::add(qint32 l, const SharedNotebook &t, bool isDirty)
         query.bindValue(":data", username);
         query.exec();
     }
+    query.finish();
     return lid;
 }
 
@@ -252,6 +255,7 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
             break;
         }
     }
+    query.finish();
     return returnVal;
 }
 
@@ -259,15 +263,16 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
 
 
 bool SharedNotebookTable::isDirty(qint32 lid){
+    bool retval = false;
     NSqlQuery query(*db);
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", SHAREDNOTEBOOK_ISDIRTY);
     query.exec();
     if (query.next())
-        return query.value(0).toBool();
-    else
-        return false;
+        retval = query.value(0).toBool();
+    query.finish();
+    return retval;
 }
 
 
@@ -279,10 +284,12 @@ bool SharedNotebookTable::exists(qint32 lid){
     query.bindValue(":lid", lid);
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
     query.exec();
-    if (query.next())
+    if (query.next()) {
+        query.finish();
         return true;
-    else
-        return false;
+    }
+    query.finish();
+    return false;
 }
 
 
@@ -293,10 +300,12 @@ bool SharedNotebookTable::exists(qlonglong id){
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
     query.bindValue(":id", id);
     query.exec();
-    if (query.next())
+    if (query.next()) {
+        query.finish();
         return true;
-    else
-        return false;
+    }
+    query.finish();
+    return false;
 }
 
 
@@ -311,7 +320,7 @@ qint32 SharedNotebookTable::getAll(QList<qint32> &values){
     while (query.next()) {
         values.append(query.value(0).toInt());
     }
-
+    query.finish();
     return  values.size();
 }
 
@@ -324,9 +333,12 @@ qlonglong SharedNotebookTable::getId(qint32 lid){
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
     query.exec();
     while (query.next()) {
-        return query.value(0).toLongLong();
+        qint32 retval = 0;
+        retval =  query.value(0).toLongLong();
+        query.finish();
+        return retval;
     }
-
+    query.finish();
     return 0;
 }
 
@@ -338,8 +350,12 @@ qint32 SharedNotebookTable::findById(qlonglong id) {
     query.bindValue(":data", id);
     query.exec();
     if (query.next()) {
-        return query.value(0).toInt();
+        qint32 retval = 0;
+        retval = query.value(0).toInt();
+        query.finish();
+        return retval;
     }
+    query.finish();
     return 0;
 }
 
@@ -352,8 +368,11 @@ qint32 SharedNotebookTable::findByShareKey(QString id) {
     query.bindValue(":data", id);
     query.exec();
     while (query.next()) {
-        return query.value(0).toInt();
+        qint32 retval = query.value(0).toInt();
+        query.finish();
+        return retval;
     }
+    query.finish();
     return 0;
 }
 
@@ -373,8 +392,11 @@ qint32 SharedNotebookTable::findByNotebookGuid(QString id) {
     query.bindValue(":data", id);
     query.exec();
     while (query.next()) {
-        return query.value(0).toInt();
+        qint32 retval = query.value(0).toInt();
+        query.finish();
+        return retval;
     }
+    query.finish();
     NotebookTable ntable(db);
     return ntable.getLid(id);
 }

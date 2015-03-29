@@ -38,6 +38,7 @@ class NTableView : public QTableView
 {
     Q_OBJECT
 private:
+    //DatabaseConnection *db;
     //unsigned int filterPosition;
     DateDelegate *dateDelegate;
     NumberDelegate *blankNumber;

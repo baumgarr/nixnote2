@@ -313,6 +313,7 @@ void UserTable::updateUser(User &user) {
             query.exec();
         }
     }
+    query.finish();
 }
 
 
@@ -348,7 +349,7 @@ void UserTable::updateSyncState(SyncState s) {
      if (!query.exec()) {
          QLOG_ERROR() << "Error updating USER_SYNC_LAST_NUMBER : " << query.lastError();
      }
-
+     query.finish();
 }
 
 
@@ -361,8 +362,10 @@ qlonglong UserTable::getLastSyncDate() {
 
     if (query.next()) {
         qlonglong value = query.value(0).toLongLong();
+        query.finish();
         return value;
     }
+    query.finish();
     return 0;
 }
 
@@ -376,8 +379,10 @@ qint32 UserTable::getLastSyncNumber() {
 
     if (query.next()) {
         value = query.value(0).toInt();
+        query.finish();
         return value;
     }
+    query.finish();
     return value;
 }
 
@@ -392,6 +397,7 @@ void UserTable::updateLastSyncDate(long date) {
     query.bindValue(":key", USER_SYNC_LAST_DATE);
     query.bindValue(":data", qlonglong(date));
     query.exec();
+    query.finish();
 }
 
 // update the last sequence number
@@ -404,6 +410,7 @@ void UserTable::updateLastSyncNumber(qint32 value) {
     query.bindValue(":key", USER_SYNC_LAST_NUMBER);
     query.bindValue(":data", value);
     query.exec();
+    query.finish();
 }
 
 
@@ -466,17 +473,18 @@ void UserTable::getUser(User &user) {
             user.accounting = accounting;
         }
     }
+    query.finish();
 }
 
 
 qlonglong UserTable::getUploadAmt() {
+    qint32 retval = 0;
     NSqlQuery query(*db);
     query.prepare("Select data from usertable where key=:key");
     query.bindValue(":key", USER_SYNC_UPLOADED);
     query.exec();
     if (query.next())
-        return query.value(0).toLongLong();
-    else
-        return 0;
+       retval = query.value(0).toLongLong();
+    query.finish();
+    return retval;
 }
-

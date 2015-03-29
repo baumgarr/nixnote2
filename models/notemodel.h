@@ -21,10 +21,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTEMODEL_H
 
 #include <QSqlTableModel>
+#include "sql/databaseconnection.h"
 
 class NoteModel : public QSqlTableModel
 {
     Q_OBJECT
+private:
 public:
     explicit NoteModel(QObject *parent = 0);
     ~NoteModel();

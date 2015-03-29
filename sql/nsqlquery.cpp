@@ -32,6 +32,11 @@ NSqlQuery::NSqlQuery(QSqlDatabase db) :
 }
 
 
+
+NSqlQuery::~NSqlQuery() {
+    this->finish();
+}
+
 bool NSqlQuery::exec() {
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec();
@@ -81,5 +86,3 @@ bool NSqlQuery::exec(const char *query) {
     q = QString::fromStdString(query);
     return this->exec(q);
 }
-
-
