@@ -136,23 +136,23 @@
         <translation>ユーザアカウント管理</translation>
     </message>
     <message>
-        <location filename="../dialog/accountmaintenancedialog.cpp" line="80"/>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="81"/>
         <source>Are you sure you want to delete this account?</source>
         <translation>このアカウントを本当に削除して良いですか？</translation>
     </message>
     <message>
-        <location filename="../dialog/accountmaintenancedialog.cpp" line="81"/>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="82"/>
         <source>Verify Delete</source>
         <translation>削除の確認</translation>
     </message>
     <message>
-        <location filename="../dialog/accountmaintenancedialog.cpp" line="93"/>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="94"/>
         <source>You cannot delete the active account.</source>
         <translation>動作中のアカウントを削除できません.</translation>
     </message>
     <message>
-        <location filename="../dialog/accountmaintenancedialog.cpp" line="146"/>
-        <location filename="../dialog/accountmaintenancedialog.cpp" line="170"/>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="147"/>
+        <location filename="../dialog/accountmaintenancedialog.cpp" line="171"/>
         <source>Switch to </source>
         <translation>切り替え</translation>
     </message>
@@ -198,81 +198,96 @@
 <context>
     <name>AppearancePreferences</name>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="35"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="37"/>
         <source>Show tray icon</source>
         <translation>トレイアイコン表示</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="36"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="38"/>
         <source>Display PDFs inline</source>
         <translation>PDFをインライン表示</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="37"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="39"/>
         <source>Show splash screen on startup</source>
         <translation>スプラッシュ画面を開始時に表示</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="38"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="40"/>
         <source>Start automatically at login</source>
         <translation>ログイン時に自動開始</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="39"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="41"/>
         <source>Show missed reminders on startup</source>
         <translation>開始時に未表示のリマインダーを表示</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="40"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="42"/>
         <source>Always Start minimized</source>
         <translation>常に最小化で開始</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="41"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="43"/>
         <source>Show notebook and tag totals</source>
         <translation>ノートブックとタグの総数を表示</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="60"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="68"/>
         <source>Startup Behavior</source>
         <translation>起動時の動作</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="62"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="70"/>
         <source>Restore Selection Criteria</source>
         <translation type="unfinished">選択方法をリストアする</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="63"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="71"/>
         <source>Select Default Notebook</source>
         <translation>既定のノートブックを選択</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="64"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="72"/>
         <source>View All Notebooks</source>
         <translation>全てのノートブックを表示</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="71"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="79"/>
         <source>Minimize to tray</source>
         <translation>トレイに最小化</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="72"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="80"/>
         <source>Close to tray</source>
         <translation>トレイへ閉じる</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="85"/>
-        <source>Default Editor Font</source>
-        <translation>エディタの既定フォント</translation>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="93"/>
+        <source>Default GUI Font*</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="91"/>
-        <source>Window Icon
-(may require restart on
-some window managers)</source>
-        <translation>ウインドウアイコン（ウインドウマネージャによっては再開時に必要となる）</translation>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="96"/>
+        <source>Default GUI Font Size*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="99"/>
+        <source>Default Editor Font*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="105"/>
+        <source>Window Icon*</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="291"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="309"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="328"/>
+        <source>System Default</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -291,7 +306,7 @@ some window managers)</source>
 <context>
     <name>AuthorEditor</name>
     <message>
-        <location filename="../gui/browserWidgets/authoreditor.cpp" line="39"/>
+        <location filename="../gui/browserWidgets/authoreditor.cpp" line="37"/>
         <source>Click to set author</source>
         <translation>著者設定</translation>
     </message>
@@ -342,33 +357,33 @@ some window managers)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1035"/>
         <location filename="../communication/communicationmanager.cpp" line="1037"/>
+        <location filename="../communication/communicationmanager.cpp" line="1039"/>
         <source>API rate limit exceeded.  Please try again in </source>
         <translation>APIの更新制限を超えました。次の時間経過後、再度試みてください　</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1035"/>
+        <location filename="../communication/communicationmanager.cpp" line="1037"/>
         <source> minutes.</source>
         <translation>分。</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1037"/>
+        <location filename="../communication/communicationmanager.cpp" line="1039"/>
         <source> minute.</source>
         <translation>分。</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1041"/>
+        <location filename="../communication/communicationmanager.cpp" line="1043"/>
         <source>EDAMSystemException </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1043"/>
+        <location filename="../communication/communicationmanager.cpp" line="1045"/>
         <source>EDAMSystemException: Unknown error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1064"/>
+        <location filename="../communication/communicationmanager.cpp" line="1066"/>
         <source>EDAMNotFoundException: Note not found</source>
         <translation type="unfinished"></translation>
     </message>
@@ -450,37 +465,42 @@ some window managers)</source>
         <translation>LID行を表示（再起動が必要）</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/debugpreferences.cpp" line="45"/>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="37"/>
+        <source>Disable Tag Sorting (usefull for non-ASCII sort bug)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="48"/>
         <source>Message Level</source>
         <translation>メッセージレベル</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/debugpreferences.cpp" line="48"/>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="51"/>
         <source>Trace</source>
         <translation>トレース</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/debugpreferences.cpp" line="49"/>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="52"/>
         <source>Debug</source>
         <translation>デバッグ</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/debugpreferences.cpp" line="50"/>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="53"/>
         <source>Info</source>
         <translation>情報</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/debugpreferences.cpp" line="51"/>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="54"/>
         <source>Warnings</source>
         <translation>警告</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/debugpreferences.cpp" line="52"/>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="55"/>
         <source>Errors</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/debugpreferences.cpp" line="53"/>
+        <location filename="../dialog/preferences/debugpreferences.cpp" line="56"/>
         <source>Fatal</source>
         <translation>重大なエラー</translation>
     </message>
@@ -668,52 +688,52 @@ some window managers)</source>
 <context>
     <name>EnCryptDialog</name>
     <message>
-        <location filename="../dialog/encryptdialog.cpp" line="29"/>
+        <location filename="../dialog/encryptdialog.cpp" line="31"/>
         <source>Encrypt Text</source>
         <translation>テキストの暗号化</translation>
     </message>
     <message>
-        <location filename="../dialog/encryptdialog.cpp" line="45"/>
+        <location filename="../dialog/encryptdialog.cpp" line="47"/>
         <source>Password</source>
         <translation>パスワード</translation>
     </message>
     <message>
-        <location filename="../dialog/encryptdialog.cpp" line="47"/>
+        <location filename="../dialog/encryptdialog.cpp" line="49"/>
         <source>Verify</source>
         <translation>確認</translation>
     </message>
     <message>
-        <location filename="../dialog/encryptdialog.cpp" line="49"/>
+        <location filename="../dialog/encryptdialog.cpp" line="51"/>
         <source>Hint</source>
         <translation>ヒント</translation>
     </message>
     <message>
-        <location filename="../dialog/encryptdialog.cpp" line="51"/>
+        <location filename="../dialog/encryptdialog.cpp" line="53"/>
         <source>Remember Password</source>
         <translation>パスワードを記憶する</translation>
     </message>
     <message>
-        <location filename="../dialog/encryptdialog.cpp" line="59"/>
+        <location filename="../dialog/encryptdialog.cpp" line="61"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialog/encryptdialog.cpp" line="63"/>
+        <location filename="../dialog/encryptdialog.cpp" line="65"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../dialog/encryptdialog.cpp" line="110"/>
+        <location filename="../dialog/encryptdialog.cpp" line="113"/>
         <source>Password must be at least 4 characters</source>
         <translation>パスワードは少なくとも４文字必要です</translation>
     </message>
     <message>
-        <location filename="../dialog/encryptdialog.cpp" line="114"/>
+        <location filename="../dialog/encryptdialog.cpp" line="117"/>
         <source>Passwords do not match</source>
         <translation>パスワードが一致しない</translation>
     </message>
     <message>
-        <location filename="../dialog/encryptdialog.cpp" line="118"/>
+        <location filename="../dialog/encryptdialog.cpp" line="121"/>
         <source>Hint must be entered</source>
         <translation>ヒントは必ず入力が必要です</translation>
     </message>
@@ -825,22 +845,22 @@ some window managers)</source>
 <context>
     <name>FavoritesView</name>
     <message>
-        <location filename="../gui/favoritesview.cpp" line="68"/>
+        <location filename="../gui/favoritesview.cpp" line="66"/>
         <source>Favorites</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/favoritesview.cpp" line="90"/>
+        <location filename="../gui/favoritesview.cpp" line="88"/>
         <source>Remove from favorites</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/favoritesview.cpp" line="559"/>
+        <location filename="../gui/favoritesview.cpp" line="557"/>
         <source>Are you sure you want to remove this favorite?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/favoritesview.cpp" line="560"/>
+        <location filename="../gui/favoritesview.cpp" line="558"/>
         <source>Verify Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -901,7 +921,7 @@ some window managers)</source>
         <translation>HTMLエンティティ選択</translation>
     </message>
     <message>
-        <location filename="../dialog/htmlentitiesdialog.cpp" line="205"/>
+        <location filename="../dialog/htmlentitiesdialog.cpp" line="206"/>
         <source>Comma separated list of HTML entities.
 See http://www.w3schools.com/charsets/ for list.</source>
         <translation type="unfinished">HTMLエンティティのカンマ区切りリスト。http://www.w3schools.com/charsets/を参照のこと。</translation>
@@ -974,22 +994,22 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>InsertLatexDialog</name>
     <message>
-        <location filename="../dialog/insertlatexdialog.cpp" line="28"/>
+        <location filename="../dialog/insertlatexdialog.cpp" line="32"/>
         <source>Insert LaTeX Formula</source>
         <translation>LaTeX数式のインサート</translation>
     </message>
     <message>
-        <location filename="../dialog/insertlatexdialog.cpp" line="38"/>
+        <location filename="../dialog/insertlatexdialog.cpp" line="42"/>
         <source>Formula</source>
         <translation>数式</translation>
     </message>
     <message>
-        <location filename="../dialog/insertlatexdialog.cpp" line="43"/>
+        <location filename="../dialog/insertlatexdialog.cpp" line="47"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialog/insertlatexdialog.cpp" line="47"/>
+        <location filename="../dialog/insertlatexdialog.cpp" line="51"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -997,22 +1017,22 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>InsertLinkDialog</name>
     <message>
-        <location filename="../dialog/insertlinkdialog.cpp" line="30"/>
+        <location filename="../dialog/insertlinkdialog.cpp" line="34"/>
         <source>Insert Link</source>
         <translation>リンクの挿入</translation>
     </message>
     <message>
-        <location filename="../dialog/insertlinkdialog.cpp" line="41"/>
+        <location filename="../dialog/insertlinkdialog.cpp" line="45"/>
         <source>Url</source>
         <translation>URL</translation>
     </message>
     <message>
-        <location filename="../dialog/insertlinkdialog.cpp" line="46"/>
+        <location filename="../dialog/insertlinkdialog.cpp" line="50"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialog/insertlinkdialog.cpp" line="50"/>
+        <location filename="../dialog/insertlinkdialog.cpp" line="54"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -1141,32 +1161,32 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>LocationDialog</name>
     <message>
-        <location filename="../dialog/locationdialog.cpp" line="10"/>
+        <location filename="../dialog/locationdialog.cpp" line="14"/>
         <source>Location</source>
         <translation>地理情報</translation>
     </message>
     <message>
-        <location filename="../dialog/locationdialog.cpp" line="17"/>
+        <location filename="../dialog/locationdialog.cpp" line="21"/>
         <source>Longitude</source>
         <translation>経度</translation>
     </message>
     <message>
-        <location filename="../dialog/locationdialog.cpp" line="19"/>
+        <location filename="../dialog/locationdialog.cpp" line="23"/>
         <source>Latitude</source>
         <translation>緯度</translation>
     </message>
     <message>
-        <location filename="../dialog/locationdialog.cpp" line="21"/>
+        <location filename="../dialog/locationdialog.cpp" line="25"/>
         <source>Altitude</source>
         <translation>高度</translation>
     </message>
     <message>
-        <location filename="../dialog/locationdialog.cpp" line="26"/>
+        <location filename="../dialog/locationdialog.cpp" line="30"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialog/locationdialog.cpp" line="29"/>
+        <location filename="../dialog/locationdialog.cpp" line="33"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -1174,22 +1194,22 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>LocationEditor</name>
     <message>
-        <location filename="../gui/browserWidgets/locationeditor.cpp" line="43"/>
+        <location filename="../gui/browserWidgets/locationeditor.cpp" line="41"/>
         <source>Click to set location...</source>
         <translation>地理情報の設定...</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/locationeditor.cpp" line="46"/>
+        <location filename="../gui/browserWidgets/locationeditor.cpp" line="44"/>
         <source>Edit...</source>
         <translation>編集...</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/locationeditor.cpp" line="47"/>
+        <location filename="../gui/browserWidgets/locationeditor.cpp" line="45"/>
         <source>Clear</source>
         <translation>クリア</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/locationeditor.cpp" line="48"/>
+        <location filename="../gui/browserWidgets/locationeditor.cpp" line="46"/>
         <source>View on map</source>
         <translation>地図表示</translation>
     </message>
@@ -1217,12 +1237,12 @@ See http://www.w3schools.com/charsets/ for list.</source>
         <translation>ログ保存</translation>
     </message>
     <message>
-        <location filename="../dialog/logviewer.cpp" line="65"/>
+        <location filename="../dialog/logviewer.cpp" line="66"/>
         <source>Save Log</source>
         <translation>ログ保存</translation>
     </message>
     <message>
-        <location filename="../dialog/logviewer.cpp" line="66"/>
+        <location filename="../dialog/logviewer.cpp" line="67"/>
         <source>NixNote Log (*.log);;All Files (*.*)</source>
         <translation>NixNoteログ（*.log);;全てのファイル(*.*)</translation>
     </message>
@@ -1258,173 +1278,173 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>NAttributeTree</name>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="50"/>
+        <location filename="../gui/nattributetree.cpp" line="48"/>
         <source>Attributes</source>
         <translation>属性</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="127"/>
+        <location filename="../gui/nattributetree.cpp" line="125"/>
         <source>Created</source>
         <translation>作成日</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="130"/>
-        <location filename="../gui/nattributetree.cpp" line="211"/>
+        <location filename="../gui/nattributetree.cpp" line="128"/>
+        <location filename="../gui/nattributetree.cpp" line="209"/>
         <source>Since</source>
         <translation>以降</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="134"/>
-        <location filename="../gui/nattributetree.cpp" line="171"/>
-        <location filename="../gui/nattributetree.cpp" line="215"/>
-        <location filename="../gui/nattributetree.cpp" line="252"/>
+        <location filename="../gui/nattributetree.cpp" line="132"/>
+        <location filename="../gui/nattributetree.cpp" line="169"/>
+        <location filename="../gui/nattributetree.cpp" line="213"/>
+        <location filename="../gui/nattributetree.cpp" line="250"/>
         <source>Today</source>
         <translation>今日</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="138"/>
-        <location filename="../gui/nattributetree.cpp" line="175"/>
-        <location filename="../gui/nattributetree.cpp" line="219"/>
-        <location filename="../gui/nattributetree.cpp" line="256"/>
+        <location filename="../gui/nattributetree.cpp" line="136"/>
+        <location filename="../gui/nattributetree.cpp" line="173"/>
+        <location filename="../gui/nattributetree.cpp" line="217"/>
+        <location filename="../gui/nattributetree.cpp" line="254"/>
         <source>Yesterday</source>
         <translation>昨日</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="142"/>
-        <location filename="../gui/nattributetree.cpp" line="179"/>
-        <location filename="../gui/nattributetree.cpp" line="223"/>
-        <location filename="../gui/nattributetree.cpp" line="260"/>
+        <location filename="../gui/nattributetree.cpp" line="140"/>
+        <location filename="../gui/nattributetree.cpp" line="177"/>
+        <location filename="../gui/nattributetree.cpp" line="221"/>
+        <location filename="../gui/nattributetree.cpp" line="258"/>
         <source>This week</source>
         <translation>今週</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="146"/>
-        <location filename="../gui/nattributetree.cpp" line="183"/>
-        <location filename="../gui/nattributetree.cpp" line="227"/>
-        <location filename="../gui/nattributetree.cpp" line="264"/>
+        <location filename="../gui/nattributetree.cpp" line="144"/>
+        <location filename="../gui/nattributetree.cpp" line="181"/>
+        <location filename="../gui/nattributetree.cpp" line="225"/>
+        <location filename="../gui/nattributetree.cpp" line="262"/>
         <source>Last week</source>
         <translation>先週</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="150"/>
-        <location filename="../gui/nattributetree.cpp" line="187"/>
-        <location filename="../gui/nattributetree.cpp" line="231"/>
-        <location filename="../gui/nattributetree.cpp" line="268"/>
+        <location filename="../gui/nattributetree.cpp" line="148"/>
+        <location filename="../gui/nattributetree.cpp" line="185"/>
+        <location filename="../gui/nattributetree.cpp" line="229"/>
+        <location filename="../gui/nattributetree.cpp" line="266"/>
         <source>This Month</source>
         <translation>今月</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="154"/>
-        <location filename="../gui/nattributetree.cpp" line="191"/>
-        <location filename="../gui/nattributetree.cpp" line="235"/>
-        <location filename="../gui/nattributetree.cpp" line="272"/>
+        <location filename="../gui/nattributetree.cpp" line="152"/>
+        <location filename="../gui/nattributetree.cpp" line="189"/>
+        <location filename="../gui/nattributetree.cpp" line="233"/>
+        <location filename="../gui/nattributetree.cpp" line="270"/>
         <source>Last Month</source>
         <translation>先月</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="158"/>
-        <location filename="../gui/nattributetree.cpp" line="195"/>
-        <location filename="../gui/nattributetree.cpp" line="239"/>
-        <location filename="../gui/nattributetree.cpp" line="276"/>
+        <location filename="../gui/nattributetree.cpp" line="156"/>
+        <location filename="../gui/nattributetree.cpp" line="193"/>
+        <location filename="../gui/nattributetree.cpp" line="237"/>
+        <location filename="../gui/nattributetree.cpp" line="274"/>
         <source>This Year</source>
         <translation>今年</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="162"/>
-        <location filename="../gui/nattributetree.cpp" line="199"/>
-        <location filename="../gui/nattributetree.cpp" line="243"/>
-        <location filename="../gui/nattributetree.cpp" line="280"/>
+        <location filename="../gui/nattributetree.cpp" line="160"/>
+        <location filename="../gui/nattributetree.cpp" line="197"/>
+        <location filename="../gui/nattributetree.cpp" line="241"/>
+        <location filename="../gui/nattributetree.cpp" line="278"/>
         <source>Last Year</source>
         <translation>昨年</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="167"/>
-        <location filename="../gui/nattributetree.cpp" line="248"/>
+        <location filename="../gui/nattributetree.cpp" line="165"/>
+        <location filename="../gui/nattributetree.cpp" line="246"/>
         <source>Before</source>
         <translation>以前</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="208"/>
+        <location filename="../gui/nattributetree.cpp" line="206"/>
         <source>Last Modified</source>
         <translation>最終変更</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="287"/>
+        <location filename="../gui/nattributetree.cpp" line="285"/>
         <source>Contains</source>
         <translation>内容</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="290"/>
+        <location filename="../gui/nattributetree.cpp" line="288"/>
         <source>Images</source>
         <translation>画像</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="294"/>
+        <location filename="../gui/nattributetree.cpp" line="292"/>
         <source>Audio</source>
         <translation>音声</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="298"/>
+        <location filename="../gui/nattributetree.cpp" line="296"/>
         <source>Ink</source>
         <translation>インク</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="302"/>
+        <location filename="../gui/nattributetree.cpp" line="300"/>
         <source>Encrypted Text</source>
         <translation>暗号化した文章</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="306"/>
+        <location filename="../gui/nattributetree.cpp" line="304"/>
         <source>To-do items</source>
         <translation>やることリスト</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="310"/>
+        <location filename="../gui/nattributetree.cpp" line="308"/>
         <source>Unfinished to-do items</source>
         <translation>終了していないTo-Do項目</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="314"/>
+        <location filename="../gui/nattributetree.cpp" line="312"/>
         <source>Finished to-do items</source>
         <translation>完了したTo-Do項目</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="318"/>
+        <location filename="../gui/nattributetree.cpp" line="316"/>
         <source>PDF document</source>
         <translation>PDF文書</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="322"/>
+        <location filename="../gui/nattributetree.cpp" line="320"/>
         <source>Attachment</source>
         <translation>添付ファイル</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="329"/>
+        <location filename="../gui/nattributetree.cpp" line="327"/>
         <source>Source</source>
         <translation>情報源</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="332"/>
+        <location filename="../gui/nattributetree.cpp" line="330"/>
         <source>Emailed to Evernote</source>
         <translation>Evernoteに電子メールされた</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="336"/>
+        <location filename="../gui/nattributetree.cpp" line="334"/>
         <source>Email</source>
         <translation>電子メール</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="340"/>
+        <location filename="../gui/nattributetree.cpp" line="338"/>
         <source>Web page</source>
         <translation>Webページ</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="344"/>
+        <location filename="../gui/nattributetree.cpp" line="342"/>
         <source>Mobile</source>
         <translation>モバイル</translation>
     </message>
     <message>
-        <location filename="../gui/nattributetree.cpp" line="348"/>
+        <location filename="../gui/nattributetree.cpp" line="346"/>
         <source>Another application</source>
         <translation>他のアプリ</translation>
     </message>
@@ -1432,45 +1452,45 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>NBrowserWindow</name>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="330"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2337"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="339"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2346"/>
         <source>Today</source>
         <translation>今日</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="332"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2339"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="341"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2348"/>
         <source>Tomorrow</source>
         <translation>明日</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="334"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2341"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="343"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2350"/>
         <source>Yesterday</source>
         <translation>昨日</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="584"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="595"/>
         <source>Unable to Save</source>
         <translation>保存不可</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="584"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="595"/>
         <source>Unable to save this note.  Either tidy isn&apos;t installed or the note is too complex to save.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1379"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1390"/>
         <source>Insert Link</source>
         <translation>リンクの挿入</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1595"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1606"/>
         <source>Unable Open</source>
         <translation>開くのに失敗</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1595"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1606"/>
         <source>This is an ink note.
 Ink notes are not supported since Evernote has not
  published any specifications on them
@@ -1479,59 +1499,59 @@ and I&apos;m too lazy to figure them out by myself.</source>
 インクノートは、Evernoteが仕様を公開しないうちはサポートされません。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1758"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1769"/>
         <source>Edit Link</source>
         <translation>リンクの編集</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1823"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1834"/>
         <source>Unable to create LaTeX image</source>
         <translation>LaTeXイメージの作成に失敗</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1824"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1835"/>
         <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
         <translation>LaTeXイメージの生成に失敗しました。mimetexがインストールされているか確認してください。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2061"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2072"/>
         <source>Error loading document for printing.
 Printing aborted.</source>
         <translation>印刷用に文書ロードに失敗。印刷を中止します。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2062"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2073"/>
         <source>Print Error</source>
         <translation>印刷エラー</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2381"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2393"/>
         <source>Decryption Error</source>
         <translation>復号エラー</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2382"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2394"/>
         <source>Unknown encryption method.
 Unable to decrypt.</source>
         <translation>未知の暗号化方式。復号できません。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2485"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2497"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2486"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2498"/>
         <source>Error Encrypting String.  Please verify you have Java installed.</source>
         <translation>文字列暗号化に失敗。Javaがインストールされているか確認してください。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2618"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2664"/>
         <source>Spell Check Complete</source>
         <translation>スペルチェック完了</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2618"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2664"/>
         <source>Spell Check Complete.</source>
         <translation>スペルチェック完了。</translation>
     </message>
@@ -1539,412 +1559,412 @@ Unable to decrypt.</source>
 <context>
     <name>NMainMenuBar</name>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="53"/>
+        <location filename="../gui/nmainmenubar.cpp" line="56"/>
         <source>&amp;File</source>
         <translation>ファイル(&amp;F)</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="58"/>
+        <location filename="../gui/nmainmenubar.cpp" line="61"/>
         <source>Print Note</source>
         <translation>ノート印刷</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="59"/>
+        <location filename="../gui/nmainmenubar.cpp" line="62"/>
         <source>Print this note</source>
         <translation>このノートを印刷</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="67"/>
+        <location filename="../gui/nmainmenubar.cpp" line="70"/>
         <source>Backup Database</source>
         <translation>データベースのバックアップ</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="68"/>
+        <location filename="../gui/nmainmenubar.cpp" line="71"/>
         <source>Backup database to a file</source>
         <translation>データベースをファイルにバックアップ</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="74"/>
+        <location filename="../gui/nmainmenubar.cpp" line="77"/>
         <source>Restore Database</source>
         <translation>データベースの復元</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="75"/>
+        <location filename="../gui/nmainmenubar.cpp" line="78"/>
         <source>Restore from a backup</source>
         <translation>バックアップから復元</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="83"/>
+        <location filename="../gui/nmainmenubar.cpp" line="86"/>
         <source>Export Notes</source>
         <translation>ノートの書き出し</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="84"/>
+        <location filename="../gui/nmainmenubar.cpp" line="87"/>
         <source>Export selected notes to a file</source>
         <translation>選択したノートをファイルに書きだす</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="90"/>
+        <location filename="../gui/nmainmenubar.cpp" line="93"/>
         <source>Import Notes</source>
         <translation>ノートの取り込み</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="91"/>
+        <location filename="../gui/nmainmenubar.cpp" line="94"/>
         <source>Import notes from an export file</source>
         <translation>書きだしたファイルからノートを読み込む</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="114"/>
+        <location filename="../gui/nmainmenubar.cpp" line="117"/>
         <source>Switch to </source>
         <translation>切り替え</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="121"/>
+        <location filename="../gui/nmainmenubar.cpp" line="124"/>
         <source>Add Another User...</source>
         <translation>他のユーザを追加...</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="126"/>
+        <location filename="../gui/nmainmenubar.cpp" line="129"/>
         <source>User Account Maintenance</source>
         <translation>ユーザアカウント管理</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="133"/>
-        <location filename="../gui/nmainmenubar.cpp" line="134"/>
+        <location filename="../gui/nmainmenubar.cpp" line="136"/>
+        <location filename="../gui/nmainmenubar.cpp" line="137"/>
         <source>Open/Close Notebooks</source>
         <translation>ノートブックの表示/非表示</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="142"/>
+        <location filename="../gui/nmainmenubar.cpp" line="145"/>
         <source>Exit</source>
         <translation>終了</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="143"/>
-        <location filename="../gui/nmainmenubar.cpp" line="400"/>
+        <location filename="../gui/nmainmenubar.cpp" line="146"/>
+        <location filename="../gui/nmainmenubar.cpp" line="404"/>
         <source>Close the program</source>
         <translation>プログラムの終了</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="161"/>
+        <location filename="../gui/nmainmenubar.cpp" line="164"/>
         <source>&amp;Edit</source>
         <translation>編集(&amp;E)</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="163"/>
+        <location filename="../gui/nmainmenubar.cpp" line="167"/>
         <source>Undo</source>
         <translation>元に戻す</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="168"/>
+        <location filename="../gui/nmainmenubar.cpp" line="172"/>
         <source>Redo</source>
         <translation>やり直す</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="175"/>
+        <location filename="../gui/nmainmenubar.cpp" line="179"/>
         <source>Cut</source>
         <translation>切り取り</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="180"/>
+        <location filename="../gui/nmainmenubar.cpp" line="184"/>
         <source>Copy</source>
         <translation>コピー</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="185"/>
+        <location filename="../gui/nmainmenubar.cpp" line="189"/>
         <source>Paste</source>
         <translation>貼り付け</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="190"/>
+        <location filename="../gui/nmainmenubar.cpp" line="194"/>
         <source>Paste as Unformatted Text</source>
         <translation>書式なしテキスト貼り付け</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="195"/>
+        <location filename="../gui/nmainmenubar.cpp" line="199"/>
         <source>Remove Formatting</source>
         <translation>書式の削除</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="202"/>
+        <location filename="../gui/nmainmenubar.cpp" line="206"/>
         <source>Select All</source>
         <translation>全選択</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="209"/>
+        <location filename="../gui/nmainmenubar.cpp" line="213"/>
         <source>Find and Replace</source>
         <translation>検索と置換</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="212"/>
+        <location filename="../gui/nmainmenubar.cpp" line="216"/>
         <source>Search Notes</source>
         <translation>ノートの検索</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="218"/>
+        <location filename="../gui/nmainmenubar.cpp" line="222"/>
         <source>Reset Search</source>
         <translation>検索のリセット</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="226"/>
+        <location filename="../gui/nmainmenubar.cpp" line="230"/>
         <source>Find in Note</source>
         <translation>ノート中の文字検索</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="233"/>
+        <location filename="../gui/nmainmenubar.cpp" line="237"/>
         <source>Find Next</source>
         <translation>次を探す</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="239"/>
+        <location filename="../gui/nmainmenubar.cpp" line="243"/>
         <source>Find Previous</source>
         <translation>前を探す</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="247"/>
+        <location filename="../gui/nmainmenubar.cpp" line="251"/>
         <source>Replace Within Note...</source>
         <translation>ノート中の文字列置換...</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="255"/>
+        <location filename="../gui/nmainmenubar.cpp" line="259"/>
         <source>Preferences</source>
         <translation>設定</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="264"/>
+        <location filename="../gui/nmainmenubar.cpp" line="268"/>
         <source>&amp;View</source>
         <translation>表示(&amp;V)</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="266"/>
+        <location filename="../gui/nmainmenubar.cpp" line="270"/>
         <source>Wide Note List</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="272"/>
+        <location filename="../gui/nmainmenubar.cpp" line="276"/>
         <source>Narrow Note List</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="280"/>
+        <location filename="../gui/nmainmenubar.cpp" line="284"/>
         <source>Show Source</source>
         <translation type="unfinished">ソースを表示</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="285"/>
+        <location filename="../gui/nmainmenubar.cpp" line="289"/>
         <source>Note History</source>
         <translation type="unfinished">ノートの経緯</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="292"/>
+        <location filename="../gui/nmainmenubar.cpp" line="296"/>
         <source>Show Left Panel</source>
         <translation>左パネルの表示</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="300"/>
+        <location filename="../gui/nmainmenubar.cpp" line="304"/>
         <source>Show Note List</source>
         <translation>ノート一覧を表示</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="308"/>
+        <location filename="../gui/nmainmenubar.cpp" line="312"/>
         <source>Show Note Panel</source>
         <translation>ノートパネルの表示</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="318"/>
+        <location filename="../gui/nmainmenubar.cpp" line="322"/>
         <source>View Note Info</source>
         <translation>ノート情報を表示</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="323"/>
+        <location filename="../gui/nmainmenubar.cpp" line="327"/>
         <source>View Toolbar</source>
         <translation>ツールバーの表示</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="331"/>
+        <location filename="../gui/nmainmenubar.cpp" line="335"/>
         <source>View Statusbar</source>
         <translation>ステータスバーの表示</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="344"/>
+        <location filename="../gui/nmainmenubar.cpp" line="348"/>
         <source>&amp;Note</source>
         <translation>ノート(&amp;N)</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="346"/>
+        <location filename="../gui/nmainmenubar.cpp" line="350"/>
         <source>New Note</source>
         <translation>新規ノート</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="352"/>
+        <location filename="../gui/nmainmenubar.cpp" line="356"/>
         <source>New Webcam Note</source>
         <translation>新規Webカムノート</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="358"/>
+        <location filename="../gui/nmainmenubar.cpp" line="362"/>
         <source>Duplicate Note</source>
         <translation>ノートの複製</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="364"/>
+        <location filename="../gui/nmainmenubar.cpp" line="368"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="372"/>
+        <location filename="../gui/nmainmenubar.cpp" line="376"/>
         <source>Spell Check</source>
         <translation>スペルチェック</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="381"/>
+        <location filename="../gui/nmainmenubar.cpp" line="385"/>
         <source>Pin Note</source>
         <translation>Pinノート</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="387"/>
+        <location filename="../gui/nmainmenubar.cpp" line="391"/>
         <source>UnPin Note</source>
         <translation>ノートのPinを外す</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="397"/>
+        <location filename="../gui/nmainmenubar.cpp" line="401"/>
         <source>&amp;Tools</source>
         <translation>ツール(&amp;T)</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="399"/>
+        <location filename="../gui/nmainmenubar.cpp" line="403"/>
         <source>Synchronize</source>
         <translation>同期</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="406"/>
+        <location filename="../gui/nmainmenubar.cpp" line="410"/>
         <source>Disconnect</source>
         <translation>切断</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="407"/>
+        <location filename="../gui/nmainmenubar.cpp" line="411"/>
         <source>Disconnect from Evernote</source>
         <translation>Evernoteから切断</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="415"/>
+        <location filename="../gui/nmainmenubar.cpp" line="419"/>
         <source>Pause Indexing</source>
         <translation>索引作成の中断</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="416"/>
+        <location filename="../gui/nmainmenubar.cpp" line="420"/>
         <source>Temporarily pause indexng</source>
         <translation>一時的に索引作成を中断する</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="423"/>
+        <location filename="../gui/nmainmenubar.cpp" line="427"/>
         <source>Account</source>
         <translation>アカウント</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="424"/>
+        <location filename="../gui/nmainmenubar.cpp" line="428"/>
         <source>Account information</source>
         <translation>アカウント情報</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="432"/>
-        <location filename="../gui/nmainmenubar.cpp" line="433"/>
+        <location filename="../gui/nmainmenubar.cpp" line="436"/>
+        <location filename="../gui/nmainmenubar.cpp" line="437"/>
         <source>Database Status</source>
         <translation>データベースの状態</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="439"/>
+        <location filename="../gui/nmainmenubar.cpp" line="443"/>
         <source>Reindex Database</source>
         <translation>データベースの再索引</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="440"/>
+        <location filename="../gui/nmainmenubar.cpp" line="444"/>
         <source>Reindex all notes</source>
         <translation>全てのノートを再索引</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="448"/>
-        <location filename="../gui/nmainmenubar.cpp" line="449"/>
+        <location filename="../gui/nmainmenubar.cpp" line="452"/>
+        <location filename="../gui/nmainmenubar.cpp" line="453"/>
         <source>Import Folders</source>
         <translation>フォルダーの取り込み</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="459"/>
+        <location filename="../gui/nmainmenubar.cpp" line="463"/>
         <source>&amp;Help</source>
         <translation>ヘルプ(&amp;H)</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="461"/>
+        <location filename="../gui/nmainmenubar.cpp" line="465"/>
         <source>User&apos;s Guide</source>
         <translation>ユーザガイド</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="462"/>
+        <location filename="../gui/nmainmenubar.cpp" line="466"/>
         <source>Open the user manual.</source>
         <translation>ユーザマニュアルを開く</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="468"/>
+        <location filename="../gui/nmainmenubar.cpp" line="472"/>
         <source>User Forum</source>
         <translation>ユーザ掲示板</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="469"/>
+        <location filename="../gui/nmainmenubar.cpp" line="473"/>
         <source>Go to the support forum.</source>
         <translation>サポート掲示板に行く（英語）。</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="474"/>
+        <location filename="../gui/nmainmenubar.cpp" line="478"/>
         <source>Message Log</source>
         <translation>メッセージログ</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="475"/>
+        <location filename="../gui/nmainmenubar.cpp" line="479"/>
         <source>View current program messages</source>
         <translation>現在のプログラムメッセージを表示する</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="482"/>
+        <location filename="../gui/nmainmenubar.cpp" line="486"/>
         <source>Evernote Account Page</source>
         <translation>Evernoteアカウントページ</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="483"/>
+        <location filename="../gui/nmainmenubar.cpp" line="487"/>
         <source>Go to your Evernote account page.</source>
         <translation>Evernoteのアカウントページへ行く。</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="488"/>
+        <location filename="../gui/nmainmenubar.cpp" line="492"/>
         <source>Evernote Support</source>
         <translation>Evernoteのサポートページ</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="489"/>
+        <location filename="../gui/nmainmenubar.cpp" line="493"/>
         <source>Go to Evernote&apos;s support page</source>
         <translation>Evernoteのサポートページへ行く</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="491"/>
+        <location filename="../gui/nmainmenubar.cpp" line="495"/>
         <source>Yinxiang Biji Support</source>
         <translation>印象笔记サポート</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="492"/>
+        <location filename="../gui/nmainmenubar.cpp" line="496"/>
         <source>Go to Yinxiang Biji&apos;s support page</source>
         <translation>印象笔记のサポートへ行く</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="498"/>
+        <location filename="../gui/nmainmenubar.cpp" line="502"/>
         <source>Evernote Trunk</source>
         <translation>Evernote　Trunk</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="499"/>
+        <location filename="../gui/nmainmenubar.cpp" line="503"/>
         <source>Go to Evernote Trunk</source>
         <translation>Evernote　Trunkへ行く</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="506"/>
-        <location filename="../gui/nmainmenubar.cpp" line="507"/>
+        <location filename="../gui/nmainmenubar.cpp" line="510"/>
+        <location filename="../gui/nmainmenubar.cpp" line="511"/>
         <source>About</source>
         <translation>情報</translation>
     </message>
@@ -1952,62 +1972,62 @@ Unable to decrypt.</source>
 <context>
     <name>NNotebookView</name>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="74"/>
+        <location filename="../gui/nnotebookview.cpp" line="72"/>
         <source>Notebooks</source>
         <translation>ノートブック</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="91"/>
+        <location filename="../gui/nnotebookview.cpp" line="89"/>
         <source>Create New Notebook</source>
         <translation>新規ノートブック作成</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="100"/>
+        <location filename="../gui/nnotebookview.cpp" line="98"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="108"/>
+        <location filename="../gui/nnotebookview.cpp" line="106"/>
         <source>Add to stack</source>
         <translation>スタックの追加</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="121"/>
+        <location filename="../gui/nnotebookview.cpp" line="119"/>
         <source>New stack</source>
         <translation>新規スタック</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="124"/>
+        <location filename="../gui/nnotebookview.cpp" line="122"/>
         <source>Remove from stack</source>
         <translation>スタックから削除</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="128"/>
+        <location filename="../gui/nnotebookview.cpp" line="126"/>
         <source>Rename</source>
         <translation>名前変更</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="136"/>
+        <location filename="../gui/nnotebookview.cpp" line="134"/>
         <source>Properties</source>
         <translation>プロパティ</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="630"/>
+        <location filename="../gui/nnotebookview.cpp" line="629"/>
         <source>Are you sure you want to delete this notebook?</source>
         <translation>このノートブックを本当に削除しますか？</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="631"/>
+        <location filename="../gui/nnotebookview.cpp" line="630"/>
         <source>Verify Delete</source>
         <translation>削除確認</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="786"/>
+        <location filename="../gui/nnotebookview.cpp" line="785"/>
         <source>New Stack (</source>
         <translation>新規スタック（</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="786"/>
+        <location filename="../gui/nnotebookview.cpp" line="785"/>
         <source>)</source>
         <translation>）</translation>
     </message>
@@ -2015,37 +2035,37 @@ Unable to decrypt.</source>
 <context>
     <name>NSearchView</name>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="63"/>
+        <location filename="../gui/nsearchview.cpp" line="61"/>
         <source>Saved Searches</source>
         <translation>検索の保存</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="75"/>
+        <location filename="../gui/nsearchview.cpp" line="73"/>
         <source>Create Saved Search</source>
         <translation>検索保存の作成</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="85"/>
+        <location filename="../gui/nsearchview.cpp" line="83"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="93"/>
+        <location filename="../gui/nsearchview.cpp" line="91"/>
         <source>Rename</source>
         <translation>名前変更</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="102"/>
+        <location filename="../gui/nsearchview.cpp" line="100"/>
         <source>Properties</source>
         <translation>プロパティ</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="389"/>
+        <location filename="../gui/nsearchview.cpp" line="388"/>
         <source>Are you sure you want to delete this saved search?</source>
         <translation>この保存された検索を本当に削除しますか？</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="390"/>
+        <location filename="../gui/nsearchview.cpp" line="389"/>
         <source>Verify Delete</source>
         <translation>削除確認</translation>
     </message>
@@ -2053,13 +2073,13 @@ Unable to decrypt.</source>
 <context>
     <name>NTabWidget</name>
     <message>
-        <location filename="../gui/ntabwidget.cpp" line="183"/>
+        <location filename="../gui/ntabwidget.cpp" line="181"/>
         <source>Untitled Note</source>
         <translation>タイトルのないノート</translation>
     </message>
     <message>
-        <location filename="../gui/ntabwidget.cpp" line="188"/>
-        <location filename="../gui/ntabwidget.cpp" line="254"/>
+        <location filename="../gui/ntabwidget.cpp" line="186"/>
+        <location filename="../gui/ntabwidget.cpp" line="252"/>
         <source>NixNote - </source>
         <translation>NixNote - </translation>
     </message>
@@ -2067,137 +2087,137 @@ Unable to decrypt.</source>
 <context>
     <name>NTableView</name>
     <message>
-        <location filename="../gui/ntableview.cpp" line="196"/>
+        <location filename="../gui/ntableview.cpp" line="195"/>
         <source>Open Note</source>
         <translation>ノートを開く</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="202"/>
+        <location filename="../gui/ntableview.cpp" line="201"/>
         <source>Open Note In New Tab</source>
         <translation>ノートを新規タブに開く</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="208"/>
+        <location filename="../gui/ntableview.cpp" line="207"/>
         <source>Open Note In New Window</source>
         <translation>ノートを新規ウインドウで開く</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="215"/>
+        <location filename="../gui/ntableview.cpp" line="214"/>
         <source>Add Note</source>
         <translation>ノート追加</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="220"/>
+        <location filename="../gui/ntableview.cpp" line="219"/>
         <source>Delete Note</source>
         <translation>ノート削除</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="225"/>
+        <location filename="../gui/ntableview.cpp" line="224"/>
         <source>Restore Note</source>
         <translation>ノートの復元</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="231"/>
+        <location filename="../gui/ntableview.cpp" line="230"/>
         <source>Copy Note Link</source>
         <translation>ノートリンクのコピー</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="236"/>
+        <location filename="../gui/ntableview.cpp" line="235"/>
         <source>Duplicate Note</source>
         <translation>ノートの複製</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="241"/>
+        <location filename="../gui/ntableview.cpp" line="240"/>
         <source>Pin Note</source>
         <translation>ノートのPinどめ</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="246"/>
+        <location filename="../gui/ntableview.cpp" line="245"/>
         <source>Unpin Note</source>
         <translation>ノートピンどめ削除</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="251"/>
+        <location filename="../gui/ntableview.cpp" line="250"/>
         <source>Merge Notes</source>
         <translation>ノートの結合</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="257"/>
+        <location filename="../gui/ntableview.cpp" line="256"/>
         <source>Title Color</source>
         <translation>タイトル色</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="260"/>
+        <location filename="../gui/ntableview.cpp" line="259"/>
         <source>White</source>
         <translation>白</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="263"/>
+        <location filename="../gui/ntableview.cpp" line="262"/>
         <source>Red</source>
         <translation>赤</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="266"/>
+        <location filename="../gui/ntableview.cpp" line="265"/>
         <source>Blue</source>
         <translation>青</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="269"/>
+        <location filename="../gui/ntableview.cpp" line="268"/>
         <source>Green</source>
         <translation>緑</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="272"/>
+        <location filename="../gui/ntableview.cpp" line="271"/>
         <source>Yellow</source>
         <translation>黄</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="275"/>
+        <location filename="../gui/ntableview.cpp" line="274"/>
         <source>Black</source>
         <translation>黒</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="278"/>
+        <location filename="../gui/ntableview.cpp" line="277"/>
         <source>Gray</source>
         <translation>灰</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="281"/>
+        <location filename="../gui/ntableview.cpp" line="280"/>
         <source>Cyan</source>
         <translation>水色</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="284"/>
+        <location filename="../gui/ntableview.cpp" line="283"/>
         <source>Magenta</source>
         <translation>紫</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="561"/>
+        <location filename="../gui/ntableview.cpp" line="570"/>
         <source>Delete </source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="564"/>
+        <location filename="../gui/ntableview.cpp" line="573"/>
         <source>Permanently delete </source>
         <translation>永久に削除</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="570"/>
+        <location filename="../gui/ntableview.cpp" line="579"/>
         <source>selected note?</source>
         <translation>選択されたノート？</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="575"/>
+        <location filename="../gui/ntableview.cpp" line="584"/>
         <source>Verify Delete</source>
         <translation>削除確認</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="790"/>
+        <location filename="../gui/ntableview.cpp" line="800"/>
         <source>Unsynchronized Note</source>
         <translation>同期されていないノート</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="791"/>
+        <location filename="../gui/ntableview.cpp" line="801"/>
         <source>This note has never been synchronized.
 Using this in a note link can cause problems unless you synchronize it first.</source>
         <translation>このノートはまだ同期されていません。このノートリンクの使用は、同期をまず行うまで、問題を発生させます。</translation>
@@ -2314,68 +2334,68 @@ Using this in a note link can cause problems unless you synchronize it first.</s
 <context>
     <name>NTagView</name>
     <message>
-        <location filename="../gui/ntagview.cpp" line="68"/>
-        <location filename="../gui/ntagview.cpp" line="162"/>
+        <location filename="../gui/ntagview.cpp" line="66"/>
+        <location filename="../gui/ntagview.cpp" line="160"/>
         <source>Tags from Personal</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="92"/>
+        <location filename="../gui/ntagview.cpp" line="90"/>
         <source>Create New Tag</source>
         <translation>新規タグ作成</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="101"/>
+        <location filename="../gui/ntagview.cpp" line="99"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="108"/>
+        <location filename="../gui/ntagview.cpp" line="106"/>
         <source>Rename</source>
         <translation>名前を変更</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="111"/>
+        <location filename="../gui/ntagview.cpp" line="109"/>
         <source>Merge</source>
         <translation>結合</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="118"/>
+        <location filename="../gui/ntagview.cpp" line="116"/>
         <source>Hide Unassigned</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="124"/>
+        <location filename="../gui/ntagview.cpp" line="122"/>
         <source>Properties</source>
         <translation>プロパティ</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="160"/>
+        <location filename="../gui/ntagview.cpp" line="158"/>
         <source>Tags from </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="353"/>
+        <location filename="../gui/ntagview.cpp" line="352"/>
         <source>-&lt;Missing Tag&gt;-</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="691"/>
+        <location filename="../gui/ntagview.cpp" line="690"/>
         <source>Are you sure you want to merge these tags?</source>
         <translation>これらのタグを結合しますか？</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="692"/>
+        <location filename="../gui/ntagview.cpp" line="691"/>
         <source>Verify Merge</source>
         <translation>結合の確認</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="738"/>
+        <location filename="../gui/ntagview.cpp" line="737"/>
         <source>Are you sure you want to delete this tag?</source>
         <translation>このタグを本当に削除しますか？</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="739"/>
+        <location filename="../gui/ntagview.cpp" line="738"/>
         <source>Verify Delete</source>
         <translation>削除の確認</translation>
     </message>
@@ -2383,13 +2403,13 @@ Using this in a note link can cause problems unless you synchronize it first.</s
 <context>
     <name>NTitleEditor</name>
     <message>
-        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="121"/>
-        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="135"/>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="123"/>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="137"/>
         <source>Untitled note</source>
         <translation>タイトルのないノート</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="132"/>
+        <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="134"/>
         <source>untitled note</source>
         <translation>タイトルのないノート</translation>
     </message>
@@ -2397,27 +2417,27 @@ Using this in a note link can cause problems unless you synchronize it first.</s
 <context>
     <name>NTrashTree</name>
     <message>
-        <location filename="../gui/ntrashtree.cpp" line="55"/>
+        <location filename="../gui/ntrashtree.cpp" line="53"/>
         <source>Trash</source>
         <translation>ゴミ箱</translation>
     </message>
     <message>
-        <location filename="../gui/ntrashtree.cpp" line="67"/>
+        <location filename="../gui/ntrashtree.cpp" line="65"/>
         <source>Restore Deleted Notes</source>
         <translation>削除したノートの復元</translation>
     </message>
     <message>
-        <location filename="../gui/ntrashtree.cpp" line="70"/>
+        <location filename="../gui/ntrashtree.cpp" line="68"/>
         <source>Empty Trash</source>
         <translation>ゴミ箱を空にする</translation>
     </message>
     <message>
-        <location filename="../gui/ntrashtree.cpp" line="240"/>
+        <location filename="../gui/ntrashtree.cpp" line="238"/>
         <source>Verify Delete</source>
         <translation>削除の確認</translation>
     </message>
     <message>
-        <location filename="../gui/ntrashtree.cpp" line="241"/>
+        <location filename="../gui/ntrashtree.cpp" line="239"/>
         <source>Are you sure you want to permanently delete these notes?</source>
         <translation>本当に永久のこれらのノートを削除してよろしいですか？</translation>
     </message>
@@ -2425,193 +2445,193 @@ Using this in a note link can cause problems unless you synchronize it first.</s
 <context>
     <name>NWebView</name>
     <message>
-        <location filename="../gui/nwebview.cpp" line="54"/>
+        <location filename="../gui/nwebview.cpp" line="55"/>
         <source>Open</source>
         <translation>開く</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="58"/>
+        <location filename="../gui/nwebview.cpp" line="60"/>
         <source>Cut</source>
         <translation>切り取り</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="63"/>
+        <location filename="../gui/nwebview.cpp" line="65"/>
         <source>Copy</source>
         <translation>コピー</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="68"/>
+        <location filename="../gui/nwebview.cpp" line="70"/>
         <source>Paste</source>
         <translation>貼り付け</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="73"/>
+        <location filename="../gui/nwebview.cpp" line="75"/>
         <source>Paste as Unformatted Text</source>
         <translation>書式なしテキストとして貼り付け</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="78"/>
+        <location filename="../gui/nwebview.cpp" line="80"/>
         <source>Remove Formatting</source>
         <translation>書式を削除</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="85"/>
+        <location filename="../gui/nwebview.cpp" line="87"/>
         <source>Background Color</source>
         <translation>背景の色</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="86"/>
+        <location filename="../gui/nwebview.cpp" line="89"/>
         <source>White</source>
         <translation>白</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="89"/>
+        <location filename="../gui/nwebview.cpp" line="92"/>
         <source>Red</source>
         <translation>赤</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="92"/>
+        <location filename="../gui/nwebview.cpp" line="95"/>
         <source>Blue</source>
         <translation>青</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="95"/>
+        <location filename="../gui/nwebview.cpp" line="98"/>
         <source>Green</source>
         <translation>緑</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="98"/>
+        <location filename="../gui/nwebview.cpp" line="101"/>
         <source>Yellow</source>
         <translation>黄</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="101"/>
+        <location filename="../gui/nwebview.cpp" line="104"/>
         <source>Black</source>
         <translation>黒</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="104"/>
+        <location filename="../gui/nwebview.cpp" line="107"/>
         <source>Grey</source>
         <translation>灰</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="107"/>
+        <location filename="../gui/nwebview.cpp" line="110"/>
         <source>Purple</source>
         <translation>紫</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="110"/>
+        <location filename="../gui/nwebview.cpp" line="113"/>
         <source>Brown</source>
         <translation>茶</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="113"/>
+        <location filename="../gui/nwebview.cpp" line="116"/>
         <source>Orange</source>
         <translation>橙</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="116"/>
+        <location filename="../gui/nwebview.cpp" line="119"/>
         <source>Powder Blue</source>
         <translation>パウダーブルー</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="123"/>
+        <location filename="../gui/nwebview.cpp" line="126"/>
         <source>To-do</source>
         <translation>To-Do</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="130"/>
+        <location filename="../gui/nwebview.cpp" line="133"/>
         <source>HTML Entities</source>
         <translation>HTMLエンティティ</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="137"/>
+        <location filename="../gui/nwebview.cpp" line="140"/>
         <source>Encrypted Selected Text</source>
         <translation>選択されたテキストの暗号化</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="142"/>
+        <location filename="../gui/nwebview.cpp" line="145"/>
         <source>Insert Hyperlink</source>
         <translation>ハイパーリンクの挿入</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="147"/>
+        <location filename="../gui/nwebview.cpp" line="150"/>
         <source>Quick Link</source>
         <translation>クイックリンク</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="152"/>
+        <location filename="../gui/nwebview.cpp" line="155"/>
         <source>Remove Hyperlink</source>
         <translation>ハイパーリンクの削除</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="157"/>
+        <location filename="../gui/nwebview.cpp" line="160"/>
         <source>Attach File</source>
         <translation>ファイルの添付</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="163"/>
+        <location filename="../gui/nwebview.cpp" line="166"/>
         <source>Insert LaTeX Formula</source>
         <translation>LaTeX数式の挿入</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="169"/>
+        <location filename="../gui/nwebview.cpp" line="172"/>
         <source>Table</source>
         <translation>表</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="171"/>
+        <location filename="../gui/nwebview.cpp" line="175"/>
         <source>Insert Table</source>
         <translation>表の挿入</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="176"/>
+        <location filename="../gui/nwebview.cpp" line="180"/>
         <source>Insert Row</source>
         <translation>列の挿入</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="180"/>
+        <location filename="../gui/nwebview.cpp" line="184"/>
         <source>Insert Column</source>
         <translation>行の挿入</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="185"/>
+        <location filename="../gui/nwebview.cpp" line="189"/>
         <source>Delete Row</source>
         <translation>列の削除</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="189"/>
+        <location filename="../gui/nwebview.cpp" line="193"/>
         <source>Delete Column</source>
         <translation>行の削除</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="195"/>
+        <location filename="../gui/nwebview.cpp" line="199"/>
         <source>Image</source>
         <translation>画像</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="197"/>
+        <location filename="../gui/nwebview.cpp" line="202"/>
         <source>Save Image</source>
         <translation>画像の保存</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="205"/>
+        <location filename="../gui/nwebview.cpp" line="210"/>
         <source>Rotate Left</source>
         <translation>左回転</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="209"/>
+        <location filename="../gui/nwebview.cpp" line="214"/>
         <source>Rotate Right</source>
         <translation>右回転</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="215"/>
+        <location filename="../gui/nwebview.cpp" line="220"/>
         <source>Save Attachment</source>
         <translation>添付の保存</translation>
     </message>
     <message>
-        <location filename="../gui/nwebview.cpp" line="459"/>
-        <location filename="../gui/nwebview.cpp" line="489"/>
+        <location filename="../gui/nwebview.cpp" line="464"/>
+        <location filename="../gui/nwebview.cpp" line="494"/>
         <source>Save File</source>
         <translation>ファイルの保存</translation>
     </message>
@@ -2619,89 +2639,89 @@ Using this in a note link can cause problems unless you synchronize it first.</s
 <context>
     <name>NixNote</name>
     <message>
-        <location filename="../nixnote.cpp" line="199"/>
+        <location filename="../nixnote.cpp" line="200"/>
         <source>Tidy Not Found</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="199"/>
+        <location filename="../nixnote.cpp" line="200"/>
         <source>Tidy is not found on this system.
 Until tidy is installed you cannot save any notes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="263"/>
+        <location filename="../nixnote.cpp" line="264"/>
         <source>ToolBar</source>
         <translation>ツールバー</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="273"/>
+        <location filename="../nixnote.cpp" line="275"/>
         <source>Back</source>
         <translation>前</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="274"/>
+        <location filename="../nixnote.cpp" line="276"/>
         <source>Next</source>
         <translation>次</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="284"/>
+        <location filename="../nixnote.cpp" line="286"/>
         <source>All Notes</source>
         <translation>全てのノート</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="286"/>
+        <location filename="../nixnote.cpp" line="288"/>
         <source>Sync</source>
         <translation>同期</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="289"/>
+        <location filename="../nixnote.cpp" line="291"/>
         <source>Print</source>
         <translation>印刷</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="294"/>
+        <location filename="../nixnote.cpp" line="296"/>
         <source>New Text Note</source>
         <translation>新規テキストノート</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="297"/>
+        <location filename="../nixnote.cpp" line="299"/>
         <source>New Webcam Note</source>
         <translation>新規Webカムノート</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="309"/>
+        <location filename="../nixnote.cpp" line="311"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="312"/>
+        <location filename="../nixnote.cpp" line="314"/>
         <source>Trunk</source>
         <translation>Trunk</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="314"/>
+        <location filename="../nixnote.cpp" line="316"/>
         <source>Usage</source>
         <translation>用途</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="466"/>
-        <location filename="../nixnote.cpp" line="2363"/>
+        <location filename="../nixnote.cpp" line="468"/>
+        <location filename="../nixnote.cpp" line="2361"/>
         <source>Screen Capture</source>
         <translation>スクリーンキャプチャ</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="480"/>
+        <location filename="../nixnote.cpp" line="482"/>
         <source>Show/Hide</source>
         <translation>表示/非表示</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="487"/>
+        <location filename="../nixnote.cpp" line="489"/>
         <source>Close</source>
         <translation>閉じる</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1462"/>
+        <location filename="../nixnote.cpp" line="1454"/>
         <source>This is used to restore a database from backups.
 It is HIGHLY recommened that this only be used to populate
 an empty database.  Restoring into a database that
@@ -2715,222 +2735,222 @@ Are you sure you want to continue?</source>
 本当に継続しますか?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1465"/>
+        <location filename="../nixnote.cpp" line="1457"/>
         <source>Confirm Restore</source>
         <translation>復元確認</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1482"/>
+        <location filename="../nixnote.cpp" line="1474"/>
         <source>Restore Database</source>
         <translation>データベースの復元</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1484"/>
+        <location filename="../nixnote.cpp" line="1476"/>
         <source>Import Notes</source>
         <translation>ノートの取り込み</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1397"/>
-        <location filename="../nixnote.cpp" line="1487"/>
+        <location filename="../nixnote.cpp" line="1389"/>
+        <location filename="../nixnote.cpp" line="1479"/>
         <source>NixNote Export (*.nnex);;All Files (*.*)</source>
         <translation>NixNote書き出し（*.nnex);;全ファイル(*.*)</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="463"/>
+        <location filename="../nixnote.cpp" line="465"/>
         <source>Quick Note</source>
         <translation>クイックノート</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="473"/>
+        <location filename="../nixnote.cpp" line="475"/>
         <source>Pinned Notes</source>
         <translation>Pinされたノート</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="475"/>
+        <location filename="../nixnote.cpp" line="477"/>
         <source>Recently Updated Notes</source>
         <translation>最近更新されたノート</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1154"/>
-        <location filename="../nixnote.cpp" line="1821"/>
+        <location filename="../nixnote.cpp" line="1167"/>
+        <location filename="../nixnote.cpp" line="1814"/>
         <source>Log in to Evernote</source>
         <translation>Evernoteへのログイン</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1156"/>
-        <location filename="../nixnote.cpp" line="1823"/>
+        <location filename="../nixnote.cpp" line="1169"/>
+        <location filename="../nixnote.cpp" line="1816"/>
         <source>NixNote</source>
         <translation>NixNote</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1385"/>
-        <location filename="../nixnote.cpp" line="1429"/>
-        <location filename="../nixnote.cpp" line="1522"/>
+        <location filename="../nixnote.cpp" line="1377"/>
+        <location filename="../nixnote.cpp" line="1421"/>
+        <location filename="../nixnote.cpp" line="1514"/>
         <source>Error</source>
         <translation>エラー</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1385"/>
+        <location filename="../nixnote.cpp" line="1377"/>
         <source>No notes selected.</source>
         <translation>ノートが選択されていません。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1394"/>
+        <location filename="../nixnote.cpp" line="1386"/>
         <source>Backup Database</source>
         <translation>データベースのバックアップ</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1396"/>
+        <location filename="../nixnote.cpp" line="1388"/>
         <source>Export Notes</source>
         <translation>ノートの書き出し</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1417"/>
+        <location filename="../nixnote.cpp" line="1409"/>
         <source>Performing backup</source>
         <translation>バックアップの実行</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1419"/>
+        <location filename="../nixnote.cpp" line="1411"/>
         <source>Performing export</source>
         <translation>書き出しの実行</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1436"/>
+        <location filename="../nixnote.cpp" line="1428"/>
         <source>Database backup complete.</source>
         <translation>データベースバックアップの完了。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1438"/>
+        <location filename="../nixnote.cpp" line="1430"/>
         <source>Note extract complete.</source>
         <translation>ノートの書き出しが完了。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1489"/>
+        <location filename="../nixnote.cpp" line="1481"/>
         <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
         <translation>NixNote形式(*.nnex);;Evernote形式（*.enex);;全ファイル(*.*)</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1510"/>
+        <location filename="../nixnote.cpp" line="1502"/>
         <source>Restoring database</source>
         <translation>データベースを復元します</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1512"/>
+        <location filename="../nixnote.cpp" line="1504"/>
         <source>Importing Notes</source>
         <translation>ノートを取り込みます</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1544"/>
+        <location filename="../nixnote.cpp" line="1536"/>
         <source>Database has been restored.</source>
         <translation>データベースは復元されました。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1546"/>
+        <location filename="../nixnote.cpp" line="1538"/>
         <source>Notes have been imported.</source>
         <translation>ノートは取り込まれました。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1577"/>
+        <location filename="../nixnote.cpp" line="1569"/>
         <source>Sync Error</source>
         <translation>同期エラー</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1577"/>
+        <location filename="../nixnote.cpp" line="1569"/>
         <source>Sync completed with errors.</source>
         <translation>同期がエラーで終了しました。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1579"/>
+        <location filename="../nixnote.cpp" line="1572"/>
         <source>Sync Complete</source>
         <translation>同期完了</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1579"/>
+        <location filename="../nixnote.cpp" line="1572"/>
         <source>Sync completed successfully.</source>
         <translation>同期が成功しました。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1841"/>
+        <location filename="../nixnote.cpp" line="1834"/>
         <source>This feature is only available to premium users.</source>
         <translation>この機能は、プレミアムユーザにのみ有効です。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1842"/>
+        <location filename="../nixnote.cpp" line="1835"/>
         <source>Premium Feature</source>
         <translation>プレミアム機能</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1861"/>
+        <location filename="../nixnote.cpp" line="1854"/>
         <source>Error retrieving note.</source>
         <translation>ノートの取り込みエラーが発生。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1862"/>
+        <location filename="../nixnote.cpp" line="1855"/>
         <source>Error retrieving note</source>
         <translation>とり込みエラー</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1884"/>
+        <location filename="../nixnote.cpp" line="1877"/>
         <source>Note restored</source>
         <translation>ノート復元</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1888"/>
+        <location filename="../nixnote.cpp" line="1881"/>
         <source>No versions of this note can be found.</source>
         <translation>このノートの前の版が見つかりません。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1889"/>
+        <location filename="../nixnote.cpp" line="1882"/>
         <source>Note Not Found</source>
         <translation>ノートが見つからない</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2256"/>
+        <location filename="../nixnote.cpp" line="2254"/>
         <source>Switch to </source>
         <translation>切り替え</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2418"/>
+        <location filename="../nixnote.cpp" line="2416"/>
         <source>Reindex Database</source>
         <translation>データベースの再索引</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2418"/>
+        <location filename="../nixnote.cpp" line="2416"/>
         <source>Reindex the entire database?</source>
         <translation>データベース全体の再索引をつくりますか？</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2427"/>
+        <location filename="../nixnote.cpp" line="2425"/>
         <source>Notes will be reindexed.</source>
         <translation>ノートは再索引されます。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2455"/>
+        <location filename="../nixnote.cpp" line="2453"/>
         <source>Unable to find webcam or capture image.</source>
         <translation>Webカムやイメージキャプチャが見つかりません。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2456"/>
+        <location filename="../nixnote.cpp" line="2454"/>
         <source>Webcam Error</source>
         <translation>Webカムエラー</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2568"/>
+        <location filename="../nixnote.cpp" line="2566"/>
         <source>Delete </source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2571"/>
+        <location filename="../nixnote.cpp" line="2569"/>
         <source>Permanently delete </source>
         <translation>永久に削除</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2575"/>
+        <location filename="../nixnote.cpp" line="2573"/>
         <source>this note?</source>
         <translation>このノート？</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2578"/>
+        <location filename="../nixnote.cpp" line="2576"/>
         <source>Verify Delete</source>
         <translation>削除確認</translation>
     </message>
@@ -2971,12 +2991,12 @@ Are you sure you want to continue?</source>
         <translation>取り込み</translation>
     </message>
     <message>
-        <location filename="../dialog/notehistoryselect.cpp" line="80"/>
+        <location filename="../dialog/notehistoryselect.cpp" line="81"/>
         <source>Today</source>
         <translation>今日</translation>
     </message>
     <message>
-        <location filename="../dialog/notehistoryselect.cpp" line="82"/>
+        <location filename="../dialog/notehistoryselect.cpp" line="83"/>
         <source>Yesterday</source>
         <translation>昨日</translation>
     </message>
@@ -3009,7 +3029,7 @@ Are you sure you want to continue?</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../dialog/notebookproperties.cpp" line="109"/>
+        <location filename="../dialog/notebookproperties.cpp" line="110"/>
         <source>Add Notebook</source>
         <translation>ノートブックの追加</translation>
     </message>
@@ -3060,42 +3080,42 @@ Are you sure you want to continue?</source>
 <context>
     <name>PreferencesDialog</name>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="27"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="30"/>
         <source>User Settings</source>
         <translation>ユーザ設定</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="40"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="44"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="41"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="45"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="81"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="85"/>
         <source>Appearance</source>
         <translation>見え方</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="87"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="91"/>
         <source>Locale</source>
         <translation>ロケール</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="93"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="97"/>
         <source>Search</source>
         <translation>検索</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="99"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="103"/>
         <source>Sync</source>
         <translation>同期</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="104"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="108"/>
         <source>Debugging</source>
         <translation>デバッグ</translation>
     </message>
@@ -3235,17 +3255,17 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>ReminderButton</name>
     <message>
-        <location filename="../gui/browserWidgets/reminderbutton.cpp" line="30"/>
+        <location filename="../gui/browserWidgets/reminderbutton.cpp" line="35"/>
         <source>Mark as Done</source>
         <translation>完了マークの</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/reminderbutton.cpp" line="31"/>
+        <location filename="../gui/browserWidgets/reminderbutton.cpp" line="36"/>
         <source>Change Date</source>
         <translation>変更日</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/reminderbutton.cpp" line="32"/>
+        <location filename="../gui/browserWidgets/reminderbutton.cpp" line="37"/>
         <source>Clear Reminder</source>
         <translation>リマインダーのクリア</translation>
     </message>
@@ -3261,12 +3281,12 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>ReminderSetDialog</name>
     <message>
-        <location filename="../dialog/remindersetdialog.cpp" line="45"/>
+        <location filename="../dialog/remindersetdialog.cpp" line="47"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialog/remindersetdialog.cpp" line="46"/>
+        <location filename="../dialog/remindersetdialog.cpp" line="48"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -3308,7 +3328,7 @@ any key or using the right or middle mouse buttons.</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../dialog/savedsearchproperties.cpp" line="105"/>
+        <location filename="../dialog/savedsearchproperties.cpp" line="106"/>
         <source>Add Saved Search</source>
         <translation>検索保存の追加</translation>
     </message>
@@ -3329,37 +3349,37 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>SpellCheckDialog</name>
     <message>
-        <location filename="../dialog/spellcheckdialog.cpp" line="33"/>
+        <location filename="../dialog/spellcheckdialog.cpp" line="35"/>
         <source>Spell Check</source>
         <translation>スペルチェック</translation>
     </message>
     <message>
-        <location filename="../dialog/spellcheckdialog.cpp" line="48"/>
+        <location filename="../dialog/spellcheckdialog.cpp" line="50"/>
         <source>Suggestion</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/spellcheckdialog.cpp" line="54"/>
+        <location filename="../dialog/spellcheckdialog.cpp" line="56"/>
         <source>Replace</source>
         <translation>置換</translation>
     </message>
     <message>
-        <location filename="../dialog/spellcheckdialog.cpp" line="55"/>
+        <location filename="../dialog/spellcheckdialog.cpp" line="57"/>
         <source>Ignore</source>
         <translation>無視</translation>
     </message>
     <message>
-        <location filename="../dialog/spellcheckdialog.cpp" line="56"/>
+        <location filename="../dialog/spellcheckdialog.cpp" line="58"/>
         <source>Ignore All</source>
         <translation>全て無視</translation>
     </message>
     <message>
-        <location filename="../dialog/spellcheckdialog.cpp" line="57"/>
+        <location filename="../dialog/spellcheckdialog.cpp" line="59"/>
         <source>Add To Dictionary</source>
         <translation>辞書に追加</translation>
     </message>
     <message>
-        <location filename="../dialog/spellcheckdialog.cpp" line="64"/>
+        <location filename="../dialog/spellcheckdialog.cpp" line="66"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -3375,7 +3395,7 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>SyncPreferences</name>
     <message>
-        <location filename="../dialog/preferences/syncpreferences.cpp" line="31"/>
+        <location filename="../dialog/preferences/syncpreferences.cpp" line="32"/>
         <source>Sync automatically</source>
         <translation>自動的に同期</translation>
     </message>
@@ -3414,75 +3434,80 @@ any key or using the right or middle mouse buttons.</source>
         <source>Enable sync notifications</source>
         <translation>同期のお知らせを表示</translation>
     </message>
+    <message>
+        <location filename="../dialog/preferences/syncpreferences.cpp" line="46"/>
+        <source>Show successful syncs</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>SyncRunner</name>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="124"/>
+        <location filename="../threads/syncrunner.cpp" line="130"/>
         <source>Beginning Sync</source>
         <translation>同期開始</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="132"/>
+        <location filename="../threads/syncrunner.cpp" line="138"/>
         <source>Downloading changes</source>
         <translation>変更のダウンロード</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="181"/>
+        <location filename="../threads/syncrunner.cpp" line="187"/>
         <source>Sync Complete</source>
         <translation>同期完了</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="227"/>
-        <location filename="../threads/syncrunner.cpp" line="256"/>
+        <location filename="../threads/syncrunner.cpp" line="233"/>
+        <location filename="../threads/syncrunner.cpp" line="262"/>
         <source>Download </source>
         <translation>ダウンロード</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="227"/>
+        <location filename="../threads/syncrunner.cpp" line="233"/>
         <source>% complete for notebooks, tags, &amp; searches.</source>
         <translation>％完了（ノートブック、タグ、検索）。</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="236"/>
+        <location filename="../threads/syncrunner.cpp" line="242"/>
         <source>Download complete for notebooks, tags, &amp; searches.  Downloading notes.</source>
         <translation>ダウンロード完了（ノートブック、タグ、検索）  ノートのダウンロード。</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="256"/>
+        <location filename="../threads/syncrunner.cpp" line="262"/>
         <source>% complete.</source>
         <translation>％完了。</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="269"/>
+        <location filename="../threads/syncrunner.cpp" line="275"/>
         <source>Download complete.</source>
         <translation>ダウンロード完了。</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="670"/>
-        <location filename="../threads/syncrunner.cpp" line="709"/>
+        <location filename="../threads/syncrunner.cpp" line="676"/>
+        <location filename="../threads/syncrunner.cpp" line="715"/>
         <source>Downloading </source>
         <translation>ダウンロード中</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="670"/>
+        <location filename="../threads/syncrunner.cpp" line="676"/>
         <source>% complete for tags in shared notebook </source>
         <translation>％完了（共有ノートブックのタグ）</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="688"/>
+        <location filename="../threads/syncrunner.cpp" line="694"/>
         <source>Downloading notes for shared notebook </source>
         <translation>共有ノートブックのダウンロード</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="709"/>
+        <location filename="../threads/syncrunner.cpp" line="715"/>
         <source>% complete for shared notebook </source>
         <translation>％完了（共有ノートブック）</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="670"/>
-        <location filename="../threads/syncrunner.cpp" line="688"/>
-        <location filename="../threads/syncrunner.cpp" line="709"/>
+        <location filename="../threads/syncrunner.cpp" line="676"/>
+        <location filename="../threads/syncrunner.cpp" line="694"/>
+        <location filename="../threads/syncrunner.cpp" line="715"/>
         <source>.</source>
         <translation>。</translation>
     </message>
@@ -3490,47 +3515,47 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>TableDialog</name>
     <message>
-        <location filename="../dialog/tabledialog.cpp" line="28"/>
+        <location filename="../dialog/tabledialog.cpp" line="30"/>
         <source>Insert Table</source>
         <translation>表の挿入</translation>
     </message>
     <message>
-        <location filename="../dialog/tabledialog.cpp" line="32"/>
+        <location filename="../dialog/tabledialog.cpp" line="34"/>
         <source>Percent</source>
         <translation>パーセント</translation>
     </message>
     <message>
-        <location filename="../dialog/tabledialog.cpp" line="33"/>
+        <location filename="../dialog/tabledialog.cpp" line="35"/>
         <source>Pixels</source>
         <translation>ピクセル</translation>
     </message>
     <message>
-        <location filename="../dialog/tabledialog.cpp" line="49"/>
+        <location filename="../dialog/tabledialog.cpp" line="51"/>
         <source>Rows</source>
         <translation>列</translation>
     </message>
     <message>
-        <location filename="../dialog/tabledialog.cpp" line="51"/>
+        <location filename="../dialog/tabledialog.cpp" line="53"/>
         <source>Columns</source>
         <translation>行</translation>
     </message>
     <message>
-        <location filename="../dialog/tabledialog.cpp" line="53"/>
+        <location filename="../dialog/tabledialog.cpp" line="55"/>
         <source>Width</source>
         <translation>幅</translation>
     </message>
     <message>
-        <location filename="../dialog/tabledialog.cpp" line="55"/>
+        <location filename="../dialog/tabledialog.cpp" line="57"/>
         <source>Unit</source>
         <translation>単位</translation>
     </message>
     <message>
-        <location filename="../dialog/tabledialog.cpp" line="62"/>
+        <location filename="../dialog/tabledialog.cpp" line="64"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="../dialog/tabledialog.cpp" line="65"/>
+        <location filename="../dialog/tabledialog.cpp" line="67"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
@@ -3538,7 +3563,7 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>TagEditorNewTag</name>
     <message>
-        <location filename="../gui/browserWidgets/tageditornewtag.cpp" line="56"/>
+        <location filename="../gui/browserWidgets/tageditornewtag.cpp" line="54"/>
         <source>Click to add tag...</source>
         <translation>タグの追加...</translation>
     </message>
@@ -3566,7 +3591,7 @@ any key or using the right or middle mouse buttons.</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../dialog/tagproperties.cpp" line="101"/>
+        <location filename="../dialog/tagproperties.cpp" line="102"/>
         <source>Add Tag</source>
         <translation>タグ追加</translation>
     </message>
@@ -3574,7 +3599,7 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>UrlEditor</name>
     <message>
-        <location filename="../gui/browserWidgets/urleditor.cpp" line="45"/>
+        <location filename="../gui/browserWidgets/urleditor.cpp" line="43"/>
         <source>Click to set source URL...</source>
         <translation>ソースURLの設定</translation>
     </message>
@@ -3656,38 +3681,38 @@ any key or using the right or middle mouse buttons.</source>
     </message>
     <message>
         <location filename="../dialog/watchfolderdialog.cpp" line="71"/>
-        <location filename="../dialog/watchfolderdialog.cpp" line="161"/>
+        <location filename="../dialog/watchfolderdialog.cpp" line="162"/>
         <source>Delete</source>
         <translation>削除</translation>
     </message>
     <message>
-        <location filename="../dialog/watchfolderdialog.cpp" line="111"/>
+        <location filename="../dialog/watchfolderdialog.cpp" line="112"/>
         <source>Directory</source>
         <translation>ディレクトリ</translation>
     </message>
     <message>
-        <location filename="../dialog/watchfolderdialog.cpp" line="112"/>
+        <location filename="../dialog/watchfolderdialog.cpp" line="113"/>
         <source>Target Notebook</source>
         <translation>対象ノートブック</translation>
     </message>
     <message>
-        <location filename="../dialog/watchfolderdialog.cpp" line="113"/>
-        <location filename="../dialog/watchfolderdialog.cpp" line="158"/>
+        <location filename="../dialog/watchfolderdialog.cpp" line="114"/>
+        <location filename="../dialog/watchfolderdialog.cpp" line="159"/>
         <source>Keep</source>
         <translation>保持</translation>
     </message>
     <message>
-        <location filename="../dialog/watchfolderdialog.cpp" line="114"/>
+        <location filename="../dialog/watchfolderdialog.cpp" line="115"/>
         <source>Include Subdirectories</source>
         <translation>サブディレクトリを含む</translation>
     </message>
     <message>
-        <location filename="../dialog/watchfolderdialog.cpp" line="168"/>
+        <location filename="../dialog/watchfolderdialog.cpp" line="169"/>
         <source>Yes</source>
         <translation>はい</translation>
     </message>
     <message>
-        <location filename="../dialog/watchfolderdialog.cpp" line="171"/>
+        <location filename="../dialog/watchfolderdialog.cpp" line="172"/>
         <source>No</source>
         <translation>いいえ</translation>
     </message>
@@ -3695,17 +3720,17 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>WebcamCaptureDialog</name>
     <message>
-        <location filename="../dialog/webcamcapturedialog.cpp" line="37"/>
+        <location filename="../dialog/webcamcapturedialog.cpp" line="40"/>
         <source>Webcam Capture</source>
         <translation>Webカム取り込み</translation>
     </message>
     <message>
-        <location filename="../dialog/webcamcapturedialog.cpp" line="59"/>
+        <location filename="../dialog/webcamcapturedialog.cpp" line="62"/>
         <source>Cancel</source>
         <translation>キャンセル</translation>
     </message>
     <message>
-        <location filename="../dialog/webcamcapturedialog.cpp" line="60"/>
+        <location filename="../dialog/webcamcapturedialog.cpp" line="63"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>

@@ -1,3 +1,12 @@
+NixNote (2.0-beta-3) stable; urgency=low
+  * Added the ability to change GUI fonts & font sizes.
+  * Added the option to only show popup notices if a sync fails.
+  * Added debug option to disable tag name sorting to bypass 
+    non-ASCII character bug.
+  * Lots of bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Sat, 04 Apr 2015 14:00:00 -0400
+
+
 NixNote (2.0-beta-2) stable; urgency=low
   * Beta 2.  Lots of bug fixes and removal of Thrift.
  -- Randy Baumgarte <randy@fbn.cx>  Sat, 26 Apr 2014 14:00:00 -0400
