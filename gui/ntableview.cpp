@@ -427,7 +427,8 @@ void NTableView::refreshData() {
         verticalHeader()->setDefaultSectionSize(100);
     else {
         QFont f = font();
-        f.setPointSize(global.defaultGuiFontSize);
+        global.getGuiFont(f);
+        //f.setPointSize(global.defaultGuiFontSize);
         QFontMetrics fm(f);
         verticalHeader()->setDefaultSectionSize(fm.height());
         //verticalHeader()->setDefaultSectionSize(QApplication::fontMetrics().height()*200);

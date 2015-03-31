@@ -36,6 +36,7 @@ public:
     explicit TagEditor(QWidget *parent = 0);
     void addTag(QString text);
     void setTags(QStringList names);
+    void getTags(QStringList &names);
     void clear();
     void loadTags();
     void setCurrentLid(qint32 l);

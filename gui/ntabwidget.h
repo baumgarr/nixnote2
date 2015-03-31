@@ -92,6 +92,14 @@ public slots:
     void refreshNoteContent(qint32 lid);  // refresh a note's contents
     void updateNoteListSignaled(qint32, int, QVariant); // A note was edited so we update the note list
     void noteContentEdited(QString uuid, qint32 lid, QString content);
+    void noteTitleEdited(QString uuid, qint32 lid, QString title);
+    void noteAuthorEdited(QString uuid, qint32 lid, QString title);
+    void noteNotebookEdited(QString uuid, qint32 lid, qint32 notebookLid, QString notebookName);
+    void noteDateEdited(QString uuid, qint32 lid, int dateID, QDateTime dt);
+    void noteUrlEdited(QString uuid, qint32 lid, QString title);
+    void noteLocationEdited(QString uuid, qint32 lid, double longitude, double latitude, double altitude, QString name);
+    void noteTagsEdited(QString uuid, qint32 lid, QStringList names);
+    void noteAlarmEdited(QString uuid, qint32 lid, bool strikeout, QString text);
     void showHtmlEntities();
     void htmlEntitiesClicked(QString entity);
 

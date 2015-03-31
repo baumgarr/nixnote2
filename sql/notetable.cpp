@@ -1888,7 +1888,6 @@ void NoteTable::setGeography(qint32 lid, double longitude, double latitude, doub
     query.bindValue(":key", NOTE_ATTRIBUTE_LONGITUDE);
     query.bindValue(":data", longitude);
     query.exec();
-    QLOG_DEBUG() << query.lastError();
 
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_ATTRIBUTE_LATITUDE);

@@ -283,6 +283,14 @@ void NTabWidget::setupConnections(NBrowserWindow *newBrowser) {
     connect(newBrowser, SIGNAL(updateNoteList(qint32,int,QVariant)), this, SLOT(updateNoteListSignaled(qint32,int,QVariant)));
     connect(syncThread, SIGNAL(noteUpdated(qint32)), this, SLOT(noteSyncSignaled(qint32)));
     connect(newBrowser, SIGNAL(noteContentEditedSignal(QString,qint32,QString)), this,  SLOT(noteContentEdited(QString,qint32,QString)));
+    connect(newBrowser, SIGNAL(noteTitleEditedSignal(QString,qint32,QString)), this,  SLOT(noteTitleEdited(QString,qint32,QString)));
+    connect(newBrowser, SIGNAL(noteAuthorEditedSignal(QString,qint32,QString)), this,  SLOT(noteAuthorEdited(QString,qint32,QString)));
+    connect(newBrowser, SIGNAL(noteLocationEditedSignal(QString,qint32,double,double,double,QString)), this,  SLOT(noteLocationEdited(QString,qint32,double,double,double,QString)));
+    connect(newBrowser, SIGNAL(noteUrlEditedSignal(QString,qint32,QString)), this,  SLOT(noteUrlEdited(QString,qint32,QString)));
+    connect(newBrowser, SIGNAL(noteAlarmEditedSignal(QString,qint32,bool,QString)), this,  SLOT(noteAlarmEdited(QString,qint32,bool,QString)));
+    connect(newBrowser, SIGNAL(noteTagsEditedSignal(QString,qint32,QStringList)), this,  SLOT(noteTagsEdited(QString,qint32,QStringList)));
+    connect(newBrowser, SIGNAL(noteNotebookEditedSignal(QString,qint32,qint32,QString)), this,  SLOT(noteNotebookEdited(QString,qint32,qint32,QString)));
+    connect(newBrowser, SIGNAL(noteDateEditedSignal(QString,qint32,int,QDateTime)), this,  SLOT(noteDateEdited(QString,qint32,int,QDateTime)));
     connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool)), this, SLOT(evernoteLinkClicked(qint32, bool)));
 }
 
@@ -391,6 +399,14 @@ void NTabWidget::setupExternalBrowserConnections(NBrowserWindow *newBrowser) {
     connect(syncThread, SIGNAL(noteUpdated(qint32)), this, SLOT(noteSyncSignaled(qint32)));
     connect(newBrowser, SIGNAL(noteContentEditedSignal(QString,qint32,QString)), this,  SLOT(noteContentEdited(QString,qint32,QString)));
     connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool)), this, SLOT(evernoteLinkClicked(qint32, bool)));
+    connect(newBrowser, SIGNAL(noteTitleEditedSignal(QString,qint32,QString)), this,  SLOT(noteTitleEdited(QString,qint32,QString)));
+    connect(newBrowser, SIGNAL(noteAuthorEditedSignal(QString,qint32,QString)), this,  SLOT(noteAuthorEdited(QString,qint32,QString)));
+    connect(newBrowser, SIGNAL(noteLocationEditedSignal(QString,qint32,double,double,double,QString)), this,  SLOT(noteLocationEdited(QString,qint32,double,double,double,QString)));
+    connect(newBrowser, SIGNAL(noteUrlEditedSignal(QString,qint32,QString)), this,  SLOT(noteUrlEdited(QString,qint32,QString)));
+    connect(newBrowser, SIGNAL(noteAlarmEditedSignal(QString,qint32,bool,QString)), this,  SLOT(noteAlarmEdited(QString,qint32,bool,QString)));
+    connect(newBrowser, SIGNAL(noteTagsEditedSignal(QString,qint32,QStringList)), this,  SLOT(noteTagsEdited(QString,qint32,QStringList)));
+    connect(newBrowser, SIGNAL(noteNotebookEditedSignal(QString,qint32,qint32,QString)), this,  SLOT(noteNotebookEdited(QString,qint32,qint32,QString)));
+    connect(newBrowser, SIGNAL(noteDateEditedSignal(QString,qint32,int,QDateTime)), this,  SLOT(noteDateEdited(QString,qint32,int,QDateTime)));
 
     // Hide the html entities dialog since it doesn't work.
     newBrowser->hideHtmlEntities();
@@ -425,6 +441,79 @@ void NTabWidget::noteContentEdited(QString uuid, qint32 lid, QString content) {
 }
 
 
+
+// A note's notebook was edited, so we need to make sure all the windows
+// are in sync.
+void NTabWidget::noteNotebookEdited(QString uuid, qint32 lid, qint32 notebookLid, QString notebookName) {
+    for (int i=0; i<browserList->size(); i++) {
+        if (lid == browserList->at(i)->lid &&
+                browserList->at(i)->uuid != uuid) {
+            browserList->at(i)->notebookMenu.blockSignals(true);
+            browserList->at(i)->notebookMenu.updateCurrentNotebook(notebookLid, notebookName);
+            browserList->at(i)->notebookMenu.blockSignals(false);
+        }
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        if (lid == externalList->at(i)->browser->lid &&
+                externalList->at(i)->browser->uuid != uuid) {
+            externalList->at(i)->browser->notebookMenu.blockSignals(true);
+            externalList->at(i)->browser->notebookMenu.updateCurrentNotebook(notebookLid, notebookName);
+            externalList->at(i)->browser->notebookMenu.blockSignals(false);
+        }
+    }
+}
+
+
+
+
+// A note's notebook was edited, so we need to make sure all the windows
+// are in sync.
+void NTabWidget::noteDateEdited(QString uuid, qint32 lid, int dateType, QDateTime dt) {
+    for (int i=0; i<browserList->size(); i++) {
+        if (lid == browserList->at(i)->lid &&
+                browserList->at(i)->uuid != uuid) {
+            DateTimeEditor *dte=NULL;
+            switch(dateType) {
+            case NOTE_CREATED_DATE:
+                dte = &browserList->at(i)->dateEditor.createdDate;
+                break;
+            case NOTE_UPDATED_DATE:
+                dte = &browserList->at(i)->dateEditor.updatedDate;
+                break;
+            case NOTE_ATTRIBUTE_SUBJECT_DATE:
+                dte = &browserList->at(i)->dateEditor.subjectDate;
+                break;
+            default: return;
+            }
+            dte->blockSignals(true);
+            dte->setDateTime(dt);
+            dte->blockSignals(false);
+        }
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        if (lid == externalList->at(i)->browser->lid &&
+                externalList->at(i)->browser->uuid != uuid) {
+            DateTimeEditor *dte=NULL;
+            switch(dateType) {
+            case NOTE_CREATED_DATE:
+                dte = &externalList->at(i)->browser->dateEditor.createdDate;
+                break;
+            case NOTE_UPDATED_DATE:
+                dte = &externalList->at(i)->browser->dateEditor.updatedDate;
+                break;
+            case NOTE_ATTRIBUTE_SUBJECT_DATE:
+                dte = &externalList->at(i)->browser->dateEditor.subjectDate;
+                break;
+            default: return;
+            }
+            dte->blockSignals(true);
+            dte->setDateTime(dt);
+            dte->blockSignals(false);
+        }
+    }
+}
+
+
 void NTabWidget::saveAllNotes() {
     for (int i=0; i<browserList->size(); i++) {
         browserList->at(i)->saveNoteContent();
@@ -434,6 +523,157 @@ void NTabWidget::saveAllNotes() {
         externalList->at(i)->browser->saveNoteContent();
     }
 }
+
+
+
+// A note title was edited, so we need to make sure all the windows
+// are in sync.
+void NTabWidget::noteTitleEdited(QString uuid, qint32 lid, QString content) {
+    for (int i=0; i<browserList->size(); i++) {
+        if (lid == browserList->at(i)->lid &&
+                browserList->at(i)->uuid != uuid) {
+            browserList->at(i)->noteTitle.blockSignals(true);
+            browserList->at(i)->noteTitle.setText(content);
+            browserList->at(i)->noteTitle.blockSignals(false);
+        }
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        if (lid == externalList->at(i)->browser->lid &&
+                externalList->at(i)->browser->uuid != uuid) {
+            externalList->at(i)->browser->noteTitle.blockSignals(true);
+            externalList->at(i)->browser->noteTitle.setText(content);
+            externalList->at(i)->browser->noteTitle.blockSignals(false);
+        }
+    }
+}
+
+
+// A note title was edited, so we need to make sure all the windows
+// are in sync.
+void NTabWidget::noteAuthorEdited(QString uuid, qint32 lid, QString content) {
+    for (int i=0; i<browserList->size(); i++) {
+        if (lid == browserList->at(i)->lid &&
+                browserList->at(i)->uuid != uuid) {
+            browserList->at(i)->dateEditor.authorEditor.blockSignals(true);
+            browserList->at(i)->dateEditor.authorEditor.setText(content);
+            browserList->at(i)->dateEditor.authorEditor.blockSignals(false);
+        }
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        if (lid == externalList->at(i)->browser->lid &&
+                externalList->at(i)->browser->uuid != uuid) {
+            externalList->at(i)->browser->dateEditor.authorEditor.blockSignals(true);
+            externalList->at(i)->browser->dateEditor.authorEditor.setText(content);
+            externalList->at(i)->browser->dateEditor.authorEditor.blockSignals(false);
+        }
+    }
+}
+
+
+
+
+
+
+// A note title was edited, so we need to make sure all the windows
+// are in sync.
+void NTabWidget::noteLocationEdited(QString uuid, qint32 lid, double longitude, double latitude, double altitude, QString name) {
+    for (int i=0; i<browserList->size(); i++) {
+        if (lid == browserList->at(i)->lid &&
+                browserList->at(i)->uuid != uuid) {
+            browserList->at(i)->dateEditor.locationEditor.blockSignals(true);
+            browserList->at(i)->dateEditor.locationEditor.setGeography(lid, longitude, latitude, altitude, name);
+            browserList->at(i)->dateEditor.locationEditor.blockSignals(false);
+        }
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        if (lid == externalList->at(i)->browser->lid &&
+                externalList->at(i)->browser->uuid != uuid) {
+            externalList->at(i)->browser->dateEditor.locationEditor.blockSignals(true);
+            externalList->at(i)->browser->dateEditor.locationEditor.setGeography(lid, longitude, latitude, altitude, name);
+            externalList->at(i)->browser->dateEditor.locationEditor.blockSignals(false);
+        }
+    }
+}
+
+
+
+// A note title was edited, so we need to make sure all the windows
+// are in sync.
+void NTabWidget::noteUrlEdited(QString uuid, qint32 lid, QString content) {
+    for (int i=0; i<browserList->size(); i++) {
+        if (lid == browserList->at(i)->lid &&
+                browserList->at(i)->uuid != uuid) {
+            browserList->at(i)->urlEditor.blockSignals(true);
+            browserList->at(i)->urlEditor.setText(content);
+            browserList->at(i)->urlEditor.blockSignals(false);
+        }
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        if (lid == externalList->at(i)->browser->lid &&
+                externalList->at(i)->browser->uuid != uuid) {
+            externalList->at(i)->browser->urlEditor.blockSignals(true);
+            externalList->at(i)->browser->urlEditor.setText(content);
+            externalList->at(i)->browser->urlEditor.blockSignals(false);
+        }
+    }
+}
+
+
+
+
+
+
+// A note title was edited, so we need to make sure all the windows
+// are in sync.
+void NTabWidget::noteTagsEdited(QString uuid, qint32 lid, QStringList names) {
+    for (int i=0; i<browserList->size(); i++) {
+        if (lid == browserList->at(i)->lid &&
+                browserList->at(i)->uuid != uuid) {
+            browserList->at(i)->tagEditor.blockSignals(true);
+            browserList->at(i)->tagEditor.setTags(names);
+            browserList->at(i)->tagEditor.blockSignals(false);
+        }
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        if (lid == externalList->at(i)->browser->lid &&
+                externalList->at(i)->browser->uuid != uuid) {
+            externalList->at(i)->browser->tagEditor.blockSignals(true);
+            externalList->at(i)->browser->tagEditor.setTags(names);
+            externalList->at(i)->browser->tagEditor.blockSignals(false);
+        }
+    }
+}
+
+
+
+
+// A note title was edited, so we need to make sure all the windows
+// are in sync.
+void NTabWidget::noteAlarmEdited(QString uuid, qint32 lid, bool strikeout, QString text) {
+    for (int i=0; i<browserList->size(); i++) {
+        if (lid == browserList->at(i)->lid &&
+                browserList->at(i)->uuid != uuid) {
+            QFont f = browserList->at(i)->alarmText.font();
+            f.setStrikeOut(strikeout);
+            browserList->at(i)->alarmText.setFont(f);
+            browserList->at(i)->alarmText.setText(text);
+        }
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        if (lid == externalList->at(i)->browser->lid &&
+                externalList->at(i)->browser->uuid != uuid) {
+            QFont f = externalList->at(i)->browser->alarmText.font();
+            f.setStrikeOut(strikeout);
+            externalList->at(i)->browser->alarmText.setFont(f);
+            externalList->at(i)->browser->alarmText.setText(text);
+        }
+    }
+}
+
+
+
+
+
 
 
 void NTabWidget::showHtmlEntities() {

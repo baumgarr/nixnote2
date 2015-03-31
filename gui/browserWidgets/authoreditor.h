@@ -9,7 +9,6 @@ class AuthorEditor : public QLineEdit
 private:
     QString activeColor;
     QString inactiveColor;
-//    QString defaultText;
     QString initialText;
     QString priorText;
     qint32 currentLid;

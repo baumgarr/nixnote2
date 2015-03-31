@@ -37,14 +37,15 @@ class DateEditor : public QWidget
 {
     Q_OBJECT
 private:
+
+
+public:
+    explicit DateEditor(QWidget *parent = 0);
     AuthorEditor authorEditor;
     LocationEditor locationEditor;
     DateTimeEditor subjectDate;
     DateTimeEditor createdDate;
     DateTimeEditor updatedDate;
-
-public:
-    explicit DateEditor(QWidget *parent = 0);
     void setNote(qint32 lid, Note n);
     void setUpdateDate(qint64 value);
     void clear();

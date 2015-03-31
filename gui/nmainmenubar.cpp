@@ -38,8 +38,9 @@ NMainMenuBar::NMainMenuBar(QWidget *parent) :
     QMenuBar(parent)
 {
     this->parent = (NixNote*)parent;
-    font.setPointSize(global.defaultGuiFontSize);
-    font = global.getGuiFont(font);
+    global.getGuiFont(font);
+//    font.setPointSize(global.defaultGuiFontSize);
+//    font = global.getGuiFont(font);
     setFont(font);
 
     setupFileMenu();

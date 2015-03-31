@@ -116,6 +116,17 @@ void LocationEditor::setGeography(qint32 lid, double longitude, double latitude,
 }
 
 
+
+void LocationEditor::getGeography(double &longitude, double &latitude, double &altitude, QString &placeName) {
+    longitude = this->startLongitude;
+    latitude = this->startLatitude;
+    altitude = this->startAltitude;
+    placeName = text();
+}
+
+
+
+
 void LocationEditor::clearClicked() {
     NoteTable ntable(global.db);
     ntable.resetGeography(currentLid, true);

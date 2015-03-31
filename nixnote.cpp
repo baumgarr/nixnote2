@@ -124,7 +124,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     heartbeatTimer.start();
 
     QFont f = this->font();
-    f.setPointSize(8);
+    //f.setPointSize(8);
+    global.getGuiFont(f);
     this->setFont(f);
 
     db = new DatabaseConnection("nixnote");  // Startup the database

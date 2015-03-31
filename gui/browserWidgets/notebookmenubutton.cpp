@@ -73,6 +73,28 @@ void NotebookMenuButton::setCurrentNotebook(int lid, Note note) {
 }
 
 
+
+
+
+void NotebookMenuButton::updateCurrentNotebook(int notebookLid, QString notebookName) {
+
+    if (currentAction < actions.size())
+        actions[currentAction]->setChecked(false);
+    this->setText(notebookName);
+    for (int i=0; i<actions.size(); i++) {
+        actions[i]->setChecked(false);
+        if (actions[i]->text().toLower().trimmed() == notebookName.toLower().trimmed()) {
+            currentAction = i;
+            actions[currentAction]->setChecked(true);
+        }
+    }
+    this->notebookLid = notebookLid;
+    this->notebookName = notebookName;
+    blockSignals(false);
+}
+
+
+
 // Read in all of the data and build the menu.
 void NotebookMenuButton::loadData() {
     rootMenu.clear();

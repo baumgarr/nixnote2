@@ -193,6 +193,17 @@ void TagEditor::setTags(QStringList s) {
 }
 
 
+
+//*******************************************************
+//* Get all current tags
+//*******************************************************
+void TagEditor::getTags(QStringList &names) {
+    names.clear();
+    names = tagNames;
+}
+
+
+
 //*******************************************************
 //* Remove a tag for a note
 //*******************************************************

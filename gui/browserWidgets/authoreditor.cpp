@@ -97,8 +97,9 @@ void AuthorEditor::textModified(QString text) {
     setText(text);
     this->blockSignals(false);
 
-    if (text.trimmed() != initialText.trimmed() || priorText.trimmed() != text.trimmed())
-        emit(textUpdated());
+    if (text.trimmed() != initialText.trimmed() || priorText.trimmed() != text.trimmed()) {
+        emit textUpdated();
+    }
 
     priorText = text;
 }

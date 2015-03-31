@@ -115,7 +115,8 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     QFont font;
     font.setFamily("Courier");
     font.setFixedPitch(true);
-    font.setPointSize(global.defaultGuiFontSize);
+    global.getGuiFont(font);
+//    font.setPointSize(global.defaultGuiFontSize);
     sourceEdit->setFont(global.getGuiFont(font));
     XmlHighlighter *highlighter = new XmlHighlighter(sourceEdit->document());
     highlighter = highlighter;  // Prevents the unused warning
@@ -147,6 +148,10 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(&notebookMenu, SIGNAL(notebookChanged()), this, SLOT(sendNotebookUpdateSignal()));
     connect(&urlEditor, SIGNAL(textUpdated()), this, SLOT(sendUrlUpdateSignal()));
     connect(&noteTitle, SIGNAL(titleChanged()), this, SLOT(sendTitleUpdateSignal()));
+    connect(&dateEditor.authorEditor, SIGNAL(textUpdated()), this, SLOT(sendAuthorUpdateSignal()));
+    connect(&dateEditor.locationEditor, SIGNAL(clicked()), this, SLOT(sendLocationUpdateSignal()));
+    connect(&dateEditor.createdDate, SIGNAL(editingFinished()), this, SLOT(sendDateCreatedUpdateSignal()));
+    connect(&dateEditor.subjectDate, SIGNAL(editingFinished()), this, SLOT(sendDateSubjectUpdateSignal()));
     connect(&dateEditor, SIGNAL(valueChanged()), this, SLOT(sendDateUpdateSignal()));
     connect(&tagEditor, SIGNAL(tagsUpdated()), this, SLOT(sendTagUpdateSignal()));
     connect(&tagEditor, SIGNAL(newTagCreated(qint32)), this, SLOT(newTagAdded(qint32)));
@@ -398,8 +403,8 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
         noteTitle.setFocusPolicy(Qt::NoFocus);
         tagEditor.setEnabled(false);
         tagEditor.setFocusPolicy(Qt::NoFocus);
-        authorEditor.setFocusPolicy(Qt::NoFocus);
-        locationEditor.setFocusPolicy(Qt::NoFocus);
+        //authorEditor.setFocusPolicy(Qt::NoFocus);
+        //locationEditor.setFocusPolicy(Qt::NoFocus);
         urlEditor.setFocusPolicy(Qt::NoFocus);
         notebookMenu.setEnabled(false);
         dateEditor.setEnabled(false);
@@ -410,8 +415,8 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
     noteTitle.setFocusPolicy(Qt::StrongFocus);
     tagEditor.setEnabled(true);
     tagEditor.setFocusPolicy(Qt::StrongFocus);
-    authorEditor.setFocusPolicy(Qt::StrongFocus);
-    locationEditor.setFocusPolicy(Qt::StrongFocus);
+    //authorEditor.setFocusPolicy(Qt::StrongFocus);
+    //locationEditor.setFocusPolicy(Qt::StrongFocus);
     urlEditor.setFocusPolicy(Qt::StrongFocus);
     notebookMenu.setEnabled(true);
     dateEditor.setEnabled(true);
@@ -1663,9 +1668,9 @@ void NBrowserWindow::clear() {
     tagEditor.clear();
     tagEditor.blockSignals(false);
 
-    authorEditor.blockSignals(true);
-    authorEditor.setText("");
-    authorEditor.blockSignals(false);
+//    authorEditor.blockSignals(true);
+//    authorEditor.setText("");
+//    authorEditor.blockSignals(false);
 
     urlEditor.blockSignals(true);
     urlEditor.setUrl(-1, "");
@@ -2294,17 +2299,15 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 // Alarm has been completed
 void NBrowserWindow::alarmCompleted() {
     QFont f = alarmText.font();
-    bool completed = false;
-    if (!f.strikeOut())
-        completed = true;
-    f.setStrikeOut(completed);
+    f.setStrikeOut(!f.strikeOut());
     alarmText.setFont(f);
 
     NoteTable noteTable(global.db);
     noteTable.setDirty(this->lid, true);
-    noteTable.setReminderCompleted(this->lid, completed);
+    noteTable.setReminderCompleted(this->lid, f.strikeOut());
     global.reminderManager->remove(this->lid);
     emit(noteUpdated(this->lid));
+    emit noteAlarmEditedSignal(uuid, lid, f.strikeOut(), alarmText.text());
 }
 
 
@@ -2357,6 +2360,7 @@ void NBrowserWindow::alarmSet() {
     global.reminderManager->updateReminder(this->lid, dt);
     this->noteUpdated(this->lid);
     this->editor->isDirty = true;
+    emit noteAlarmEditedSignal(uuid, lid, false, alarmText.text());
 }
 
 void NBrowserWindow::alarmClear() {
@@ -2367,11 +2371,13 @@ void NBrowserWindow::alarmClear() {
     noteTable.setDirty(this->lid, true);
     noteTable.removeReminder(this->lid);
     emit(noteUpdated(this->lid));
+    emit noteAlarmEditedSignal(uuid, lid, false, "");
 }
 
 void NBrowserWindow::alarmMenuActivated() {
     QFont f = alarmText.font();
     f.setStrikeOut(false);
+    emit noteAlarmEditedSignal(uuid, lid, false, alarmText.text());
     alarmText.setFont(f);
 
     NoteTable noteTable(global.db);
@@ -2513,12 +2519,37 @@ void NBrowserWindow::encryptButtonPressed() {
 }
 
 
+void NBrowserWindow::sendAuthorUpdateSignal() {
+    emit noteAuthorEditedSignal(uuid, lid, dateEditor.authorEditor.getText());
+}
+
+
+
+void NBrowserWindow::sendLocationUpdateSignal() {
+    double longitude, latitude, altitude;
+    QString name;
+    dateEditor.locationEditor.getGeography(longitude, latitude, altitude, name);
+    emit noteLocationEditedSignal(uuid, lid, longitude, latitude, altitude, name);
+}
+
+
+void NBrowserWindow::sendDateCreatedUpdateSignal() {
+    emit noteDateEditedSignal(uuid, lid, NOTE_CREATED_DATE, dateEditor.createdDate.dateTime());
+}
+
+
+void NBrowserWindow::sendDateSubjectUpdateSignal() {
+    emit noteDateEditedSignal(uuid, lid, NOTE_ATTRIBUTE_SUBJECT_DATE, dateEditor.subjectDate.dateTime());
+}
+
+
 
 
 // Send a signal that the note has been updated
 void NBrowserWindow::sendTitleUpdateSignal() {
     NoteTable ntable(global.db);
     ntable.updateTitle(this->lid, this->noteTitle.text().trimmed(), true);
+    emit noteTitleEditedSignal(uuid, lid, this->noteTitle.text().trimmed());
     emit(this->noteUpdated(lid));
     emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, this->noteTitle.text()));
     sendDateUpdateSignal();
@@ -2538,6 +2569,9 @@ void NBrowserWindow::sendNotebookUpdateSignal() {
     QString name = notebookMenu.notebookName;
     emit(this->updateNoteList(lid, NOTE_TABLE_NOTEBOOK_POSITION, name));
     emit(this->updateNoteList(lid, NOTE_TABLE_NOTEBOOK_LID_POSITION, lid));
+    emit noteNotebookEditedSignal(uuid, this->lid, lid, name);
+
+
     sendDateUpdateSignal();
 }
 
@@ -2562,6 +2596,10 @@ void NBrowserWindow::sendTagUpdateSignal() {
     ntable.setDirty(this->lid, true);
     emit(this->noteUpdated(lid));
     sendDateUpdateSignal();
+    QStringList names;
+    tagEditor.getTags(names);
+    emit noteTagsEditedSignal(uuid, lid, names);
+
 }
 
 
@@ -2572,6 +2610,8 @@ void NBrowserWindow::sendUrlUpdateSignal() {
     emit(this->noteUpdated(lid));
     sendDateUpdateSignal();
     emit(this->updateNoteList(lid, NOTE_TABLE_SOURCE_URL_POSITION, urlEditor.getText()));
+    emit noteUrlEditedSignal(uuid, lid, urlEditor.getText());
+
 }
 
 

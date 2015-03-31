@@ -103,8 +103,8 @@ public:
     UrlEditor urlEditor;
     TagEditor tagEditor;
     DateEditor dateEditor;
-    AuthorEditor authorEditor;
-    LocationEditor locationEditor;
+    //AuthorEditor authorEditor;
+    //LocationEditor locationEditor;
     void setReadOnly(bool readOnly);
     NMainMenuBar *mainMenuBarHook;
 
@@ -140,6 +140,14 @@ signals:
     void evernoteLinkClicked(qint32 lid, bool newWindow);
     void updateNoteList(qint32 lid, int column, QVariant data);
     void noteContentEditedSignal(QString uuid, qint32 lid, QString content);
+    void noteTitleEditedSignal(QString uuid, qint32 lid, QString content);
+    void noteAuthorEditedSignal(QString uuid, qint32 lid, QString content);
+    void noteDateEditedSignal(QString uuid, qint32 lid, int dateID, QDateTime dt);
+    void noteNotebookEditedSignal(QString uuid, qint32 lid, qint32 notebookLid, QString notebookName);
+    void noteUrlEditedSignal(QString uuid, qint32 lid, QString content);
+    void noteTagsEditedSignal(QString uuid, qint32 lid, QStringList names);
+    void noteLocationEditedSignal(QString uuid, qint32 lid, double longitude, double latitude, double altitude, QString name);
+    void noteAlarmEditedSignal(QString uuid, qint32 lid, bool strikeout, QString text);
     void showHtmlEntities();
 
 public slots:
@@ -229,11 +237,15 @@ public slots:
     void changeDisplayFontSize(QString size);
     void changeDisplayFontName(QString name);
     void printNodeName(QString node);
+    void sendDateCreatedUpdateSignal();
+    void sendDateSubjectUpdateSignal();
 
 private slots:
     void sendTitleUpdateSignal();
     void sendNotebookUpdateSignal();
     void sendDateUpdateSignal(qint64 dt=0);
+    void sendLocationUpdateSignal();
+    void sendAuthorUpdateSignal();
     void sendTagUpdateSignal();
     void sendUrlUpdateSignal();
     void newTagAdded(qint32);
