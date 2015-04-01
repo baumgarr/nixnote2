@@ -32,7 +32,7 @@ LoginDialog::LoginDialog(QWidget *parent) :
 {
     okPressed = false;
     setWindowTitle(tr("NixNote Login"));
-    setWindowIcon(QIcon(":password.png"));
+    setWindowIcon(global.getIconResource(":password.png"));
     setLayout(&grid);
 
     password.setEchoMode(QLineEdit::Password);

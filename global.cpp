@@ -143,6 +143,11 @@ void Global::setup(StartupConfig startupConfig) {
             );
     }
 
+    settings->beginGroup("Appearance");
+    QString theme = settings->value("themeName", "").toString();
+    loadTheme(theme);
+    settings->endGroup();
+
     minIndexInterval = 5000;
     maxIndexInterval = 120000;
     indexResourceCountPause=2;
@@ -442,12 +447,12 @@ bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
      return s1.toLower() < s2.toLower();
  }
 
-QString Global::getWindowIcon() {
-    settings->beginGroup("Appearance");
-    QString value = settings->value("windowIcon", ":windowIcon0.png").toString();
-    settings->endGroup();
-    return value;
-}
+//QString Global::getWindowIcon() {
+//    settings->beginGroup("Appearance");
+//    QString value = settings->value("windowIcon", ":windowIcon0.png").toString();
+//    settings->endGroup();
+//    return value;
+//}
 
 
 QFont Global::getGuiFont(QFont f) {
@@ -456,6 +461,123 @@ QFont Global::getGuiFont(QFont f) {
     if (defaultGuiFontSize > 0)
         f.setPointSize(defaultGuiFontSize);
     return f;
+}
+
+
+
+QIcon Global::getIconResource(QString key) {
+    if (resourceList.contains(key) && resourceList[key].trimmed()!="")
+        return QIcon(resourceList[key]);
+    return QIcon(key);
+}
+
+
+
+QPixmap Global::getPixmapResource(QString key) {
+    if (resourceList.contains(key) && resourceList[key].trimmed()!="")
+        return QPixmap(resourceList[key]);
+    return QPixmap(key);
+}
+
+
+void Global::loadTheme(QString theme) {
+    if (theme.trimmed() == "")
+        return;
+    QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
+
+    this->loadThemeFile(systemTheme, theme);
+
+    QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
+        this->loadThemeFile(userTheme, theme);
+}
+
+
+void Global::loadThemeFile(QFile &file, QString themeName) {
+    if (!file.exists())
+        return;
+    if(!file.open(QIODevice::ReadOnly))
+        return;
+
+    QTextStream in(&file);
+    bool themeFound = false;
+    QString themeHeader = "[" + themeName.trimmed() + "]";
+    while(!in.atEnd()) {
+        QString line = in.readLine();
+        if (!line.startsWith("#")){
+            if (line.startsWith("[") && themeHeader != line)
+                themeFound = false;
+            if (line.startsWith("[") && themeHeader == line)
+                themeFound = true;
+            if (themeFound && !line.startsWith("[") && line != "") {
+                QStringList fields = line.split("=");
+                QLOG_DEBUG() << fields.size();
+                if (fields.size() >= 2) {
+                    QString key = fields[0].simplified();
+                    QString value = fields[1].split("#").at(0).simplified();
+                    QFile f(value);
+                    if (f.exists()) {
+                        resourceList.remove(":"+key+".png");
+                        resourceList.insert(":"+key+".png",value);
+                    }
+                }
+            }
+        }
+    }
+
+    file.close();
+}
+
+
+
+QStringList Global::getThemeNames() {
+    QStringList values;
+    values.empty();
+    QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
+    this->getThemeNamesFromFile(systemTheme, values);
+    QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
+        this->getThemeNamesFromFile(userTheme, values);
+    if (!nonAsciiSortBug)
+        qSort(values.begin(), values.end(), caseInsensitiveLessThan);
+
+    return values;
+}
+
+
+
+
+void Global::getThemeNamesFromFile(QFile &file, QStringList &values) {
+    if (!file.exists())
+        return;
+    if(!file.open(QIODevice::ReadOnly))
+        return;
+
+    QTextStream in(&file);
+    while(!in.atEnd()) {
+        QString line = in.readLine().simplified();
+        if (line.startsWith("[")) {
+            QString name = line.mid(1);
+            name.chop(1);
+            if (name.simplified() != "") {
+                if (!values.contains(name, Qt::CaseInsensitive)) {
+                    values.append(name);
+                }
+            }
+        }
+    }
+
+    file.close();
+}
+
+
+
+QString Global::getResourceFileName(QString key) {
+        if (resourceList.contains(key) && resourceList[key].trimmed()!="")
+            return resourceList[key];
+
+        // If we have a default resource
+        QString fileName = key.remove(":");
+        return fileManager.getImageDirPath("")+fileName;
+
 }
 
 

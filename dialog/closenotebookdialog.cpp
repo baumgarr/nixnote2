@@ -35,7 +35,7 @@ CloseNotebookDialog::CloseNotebookDialog(QWidget *parent) :
     QDialog(parent)
 {
     this->setWindowTitle(tr("Open/Close Notebooks"));
-    this->setWindowIcon(QIcon(":notebook_small.png"));
+    this->setWindowIcon(global.getIconResource(":notebook_small.png"));
     okPressed = false;
     openButton.setEnabled(false);
     closeButton.setEnabled(false);

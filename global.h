@@ -169,12 +169,21 @@ public:
     QHash< QString, QPair <QString, QString> > passwordSafe;  // Saved passwords
     void appendFilter(FilterCriteria *criteria);
     void setupDateTimeFormat();
-    QString getWindowIcon();
+    //QString getWindowIcon();
     QFont getGuiFont(QFont f);
 
     bool nonAsciiSortBug;  // Workaround for non-ASCII characters in tag name sorting
 
     ReminderManager *reminderManager;
+
+    QHash<QString,QString> resourceList;
+    QPixmap getPixmapResource(QString key);
+    QIcon getIconResource(QString key);
+    void loadTheme(QString themeName);
+    void loadThemeFile(QFile &file, QString themeName);
+    QStringList getThemeNames();
+    QString getResourceFileName(QString key);
+    void getThemeNamesFromFile(QFile &file, QStringList &values);
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);

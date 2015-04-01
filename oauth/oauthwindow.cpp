@@ -68,7 +68,7 @@ OAuthWindow::OAuthWindow(QMainWindow *parent) :
 
     // Build the window
     setWindowTitle(tr("Please Grant NixNote Access"));
-    setWindowIcon(QIcon(":password.png"));
+    setWindowIcon(global.getIconResource(":password.png"));
     //setLayout(&grid);
     //grid.addWidget(userLoginPage);
     setCentralWidget(userLoginPage);

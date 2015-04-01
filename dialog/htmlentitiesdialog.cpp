@@ -69,7 +69,7 @@ HtmlEntitiesDialog::HtmlEntitiesDialog(QWidget *parent) :
     this->listSeparator = ",";
     loadCustomEntities();
     setWindowTitle(tr("HTML Entities Selection"));
-    this->setWindowIcon(QIcon(":htmlentities.png"));
+    this->setWindowIcon(global.getIconResource(":htmlentities.png"));
     setModal(false);
 
     initGrid();

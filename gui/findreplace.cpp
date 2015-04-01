@@ -24,6 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSpacerItem>
 #include <QLabel>
 
+#include "global.h"
+
+extern Global global;
 
 FindReplace::FindReplace(QWidget *parent) :
     QWidget(parent)
@@ -34,7 +37,7 @@ FindReplace::FindReplace(QWidget *parent) :
     findLine = new QLineEdit(this);
     closeButton  = new QPushButton(this);
 
-    closeButton->setIcon(QIcon(":fileclose.png"));
+    closeButton->setIcon(global.getIconResource(":fileclose.png"));
     closeButton->setStyleSheet("border:none;");
     connect(closeButton, SIGNAL(clicked()), this, SLOT(hide()));
 

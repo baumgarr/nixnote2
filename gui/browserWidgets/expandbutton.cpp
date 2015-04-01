@@ -18,12 +18,15 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "expandbutton.h"
+#include "global.h"
+
+extern Global global;
 
 ExpandButton::ExpandButton(QWidget *parent) :
     QToolButton(parent)
 {
 
-    setIcon(QIcon(":down_arrow_small.png"));
+    setIcon(global.getIconResource(":down_arrow_small.png"));
     this->resize(5,5);
     currentState = EXPANDBUTTON_1;
 
@@ -34,15 +37,15 @@ void ExpandButton::setState(int state) {
     currentState = state;
     switch (currentState) {
     case EXPANDBUTTON_1 :
-        setIcon(QIcon(":down_arrow_small.png"));
+        setIcon(global.getIconResource(":down_arrow_small.png"));
         emit(stateChanged(currentState));
         break;
     case EXPANDBUTTON_2 :
-        setIcon(QIcon(":down_arrow_small.png"));
+        setIcon(global.getIconResource(":down_arrow_small.png"));
         emit(stateChanged(currentState));
         break;
     case EXPANDBUTTON_3 :
-        setIcon(QIcon(":up_arrow_small.png"));
+        setIcon(global.getIconResource(":up_arrow_small.png"));
         emit(stateChanged(currentState));
         break;
     }

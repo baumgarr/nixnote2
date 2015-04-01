@@ -92,7 +92,7 @@ class SyncRunner;
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
-    splashScreen = new QSplashScreen(this, QPixmap(":splash_logo.png"));
+    splashScreen = new QSplashScreen(this, global.getPixmapResource(":splash_logo.png"));
     global.settings->beginGroup("Appearance");
     if(global.settings->value("showSplashScreen", false).toBool() && !global.syncAndExit) {
         splashScreen->show();
@@ -253,7 +253,7 @@ void NixNote::setupGui() {
     // Setup the GUI
     //this->setStyleSheet("background-color: white;");
     //statusBar();    setWindowTitle(tr("NixNote 2"));
-    setWindowIcon(QIcon(global.getWindowIcon()));
+    setWindowIcon(QIcon(global.getIconResource(":windowIcon.png")));
 
     //QLOG_TRACE() << "Setting up menu bar";
     searchText = new LineEdit();
@@ -272,8 +272,8 @@ void NixNote::setupGui() {
     toolBar->setFont(global.getGuiFont(toolBar->font()));
     toolBar->setAllowedAreas(Qt::BottomToolBarArea | Qt::TopToolBarArea);
     //toolBar->addSeparator();
-    leftArrowButton = toolBar->addAction(QIcon(":left_arrow.png"), tr("Back"));
-    rightArrowButton = toolBar->addAction(QIcon(":right_arrow.png"), tr("Next"));
+    leftArrowButton = toolBar->addAction(global.getIconResource(":left_arrow.png"), tr("Back"));
+    rightArrowButton = toolBar->addAction(global.getIconResource(":right_arrow.png"), tr("Next"));
 
     leftArrowButton->setEnabled(false);
     leftArrowButton->setPriority(QAction::LowPriority);
@@ -283,19 +283,19 @@ void NixNote::setupGui() {
     connect(rightArrowButton, SIGNAL(triggered(bool)),this, SLOT(rightButtonTriggered()));
     toolBar->addSeparator();
 
-    homeButton = toolBar->addAction(QIcon(":home.png"), tr("All Notes"));
+    homeButton = toolBar->addAction(global.getIconResource(":home.png"), tr("All Notes"));
 //    homeButton->setPriority(QAction::LowPriority);   Hide the text by the icon
-    syncButton = toolBar->addAction(QIcon(":synchronize.png"), tr("Sync"));
+    syncButton = toolBar->addAction(global.getIconResource(":synchronize.png"), tr("Sync"));
 //  syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
     toolBar->addSeparator();
-    printNoteButton = toolBar->addAction(QIcon(":printer.png"), tr("Print"));
+    printNoteButton = toolBar->addAction(global.getIconResource(":printer.png"), tr("Print"));
     noteButton = new QToolButton();
     toolBar->addSeparator();
     newNoteButton = new QAction(noteButton);
-    newNoteButton->setIcon(QIcon(":newNote.png"));
+    newNoteButton->setIcon(global.getIconResource(":newNote.png"));
     newNoteButton->setText(tr("New Text Note"));
     newWebcamNoteButton = new QAction(noteButton);
-    newWebcamNoteButton->setIcon(QIcon(":webcam.png"));
+    newWebcamNoteButton->setIcon(global.getIconResource(":webcam.png"));
     newWebcamNoteButton->setText(tr("New Webcam Note"));
     noteButton->addAction(newNoteButton);
     noteButton->addAction(newWebcamNoteButton);
@@ -308,12 +308,12 @@ void NixNote::setupGui() {
     toolBar->addWidget(noteButton);
     toolBar->addSeparator();
 
-    deleteNoteButton = toolBar->addAction(QIcon(":delete.png"), tr("Delete"));
+    deleteNoteButton = toolBar->addAction(global.getIconResource(":delete.png"), tr("Delete"));
 
     toolBar->addSeparator();
-    trunkButton = toolBar->addAction(QIcon(":trunk.png"), tr("Trunk"));
+    trunkButton = toolBar->addAction(global.getIconResource(":trunk.png"), tr("Trunk"));
     trunkButton->setVisible(false);
-    usageButton = toolBar->addAction(QIcon(":usage.png"), tr("Usage"));
+    usageButton = toolBar->addAction(global.getIconResource(":usage.png"), tr("Usage"));
 
 
     connect(syncButton,SIGNAL(triggered()), this, SLOT(synchronize()));
@@ -456,9 +456,7 @@ void NixNote::setupGui() {
     minimizeToTray = global.settings->value("minimizeToTray", false).toBool();
     closeToTray = global.settings->value("closeToTray", false).toBool();
     global.settings->endGroup();
-    QLOG_DEBUG() << global.getWindowIcon();
-    //trayIcon = new QSystemTrayIcon(QIcon(global.getWindowIcon()), this);
-    trayIcon = new QSystemTrayIcon(QIcon(":trayicon.png"), this);
+    trayIcon = new QSystemTrayIcon(global.getIconResource(":trayicon.png"), this);
     trayIconContextMenu = new TrayMenu(this);
     trayIconContextMenu->addAction(newNoteButton);
 
@@ -467,7 +465,7 @@ void NixNote::setupGui() {
 
     screenCaptureButton = new QAction(tr("Screen Capture"), this);
     trayIconContextMenu->addAction(screenCaptureButton);
-    screenCaptureButton->setIcon(QIcon(":screenCapture.png"));
+    screenCaptureButton->setIcon(global.getIconResource(":screenCapture.png"));
     noteButton->addAction(screenCaptureButton);
     connect(screenCaptureButton, SIGNAL(triggered()), this, SLOT(screenCapture()));
 
@@ -2133,8 +2131,8 @@ void NixNote::openPreferences() {
     if (prefs.okButtonPressed) {
         setSyncTimer();
         bool showTrayIcon = global.showTrayIcon();
-        setWindowIcon(QIcon(global.getWindowIcon()));
-        trayIcon->setIcon(QIcon(":trayicon.png"));
+        setWindowIcon(global.getIconResource(":windowIcon.png"));
+        trayIcon->setIcon(global.getIconResource(":trayicon.png"));
         if (!showTrayIcon) {
             //trayIconBehavior();
             if (!this->isVisible())

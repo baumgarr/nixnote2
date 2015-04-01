@@ -34,7 +34,7 @@ NotebookProperties::NotebookProperties(QWidget *parent) :
 {
     okPressed = false;
     setWindowTitle(tr("Notebook"));
-    setWindowIcon(QIcon(":notebook_small.png"));
+    setWindowIcon(global.getIconResource(":notebook_small.png"));
     setLayout(&grid);
 
     syncBox.setText(tr("Synchronized"));

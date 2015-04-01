@@ -38,7 +38,7 @@ WebcamCaptureDialog::WebcamCaptureDialog(QWidget *parent) :
     this->setFont(global.getGuiFont(font()));
     webcamReady = true;
     this->setWindowTitle(tr("Webcam Capture"));
-    this->setWindowIcon(QIcon(":webcam.png"));
+    this->setWindowIcon(global.getIconResource(":webcam.png"));
     mainLayout = new QVBoxLayout();
     webcamImage = new CVImageWidget();
     mainLayout->addWidget(webcamImage);

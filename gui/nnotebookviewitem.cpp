@@ -74,19 +74,19 @@ bool NNotebookViewItem::operator<(const QTreeWidgetItem &other)const {
 void NNotebookViewItem::setType(NNotebookWidgetType type) {
     this->type = type;
     if (type == Linked)
-        setIcon(0, QIcon(":notebook-linked.png"));
+        setIcon(0, global.getIconResource(":notebook-linked.png"));
     if (type == Shared)
-        setIcon(0, QIcon(":notebook-shared.png"));
+        setIcon(0, global.getIconResource(":notebook-shared.png"));
     if (type == Local)
-        setIcon(0, QIcon(":notebook-local.png"));
+        setIcon(0, global.getIconResource(":notebook-local.png"));
     if (type == Synchronized)
-        setIcon(0, QIcon(":notebook_small.png"));
+        setIcon(0, global.getIconResource(":notebook_small.png"));
     if (type == Stack)
-        setIcon(0, QIcon(":stack.png"));
+        setIcon(0, global.getIconResource(":stack.png"));
     if (type == LinkedStack)
-        setIcon(0, QIcon(":silhouette.png"));
+        setIcon(0, global.getIconResource(":silhouette.png"));
     if (type == Conflict)
-        setIcon(0, QIcon(":notebook-conflict.png"));
+        setIcon(0, global.getIconResource(":notebook-conflict.png"));
 }
 
 

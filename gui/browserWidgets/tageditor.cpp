@@ -40,8 +40,9 @@ TagEditor::TagEditor(QWidget *parent) :
     layout->addWidget(&tagIcon);
     setLayout(layout);
 
-    QPixmap *pix = new QPixmap(":tag.png");
-    tagIcon.setPixmap(*pix);
+//    QPixmap *pix = new QPixmap(":tag.png");
+    QPixmap pix = global.getPixmapResource(":tag.png");
+    tagIcon.setPixmap(pix);
 
     for (int i=0; i<MAX_TAGS; i++) {
         tags[i].setVisible(false);
@@ -53,7 +54,7 @@ TagEditor::TagEditor(QWidget *parent) :
     connect(&newTag, SIGNAL(tabPressed()), this, SLOT(newTagTabPressed()));
     tagNames.clear();
     layout->addWidget(&newTag);
-    delete pix;
+    //delete pix;
     account = 0;
     hide();
 }

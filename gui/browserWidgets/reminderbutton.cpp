@@ -31,7 +31,7 @@ extern Global global;
 ReminderButton::ReminderButton(QWidget *parent) :
     QPushButton(parent)
 {
-    setIcon(QIcon(":alarmclock.png"));
+    setIcon(global.getIconResource(":alarmclock.png"));
     doneAction = menu.addAction(tr("Mark as Done"));
     setAction = menu.addAction(tr("Change Date"));
     clearAction = menu.addAction(tr("Clear Reminder"));

@@ -117,62 +117,62 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(htmlEntitiesButtonVisible, SIGNAL(triggered()), this, SLOT(toggleHtmlEntitiesButtonVisible()));
 
 
-  undoButtonAction = this->addAction(QIcon(":undo.png"), tr("Undo"));
+  undoButtonAction = this->addAction(global.getIconResource(":undo.png"), tr("Undo"));
   this->setupShortcut(undoButtonAction, "Edit_Undo");
-  redoButtonAction = this->addAction(QIcon(":redo.png"), tr("Redo"));
+  redoButtonAction = this->addAction(global.getIconResource(":redo.png"), tr("Redo"));
   this->setupShortcut(redoButtonAction, "Edit_Redo");
 
-  cutButtonAction = this->addAction(QIcon(":cut.png"), tr("Cut"));
+  cutButtonAction = this->addAction(global.getIconResource(":cut.png"), tr("Cut"));
   this->setupShortcut(cutButtonAction, "Edit_Cut");
-  copyButtonAction = this->addAction(QIcon(":copy.png"), tr("Copy"));
+  copyButtonAction = this->addAction(global.getIconResource(":copy.png"), tr("Copy"));
   this->setupShortcut(copyButtonAction, "Edit_Copy");
-  pasteButtonAction = this->addAction(QIcon(":paste.png"), tr("Paste"));
+  pasteButtonAction = this->addAction(global.getIconResource(":paste.png"), tr("Paste"));
   this->setupShortcut(pasteButtonAction, "Edit_Paste");
-  removeFormatButtonAction = this->addAction(QIcon(":eraser.png"), tr("Remove Formatting"));
+  removeFormatButtonAction = this->addAction(global.getIconResource(":eraser.png"), tr("Remove Formatting"));
   this->setupShortcut(removeFormatButtonAction, "Edit_Remove_Formatting");
 
   boldButtonWidget = new QToolButton(this);
-  boldButtonWidget->setIcon(QIcon(":bold.png"));
+  boldButtonWidget->setIcon(global.getIconResource(":bold.png"));
   boldButtonWidget->setText(tr("Bold"));
   this->setupShortcut(boldButtonWidget, "Format_Bold");
   boldButtonAction = this->addWidget(boldButtonWidget);
 
 
   italicButtonWidget = new QToolButton(this);
-  italicButtonWidget->setIcon(QIcon(":italics.png"));
+  italicButtonWidget->setIcon(global.getIconResource(":italics.png"));
   italicButtonWidget->setText(tr("Italics"));
   italicButtonWidget->setToolTip(tr("Italics"));
   italicButtonAction = this->addWidget(italicButtonWidget);
   this->setupShortcut(italicButtonWidget, "Format_Italic");
 
   underlineButtonWidget = new QToolButton(this);
-  underlineButtonWidget->setIcon(QIcon(":underline.png"));
+  underlineButtonWidget->setIcon(global.getIconResource(":underline.png"));
   underlineButtonWidget->setText(tr("Underline"));
   underlineButtonWidget->setToolTip(tr("Underline"));
   underlineButtonAction = this->addWidget(underlineButtonWidget);
   this->setupShortcut(underlineButtonWidget, "Format_Underline");
 
-  strikethroughButtonAction = this->addAction(QIcon(":strikethrough.png"), tr("Strikethrough"));
+  strikethroughButtonAction = this->addAction(global.getIconResource(":strikethrough.png"), tr("Strikethrough"));
   this->setupShortcut(strikethroughButtonAction, "Format_Strikethrough");
 
-  leftJustifyButtonAction = this->addAction(QIcon(":leftAlign.png"), tr("Left Justify"));
+  leftJustifyButtonAction = this->addAction(global.getIconResource(":leftAlign.png"), tr("Left Justify"));
   this->setupShortcut(leftJustifyButtonAction, "Format_Alignment_Left");
-  centerJustifyButtonAction = this->addAction(QIcon(":centerAlign.png"), tr("Center"));
+  centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlign.png"), tr("Center"));
   this->setupShortcut(centerJustifyButtonAction, "Format_Alignment_Center");
-  rightJustifyButtonAction = this->addAction(QIcon(":rightAlign.png"), tr("Right Justify"));
+  rightJustifyButtonAction = this->addAction(global.getIconResource(":rightAlign.png"), tr("Right Justify"));
   this->setupShortcut(rightJustifyButtonAction, "Format_Alignment_Right");
 
-  hlineButtonAction = this->addAction(QIcon(":hline.png"), tr("Horizontal Line"));
+  hlineButtonAction = this->addAction(global.getIconResource(":hline.png"), tr("Horizontal Line"));
   this->setupShortcut(hlineButtonAction, "Format_Horizontal_Line");
 
-  shiftRightButtonAction = this->addAction(QIcon(":shiftRight.png"), tr("Shift Right"));
+  shiftRightButtonAction = this->addAction(global.getIconResource(":shiftRight.png"), tr("Shift Right"));
   this->setupShortcut(shiftRightButtonAction, "Format_Indent_Increase");
-  shiftLeftButtonAction = this->addAction(QIcon(":shiftLeft.png"), tr("Shift Left"));
+  shiftLeftButtonAction = this->addAction(global.getIconResource(":shiftLeft.png"), tr("Shift Left"));
   this->setupShortcut(shiftLeftButtonAction, "Format_Indent_Decrease");
 
-  bulletListButtonAction = this->addAction(QIcon(":bulletList.png"), tr("Bullet List"));
+  bulletListButtonAction = this->addAction(global.getIconResource(":bulletList.png"), tr("Bullet List"));
   this->setupShortcut(bulletListButtonAction, "Format_List_Bullet");
-  numberListButtonAction = this->addAction(QIcon(":numberList.png"), tr("Number List"));
+  numberListButtonAction = this->addAction(global.getIconResource(":numberList.png"), tr("Number List"));
   this->setupShortcut(numberListButtonAction, "Format_List_Numbered");
 
 
@@ -187,7 +187,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   fontColorButtonWidget = new QToolButton(this);
   fontColorButtonWidget->setAutoRaise(false);
   fontColorButtonWidget->setMenu(fontColorMenuWidget->getMenu());
-  fontColorButtonWidget->setIcon(QIcon(":fontColor.png"));
+  fontColorButtonWidget->setIcon(global.getIconResource(":fontColor.png"));
   fontColorButtonWidget->setToolTip(tr("Font Color"));
   fontColorAction = this->addWidget(fontColorButtonWidget);
 
@@ -196,20 +196,20 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   highlightColorButtonWidget = new QToolButton(this);
   highlightColorButtonWidget->setAutoRaise(false);
   highlightColorButtonWidget->setMenu(highlightColorMenuWidget->getMenu());
-  highlightColorButtonWidget->setIcon(QIcon(":fontHighlight.png"));
+  highlightColorButtonWidget->setIcon(global.getIconResource(":fontHighlight.png"));
   highlightColorButtonWidget->setToolTip(tr("Highlight"));
   highlightColorAction = this->addWidget(highlightColorButtonWidget);
 
-  todoButtonAction = this->addAction(QIcon(":todo.png"), tr("Todo"));
+  todoButtonAction = this->addAction(global.getIconResource(":todo.png"), tr("Todo"));
   this->setupShortcut(todoButtonAction, "Edit_Insert_Todo");
 
-  spellCheckButtonAction = this->addAction(QIcon(":spellCheck.png"), tr("Spell Check"));
+  spellCheckButtonAction = this->addAction(global.getIconResource(":spellCheck.png"), tr("Spell Check"));
   this->setupShortcut(spellCheckButtonAction, "Note_Spell_Check");
 
-  insertTableButtonAction = this->addAction(QIcon(":grid.png"), tr("Insert Table"));
+  insertTableButtonAction = this->addAction(global.getIconResource(":grid.png"), tr("Insert Table"));
   this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
 
-  htmlEntitiesButtonAction = this->addAction(QIcon(":htmlentities.png"), tr("Insert HTML Entities"));
+  htmlEntitiesButtonAction = this->addAction(global.getIconResource(":htmlentities.png"), tr("Insert HTML Entities"));
 //  this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
 }
 

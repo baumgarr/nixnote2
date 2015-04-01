@@ -21,9 +21,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define STARTUPCONFIG_H
 
 #include <QString>
+#include <QHash>
+#include <QIcon>
+#include <QPixmap>
 
 class StartupConfig
 {
+private:
+    void loadTheme(QString theme);
 public:
     StartupConfig();
     QString name;
