@@ -469,8 +469,8 @@ void NMainMenuBar::setupHelpMenu() {
             this, SLOT(openManual()));
     helpMenu->addAction(openManualAction);
 
-    openUserForumAction = new QAction(tr("User Forum"), this);
-    openUserForumAction->setToolTip(tr("Go to the support forum."));
+    openUserForumAction = new QAction(tr("Evernote User Forum"), this);
+    openUserForumAction->setToolTip(tr("Go to the Evernote user support forum."));
     openUserForumAction->setFont(font);
     connect(openUserForumAction, SIGNAL(triggered()), this, SLOT(openUserForum()));
     helpMenu->addAction(openUserForumAction);
@@ -531,7 +531,7 @@ void NMainMenuBar::openManual() {
 
 
 void NMainMenuBar::openUserForum() {
-    QDesktopServices::openUrl(QUrl("https://sourceforge.net/apps/phpbb/nevernote/?source=navbar"));
+    QDesktopServices::openUrl(QUrl("https://discussion.evernote.com/index.php"));
 }
 
 
