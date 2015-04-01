@@ -196,94 +196,110 @@
 <context>
     <name>AppearancePreferences</name>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="37"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="39"/>
         <source>Show tray icon</source>
         <translation>Zobrazovat ikonu v systémové části panelu</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="38"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="40"/>
         <source>Display PDFs inline</source>
         <translation>Zobrazuj PDF jako vložené</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="39"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="41"/>
         <source>Show splash screen on startup</source>
         <translation>Zobrazovat úvodní obrázek při spuštění</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="40"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="42"/>
         <source>Start automatically at login</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="41"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="43"/>
         <source>Show missed reminders on startup</source>
         <translation>Zobrazovat zmeškané připomínky při spuštění</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="42"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="44"/>
         <source>Always Start minimized</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="43"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="45"/>
         <source>Show notebook and tag totals</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="68"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="73"/>
         <source>Startup Behavior</source>
         <translation>Chování při spuštění</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="70"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="75"/>
         <source>Restore Selection Criteria</source>
         <translation>Obnovit kritéria výběru</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="71"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="76"/>
         <source>Select Default Notebook</source>
         <translation>Vyberte výchozí poznámkový blok</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="72"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="77"/>
         <source>View All Notebooks</source>
         <translation>Zobrazit všechny poznámkové bloky</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="79"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="84"/>
         <source>Minimize to tray</source>
         <translation type="unfinished">Minimalizovat do systémové části</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="80"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="85"/>
         <source>Close to tray</source>
         <translation type="unfinished">Zavřít do systémové části</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="93"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="98"/>
         <source>Default GUI Font*</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="96"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="101"/>
         <source>Default GUI Font Size*</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="99"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="104"/>
         <source>Default Editor Font*</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="105"/>
-        <source>Window Icon*</source>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="110"/>
+        <source>Theme*</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="291"/>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="309"/>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="328"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="112"/>
+        <source>Preview</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="394"/>
+        <source>Preview Not Found</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="394"/>
+        <source>This theme has not provided an image preview.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="69"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="314"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="332"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="351"/>
         <source>System Default</source>
         <translation type="unfinished"></translation>
     </message>
@@ -869,27 +885,27 @@
 <context>
     <name>FindReplace</name>
     <message>
-        <location filename="../gui/findreplace.cpp" line="43"/>
+        <location filename="../gui/findreplace.cpp" line="46"/>
         <source>Next</source>
         <translation>Další</translation>
     </message>
     <message>
-        <location filename="../gui/findreplace.cpp" line="44"/>
+        <location filename="../gui/findreplace.cpp" line="47"/>
         <source>Previous</source>
         <translation>Předchozí</translation>
     </message>
     <message>
-        <location filename="../gui/findreplace.cpp" line="45"/>
+        <location filename="../gui/findreplace.cpp" line="48"/>
         <source>Match case</source>
         <translation>Rozlišovat malá/VELKÁ</translation>
     </message>
     <message>
-        <location filename="../gui/findreplace.cpp" line="54"/>
+        <location filename="../gui/findreplace.cpp" line="57"/>
         <source>Replace</source>
         <translation>Nahradit</translation>
     </message>
     <message>
-        <location filename="../gui/findreplace.cpp" line="55"/>
+        <location filename="../gui/findreplace.cpp" line="58"/>
         <source>Replace all</source>
         <translation>Nahradit vše</translation>
     </message>
@@ -2715,24 +2731,24 @@ Dokud nebude tidy nainstalován, nebude možné ukládat žádné poznámky.</tr
         <translation>Kvóta</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="468"/>
-        <location filename="../nixnote.cpp" line="2361"/>
+        <location filename="../nixnote.cpp" line="466"/>
+        <location filename="../nixnote.cpp" line="2359"/>
         <source>Screen Capture</source>
         <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
         <translation>Snímat obrazovku</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="482"/>
+        <location filename="../nixnote.cpp" line="480"/>
         <source>Show/Hide</source>
         <translation>Zobrazit/Skrýt</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="489"/>
+        <location filename="../nixnote.cpp" line="487"/>
         <source>Close</source>
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1454"/>
+        <location filename="../nixnote.cpp" line="1452"/>
         <source>This is used to restore a database from backups.
 It is HIGHLY recommened that this only be used to populate
 an empty database.  Restoring into a database that
@@ -2747,222 +2763,222 @@ data, může způsobit nevratné problémy a ztrátu dat.
 Opravdu chcete pokračovat?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1457"/>
+        <location filename="../nixnote.cpp" line="1455"/>
         <source>Confirm Restore</source>
         <translation>Potvrzení obnovení</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1474"/>
+        <location filename="../nixnote.cpp" line="1472"/>
         <source>Restore Database</source>
         <translation>Obnovení databáze</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1476"/>
+        <location filename="../nixnote.cpp" line="1474"/>
         <source>Import Notes</source>
         <translation>Import poznámek</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1389"/>
-        <location filename="../nixnote.cpp" line="1479"/>
+        <location filename="../nixnote.cpp" line="1387"/>
+        <location filename="../nixnote.cpp" line="1477"/>
         <source>NixNote Export (*.nnex);;All Files (*.*)</source>
         <translation>NeverNote Export (*.nnex);;Všechny soubory (*.*)</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="465"/>
+        <location filename="../nixnote.cpp" line="463"/>
         <source>Quick Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="475"/>
+        <location filename="../nixnote.cpp" line="473"/>
         <source>Pinned Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="477"/>
+        <location filename="../nixnote.cpp" line="475"/>
         <source>Recently Updated Notes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1165"/>
+        <location filename="../nixnote.cpp" line="1812"/>
+        <source>Log in to Evernote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../nixnote.cpp" line="1167"/>
         <location filename="../nixnote.cpp" line="1814"/>
-        <source>Log in to Evernote</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../nixnote.cpp" line="1169"/>
-        <location filename="../nixnote.cpp" line="1816"/>
         <source>NixNote</source>
         <translation type="unfinished">NixNote</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1377"/>
-        <location filename="../nixnote.cpp" line="1421"/>
-        <location filename="../nixnote.cpp" line="1514"/>
+        <location filename="../nixnote.cpp" line="1375"/>
+        <location filename="../nixnote.cpp" line="1419"/>
+        <location filename="../nixnote.cpp" line="1512"/>
         <source>Error</source>
         <translation type="unfinished">Chyba</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1377"/>
+        <location filename="../nixnote.cpp" line="1375"/>
         <source>No notes selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1386"/>
+        <location filename="../nixnote.cpp" line="1384"/>
         <source>Backup Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1388"/>
+        <location filename="../nixnote.cpp" line="1386"/>
         <source>Export Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1409"/>
+        <location filename="../nixnote.cpp" line="1407"/>
         <source>Performing backup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1411"/>
+        <location filename="../nixnote.cpp" line="1409"/>
         <source>Performing export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1428"/>
+        <location filename="../nixnote.cpp" line="1426"/>
         <source>Database backup complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1430"/>
+        <location filename="../nixnote.cpp" line="1428"/>
         <source>Note extract complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1481"/>
+        <location filename="../nixnote.cpp" line="1479"/>
         <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1502"/>
+        <location filename="../nixnote.cpp" line="1500"/>
         <source>Restoring database</source>
         <translation>Obnovuji databázi</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1504"/>
+        <location filename="../nixnote.cpp" line="1502"/>
         <source>Importing Notes</source>
         <translation>Import poznámek</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1536"/>
+        <location filename="../nixnote.cpp" line="1534"/>
         <source>Database has been restored.</source>
         <translation>Databáze byla obnovena.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1538"/>
+        <location filename="../nixnote.cpp" line="1536"/>
         <source>Notes have been imported.</source>
         <translation>Poznámky byly naimportovány.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1569"/>
+        <location filename="../nixnote.cpp" line="1567"/>
         <source>Sync Error</source>
         <translation>Chyba synchronizace</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1569"/>
+        <location filename="../nixnote.cpp" line="1567"/>
         <source>Sync completed with errors.</source>
         <translation>Synchronizace dokončena s chybami.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1572"/>
+        <location filename="../nixnote.cpp" line="1570"/>
         <source>Sync Complete</source>
         <translation>Synchronizace dokončena</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1572"/>
+        <location filename="../nixnote.cpp" line="1570"/>
         <source>Sync completed successfully.</source>
         <translation>Synchronizace úspěšně dokončena.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1834"/>
+        <location filename="../nixnote.cpp" line="1832"/>
         <source>This feature is only available to premium users.</source>
         <translation>Tato funkce je dostupná pouze pro prémiové uživatele.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1835"/>
+        <location filename="../nixnote.cpp" line="1833"/>
         <source>Premium Feature</source>
         <translation>Prémiová funkce</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1854"/>
+        <location filename="../nixnote.cpp" line="1852"/>
         <source>Error retrieving note.</source>
         <translation>Chyba při stahování poznámky.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1855"/>
+        <location filename="../nixnote.cpp" line="1853"/>
         <source>Error retrieving note</source>
         <translation>Chyba při stahování poznámky</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1877"/>
+        <location filename="../nixnote.cpp" line="1875"/>
         <source>Note restored</source>
         <translation>Poznámka obnovena</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1881"/>
+        <location filename="../nixnote.cpp" line="1879"/>
         <source>No versions of this note can be found.</source>
         <translation>Nenalezeny žádné verze této poznámky.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1882"/>
+        <location filename="../nixnote.cpp" line="1880"/>
         <source>Note Not Found</source>
         <translation>Poznámka nenalezena</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2254"/>
+        <location filename="../nixnote.cpp" line="2252"/>
         <source>Switch to </source>
         <translation>Přepnout na </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2416"/>
+        <location filename="../nixnote.cpp" line="2414"/>
         <source>Reindex Database</source>
         <translation>Zindexovat databázi</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2416"/>
+        <location filename="../nixnote.cpp" line="2414"/>
         <source>Reindex the entire database?</source>
         <translation>Zindexovat celou databázi?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2425"/>
+        <location filename="../nixnote.cpp" line="2423"/>
         <source>Notes will be reindexed.</source>
         <translation>Poznámky budou zindexovány.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2453"/>
+        <location filename="../nixnote.cpp" line="2451"/>
         <source>Unable to find webcam or capture image.</source>
         <translation>Nemohu nalézt webkameru nebo se nepovedlo získat obraz.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2454"/>
+        <location filename="../nixnote.cpp" line="2452"/>
         <source>Webcam Error</source>
         <translation>Chyba webkamery</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2566"/>
+        <location filename="../nixnote.cpp" line="2564"/>
         <source>Delete </source>
         <translation>Smazat </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2569"/>
+        <location filename="../nixnote.cpp" line="2567"/>
         <source>Permanently delete </source>
         <translation>Trvale smazat </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2573"/>
+        <location filename="../nixnote.cpp" line="2571"/>
         <source>this note?</source>
         <translation> tuto poznámku?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2576"/>
+        <location filename="../nixnote.cpp" line="2574"/>
         <source>Verify Delete</source>
         <translation>Potvrzení smazání</translation>
     </message>

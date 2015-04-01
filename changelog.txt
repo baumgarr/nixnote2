@@ -1,5 +1,6 @@
 NixNote (2.0-beta-3) stable; urgency=low
   * Added the ability to change GUI fonts & font sizes.
+  * Added the ability to change GUI icons.
   * Added the option to only show popup notices if a sync fails.
   * Added debug option to disable tag name sorting to bypass 
     non-ASCII character bug.

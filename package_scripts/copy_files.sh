@@ -54,6 +54,7 @@ mkdir $package_dir/nixnote2/usr/share/doc/nixnote2
 
 # Copy binary, configs, & man pages
 echo "Copying files"
+cp $source_dir/*.ini $package_dir/nixnote2/usr/share/nixnote2/
 cp $source_dir/*.txt $package_dir/nixnote2/usr/share/nixnote2/
 cp $source_dir/*.html $package_dir/nixnote2/usr/share/nixnote2/
 cp $source_dir/nixnote2.desktop $package_dir/nixnote2/usr/share/applications/

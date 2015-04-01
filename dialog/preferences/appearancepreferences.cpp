@@ -18,12 +18,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "appearancepreferences.h"
+#include "themepreview.h"
 #include "global.h"
 
 #include <QFontDatabase>
 #include <QWebSettings>
 #include <QtGui/QDesktopWidget>
 #include <QApplication>
+#include <QMessageBox>
 
 extern Global global;
 
@@ -106,7 +108,10 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(defaultFontSizeChooser, row++, 1);
 
     mainLayout->addWidget(new QLabel(tr("Theme*")), row,0);
-    mainLayout->addWidget(windowThemeChooser, row++,1);
+    mainLayout->addWidget(windowThemeChooser, row,1);
+    previewButton = new QPushButton(tr("Preview"));
+    mainLayout->addWidget(previewButton, row++, 2);
+    connect(previewButton, SIGNAL(clicked()), this, SLOT(themePreview()));
 
     mainLayout->addWidget(new QLabel(""), row++, 0);
     mainLayout->addWidget(new QLabel("* May require restart on some systems."), row++, 0);
@@ -204,6 +209,7 @@ void AppearancePreferences::saveValues() {
             global.settings->remove("themeName");
         else
             global.settings->setValue("themeName", themeName);
+        global.loadTheme(global.resourceList,themeName);
 
         QWebSettings *settings = QWebSettings::globalSettings();
         settings->setFontFamily(QWebSettings::StandardFont, global.defaultFont);
@@ -216,10 +222,10 @@ void AppearancePreferences::saveValues() {
 
 
     // See if the user has overridden the window icon
-    index = windowThemeChooser->currentIndex();
-    QString userIcon = windowThemeChooser->itemData(index).toString();
-    if (userIcon != global.getResourceFileName(userIcon)) {
-        global.settings->setValue("windowIcon", userIcon);
+//    index = windowThemeChooser->currentIndex();
+//    QString userIcon = windowThemeChooser->itemData(index).toString();
+//    if (userIcon != global.getResourceFileName(userIcon)) {
+        //global.settings->setValue("windowIcon", userIcon);
 
         //Copy the nixnote2.desktop so we can override the app icon
         // Ideally, we could use QSettings since it is ini format, but
@@ -234,7 +240,7 @@ void AppearancePreferences::saveValues() {
             QString line = data.readLine();
             while (!line.isNull()) {
                 if (line.startsWith("Icon=")) {
-                    line = "Icon=" +global.fileManager.getProgramDirPath("")+"images/"+userIcon.mid(1);
+                    line = "Icon=" +global.getResourceFileName(global.resourceList,":windowIcon.png");
                 }
                 desktopData.append(line);
                 line = data.readLine();
@@ -253,7 +259,7 @@ void AppearancePreferences::saveValues() {
         }
         userIni.close();
 
-    }
+//    }
 
     // Setup if the user wants to start NixNote the next time they login.
     global.settings->setValue("autoStart", autoStart->isChecked());
@@ -271,7 +277,7 @@ void AppearancePreferences::saveValues() {
             QString line = data.readLine();
             while (!line.isNull()) {
                 if (line.startsWith("Icon=")) {
-                    line = "Icon=" +global.fileManager.getProgramDirPath("")+"images/"+userIcon.mid(1);
+                    line = "Icon=" +global.getResourceFileName(global.resourceList,":windowIcon.png");
                 }
                 desktopData.append(line);
                 line = data.readLine();
@@ -373,6 +379,25 @@ void AppearancePreferences::showTrayIconChanged(bool value) {
         minimizeToTray->setEnabled(false);
         closeToTray->setEnabled(false);
     }
+}
+
+
+void AppearancePreferences::themePreview() {
+    QHash<QString,QString> resourceList;
+    int idx = this->windowThemeChooser->currentIndex();
+    QString themeName = "";
+    if (idx>0)
+        themeName = windowThemeChooser->itemText(idx);
+    global.loadTheme(resourceList, themeName);
+    if (resourceList[":themePreview.png"] == "" && idx>0) {
+        QMessageBox mb;
+        mb.information(this, tr("Preview Not Found"), tr("This theme has not provided an image preview."));
+        return;
+    }
+
+    QString file = global.getResourceFileName(resourceList, ":themePreview.png");
+    ThemePreview preview(file);
+    preview.exec();
 }
 
 

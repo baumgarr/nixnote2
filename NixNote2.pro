@@ -181,7 +181,8 @@ SOURCES += main.cpp\
     gui/favoritesviewitem.cpp \
     sql/favoritestable.cpp \
     sql/favoritesrecord.cpp \
-    filters/remotequery.cpp
+    filters/remotequery.cpp \
+    dialog/preferences/themepreview.cpp
 
 
 
@@ -336,7 +337,8 @@ HEADERS  += nixnote.h \
     gui/favoritesviewitem.h \
     sql/favoritestable.h \
     sql/favoritesrecord.h \
-    filters/remotequery.h
+    filters/remotequery.h \
+    dialog/preferences/themepreview.h
 
 
 #INCLUDEPATH += /usr/local/include/thrift \

@@ -145,7 +145,7 @@ void Global::setup(StartupConfig startupConfig) {
 
     settings->beginGroup("Appearance");
     QString theme = settings->value("themeName", "").toString();
-    loadTheme(theme);
+    loadTheme(resourceList,theme);
     settings->endGroup();
 
     minIndexInterval = 5000;
@@ -465,7 +465,7 @@ QFont Global::getGuiFont(QFont f) {
 
 
 
-QIcon Global::getIconResource(QString key) {
+QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key) {
     if (resourceList.contains(key) && resourceList[key].trimmed()!="")
         return QIcon(resourceList[key]);
     return QIcon(key);
@@ -473,26 +473,44 @@ QIcon Global::getIconResource(QString key) {
 
 
 
+
+QIcon Global::getIconResource(QString key) {
+    return this->getIconResource(resourceList, key);
+}
+
+
+
+
+
 QPixmap Global::getPixmapResource(QString key) {
+    return this->getPixmapResource(resourceList, key);
+}
+
+
+QPixmap Global::getPixmapResource(QHash<QString,QString> &resourceList, QString key) {
     if (resourceList.contains(key) && resourceList[key].trimmed()!="")
         return QPixmap(resourceList[key]);
     return QPixmap(key);
 }
 
 
-void Global::loadTheme(QString theme) {
+void Global::loadTheme(QHash<QString, QString> &resourceList, QString theme) {
+    resourceList.clear();
     if (theme.trimmed() == "")
         return;
     QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
-
-    this->loadThemeFile(systemTheme, theme);
+    this->loadThemeFile(resourceList,systemTheme, theme);
 
     QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
-        this->loadThemeFile(userTheme, theme);
+    this->loadThemeFile(resourceList, userTheme, theme);
 }
 
 
 void Global::loadThemeFile(QFile &file, QString themeName) {
+    this->loadThemeFile(resourceList, file, themeName);
+}
+
+void Global::loadThemeFile(QHash<QString,QString> &resourceList, QFile &file, QString themeName) {
     if (!file.exists())
         return;
     if(!file.open(QIODevice::ReadOnly))
@@ -510,7 +528,6 @@ void Global::loadThemeFile(QFile &file, QString themeName) {
                 themeFound = true;
             if (themeFound && !line.startsWith("[") && line != "") {
                 QStringList fields = line.split("=");
-                QLOG_DEBUG() << fields.size();
                 if (fields.size() >= 2) {
                     QString key = fields[0].simplified();
                     QString value = fields[1].split("#").at(0).simplified();
@@ -570,7 +587,7 @@ void Global::getThemeNamesFromFile(QFile &file, QStringList &values) {
 
 
 
-QString Global::getResourceFileName(QString key) {
+QString Global::getResourceFileName(QHash<QString,QString> &resourceList, QString key) {
         if (resourceList.contains(key) && resourceList[key].trimmed()!="")
             return resourceList[key];
 

@@ -57,12 +57,13 @@
         <file>images/gps.png</file>
         <file>images/notebook_old.png</file>
         <file>images/notebook_small_old.png</file>
-        <file alias="windowIcon.png">images/windowIcon0.png</file>
+        <file alias="windowIcon.png">images/windowIcon.png</file>
         <file alias="expanded.png">images/expanded.png</file>
         <file alias="collapsed.png">images/collapsed.png</file>
         <file alias="htmlentities.png">images/htmlentities.png</file>
         <file alias="screenCapture.png">images/screenCapture.png</file>
         <file alias="favorites.png">images/favorites.png</file>
         <file alias="trayicon.png">images/trayicon.png</file>
+        <file alias="themePreview.png">images/themePreview.png</file>
     </qresource>
 </RCC>

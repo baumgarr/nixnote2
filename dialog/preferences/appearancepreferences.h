@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QLabel>
 #include <QComboBox>
+#include <QPushButton>
 
 class AppearancePreferences : public QWidget
 {
@@ -39,6 +40,7 @@ private:
     QComboBox *defaultGuiFontSizeChooser;
     QComboBox *defaultGuiFontChooser;
     QLabel *defaultNotebookOnStartupLabel;
+    QPushButton *previewButton;
     bool webSettingsChanged;
     void loadFontNames(QComboBox *combo, QString defaultFont);
 
@@ -70,6 +72,7 @@ public slots:
     void loadGuiFontSizes(QString name);
     void fontSizeChanged(QString name);
     void showTrayIconChanged(bool value);
+    void themePreview();
     
 };
 

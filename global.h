@@ -177,12 +177,16 @@ public:
     ReminderManager *reminderManager;
 
     QHash<QString,QString> resourceList;
+    QPixmap getPixmapResource(QHash<QString, QString> &resourceList, QString key);
+    QIcon getIconResource(QHash<QString, QString> &resourceList, QString key);
     QPixmap getPixmapResource(QString key);
     QIcon getIconResource(QString key);
-    void loadTheme(QString themeName);
+    void loadTheme(QHash<QString, QString> &resourceList, QString themeName);
     void loadThemeFile(QFile &file, QString themeName);
+    void loadThemeFile(QHash<QString, QString> &resourceList, QFile &file, QString themeName);
     QStringList getThemeNames();
-    QString getResourceFileName(QString key);
+    QString getResourceFileName(QHash<QString, QString> &resourceList, QString key);
+    QString getResourcefileName(QString key);
     void getThemeNamesFromFile(QFile &file, QStringList &values);
 };
 
