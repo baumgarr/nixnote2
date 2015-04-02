@@ -19,6 +19,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "notemetadata.h"
 
+
+
+// Constructor
 NoteMetaData::NoteMetaData()
 {
     color = -1;
@@ -27,33 +30,59 @@ NoteMetaData::NoteMetaData()
 }
 
 
+
+// Get the GUID for the note
 QString NoteMetaData::getGuid() {
     return guid;
 }
 
 
+
+// Set the GUID for the note
 void NoteMetaData::setGuid(QString g) {
     guid = g;
 }
 
+
+// Get the title color for the note
 int NoteMetaData::getColor() {
     return color;
 }
+
+
+// Set the title color for the note
 void NoteMetaData::setColor(int c) {
     color = c;
 }
+
+
+// Set this note as pinned
 void NoteMetaData::setPinned(bool value) {
     pinned = value;
 }
+
+
+// Is this note pinned?
 bool NoteMetaData::isPinned() {
     return pinned;
 }
+
+
+// Set this note as needing to be synced
 void NoteMetaData::setDirty(bool v) {
     dirty = v;
 }
+
+
+
+// Does this note need to be synchornized
 bool NoteMetaData::isDirty() {
     return dirty;
 }
+
+
+
+// Copy this metadata
 void NoteMetaData::copy(NoteMetaData m) {
     color = m.getColor();
     guid = m.getGuid();

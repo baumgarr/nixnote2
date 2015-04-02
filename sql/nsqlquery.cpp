@@ -26,17 +26,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
+
+// Constructor
 NSqlQuery::NSqlQuery(QSqlDatabase db) :
     QSqlQuery(db)
 {
 }
 
 
-
+// Destructor
 NSqlQuery::~NSqlQuery() {
     this->finish();
 }
 
+
+// Generic exec().  A prepare should have been done already
 bool NSqlQuery::exec() {
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec();
@@ -56,6 +60,7 @@ bool NSqlQuery::exec() {
 
 
 
+// Execute a SQL statement
 bool NSqlQuery::exec(const QString &query) {
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec(query);
@@ -75,12 +80,16 @@ bool NSqlQuery::exec(const QString &query) {
 }
 
 
+
+// Execute a SQL statement
 bool NSqlQuery::exec(const string query) {
     QString q;
     q = QString::fromStdString(query);
     return this->exec(q);
 }
 
+
+// Execute a SQL statement
 bool NSqlQuery::exec(const char *query) {
     QString q;
     q = QString::fromStdString(query);

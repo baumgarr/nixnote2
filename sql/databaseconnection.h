@@ -42,7 +42,7 @@ class DatabaseConnection
 public:
     QSqlDatabase conn;              // The actual database connection
     ConfigStore *configStore;       // Table used to store program settings
-    DataStore *dataStore;      // Table that contains the note data
+    DataStore *dataStore;           // Table that contains the note data
 
     DatabaseConnection(QString connection);           // Generic constructor
     ~DatabaseConnection();          // Destructor

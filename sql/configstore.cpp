@@ -115,6 +115,10 @@ qint32 ConfigStore::incrementLidCounter() {
     return -1;
 }
 
+
+//*******************************************************************
+// Save a setting to the DB
+//*******************************************************************
 void ConfigStore::saveSetting(int key, QByteArray value) {
     NSqlQuery sql(*db);
     // Prepare the SQL statement & fetch the row
@@ -130,6 +134,9 @@ void ConfigStore::saveSetting(int key, QByteArray value) {
 }
 
 
+//*******************************************************************
+// Return a value from the DB
+//*******************************************************************
 bool ConfigStore::getSetting(QByteArray &value, int key) {
     NSqlQuery sql(*db);
     sql.prepare("select value from ConfigStore where key=:key");

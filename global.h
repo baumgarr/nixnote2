@@ -79,117 +79,117 @@ using namespace std;
 class Global
 {
 public:
+    Global();           // Generic constructor
+    ~Global();          // destructor
 
+    // Possible ways tags & notebook counts may be displayed to the user
     enum CountBehavior {
         CountAll = 1,
         CountNone = 2
     };
+    CountBehavior countBehavior;   // How does the user want tags/notebooks to be counted.
 
-    CountBehavior countBehavior;
+    bool disableUploads;           // Should we disable all uploads to Evernote?  Useful for testing.
 
-    bool disableUploads;
-    Global();           // Generic constructor
-    ~Global();          // destructor
-
+    // Valid values for the note list appearance.  Should it be a narrow or wide list
     enum ListViewSetup {
         ListViewWide = 1,
         listViewNarrow = 2
     };
+    ListViewSetup listView;    // Current desired note list value
 
-    ListViewSetup listView;
+    int argc;                  // Initial argument count from the program start
+    char** argv;               // List of arguments from the program start
+    FileManager fileManager;   // Manage file paths
+    AccountsManager *accountsManager;      // Manage user account
+    Application *application;              // pointer to this current application
+    unsigned int cryptCounter;             // Count of crytpographic entries.  This is incremented each time we encrypt some text.
+    QString attachmentNameDelimeter;       // Delimeter between attachment ID & name
+    string username;                       // This is probably obsolete
+    string password;                       // This is probably obsolete
+    bool connected;                        // Are we currently connected to Evernote?
+    bool disableIndexing;                  // Stop indexing
+    bool pdfPreview;                       // Should we view PDFs inline?
+    bool showGoodSyncMessagesInTray;       // Should we show good sync messages in the tray, or just errors?
+    QSharedMemory *sharedMemory;           // Shared memory key.  Useful to prevent multiple instances and for cross memory communication
+    bool confirmDeletes();                 // Should we confirm deletes?
+    QString tagBehavior();                 // Should inactive tags be shown?
+    QString server;                        // Evernote server to sync with
+    QSettings *settings;                   // Pointer to the nixnote config file.  There is a different one for each account.
+    QSettings *globalSettings;             // Pointer to all the config file that is common to all accounts.
+    QClipboard *clipboard;                 // System clipboard pointer
+    ShortcutKeys *shortcutKeys;            // Keyboard shortcuts defined by the user
+    QList<qint32> expungedResources;       // List of expunged resource LIDs
+    QFileSystemWatcher resourceWatcher;    // Watcher for file system directories.  New files here will create anote
+    bool showTrayIcon();                   // Should we show the tray icon?
+    bool closeToTray();                    // Close it to the tray.  We really just hide it.
+    bool minimizeToTray();                 // Minimize it to tray rather than the task list.  We really just hide it.
+    void setMinimizeToTray(bool value);    // Set if we should minimize it to the tray
+    void setCloseToTray(bool value);       // Set if we should close it to the tray
+    void setColumnPosition(QString col, int position);    // Save the order of a  note list's column.
+    void setColumnWidth(QString col, int width);          // Save the width of a note list column
+    int getColumnPosition(QString col);                   // Get the desired position of a note column
+    int getColumnWidth(QString col);                      // Get the desired width o a note column.
+    int getMinimumRecognitionWeight();                    // Minimum OCR recognition confidence before including it in search results.
+    void setSynchronizeAttachments(bool value);           // Should at
+    bool synchronizeAttachments();                        // This is probabably obsolete
+    qlonglong getLastReminderTime();                      // Get the last time we actually showed a user note reminders.
+    void setLastReminderTime(qlonglong value);            // Save the date/time we last showed a user note reminders.
+    void setMinimumRecognitionWeight(int weight);         // Set the minimum OCR recgnition confidence before including it in search results.
+    QString dateFormat;                                   // Desired display date format
+    QString timeFormat;                                   // Desired display time format
+    QSqlDatabase *db;                                     // "default" DB connection for the main thread.
+    bool javaFound;                                       // Have we found Java?
+    QString defaultFont;                                  // Default editor font name
+    int defaultFontSize;                                  // Default editor font size
+    int defaultGuiFontSize;                               // Default GUI font size
+    QString defaultGuiFont;                               // Default GUI font name
+    bool startupNewNote;                                  // Were we started with the command to begin a new note?
+    bool forceNoStartMimized;                             // Force the system to not start minimized, dispite the user's settings
+    bool forceStartMinimized;                             // Force it to start minimized, despiet the user's settings
+    bool startMinimized;                                  // Do user prefernces say to start minimized?
+    bool syncAndExit;                                     // Should we just start, do a sync, and then quit?
+    qint32 startupNote;                                   // Initial note to startup with.
 
-    int argc;           // Initial argument count from the program start
-    char** argv;        // List of arguments from the program start
-    FileManager fileManager;
-    AccountsManager *accountsManager;\
-    Application *application;
-    unsigned int cryptCounter;
-    QString attachmentNameDelimeter;
-    string username;
-    string password;
-    bool connected;
-    bool disableIndexing;
-    bool pdfPreview;
-    bool showGoodSyncMessagesInTray;
-    QSharedMemory *sharedMemory;
-    bool confirmDeletes();
-    QString tagBehavior();
-    QString server;
-    QSettings *settings;
-    QSettings *globalSettings;
-    QClipboard *clipboard;
-    ShortcutKeys *shortcutKeys;
-    QList<qint32> expungedResources;
-    QFileSystemWatcher resourceWatcher;
-    bool showTrayIcon();
-    bool closeToTray();
-    bool minimizeToTray();
-    void setMinimizeToTray(bool value);
-    void setCloseToTray(bool value);
-    void setColumnPosition(QString col, int position);
-    void setColumnWidth(QString col, int width);
-    int getColumnPosition(QString col);
-    int getColumnWidth(QString col);
-    int getMinimumRecognitionWeight();
-    void setSynchronizeAttachments(bool value);
-    bool synchronizeAttachments();
-    qlonglong getLastReminderTime();
-    void setLastReminderTime(qlonglong value);
-    void setMinimumRecognitionWeight(int weight);
-    QString dateFormat;
-    QString timeFormat;
-    QSqlDatabase *db;
-    bool javaFound;
-    QString defaultFont;
-    int defaultFontSize;
-    int defaultGuiFontSize;
-    QString defaultGuiFont;
-    bool startupNewNote;
-    bool forceNoStartMimized;
-    bool forceStartMinimized;
-    bool startMinimized;
-    bool syncAndExit;
-    qint32 startupNote;
-
-    qint32 minIndexInterval;
-    qint32 maxIndexInterval;
-    qint32 indexResourceCountPause;
-    qint32 indexNoteCountPause;
+    qint32 minIndexInterval;                              // Minimum interval to check for any unindexed notes.
+    qint32 maxIndexInterval;                              // Maximum interval to check for any unindexed notes.
+    qint32 indexResourceCountPause;                       // After indexing this many resources we pause to avoid overloading the CPU
+    qint32 indexNoteCountPause;                           // After indexing this many notes we pause to avoid overloading the CPU
 
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;
     qint32 filterPosition;
 
-    // Note cache
-    QHash<int, NoteCache*> cache;
+    QHash<int, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
 
-    void setup(StartupConfig config);  // Setup the global variables
-    QString getProgramDirPath();      // Get the path the program is executing from
-    QList< QPair<QString, QString> > passwordRemember;   // Cache of passwords
+    void setup(StartupConfig config);                         // Setup the global variables
+    QString getProgramDirPath();                              // Get the path the program is executing from
+    QList< QPair<QString, QString> > passwordRemember;        // Cache of passwords
     QHash< QString, QPair <QString, QString> > passwordSafe;  // Saved passwords
     void appendFilter(FilterCriteria *criteria);
-    void setupDateTimeFormat();
-    //QString getWindowIcon();
-    QFont getGuiFont(QFont f);
+    void setupDateTimeFormat();                               // Setup the user's desired date & time format
+    QFont getGuiFont(QFont f);                                // Get the user's desired GUI font
 
-    bool nonAsciiSortBug;  // Workaround for non-ASCII characters in tag name sorting
+    bool nonAsciiSortBug;                                     // Workaround for non-ASCII characters in tag name sorting
 
-    ReminderManager *reminderManager;
+    ReminderManager *reminderManager;                         // Used to alert the user when a reminder time has expired
 
-    QHash<QString,QString> resourceList;
-    QPixmap getPixmapResource(QHash<QString, QString> &resourceList, QString key);
-    QIcon getIconResource(QHash<QString, QString> &resourceList, QString key);
-    QPixmap getPixmapResource(QString key);
-    QIcon getIconResource(QString key);
-    void loadTheme(QHash<QString, QString> &resourceList, QString themeName);
-    void loadThemeFile(QFile &file, QString themeName);
-    void loadThemeFile(QHash<QString, QString> &resourceList, QFile &file, QString themeName);
-    QStringList getThemeNames();
-    QString getResourceFileName(QHash<QString, QString> &resourceList, QString key);
-    QString getResourcefileName(QString key);
-    void getThemeNamesFromFile(QFile &file, QStringList &values);
+
+    // These functions deal with the icon themes
+    QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme
+    QPixmap getPixmapResource(QHash<QString, QString> &resourceList, QString key);   // Get a pixmap from the user's (or default) theme
+    QPixmap getPixmapResource(QString key);                   // Get a pixmap from the user's (or default) theme
+    QIcon getIconResource(QHash<QString, QString> &resourceList, QString key);       // Get an icon from the user's (or default) theme
+    QIcon getIconResource(QString key);                       // Get an icon from the user's (or default) theme
+    void loadTheme(QHash<QString, QString> &resourceList, QString themeName);   // Load an icon theme into the resourceList
+    void loadThemeFile(QFile &file, QString themeName);       // Load a given theme's values from a a file.
+    void loadThemeFile(QHash<QString, QString> &resourceList, QFile &file, QString themeName);    // Load a given theme's values from a file
+    QStringList getThemeNames();                               // Get a list of all available theme names
+    QString getResourceFileName(QHash<QString, QString> &resourceList, QString key);    // Get the actual file path for a given icon theme
+    QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme
+    void getThemeNamesFromFile(QFile &file, QStringList &values);  // Get all themes available in a given file
 };
 
-bool caseInsensitiveLessThan(const QString &s1, const QString &s2);
+bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.
 
 #endif // GLOBAL_H

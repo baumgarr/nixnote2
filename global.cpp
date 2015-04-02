@@ -54,6 +54,7 @@ Global::Global()
 }
 
 
+// Destructor
 Global::~Global() {
     FilterCriteria *criteria;
     for (int i=0; i<filterCriteria.size(); i++) {
@@ -62,6 +63,8 @@ Global::~Global() {
             delete criteria;
     }
 }
+
+
 
 //Initial global settings setup
 void Global::setup(StartupConfig startupConfig) {
@@ -170,16 +173,23 @@ QString Global::getProgramDirPath() {
     return path;
 }
 
+
+// Should we confirm all deletes?
 bool Global::confirmDeletes() {
     return true;
 }
 
 
+
+// Should we display tag counts?  This is really just a stub for future changes
 QString Global::tagBehavior() {
     return "Count";
 }
 
 
+
+
+// Append the filter criteria to the filterCriteria queue.
 void Global::appendFilter(FilterCriteria *criteria) {
     // First, find out if we're already viewing history.  If we are we
     // chop off the end of the history & start a new one
@@ -193,6 +203,8 @@ void Global::appendFilter(FilterCriteria *criteria) {
 }
 
 
+
+// Should we show the tray icon?
 bool Global::showTrayIcon() {
     bool showTrayIcon;
     settings->beginGroup("Appearance");
@@ -202,6 +214,8 @@ bool Global::showTrayIcon() {
 }
 
 
+
+// Should we minimize to the tray
 bool Global::minimizeToTray() {
     bool showTrayIcon;
     settings->beginGroup("Appearance");
@@ -211,6 +225,8 @@ bool Global::minimizeToTray() {
 }
 
 
+
+// Should we close to the tray?
 bool Global::closeToTray() {
     bool showTrayIcon;
     settings->beginGroup("Appearance");
@@ -220,6 +236,8 @@ bool Global::closeToTray() {
 }
 
 
+
+// Save the user request to minimize to the tray
 void Global::setMinimizeToTray(bool value) {
     settings->beginGroup("SaveState");
     settings->setValue("minimizeToTray", value);
@@ -227,6 +245,8 @@ void Global::setMinimizeToTray(bool value) {
 }
 
 
+
+// Save the user's request to close to the tray
 void Global::setCloseToTray(bool value) {
     settings->beginGroup("SaveState");
     settings->setValue("closeToTray", value);
@@ -235,7 +255,7 @@ void Global::setCloseToTray(bool value) {
 
 
 
-
+// Save the position of a column in the note list.
 void Global::setColumnPosition(QString col, int position) {
     if (listView == ListViewWide)
         settings->beginGroup("ColumnPosition-Wide");
@@ -248,7 +268,7 @@ void Global::setColumnPosition(QString col, int position) {
 
 
 
-
+// Save the with of a column in the note list
 void Global::setColumnWidth(QString col, int width) {
     if (listView == ListViewWide)
         settings->beginGroup("ColumnWidth-Wide");
@@ -259,6 +279,8 @@ void Global::setColumnWidth(QString col, int width) {
 }
 
 
+
+// Get the desired width for a given column
 int Global::getColumnWidth(QString col) {
     if (listView == ListViewWide)
         settings->beginGroup("ColumnWidth-Wide");
@@ -271,6 +293,7 @@ int Global::getColumnWidth(QString col) {
 
 
 
+// Get the position of a given column in the note list
 int Global::getColumnPosition(QString col) {
     if (listView == ListViewWide)
         settings->beginGroup("ColumnPosition-Wide");
@@ -282,6 +305,9 @@ int Global::getColumnPosition(QString col) {
  }
 
 
+
+// Get the minimum recognition confidence.  Anything below this minimum will not be
+// included in search results.
 int Global::getMinimumRecognitionWeight() {
     settings->beginGroup("Search");
     int value = settings->value("minimumRecognitionWeight", 20).toInt();
@@ -291,6 +317,7 @@ int Global::getMinimumRecognitionWeight() {
 
 
 
+// Save the minimum recognition weight for an item to be included in a serch result
 void Global::setMinimumRecognitionWeight(int weight) {
     settings->beginGroup("Search");
     settings->setValue("minimumRecognitionWeight", weight);
@@ -300,7 +327,7 @@ void Global::setMinimumRecognitionWeight(int weight) {
 
 
 
-
+// Should we synchronize attachments?  Not really useful except in debugging
 bool Global::synchronizeAttachments() {
     settings->beginGroup("Search");
     bool value = settings->value("synchronizeAttachments", true).toBool();
@@ -310,6 +337,7 @@ bool Global::synchronizeAttachments() {
 
 
 
+// Should we synchronize attachments?  Not really useful except in debugging
 void Global::setSynchronizeAttachments(bool value) {
     settings->beginGroup("Search");
     settings->setValue("synchronizeAttachments", value);
@@ -318,6 +346,7 @@ void Global::setSynchronizeAttachments(bool value) {
 
 
 
+// get the last time we issued a reminder
 qlonglong Global::getLastReminderTime() {
     settings->beginGroup("Reminders");
     qlonglong value = settings->value("lastReminderTime", 0).toLongLong();
@@ -325,11 +354,14 @@ qlonglong Global::getLastReminderTime() {
     return value;
 }
 
+
+// Save the last time we issued a reminder.
 void Global::setLastReminderTime(qlonglong value) {
     settings->beginGroup("Reminders");
     settings->setValue("lastReminderTime", value);
     settings->endGroup();
 }
+
 
 
 // Setup the default date & time formatting
@@ -447,14 +479,9 @@ bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
      return s1.toLower() < s2.toLower();
  }
 
-//QString Global::getWindowIcon() {
-//    settings->beginGroup("Appearance");
-//    QString value = settings->value("windowIcon", ":windowIcon0.png").toString();
-//    settings->endGroup();
-//    return value;
-//}
 
 
+// Get the default GUI font
 QFont Global::getGuiFont(QFont f) {
     if (defaultGuiFont != "")
         f.setFamily(defaultGuiFont);
@@ -464,7 +491,7 @@ QFont Global::getGuiFont(QFont f) {
 }
 
 
-
+// Get a QIcon of in an icon theme
 QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key) {
     if (resourceList.contains(key) && resourceList[key].trimmed()!="")
         return QIcon(resourceList[key]);
@@ -473,7 +500,7 @@ QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key)
 
 
 
-
+// Get a QIcon in an icon theme
 QIcon Global::getIconResource(QString key) {
     return this->getIconResource(resourceList, key);
 }
@@ -481,12 +508,13 @@ QIcon Global::getIconResource(QString key) {
 
 
 
-
+// Get a QPixmap from an icon theme
 QPixmap Global::getPixmapResource(QString key) {
     return this->getPixmapResource(resourceList, key);
 }
 
 
+// Get a QPixmap from an icon theme
 QPixmap Global::getPixmapResource(QHash<QString,QString> &resourceList, QString key) {
     if (resourceList.contains(key) && resourceList[key].trimmed()!="")
         return QPixmap(resourceList[key]);
@@ -494,6 +522,8 @@ QPixmap Global::getPixmapResource(QHash<QString,QString> &resourceList, QString 
 }
 
 
+
+// Load a theme into a resourceList.
 void Global::loadTheme(QHash<QString, QString> &resourceList, QString theme) {
     resourceList.clear();
     if (theme.trimmed() == "")
@@ -506,10 +536,15 @@ void Global::loadTheme(QHash<QString, QString> &resourceList, QString theme) {
 }
 
 
+
+// Load a theme from a given file
 void Global::loadThemeFile(QFile &file, QString themeName) {
     this->loadThemeFile(resourceList, file, themeName);
 }
 
+
+
+// Load a theme from a given file
 void Global::loadThemeFile(QHash<QString,QString> &resourceList, QFile &file, QString themeName) {
     if (!file.exists())
         return;
@@ -545,7 +580,7 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QFile &file, QS
 }
 
 
-
+// Get all available themes
 QStringList Global::getThemeNames() {
     QStringList values;
     values.empty();
@@ -561,7 +596,7 @@ QStringList Global::getThemeNames() {
 
 
 
-
+// Get themes contained in a given file
 void Global::getThemeNamesFromFile(QFile &file, QStringList &values) {
     if (!file.exists())
         return;
@@ -587,6 +622,7 @@ void Global::getThemeNamesFromFile(QFile &file, QStringList &values) {
 
 
 
+// Get the full path of a resource in a theme file
 QString Global::getResourceFileName(QHash<QString,QString> &resourceList, QString key) {
         if (resourceList.contains(key) && resourceList[key].trimmed()!="")
             return resourceList[key];

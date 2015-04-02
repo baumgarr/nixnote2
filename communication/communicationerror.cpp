@@ -20,6 +20,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "communicationerror.h"
 
+
+
+// Default constructor
 CommunicationError::CommunicationError(QObject *parent) :
     QObject(parent)
 {
@@ -27,6 +30,7 @@ CommunicationError::CommunicationError(QObject *parent) :
 }
 
 
+// Reset the last communication error messages
 void CommunicationError::reset() {
     retryCount = 0;
     maxRetryCount = 3;
@@ -35,6 +39,8 @@ void CommunicationError::reset() {
     type = None;
 }
 
+
+// Retry after the last error
 bool CommunicationError::retry() {
     if (retryCount < maxRetryCount)
         return true;

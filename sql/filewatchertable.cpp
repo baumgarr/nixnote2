@@ -27,6 +27,9 @@ FileWatcherTable::FileWatcherTable(QSqlDatabase *db)
 }
 
 
+
+
+// Add a new directory to watch
 qint32 FileWatcherTable::addEntry(qint32 lid, QString baseDir, FileWatcher::ScanType type, qint32 notebookLid, bool includeSubdirs) {
     if (lid == 0) {
         ConfigStore cs(global.db);
@@ -57,6 +60,9 @@ qint32 FileWatcherTable::addEntry(qint32 lid, QString baseDir, FileWatcher::Scan
     return lid;
 }
 
+
+
+// Get an individual record
 void FileWatcherTable::get(qint32 lid, QString &baseDir, FileWatcher::ScanType &type, qint32 &notebookLid, bool &includeSubdirs) {
     NSqlQuery sql(*db);
     sql.prepare("Select key, data from DataStore where lid=:lid");
@@ -89,6 +95,10 @@ void FileWatcherTable::get(qint32 lid, QString &baseDir, FileWatcher::ScanType &
     sql.finish();
 }
 
+
+
+
+// Find the record by a directory name
 qint32 FileWatcherTable::findLidByDir(QString baseDir) {
     NSqlQuery sql(*db);
     sql.prepare("Select lid from DataStore where key=:key and data=:data");
@@ -103,6 +113,9 @@ qint32 FileWatcherTable::findLidByDir(QString baseDir) {
 }
 
 
+
+
+// Get all LIDs for file watchers
 qint32 FileWatcherTable::getAll(QList<qint32> &lids) {
     NSqlQuery sql(*db);
     sql.prepare("Select lid from DataStore where key=:key");
@@ -115,6 +128,9 @@ qint32 FileWatcherTable::getAll(QList<qint32> &lids) {
     return lids.size();
 }
 
+
+
+// Remove a record
 void FileWatcherTable::expunge(qint32 lid) {
     NSqlQuery sql(*db);
     sql.prepare("Delete from datastore where lid=:lid");

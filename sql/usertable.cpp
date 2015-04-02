@@ -60,6 +60,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 extern Global global;
 
+
+// Default constructor
 UserTable::UserTable(QSqlDatabase *db)
 {
     this->db = db;
@@ -369,6 +371,7 @@ qlonglong UserTable::getLastSyncDate() {
     return 0;
 }
 
+
 // Get the last sequence number
 qint32 UserTable::getLastSyncNumber() {
     qint32 value = 0;
@@ -400,6 +403,7 @@ void UserTable::updateLastSyncDate(long date) {
     query.finish();
 }
 
+
 // update the last sequence number
 void UserTable::updateLastSyncNumber(qint32 value) {
     NSqlQuery query(*db);
@@ -414,6 +418,7 @@ void UserTable::updateLastSyncNumber(qint32 value) {
 }
 
 
+// Fetch the user record fro the DB
 void UserTable::getUser(User &user) {
     NSqlQuery query(*db);
     query.exec("Select key, data from UserTable;");
@@ -477,6 +482,8 @@ void UserTable::getUser(User &user) {
 }
 
 
+
+// Get the amount of data the user has uploaded
 qlonglong UserTable::getUploadAmt() {
     qint32 retval = 0;
     NSqlQuery query(*db);

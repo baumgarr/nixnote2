@@ -24,6 +24,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlTableModel>
 #include <QList>
 
+
+//***********************************************************
+// The DataStore is the "main" table which contains multiple
+// values.  It consists of a LID which identifies a note,
+// a value which is the actual data, and a key which
+// identifies what the value actually is (i.e. is it a
+// note title, a note body, tag name, notebook GUID...
+//***********************************************************
 using namespace std;
 
 #include "qevercloud/include/QEverCloud.h"
@@ -39,7 +47,6 @@ private:
 
 public:
     explicit DataStore(QSqlDatabase *db);
-    qint32 getDirtyNoteGuids(QList<QString> &retVal);
 
 signals:
 

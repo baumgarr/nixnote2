@@ -18,6 +18,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
+//* Favorites Records are used to store information that the user
+//* defines in the upper left corner as a "favorite".  It can be
+//* many different types of items.
 
 #ifndef FAVORITESRECORD_H
 #define FAVORITESRECORD_H
@@ -32,6 +35,8 @@ class FavoritesRecord : public QObject
     Q_OBJECT
 public:
     explicit FavoritesRecord(QObject *parent = 0);
+
+    // What type of favorite record is it
     enum FavoritesRecordType {
         Note=1,
         Tag=2,
@@ -44,12 +49,14 @@ public:
         LinkedNotebook=9,
         LinkedStack=10
     };
-    qint32  lid;
-    QString displayName;
-    qint32 order;
-    FavoritesRecordType  type;
-    QVariant  target;
-    qint32 parent;
+
+
+    qint32  lid;                // LID of the actual note/notebook/tag/search...
+    QString displayName;        // Display nme to show in the favorites list
+    qint32 order;               // Display order (lower ones show up first)
+    FavoritesRecordType  type;  // The actual type of record we point to
+    QVariant  target;           // The target of the record
+    qint32 parent;              // The parent of this record
 
 
 signals:

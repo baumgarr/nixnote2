@@ -52,22 +52,27 @@ class SharedNotebookTable
 private:
     QSqlDatabase *db;
 public:
-    SharedNotebookTable(QSqlDatabase *db);                  // Constructor
+    SharedNotebookTable(QSqlDatabase *db);     // Constructor
+
+    // DB Read Functions
     qint32 getLid(qlonglong id);               // given a guid, return the lid
-    qint32 sync(SharedNotebook &sharedNotebook); // Sync a notebook with a new record
-    qint32 sync(qint32 lid, SharedNotebook sharedNotebook); // Sync a notebook with a new record
-    qint32 add(qint32 lid, const SharedNotebook &t, bool isDirty); // Add a new record
-    bool get(SharedNotebook &notebook, qint32 lid);           // Get a shared notebook given a lid
+    bool get(SharedNotebook &notebook, qint32 lid);     // Get a shared notebook given a lid
     bool isDirty(qint32 lid);                  // Check if a shared notebook is dirty
     bool exists(qint32 lid);                   // Does this shared notebook exist?
-    bool exists(qlonglong id);              // Does this shared notebook exist?
-    qint32 getAll(QList<qint32> &values);                   // Get all possible shared notebook lids
-    qlonglong getId(qint32 lid);   // Get a shared notebook for a tag given the lid
-    qint32 findById(qlonglong id);  // Find a lid by the id
-    qint32 findByShareKey(QString key);  // Find by the share key
-    qint32 findByShareKey(string key);   // Find by the share key
-    qint32 findByNotebookGuid(string key);   // Find by the notebook Guid
-    qint32 findByNotebookGuid(QString key);   // Find by the notebook Guid
+    bool exists(qlonglong id);                 // Does this shared notebook exist?
+    qint32 getAll(QList<qint32> &values);      // Get all possible shared notebook lids
+    qlonglong getId(qint32 lid);               // Get a shared notebook for a tag given the lid
+    qint32 findById(qlonglong id);             // Find a lid by the id
+    qint32 findByShareKey(QString key);        // Find by the share key
+    qint32 findByShareKey(string key);         // Find by the share key
+    qint32 findByNotebookGuid(string key);     // Find by the notebook Guid
+    qint32 findByNotebookGuid(QString key);    // Find by the notebook Guid
+
+
+    // DB Write Functions
+    qint32 sync(SharedNotebook &sharedNotebook);                   // Sync a notebook with a new record
+    qint32 sync(qint32 lid, SharedNotebook sharedNotebook);        // Sync a notebook with a new record
+    qint32 add(qint32 lid, const SharedNotebook &t, bool isDirty); // Add a new record
 } ;
 
 

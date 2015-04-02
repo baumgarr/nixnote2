@@ -54,35 +54,39 @@ class LinkedNotebookTable : public QObject
     Q_OBJECT
 public:
     explicit LinkedNotebookTable(QSqlDatabase *db);
-    qint32 getLid(QString guid);            // given a guid, return the lid
-    qint32 getLid(string guid);             // Given a guid, return the lid
-    qint32 findByName(string &name);           // Find a notebook given a name
-    qint32 findByName(QString &name);          // Find a notebook given a name
-    qint32 sync(LinkedNotebook &notebook);                    // Sync a notebook with a new record
-    qint32 sync(qint32 lid, LinkedNotebook &notebook);           // Sync a notebook with a new record
-    qint32 add(qint32 lid, LinkedNotebook &t, bool isDirty); // Add a new notebook
-    bool get(LinkedNotebook &notebook, qint32 lid);           // Get a notebook given a lid
-    bool get(LinkedNotebook &notebook, QString guid);      // get a notebook given a guid
-    bool get(LinkedNotebook &notebook, string guid);       // get a notebook given a guid
-    qint32 getAll(QList<qint32> &retVal);                    // Get a list of all notebooks
-    qint32 getStack(QList<qint32> &retval, QString &stack);  // Get all notebooks for a particular stack
-    bool getGuid(QString& retval, qint32 lid); // Get a guid for a particular lid
+
+    // DB Read Functions
+    qint32 getLid(QString guid);                 // given a guid, return the lid
+    qint32 getLid(string guid);                  // Given a guid, return the lid
+    qint32 findByName(string &name);             // Find a notebook given a name
+    qint32 findByName(QString &name);            // Find a notebook given a name
+    bool get(LinkedNotebook &notebook, qint32 lid);              // Get a notebook given a lid
+    bool get(LinkedNotebook &notebook, QString guid);            // get a notebook given a guid
+    bool get(LinkedNotebook &notebook, string guid);             // get a notebook given a guid
+    qint32 getAll(QList<qint32> &retVal);                        // Get a list of all notebooks
+    qint32 getStack(QList<qint32> &retval, QString &stack);      // Get all notebooks for a particular stack
+    bool getGuid(QString& retval, qint32 lid);            // Get a guid for a particular lid
     bool findGuidByName(QString &retval, QString &guid);  // Search for a notebook's guid based upon its name
-    void deleteLinkedNotebook(qint32 lid);           // mark a notebook for deletion
-    void expunge(qint32 lid);          // purge a notebook
-    void expunge(string guid);         // purge a notebook
-    void expunge(QString guid);        // purge a notebook
-    bool isDeleted(qint32 lid);            // is this notebook deleted?
-    bool update(LinkedNotebook &notebook, bool isDirty);
-    void renameStack(QString oldName, QString newName);
-    void findByStack(QList<qint32> &lids, QString stackName);
-    bool isStacked(qint32 lid);
-    void removeFromStack(qint32 lid);
-    void getStacks(QStringList &stacks);
-    bool exists(qint32 lid);
-    qint32 getLastUpdateSequenceNumber(qint32 lid);
-    void setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN);
+    bool isDeleted(qint32 lid);                           // is this notebook deleted?
+    void findByStack(QList<qint32> &lids, QString stackName);     // Find notebooks by the stack name
+    bool isStacked(qint32 lid);                            // does this notebook belong to a stack?
+    void getStacks(QStringList &stacks);                   // Get a list of all stacks
+    bool exists(qint32 lid);                               // Does this LID exist in the database?
+    void setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN);      // Update the last update sequence number
     QSqlDatabase *db;
+
+    // DB Write Functions
+    qint32 getLastUpdateSequenceNumber(qint32 lid);        // Get the last update sequence number for this notebook
+    void removeFromStack(qint32 lid);                      // Remove from a stack
+    bool update(LinkedNotebook &notebook, bool isDirty);  // Update a linked noteboook record
+    void renameStack(QString oldName, QString newName);   // Rename the stack name
+    void deleteLinkedNotebook(qint32 lid);                // mark a notebook for deletion
+    void expunge(qint32 lid);                             // purge a notebook
+    void expunge(string guid);                            // purge a notebook
+    void expunge(QString guid);                           // purge a notebook
+    qint32 sync(LinkedNotebook &notebook);                       // Sync a notebook with a new record
+    qint32 sync(qint32 lid, LinkedNotebook &notebook);           // Sync a notebook with a new record
+    qint32 add(qint32 lid, LinkedNotebook &t, bool isDirty);     // Add a new notebook
 
 signals:
     

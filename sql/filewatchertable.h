@@ -27,9 +27,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 //*************************************
-//* This table is used to store
-//* config values & things about how
-//* to run the program.
+//* This table is used to keep track
+//* of what directories to "watch".
+//* Files found in these directories are
+//* imparted automatically.
 //*************************************
 
 // Define key types
@@ -43,12 +44,16 @@ class FileWatcherTable : public QObject
     Q_OBJECT
 public:
     explicit FileWatcherTable(QSqlDatabase *db);
-    qint32 addEntry(qint32 lid, QString baseDir, FileWatcher::ScanType type, qint32 notebookLid, bool includeSubdirs);
-    void get(qint32 lid, QString &baseDir, FileWatcher::ScanType &type, qint32 &notebookLid, bool &includeSubdirs);
-    qint32 findLidByDir(QString baseDir);
-    qint32 getAll(QList<qint32> &lids);
-    void expunge(qint32 lid);
     QSqlDatabase *db;
+
+    // DB Read Functions
+    void get(qint32 lid, QString &baseDir, FileWatcher::ScanType &type, qint32 &notebookLid, bool &includeSubdirs);  // Get a record
+    qint32 findLidByDir(QString baseDir);   // Find a LID by the directory name
+    qint32 getAll(QList<qint32> &lids);     // Get all watcher LIDs
+
+    // DB Write Functions
+    qint32 addEntry(qint32 lid, QString baseDir, FileWatcher::ScanType type, qint32 notebookLid, bool includeSubdirs);  // Add a record
+    void expunge(qint32 lid);               // Delete a record
     
 signals:
     

@@ -198,6 +198,9 @@ bool ResourceTable::get(Resource &resource, qint32 lid, bool withBinary) {
     return true;
 }
 
+
+
+// Save a resource's map data.
 void ResourceTable::mapResource(NSqlQuery &query, Resource &resource) {
     NoteTable ntable(db);
     Data d, rd, ad;
@@ -933,6 +936,8 @@ qint32 ResourceTable::getNoteLid(qint32 resLid) {
 }
 
 
+
+// Get a resource's HASH data
 QByteArray ResourceTable::getDataHash(qint32 lid) {
         NSqlQuery query(*db);
         query.prepare("Select data from datastore where lid=:lid and key=:key");
@@ -976,12 +981,17 @@ void ResourceTable::updateNoteLid(qint32 resourceLid, qint32 newNoteLid) {
 
 }
 
+
+// Get a resource's map data
 void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash< qint32, Resource > &resourceMap, QString guid) {
     NoteTable ntable(db);
     qint32 lid = ntable.getLid(guid);
     this->getResourceMap(map, resourceMap, lid);
 }
 
+
+
+// Get a resource's map data
 void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, string guid) {
     NoteTable ntable(db);
     qint32 lid = ntable.getLid(guid);
@@ -990,6 +1000,7 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Re
 
 
 
+// Get a resource's map data
 void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32, Resource> &resourceMap, qint32 noteLid) {
     NoteTable ntable(db);
     QString noteGuid = ntable.getGuid(noteLid);
@@ -1046,6 +1057,8 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
         delete r;
 }
 
+
+// Get all resources for a note
 void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary) {
     //NoteTable ntable(db);
     //QString noteGuid = ntable.getGuid(noteLid);
@@ -1113,87 +1126,3 @@ void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool 
         list.append(*i.value());
     }
 }
-
-
-//void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary) {
-//    NoteTable ntable(db);
-//    QString noteGuid = ntable.getGuid(noteLid);
-//    NSqlQuery query(*db);
-//    qint32 prevLid = -1;
-//    if (fullLoad){
-//        query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");
-//        query.bindValue(":key2", RESOURCE_NOTE_LID);
-//        query.bindValue(":noteLid", noteLid);
-//    } else {
-//        query.prepare("Select key, data, lid from datastore where key=:key and lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");
-//        query.bindValue(":key", RESOURCE_GUID);
-//        query.bindValue(":key2", RESOURCE_NOTE_LID);
-//        query.bindValue(":noteLid", noteLid);
-//    }
-//    query.exec();
-//    list.clear();
-//    Resource *r=NULL;
-//    bool endOfFile = false;
-//    bool startOfLoop = true;
-//    qint32 lid = -1;
-//    while (query.next()) {
-//        if (lid > 0) {
-//            int lid = query.value(2).toInt();
-//            if (startOfLoop) {
-//                prevLid = lid;
-//                startOfLoop = false;
-//            }
-
-//            // If this is the last result set, we force a save of the
-//            // record
-//            if (!query.next()) {
-//                endOfFile = true;
-//            }
-//            query.previous();
-
-//            // Save the last record if we are currently pointing to a new one
-//            if (prevLid != lid || endOfFile) {
-//                r = new Resource();
-//                if (!r->__isset.noteGuid) {
-//                    r->noteGuid = noteGuid.toStdString();
-//                    r->__isset.noteGuid = true;
-//                }
-//                // Now read the binary data from the disk if needed
-//                if (withBinary && fullLoad) {
-//                    QString mimetype = QString::fromStdString(r->mime);
-//                    MimeReference ref;
-//                    QString filename;
-//                    if (r->__isset.attributes && r->attributes.__isset.fileName)
-//                        filename = QString::fromStdString(r->attributes.fileName);
-//                    QString fileExt = ref.getExtensionFromMime(mimetype, filename);
-//                    QFile tfile(global.fileManager.getDbDirPath("/dba/"+QString::number(lid)) +fileExt );
-//                    if (!tfile.open(QIODevice::ReadOnly)) {
-//                        QDir dir(global.fileManager.getDbaDirPath());
-//                        QStringList filterList;
-//                        filterList.append(QString::number(lid)+".*");
-//                        QStringList list= dir.entryList(filterList, QDir::Files);
-//                        if (list.size() > 0) {
-//                            tfile.setFileName(global.fileManager.getDbaDirPath()+list[0]);
-//                            tfile.open(QIODevice::ReadOnly);
-//                        }
-//                    }
-//                    QByteArray b = tfile.readAll();
-//                    r->data.body.clear();
-//                    r->data.body.append(b.data(), b.size());
-//                    tfile.close();
-//                    if (r->data.body.size() > 0) {
-//                        r->data.__isset.body = true;
-//                        r->__isset.data = true;
-//                    }
-//                }
-//                list.insert(prevLid, *r);
-//                delete r;
-//            }
-//            r = new Resource();
-//            prevLid = lid;
-//        }
-//        mapResource(query, *r);
-//    }
-//    if (r != NULL)
-//        delete r;
-//}

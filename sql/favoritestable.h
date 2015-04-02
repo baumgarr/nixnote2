@@ -34,6 +34,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 
+// Read/Write a favorite records to the database
+
 class FavoritesTable : public QObject
 {
     Q_OBJECT
@@ -41,15 +43,19 @@ private:
     QSqlDatabase *db;
 
 public:
-    explicit FavoritesTable(QSqlDatabase *db, QObject *parent = 0);
-    void getAll(QList<qint32> &lids);
-    bool get(FavoritesRecord &record, qint32 lid);
-    void expunge(qint32 lid);
-    void setOrder(QList< QPair< qint32, qint32 > > order);
-    qint32 add(const FavoritesRecord &record);
-    qint32 insert(const FavoritesRecord &record);
-    qint32 getLidByTarget(const QVariant &target);
-    bool childrenFound(qint32 lid);
+    explicit FavoritesTable(QSqlDatabase *db, QObject *parent = 0);   // Generic constructor
+
+    // DB Read Functions
+    void getAll(QList<qint32> &lids);                                 // Get the lid of all favorites
+    bool get(FavoritesRecord &record, qint32 lid);                    // Get a particular favorite record
+    bool childrenFound(qint32 lid);                                   // Does this favorite have any children?
+
+    // DB Write Functions
+    void expunge(qint32 lid);                                         // Erase a favorite record
+    void setOrder(QList< QPair< qint32, qint32 > > order);            // Set the order of display for a favorite
+    qint32 add(const FavoritesRecord &record);                        // Add a new favorite
+    qint32 insert(const FavoritesRecord &record);                     // Insert a new favorite
+    qint32 getLidByTarget(const QVariant &target);                    // Get a favorite lid by an owner
 
 signals:
 

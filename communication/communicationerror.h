@@ -23,10 +23,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QObject>
 
+
+//************************************************
+//* This class is used to let the user know
+//* about any errors when doing a sync.
+//************************************************
+
 class CommunicationError : public QObject
 {
     Q_OBJECT
 public:
+
+    // The type of errors possible
     enum CommunicationErrorType {
         None = 0,
         Unknown = 1,
@@ -41,14 +49,14 @@ public:
         ThriftException = 10
     };
 
-    CommunicationErrorType type;
-    explicit CommunicationError(QObject *parent = 0);
-    QString message;
-    int code;
-    void reset();
-    bool retry();
-    int retryCount;
-    int maxRetryCount;
+    explicit CommunicationError(QObject *parent = 0);    // Constructor
+    CommunicationErrorType type;  // The last error type we encountered
+    QString message;              // The last error message from Evernote
+    int code;                     // The EDAM error code
+    void reset();                 // Reset all values
+    bool retry();                 // Retry after the last error
+    int retryCount;               // Current retry count
+    int maxRetryCount;            // Maximum number of times to retry
     
 signals:
     

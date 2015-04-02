@@ -27,23 +27,23 @@ class NoteMetaData;
 class NoteMetaData
 {
 public:
-    NoteMetaData();
-    QString getGuid();
-    void setGuid(QString g);
+    NoteMetaData();             // Constructor
+    QString getGuid();          // Get the GUID for this record
+    void setGuid(QString g);    // Set the GUID for this record
 
-    int getColor();
-    void setColor(int c);
-    void setPinned(bool value);
-    bool isPinned();
-    void setDirty(bool v);
-    bool isDirty();
-    void copy(NoteMetaData m);
+    int getColor();             // Get the title color for a note
+    void setColor(int c);       // Set the title color for a note
+    void setPinned(bool value); // Set this note pinned?
+    bool isPinned();            // Is this note pinned?
+    void setDirty(bool v);      // Set this note as needing a sync
+    bool isDirty();             // Does this note need a sync?
+    void copy(NoteMetaData m);  // Copy this record
 
 private:
-    QString guid;
-    int color;
-    bool pinned;
-    bool dirty;
+    QString guid;                // Note GUID
+    int color;                   // Note color
+    bool pinned;                 // Is it pinned?
+    bool dirty;                  // Does it need a sync
 };
 
 #endif // NOTEMETADATA_H

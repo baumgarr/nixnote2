@@ -42,10 +42,14 @@ private:
 
 public:
     ConfigStore(QSqlDatabase *conn);  // Generic constructor
-    void createTable();         // SQL to create the table
-    qint32 incrementLidCounter();  // Get the next LID number
-    void saveSetting(int key, QByteArray);  // Save a setting
+
+    // DB Read Functions
     bool getSetting(QByteArray &value, int key);  // retrieve a setting
+
+    // DB Write Functions
+    void createTable();               // SQL to create the table
+    qint32 incrementLidCounter();     // Get the next LID number
+    void saveSetting(int key, QByteArray);        // Save a setting
 };
 
 #endif // CONFIGSTORE_H

@@ -74,46 +74,50 @@ private:
     QSqlDatabase *db;
 public:
     ResourceTable(QSqlDatabase *db);                             // Constructor
-    qint32 getLid(QString noteGuid, QString guid);            // given a guid, return the lid
-    qint32 getLid(string noteGuid, string guid);             // Given a guid, return the lid
-    qint32 getLid(string resourceGuid);
-    qint32 getLid(QString resourceGuid);
-    QString getGuid(int lid);                   // Given a lid, get the guid
-    void updateGuid(qint32 lid, Guid &guid);    // Update a resource's guid
-    void sync(Resource &resource);                    // Sync a resource with a new record
-    void sync(qint32 lid, Resource &resource);           // Sync a resource with a new record
-    qint32 add(qint32 lid, Resource &t, bool isDirty, int noteLid=0); // Add a new resource
+
+    // DB Read Functions
+    qint32 getLid(QString noteGuid, QString guid);               // given a note & resource guid, return the lid
+    qint32 getLid(string noteGuid, string guid);                 // Given a note & resource guid, return the lid
+    qint32 getLid(string resourceGuid);                          // Given a GUID, return the lid
+    qint32 getLid(QString resourceGuid);                         // Given a resource GUID, return the lid
+    QString getGuid(int lid);                                    // Given a lid, get the guid
     bool get(Resource &resource, qint32 lid, bool withBinary);           // Get a resource given a lid
     bool get(Resource &resource, QString noteGuid, QString guid, bool withBinary);      // get a resource given a guid
-    bool get(Resource &resource, string noteGuid, string guid, bool withBinary);       // get a resource given a guid
-    bool isDirty(qint32 lid);                  // Check if a resource is dirty
-    bool isDirty(QString noteGuid, QString guid);             // Check if a resource is dirty
-    bool isDirty(string noteGuid, string guid);              // Check if a resource is dirty
-    bool exists(qint32 lid);                                   // Does this resource exist?
-    bool exists(QString noteGuid, QString guid);              // Does this resource exist?
-    bool exists(string noteGuid, string guid);               // Does this resource exist?
-    bool getResourceRecognition(Resource &resource, qint32 lid);
-    qint32 getLidByHashHex(QString noteGuid, QString hash);
-    bool getInkNote(QByteArray &value, qint32 lid);
-    void setIndexNeeded(qint32 lid, bool indexNeeded);    // flag if a resource needs reindexing
-    void expunge(int lid);                                // erase a resource
-    void expunge(QString guid);                           // erase a resource
-    qint32 getIndexNeeded(QList<qint32> &lids);           // Get a list of all resources needing indexing
+    bool get(Resource &resource, string noteGuid, string guid, bool withBinary);        // get a resource given a guid
+    bool isDirty(qint32 lid);                                    // Check if a resource is dirty
+    bool isDirty(QString noteGuid, QString guid);                // Check if a resource is dirty
+    bool isDirty(string noteGuid, string guid);                  // Check if a resource is dirty
+    bool exists(qint32 lid);                                     // Does this resource exist?
+    bool exists(QString noteGuid, QString guid);                 // Does this resource exist?
+    bool exists(string noteGuid, string guid);                   // Does this resource exist?
+    bool getResourceRecognition(Resource &resource, qint32 lid); // Get a resource's recognition data
+    qint32 getLidByHashHex(QString noteGuid, QString hash);      // Get a lid by the resource's hash value
+    bool getInkNote(QByteArray &value, qint32 lid);              // Get an inknote
+    qint32 getIndexNeeded(QList<qint32> &lids);                  // Get a list of all resources needing indexing
     bool getResourceList(QList<qint32> &resourceList, qint32 noteLid);  // Get resources for a note
-    void updateResourceHash(qint32 lid, QByteArray newhash);
-    qint32 getCount();                                     // count of all resources
-    qint32 getUnindexedCount();                            // count of unindexed resources
-    qint32 addStub(qint32 resLid, qint32 noteLid);         // Add a basic "stub" record.  Useful when duplicating notes
-    qint32 getNoteLid(qint32 resLid);                      // Get the owning note for this resource
-    QByteArray getDataHash(qint32 lid);                    // Get the hash value for the data in a resource
-    void reindexAllResources();                             // Reindex all relources
-    void updateNoteLid(qint32 resourceLid, qint32 newNoteLid);     // Update the owning note
-    void expungeByNote(qint32 notebookLid);
-    void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, qint32 noteLid);
-    void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, string guid);
-    void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, QString guid);
-    void mapResource(NSqlQuery &query, Resource &resource);
-    void getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary);
+    qint32 getCount();                                           // count of all resources
+    qint32 getUnindexedCount();                                  // count of unindexed resources
+    qint32 getNoteLid(qint32 resLid);                            // Get the owning note for this resource
+    QByteArray getDataHash(qint32 lid);                          // Get the hash value for the data in a resource
+    void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, qint32 noteLid);  // Get a resource MAP data
+    void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, string guid);     // Get a resource's MAP data
+    void getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Resource> &resourceMap, QString guid);    // Get a resource's MAP data
+    void getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary);  // Get all resources for a note
+
+    // DB Write Functions
+    void updateGuid(qint32 lid, Guid &guid);                     // Update a resource's guid
+    void sync(Resource &resource);                               // Sync a resource with a new record
+    void sync(qint32 lid, Resource &resource);                   // Sync a resource with a new record
+    qint32 add(qint32 lid, Resource &t, bool isDirty, int noteLid=0);    // Add a new resource
+    void setIndexNeeded(qint32 lid, bool indexNeeded);           // flag if a resource needs reindexing
+    void expunge(int lid);                                       // erase a resource
+    void expunge(QString guid);                                  // erase a resource
+    void updateResourceHash(qint32 lid, QByteArray newhash);     // Update a resource's hash value
+    qint32 addStub(qint32 resLid, qint32 noteLid);               // Add a basic "stub" record.  Useful when duplicating notes
+    void reindexAllResources();                                  // Reindex all relources
+    void updateNoteLid(qint32 resourceLid, qint32 newNoteLid);   // Update the owning note
+    void expungeByNote(qint32 notebookLid);                      // Given a note's LID, erase teh resource
+    void mapResource(NSqlQuery &query, Resource &resource);      // Save a resource map data
 };
 
 

@@ -35,7 +35,7 @@ SearchTable::SearchTable(QSqlDatabase *db)
 }
 
 
-
+// Get the LIDs for all searches
 void SearchTable::getAll(QList<qint32> &lids) {
     lids.empty();
     NSqlQuery query(*db);
@@ -351,10 +351,14 @@ void SearchTable::expunge(qint32 lid) {
 }
 
 
+// Erase a search
 void SearchTable::expunge(string guid) {
     expunge(getLid(guid));
 }
 
+
+
+// Erase a search
 void SearchTable::expunge(QString guid) {
     expunge(getLid(guid));
 }

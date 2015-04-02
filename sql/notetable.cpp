@@ -462,6 +462,8 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
 
 
 
+// Add a stub for a note.  More information about the note will be added later.  This can
+// happen during a sync if a resource appears before the note itself
 qint32 NoteTable::addStub(QString noteGuid) {
     ConfigStore cs(db);
     NSqlQuery query(*db);
@@ -482,6 +484,8 @@ qint32 NoteTable::addStub(QString noteGuid) {
 }
 
 
+
+// Update the note listing table
 bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 notebook) {
 
     if (lid <= 0)
@@ -698,7 +702,7 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
 
 
 
-
+// Update the name of a notebook in the note list table
 bool NoteTable::updateNotebookName(qint32 lid, QString name) {
     NSqlQuery query(*db);
     query.prepare("Update NoteTable set notebook=:name where notebooklid=:lid");
@@ -962,6 +966,8 @@ qint32 NoteTable::findNotesByTag(QList<qint32> &values, qint32 tagLid) {
     return values.size();
 }
 
+
+
 // Find the note LIDs for a tag
 qint32 NoteTable::findNotesByTag(QList<qint32> &values, QString data) {
     TagTable tagTable(db);
@@ -970,6 +976,8 @@ qint32 NoteTable::findNotesByTag(QList<qint32> &values, QString data) {
 }
 
 
+
+// Find the note LIDs for a tag
 qint32 NoteTable::findNotesByTag(QList<qint32> &values, string data) {
     return findNotesByTag(values, QString::fromStdString(data));
 }
@@ -1001,6 +1009,8 @@ void NoteTable::updateNoteListNotebooks(QString guid, QString name) {
 }
 
 
+
+// Get a list of notes for a given tag
 qint32 NoteTable::getNotesWithTag(QList<qint32> &retval, QString tag) {
     NSqlQuery query(*db);
     TagTable tagTable(db);
@@ -1017,6 +1027,7 @@ qint32 NoteTable::getNotesWithTag(QList<qint32> &retval, QString tag) {
 }
 
 
+// Set if a note needs to be indexed
 void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     if (lid <= 0)
         return;
@@ -1041,6 +1052,8 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
 }
 
 
+
+// Set if a note needs to be indexed
 qint32 NoteTable::getIndexNeeded(QList<qint32> &lids) {
     NSqlQuery query(*db);
     lids.clear();
@@ -1059,6 +1072,8 @@ qint32 NoteTable::getIndexNeeded(QList<qint32> &lids) {
 }
 
 
+
+// Update the notebook for a note
 void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty) {
     Notebook book;
     NotebookTable notebookTable(db);
@@ -1092,6 +1107,8 @@ void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDir
 
 
 
+
+// Update the URL for a note
 void NoteTable::updateUrl(qint32 noteLid, QString url, bool setAsDirty=false) {
     NSqlQuery query(*db);
     query.prepare("Update DataStore set data=:url where lid=:lid and key=:key;");
@@ -1113,6 +1130,8 @@ void NoteTable::updateUrl(qint32 noteLid, QString url, bool setAsDirty=false) {
 
 
 
+
+// Update the title for a note
 void NoteTable::updateTitle(qint32 noteLid, QString title, bool setAsDirty=false) {
     NSqlQuery query(*db);
     query.prepare("Update DataStore set data=:url where lid=:lid and key=:key;");
@@ -1134,6 +1153,8 @@ void NoteTable::updateTitle(qint32 noteLid, QString title, bool setAsDirty=false
 
 
 
+
+// Update the author for a note
 void NoteTable::updateAuthor(qint32 noteLid, QString author, bool setAsDirty=false) {
     if (noteLid <=0)
         return;
@@ -1161,6 +1182,8 @@ void NoteTable::updateAuthor(qint32 noteLid, QString author, bool setAsDirty=fal
 }
 
 
+
+// Update the subject/update/deleted/created date for a note
 void NoteTable::updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty = false) {
     if (lid <= 0)
         return;

@@ -27,6 +27,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include "sql/searchtable.h"
 
+
+// Generic constructor
 FavoritesTable::FavoritesTable(QSqlDatabase *db, QObject *parent) :
     QObject(parent)
 {
@@ -35,6 +37,7 @@ FavoritesTable::FavoritesTable(QSqlDatabase *db, QObject *parent) :
 
 
 
+// Get the LID of all favorites
 void FavoritesTable::getAll(QList<qint32> &lids) {
     lids.empty();
     NSqlQuery query(*db);
@@ -49,6 +52,7 @@ void FavoritesTable::getAll(QList<qint32> &lids) {
 
 
 
+// Fetch an individual favorite
 bool FavoritesTable::get(FavoritesRecord &record, qint32 lid) {
     NSqlQuery query(*db);
     record.parent = 0;
@@ -149,6 +153,8 @@ bool FavoritesTable::get(FavoritesRecord &record, qint32 lid) {
 }
 
 
+
+// Change the sort order of the favorite records
 void FavoritesTable::setOrder(QList< QPair< qint32, qint32 > > order) {
     NSqlQuery query(*db);
     query.prepare("delete from datastore where key=:key");
@@ -166,6 +172,9 @@ void FavoritesTable::setOrder(QList< QPair< qint32, qint32 > > order) {
 }
 
 
+
+
+// Erase a favorite record
 void FavoritesTable::expunge(qint32 lid) {
     NSqlQuery query(*db);
     query.prepare("delete from datastore where lid=:key");
@@ -175,6 +184,8 @@ void FavoritesTable::expunge(qint32 lid) {
 }
 
 
+
+// Get a favorite's lid by the data target
 qint32 FavoritesTable::getLidByTarget(const QVariant &target) {
     NSqlQuery query(*db);
     query.prepare("select lid from datastore where key=:key and data=:target");
@@ -189,7 +200,7 @@ qint32 FavoritesTable::getLidByTarget(const QVariant &target) {
 }
 
 
-
+// Add a new record
 qint32 FavoritesTable::add(const FavoritesRecord &record) {
     NSqlQuery query(*db);
     query.prepare("Insert into datastore (lid, key, data) values (:lid, :key, :value)");
@@ -228,7 +239,7 @@ qint32 FavoritesTable::add(const FavoritesRecord &record) {
 }
 
 
-
+// Insert a new favorite
 qint32 FavoritesTable::insert(const FavoritesRecord &record) {
     NSqlQuery query(*db);
     NSqlQuery subQuery(*db);
@@ -254,6 +265,8 @@ qint32 FavoritesTable::insert(const FavoritesRecord &record) {
 }
 
 
+
+// Does this favorite have any children?
 bool FavoritesTable::childrenFound(qint32 lid) {
     NSqlQuery query(*db);
     query.prepare("select lid from datastore where key=:key and data=:lid limit 1");

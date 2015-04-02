@@ -97,9 +97,3 @@ void DataStore::createTable() {
     table.add(0,notebook,true,false);
 }
 
-
-qint32 DataStore::getDirtyNoteGuids(QList<QString> &retVal) {
-    Q_UNUSED(retVal);  /* suppress unused warning */
-    return 0;
-}
-

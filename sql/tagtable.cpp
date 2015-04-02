@@ -66,6 +66,7 @@ qint32 TagTable::findByName(QString &name, qint32 account) {
     return findByName(n, account);
 }
 
+
 // Determine if a lid belongs to a linked notebook
 bool TagTable::isLinked(qint32 lid) {
     NSqlQuery query(*db);
@@ -487,6 +488,8 @@ void TagTable::deleteTag(qint32 lid) {
 }
 
 
+
+// Erase a tag
 void TagTable::expunge(qint32 lid) {
     QString tagGuid;
     this->getGuid(tagGuid, lid);
@@ -504,11 +507,14 @@ void TagTable::expunge(qint32 lid) {
 }
 
 
+// Erase a tag
 void TagTable::expunge(string guid) {
     int lid = this->getLid(guid);
     expunge(lid);
 }
 
+
+// Erase a tag
 void TagTable::expunge(QString guid) {
     int lid = this->getLid(guid);
     expunge(lid);
@@ -583,6 +589,8 @@ void TagTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
     query.finish();
 }
 
+
+
 // Linked tags are not uploaded, so we reset the dirty flags in case
 // they were updated locally
 void TagTable::resetLinkedTagsDirty() {
@@ -634,6 +642,8 @@ void TagTable::cleanupLinkedTags() {
 }
 
 
+
+// Get a hashtable of tags by GUID
 void TagTable::getGuidMap(QHash<QString,QString> &guidMap) {
     QList<qint32> tags;
     Tag t;
@@ -653,6 +663,7 @@ void TagTable::getGuidMap(QHash<QString,QString> &guidMap) {
 
 
 
+// Get a hash table of tags by name
 void TagTable::getNameMap(QHash<QString,QString> &nameMap) {
     QList<qint32> tags;
     Tag t;
@@ -666,6 +677,8 @@ void TagTable::getNameMap(QHash<QString,QString> &nameMap) {
 
 
 
+
+// Find any invalid parent records
 void TagTable::findMissingParents(QList<qint32> &lids) {
     NSqlQuery query(*db);
     query.prepare("select data from datastore where key=:parentKey and data not in (select lid from datastore where key=:guidKey)");
@@ -682,7 +695,7 @@ void TagTable::findMissingParents(QList<qint32> &lids) {
 }
 
 
-
+// Remove any invalid parent records
 void TagTable::cleanupMissingParents() {
     NSqlQuery query(*db);
     query.prepare("delete from datastore where key=:parentKey and data not in (select lid from datastore where key=:guidKey)");

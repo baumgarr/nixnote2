@@ -33,15 +33,19 @@ private:
     QSqlDatabase *db;
 
 public:
-    UserTable(QSqlDatabase *db);
-    void updateUser(User &user);
-    void updateSyncState(SyncState s);
-    qlonglong getLastSyncDate();
-    qint32 getLastSyncNumber();
-    void updateLastSyncDate(long date);
-    void updateLastSyncNumber(qint32 usn);
-    void getUser(User &user);
-    qlonglong getUploadAmt();
+    UserTable(QSqlDatabase *db);      // Default constructor
+
+    // DB Read Functions
+    qlonglong getLastSyncDate();      // Get the last date the user did a sync
+    qint32 getLastSyncNumber();       // Get the last high sequence number
+    void getUser(User &user);         // Get the user record
+    qlonglong getUploadAmt();         // Get the amount uploaded
+
+    // DB Write Functions
+    void updateUser(User &user);            // Save the user record
+    void updateSyncState(SyncState s);      // Update the sync state
+    void updateLastSyncDate(long date);     // Update the last sync date
+    void updateLastSyncNumber(qint32 usn);  // Update the last sync number
 };
 
 #endif // USER_H

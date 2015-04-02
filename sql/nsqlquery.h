@@ -18,6 +18,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
+//*****************************************
+// This is a version of QSqlQuery.  The
+// main reason to have this is to handle
+// the database being locked and to issue
+// a retry if it fails.
+//*****************************************
+
 #ifndef NSQLQUERY_H
 #define NSQLQUERY_H
 
@@ -30,12 +37,12 @@ using namespace std;
 class NSqlQuery : public QSqlQuery
 {
 public:
-    explicit NSqlQuery(QSqlDatabase db);
-    ~NSqlQuery();
-    bool exec();
-    bool exec(const QString &query);
-    bool exec(const string query);
-    bool exec(const char *query);
+    explicit NSqlQuery(QSqlDatabase db);   // Constructor
+    ~NSqlQuery();                          // Destructor
+    bool exec();                           // Execute SQL statement
+    bool exec(const QString &query);       // Execute SQL statement
+    bool exec(const string query);         // Execute SQL statement
+    bool exec(const char *query);          // Execute SQL statement
 };
 
 #endif // NSQLQUERY_H
