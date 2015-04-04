@@ -670,12 +670,15 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
         // We lowercased them above to sort properly without regards
         // to case.  Now, for the note list we need the correct case
         for (int i=0; i<sortedNames.size(); i++) {
-            if (i>0)
-                tagName = tagName+", ";
             Tag currentTag;
             qint32 tagLid = tagTable.findByName(sortedNames[i], account);
             tagTable.get(currentTag, tagLid);
-            tagName = tagName + currentTag.name;
+            if (currentTag.name.isSet()) {
+                if (i>0) {
+                    tagName = tagName+", ";
+                }
+                tagName = tagName + currentTag.name;
+            }
         }
     } else {
         // Users have experienced bugs with the above because of non-ASCII characters.
