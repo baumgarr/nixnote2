@@ -44,6 +44,7 @@ private:
 
 public:
     QList<QAction*> userAccountActions;
+    QList<QAction*> themeActions;
     QMenu *fileMenu;
     QMenu *editMenu;
     QMenu *viewMenu;
@@ -51,6 +52,7 @@ public:
     QMenu *toolsMenu;
     QMenu *helpMenu;
     QMenu *findReplaceMenu;
+    QMenu *themeMenu;
 
     QAction *exitAction;
     QAction *openCloseAction;
@@ -111,10 +113,12 @@ public:
     QAction *openMessageLogAction;
     QAction *openUserForumAction;
     QAction *openEvernoteAccountPageAction;
+    QAction *themeInformationAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 
     void addUserAccount(QAction *action);
+    void setupThemeMenu();
 
 signals:
 
@@ -122,7 +126,7 @@ public slots:
     void openManual();
     void openUserForum();
     void openEvernoteAccountPage();
-
+    void openThemeInformation();
 };
 
 #endif // NMAINMENUBAR_H

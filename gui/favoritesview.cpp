@@ -67,12 +67,12 @@ FavoritesView::FavoritesView(QWidget *parent) :
     QFont rootFont = root->font(NAME_POSITION);
     rootFont.setBold(true);
     root->setFont(NAME_POSITION, rootFont);
-    root->setIcon(NAME_POSITION, global.getIconResource(":favorites.png"));
+    root->setIcon(NAME_POSITION, global.getIconResource(":favoritesIcon"));
 
     root->setRootColor(false);
 
-    expandedImage = new QImage(":expanded.png");
-    collapsedImage = new QImage(":collapsed.png");
+    expandedImage = new QImage(":expandedIcon");
+    collapsedImage = new QImage(":collapsedIcon");
     this->setAcceptDrops(true);
     this->setItemDelegate(new FavoritesViewDelegate());
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
@@ -204,34 +204,34 @@ void FavoritesView::buildTreeEntry(FavoritesViewItem *parent, const FavoritesRec
     item->setText(NAME_POSITION, record->displayName);
     switch (record->type) {
     case FavoritesRecord::Tag :
-        item->setIcon(NAME_POSITION, global.getIconResource(":tag.png"));
+        item->setIcon(NAME_POSITION, global.getIconResource(":tagIcon"));
         break;
     case FavoritesRecord::Note :
-        item->setIcon(NAME_POSITION, global.getIconResource(":newNote.png"));
+        item->setIcon(NAME_POSITION, global.getIconResource(":newNoteIcon"));
         break;
     case FavoritesRecord::ConflictNotebook :
-        item->setIcon(NAME_POSITION, global.getIconResource(":notebook-conflict.png"));
+        item->setIcon(NAME_POSITION, global.getIconResource(":notebookConflictIcon"));
         break;
     case FavoritesRecord::LinkedNotebook :
-        item->setIcon(NAME_POSITION, global.getIconResource(":notebook-linked.png"));
+        item->setIcon(NAME_POSITION, global.getIconResource(":notebookLinkedIcon"));
         break;
     case FavoritesRecord::LinkedStack :
-        item->setIcon(NAME_POSITION, global.getIconResource(":silhouette.png"));
+        item->setIcon(NAME_POSITION, global.getIconResource(":silhouetteIcon"));
         break;
     case FavoritesRecord::LocalNotebook :
-        item->setIcon(NAME_POSITION, global.getIconResource(":local-notebook.png"));
+        item->setIcon(NAME_POSITION, global.getIconResource(":locaNotebookIcon"));
         break;
     case FavoritesRecord::Search :
-        item->setIcon(NAME_POSITION, global.getIconResource(":search.png"));
+        item->setIcon(NAME_POSITION, global.getIconResource(":searchIcon"));
         break;
     case FavoritesRecord::SharedNotebook :
-        item->setIcon(NAME_POSITION, global.getIconResource(":notebook-shared.png"));
+        item->setIcon(NAME_POSITION, global.getIconResource(":notebookSharedIcon"));
         break;
     case FavoritesRecord::SynchronizedNotebook :
-        item->setIcon(NAME_POSITION, global.getIconResource(":notebook_small.png"));
+        item->setIcon(NAME_POSITION, global.getIconResource(":notebookSmallIcon"));
         break;
     case FavoritesRecord::NotebookStack :
-        item->setIcon(NAME_POSITION, global.getIconResource(":stack.png"));
+        item->setIcon(NAME_POSITION, global.getIconResource(":stackIcon"));
         break;
     }
     dataStore.insert(record->lid, item);
@@ -779,6 +779,49 @@ void FavoritesView::stackExpunged(QString stackname) {
                 dataStore[rec.lid]->setHidden(true);
                 return;
             }
+        }
+    }
+}
+
+
+void FavoritesView::reloadIcons() {
+    root->setIcon(NAME_POSITION, global.getIconResource(":favoritesIcon"));
+
+    QHash<qint32, FavoritesViewItem*>::iterator i;
+    for (i=dataStore.begin(); i!=dataStore.end(); ++i) {
+        FavoritesViewItem *record = i.value();
+        FavoritesRecord *r = &record->record;
+        switch (r->type) {
+        case FavoritesRecord::Tag :
+            record->setIcon(NAME_POSITION, global.getIconResource(":tagIcon"));
+            break;
+        case FavoritesRecord::Note :
+            record->setIcon(NAME_POSITION, global.getIconResource(":newNoteIcon"));
+            break;
+        case FavoritesRecord::ConflictNotebook :
+            record->setIcon(NAME_POSITION, global.getIconResource(":notebookConflictIcon"));
+            break;
+        case FavoritesRecord::LinkedNotebook :
+            record->setIcon(NAME_POSITION, global.getIconResource(":notebookLinkedIcon"));
+            break;
+        case FavoritesRecord::LinkedStack :
+            record->setIcon(NAME_POSITION, global.getIconResource(":silhouetteIcon"));
+            break;
+        case FavoritesRecord::LocalNotebook :
+            record->setIcon(NAME_POSITION, global.getIconResource(":notebookLocalIcon"));
+            break;
+        case FavoritesRecord::Search :
+            record->setIcon(NAME_POSITION, global.getIconResource(":searchIcon"));
+            break;
+        case FavoritesRecord::SharedNotebook :
+            record->setIcon(NAME_POSITION, global.getIconResource(":notebookSharedIcon"));
+            break;
+        case FavoritesRecord::SynchronizedNotebook :
+            record->setIcon(NAME_POSITION, global.getIconResource(":notebookSmallIcon"));
+            break;
+        case FavoritesRecord::NotebookStack :
+            record->setIcon(NAME_POSITION, global.getIconResource(":stackIcon"));
+            break;
         }
     }
 }

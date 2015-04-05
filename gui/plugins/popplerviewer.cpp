@@ -57,8 +57,8 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
     pageRight = new QPushButton();
     pageRight->setMaximumWidth(30);
     pageLeft->setMaximumWidth(30);
-    pageLeft->setIcon(global.getIconResource(":left_arrow.png"));
-    pageRight->setIcon(global.getIconResource(":right_arrow.png"));
+    pageLeft->setIcon(global.getIconResource(":leftArrowIcon"));
+    pageRight->setIcon(global.getIconResource(":rightArrowIcon"));
     buttonLayout->addStretch(100);
     buttonLayout->addWidget(pageLeft);
     buttonLayout->addWidget(pageLabel);

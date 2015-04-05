@@ -568,8 +568,8 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QFile &file, QS
                     QString value = fields[1].split("#").at(0).simplified();
                     QFile f(value);
                     if (f.exists()) {
-                        resourceList.remove(":"+key+".png");
-                        resourceList.insert(":"+key+".png",value);
+                        resourceList.remove(":"+key);
+                        resourceList.insert(":"+key,value);
                     }
                 }
             }

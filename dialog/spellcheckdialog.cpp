@@ -29,7 +29,7 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
     QDialog(parent)
 {
     misspelledWord = misspelled;
-    setWindowIcon(global.getIconResource(":spellCheck.png"));
+    setWindowIcon(global.getIconResource(":spellCheckIcon"));
     replacePressed = false;
     cancelPressed = false;
     setWindowTitle(tr("Spell Check"));

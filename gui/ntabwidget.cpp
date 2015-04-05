@@ -684,3 +684,23 @@ void NTabWidget::showHtmlEntities() {
 void NTabWidget::htmlEntitiesClicked(QString entity) {
     currentBrowser()->insertHtml(entity);
 }
+
+
+void NTabWidget::reloadIcons() {
+    for (int i=0; i<this->browserList->size(); i++) {
+        this->browserList->at(i)->buttonBar->reloadIcons();
+        this->browserList->at(i)->expandButton.reloadIcon();
+        this->browserList->at(i)->dateEditor.locationEditor.reloadIcons();
+        this->browserList->at(i)->alarmButton.reloadIcons();
+        this->browserList->at(i)->tagEditor.reloadIcons();
+        this->browserList->at(i)->notebookMenu.reloadIcons();
+    }
+    for (int i=0; i<this->externalList->size(); i++) {
+        this->externalList->at(i)->browser->buttonBar->reloadIcons();
+        this->externalList->at(i)->browser->expandButton.reloadIcon();
+        this->externalList->at(i)->browser->dateEditor.locationEditor.reloadIcons();
+        this->externalList->at(i)->browser->alarmButton.reloadIcons();
+        this->externalList->at(i)->browser->tagEditor.reloadIcons();
+        this->externalList->at(i)->browser->notebookMenu.reloadIcons();
+    }
+}

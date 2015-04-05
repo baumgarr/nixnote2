@@ -33,7 +33,7 @@ EnDecryptDialog::EnDecryptDialog(QWidget *parent) :
 {
     okPressed = false;
     setWindowTitle(tr("Decrypt"));
-    setWindowIcon(global.getIconResource(":password.png"));
+    setWindowIcon(global.getIconResource(":passwordIcon"));
     grid = new QGridLayout(this);
     setLayout(grid);
 

@@ -54,6 +54,7 @@ public:
     void addNotebook(qint32 lid);
     qint32 notebookLid;
     QString notebookName;
+    void reloadIcons();
 
     
 signals:

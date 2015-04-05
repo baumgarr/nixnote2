@@ -53,7 +53,7 @@ NSearchView::NSearchView(QWidget *parent) :
     this->header()->setVisible(false);
 
     // Build the root item
-    QIcon icon(":search.png");
+    QIcon icon = global.getIconResource(":searchIcon");
     root = new NSearchViewItem(this);
     root->setIcon(NAME_POSITION,icon);
     root->setRootColor(true);
@@ -111,8 +111,8 @@ NSearchView::NSearchView(QWidget *parent) :
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     this->setFrameShape(QFrame::NoFrame);
 
-    expandedImage = new QImage(":expanded.png");
-    collapsedImage = new QImage(":collapsed.png");
+    expandedImage = new QImage(":expandedIcon");
+    collapsedImage = new QImage(":collapsedIcon");
 
 }
 
@@ -496,4 +496,9 @@ void NSearchView::mouseMoveEvent(QMouseEvent *event)
     drag->setMimeData(mimeData);
 
     drag->exec(Qt::MoveAction);
+}
+
+
+void NSearchView::reloadIcons() {
+    root->setIcon(NAME_POSITION,global.getIconResource(":searchIcon"));
 }

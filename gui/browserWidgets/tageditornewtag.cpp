@@ -136,16 +136,6 @@ void TagEditorNewTag::textModified(QString text) {
 
 
 //*******************************************************
-//* Event listener for when the editor gains focus
-//*******************************************************
-//void TagEditorNewTag::gainedFocus(bool focus) {
-//    if (focus && text() == defaultText)
-//        textModified("");
-//}
-
-
-
-//*******************************************************
 //* Get the current text.  If the text is the default
 //* text, the n return an empty string.
 //*******************************************************

@@ -107,6 +107,7 @@ public:
     void contextMenuEvent(QContextMenuEvent *event);
     void saveVisibleButtons();
     void setupVisibleButtons();
+    void reloadIcons();
 
 signals:
     

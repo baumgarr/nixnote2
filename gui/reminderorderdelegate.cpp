@@ -18,6 +18,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "reminderorderdelegate.h"
+#include "global.h"
+
+extern Global global;
 
 ReminderOrderDelegate::ReminderOrderDelegate()
 {
@@ -31,7 +34,7 @@ void ReminderOrderDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     if(value != "0")
     {
         painter->save();
-        QPixmap dot(":black_dot.png");
+        QPixmap dot = global.getPixmapResource(":blackDotIcon");
         int centerDot = dot.width()/2;
         int len = (option.rect.right() - option.rect.left())/2;
         len = len-centerDot;

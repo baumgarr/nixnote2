@@ -67,6 +67,7 @@ public:
     void mouseMoveEvent(QMouseEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);
     void dragMoveEvent(QDragMoveEvent *event);
+    void reloadIcons();
 
 signals:
     void updateSelectionRequested();

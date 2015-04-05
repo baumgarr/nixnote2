@@ -40,8 +40,7 @@ TagEditor::TagEditor(QWidget *parent) :
     layout->addWidget(&tagIcon);
     setLayout(layout);
 
-//    QPixmap *pix = new QPixmap(":tag.png");
-    QPixmap pix = global.getPixmapResource(":tag.png");
+    QPixmap pix = global.getPixmapResource(":tagIcon");
     tagIcon.setPixmap(pix);
 
     for (int i=0; i<MAX_TAGS; i++) {
@@ -307,4 +306,10 @@ void TagEditor::newTagTabPressed() {
 
 void TagEditor::setAccount(qint32 a) {
     account = a;
+}
+
+
+
+void TagEditor::reloadIcons() {
+    tagIcon.setPixmap(global.getPixmapResource(":tagIcon"));
 }

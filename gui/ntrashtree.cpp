@@ -46,7 +46,7 @@ NTrashTree::NTrashTree(QWidget *parent) :
     //this->setStyleSheet("QTreeWidget {  border: none; background-color:transparent; }");
 
     // Build the root item
-    QIcon icon(":trash.png");
+    QIcon icon(":trashIcon");
     root = new QTreeWidgetItem(this);
     root->setIcon(0,icon);
     root->setData(0, Qt::UserRole, "root");
@@ -290,3 +290,6 @@ void NTrashTree::drawBranches(QPainter *painter, const QRect &rect, const QModel
     return;
 }
 
+void NTrashTree::reloadIcons() {
+    root->setIcon(0,global.getIconResource(":trashIcon"));
+}

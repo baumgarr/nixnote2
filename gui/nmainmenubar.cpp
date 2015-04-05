@@ -256,6 +256,9 @@ void NMainMenuBar::setupEditMenu() {
 
     editMenu->addSeparator();
 
+    setupThemeMenu();
+    editMenu->addMenu(themeMenu);
+
     preferencesAction = new QAction(tr("Preferences"), this);
     setupShortcut(preferencesAction, QString("Edit_Preferences"));
     preferencesAction->setFont(font);
@@ -469,11 +472,24 @@ void NMainMenuBar::setupHelpMenu() {
             this, SLOT(openManual()));
     helpMenu->addAction(openManualAction);
 
-    openUserForumAction = new QAction(tr("Evernote User Forum"), this);
-    openUserForumAction->setToolTip(tr("Go to the Evernote user support forum."));
-    openUserForumAction->setFont(font);
-    connect(openUserForumAction, SIGNAL(triggered()), this, SLOT(openUserForum()));
-    helpMenu->addAction(openUserForumAction);
+    themeInformationAction = new QAction(tr("Icon Theme Information"), this);
+    themeInformationAction->setToolTip(tr("View information about the current icon theme."));
+    themeInformationAction->setFont(font);
+    connect(themeInformationAction, SIGNAL(triggered()), this, SLOT(openThemeInformation()));
+    helpMenu->addAction(themeInformationAction);
+    QString url = global.getResourceFileName(global.resourceList, ":themeInformation");
+    themeInformationAction->setVisible(false);
+    if (url.startsWith("http://", Qt::CaseInsensitive) || url.startsWith("https://", Qt::CaseInsensitive))
+            themeInformationAction->setVisible(true);
+    QFile f(url);
+    if (f.exists())
+        themeInformationAction->setVisible(true);
+    global.settings->beginGroup("Appearance");
+    QString themeName = global.settings->value("themeName","").toString();
+    global.settings->endGroup();
+    if (themeName == "")
+        themeInformationAction->setVisible(true);
+
 
     openMessageLogAction = new QAction(tr("Message Log"), this);
     openMessageLogAction->setToolTip(tr("View current program messages"));
@@ -504,6 +520,12 @@ void NMainMenuBar::setupHelpMenu() {
     openTrunkAction->setFont(font);
     connect(openTrunkAction, SIGNAL(triggered()), parent, SLOT(openTrunk()));
     helpMenu->addAction(openTrunkAction);
+
+    openUserForumAction = new QAction(tr("Evernote User Forum"), this);
+    openUserForumAction->setToolTip(tr("Go to the Evernote user support forum."));
+    openUserForumAction->setFont(font);
+    connect(openUserForumAction, SIGNAL(triggered()), this, SLOT(openUserForum()));
+    helpMenu->addAction(openUserForumAction);
 
     helpMenu->addSeparator();
 
@@ -538,4 +560,53 @@ void NMainMenuBar::openUserForum() {
 
 void NMainMenuBar::openEvernoteAccountPage() {
     QDesktopServices::openUrl(QUrl("https://www.evernote.com/Settings.action"));
+}
+
+
+void NMainMenuBar::setupThemeMenu() {
+    themeMenu = editMenu->addMenu(tr("Icon Theme"));
+    QStringList list = global.getThemeNames();
+    QFont f;
+    global.getGuiFont(f);
+
+    global.settings->beginGroup("Appearance");
+    QString userTheme = global.settings->value("themeName", "").toString();
+    global.settings->endGroup();
+    // Setup system default
+    QAction *themeAction = new QAction(tr("System Default"), this);
+    themeAction->setCheckable(true);
+    themeAction->setData("");
+    if (userTheme == "")
+        themeAction->setChecked(true);
+    themeAction->setFont(f);
+    connect(themeAction, SIGNAL(triggered()), parent, SLOT(reloadIcons()));
+    themeActions.append(themeAction);
+
+    // Setup the user themes
+    for (int i=0; i<list.size(); i++) {
+        QAction *themeAction = new QAction(list[i],this);
+        themeAction->setData(list[i]);
+        themeAction->setCheckable(true);
+        themeAction->setFont(f);
+        connect(themeAction, SIGNAL(triggered()), parent, SLOT(reloadIcons()));
+        if (list[i] == userTheme) {
+            themeAction->setChecked(true);
+        }
+        themeActions.append(themeAction);
+    }
+    themeMenu->addActions(themeActions);
+}
+
+
+
+void NMainMenuBar::openThemeInformation() {
+    global.settings->beginGroup("Appearance");
+    QString themeName = global.settings->value("themeName","").toString();
+    global.settings->endGroup();
+    if (themeName == "") {
+        QDesktopServices::openUrl(QUrl(global.fileManager.getImageDirPath("")+"themeInfo.html"));
+        return;
+    }
+    QString url = global.getResourceFileName(global.resourceList, ":themeInformation");
+    QDesktopServices::openUrl(QUrl(url));
 }

@@ -72,8 +72,6 @@ public slots:
     void loadGuiFontSizes(QString name);
     void fontSizeChanged(QString name);
     void showTrayIconChanged(bool value);
-    void themePreview();
-    
 };
 
 #endif // APPEARANCEPREFERENCES_H

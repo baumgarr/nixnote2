@@ -31,7 +31,7 @@ TagViewer::TagViewer(QWidget *parent) :
 {
 
     clearButton = new QToolButton(this);
-    clearButton->setIcon(global.getIconResource(":fileclose.png"));
+    clearButton->setIcon(global.getIconResource(":filecloseIcon"));
     clearButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
     clearButton->setCursor(Qt::PointingHandCursor);
     setStyleSheet("QFrame{border: 1px solid darkgray; border-radius: 8px;}");

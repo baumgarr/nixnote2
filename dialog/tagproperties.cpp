@@ -34,7 +34,7 @@ TagProperties::TagProperties(QWidget *parent) :
 {
     okPressed = false;
     setWindowTitle(tr("Tag"));
-    setWindowIcon(global.getIconResource(":tag.png"));
+    setWindowIcon(global.getIconResource(":tagIcon"));
     setLayout(&grid);
 
     connect(&name, SIGNAL(textChanged(const QString&)), this, SLOT(validateInput()));

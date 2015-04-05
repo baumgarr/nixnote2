@@ -34,6 +34,7 @@ public:
     QAction *setAction;
     QAction *clearAction;
     QAction *doneAction;
+    void reloadIcons();
     
 signals:
     

@@ -43,6 +43,7 @@ public:
     void setAccount(qint32 a);
     void tagRenamed(qint32 lid, QString oldName, QString newName);
     TagEditorNewTag newTag;
+    void reloadIcons();
 
 private:
     qint32 currentLid;

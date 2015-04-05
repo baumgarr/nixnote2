@@ -250,6 +250,7 @@ public slots:
     void openEvernoteSupport();
     void openMessageLog();
     void showDesktopUrl(const QUrl &url);
+    void reloadIcons();
 
 signals:
     void syncRequested();

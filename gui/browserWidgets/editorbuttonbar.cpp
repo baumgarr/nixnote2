@@ -117,62 +117,62 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(htmlEntitiesButtonVisible, SIGNAL(triggered()), this, SLOT(toggleHtmlEntitiesButtonVisible()));
 
 
-  undoButtonAction = this->addAction(global.getIconResource(":undo.png"), tr("Undo"));
+  undoButtonAction = this->addAction(global.getIconResource(":undoIcon"), tr("Undo"));
   this->setupShortcut(undoButtonAction, "Edit_Undo");
-  redoButtonAction = this->addAction(global.getIconResource(":redo.png"), tr("Redo"));
+  redoButtonAction = this->addAction(global.getIconResource(":redoIcon"), tr("Redo"));
   this->setupShortcut(redoButtonAction, "Edit_Redo");
 
-  cutButtonAction = this->addAction(global.getIconResource(":cut.png"), tr("Cut"));
+  cutButtonAction = this->addAction(global.getIconResource(":cutIcon"), tr("Cut"));
   this->setupShortcut(cutButtonAction, "Edit_Cut");
-  copyButtonAction = this->addAction(global.getIconResource(":copy.png"), tr("Copy"));
+  copyButtonAction = this->addAction(global.getIconResource(":copyIcon"), tr("Copy"));
   this->setupShortcut(copyButtonAction, "Edit_Copy");
-  pasteButtonAction = this->addAction(global.getIconResource(":paste.png"), tr("Paste"));
+  pasteButtonAction = this->addAction(global.getIconResource(":pasteIcon"), tr("Paste"));
   this->setupShortcut(pasteButtonAction, "Edit_Paste");
-  removeFormatButtonAction = this->addAction(global.getIconResource(":eraser.png"), tr("Remove Formatting"));
+  removeFormatButtonAction = this->addAction(global.getIconResource(":eraserIcon"), tr("Remove Formatting"));
   this->setupShortcut(removeFormatButtonAction, "Edit_Remove_Formatting");
 
   boldButtonWidget = new QToolButton(this);
-  boldButtonWidget->setIcon(global.getIconResource(":bold.png"));
+  boldButtonWidget->setIcon(global.getIconResource(":boldIcon"));
   boldButtonWidget->setText(tr("Bold"));
   this->setupShortcut(boldButtonWidget, "Format_Bold");
   boldButtonAction = this->addWidget(boldButtonWidget);
 
 
   italicButtonWidget = new QToolButton(this);
-  italicButtonWidget->setIcon(global.getIconResource(":italics.png"));
+  italicButtonWidget->setIcon(global.getIconResource(":italicsIcon"));
   italicButtonWidget->setText(tr("Italics"));
   italicButtonWidget->setToolTip(tr("Italics"));
   italicButtonAction = this->addWidget(italicButtonWidget);
   this->setupShortcut(italicButtonWidget, "Format_Italic");
 
   underlineButtonWidget = new QToolButton(this);
-  underlineButtonWidget->setIcon(global.getIconResource(":underline.png"));
+  underlineButtonWidget->setIcon(global.getIconResource(":underlineIcon"));
   underlineButtonWidget->setText(tr("Underline"));
   underlineButtonWidget->setToolTip(tr("Underline"));
   underlineButtonAction = this->addWidget(underlineButtonWidget);
   this->setupShortcut(underlineButtonWidget, "Format_Underline");
 
-  strikethroughButtonAction = this->addAction(global.getIconResource(":strikethrough.png"), tr("Strikethrough"));
+  strikethroughButtonAction = this->addAction(global.getIconResource(":strikethroughIcon"), tr("Strikethrough"));
   this->setupShortcut(strikethroughButtonAction, "Format_Strikethrough");
 
-  leftJustifyButtonAction = this->addAction(global.getIconResource(":leftAlign.png"), tr("Left Justify"));
+  leftJustifyButtonAction = this->addAction(global.getIconResource(":leftAlignIcon"), tr("Left Justify"));
   this->setupShortcut(leftJustifyButtonAction, "Format_Alignment_Left");
-  centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlign.png"), tr("Center"));
+  centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlignIcon"), tr("Center"));
   this->setupShortcut(centerJustifyButtonAction, "Format_Alignment_Center");
-  rightJustifyButtonAction = this->addAction(global.getIconResource(":rightAlign.png"), tr("Right Justify"));
+  rightJustifyButtonAction = this->addAction(global.getIconResource(":rightAlignIcon"), tr("Right Justify"));
   this->setupShortcut(rightJustifyButtonAction, "Format_Alignment_Right");
 
-  hlineButtonAction = this->addAction(global.getIconResource(":hline.png"), tr("Horizontal Line"));
+  hlineButtonAction = this->addAction(global.getIconResource(":hlineIcon"), tr("Horizontal Line"));
   this->setupShortcut(hlineButtonAction, "Format_Horizontal_Line");
 
-  shiftRightButtonAction = this->addAction(global.getIconResource(":shiftRight.png"), tr("Shift Right"));
+  shiftRightButtonAction = this->addAction(global.getIconResource(":shiftRightIcon"), tr("Shift Right"));
   this->setupShortcut(shiftRightButtonAction, "Format_Indent_Increase");
-  shiftLeftButtonAction = this->addAction(global.getIconResource(":shiftLeft.png"), tr("Shift Left"));
+  shiftLeftButtonAction = this->addAction(global.getIconResource(":shiftLeftIcon"), tr("Shift Left"));
   this->setupShortcut(shiftLeftButtonAction, "Format_Indent_Decrease");
 
-  bulletListButtonAction = this->addAction(global.getIconResource(":bulletList.png"), tr("Bullet List"));
+  bulletListButtonAction = this->addAction(global.getIconResource(":bulletListIcon"), tr("Bullet List"));
   this->setupShortcut(bulletListButtonAction, "Format_List_Bullet");
-  numberListButtonAction = this->addAction(global.getIconResource(":numberList.png"), tr("Number List"));
+  numberListButtonAction = this->addAction(global.getIconResource(":numberListIcon"), tr("Number List"));
   this->setupShortcut(numberListButtonAction, "Format_List_Numbered");
 
 
@@ -187,7 +187,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   fontColorButtonWidget = new QToolButton(this);
   fontColorButtonWidget->setAutoRaise(false);
   fontColorButtonWidget->setMenu(fontColorMenuWidget->getMenu());
-  fontColorButtonWidget->setIcon(global.getIconResource(":fontColor.png"));
+  fontColorButtonWidget->setIcon(global.getIconResource(":fontColorIcon"));
   fontColorButtonWidget->setToolTip(tr("Font Color"));
   fontColorAction = this->addWidget(fontColorButtonWidget);
 
@@ -196,20 +196,20 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   highlightColorButtonWidget = new QToolButton(this);
   highlightColorButtonWidget->setAutoRaise(false);
   highlightColorButtonWidget->setMenu(highlightColorMenuWidget->getMenu());
-  highlightColorButtonWidget->setIcon(global.getIconResource(":fontHighlight.png"));
+  highlightColorButtonWidget->setIcon(global.getIconResource(":fontHighlightIcon"));
   highlightColorButtonWidget->setToolTip(tr("Highlight"));
   highlightColorAction = this->addWidget(highlightColorButtonWidget);
 
-  todoButtonAction = this->addAction(global.getIconResource(":todo.png"), tr("Todo"));
+  todoButtonAction = this->addAction(global.getIconResource(":todoIcon"), tr("Todo"));
   this->setupShortcut(todoButtonAction, "Edit_Insert_Todo");
 
-  spellCheckButtonAction = this->addAction(global.getIconResource(":spellCheck.png"), tr("Spell Check"));
+  spellCheckButtonAction = this->addAction(global.getIconResource(":spellCheckIcon"), tr("Spell Check"));
   this->setupShortcut(spellCheckButtonAction, "Note_Spell_Check");
 
-  insertTableButtonAction = this->addAction(global.getIconResource(":grid.png"), tr("Insert Table"));
+  insertTableButtonAction = this->addAction(global.getIconResource(":gridIcon"), tr("Insert Table"));
   this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
 
-  htmlEntitiesButtonAction = this->addAction(global.getIconResource(":htmlentities.png"), tr("Insert HTML Entities"));
+  htmlEntitiesButtonAction = this->addAction(global.getIconResource(":htmlentitiesIcon"), tr("Insert HTML Entities"));
 //  this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
 }
 
@@ -567,4 +567,32 @@ void EditorButtonBar::setupShortcut(QToolButton *action, QString text) {
         return;
     QKeySequence key(global.shortcutKeys->getShortcut(&text));
     action->setShortcut(key);
+}
+
+
+void EditorButtonBar::reloadIcons() {
+    undoButtonAction->setIcon(global.getIconResource(":undoIcon"));
+    redoButtonAction->setIcon(global.getIconResource(":redoIcon"));
+    cutButtonAction->setIcon(global.getIconResource(":cutIcon"));
+    copyButtonAction->setIcon(global.getIconResource(":copyIcon"));
+    pasteButtonAction->setIcon(global.getIconResource(":pasteIcon"));
+    removeFormatButtonAction->setIcon(global.getIconResource(":eraserIcon"));
+    boldButtonWidget->setIcon(global.getIconResource(":boldIcon"));
+    italicButtonWidget->setIcon(global.getIconResource(":italicsIcon"));
+    underlineButtonWidget->setIcon(global.getIconResource(":underlineIcon"));
+    strikethroughButtonAction->setIcon(global.getIconResource(":strikethroughIcon"));
+    leftJustifyButtonAction->setIcon(global.getIconResource(":leftAlignIcon"));
+    rightJustifyButtonAction->setIcon(global.getIconResource(":rightAlignIcon"));
+    centerJustifyButtonAction->setIcon(global.getIconResource(":centerAlignIcon"));
+    hlineButtonAction->setIcon(global.getIconResource(":hlineIcon"));
+    shiftRightButtonAction->setIcon(global.getIconResource(":shiftRightIcon"));
+    shiftLeftButtonAction->setIcon(global.getIconResource(":shiftLeftIcon"));
+    bulletListButtonAction->setIcon(global.getIconResource(":bulletListIcon"));
+    numberListButtonAction->setIcon(global.getIconResource(":numberListIcon"));
+    fontColorButtonWidget->setIcon(global.getIconResource(":fontColorIcon"));
+    highlightColorButtonWidget->setIcon(global.getIconResource(":fontHighlightIcon"));
+    todoButtonAction->setIcon(global.getIconResource(":todoIcon"));
+    spellCheckButtonAction->setIcon(global.getIconResource(":spellCheckIcon"));
+    insertTableButtonAction->setIcon(global.getIconResource(":gridIcon"));
+    htmlEntitiesButtonAction->setIcon(global.getIconResource(":htmlentitiesIcon"));
 }

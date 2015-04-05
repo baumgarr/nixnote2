@@ -35,7 +35,6 @@ AccountDialog::AccountDialog(QWidget *parent) :
 {
     // Setup window layout, title, & icon
     this->setWindowTitle(tr("Account Information"));
-    //setWindowIcon(new QIcon(new QIcon(iconPath+"account.png")));
     QGridLayout *grid = new QGridLayout();
     setLayout(grid);
     QLabel *premium = new QLabel(tr("Free"));

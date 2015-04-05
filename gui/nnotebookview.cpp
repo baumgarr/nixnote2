@@ -156,8 +156,8 @@ NNotebookView::NNotebookView(QWidget *parent) :
 
 //    setStyleSheet("QTreeView::branch { image: url(:right-arrow.png); }");
 
-    expandedImage = new QImage(":expanded.png");
-    collapsedImage = new QImage(":collapsed.png");
+    expandedImage = new QImage(":expandedIcon");
+    collapsedImage = new QImage(":collapsedIcon");
 }
 
 
@@ -1054,3 +1054,18 @@ void NNotebookView::mouseMoveEvent(QMouseEvent *event)
     drag->exec(Qt::MoveAction);
 }
 
+
+
+void NNotebookView::reloadIcons() {
+    QHash<qint32, NNotebookViewItem*>::iterator i;
+    for (i=dataStore.begin(); i!=dataStore.end(); ++i) {
+        NNotebookViewItem* data = i.value();
+        data->reloadIcon();
+    }
+    QHash<QString, NNotebookViewItem*>::iterator j;
+    for (j=stackStore.begin(); j!=stackStore.end(); ++j) {
+        NNotebookViewItem* data = j.value();
+        data->reloadIcon();
+    }
+    root->reloadIcon();
+}

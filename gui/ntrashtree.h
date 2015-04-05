@@ -42,6 +42,7 @@ public:
     QSize sizeHint();
     qint32 count;
     void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
+    void reloadIcons();
 
 signals:
     void updateSelectionRequested();

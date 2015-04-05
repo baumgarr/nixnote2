@@ -30,7 +30,7 @@ ExternalBrowse::ExternalBrowse(qint32 lid, QWidget *parent) :
 {
     setAttribute(Qt::WA_QuitOnClose, false);
     this->setWindowTitle(tr("NixNote"));
-    setWindowIcon(global.getIconResource(":windowIcon.png"));
+    setWindowIcon(global.getIconResource(":windowIcon"));
 
     browser = new NBrowserWindow(this);
     setWidget(browser);

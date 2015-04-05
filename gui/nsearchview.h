@@ -70,6 +70,7 @@ public:
     void contextMenuEvent(QContextMenuEvent *event);
     QSize sizeHint();
     void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
+    void reloadIcons();
 
 signals:
     void updateSelectionRequested();
@@ -85,8 +86,5 @@ public slots:
     void deleteRequested();
     void renameRequested();
     void mouseMoveEvent(QMouseEvent *event);
-
-
 };
-
 #endif // NSEARCHVIEW_H

@@ -22,7 +22,7 @@ extern Global global;
 
      filterPosition = -1;
      clearButton = new QToolButton(this);
-     QPixmap pixmap(":fileclose.png");
+     QPixmap pixmap(global.getPixmapResource(":fileclose.png"));
      clearButton->setIcon(QIcon(pixmap));
      clearButton->setIconSize(pixmap.size());
      clearButton->setCursor(Qt::ArrowCursor);
@@ -177,4 +177,11 @@ bool LineEdit::isSet() {
         return true;
     else
         return false;
+}
+
+
+
+
+void LineEdit::reloadIcons() {
+    clearButton->setIcon(global.getIconResource(":filecloseIcon"));
 }

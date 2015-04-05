@@ -34,7 +34,7 @@ ReminderSetDialog::ReminderSetDialog(QWidget *parent) :
     ok = new QPushButton(this);
     cancel = new QPushButton(this);
 
-    this->setWindowIcon(global.getIconResource(":alarmclock.png"));
+    this->setWindowIcon(global.getIconResource(":alarmclockIcon"));
     QVBoxLayout *vboxLayout = new QVBoxLayout(this);
     setLayout(vboxLayout);
     vboxLayout->addWidget(time);

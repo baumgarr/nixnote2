@@ -33,7 +33,7 @@ SavedSearchProperties::SavedSearchProperties(QWidget *parent) :
 {
     okPressed = false;
     setWindowTitle(tr("Saved Search"));
-    setWindowIcon(global.getIconResource(":search.png"));
+    setWindowIcon(global.getIconResource(":searchIcon"));
     setLayout(&grid);
 
     connect(&name, SIGNAL(textChanged(const QString&)), this, SLOT(validateInput()));

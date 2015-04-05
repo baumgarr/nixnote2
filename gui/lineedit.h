@@ -28,6 +28,7 @@
      LineEdit(QWidget *parent = 0);
      void updateSelection();
      bool isSet();
+     void reloadIcons();
 
  protected:
      void resizeEvent(QResizeEvent *);

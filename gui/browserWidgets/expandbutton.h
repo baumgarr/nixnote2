@@ -32,6 +32,7 @@ public:
     explicit ExpandButton(QWidget *parent = 0);
     int currentState;
     void setState(int state);
+    void reloadIcon();
     
 signals:
     void stateChanged(int state);

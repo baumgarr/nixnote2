@@ -31,8 +31,7 @@ NotebookMenuButton::NotebookMenuButton(QWidget *parent) :
     QPushButton(parent)
 {
     setMenu(&rootMenu);
-    QIcon icon(":notebook_small.png");
-    setIcon(icon);
+    setIcon(global.getIconResource(":notebookSmallIcon"));
     currentNotebookName = "";
     loadData();
 
@@ -266,5 +265,10 @@ void NotebookMenuButton::reloadData() {
         setCurrentNotebook(currentNoteLid, n);
     }
     return;
+}
+
+
+void NotebookMenuButton::reloadIcons() {
+    setIcon(global.getIconResource(":notebookSmallIcon"));
 }
 

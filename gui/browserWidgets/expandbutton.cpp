@@ -26,7 +26,7 @@ ExpandButton::ExpandButton(QWidget *parent) :
     QToolButton(parent)
 {
 
-    setIcon(global.getIconResource(":down_arrow_small.png"));
+    setIcon(global.getIconResource(":downArrowSmallIcon"));
     this->resize(5,5);
     currentState = EXPANDBUTTON_1;
 
@@ -37,15 +37,15 @@ void ExpandButton::setState(int state) {
     currentState = state;
     switch (currentState) {
     case EXPANDBUTTON_1 :
-        setIcon(global.getIconResource(":down_arrow_small.png"));
+        setIcon(global.getIconResource(":downArrowSmallIcon"));
         emit(stateChanged(currentState));
         break;
     case EXPANDBUTTON_2 :
-        setIcon(global.getIconResource(":down_arrow_small.png"));
+        setIcon(global.getIconResource(":downArrowSmallIcon"));
         emit(stateChanged(currentState));
         break;
     case EXPANDBUTTON_3 :
-        setIcon(global.getIconResource(":up_arrow_small.png"));
+        setIcon(global.getIconResource(":upArrowSmallIcon"));
         emit(stateChanged(currentState));
         break;
     }
@@ -64,4 +64,9 @@ void ExpandButton::buttonClicked() {
         break;
     }
     setState(currentState);
+}
+
+
+void ExpandButton::reloadIcon() {
+    this->setIcon(global.getIconResource(":downArrowSmallIcon"));
 }

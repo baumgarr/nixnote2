@@ -37,7 +37,7 @@ FindReplace::FindReplace(QWidget *parent) :
     findLine = new QLineEdit(this);
     closeButton  = new QPushButton(this);
 
-    closeButton->setIcon(global.getIconResource(":fileclose.png"));
+    closeButton->setIcon(global.getIconResource(":filecloseIcon"));
     closeButton->setStyleSheet("border:none;");
     connect(closeButton, SIGNAL(clicked()), this, SLOT(hide()));
 

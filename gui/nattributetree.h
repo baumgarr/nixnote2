@@ -167,6 +167,7 @@ public:
     void mousePressEvent(QMouseEvent *event);
     QSize sizeHint();
     void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
+    void reloadIcons();
 
 signals:
     void updateSelectionRequested();

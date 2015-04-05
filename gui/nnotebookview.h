@@ -68,6 +68,7 @@ public:
     QHash<QString, NNotebookViewItem*> stackStore;
     QSize sizeHint();
     void drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const;
+    void reloadIcons();
 
 
 signals:

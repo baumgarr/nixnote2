@@ -59,9 +59,8 @@ NTagView::NTagView(QWidget *parent) :
     //this->setStyleSheet("QTreeWidget { background:transparent; border:none; margin:0px; padding: 0px; }");
 
     // Build the root item
-    QIcon icon(":tag.png");
     root = new NTagViewItem(this);
-    root->setIcon(NAME_POSITION,icon);
+    root->setIcon(NAME_POSITION,global.getIconResource(":tagIcon"));
     root->setData(NAME_POSITION, Qt::UserRole, "root");
     root->setData(NAME_POSITION, Qt::DisplayRole, tr("Tags from Personal"));
     root->setExpanded(true);
@@ -133,8 +132,8 @@ NTagView::NTagView(QWidget *parent) :
     this->setItemDelegate(new NTagViewDelegate());
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     this->setFrameShape(QFrame::NoFrame);
-    expandedImage = new QImage(":expanded.png");
-    collapsedImage = new QImage(":collapsed.png");
+    expandedImage = new QImage(":expandedIcon");
+    collapsedImage = new QImage(":collapsedIcon");
 }
 
 
@@ -930,4 +929,9 @@ void NTagView::drawBranches(QPainter *painter, const QRect &rect, const QModelIn
 //    }
 
 //    QTreeView::drawBranches(painter, rect, index);
+}
+
+
+void NTagView::reloadIcons() {
+    root->setIcon(NAME_POSITION,global.getIconResource(":tagIcon"));
 }

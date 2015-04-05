@@ -69,24 +69,27 @@ bool NNotebookViewItem::operator<(const QTreeWidgetItem &other)const {
     return text(column).toLower() < other.text(column).toLower();
 }
 
+void NNotebookViewItem::reloadIcon() {
+    setType(this->type);
+}
 
 
 void NNotebookViewItem::setType(NNotebookWidgetType type) {
     this->type = type;
     if (type == Linked)
-        setIcon(0, global.getIconResource(":notebook-linked.png"));
+        setIcon(0, global.getIconResource(":notebookLinkedIcon"));
     if (type == Shared)
-        setIcon(0, global.getIconResource(":notebook-shared.png"));
+        setIcon(0, global.getIconResource(":notebookSharedIcon"));
     if (type == Local)
-        setIcon(0, global.getIconResource(":notebook-local.png"));
+        setIcon(0, global.getIconResource(":notebookLocalIcon"));
     if (type == Synchronized)
-        setIcon(0, global.getIconResource(":notebook_small.png"));
+        setIcon(0, global.getIconResource(":notebookSmallIcon"));
     if (type == Stack)
-        setIcon(0, global.getIconResource(":stack.png"));
+        setIcon(0, global.getIconResource(":stackIcon"));
     if (type == LinkedStack)
-        setIcon(0, global.getIconResource(":silhouette.png"));
+        setIcon(0, global.getIconResource(":silhouetteIcon"));
     if (type == Conflict)
-        setIcon(0, global.getIconResource(":notebook-conflict.png"));
+        setIcon(0, global.getIconResource(":notebookConflictIcon"));
 }
 
 

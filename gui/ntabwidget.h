@@ -61,6 +61,7 @@ public:
         NewTab = 1,
         ExternalWindow = 2
     };
+    void reloadIcons();
 
 
 signals:

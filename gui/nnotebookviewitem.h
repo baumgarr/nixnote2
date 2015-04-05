@@ -48,6 +48,7 @@ public:
 
     bool operator<(const QTreeWidgetItem &other)const;
     void setRootColor(bool val) ;
+    void reloadIcon();
 
 signals:
 

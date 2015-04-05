@@ -357,8 +357,8 @@ NAttributeTree::NAttributeTree(QWidget *parent) :
 
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     this->setFrameShape(QFrame::NoFrame);
-    expandedImage = new QImage(":expanded.png");
-    collapsedImage = new QImage(":collapsed.png");
+    expandedImage = new QImage(":expandedIcon");
+    collapsedImage = new QImage(":collapsedIcon");
 }
 
 NAttributeTree::~NAttributeTree() {
@@ -546,4 +546,9 @@ void NAttributeTree::drawBranches(QPainter *painter, const QRect &rect, const QM
     painter->restore();
     return;
 }
+
+void NAttributeTree::reloadIcons() {
+    root->setIcon(0,global.getIconResource(":attributesIcon"));
+}
+
 
