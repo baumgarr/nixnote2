@@ -29,13 +29,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-
 //*******************************************************
 //* Constructor
 //*******************************************************
 TagEditor::TagEditor(QWidget *parent) :
     QWidget(parent)
 {
+    QLOG_TRACE_IN() << typeid(*this).name();
     layout = new FlowLayout(this);
     layout->addWidget(&tagIcon);
     setLayout(layout);
@@ -56,6 +56,7 @@ TagEditor::TagEditor(QWidget *parent) :
     //delete pix;
     account = 0;
     hide();
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -63,19 +64,24 @@ TagEditor::TagEditor(QWidget *parent) :
 //* Set the current note lid
 //********************************************************
 void TagEditor::setCurrentLid(qint32 l) {
+    QLOG_TRACE_IN() << typeid(*this).name();
     currentLid = l;
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 //*******************************************************
 //* The new tag editor has lost focus.  Check for a new tag
 //*******************************************************
 void TagEditor::newTagFocusLost(bool focus) {
+    QLOG_TRACE_IN() << typeid(*this).name();
     if (focus) {
         newEditorHasFocus = true;
+        QLOG_TRACE_OUT() << typeid(*this).name();
         return;
     }
     newEditorHasFocus = false;
     checkNewTagEditor();
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -84,18 +90,22 @@ void TagEditor::newTagFocusLost(bool focus) {
 //* Check the new tag editor for a new tag.
 //*******************************************************
 bool TagEditor::checkNewTagEditor() {
+    QLOG_TRACE_IN() << typeid(*this).name();
     if (newTag.getText().trimmed() != "") {
         QString name = newTag.getText().trimmed();
         for (qint32 i=0; i<tagNames.size(); i++) {
             if (tagNames.at(i).trimmed().toLower() == name.trimmed().toLower()) {
                 newTag.resetText();
+                QLOG_TRACE_OUT() << typeid(*this).name();
                 return false;
             }
         }
         addTag(name);
         newTag.resetText();
+        QLOG_TRACE_OUT() << typeid(*this).name();
         return true;
     }
+    QLOG_TRACE_OUT() << typeid(*this).name();
     return false;
 }
 
@@ -104,7 +114,7 @@ bool TagEditor::checkNewTagEditor() {
 //* A user has added a new tag
 //*******************************************************
 void TagEditor::addTag(QString text) {
-
+    QLOG_TRACE_IN() << typeid(*this).name();
     // First blank out the old tags.
     emptyTags();
 
@@ -128,6 +138,7 @@ void TagEditor::addTag(QString text) {
     }
     noteTable.addTag(currentLid, tagLid, true);
     emit(tagsUpdated());
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -136,6 +147,7 @@ void TagEditor::addTag(QString text) {
 //* Load the tags for the current note.
 //*******************************************************
 void TagEditor::loadTags() {
+    QLOG_TRACE_IN() << typeid(*this).name();
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
 
     for (qint32 i=0; i<tagNames.size(); i++) {
@@ -144,6 +156,7 @@ void TagEditor::loadTags() {
         tags[i].resize();
     }
     layout->invalidate();
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -152,6 +165,7 @@ void TagEditor::loadTags() {
 //* Reload the tags after a sync
 //*******************************************************
 void TagEditor::reloadTags() {
+    QLOG_TRACE_IN() << typeid(*this).name();
     NoteTable noteTable(global.db);
     Note n;
     noteTable.get(n, currentLid, false, false);
@@ -163,6 +177,7 @@ void TagEditor::reloadTags() {
         names << tagNames[i];
     }
     setTags(names);
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 //*******************************************************
@@ -170,9 +185,11 @@ void TagEditor::reloadTags() {
 //*******************************************************
 void TagEditor::tagRenamed(qint32 lid, QString oldName, QString newName) {
     Q_UNUSED(lid);  // suppress unuesd
+    QLOG_TRACE_IN() << typeid(*this).name();
     tagNames.removeOne(oldName);
     tagNames << newName;
     loadTags();
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -181,6 +198,7 @@ void TagEditor::tagRenamed(qint32 lid, QString oldName, QString newName) {
 //*******************************************************
 void TagEditor::setTags(QStringList s) {
 
+    QLOG_TRACE_IN() << typeid(*this).name();
     // First blank out the old tags.
     emptyTags();
     tagNames.clear();
@@ -190,6 +208,7 @@ void TagEditor::setTags(QStringList s) {
         tagNames << s[i];
     loadTags();
     newTag.setTags(s);
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -198,8 +217,10 @@ void TagEditor::setTags(QStringList s) {
 //* Get all current tags
 //*******************************************************
 void TagEditor::getTags(QStringList &names) {
+    QLOG_TRACE_IN() << typeid(*this).name();
     names.clear();
     names = tagNames;
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -208,6 +229,7 @@ void TagEditor::getTags(QStringList &names) {
 //* Remove a tag for a note
 //*******************************************************
 void TagEditor::removeTag(QString text) {
+    QLOG_TRACE_IN() << typeid(*this).name();
     bool found = false;
     qint32 j=-1;
     for (qint32 i=0; i<tagNames.size(); i++) {
@@ -238,6 +260,7 @@ void TagEditor::removeTag(QString text) {
     }
 
     emit(tagsUpdated());
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -246,10 +269,12 @@ void TagEditor::removeTag(QString text) {
 //* Empty out all tags
 //*******************************************************
 void TagEditor::clear() {
+    QLOG_TRACE_IN() << typeid(*this).name();
     emptyTags();
     tagNames.clear();
 
     layout->invalidate();
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -258,12 +283,14 @@ void TagEditor::clear() {
 //* Hide this window
 //*******************************************************
 void TagEditor::hideEvent(QHideEvent* event) {
+    QLOG_TRACE_IN() << typeid(*this).name();
     Q_UNUSED(event);  // suppress unused
     tagIcon.hide();
     newTag.hide();
     for (qint32 i=0; i<MAX_TAGS; i++) {
         tags[i].hide();
     }
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -272,11 +299,13 @@ void TagEditor::hideEvent(QHideEvent* event) {
 //* Show this window
 //*******************************************************
 void TagEditor::showEvent(QShowEvent* event) {
+    QLOG_TRACE_IN() << typeid(*this).name();
     Q_UNUSED(event);  // suppress unused
     tagIcon.show();
     newTag.show();
     for (qint32 i=0; i<tagNames.size(); i++)
         tags[i].show();
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -285,11 +314,13 @@ void TagEditor::showEvent(QShowEvent* event) {
 //* Empty out the tags window
 //*******************************************************
 void TagEditor::emptyTags() {
+    QLOG_TRACE_IN() << typeid(*this).name();
     for (qint32 i=MAX_TAGS-1; i>=0; i--) {
         tags[i].clear();
         tags[i].setMinimumWidth(0);
         tags[i].setVisible(false);
     }
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -299,17 +330,23 @@ void TagEditor::emptyTags() {
 //* add it and reset focus back to this window
 //*******************************************************
 void TagEditor::newTagTabPressed() {
+   QLOG_TRACE_IN() << typeid(*this).name();
    if (checkNewTagEditor())
        newTag.setFocus();
+   QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
 void TagEditor::setAccount(qint32 a) {
+    QLOG_TRACE_IN() << typeid(*this).name();
     account = a;
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
 
 void TagEditor::reloadIcons() {
+    QLOG_TRACE_IN() << typeid(*this).name();
     tagIcon.setPixmap(global.getPixmapResource(":tagIcon"));
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }

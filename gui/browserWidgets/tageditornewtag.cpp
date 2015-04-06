@@ -38,6 +38,7 @@ extern Global global;
 TagEditorNewTag::TagEditorNewTag(QWidget *parent) :
     QLineEdit(parent)
 {
+    QLOG_TRACE_IN() << typeid(*this).name();
     account = 0;
     this->setCursor(Qt::PointingHandCursor);
     // Setup the note title editor
@@ -55,9 +56,10 @@ TagEditorNewTag::TagEditorNewTag(QWidget *parent) :
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(textModified(QString)));
 
 //    connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
-    completer = NULL;
+    completer = new QCompleter(this);
     loadCompleter();
     hide();
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -65,9 +67,7 @@ TagEditorNewTag::TagEditorNewTag(QWidget *parent) :
 //* Load the completer with the list of valid tag names
 //***********************************************************
 void TagEditorNewTag::loadCompleter() {
-    if (completer != NULL) {
-        delete completer;
-    }
+    QLOG_TRACE_IN() << typeid(*this).name();
     QList<int> tagList;
     TagTable tagTable(global.db);
     QStringList tagNames;
@@ -83,10 +83,18 @@ void TagEditorNewTag::loadCompleter() {
             tagNames << name;
     }
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
-    completer = new QCompleter(tagNames, this);
     completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
     setCompleter(completer);
+
+    QStringListModel *model;
+    model = (QStringListModel*)(completer->model());
+    if(model==NULL)
+        model = new QStringListModel();
+
+    model->setStringList(tagNames);
+    completer->setModel(model);
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -95,7 +103,9 @@ void TagEditorNewTag::loadCompleter() {
 //* Set the color whe the editor has a good focus
 //******************************************************
 void TagEditorNewTag::setActiveColor() {
+    QLOG_TRACE_IN() << typeid(*this).name();
     setStyleSheet(activeColor);
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -104,10 +114,12 @@ void TagEditorNewTag::setActiveColor() {
 //*******************************************************
 void TagEditorNewTag::focusInEvent(QFocusEvent *e)
 {
-  this->setCursor(Qt::ArrowCursor);
-  QLineEdit::focusInEvent(e);
-  setStyleSheet(activeColor);
-  emit(focussed(true));
+    QLOG_TRACE_IN() << typeid(*this).name();
+    this->setCursor(Qt::ArrowCursor);
+    QLineEdit::focusInEvent(e);
+    setStyleSheet(activeColor);
+    emit(focussed(true));
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -116,10 +128,12 @@ void TagEditorNewTag::focusInEvent(QFocusEvent *e)
 //*******************************************************
 void TagEditorNewTag::focusOutEvent(QFocusEvent *e)
 {
-  this->setCursor(Qt::PointingHandCursor);
-  QLineEdit::focusOutEvent(e);
-  setStyleSheet(inactiveColor);
-  emit(focussed(false));
+    QLOG_TRACE_IN() << typeid(*this).name();
+    this->setCursor(Qt::PointingHandCursor);
+    QLineEdit::focusOutEvent(e);
+    setStyleSheet(inactiveColor);
+    emit(focussed(false));
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -127,11 +141,15 @@ void TagEditorNewTag::focusOutEvent(QFocusEvent *e)
 //* The current text has changed
 //*******************************************************
 void TagEditorNewTag::textModified(QString text) {
-    if (this->hasFocus())
+    QLOG_TRACE_IN() << typeid(*this).name();
+    if (this->hasFocus()) {
+        QLOG_TRACE_OUT() << typeid(*this).name();
         return;
+    }
     this->blockSignals(true);
     setText(text);
     this->blockSignals(false);
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -140,7 +158,10 @@ void TagEditorNewTag::textModified(QString text) {
 //* text, the n return an empty string.
 //*******************************************************
 QString TagEditorNewTag::getText() {
-    return text().trimmed();
+    QLOG_TRACE_IN() << typeid(*this).name();
+    QString retval = text().trimmed();
+    QLOG_TRACE_OUT() << typeid(*this).name();
+    return retval;
 }
 
 
@@ -148,8 +169,10 @@ QString TagEditorNewTag::getText() {
 //* Set the list of valid tags for the completer
 //*******************************************************
 void TagEditorNewTag::setTags(QStringList s) {
+    QLOG_TRACE_IN() << typeid(*this).name();
     currentTags = s;
     loadCompleter();
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -157,8 +180,10 @@ void TagEditorNewTag::setTags(QStringList s) {
 //* Add a new tag to the completer list
 //*******************************************************
 void TagEditorNewTag::addTag(QString s) {
+    QLOG_TRACE_IN() << typeid(*this).name();
     currentTags.append(s);
     loadCompleter();
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
@@ -170,16 +195,20 @@ void TagEditorNewTag::addTag(QString s) {
 //*******************************************************
 bool  TagEditorNewTag::event(QEvent *event)
 {
+    QLOG_TRACE_IN() << typeid(*this).name();
     if (event->type() == QEvent::KeyPress) {
         QKeyEvent *ke = (QKeyEvent*)event;
         if (ke->key() == Qt::Key_Tab) {
             if (getText().trimmed() != "") {
                 emit(tabPressed());
+                QLOG_TRACE_OUT() << typeid(*this).name();
                 return true;
             }
+            QLOG_TRACE_OUT() << typeid(*this).name();
             return QLineEdit::event(event);
         }
     }
+    QLOG_TRACE_OUT() << typeid(*this).name();
     return QLineEdit::event(event);
 }
 
@@ -189,13 +218,17 @@ bool  TagEditorNewTag::event(QEvent *event)
 //* Reset the tag editor to the default text
 //*******************************************************
 void TagEditorNewTag::resetText() {
+    QLOG_TRACE_IN() << typeid(*this).name();
     blockSignals(true);
     setText("");
     blockSignals(false);
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
 
 void TagEditorNewTag::notebookSelectionChanged(qint32 notebook) {
+    QLOG_TRACE_IN() << typeid(*this).name();
     account = notebook;
     loadCompleter();
+    QLOG_TRACE_OUT() << typeid(*this).name();
 }
