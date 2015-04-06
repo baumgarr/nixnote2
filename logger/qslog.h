@@ -28,6 +28,7 @@
 
 #include <QDebug>
 #include <QString>
+#include <typeinfo>
 
 namespace QsLogging
 {
@@ -114,6 +115,12 @@ private:
    #define QLOG_FATAL() \
       QsLogging::Logger::Helper(QsLogging::FatalLevel).stream()
 #else
+#define QLOG_TRACE_IN() \
+      if( QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel ){} \
+      else  QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')' << "Entering" << __func__  << ":"
+   #define QLOG_TRACE_OUT() \
+      if( QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel ){} \
+      else  QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')' << "Exiting" << __func__ << ":"
    #define QLOG_TRACE() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel ){} \
       else  QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
