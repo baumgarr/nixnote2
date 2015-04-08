@@ -3576,7 +3576,7 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>TagEditorNewTag</name>
     <message>
-        <location filename="../gui/browserWidgets/tageditornewtag.cpp" line="54"/>
+        <location filename="../gui/browserWidgets/tageditornewtag.cpp" line="55"/>
         <source>Click to add tag...</source>
         <translation type="unfinished"></translation>
     </message>

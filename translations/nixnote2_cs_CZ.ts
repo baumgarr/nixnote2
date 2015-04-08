@@ -3592,7 +3592,7 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
 <context>
     <name>TagEditorNewTag</name>
     <message>
-        <location filename="../gui/browserWidgets/tageditornewtag.cpp" line="54"/>
+        <location filename="../gui/browserWidgets/tageditornewtag.cpp" line="55"/>
         <source>Click to add tag...</source>
         <translation>Klikněte pro přidání štítku...</translation>
     </message>
