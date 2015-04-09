@@ -88,6 +88,7 @@ private:
     PluginFactory *factory;
     Thumbnailer *hammer;
     Thumbnailer *thumbnailer;
+    QTimer focusTimer;
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
@@ -250,6 +251,7 @@ private slots:
     void sendUrlUpdateSignal();
     void newTagAdded(qint32);
     void printReady(bool ok);
+    void focusCheck();
 
 };
 

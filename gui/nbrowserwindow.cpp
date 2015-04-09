@@ -93,14 +93,15 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     line1Layout->addWidget(&expandButton);
 
 
-    // Add the third layout display (which actually appears on line 2)
-    layout->addLayout(&line3Layout);
-    line3Layout.addWidget(&dateEditor);
-
-    // Add the second layout display (which actually appears on line 3)
+    // Add the second layout display
     layout->addLayout(&line2Layout);
     line2Layout.addWidget(&urlEditor,1);
     line2Layout.addWidget(&tagEditor, 3);
+
+    // Add the third layout display
+    layout->addLayout(&line3Layout);
+    line3Layout.addWidget(&dateEditor);
+
 
     editor = new NWebView(this);
     editor->setTitleEditor(&noteTitle);
@@ -184,6 +185,10 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     global.settings->endGroup();
     this->expandButton.setState(expandButton);
 //    changeExpandState(expandButton);
+
+    connect(&focusTimer, SIGNAL(timeout()), this, SLOT(focusCheck()));
+    focusTimer.setInterval(100);
+    focusTimer.start();
 }
 
 
@@ -2729,4 +2734,12 @@ void NBrowserWindow::changeDisplayFontName(QString name) {
     if (idx >=0)
         buttonBar->fontNames->setCurrentIndex(idx);
     buttonBar->fontNames->blockSignals(false);
+}
+
+
+void NBrowserWindow::focusCheck() {
+    bool buttonBarVisible = false;
+    if (editor->hasFocus() || editor->contextMenu->hasFocus() || buttonBar->hasFocus())
+        buttonBarVisible = true;
+    buttonBar->setVisible(buttonBarVisible);
 }
