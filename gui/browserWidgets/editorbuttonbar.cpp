@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include <QFontDatabase>
 #include <QPushButton>
+#include <QLineEdit>
 
 extern Global global;
 
@@ -117,6 +118,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(htmlEntitiesButtonVisible, SIGNAL(triggered()), this, SLOT(toggleHtmlEntitiesButtonVisible()));
 
 
+
   undoButtonAction = this->addAction(global.getIconResource(":undoIcon"), tr("Undo"));
   this->setupShortcut(undoButtonAction, "Edit_Undo");
   redoButtonAction = this->addAction(global.getIconResource(":redoIcon"), tr("Redo"));
@@ -176,8 +178,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   this->setupShortcut(numberListButtonAction, "Format_List_Numbered");
 
 
-  fontNames = new QComboBox(this);
-  fontSizes = new QComboBox(this);
+  fontNames = new FontNameComboBox(this);
+  fontSizes = new FontSizeComboBox(this);
 
   loadFontNames();
   fontButtonAction = addWidget(fontNames);
@@ -211,6 +213,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
   htmlEntitiesButtonAction = this->addAction(global.getIconResource(":htmlentitiesIcon"), tr("Insert HTML Entities"));
 //  this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
+
 }
 
 
@@ -529,10 +532,17 @@ void EditorButtonBar::loadFontNames() {
     QStringList fontFamilies = fonts.families();
     fontFamilies.append(tr("Times"));
     fontFamilies.sort();
+    bool first = true;
+    //QFontDatabase fdb;
     for (int i = 0; i < fontFamilies.size(); i++) {
         fontNames->addItem(fontFamilies[i], fontFamilies[i]);
-        if (i == 0) {
+        QFont f;
+        global.getGuiFont(f);
+        f.setFamily(fontFamilies[i]);
+        fontNames->setItemData(i, QVariant(f), Qt::FontRole);
+        if (first) {
             loadFontSizeComboBox(fontFamilies[i]);
+            first=false;
         }
     }
 }
@@ -544,9 +554,25 @@ void EditorButtonBar::loadFontNames() {
 void EditorButtonBar::loadFontSizeComboBox(QString name) {
     QFontDatabase fdb;
     fontSizes->clear();
-    QList<int> sizes = fdb.pointSizes(name);
+    QList<int> sizes = fdb.smoothSizes(name, "Normal");
     for (int i=0; i<sizes.size(); i++) {
         fontSizes->addItem(QString::number(sizes[i]), sizes[i]);
+    }
+    if (sizes.size() == 0) {
+        fontSizes->addItem("8", 8);
+        fontSizes->addItem("9", 9);
+        fontSizes->addItem("10", 10);
+        fontSizes->addItem("11", 11);
+        fontSizes->addItem("12", 12);
+        fontSizes->addItem("14", 14);
+        fontSizes->addItem("15", 15);
+        fontSizes->addItem("16", 16);
+        fontSizes->addItem("17", 17);
+        fontSizes->addItem("18", 18);
+        fontSizes->addItem("19", 19);
+        fontSizes->addItem("20", 20);
+        fontSizes->addItem("21", 21);
+        fontSizes->addItem("22", 22);
     }
 
 }

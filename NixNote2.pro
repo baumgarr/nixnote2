@@ -181,7 +181,10 @@ SOURCES += main.cpp\
     gui/favoritesviewitem.cpp \
     sql/favoritestable.cpp \
     sql/favoritesrecord.cpp \
-    filters/remotequery.cpp
+    filters/remotequery.cpp \
+    gui/browserWidgets/fontnamecombobox.cpp \
+    gui/browserWidgets/fontsizecombobox.cpp \
+    utilities/pixelconverter.cpp
 
 
 
@@ -336,7 +339,10 @@ HEADERS  += nixnote.h \
     gui/favoritesviewitem.h \
     sql/favoritestable.h \
     sql/favoritesrecord.h \
-    filters/remotequery.h
+    filters/remotequery.h \
+    gui/browserWidgets/fontnamecombobox.h \
+    gui/browserWidgets/fontsizecombobox.h \
+    utilities/pixelconverter.h
 
 
 #INCLUDEPATH += /usr/local/include/thrift \

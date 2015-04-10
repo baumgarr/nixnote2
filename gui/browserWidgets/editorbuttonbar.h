@@ -29,6 +29,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QShortcut>
 
 #include "gui/browserWidgets/colormenu.h"
+#include "gui/browserWidgets/fontnamecombobox.h"
+#include "gui/browserWidgets/fontsizecombobox.h"
+
 
 class EditorButtonBar : public QToolBar
 {
@@ -88,8 +91,8 @@ public:
     QAction *spellCheckButtonVisible;
     QAction *htmlEntitiesButtonAction;
     QAction *htmlEntitiesButtonVisible;
-    QComboBox *fontNames;
-    QComboBox *fontSizes;
+    FontNameComboBox *fontNames;
+    FontSizeComboBox *fontSizes;
 
     QToolButton *boldButtonWidget;
     QToolButton *italicButtonWidget;
