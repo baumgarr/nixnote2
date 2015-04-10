@@ -39,6 +39,7 @@ private:
     QComboBox *defaultFontSizeChooser;
     QComboBox *defaultGuiFontSizeChooser;
     QComboBox *defaultGuiFontChooser;
+    QCheckBox *autoHideEditorButtonbar;
     QLabel *defaultNotebookOnStartupLabel;
     QPushButton *previewButton;
     bool webSettingsChanged;

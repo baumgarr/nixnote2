@@ -171,7 +171,7 @@ public:
     QFont getGuiFont(QFont f);                                // Get the user's desired GUI font
 
     bool nonAsciiSortBug;                                     // Workaround for non-ASCII characters in tag name sorting
-
+    bool autoHideEditorToolbar;                               // Should the editor bar be hidden when focus is lost?
     ReminderManager *reminderManager;                         // Used to alert the user when a reminder time has expired
 
 

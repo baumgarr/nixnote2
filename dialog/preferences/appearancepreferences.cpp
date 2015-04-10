@@ -42,6 +42,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
     startMinimized = new QCheckBox(tr("Always Start minimized"), this);
     dynamicTotals = new QCheckBox(tr("Show notebook and tag totals"), this);
+    autoHideEditorButtonbar = new QCheckBox(tr("Auto-Hide editor toolbar"), this);
+    autoHideEditorButtonbar->setChecked(global.autoHideEditorToolbar);
 
     defaultGuiFontSizeChooser = new QComboBox();
 
@@ -86,6 +88,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
         mainLayout->addWidget(closeToTray, row++, 0);
     }
     mainLayout->addWidget(showSplashScreen, row++,0);
+    mainLayout->addWidget(autoHideEditorButtonbar, row++, 0);
     mainLayout->addWidget(showPDFs, row++,0);
     mainLayout->addWidget(showMissedReminders, row++, 0);
     mainLayout->addWidget(dynamicTotals, row++, 0);
@@ -146,6 +149,8 @@ void AppearancePreferences::saveValues() {
     global.settings->beginGroup("Appearance");
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
     global.settings->setValue("showPDFs", showPDFs->isChecked());
+    global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();
+    global.settings->setValue("autoHideEditorToolbar", global.autoHideEditorToolbar);
     global.pdfPreview = showPDFs->isChecked();
     if (minimizeToTray!= NULL)
         global.settings->setValue("minimizeToTray", minimizeToTray->isChecked());

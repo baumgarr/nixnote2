@@ -149,6 +149,7 @@ void Global::setup(StartupConfig startupConfig) {
     settings->beginGroup("Appearance");
     QString theme = settings->value("themeName", "").toString();
     loadTheme(resourceList,theme);
+    autoHideEditorToolbar = settings->value("autoHideEditorToolbar", true).toBool();
     settings->endGroup();
 
     minIndexInterval = 5000;

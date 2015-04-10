@@ -2770,5 +2770,7 @@ void NBrowserWindow::focusCheck() {
         buttonBarVisible = true;
     if (buttonBar->fontSizes->isExpanded())
         buttonBarVisible = true;
+    if (!global.autoHideEditorToolbar)
+        buttonBarVisible = true;
     buttonBar->setVisible(buttonBarVisible);
 }
