@@ -63,7 +63,7 @@ FavoritesView::FavoritesView(QWidget *parent) :
     this->setStyleSheet("QTreeView {border-image:none; image:none;} ");
     root = new FavoritesViewItem(0);
     root->setData(NAME_POSITION, Qt::UserRole, "root");
-    root->setData(NAME_POSITION, Qt::DisplayRole, tr("Favorites"));
+    root->setData(NAME_POSITION, Qt::DisplayRole, tr("Shortcuts"));
     QFont rootFont = root->font(NAME_POSITION);
     rootFont.setBold(true);
     root->setFont(NAME_POSITION, rootFont);
@@ -85,7 +85,7 @@ FavoritesView::FavoritesView(QWidget *parent) :
     this->loadData();
 
     context.addSeparator();
-    deleteAction = context.addAction(tr("Remove from favorites"));
+    deleteAction = context.addAction(tr("Remove from shortcuts"));
     deleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
 
     deleteShortcut = new QShortcut(this);
