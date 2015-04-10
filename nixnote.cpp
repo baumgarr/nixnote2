@@ -507,7 +507,9 @@ void NixNote::setupGui() {
     trayIconContextMenu->addSeparator();
 
     showAction = trayIconContextMenu->addAction(tr("Show/Hide"));
+    QLOG_DEBUG() << "QSystemTrayIcon::isSystemTrayAvailable():" << QSystemTrayIcon::isSystemTrayAvailable();
     if (!global.showTrayIcon() || global.forceNoStartMimized || !QSystemTrayIcon::isSystemTrayAvailable()) {
+        QLOG_DEBUG() << "Overriding close & minimize to tray because of command line or isSystemTrayAvailable";
         closeToTray = false;
         minimizeToTray = false;
     }
@@ -2114,18 +2116,32 @@ void NixNote::fastPrintNote() {
 
 
 void NixNote::toggleVisible() {
-    if (isMinimized() && minimizeToTray) {
-        setHidden(false);
-        this->show();
-        this->setFocus();
-        unhidingWindow=true;
-        return;
+    if (minimizeToTray) {
+        if (isMinimized()) {
+            setHidden(false);
+            this->showNormal();
+            this->setFocus();
+            unhidingWindow=true;
+            return;
+        } else {
+            showMinimized();
+            this->setHidden(false);
+            unhidingWindow=false;
+            this->setHidden(true);
+            return;
+        }
+    } else {
+        if (isMinimized()) {
+            this->showNormal();
+            this->setFocus();
+            unhidingWindow = true;
+            return;
+        } else {
+            this->unhidingWindow = true;
+            this->showMinimized();
+            return;
+        }
     }
-
-    if (isVisible())
-        this->hide();
-    else
-        this->show();
 }
 
 // The tray icon was activated.  If it was double clicked we restore the
@@ -2133,6 +2149,9 @@ void NixNote::toggleVisible() {
 void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     if (reason == QSystemTrayIcon::DoubleClick) {
         toggleVisible();
+    }
+    if (reason == QSystemTrayIcon::Trigger) {
+        this->toggleVisible();
     }
 }
 
