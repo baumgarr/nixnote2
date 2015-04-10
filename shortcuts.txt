@@ -63,6 +63,12 @@ View_Show_SavedSearches				// Show the saved search tree
 View_Show_Trash					// Show the trash window
 View_Show_Editor_Button_Bar			// Hide the editor button bar
 View_Show_Left_Side		F11		// Hide all left hand windows
+View_Show_Favorites_List			// Show/Hide the favorites list in the left hand window
+View_Show_Notebook_List 			// Show/Hide the notebook list in the left hand window
+View_Show_Tags_List     			// Show/Hide the tags list in the left hand window
+View_Show_Saved_Search_List			// Show/Hide the saved searcht list in the left hand window
+View_Show_Attribute_List			// Show/Hide the attribute list in the left hand window
+View_Show_Trash                                 // Show/Hide the trash list in the left hand window
 View_Toolbar					// Show/hide the toolbar
 View_Show_Search				// Show/hide the search box
 View_Show_Quota					// Show/hide the user quota

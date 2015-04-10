@@ -95,6 +95,12 @@ public:
     QAction *viewNoteListWide;
     QAction *viewNoteListNarrow;
     QAction *viewLeftPanel;
+    QAction *viewFavoritesTree;
+    QAction *viewNotebookTree;
+    QAction *viewTagTree;
+    QAction *viewSearchTree;
+    QAction *viewAttributesTree;
+    QAction *viewTrashTree;
     QAction *viewNoteList;
     QAction *viewNotePanel;
     QAction *viewToolbar;

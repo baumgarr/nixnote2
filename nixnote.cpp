@@ -411,9 +411,38 @@ void NixNote::setupGui() {
         menuBar->viewNotePanel->setChecked(false);
         tabWindow->setVisible(false);
     }
-
-
+    value = global.settings->value("favoritesTreeVisible", true).toBool();
+    if (!value) {
+        menuBar->viewFavoritesTree->setChecked(false);
+        favoritesTreeView->setVisible(false);
+    }
+    value = global.settings->value("notebookTreeVisible", true).toBool();
+    if (!value) {
+        menuBar->viewNotebookTree->setChecked(false);
+        notebookTreeView->setVisible(false);
+    }
+    value = global.settings->value("tagTreeVisible", true).toBool();
+    if (!value) {
+        menuBar->viewTagTree->setChecked(false);
+        tagTreeView->setVisible(false);
+    }
+    value = global.settings->value("savedSearchTreeVisible", true).toBool();
+    if (!value) {
+        menuBar->viewSearchTree->setChecked(false);
+        searchTreeView->setVisible(false);
+    }
+    value = global.settings->value("attributeTreeVisible", true).toBool();
+    if (!value) {
+        menuBar->viewAttributesTree->setChecked(false);
+        attributeTree->setVisible(false);
+    }
+    value = global.settings->value("trashTreeVisible", true).toBool();
+    if (!value) {
+        menuBar->viewTrashTree->setChecked(false);
+        trashTree->setVisible(false);
+    }
     global.settings->endGroup();
+    checkLeftPanelSeparators();
 
     if (rightPanelSplitter->orientation() == Qt::Vertical)
         viewNoteListWide();
@@ -736,10 +765,12 @@ void NixNote::noteSynchronized(qint32 lid, bool value) {
 //*****************************************************************************
 void NixNote::setupSearchTree() {
     QLOG_TRACE() << "Starting NixNote.setupSearchTree()";
-    QLabel *lbl = new QLabel();
-    lbl->setTextFormat(Qt::RichText);
-    lbl->setText("<hr>");
-    leftPanel->addWidget(lbl);
+
+    leftSeparator3 = new QLabel();
+    leftSeparator3->setTextFormat(Qt::RichText);
+    leftSeparator3->setText("<hr>");
+    leftPanel->addWidget(leftSeparator3);
+
     searchTreeView = new NSearchView(leftPanel);
     leftPanel->addWidget(searchTreeView);
     connect(&syncRunner, SIGNAL(searchUpdated(qint32, QString)), searchTreeView, SLOT(searchUpdated(qint32, QString)));
@@ -754,10 +785,12 @@ void NixNote::setupSearchTree() {
 //*****************************************************************************
 void NixNote::setupTagTree() {
     QLOG_TRACE() << "Starting NixNote.setupTagTree()";
-    QLabel *lbl = new QLabel();
-    lbl->setTextFormat(Qt::RichText);
-    lbl->setText("<hr>");
-    leftPanel->addWidget(lbl);
+
+    leftSeparator2 = new QLabel();
+    leftSeparator2->setTextFormat(Qt::RichText);
+    leftSeparator2->setText("<hr>");
+    leftPanel->addWidget(leftSeparator2);
+
     tagTreeView = new NTagView(leftPanel);
     leftPanel->addWidget(tagTreeView);
     connect(&syncRunner, SIGNAL(tagUpdated(qint32, QString, QString, qint32)),tagTreeView, SLOT(tagUpdated(qint32, QString, QString, qint32)));
@@ -778,10 +811,12 @@ void NixNote::setupTagTree() {
 //*****************************************************************************
 void NixNote::setupAttributeTree() {
     QLOG_TRACE() << "Starting NixNote.setupAttributeTree()";
-    QLabel *lbl = new QLabel();
-    lbl->setTextFormat(Qt::RichText);
-    lbl->setText("<hr>");
-    leftPanel->addWidget(lbl);
+
+    leftseparator4 = new QLabel();
+    leftseparator4->setTextFormat(Qt::RichText);
+    leftseparator4->setText("<hr>");
+    leftPanel->addWidget(leftseparator4);
+
     attributeTree = new NAttributeTree(leftPanel);
     leftPanel->addWidget(attributeTree);
     QLOG_TRACE() << "Exiting NixNote.setupAttributeTree()";
@@ -793,11 +828,13 @@ void NixNote::setupAttributeTree() {
 //*****************************************************************************
 void NixNote::setupTrashTree() {
     QLOG_TRACE() << "Starting NixNote.setupTrashTree()";
+
+    leftSeparator5 = new QLabel();
+    leftSeparator5->setTextFormat(Qt::RichText);
+    leftSeparator5->setText("<hr>");
+    leftPanel->addWidget(leftSeparator5);
+
     trashTree = new NTrashTree(leftPanel);
-    QLabel *lbl = new QLabel();
-    lbl->setTextFormat(Qt::RichText);
-    lbl->setText("<hr>");
-    leftPanel->addWidget(lbl);
     leftPanel->addWidget(trashTree);
     QLOG_TRACE() << "Exiting NixNote.setupTrashTree()";
     connect(&counterRunner, SIGNAL(trashTotals(qint32)), trashTree, SLOT(updateTotals(qint32)));
@@ -821,10 +858,10 @@ void NixNote::setupFavoritesTree() {
     connect(&counterRunner, SIGNAL(tagTotals(qint32,qint32,qint32)), favoritesTreeView, SLOT(updateTotals(qint32,qint32, qint32)));
     connect(favoritesTreeView, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));
 
-    QLabel *lbl = new QLabel();
-    lbl->setTextFormat(Qt::RichText);
-    lbl->setText("<hr>");
-    leftPanel->addWidget(lbl);
+    leftSeparator1 = new QLabel();
+    leftSeparator1->setTextFormat(Qt::RichText);
+    leftSeparator1->setText("<hr>");
+    leftPanel->addWidget(leftSeparator1);
 
     QLOG_TRACE() << "Exiting NixNote.setupFavoritesTree()";
 }
@@ -2617,6 +2654,7 @@ void NixNote::duplicateCurrentNote() {
 }
 
 
+// "Pin" the current note.  This makes sure it appears in all searches
 void NixNote::pinCurrentNote() {
     qint32 lid = tabWindow->currentBrowser()->lid;
     NoteTable ntable(global.db);
@@ -2625,6 +2663,7 @@ void NixNote::pinCurrentNote() {
 }
 
 
+// "Unpin" the current note so it doesn't appear in every search
 void NixNote::unpinCurrentNote() {
     qint32 lid = tabWindow->currentBrowser()->lid;
     NoteTable ntable(global.db);
@@ -2633,12 +2672,13 @@ void NixNote::unpinCurrentNote() {
 }
 
 
-
+// Run the spell checker
 void NixNote::spellCheckCurrentNote() {
     tabWindow->currentBrowser()->spellCheckPressed();
 }
 
 
+// Pause/unpause indexing.
 void NixNote::pauseIndexing(bool value) {
     if (menuBar->pauseIndexingAction->isChecked()) {
        indexRunner.pauseIndexing = true;
@@ -2648,12 +2688,14 @@ void NixNote::pauseIndexing(bool value) {
 }
 
 
+// View the mesasge log.  These same messages show up in a terminal
 void NixNote::openMessageLog() {
     LogViewer viewer;
     viewer.exec();
 }
 
 
+// Note button has been pressed, so we need to know what type of note to create
 void NixNote::noteButtonClicked() {
     if (noteButton->property("currentNoteButton").toInt() == NewTextNote)
         newNote();
@@ -2664,11 +2706,14 @@ void NixNote::noteButtonClicked() {
 }
 
 
+// Show a url to the debugging log
 void NixNote::showDesktopUrl(const QUrl &url) {
     QLOG_DEBUG() << url.toString();
 }
 
 
+
+// Reload the icons after a theme switch
 void NixNote::reloadIcons() {
     QString newThemeName = "";
     global.settings->beginGroup("Appearance");
@@ -2747,3 +2792,133 @@ void NixNote::reloadIcons() {
     if (!f.exists() && newThemeName != "")
         menuBar->themeInformationAction->setVisible(false);
 }
+
+
+// Show/Hide the favorites tree on the left side
+void NixNote::toggleFavoritesTree() {
+    bool visible = true;
+    if (favoritesTreeView->isVisible())
+        visible = false;
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("favoritesTreeVisible", visible);
+    global.settings->endGroup();
+    favoritesTreeView->setVisible(visible);
+    checkLeftPanelSeparators();
+}
+
+
+
+// Show/Hide the notebook tree on the left side
+void NixNote::toggleNotebookTree() {
+    bool visible = true;
+    if (notebookTreeView->isVisible())
+        visible = false;
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("notebookTreeVisible", visible);
+    global.settings->endGroup();
+    notebookTreeView->setVisible(visible);
+    checkLeftPanelSeparators();
+}
+
+
+// Show/Hide the tag tree on the left side
+void NixNote::toggleTagTree() {
+    bool visible = true;
+    if (tagTreeView->isVisible())
+        visible = false;
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("tagTreeVisible", visible);
+    global.settings->endGroup();
+    tagTreeView->setVisible(visible);
+    checkLeftPanelSeparators();
+}
+
+
+// Show/Hide the saved search tree on the left side
+void NixNote::toggleSavedSearchTree() {
+    bool visible = true;
+    if (searchTreeView->isVisible())
+        visible = false;
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("savedSearchTreeVisible", visible);
+    global.settings->endGroup();
+    searchTreeView->setVisible(visible);
+    checkLeftPanelSeparators();
+}
+
+
+// Show/Hide the attributes tree on the left side
+void NixNote::toggleAttributesTree() {
+    bool visible = true;
+    if (attributeTree->isVisible())
+        visible = false;
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("attributeTreeVisible", visible);
+    global.settings->endGroup();
+    attributeTree->setVisible(visible);
+    checkLeftPanelSeparators();
+}
+
+// Show/Hide the trash tree on the left side
+void NixNote::toggleTrashTree() {
+    bool visible = true;
+    if (trashTree->isVisible())
+        visible = false;
+    global.settings->beginGroup("SaveState");
+    global.settings->setValue("trashTreeVisible", visible);
+    global.settings->endGroup();
+    trashTree->setVisible(visible);
+    checkLeftPanelSeparators();
+}
+
+
+
+// This function will show/hide all of the separators between the trees on the left side
+// of the gui.
+void NixNote::checkLeftPanelSeparators() {
+    bool s1 = false;
+    bool s2 = false;
+    bool s3 = false;
+    bool s4 = false;
+    bool s5 = false;
+
+    bool tags;
+    bool notebooks;
+    bool favorites;
+    bool searches;
+    bool attributes;
+    bool trash;
+
+    global.settings->beginGroup("SaveState");
+    favorites = global.settings->value("favoritesTreeVisible", true).toBool();
+    notebooks = global.settings->value("notebookTreeVisible",true).toBool();
+    tags = global.settings->value("tagTreeVisible", true).toBool();
+    searches = global.settings->value("savedSearchTreeVisible", true).toBool();
+    attributes = global.settings->value("attributeTreeVisible", true).toBool();
+    trash = global.settings->value("trashTreeVisible", true).toBool();
+    global.settings->endGroup();
+
+    if (favorites && (notebooks || tags || searches || attributes || trash)) {
+        s1=true;
+    }
+    if (notebooks && (tags || searches || attributes || trash)) {
+        s2=true;
+    }
+    if (tags && (searches || attributes || trash)) {
+        s3=true;
+    }
+    if (searches && (attributes || trash)) {
+        s4=true;
+    }
+    if (attributes && trash) {
+        s5=true;
+    }
+
+    leftSeparator1->setVisible(s1);
+    leftSeparator2->setVisible(s2);
+    leftSeparator3->setVisible(s3);
+    leftseparator4->setVisible(s4);
+    leftSeparator5->setVisible(s5);
+}
+
+

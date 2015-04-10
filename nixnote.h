@@ -87,6 +87,11 @@ private:
     NSearchView *searchTreeView;
     NNotebookView *notebookTreeView;
     FavoritesView *favoritesTreeView;
+    QLabel *leftSeparator1;
+    QLabel *leftSeparator2;
+    QLabel *leftSeparator3;
+    QLabel *leftseparator4;
+    QLabel *leftSeparator5;
     NTrashTree *trashTree;
     NTagView *tagTreeView;
     NTabWidget *tabWindow;
@@ -156,6 +161,7 @@ private:
     void saveContents();
     void saveNoteColumnPositions();
     void saveNoteColumnWidths();
+    void checkLeftPanelSeparators();
     QSplashScreen *splashScreen;
     RemoteQuery *remoteQuery;
 
@@ -203,6 +209,12 @@ public slots:
     void openImportFolders();
     void setMessage(QString msg, int timeout=15000);
     void toggleLeftPanel();
+    void toggleFavoritesTree();
+    void toggleNotebookTree();
+    void toggleTagTree();
+    void toggleSavedSearchTree();
+    void toggleAttributesTree();
+    void toggleTrashTree();
     void toggleNoteList();
     void toggleTabWindow();
     void toggleToolbar();

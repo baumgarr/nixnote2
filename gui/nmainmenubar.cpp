@@ -304,6 +304,54 @@ void NMainMenuBar::setupViewMenu() {
     viewMenu->addAction(viewLeftPanel);
     connect(viewLeftPanel, SIGNAL(triggered()), parent, SLOT(toggleLeftPanel()));
 
+    viewFavoritesTree = new QAction(tr("Show Favorites"), this);
+    setupShortcut(viewFavoritesTree, "View_Show_Favorites_List");
+    viewFavoritesTree->setCheckable(true);
+    viewFavoritesTree->setChecked(true);
+    viewFavoritesTree->setFont(font);
+    viewMenu->addAction(viewFavoritesTree);
+    connect(viewFavoritesTree, SIGNAL(triggered()), parent, SLOT(toggleFavoritesTree()));
+
+    viewNotebookTree = new QAction(tr("Show Notebooks"), this);
+    setupShortcut(viewNotebookTree, "View_Show_Notebook_List");
+    viewNotebookTree->setCheckable(true);
+    viewNotebookTree->setChecked(true);
+    viewNotebookTree->setFont(font);
+    viewMenu->addAction(viewNotebookTree);
+    connect(viewNotebookTree, SIGNAL(triggered()), parent, SLOT(toggleNotebookTree()));
+
+    viewTagTree = new QAction(tr("Show Tags"), this);
+    setupShortcut(viewTagTree, "View_Show_Tag_List");
+    viewTagTree->setCheckable(true);
+    viewTagTree->setChecked(true);
+    viewTagTree->setFont(font);
+    viewMenu->addAction(viewTagTree);
+    connect(viewTagTree, SIGNAL(triggered()), parent, SLOT(toggleTagTree()));
+
+    viewSearchTree = new QAction(tr("Show Saved Searches"), this);
+    setupShortcut(viewSearchTree , "View_Show_Saved_Search_List");
+    viewSearchTree ->setCheckable(true);
+    viewSearchTree ->setChecked(true);
+    viewSearchTree ->setFont(font);
+    viewMenu->addAction(viewSearchTree);
+    connect(viewSearchTree , SIGNAL(triggered()), parent, SLOT(toggleSavedSearchTree()));
+
+    viewAttributesTree = new QAction(tr("Show Attribute Fliter"), this);
+    setupShortcut(viewAttributesTree, "View_Attributes_List");
+    viewAttributesTree ->setCheckable(true);
+    viewAttributesTree ->setChecked(true);
+    viewAttributesTree ->setFont(font);
+    viewMenu->addAction(viewAttributesTree);
+    connect(viewAttributesTree , SIGNAL(triggered()), parent, SLOT(toggleAttributesTree()));
+
+    viewTrashTree = new QAction(tr("Show Trash"), this);
+    setupShortcut(viewTrashTree, "View_Trash");
+    viewTrashTree ->setCheckable(true);
+    viewTrashTree ->setChecked(true);
+    viewTrashTree ->setFont(font);
+    viewMenu->addAction(viewTrashTree);
+    connect(viewTrashTree, SIGNAL(triggered()), parent, SLOT(toggleTrashTree()));
+
     viewNoteList = new QAction(tr("Show Note List"), this);
     setupShortcut(viewNoteList, "View_Show_Note_List");
     viewNoteList->setCheckable(true);
