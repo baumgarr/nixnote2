@@ -30,4 +30,5 @@ StartupConfig::StartupConfig()
     this->forceStartMinimized = false;
     this->disableIndexing = false;
     this->startupNoteLid = 0;
+    this->forceSystemTrayAvailable=false;
 }

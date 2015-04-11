@@ -90,13 +90,15 @@ int main(int argc, char *argv[])
         if (parm == "--help" || parm == "-?") {
             printf("\n\n");
             printf("NixNote command line options:\n");
-            printf("  --help or -?            Show this message\n");
-            printf("  --accountId=<id>        Start with specified user account\n");
-            printf("  --dontStartMinimized    Override option to start minimized\n");
-            printf("  --disablIndexng         Override option to start minimized\n");
-            printf("  --openNote=<lid>        Open a specific note on startup\n");
-            printf("  --startMinimized        Force a startup with NixNote minimized\n");
-            printf("  --syncAndExit           Synchronize and exit the program.\n");
+            printf("  --help or -?                  Show this message\n");
+            printf("  --accountId=<id>              Start with specified user account\n");
+            printf("  --dontStartMinimized          Override option to start minimized\n");
+            printf("  --disablIndexng               Override option to start minimized\n");
+            printf("  --openNote=<lid>              Open a specific note on startup\n");
+            printf("  --forceSystemTrayAvailable    Force the program to accept that");
+            printf("                                the desktop supports tray icons.");
+            printf("  --startMinimized              Force a startup with NixNote minimized\n");
+            printf("  --syncAndExit                 Synchronize and exit the program.\n");
             printf("\n\n");
             return 0;
         }
@@ -122,6 +124,9 @@ int main(int argc, char *argv[])
         }
         if (parm == "--disableIndexing") {
             startupConfig.disableIndexing = true;
+        }
+        if (parm == "--forceSystemTrayAvailable") {
+            startupConfig.forceSystemTrayAvailable = true;
         }
     }
 

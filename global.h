@@ -146,6 +146,7 @@ public:
     QString defaultGuiFont;                               // Default GUI font name
     bool startupNewNote;                                  // Were we started with the command to begin a new note?
     bool forceNoStartMimized;                             // Force the system to not start minimized, dispite the user's settings
+    bool forceSystemTrayAvailable;                        // Override QSystemTrayIcon::isSystemTrayAvailable()
     bool forceStartMinimized;                             // Force it to start minimized, despiet the user's settings
     bool startMinimized;                                  // Do user prefernces say to start minimized?
     bool syncAndExit;                                     // Should we just start, do a sync, and then quit?

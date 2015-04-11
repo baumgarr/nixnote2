@@ -90,6 +90,7 @@ void Global::setup(StartupConfig startupConfig) {
     settings = new QSettings(settingsFile, QSettings::IniFormat);
 
     this->forceNoStartMimized = startupConfig.forceNoStartMinimized;
+    this->forceSystemTrayAvailable = startupConfig.forceSystemTrayAvailable;
     this->startupNewNote = startupConfig.startupNewNote;
     this->syncAndExit = startupConfig.syncAndExit;
     this->forceStartMinimized = startupConfig.forceStartMinimized;

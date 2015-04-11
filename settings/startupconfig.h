@@ -41,6 +41,7 @@ public:
     qint32 startupNoteLid;
     bool forceStartMinimized;
     bool disableIndexing;
+    bool forceSystemTrayAvailable;
 };
 
 #endif // STARTUPCONFIG_H

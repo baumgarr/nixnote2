@@ -508,7 +508,10 @@ void NixNote::setupGui() {
 
     showAction = trayIconContextMenu->addAction(tr("Show/Hide"));
     QLOG_DEBUG() << "QSystemTrayIcon::isSystemTrayAvailable():" << QSystemTrayIcon::isSystemTrayAvailable();
-    if (!global.showTrayIcon() || global.forceNoStartMimized || !QSystemTrayIcon::isSystemTrayAvailable()) {
+    if (!QSystemTrayIcon::isSystemTrayAvailable() && global.forceSystemTrayAvailable) {
+        QLOG_INFO() << "Overriding QSystemTrayIcon::isSystemTrayAvailable() per command line option.";
+    }
+    if (!global.showTrayIcon() || global.forceNoStartMimized || (!QSystemTrayIcon::isSystemTrayAvailable() && !global.forceSystemTrayAvailable)) {
         QLOG_DEBUG() << "Overriding close & minimize to tray because of command line or isSystemTrayAvailable";
         closeToTray = false;
         minimizeToTray = false;
@@ -667,7 +670,7 @@ void NixNote::setupGui() {
 
     // Determine if we should start minimized
     QLOG_DEBUG() << "isSystemTrayAvailable:" << QSystemTrayIcon::isSystemTrayAvailable();
-    if (global.startMinimized && !global.forceNoStartMimized && QSystemTrayIcon::isSystemTrayAvailable()) {
+    if (global.startMinimized && !global.forceNoStartMimized && (QSystemTrayIcon::isSystemTrayAvailable()||global.forceSystemTrayAvailable)) {
         if (minimizeToTray)
             this->hide();
         else
