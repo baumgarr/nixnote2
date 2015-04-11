@@ -124,11 +124,11 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(new QLabel(tr("Default Editor Font*")), row, 0);
     mainLayout->addWidget(defaultFontChooser, row++, 1);
 
-    mainLayout->addWidget(new QLabel("Default Editor Font Size*"), row, 0);
+    mainLayout->addWidget(new QLabel(tr("Default Editor Font Size*")), row, 0);
     mainLayout->addWidget(defaultFontSizeChooser, row++, 1);
 
     mainLayout->addWidget(new QLabel(""), row++, 0);
-    mainLayout->addWidget(new QLabel("* May require restart on some systems."), row++, 0);
+    mainLayout->addWidget(new QLabel(tr("* May require restart on some systems.")), row++, 0);
 
     global.settings->beginGroup("Appearance");
 
