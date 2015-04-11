@@ -95,8 +95,8 @@ int main(int argc, char *argv[])
             printf("  --dontStartMinimized          Override option to start minimized\n");
             printf("  --disablIndexng               Override option to start minimized\n");
             printf("  --openNote=<lid>              Open a specific note on startup\n");
-            printf("  --forceSystemTrayAvailable    Force the program to accept that");
-            printf("                                the desktop supports tray icons.");
+            printf("  --forceSystemTrayAvailable    Force the program to accept that\n");
+            printf("                                the desktop supports tray icons.\n");
             printf("  --startMinimized              Force a startup with NixNote minimized\n");
             printf("  --syncAndExit                 Synchronize and exit the program.\n");
             printf("\n\n");
