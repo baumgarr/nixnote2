@@ -2150,11 +2150,42 @@ void NixNote::toggleVisible() {
 // The tray icon was activated.  If it was double clicked we restore the
 // gui.
 void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
+    int showHide = 0;
+    int newNote = 1;
+    int newQuickNote = 2;
+    int screenCapture = 3;
+
     if (reason == QSystemTrayIcon::DoubleClick) {
-        toggleVisible();
+        global.settings->beginGroup("Appearance");
+        int value = global.settings->value("trayDoubleClickAction", 0).toInt();
+        global.settings->endGroup();
+        if (value == showHide)
+            toggleVisible();
+        if (value == newNote) {
+            if (!isVisible())
+                toggleVisible();
+            this->newNote();
+        }
+        if (value == newQuickNote)
+            this->newExternalNote();
+        if (value == screenCapture)
+            this->screenCapture();
     }
     if (reason == QSystemTrayIcon::Trigger) {
-        this->toggleVisible();
+        global.settings->beginGroup("Appearance");
+        int value = global.settings->value("traySingleClickAction", 0).toInt();
+        global.settings->endGroup();
+        if (value == showHide)
+            toggleVisible();
+        if (value == newNote) {
+            if (!isVisible())
+                toggleVisible();
+             this->newNote();
+        }
+        if (value == newQuickNote)
+            this->newExternalNote();
+        if (value == screenCapture)
+            this->screenCapture();
     }
 }
 
