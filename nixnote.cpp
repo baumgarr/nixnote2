@@ -630,6 +630,25 @@ void NixNote::setupGui() {
                 }
             }
 
+            searchTreeView->root->setExpanded(true);
+            QString collapsedTrees = global.settings->value("collapsedTrees", "").toString();
+            if (collapsedTrees != "") {
+                QStringList trees = collapsedTrees.split(" ");
+                for (int i=0; i<trees.size(); i++) {
+                    QString item = trees[i].toLower();
+                    if (item=="favorites")
+                        this->favoritesTreeView->root->setExpanded(false);
+                    if (item=="notebooks")
+                        this->notebookTreeView->root->setExpanded(false);
+                    if (item=="tags")
+                        this->tagTreeView->root->setExpanded(false);
+                    if (item=="attributes")
+                        this->attributeTree->root->setExpanded(false);
+                    if (item=="savedsearches")
+                        this->searchTreeView->root->setExpanded(false);
+                }
+            }
+
 
             global.settings->endGroup();
         }
@@ -1055,6 +1074,19 @@ void NixNote::closeEvent(QCloseEvent *event) {
     }
     global.settings->setValue("expandedTags", savedLids.trimmed());
 
+    QString collapsedTrees = "";
+    global.settings->remove("collapsedTrees");
+    if (!favoritesTreeView->root->isExpanded())
+        collapsedTrees = "favorites ";
+    if (!notebookTreeView->root->isExpanded())
+        collapsedTrees= collapsedTrees + "notebooks ";
+    if (!tagTreeView->root->isExpanded())
+        collapsedTrees= collapsedTrees + "tags ";
+    if (!attributeTree->root->isExpanded())
+        collapsedTrees= collapsedTrees + "attributes ";
+    if (!searchTreeView->root->isExpanded())
+        collapsedTrees= collapsedTrees + "savedsearches ";
+    global.settings->setValue("collapsedTrees", collapsedTrees.trimmed());
 
     QHash<qint32, NNotebookViewItem*>::iterator books;
     savedLids = "";

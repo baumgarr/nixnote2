@@ -92,7 +92,6 @@ class NAttributeTree : public QTreeWidget
     Q_OBJECT
 private:
 
-    QTreeWidgetItem *root;
     QTreeWidgetItem *createdRoot;
     QTreeWidgetItem *lastUpdatedRoot;
     QTreeWidgetItem *containsRoot;
@@ -162,6 +161,7 @@ private:
 public:
     explicit NAttributeTree(QWidget *parent = 0);
     ~NAttributeTree();
+    QTreeWidgetItem *root;
     void updateSelection();
     void resetSize();
     void mousePressEvent(QMouseEvent *event);

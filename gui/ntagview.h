@@ -31,7 +31,6 @@ class NTagView : public QTreeWidget
 {
     Q_OBJECT
 private:
-    NTagViewItem *root;
     virtual void mousePressEvent(QMouseEvent *event);
     int filterPosition;
     int maxCount;
@@ -56,6 +55,7 @@ private slots:
     void editComplete();
 
 public:
+    NTagViewItem *root;
     explicit NTagView(QWidget *parent = 0);
     ~NTagView();
     QHash<qint32, NTagViewItem*> dataStore;
