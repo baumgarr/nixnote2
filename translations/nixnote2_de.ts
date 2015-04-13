@@ -194,83 +194,79 @@
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="35"/>
         <source>Show tray icon</source>
-        <translation>Zeige Icon im Tray</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="36"/>
         <source>Display PDFs inline</source>
-        <translation>PDF Dateien in Notiz darstellen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="37"/>
         <source>Show splash screen on startup</source>
-        <translation>Zeige das Begrüßungsfenster beim Starten</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="38"/>
         <source>Start automatically at login</source>
-        <translation>Starte automatisch beim Login </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="39"/>
         <source>Show missed reminders on startup</source>
-        <translation>Zeige beim Starten alle vergessenen Erinnerungen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="40"/>
         <source>Always Start minimized</source>
-        <translation>Immer Minimiert starten</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="41"/>
         <source>Show notebook and tag totals</source>
-        <translation>Zeige alle Notiozbücher und Tags</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="60"/>
         <source>Startup Behavior</source>
-        <translation>Startverhalten</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="62"/>
         <source>Restore Selection Criteria</source>
-        <translatorcomment>Auswahl für die Startoption</translatorcomment>
-        <translation>Wiederherstellen der Auswahlkriterien</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="63"/>
         <source>Select Default Notebook</source>
-        <translatorcomment>Auswahl für die Startoption</translatorcomment>
-        <translation>Zeige das Standard-Notizbuch</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="64"/>
         <source>View All Notebooks</source>
-        <translatorcomment>Auswahl für die Startoption</translatorcomment>
-        <translation>Zeige alle Notizbücher</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="71"/>
         <source>Minimize to tray</source>
-        <translation>In den Tray minimieren</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="72"/>
         <source>Close to tray</source>
-        <translatorcomment>Bei der Fensterfunktion &quot;Schließen&quot; wird anstelle des Beenden in den Tray minimiert</translatorcomment>
-        <translation>Schließen in den Tray</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="85"/>
         <source>Default Editor Font</source>
-        <translation>Voreinstellung der Editor Schrift/-art</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="91"/>
         <source>Window Icon
 (may require restart on
 some window managers)</source>
-        <translation>Fenster Icon (einige Fenstermanager benötigen einen Neustart)</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -278,12 +274,12 @@ some window managers)</source>
     <message>
         <location filename="../html/attachmenticonbuilder.cpp" line="54"/>
         <source>Bytes</source>
-        <translation>Bytes</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../html/attachmenticonbuilder.cpp" line="58"/>
         <source>KB</source>
-        <translation>KB</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -291,7 +287,7 @@ some window managers)</source>
     <message>
         <location filename="../gui/browserWidgets/authoreditor.cpp" line="39"/>
         <source>Click to set author</source>
-        <translation>Hier den Autor auswählen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -299,37 +295,37 @@ some window managers)</source>
     <message>
         <location filename="../dialog/closenotebookdialog.cpp" line="37"/>
         <source>Open/Close Notebooks</source>
-        <translation>Notizbücher öffnen/schließen </translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/closenotebookdialog.cpp" line="42"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/closenotebookdialog.cpp" line="43"/>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/closenotebookdialog.cpp" line="56"/>
         <source>Open Notebooks</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/closenotebookdialog.cpp" line="57"/>
         <source>Closed Notebooks</source>
-        <translation>Geschlossene Notizbücher</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/closenotebookdialog.cpp" line="59"/>
         <source>Open</source>
-        <translation>Öffnen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/closenotebookdialog.cpp" line="60"/>
         <source>Close</source>
-        <translation>Schließen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -414,7 +410,7 @@ some window managers)</source>
     <message>
         <location filename="../gui/datedelegate.cpp" line="42"/>
         <source>Today</source>
-        <translation>Heute</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -422,18 +418,17 @@ some window managers)</source>
     <message>
         <location filename="../gui/browserWidgets/dateeditor.cpp" line="38"/>
         <source>Created:</source>
-        <translation>Erstellt:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/dateeditor.cpp" line="42"/>
         <source>Updated:</source>
-        <translation>Geändert:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/dateeditor.cpp" line="46"/>
         <source>Subject:</source>
-        <translatorcomment>Was ist der Unterschied zu Updated? Der Zeitstempel ist der Gleiche</translatorcomment>
-        <translation type="unfinished">Geändert:</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -813,12 +808,12 @@ some window managers)</source>
     <message>
         <location filename="../gui/externalbrowse.cpp" line="32"/>
         <source>NixNote</source>
-        <translation>NixNote</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/externalbrowse.cpp" line="55"/>
         <source>NixNote - </source>
-        <translation>NixNote - </translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -826,22 +821,22 @@ some window managers)</source>
     <message>
         <location filename="../gui/favoritesview.cpp" line="68"/>
         <source>Favorites</source>
-        <translation>Favoriten</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/favoritesview.cpp" line="90"/>
         <source>Remove from favorites</source>
-        <translation>Von Favoriten entfernen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/favoritesview.cpp" line="559"/>
         <source>Are you sure you want to remove this favorite?</source>
-        <translation>Wollen Sie wirklich diesen Favorit entfernen?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/favoritesview.cpp" line="560"/>
         <source>Verify Delete</source>
-        <translation>Löschen bestätigen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -975,22 +970,22 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../dialog/insertlatexdialog.cpp" line="28"/>
         <source>Insert LaTeX Formula</source>
-        <translation>Ein LaTeX Formular einfügen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/insertlatexdialog.cpp" line="38"/>
         <source>Formula</source>
-        <translation>Formular</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/insertlatexdialog.cpp" line="43"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/insertlatexdialog.cpp" line="47"/>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -998,22 +993,22 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../dialog/insertlinkdialog.cpp" line="30"/>
         <source>Insert Link</source>
-        <translation>Link einfügen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/insertlinkdialog.cpp" line="41"/>
         <source>Url</source>
-        <translation>Url</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/insertlinkdialog.cpp" line="46"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/insertlinkdialog.cpp" line="50"/>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1021,7 +1016,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../gui/lineedit.cpp" line="39"/>
         <source>Search</source>
-        <translation>Suchen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1175,22 +1170,22 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../gui/browserWidgets/locationeditor.cpp" line="43"/>
         <source>Click to set location...</source>
-        <translation>Klicke, um den Speicherort festzulegen...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/locationeditor.cpp" line="46"/>
         <source>Edit...</source>
-        <translation>Bearbeiten...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/locationeditor.cpp" line="47"/>
         <source>Clear</source>
-        <translation>Löschen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/locationeditor.cpp" line="48"/>
         <source>View on map</source>
-        <translation>Auf der Karte zeigen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2053,13 +2048,13 @@ Unable to decrypt.</source>
     <message>
         <location filename="../gui/ntabwidget.cpp" line="183"/>
         <source>Untitled Note</source>
-        <translation>unbenannte Notiz</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/ntabwidget.cpp" line="188"/>
         <location filename="../gui/ntabwidget.cpp" line="254"/>
         <source>NixNote - </source>
-        <translation>NixNote - </translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2384,12 +2379,12 @@ Using this in a note link can cause problems unless you synchronize it first.</s
         <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="121"/>
         <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="135"/>
         <source>Untitled note</source>
-        <translation>unbenannte Notiz</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/ntitleeditor.cpp" line="132"/>
         <source>untitled note</source>
-        <translation>unbenannte Notiz</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2934,17 +2929,17 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../html/noteformatter.cpp" line="554"/>
         <source>File</source>
-        <translation>Datei</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../html/noteformatter.cpp" line="582"/>
         <source>Bytes</source>
-        <translation>Bytes</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../html/noteformatter.cpp" line="586"/>
         <source>KB</source>
-        <translation>KB</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3042,13 +3037,13 @@ Are you sure you want to continue?</source>
         <location filename="../gui/plugins/popplerviewer.cpp" line="55"/>
         <location filename="../gui/plugins/popplerviewer.cpp" line="95"/>
         <source>Page </source>
-        <translation>Seite</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/plugins/popplerviewer.cpp" line="55"/>
         <location filename="../gui/plugins/popplerviewer.cpp" line="95"/>
         <source> of </source>
-        <translation>von</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3231,17 +3226,17 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../gui/browserWidgets/reminderbutton.cpp" line="30"/>
         <source>Mark as Done</source>
-        <translation>Als erledigt markieren</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/reminderbutton.cpp" line="31"/>
         <source>Change Date</source>
-        <translation>Datum ändern</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/reminderbutton.cpp" line="32"/>
         <source>Clear Reminder</source>
-        <translation>Erinnerung löschen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3249,7 +3244,7 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../reminders/remindermanager.cpp" line="87"/>
         <source>Reminders Due</source>
-        <translation>Fällige Erinnerungen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3257,12 +3252,12 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../dialog/remindersetdialog.cpp" line="45"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/remindersetdialog.cpp" line="46"/>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3271,7 +3266,7 @@ any key or using the right or middle mouse buttons.</source>
         <location filename="../filters/remotequery.cpp" line="94"/>
         <location filename="../filters/remotequery.cpp" line="111"/>
         <source>Today</source>
-        <translation>Heute</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3363,7 +3358,7 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../utilities/spellchecker.cpp" line="75"/>
         <source>Unable to find dictionaries.  Is Huntspell installed?</source>
-        <translation>Keine Wörterbücher gefunden. Ist Huntspell installiert? </translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3534,7 +3529,7 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../gui/browserWidgets/tageditornewtag.cpp" line="56"/>
         <source>Click to add tag...</source>
-        <translation>Klicke, um Schlagwörter hinzuzufügen...</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3570,7 +3565,7 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../gui/browserWidgets/urleditor.cpp" line="45"/>
         <source>Click to set source URL...</source>
-        <translation>Klicke, um Quell-Url hinzuzufügen...</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3691,18 +3686,17 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../dialog/webcamcapturedialog.cpp" line="37"/>
         <source>Webcam Capture</source>
-        <translatorcomment>Die Fensterüberschrift beschreibt den Aufnahmebereich der Webcam </translatorcomment>
-        <translation>Webcam Aufnahme</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/webcamcapturedialog.cpp" line="59"/>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/webcamcapturedialog.cpp" line="60"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
