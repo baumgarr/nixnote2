@@ -36,7 +36,7 @@ void CounterRunner::initialize() {
     init = true;
     QLOG_DEBUG() << "Starting CounterRunner";
     db = new DatabaseConnection("counterrunner");
-    QLOG_DEBUG() << "CounterRunner exiting.";
+    QLOG_DEBUG() << "CounterRunner initialization complete.";
 }
 
 
