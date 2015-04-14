@@ -54,7 +54,7 @@ void CounterRunner::countAll() {
 void CounterRunner::countTrash() {
     if (!init)
         initialize();
-    NoteTable ntable(&db->conn);
+    NoteTable ntable(db);
     QList<qint32> lids;
     emit trashTotals(ntable.getAllDeleted(lids));
 }
@@ -66,7 +66,7 @@ void CounterRunner::countNotebooks() {
         initialize();
 
     // First get every possible notebook
-    NotebookTable nTable(&db->conn);
+    NotebookTable nTable(db);
     QList<qint32> lids;
     nTable.getAll(lids);
 
@@ -76,7 +76,7 @@ void CounterRunner::countNotebooks() {
         allNotebooks.insert(lids.at(i), 0);
     }
 
-    NSqlQuery query(db->conn);
+    NSqlQuery query(db);
     query.exec(" select data, count(data) from datastore where key=5011 and lid not in (select lid from datastore where data='false' and key=5010) group by data;");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
@@ -104,7 +104,7 @@ void CounterRunner::countTags() {
     if (!init)
         initialize();
     // First get every possible tag
-    TagTable tTable(&db->conn);
+    TagTable tTable(db);
     QList<qint32> lids;
     tTable.getAll(lids);
 
@@ -114,7 +114,7 @@ void CounterRunner::countTags() {
         allTags.insert(lids.at(i), 0);
     }
 
-    NSqlQuery query(db->conn);
+    NSqlQuery query(db);
     query.exec(" select data, count(data) from datastore where key=5012 and lid not in (select lid from datastore where data='false' and key=5010) group by data;");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();

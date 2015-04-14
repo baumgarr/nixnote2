@@ -33,7 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 // Default constructor
-NoteTable::NoteTable(QSqlDatabase *db)
+NoteTable::NoteTable(DatabaseConnection *db)
 {
     this->db = db;
 }
@@ -45,7 +45,7 @@ NoteTable::NoteTable(QSqlDatabase *db)
 void NoteTable::updateGuid(qint32 lid, Guid &guid) {
     QLOG_TRACE() << "Entering NoteTable::updateNoteGuid()";
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", guid);
     query.bindValue(":lid", lid);
@@ -72,7 +72,7 @@ void NoteTable::sync(qint32 lid, const Note &note, qint32 account) {
    // QLOG_TRACE() << "Entering NoteTable::sync()";
 
     if (lid > 0) {
-        NSqlQuery query(*db);
+        NSqlQuery query(db);
 
         // Delete the old record
         query.prepare("Delete from DataStore where lid=:lid");
@@ -99,7 +99,7 @@ void NoteTable::sync(qint32 lid, const Note &note, qint32 account) {
 // Given a note's GUID, we return the LID
 qint32 NoteTable::getLid(QString guid) {
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":key", NOTE_GUID);
     query.bindValue(":data", guid);
@@ -115,7 +115,7 @@ qint32 NoteTable::getLid(QString guid) {
 // Given a note's lid, return the guid
 QString NoteTable::getGuid(qint32 lid) {
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     QString retval = "";
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", NOTE_GUID);
@@ -140,8 +140,8 @@ qint32 NoteTable::getLid(string guid) {
 qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     ResourceTable resTable(db);
     ConfigStore cs(db);
-    NSqlQuery query(*db);
-    NSqlQuery trans(*db);
+    NSqlQuery query(db);
+    NSqlQuery trans(db);
     trans.exec("begin");
     qint32 position;
     qint32 lid = l;
@@ -466,7 +466,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
 // happen during a sync if a resource appears before the note itself
 qint32 NoteTable::addStub(QString noteGuid) {
     ConfigStore cs(db);
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
 
     qint32 lid = 0;
     lid = getLid(noteGuid);
@@ -512,7 +512,7 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
         notebookName = notebook.name;
     }
     // Now let's update the user table
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
 
     query.prepare("Delete from NoteTable where lid=:lid");
     query.bindValue(":lid", lid);
@@ -707,7 +707,7 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
 
 // Update the name of a notebook in the note list table
 bool NoteTable::updateNotebookName(qint32 lid, QString name) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update NoteTable set notebook=:name where notebooklid=:lid");
     query.bindValue(":name", name);
     query.bindValue(":lid", lid);
@@ -719,7 +719,7 @@ bool NoteTable::updateNotebookName(qint32 lid, QString name) {
 // Return a note structure given the LID
 bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadBinary) {
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     NoteAttributes na;
@@ -882,7 +882,7 @@ bool NoteTable::get(Note &note, string guid, bool loadResources, bool loadBinary
 
 // Return if a note is dirty given its lid
 bool NoteTable::isIndexNeeded(qint32 lid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
@@ -898,7 +898,7 @@ bool NoteTable::isIndexNeeded(qint32 lid) {
 
 // Return if a note is dirty given its lid
 bool NoteTable::isDirty(qint32 lid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     bool retval = false;
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
@@ -927,7 +927,7 @@ bool NoteTable::isDirty(string guid) {
 
 // Does this note exist?
 bool NoteTable::exists(qint32 lid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     bool retval = false;
     query.prepare("Select lid from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
@@ -957,7 +957,7 @@ bool NoteTable::exists(string guid) {
 
 // Find the note LIDs for a tag
 qint32 NoteTable::findNotesByTag(QList<qint32> &values, qint32 tagLid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and data=:tagLid");
     query.bindValue(":key", NOTE_TAG_LID);
     query.bindValue(":tagLid", tagLid);
@@ -988,7 +988,7 @@ qint32 NoteTable::findNotesByTag(QList<qint32> &values, string data) {
 
 // Update the user note list with the proper tag names
 void NoteTable::updateNoteListTags(qint32 noteLid, QString tags) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update NoteTable set tags=:tags where lid=:lid");
     query.bindValue(":lid", noteLid);
     query.bindValue(":tags", tags);
@@ -1003,7 +1003,7 @@ void NoteTable::updateNoteListNotebooks(QString guid, QString name) {
     NotebookTable notebookTable(db);
     qint32 notebookLid;
     notebookLid = notebookTable.getLid(guid);
-    NSqlQuery sql2(*db);
+    NSqlQuery sql2(db);
     sql2.prepare("Update NoteTable set notebook=:note where lid=:lid");
     sql2.bindValue(":note", name);
     sql2.bindValue(":lid", notebookLid);
@@ -1015,7 +1015,7 @@ void NoteTable::updateNoteListNotebooks(QString guid, QString name) {
 
 // Get a list of notes for a given tag
 qint32 NoteTable::getNotesWithTag(QList<qint32> &retval, QString tag) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     TagTable tagTable(db);
     qint32 tagLid = tagTable.getLid(tag);
     query.prepare("Select lid data from DataStore where data=:tag and key=:key");
@@ -1040,7 +1040,7 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     if (this->isIndexNeeded(lid) == indexNeeded)
         return;
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Delete from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
@@ -1058,7 +1058,7 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
 
 // Set if a note needs to be indexed
 qint32 NoteTable::getIndexNeeded(QList<qint32> &lids) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     lids.clear();
     qlonglong delayTime = QDateTime::currentDateTime().currentMSecsSinceEpoch()-300000;
     query.prepare("Select lid, data from DataStore where key=:key and lid in (select lid from datastore where key=:key2 and data='true')");
@@ -1083,7 +1083,7 @@ void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDir
     notebookTable.get(book, notebookLid);
 
     if (book.guid.isSet()) {
-        NSqlQuery query(*db);
+        NSqlQuery query(db);
         query.prepare("Update DataStore set data=:notebookLid where lid=:lid and key=:key;");
         query.bindValue(":notebookLid", notebookLid);
         query.bindValue(":lid", noteLid);
@@ -1113,7 +1113,7 @@ void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDir
 
 // Update the URL for a note
 void NoteTable::updateUrl(qint32 noteLid, QString url, bool setAsDirty=false) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update DataStore set data=:url where lid=:lid and key=:key;");
     query.bindValue(":url", url);
     query.bindValue(":lid", noteLid);
@@ -1136,7 +1136,7 @@ void NoteTable::updateUrl(qint32 noteLid, QString url, bool setAsDirty=false) {
 
 // Update the title for a note
 void NoteTable::updateTitle(qint32 noteLid, QString title, bool setAsDirty=false) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update DataStore set data=:url where lid=:lid and key=:key;");
     query.bindValue(":url", title);
     query.bindValue(":lid", noteLid);
@@ -1161,7 +1161,7 @@ void NoteTable::updateTitle(qint32 noteLid, QString title, bool setAsDirty=false
 void NoteTable::updateAuthor(qint32 noteLid, QString author, bool setAsDirty=false) {
     if (noteLid <=0)
         return;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Delete from Datastore where lid=:lid and key=:key");
     query.bindValue(":lid", noteLid);
     query.bindValue(":key", NOTE_ATTRIBUTE_AUTHOR);
@@ -1191,7 +1191,7 @@ void NoteTable::updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty = 
     if (lid <= 0)
         return;
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update DataStore set data=:ts where lid=:lid and key=:key;");
     query.bindValue(":ts",ts);
     query.bindValue(":lid", lid);
@@ -1249,7 +1249,7 @@ void NoteTable::updateDate(qint32 lid, Timestamp ts, qint32 key, bool isDirty = 
 
 
 void NoteTable::removeTag(qint32 lid, qint32 tag, bool isDirty = false) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("delete from DataStore where lid=:lid and key=:key and data=:tag");
     query.bindValue(":lid", lid);
     query.bindValue(":key",NOTE_TAG_LID);
@@ -1267,7 +1267,7 @@ void NoteTable::addTag(qint32 lid, qint32 tag, bool isDirty = false) {
     if (lid <= 0)
         return;
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("delete from DataStore where lid=:lid and key=:key and data=:tag");
     query.bindValue(":lid", lid);
     query.bindValue(":key",NOTE_TAG_LID);
@@ -1289,7 +1289,7 @@ void NoteTable::addTag(qint32 lid, qint32 tag, bool isDirty = false) {
 
 
 bool NoteTable::hasTag(qint32 noteLid, qint32 tagLid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     bool retval = false;
     query.prepare("select lid from DataStore where lid=:lid and key=:key and data=:tag");
     query.bindValue(":lid", noteLid);
@@ -1307,7 +1307,7 @@ void NoteTable::rebuildNoteListTags(qint32 lid) {
     // update the note list
     QStringList tagNames;
     TagTable tagTable(db);
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("select data from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_TAG_LID);
@@ -1337,7 +1337,7 @@ void NoteTable::rebuildNoteListTags(qint32 lid) {
 
 QString NoteTable::getNoteListTags(qint32 lid) {
     QString retval = "";
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("select tags from NoteTable where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -1354,7 +1354,7 @@ void NoteTable::setDirty(qint32 lid, bool dirty) {
         return;
     qint64 dt = QDateTime::currentMSecsSinceEpoch();
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
 
     // If it is setting it as dirty, we need to update the
     // update date &  time.
@@ -1407,7 +1407,7 @@ void NoteTable::setDirty(qint32 lid, bool dirty) {
 
 
 bool NoteTable::isDeleted(qint32 lid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", NOTE_ACTIVE);
     query.bindValue(":lid", lid);
@@ -1427,7 +1427,7 @@ void NoteTable::deleteNote(qint32 lid, bool isDirty=true) {
     if (lid <=0)
         return;
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("delete from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", NOTE_ACTIVE);
     query.bindValue(":lid", lid);
@@ -1472,7 +1472,7 @@ void NoteTable::restoreNote(qint32 lid, bool isDirty=true) {
     if (lid <=0)
         return;
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("delete from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", NOTE_ACTIVE);
     query.bindValue(":lid", lid);
@@ -1516,7 +1516,7 @@ void NoteTable::restoreNote(qint32 lid, bool isDirty=true) {
 
 qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {
     lids.clear();
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("select lid from DataStore where key=:key and data='false'");
     query.bindValue(":key", NOTE_ACTIVE);
     query.exec();
@@ -1541,7 +1541,7 @@ void NoteTable::expunge(qint32 lid) {
         resTable.expunge(resources[i].guid);
     }
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -1568,7 +1568,7 @@ void NoteTable::expunge(QString guid) {
 
 
 qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, QString guid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     qint32 notebookLid;
     NotebookTable notebookTable(db);
     notebookLid = notebookTable.getLid(guid);
@@ -1590,7 +1590,7 @@ qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, string guid) {
 
 
 void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("update datastore set data=:content where lid=:lid and key=:key");
     query.bindValue(":content", content);
     query.bindValue(":lid", lid);
@@ -1615,7 +1615,7 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
 
 
 qint32 NoteTable::findNotesByTitle(QList<qint32> &lids, QString title) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     lids.clear();
 
     query.prepare("select lid from notetable where title like :title order by datecreated;");
@@ -1632,7 +1632,7 @@ qint32 NoteTable::findNotesByTitle(QList<qint32> &lids, QString title) {
 
 qint32 NoteTable::getCount() {
     qint32 retval = 0;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select count(lid) from DataStore where key=:key and lid not in (select lid from datastore where key=:key2 and data = 'true')");
     query.bindValue(":key", NOTE_GUID);
     query.bindValue(":key2", NOTE_EXPUNGED_FROM_TRASH);
@@ -1648,7 +1648,7 @@ qint32 NoteTable::getCount() {
 
 qint32 NoteTable::getUnindexedCount() {
     qint32 retval = 0;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select count(lid) from DataStore where key=:key and data='true' and lid not in (select lid from datastore where key=:key2 and data = 'true')");
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.bindValue(":key2", NOTE_EXPUNGED_FROM_TRASH);
@@ -1668,7 +1668,7 @@ qint32 NoteTable::duplicateNote(qint32 oldLid, bool keepCreatedDate) {
     ConfigStore cs(db);
     qint32 newLid = cs.incrementLidCounter();
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("insert into datastore (lid, key, data) select :newLid, key, data from datastore where lid=:oldLid");
     query.bindValue(":newLid", newLid);
     query.bindValue(":oldLid", oldLid);
@@ -1755,7 +1755,7 @@ qint32 NoteTable::duplicateNote(qint32 oldLid, bool keepCreatedDate) {
 
 // Get all dirty lids
 qint32 NoteTable::getAllDirty(QList<qint32> &lids) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     lids.clear();
     query.prepare("Select lid from DataStore where key=:key and data = 'true'");
     query.bindValue(":key", NOTE_ISDIRTY);
@@ -1771,7 +1771,7 @@ qint32 NoteTable::getAllDirty(QList<qint32> &lids) {
 
 // Get all dirty lids
 qint32 NoteTable::getAllDirty(QList<qint32> &lids, qint32 linkedNotebookLid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     lids.clear();
     query.prepare("Select lid from DataStore where key=:key and data = 'true' and lid in (select lid from datastore where key=:notebookKey and data=:notebookLid)");
     query.bindValue(":key", NOTE_ISDIRTY);
@@ -1794,7 +1794,7 @@ qint32 NoteTable::getAllDirty(QList<qint32> &lids, qint32 linkedNotebookLid) {
 // Get the notebook lid for a note
 qint32 NoteTable::getNotebookLid(qint32 noteLid) {
     qint32 retval = 0;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", NOTE_NOTEBOOK_LID);
     query.bindValue(":lid", noteLid);
@@ -1811,7 +1811,7 @@ qint32 NoteTable::getNotebookLid(qint32 noteLid) {
 
 // Update the USN
 void NoteTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", usn);
     query.bindValue(":lid", lid);
@@ -1824,7 +1824,7 @@ void NoteTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
 
 void NoteTable::updateEnmediaHash(qint32 lid, QByteArray oldHash, QByteArray newHash, bool isDirty) {
     QString content;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select data from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_CONTENT);
@@ -1857,7 +1857,7 @@ void NoteTable::updateEnmediaHash(qint32 lid, QByteArray oldHash, QByteArray new
 
 
 void NoteTable::setThumbnail(qint32 lid, QString filename) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update notetable set thumbnail=:thumbnail where lid=:lid");
     query.bindValue(":thumbnail", filename);
     query.bindValue(":lid", lid);
@@ -1867,7 +1867,7 @@ void NoteTable::setThumbnail(qint32 lid, QString filename) {
 
 
 void NoteTable::reindexAllNotes() {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("delete from datastore where key=:indexKey");
     query.bindValue(":indexKey", NOTE_INDEX_NEEDED);
     query.exec();
@@ -1881,7 +1881,7 @@ void NoteTable::reindexAllNotes() {
 
 
 void NoteTable::resetGeography(qint32 lid, bool isDirty) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("delete from datastore where lid=:lid and key=:key");
 
     query.bindValue(":lid", lid);
@@ -1907,7 +1907,7 @@ void NoteTable::resetGeography(qint32 lid, bool isDirty) {
 void NoteTable::setGeography(qint32 lid, double longitude, double latitude, double altitude, bool isDirty) {
     this->resetGeography(lid, isDirty);
 
-     NSqlQuery query(*db);
+     NSqlQuery query(db);
     query.prepare("insert into datastore (lid,key,data) values(:lid, :key, :data)");
 
     query.bindValue(":lid", lid);
@@ -1943,7 +1943,7 @@ void NoteTable::setThumbnailNeeded(qint32 lid, bool value) {
     if (isThumbnailNeeded(lid) == value)
         return;
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Delete from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
@@ -1973,7 +1973,7 @@ void NoteTable::setThumbnailNeeded(string guid, bool value) {
 
 bool NoteTable::isThumbnailNeeded(qint32 lid) {
     bool retval = false;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("select data from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
@@ -1997,7 +1997,7 @@ bool NoteTable::isThumbnailNeeded(string guid) {
 
 qint32 NoteTable::getNextThumbnailNeeded() {
     qint32 retval = -1;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("select lid from datastore where data='true' and key=:key limit 1;");
     query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
     query.exec();
@@ -2012,7 +2012,7 @@ qint32 NoteTable::getNextThumbnailNeeded() {
 
 qint32 NoteTable::getThumbnailsNeededCount() {
     qint32 retval = 0;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("select count(lid)from datastore where data='true' and key=:key;");
     query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
     query.exec();
@@ -2026,7 +2026,7 @@ qint32 NoteTable::getThumbnailsNeededCount() {
 
 
 void NoteTable::setReminderCompleted(qint32 lid, bool completed) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Delete from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
@@ -2044,7 +2044,7 @@ void NoteTable::setReminderCompleted(qint32 lid, bool completed) {
 
 
 void NoteTable::removeReminder(qint32 lid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Delete from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
@@ -2069,7 +2069,7 @@ void NoteTable::removeReminder(qint32 lid) {
 
 
 void NoteTable::getAllReminders(QList< QPair<qint32,qlonglong>* > *reminders) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("select lid,data from datastore where  key=:key1 and lid not in (select lid from datastore where key=:key2)");
     query.bindValue(":key1", NOTE_ATTRIBUTE_REMINDER_TIME);
     query.bindValue(":key2", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
@@ -2089,7 +2089,7 @@ void NoteTable::getAllReminders(QList< QPair<qint32,qlonglong>* > *reminders) {
 // Return if a note is dirty given its lid
 bool NoteTable::isPinned(qint32 lid) {
     bool retval = false;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_ISPINNED);
@@ -2120,7 +2120,7 @@ void NoteTable::pinNote(qint32 lid, bool value) {
     if (value && isPinned(lid))
         return;
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Delete from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_ISPINNED);
@@ -2165,7 +2165,7 @@ void NoteTable::pinNote(string guid, bool value) {
 
 
 void NoteTable::getAllPinned(QList< QPair< qint32, QString > > &lids) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     lids.clear();
     query.prepare("Select lid, data from DataStore where key=:titlekey and lid in (select lid from datastore where key=:key and data='true') order by data");
     query.bindValue(":titlekey", NOTE_TITLE);
@@ -2183,7 +2183,7 @@ void NoteTable::getAllPinned(QList< QPair< qint32, QString > > &lids) {
 
 
 void NoteTable::getRecentlyUpdated(QList< QPair< qint32, QString > > &lids) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     lids.clear();
     query.prepare("select lid, title from notetable order by dateupdated desc limit 10");
     query.exec();
@@ -2203,7 +2203,7 @@ void NoteTable::getRecentlyUpdated(QList< QPair< qint32, QString > > &lids) {
 
 // Get all lids
 void NoteTable::getAll(QList<qint32> &lids) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     lids.empty();
     query.prepare("Select lid from DataStore where key=:guid");
     query.bindValue(":guid", NOTE_GUID);
@@ -2219,7 +2219,7 @@ void NoteTable::getAll(QList<qint32> &lids) {
 
 // Get all lids
 void NoteTable::setTitleColor(qint32 lid, QString color) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     QString c = color;
     if (c == "white")
         c = "";

@@ -34,7 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // Forward declare table classes
 class NoteTable;
 class ConfigStore;
-
+class DataStore;
 
 // Define the class used to access the table
 class DatabaseConnection
@@ -43,9 +43,13 @@ public:
     QSqlDatabase conn;              // The actual database connection
     ConfigStore *configStore;       // Table used to store program settings
     DataStore *dataStore;           // Table that contains the note data
+    bool dbLocked;
 
     DatabaseConnection(QString connection);           // Generic constructor
     ~DatabaseConnection();          // Destructor
+    void lockForRead();
+    void lockForWrite();
+    void unlock();
 };
 
 #endif // DATABASECONNECTION_H

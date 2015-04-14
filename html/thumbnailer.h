@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlDatabase>
 
 #include "html/noteformatter.h"
+#include "sql/databaseconnection.h"
 
 
 #include "qevercloud/include/QEverCloud.h"
@@ -39,7 +40,7 @@ class Thumbnailer : public QObject
     Q_OBJECT
 
 private:
-    QSqlDatabase *db;
+    DatabaseConnection *db;
     QTimer timer;
     int minTime;
     int maxTime;
@@ -47,7 +48,7 @@ private:
 
 public:
     QWebPage *page;
-    Thumbnailer(QSqlDatabase *db);
+    Thumbnailer(DatabaseConnection *db);
     ~Thumbnailer();
     void render(qint32 lid);
     qint32 lid;

@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 /* Generic constructor. */
-Thumbnailer::Thumbnailer(QSqlDatabase *db)
+Thumbnailer::Thumbnailer(DatabaseConnection *db)
 {
     this->db = db;
     page = new QWebPage();

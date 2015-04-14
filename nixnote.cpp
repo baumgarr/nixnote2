@@ -2703,7 +2703,7 @@ void NixNote::deleteCurrentNote() {
         return;
 
     NoteTable ntable(global.db);
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     sql.prepare("Delete from filter where lid=:lid");
     ntable.deleteNote(lid, true);
     if (expunged)

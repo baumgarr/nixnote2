@@ -107,7 +107,7 @@ void ImportEnex::import(QString file) {
     progress->show();
 
 
-    NSqlQuery query(*global.db);
+    NSqlQuery query(global.db);
     query.exec("begin");
     recCnt = 0;
     while (!reader->atEnd() && !stopNow) {

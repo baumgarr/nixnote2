@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define SHAREDNOTEBOOKTABLE_H
 
 #include "global.h"
+#include "sql/databaseconnection.h"
 
 #include <iostream>
 #include <string>
@@ -50,9 +51,9 @@ class SharedNotebookTable
 {
 
 private:
-    QSqlDatabase *db;
+    DatabaseConnection *db;
 public:
-    SharedNotebookTable(QSqlDatabase *db);     // Constructor
+    SharedNotebookTable(DatabaseConnection *db);     // Constructor
 
     // DB Read Functions
     qint32 getLid(qlonglong id);               // given a guid, return the lid

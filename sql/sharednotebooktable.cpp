@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlTableModel>
 extern Global global;
 
-SharedNotebookTable::SharedNotebookTable(QSqlDatabase *db)
+SharedNotebookTable::SharedNotebookTable(DatabaseConnection *db)
 {
     this->db = db;
 }
@@ -35,7 +35,7 @@ SharedNotebookTable::SharedNotebookTable(QSqlDatabase *db)
 // Given the notebook ID, return the LID
 qint32 SharedNotebookTable::getLid(qlonglong id){
     qint32 retval = 0;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
     query.bindValue(":data", id);
@@ -62,7 +62,7 @@ qint32 SharedNotebookTable::sync(qint32 l, SharedNotebook sharedNotebook){
        lid = findByNotebookGuid(sharedNotebook.notebookGuid);
 
    if (lid > 0) {
-        NSqlQuery query(*db);
+        NSqlQuery query(db);
         // Delete the old record
         query.prepare("Delete from DataStore where lid=:lid and key>=3300 and key <3400");
         query.bindValue(":lid", lid);
@@ -85,7 +85,7 @@ qint32 SharedNotebookTable::add(qint32 l, const SharedNotebook &t, bool isDirty)
     if (lid == 0)
         lid = cs.incrementLidCounter();
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
 
     if (t.email.isSet()) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
@@ -187,7 +187,7 @@ qint32 SharedNotebookTable::add(qint32 l, const SharedNotebook &t, bool isDirty)
 
 // given a LID, return a shared notebook record
 bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -268,7 +268,7 @@ bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
 // Does this shared notebook need a sync?
 bool SharedNotebookTable::isDirty(qint32 lid){
     bool retval = false;
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", SHAREDNOTEBOOK_ISDIRTY);
@@ -283,7 +283,7 @@ bool SharedNotebookTable::isDirty(qint32 lid){
 
 // Does this shared notebook exist?
 bool SharedNotebookTable::exists(qint32 lid){
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
@@ -299,7 +299,7 @@ bool SharedNotebookTable::exists(qint32 lid){
 
 // Does this shared notebook exist?
 bool SharedNotebookTable::exists(qlonglong id){
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and data=:id");
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
     query.bindValue(":id", id);
@@ -317,7 +317,7 @@ bool SharedNotebookTable::exists(qlonglong id){
 qint32 SharedNotebookTable::getAll(QList<qint32> &values){
     QLOG_TRACE() << "Entering SharedNotebookTable::getAll()";
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("select distinct lid from DataStore where key=:key");
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
     query.exec();
@@ -331,7 +331,7 @@ qint32 SharedNotebookTable::getAll(QList<qint32> &values){
 
 // Get the shared notebook ID when given the LID
 qlonglong SharedNotebookTable::getId(qint32 lid){
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select data from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
@@ -350,7 +350,7 @@ qlonglong SharedNotebookTable::getId(qint32 lid){
 
 // Find a shared notebook LID by it's ID
 qint32 SharedNotebookTable::findById(qlonglong id) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and data=:id");
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
     query.bindValue(":data", id);
@@ -368,7 +368,7 @@ qint32 SharedNotebookTable::findById(qlonglong id) {
 
 // Find a shared notebook by the share key
 qint32 SharedNotebookTable::findByShareKey(QString id) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and data=:id");
     query.bindValue(":key", SHAREDNOTEBOOK_SHARE_KEY);
     query.bindValue(":data", id);
@@ -392,7 +392,7 @@ qint32 SharedNotebookTable::findByShareKey(string id) {
 
 // Find a shared notebook LID by its GUID
 qint32 SharedNotebookTable::findByNotebookGuid(QString id) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and data=:id");
     query.bindValue(":key", SHAREDNOTEBOOK_NOTEBOOK_GUID);
     query.bindValue(":data", id);

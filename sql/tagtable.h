@@ -30,6 +30,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtSql>
 #include <QString>
 #include <QList>
+#include "sql/databaseconnection.h"
+
 
 #define TAG_GUID                    1000
 #define TAG_NAME                    1001
@@ -45,9 +47,9 @@ class TagTable
 {
 
 private:
-    QSqlDatabase *db;
+    DatabaseConnection *db;
 public:
-    TagTable(QSqlDatabase *db);                // Constructor
+    TagTable(DatabaseConnection *db);                // Constructor
 
     // DB Read Functions
     qint32 getLid(QString guid);               // given a guid, return the lid

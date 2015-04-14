@@ -24,6 +24,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QObject>
 #include "sql/favoritesrecord.h"
+#include "sql/databaseconnection.h"
 #include <QSqlDatabase>
 #include <QPair>
 
@@ -40,10 +41,10 @@ class FavoritesTable : public QObject
 {
     Q_OBJECT
 private:
-    QSqlDatabase *db;
+    DatabaseConnection *db;
 
 public:
-    explicit FavoritesTable(QSqlDatabase *db, QObject *parent = 0);   // Generic constructor
+    explicit FavoritesTable(DatabaseConnection *db, QObject *parent = 0);   // Generic constructor
 
     // DB Read Functions
     void getAll(QList<qint32> &lids);                                 // Get the lid of all favorites

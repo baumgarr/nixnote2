@@ -132,7 +132,7 @@ void ImportData::import(QString file) {
     recCnt = 0;
 
     reader = new QXmlStreamReader(&xmlFile);
-    NSqlQuery query(*global.db);
+    NSqlQuery query(global.db);
     query.exec("begin");
     int commitCount = 100;
     while (!reader->atEnd() && !stopNow) {

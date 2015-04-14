@@ -247,7 +247,7 @@ void NTagView::loadData() {
         delete ptr;
     }
 
-    NSqlQuery query(*global.db);
+    NSqlQuery query(global.db);
     TagTable tagTable(global.db);
     query.exec("Select lid, name, parent_gid, account from TagModel order by name");
     while (query.next()) {

@@ -29,6 +29,7 @@ extern Global global;
 //*****************************************
 DatabaseConnection::DatabaseConnection(QString connection)
 {
+    dbLocked = false;
     QLOG_DEBUG() << "SQL drivers available: " << QSqlDatabase::drivers();
     QLOG_TRACE() << "Adding database SQLITE";
     conn = QSqlDatabase::addDatabase("QSQLITE", connection);
@@ -41,13 +42,13 @@ DatabaseConnection::DatabaseConnection(QString connection)
     }
 
     if (connection == "nixnote")
-        global.db = &conn;
+        global.db = this;
     QLOG_TRACE() << "Preparing tables";
     // Start preparing the tables
-    configStore = new ConfigStore(&conn);
-    dataStore = new DataStore(global.db);
+    configStore = new ConfigStore(this);
+    dataStore = new DataStore(this);
 
-    NSqlQuery tempTable(this->conn);
+    NSqlQuery tempTable(this);
 //    tempTable.exec("pragma cache_size=8096");
 //    tempTable.exec("pragma page_size=8096");
     tempTable.exec("pragma busy_timeout=50000");
@@ -84,3 +85,27 @@ DatabaseConnection::~DatabaseConnection() {
     delete configStore;
     delete dataStore;
 }
+
+
+// Lock the database for a read request
+void DatabaseConnection::lockForRead() {
+    global.dbLock.lockForRead();
+    dbLocked = true;
+}
+
+
+// Lock the database for a read request
+void DatabaseConnection::lockForWrite() {
+    global.dbLock.lockForWrite();
+    dbLocked = true;
+}
+
+
+// Unlock the database
+void DatabaseConnection::unlock() {
+    dbLocked = false;
+    global.dbLock.unlock();
+}
+
+
+

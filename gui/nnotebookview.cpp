@@ -234,7 +234,7 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
 
 // Load up the data from the database
 void NNotebookView::loadData() {
-    NSqlQuery query(*global.db);
+    NSqlQuery query(global.db);
     NotebookTable notebookTable(global.db);
     QList<qint32> closedLids;
     notebookTable.getClosedNotebooks(closedLids);

@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QObject>
 #include "watcher/filewatcher.h"
+#include "sql/databaseconnection.h"
 #include "global.h"
 
 extern Global global;
@@ -43,8 +44,8 @@ class FileWatcherTable : public QObject
 {
     Q_OBJECT
 public:
-    explicit FileWatcherTable(QSqlDatabase *db);
-    QSqlDatabase *db;
+    explicit FileWatcherTable(DatabaseConnection *db);
+    DatabaseConnection *db;
 
     // DB Read Functions
     void get(qint32 lid, QString &baseDir, FileWatcher::ScanType &type, qint32 &notebookLid, bool &includeSubdirs);  // Get a record

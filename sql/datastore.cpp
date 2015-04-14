@@ -36,12 +36,12 @@ extern Global global;
 #define ORIGINAL_GID 3;
 #define UPDATE_SEQUENCE_NUMBER 4;
 
-DataStore::DataStore(QSqlDatabase *db)
+DataStore::DataStore(DatabaseConnection *db)
 {
   this->db = db;
 
   // Check if the table exists.  If not, create it.
-    NSqlQuery sql(*this->db);
+    NSqlQuery sql(db);
   sql.exec("Select * from sqlite_master where type='table' and name='DataStore';");
   if (!sql.next())
       this->createTable();
@@ -57,7 +57,7 @@ void DataStore::createTable() {
     QLOG_TRACE() << "Entering DataStore::createTable()";
 
     QLOG_DEBUG() << "Creating table DataStore";
-    NSqlQuery sql(*db);
+    NSqlQuery sql(db);
     QString command("Create table DataStore (" +
                   QString("lid integer,") +
                   QString("key integer,") +

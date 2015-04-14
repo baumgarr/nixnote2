@@ -38,10 +38,10 @@ extern Global global;
 
 // Generic constructor
 NoteModel::NoteModel(QObject *parent)
-    :QSqlTableModel(parent, *global.db)
+    :QSqlTableModel(parent, global.db->conn)
 {
     // Check if the table exists.  If not, create it.
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     sql.exec("Select *  from sqlite_master where type='table' and name='NoteTable';");
     if (!sql.next())
         this->createTable();
@@ -62,7 +62,7 @@ void NoteModel::createTable() {
     QLOG_TRACE() << "Entering NoteModel::createTable()";
 
     QLOG_DEBUG() << "Creating table NoteTable";
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     QString command("Create table if not exists NoteTable (" +
                   QString("lid integer primary key,") +
                   QString("dateCreated real default null,") +

@@ -71,9 +71,9 @@ class ResourceTable
 {
 
 private:
-    QSqlDatabase *db;
+    DatabaseConnection *db;
 public:
-    ResourceTable(QSqlDatabase *db);                             // Constructor
+    ResourceTable(DatabaseConnection *db);                             // Constructor
 
     // DB Read Functions
     qint32 getLid(QString noteGuid, QString guid);               // given a note & resource guid, return the lid

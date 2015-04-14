@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define CONFIGSTORE_H
 
 #include <QtSql>
+#include "sql/databaseconnection.h"
 
 //*************************************
 //* This table is used to store
@@ -33,15 +34,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define CONFIG_STORE_WINDOW_GEOMETRY 1 // The window geometry between runs
 #define CONFIG_STORE_WINDOW_STATE 2 // The window state between runs
 
+class DatabaseConnection;
+
 // Class used to access & update the table
 class ConfigStore
 {
 private:
     void initTable();           // Initialize a new table
-    QSqlDatabase *db;           // DB connection
+    DatabaseConnection *db;           // DB connection
 
 public:
-    ConfigStore(QSqlDatabase *conn);  // Generic constructor
+    ConfigStore(DatabaseConnection *conn);  // Generic constructor
 
     // DB Read Functions
     bool getSetting(QByteArray &value, int key);  // retrieve a setting

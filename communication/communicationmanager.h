@@ -66,7 +66,7 @@ class CommunicationManager : public QObject
 
 private:
     bool initComplete;
-    QSqlDatabase *db;
+    DatabaseConnection *db;
     bool initNoteStore();
     QUrl *postData;
 
@@ -95,7 +95,7 @@ private:
 
 
 public:
-    CommunicationManager(QSqlDatabase *db);
+    CommunicationManager(DatabaseConnection *db);
     ~CommunicationManager();
     CommunicationError error;
     bool connect();

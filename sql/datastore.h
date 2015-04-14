@@ -23,7 +23,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include <QSqlTableModel>
 #include <QList>
+#include "sql/databaseconnection.h"
 
+class DatabaseConnection;
 
 //***********************************************************
 // The DataStore is the "main" table which contains multiple
@@ -43,10 +45,10 @@ class DataStore : public QSqlTableModel
     Q_OBJECT
 private:
     void createTable();
-    QSqlDatabase *db;
+    DatabaseConnection *db;
 
 public:
-    explicit DataStore(QSqlDatabase *db);
+    explicit DataStore(DatabaseConnection *db);
 
 signals:
 

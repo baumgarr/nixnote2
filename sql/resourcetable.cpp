@@ -33,7 +33,7 @@ using namespace std;
 extern Global global;
 
 // Default constructor
-ResourceTable::ResourceTable(QSqlDatabase *db)
+ResourceTable::ResourceTable(DatabaseConnection *db)
 {
     this->db = db;
 }
@@ -45,7 +45,7 @@ ResourceTable::ResourceTable(QSqlDatabase *db)
 void ResourceTable::updateGuid(qint32 lid, Guid &guid) {
     QLOG_TRACE() << "Entering ResourceTable::updateGuid()";
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", guid);
     query.bindValue(":lid", lid);
@@ -76,7 +76,7 @@ void ResourceTable::sync(qint32 lid, Resource &resource) {
 
     if (lid > 0) {
         expunge(lid);
-        NSqlQuery query(*db);
+        NSqlQuery query(db);
         // Delete the old record
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
@@ -99,7 +99,7 @@ void ResourceTable::sync(qint32 lid, Resource &resource) {
 // Given a resource's GUID, we return the LID
 qint32 ResourceTable::getLid(QString noteGuid, QString guid) {
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     NoteTable n(db);
     qint32 noteLid = n.getLid(noteGuid);
     query.prepare("Select a.lid from DataStore a where a.data=:data and a.key=:key and a.lid = (select distinct b.lid from DataStore b where b.key=:key2 and b.data=:noteLid)");
@@ -132,7 +132,7 @@ qint32 ResourceTable::getLid(string resourceGuid) {
 
 // Get the lid for a given resource's guid
 qint32 ResourceTable::getLid(QString resourceGuid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and data=:guid");
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":data", resourceGuid);
@@ -147,7 +147,7 @@ qint32 ResourceTable::getLid(QString resourceGuid) {
 
 // Get the guid for a given resource lid
 QString ResourceTable::getGuid(int lid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":lid", lid);
@@ -162,7 +162,7 @@ QString ResourceTable::getGuid(int lid) {
 // Return a resource structure given the LID
 bool ResourceTable::get(Resource &resource, qint32 lid, bool withBinary) {
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -341,7 +341,7 @@ bool ResourceTable::get(Resource &resource, string noteGuid, string guid, bool w
 
 // Return if a resource is dirty given its lid
 bool ResourceTable::isDirty(qint32 lid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_ISDIRTY);
@@ -371,7 +371,7 @@ bool ResourceTable::isDirty(string noteGuid, string guid) {
 
 // Does this resource exist?
 bool ResourceTable::exists(qint32 lid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_GUID);
@@ -407,7 +407,7 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
     else
         expunge(lid);
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
 
     if (t.guid.isSet()) {
@@ -680,7 +680,7 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
 // Get the recognition data for a resource
 bool ResourceTable::getResourceRecognition(Resource &resource, qint32 lid) {
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select key, data from DataStore where lid=:lid and (key=:body or key=:size or key=:hash)");
     query.bindValue(":lid", lid);
     query.bindValue(":body", RESOURCE_RECOGNITION_BODY);
@@ -717,13 +717,13 @@ qint32 ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
     NoteTable noteTable(db);
     qint32 notelid = noteTable.getLid(noteGuid);
 
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where data=:lid and key=:key");
     query.bindValue(":lid", notelid);
     query.bindValue(":key", RESOURCE_NOTE_LID);
     query.exec();
     while (query.next()) {
-        NSqlQuery query2(*db);
+        NSqlQuery query2(db);
         qint32 lid = query.value(0).toInt();
         QByteArray b;
         b.append(hash);
@@ -753,7 +753,7 @@ bool ResourceTable::getInkNote(QByteArray &value, qint32 lid) {
 
 // Set/unset the index needed flag
 void ResourceTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Delete from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
@@ -772,7 +772,7 @@ void ResourceTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
 
 // Get a list of all resources that need indexing
 qint32 ResourceTable::getIndexNeeded(QList<qint32> &lids) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     lids.clear();
     query.prepare("Select lid from DataStore where key=:key and data='true'");
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
@@ -790,7 +790,7 @@ qint32 ResourceTable::getIndexNeeded(QList<qint32> &lids) {
 bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid) {
 
     resourceList.clear();
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from DataStore where key=:key and data=:notelid");
     query.bindValue(":key", RESOURCE_NOTE_LID);
     query.bindValue(":notelid", noteLid);
@@ -810,7 +810,7 @@ bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid)
 
 // Permanently delete a resource
 void ResourceTable::expunge(qint32 lid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -845,7 +845,7 @@ void ResourceTable::expunge(QString guid) {
 
 // Permanently delete a resource
 void ResourceTable::expungeByNote(qint32 notebookLid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select lid from datastore where data=:data and key=:key");
     query.bindValue(":key", RESOURCE_NOTE_LID);
     query.bindValue(":data", notebookLid);
@@ -861,7 +861,7 @@ void ResourceTable::expungeByNote(qint32 notebookLid) {
 
 // Update the existing Resource's hash
 void ResourceTable::updateResourceHash(qint32 lid, QByteArray newhash) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update datastore set data=:hash where key=:key and lid=:lid");
     query.bindValue(":hash", newhash.toHex());
     query.bindValue(":key", RESOURCE_DATA_HASH);
@@ -878,7 +878,7 @@ void ResourceTable::updateResourceHash(qint32 lid, QByteArray newhash) {
 
 // Get a count of all resources in the database
 qint32 ResourceTable::getCount() {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select count(lid) from DataStore where key=:key;");
     query.bindValue(":key", RESOURCE_GUID);
     query.exec();
@@ -892,7 +892,7 @@ qint32 ResourceTable::getCount() {
 
 // Get the count of inindexed resources
 qint32 ResourceTable::getUnindexedCount() {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select count(lid) from DataStore where key=:key and data='true'");
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
     query.exec();
@@ -907,7 +907,7 @@ qint32 ResourceTable::getUnindexedCount() {
 // Add a stub resource.  This is a placeholder for a full resource that
 // should be added later.
 qint32 ResourceTable::addStub(qint32 resLid, qint32 noteLid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     query.bindValue(":lid", resLid);
     query.bindValue(":key", RESOURCE_NOTE_LID);
@@ -924,7 +924,7 @@ qint32 ResourceTable::addStub(qint32 resLid, qint32 noteLid) {
 
 // Get the owning note's LID for a resource.
 qint32 ResourceTable::getNoteLid(qint32 resLid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Select data from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", resLid);
     query.bindValue(":key", RESOURCE_NOTE_LID);
@@ -939,7 +939,7 @@ qint32 ResourceTable::getNoteLid(qint32 resLid) {
 
 // Get a resource's HASH data
 QByteArray ResourceTable::getDataHash(qint32 lid) {
-        NSqlQuery query(*db);
+        NSqlQuery query(db);
         query.prepare("Select data from datastore where lid=:lid and key=:key");
         query.bindValue(":lid", lid);
         query.bindValue(":key", RESOURCE_DATA_HASH);
@@ -954,7 +954,7 @@ QByteArray ResourceTable::getDataHash(qint32 lid) {
 
 // Mark all note resource as needing reindexed
 void ResourceTable::reindexAllResources() {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("delete from datastore where key=:indexKey");
     query.bindValue(":indexKey", RESOURCE_INDEX_NEEDED);
     query.exec();
@@ -971,7 +971,7 @@ void ResourceTable::reindexAllResources() {
 
 // Update a resource's owning note.  This is done when merging notes
 void ResourceTable::updateNoteLid(qint32 resourceLid, qint32 newNoteLid) {
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     query.prepare("Update datastore set data=:newNoteLid where lid=:resourceLid and key=:key");
     query.bindValue(":newNoteLid", newNoteLid);
     query.bindValue(":lid", resourceLid);
@@ -1004,7 +1004,7 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &map, QHash<qint32, Re
 void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32, Resource> &resourceMap, qint32 noteLid) {
     NoteTable ntable(db);
     QString noteGuid = ntable.getGuid(noteLid);
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     qint32 prevLid = -1;
     query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");
     query.bindValue(":key2", RESOURCE_NOTE_LID);
@@ -1062,7 +1062,7 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
 void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool fullLoad, bool withBinary) {
     //NoteTable ntable(db);
     //QString noteGuid = ntable.getGuid(noteLid);
-    NSqlQuery query(*db);
+    NSqlQuery query(db);
     QHash<qint32, Resource*> lidMap;
     if (fullLoad){
         query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");

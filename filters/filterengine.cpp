@@ -45,7 +45,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
 
     bool internalSearch = true;
 
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     QLOG_DEBUG() << "Purging filters";
     sql.exec("delete from filter");
     QLOG_DEBUG() << "Resetting filter table";
@@ -84,7 +84,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
 
 
     // Remove any selected notes that are not in the filter.
-    NSqlQuery query(*global.db);
+    NSqlQuery query(global.db);
     query.exec("select lid from filter");
     QList<qint32> goodLids;
 
@@ -122,7 +122,7 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
         return;
 
     int attribute = criteria->getAttribute()->data(0,Qt::UserRole).toInt();
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     QDateTime dt;
     dt.setDate(QDate().currentDate());
     int dow = QDate().currentDate().dayOfWeek();
@@ -439,7 +439,7 @@ void FilterEngine::filterFavorite(FilterCriteria *criteria) {
     if (rec.type == FavoritesRecord::Tag) {
         NoteTable noteTable(global.db);
         TagTable tagTable(global.db);
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         sql.exec("create temporary table if not exists goodLids (lid integer)");
         sql.exec("delete from goodLids");
         QList<qint32> notes;
@@ -456,7 +456,7 @@ void FilterEngine::filterFavorite(FilterCriteria *criteria) {
     }
 
     if (rec.type == FavoritesRecord::Note) {
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         sql.prepare("delete from filter where lid <> :lid");
         sql.bindValue(":lid", rec.target);
         sql.exec();
@@ -491,7 +491,7 @@ void FilterEngine::filterIndividualNotebook(QString &notebook) {
     NotebookTable notebookTable(global.db);
     qint32 notebookLid = notebookTable.getLid(notebook);
     // Filter out the records
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:type and data=:notebookLid)");
     sql.bindValue(":type", NOTE_NOTEBOOK_LID);
     sql.bindValue(":notebookLid", notebookLid);
@@ -506,7 +506,7 @@ void FilterEngine::filterStack(QString &stack) {
     notebookTable.getAll(books);
     notebookTable.getStack(stackBooks, stack);
 
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:type and data=:notebookLid)");
     sql.bindValue(":type", NOTE_NOTEBOOK_LID);
 
@@ -544,7 +544,7 @@ void FilterEngine::filterTags(FilterCriteria *criteria) {
         }
     }
 
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     sql.exec("create temporary table if not exists goodLids (lid integer)");
     sql.exec("delete from goodLids");
     sql.prepare("insert into goodLids (lid) values (:note)");
@@ -562,7 +562,7 @@ void FilterEngine::filterTrash(FilterCriteria *criteria) {
     if (!criteria->isSet() || !criteria->isDeletedOnlySet()
             || (criteria->isDeletedOnlySet() && !criteria->getDeletedOnly()))
     {
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:type and data='true')");
         sql.bindValue(":type", NOTE_ACTIVE);
         sql.exec();
@@ -573,7 +573,7 @@ void FilterEngine::filterTrash(FilterCriteria *criteria) {
         return;
 
     // Filter out the records
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:type and data='false')");
     sql.bindValue(":type", NOTE_ACTIVE);
     sql.exec();
@@ -664,7 +664,7 @@ void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
 // this is for the "all" filter (the default), not the "any:"
 void FilterEngine::filterSearchStringAll(QStringList list) {
     // Filter out the records
-    NSqlQuery sql(*global.db), sqlnegative(*global.db);
+    NSqlQuery sql(global.db), sqlnegative(global.db);
     sql.prepare("Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content match :word)");
     sqlnegative.prepare("Delete from filter where lid in (select lid from SearchIndex where weight>=:weight and content match :word)");
     sql.bindValue(":weight", global.getMinimumRecognitionWeight());
@@ -763,7 +763,7 @@ void FilterEngine::filterSearchStringIntitleAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery tagSql(*global.db);
+        NSqlQuery tagSql(global.db);
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             string = QString("%") +string +QString("%");
@@ -778,7 +778,7 @@ void FilterEngine::filterSearchStringIntitleAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery tagSql(*global.db);
+        NSqlQuery tagSql(global.db);
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             string = QString("%") +string +QString("%");
@@ -806,7 +806,7 @@ void FilterEngine::filterSearchStringCoordinatesAll(QString string, int key) {
         if (string == "")
             string = "0";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data >= :data)");
         sql.bindValue(":key", key);
         sql.bindValue(":data", string.toDouble());
@@ -816,7 +816,7 @@ void FilterEngine::filterSearchStringCoordinatesAll(QString string, int key) {
         if (string == "")
             string = "0";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data <= :data)");
         sql.bindValue(":key", key);
         sql.bindValue(":data", string.toDouble());
@@ -838,7 +838,7 @@ void FilterEngine::filterSearchStringAuthorAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
@@ -852,7 +852,7 @@ void FilterEngine::filterSearchStringAuthorAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :data)");
@@ -880,7 +880,7 @@ void FilterEngine::filterSearchStringSourceAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
@@ -894,7 +894,7 @@ void FilterEngine::filterSearchStringSourceAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :data)");
@@ -922,7 +922,7 @@ void FilterEngine::filterSearchStringContentClassAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
@@ -936,7 +936,7 @@ void FilterEngine::filterSearchStringContentClassAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :data)");
@@ -962,7 +962,7 @@ void FilterEngine::filterSearchStringPlaceNameAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
@@ -976,7 +976,7 @@ void FilterEngine::filterSearchStringPlaceNameAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :data)");
@@ -1004,7 +1004,7 @@ void FilterEngine::filterSearchStringSourceApplicationAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
@@ -1018,7 +1018,7 @@ void FilterEngine::filterSearchStringSourceApplicationAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :data)");
@@ -1043,7 +1043,7 @@ void FilterEngine::filterSearchStringResourceAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data=:data))");
@@ -1059,7 +1059,7 @@ void FilterEngine::filterSearchStringResourceAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             sql.prepare("Delete from filter where lid in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like :data))");
@@ -1083,7 +1083,7 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAll(QString string) 
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             sql.prepare("Delete from filter where lid not in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data=:data))");
@@ -1099,7 +1099,7 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAll(QString string) 
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             sql.prepare("Delete from filter where lid in (select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data like :data))");
@@ -1122,7 +1122,7 @@ void FilterEngine::filterSearchStringTagAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery tagSql(*global.db);
+        NSqlQuery tagSql(global.db);
         if (string.indexOf("*") < 0)
             tagSql.prepare("Delete from filter where lid not in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data=:tagname and key=:tagnamekey))");
         else {
@@ -1140,7 +1140,7 @@ void FilterEngine::filterSearchStringTagAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery tagSql(*global.db);
+        NSqlQuery tagSql(global.db);
         if (string.indexOf("*") < 0)
             tagSql.prepare("Delete from filter where lid in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data=:tagname and key=:tagnamekey))");
         else {
@@ -1165,7 +1165,7 @@ void FilterEngine::filterSearchStringNotebookAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery notebookSql(*global.db);
+        NSqlQuery notebookSql(global.db);
         if (string.indexOf("*") < 0)
             notebookSql.prepare("Delete from filter where lid not in (select lid from NoteTable where notebook = :notebook)");
         else {
@@ -1182,7 +1182,7 @@ void FilterEngine::filterSearchStringNotebookAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery notebookSql(*global.db);
+        NSqlQuery notebookSql(global.db);
         if (string.indexOf("*") < 0)
             notebookSql.prepare("Delete from filter where lid not in (select lid from NoteTable where notebook <> :notebook)");
         else {
@@ -1205,7 +1205,7 @@ void FilterEngine::filterSearchStringTodoAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.startsWith("*")) {
             sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key1 or key=:key2)");
             sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
@@ -1226,7 +1226,7 @@ void FilterEngine::filterSearchStringTodoAll(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.startsWith("*")) {
             sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key1 or key=:key2)");
             sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
@@ -1253,7 +1253,7 @@ void FilterEngine::filterSearchStringDateAll(QString string) {
     int separator = string.indexOf(":")+1;
     QString tempString = string.mid(separator);
     QDateTime dt = calculateDateTime(tempString);
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     int key=0;
 
     if (string.startsWith("created:", Qt::CaseInsensitive)) {
@@ -1385,7 +1385,7 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
 // this is for the "any" filter (the default), not the default of all
 void FilterEngine::filterSearchStringAny(QStringList list) {
     // Filter out the records
-    NSqlQuery sql(*global.db), sqlnegative(*global.db);
+    NSqlQuery sql(global.db), sqlnegative(global.db);
     sql.exec("create temporary table if not exists anylidsfilter (lid int);");
     sql.exec("delete from anylidsfilter");
 
@@ -1488,7 +1488,7 @@ void FilterEngine::filterSearchStringNotebookAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery notebookSql(*global.db);
+        NSqlQuery notebookSql(global.db);
         if (string.indexOf("*") < 0)
             notebookSql.prepare("insert into anylidsfilter (lid) select lid from NoteTable where notebook=:notebook");
         else {
@@ -1503,7 +1503,7 @@ void FilterEngine::filterSearchStringNotebookAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery notebookSql(*global.db);
+        NSqlQuery notebookSql(global.db);
         if (string.indexOf("*") < 0)
             notebookSql.prepare("insert into anylidsfilter (lid) select lid from NoteTable where notebook <> :notebook");
         else {
@@ -1527,7 +1527,7 @@ void FilterEngine::filterSearchStringTodoAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.startsWith("*")) {
             sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key1 or key=:key2");
             sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
@@ -1548,7 +1548,7 @@ void FilterEngine::filterSearchStringTodoAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.startsWith("*")) {
             sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key<>:key1 or key<>:key2");
             sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
@@ -1578,7 +1578,7 @@ void FilterEngine::filterSearchStringTagAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery tagSql(*global.db);
+        NSqlQuery tagSql(global.db);
         if (string.indexOf("*") < 0)
             tagSql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data=:tagname and key=:tagnamekey)");
         else {
@@ -1596,7 +1596,7 @@ void FilterEngine::filterSearchStringTagAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery tagSql(*global.db);
+        NSqlQuery tagSql(global.db);
         if (string.indexOf("*") < 0)
             tagSql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data=:tagname and key=:tagnamekey))");
         else {
@@ -1622,7 +1622,7 @@ void FilterEngine::filterSearchStringIntitleAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery tagSql(*global.db);
+        NSqlQuery tagSql(global.db);
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             string = QString("%") +string +QString("%");
@@ -1638,7 +1638,7 @@ void FilterEngine::filterSearchStringIntitleAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery tagSql(*global.db);
+        NSqlQuery tagSql(global.db);
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             string = QString("%") +string +QString("%");
@@ -1662,7 +1662,7 @@ void FilterEngine::filterSearchStringResourceAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             sql.prepare("insert into anylidsfilter (lid) select data from datastore where key=:notelidkey and lid in (select lid from DataStore where key=:mimekey and data=:data)");
@@ -1679,7 +1679,7 @@ void FilterEngine::filterSearchStringResourceAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select data from datastore where key=:notelid and lid in (select lid from DataStore where data=:data and key = :mimekey))");
@@ -1709,7 +1709,7 @@ void FilterEngine::filterSearchStringCoordinatesAny(QString string, int key) {
         if (string == "")
             string = "0";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data >= :data");
         sql.bindValue(":key", key);
         sql.bindValue(":data", string.toDouble());
@@ -1719,7 +1719,7 @@ void FilterEngine::filterSearchStringCoordinatesAny(QString string, int key) {
         if (string == "")
             string = "0";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data <= :data");
         sql.bindValue(":key", key);
         sql.bindValue(":data", string.toDouble());
@@ -1743,7 +1743,7 @@ void FilterEngine::filterSearchStringAuthorAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :data");
@@ -1757,7 +1757,7 @@ void FilterEngine::filterSearchStringAuthorAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :data)");
@@ -1777,7 +1777,7 @@ void FilterEngine::filterSearchStringDateAny(QString string) {
     int separator = string.indexOf(":")+1;
     QString tempString = string.mid(separator);
     QDateTime dt = calculateDateTime(tempString);
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     int key=0;
 
     if (string.startsWith("created:", Qt::CaseInsensitive)) {
@@ -1829,7 +1829,7 @@ void FilterEngine::filterSearchStringSourceAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :data");
@@ -1842,7 +1842,7 @@ void FilterEngine::filterSearchStringSourceAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :data)");
@@ -1870,7 +1870,7 @@ void FilterEngine::filterSearchStringSourceApplicationAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :data");
@@ -1884,7 +1884,7 @@ void FilterEngine::filterSearchStringSourceApplicationAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :data)");
@@ -1913,7 +1913,7 @@ void FilterEngine::filterSearchStringContentClassAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :data");
@@ -1927,7 +1927,7 @@ void FilterEngine::filterSearchStringContentClassAny(QString string) {
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :data)");
@@ -1954,7 +1954,7 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) 
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :data");
@@ -1968,7 +1968,7 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) 
         if (string == "")
             string = "*";
         // Filter out the records
-        NSqlQuery sql(*global.db);
+        NSqlQuery sql(global.db);
         if (string.indexOf("*")>=0) {
             string = string.replace("*", "%");
             sql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :data)");

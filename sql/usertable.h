@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define USERTABLE_H
 #include <Q_LONG>
 #include <QSqlDatabase>
+#include "sql/databaseconnection.h"
+
 #include <qevercloud/include/QEverCloud.h>
 
 
@@ -30,10 +32,10 @@ class UserTable
 {
 private:
     void createTable();
-    QSqlDatabase *db;
+    DatabaseConnection *db;
 
 public:
-    UserTable(QSqlDatabase *db);      // Default constructor
+    UserTable(DatabaseConnection *db);      // Default constructor
 
     // DB Read Functions
     qlonglong getLastSyncDate();      // Get the last date the user did a sync

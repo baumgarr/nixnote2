@@ -44,6 +44,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtSql>
 #include <QString>
 #include "global.h"
+#include "sql/databaseconnection.h"
 
 extern Global global;
 
@@ -53,7 +54,7 @@ class LinkedNotebookTable : public QObject
 {
     Q_OBJECT
 public:
-    explicit LinkedNotebookTable(QSqlDatabase *db);
+    explicit LinkedNotebookTable(DatabaseConnection *db);
 
     // DB Read Functions
     qint32 getLid(QString guid);                 // given a guid, return the lid
@@ -73,7 +74,7 @@ public:
     void getStacks(QStringList &stacks);                   // Get a list of all stacks
     bool exists(qint32 lid);                               // Does this LID exist in the database?
     void setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN);      // Update the last update sequence number
-    QSqlDatabase *db;
+    DatabaseConnection *db;
 
     // DB Write Functions
     qint32 getLastUpdateSequenceNumber(qint32 lid);        // Get the last update sequence number for this notebook

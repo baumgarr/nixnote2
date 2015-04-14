@@ -28,12 +28,12 @@ extern Global global;
 //**********************
 // Generic constructor.
 //**********************
-ConfigStore::ConfigStore(QSqlDatabase *conn)
+ConfigStore::ConfigStore(DatabaseConnection *conn)
 {
 
     db = conn;
     // Check if the database exists.  If not, create it.
-    NSqlQuery sql(*db);
+    NSqlQuery sql(db);
     sql.exec("Select * from sqlite_master where type='table' and name='ConfigStore';");
     if (!sql.next())
         this->createTable();
@@ -48,7 +48,7 @@ void ConfigStore::createTable() {
     QLOG_TRACE() << "Entering ConfigStore::createTable()";
 
     QLOG_DEBUG() << "Creating table ConfigStore";
-    NSqlQuery sql(*db);
+    NSqlQuery sql(db);
 
     // build the SQL command & cretae the table
     QString command("Create table if not exists ConfigStore (" +
@@ -72,7 +72,7 @@ void ConfigStore::initTable() {
     QLOG_TRACE() << "Entering ConfigStore::initTable()";
 
     QLOG_DEBUG() << "Initializing table ConfigStore";
-    NSqlQuery sql(*db);
+    NSqlQuery sql(db);
     sql.prepare("Insert into ConfigStore (key, value) values (:key, :value);");
     sql.bindValue(":key", CONFIG_STORE_LID);
     sql.bindValue(":value", 0);
@@ -88,7 +88,7 @@ void ConfigStore::initTable() {
 // local ID.  This number never changes
 //*******************************************************************
 qint32 ConfigStore::incrementLidCounter() {
-    NSqlQuery sql(*db);
+    NSqlQuery sql(db);
     // Prepare the SQL statement & fetch the row
     sql.prepare("Select value from ConfigStore where key=:key");
     sql.bindValue(":key", CONFIG_STORE_LID);
@@ -120,7 +120,7 @@ qint32 ConfigStore::incrementLidCounter() {
 // Save a setting to the DB
 //*******************************************************************
 void ConfigStore::saveSetting(int key, QByteArray value) {
-    NSqlQuery sql(*db);
+    NSqlQuery sql(db);
     // Prepare the SQL statement & fetch the row
     sql.prepare("Delete from ConfigStore where key=:key");
     sql.bindValue(":key", key);
@@ -138,7 +138,7 @@ void ConfigStore::saveSetting(int key, QByteArray value) {
 // Return a value from the DB
 //*******************************************************************
 bool ConfigStore::getSetting(QByteArray &value, int key) {
-    NSqlQuery sql(*db);
+    NSqlQuery sql(db);
     sql.prepare("select value from ConfigStore where key=:key");
     sql.bindValue(":key", key);
     sql.exec();

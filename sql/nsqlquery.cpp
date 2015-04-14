@@ -28,9 +28,10 @@ extern Global global;
 
 
 // Constructor
-NSqlQuery::NSqlQuery(QSqlDatabase db) :
-    QSqlQuery(db)
+NSqlQuery::NSqlQuery(DatabaseConnection *db) :
+    QSqlQuery(db->conn)
 {
+    this->db = db;
 }
 
 

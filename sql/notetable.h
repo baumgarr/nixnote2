@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QSqlTableModel>
 #include <QtSql>
 #include <QString>
+#include "sql/databaseconnection.h"
 
 #include "qevercloud/include/QEverCloud.h"
 using namespace qevercloud;
@@ -89,12 +90,12 @@ class NoteTable
 {
 
 private:
-    QSqlDatabase *db;
+    DatabaseConnection *db;
 
 public:
 
     // DB Read Functions
-    NoteTable(QSqlDatabase *db);                             // Constructor
+    NoteTable(DatabaseConnection *db);                             // Constructor
     qint32 getLid(QString guid);                             // given a guid, return the lid
     qint32 getLid(string guid);                              // Given a guid, return the lid
     QString getGuid(int lid);                                // given a lid, get the guid

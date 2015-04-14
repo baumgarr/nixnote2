@@ -45,7 +45,7 @@ extern Global global;
 
 
 // Generic constructor
-CommunicationManager::CommunicationManager(QSqlDatabase *db)
+CommunicationManager::CommunicationManager(DatabaseConnection *db)
 {
     this->db = db;
     evernoteHost = global.server;

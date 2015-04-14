@@ -56,10 +56,10 @@ class NotebookTable
 {
 
 private:
-    QSqlDatabase *db;
+    DatabaseConnection *db;
 
 public:
-    NotebookTable(QSqlDatabase *db);           // Constructor
+    NotebookTable(DatabaseConnection *db);           // Constructor
 
     // DB Read Functions
     qint32 getLid(QString guid);               // given a guid, return the lid

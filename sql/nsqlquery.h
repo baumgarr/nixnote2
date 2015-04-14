@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NSQLQUERY_H
 
 #include <QtSql>
+#include "sql/databaseconnection.h"
 
 using namespace std;
 
@@ -36,8 +37,10 @@ using namespace std;
 
 class NSqlQuery : public QSqlQuery
 {
+private:
+    DatabaseConnection *db;
 public:
-    explicit NSqlQuery(QSqlDatabase db);   // Constructor
+    explicit NSqlQuery(DatabaseConnection *db);   // Constructor
     ~NSqlQuery();                          // Destructor
     bool exec();                           // Execute SQL statement
     bool exec(const QString &query);       // Execute SQL statement

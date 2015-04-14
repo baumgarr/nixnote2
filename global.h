@@ -34,10 +34,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/shortcutkeys.h"
 #include "settings/accountsmanager.h"
 #include "reminders/remindermanager.h"
+#include "sql/databaseconnection.h"
 
 #include <string>
 #include <QSharedMemory>
 #include <QSqlDatabase>
+#include <QReadWriteLock>
 
 //*******************************
 //* This class is used to store
@@ -75,6 +77,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTE_TABLE_COLUMN_COUNT 26
 
 using namespace std;
+
+class DatabaseConnection;
 
 class Global
 {
@@ -138,7 +142,7 @@ public:
     void setMinimumRecognitionWeight(int weight);         // Set the minimum OCR recgnition confidence before including it in search results.
     QString dateFormat;                                   // Desired display date format
     QString timeFormat;                                   // Desired display time format
-    QSqlDatabase *db;                                     // "default" DB connection for the main thread.
+    DatabaseConnection *db;                               // "default" DB connection for the main thread.
     bool javaFound;                                       // Have we found Java?
     QString defaultFont;                                  // Default editor font name
     int defaultFontSize;                                  // Default editor font size
@@ -160,6 +164,8 @@ public:
     // Filter criteria.  Used for things like the back & forward buttons
     QList<FilterCriteria*> filterCriteria;
     qint32 filterPosition;
+
+    QReadWriteLock  dbLock;                               // Database read/write lock mutex
 
     QHash<int, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
 

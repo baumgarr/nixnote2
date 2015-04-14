@@ -403,7 +403,7 @@ void NTableView::refreshCell(qint32 lid, int cell, QVariant data) {
 // Update the list of notes.
 void NTableView::refreshData() {
     QLOG_TRACE() << "Getting valid lids in filter";
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
     sql.exec("select lid from filter");
     proxy->lidMap->clear();
     while(sql.next()) {
@@ -540,8 +540,8 @@ void NTableView::restoreSelectedNotes() {
         return;
 
     NoteTable ntable(global.db);
-    NSqlQuery sql(*global.db);
-    NSqlQuery transaction(*global.db);
+    NSqlQuery sql(global.db);
+    NSqlQuery transaction(global.db);
     //transaction.exec("begin");
     sql.prepare("Delete from filter where lid=:lid");
     for (int i=0; i<lids.size(); i++) {
@@ -591,7 +591,7 @@ void NTableView::deleteSelectedNotes() {
         return;
 
     NoteTable ntable(global.db);
-    NSqlQuery sql(*global.db);
+    NSqlQuery sql(global.db);
 //    NSqlQuery transaction(*global.db);
     //transaction.exec("begin");
     sql.prepare("Delete from filter where lid=:lid");
