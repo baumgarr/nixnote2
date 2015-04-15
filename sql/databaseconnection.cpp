@@ -89,22 +89,28 @@ DatabaseConnection::~DatabaseConnection() {
 
 // Lock the database for a read request
 void DatabaseConnection::lockForRead() {
-    global.dbLock.lockForRead();
+    if (dbLocked)
+        return;
+    global.dbLock->lockForRead();
     dbLocked = true;
 }
 
 
 // Lock the database for a read request
 void DatabaseConnection::lockForWrite() {
-    global.dbLock.lockForWrite();
+    if (dbLocked)
+        return;
+    global.dbLock->lockForWrite();
     dbLocked = true;
 }
 
 
 // Unlock the database
 void DatabaseConnection::unlock() {
+    if (!dbLocked)
+        return;
     dbLocked = false;
-    global.dbLock.unlock();
+    global.dbLock->unlock();
 }
 
 

@@ -418,6 +418,7 @@ void IndexRunner::flushCache() {
         return;
     QDateTime start = QDateTime::currentDateTimeUtc();
     NSqlQuery sql(db);
+    db->lockForWrite();
     sql.exec("begin");
     QHash<qint32, IndexRecord*>::iterator i;
 
@@ -455,6 +456,7 @@ void IndexRunner::flushCache() {
     sql.exec("commit");
 
     sql.finish();
+    db->unlock();
     QDateTime finish = QDateTime::currentDateTimeUtc();
 
     QLOG_DEBUG() << "Index Cache Flush Complete: " <<

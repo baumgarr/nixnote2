@@ -56,8 +56,6 @@ private:
     long evernoteUpdateCount;
     DatabaseConnection *db;
     CommunicationManager *comm;
-    //JavaMachine *jvm;
-
 
     QVector<QString> errorSharedNotebooks;
     QMap<QString,QString> errorSharedNotebooksIgnored;
@@ -70,14 +68,6 @@ private:
 
     string username;
     string password;
-
-//    shared_ptr<THttpClient> userStoreHttpClient;
-//    shared_ptr<UserStoreClient> userStoreClient;
-//    shared_ptr<THttpClient> noteStoreHttpClient;
-//    shared_ptr<NoteStoreClient> noteStoreClient;
-//    evernote::edam::AuthenticationResult authResult;
-//    shared_ptr<evernote::edam::AuthenticationResult> linkedAuthResult;
-//    shared_ptr<evernote::edam::User> user;
 
     long authTimeRemaining;
     long authRefreshTime;
@@ -124,6 +114,7 @@ public:
     bool error;
     CommunicationError* getError();
     void communicationErrorHandler();
+    bool finalSync;
 
 signals:
     void syncComplete();

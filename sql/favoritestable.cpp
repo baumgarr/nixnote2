@@ -40,6 +40,7 @@ FavoritesTable::FavoritesTable(DatabaseConnection *db, QObject *parent) :
 // Get the LID of all favorites
 void FavoritesTable::getAll(QList<qint32> &lids) {
     lids.empty();
+    db->lockForRead();
     NSqlQuery query(db);
     query.prepare("Select lid from datastore where key=:key");
     query.bindValue(":key", FAVORITES_TARGET);
@@ -48,6 +49,7 @@ void FavoritesTable::getAll(QList<qint32> &lids) {
         lids.append(query.value(0).toInt());
     }
     query.finish();
+    db->unlock();
 }
 
 
@@ -56,6 +58,7 @@ void FavoritesTable::getAll(QList<qint32> &lids) {
 bool FavoritesTable::get(FavoritesRecord &record, qint32 lid) {
     NSqlQuery query(db);
     record.parent = 0;
+    db->lockForRead();
     query.prepare("select key,data from datastore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -80,6 +83,7 @@ bool FavoritesTable::get(FavoritesRecord &record, qint32 lid) {
         }
     }
     query.finish();
+    db->unlock();
     switch (type) {
     case FavoritesRecord::Note :
         record.type = FavoritesRecord::Note;
@@ -157,6 +161,7 @@ bool FavoritesTable::get(FavoritesRecord &record, qint32 lid) {
 // Change the sort order of the favorite records
 void FavoritesTable::setOrder(QList< QPair< qint32, qint32 > > order) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from datastore where key=:key");
     query.bindValue(":key", FAVORITES_ORDER);
     query.exec();
@@ -169,6 +174,7 @@ void FavoritesTable::setOrder(QList< QPair< qint32, qint32 > > order) {
         query.exec();
     }
     query.finish();
+    db->unlock();
 }
 
 
@@ -177,10 +183,12 @@ void FavoritesTable::setOrder(QList< QPair< qint32, qint32 > > order) {
 // Erase a favorite record
 void FavoritesTable::expunge(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from datastore where lid=:key");
     query.bindValue(":lid", lid);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
@@ -188,6 +196,7 @@ void FavoritesTable::expunge(qint32 lid) {
 // Get a favorite's lid by the data target
 qint32 FavoritesTable::getLidByTarget(const QVariant &target) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("select lid from datastore where key=:key and data=:target");
     query.bindValue(":key", FAVORITES_TARGET);
     query.bindValue(":target", target);
@@ -196,6 +205,7 @@ qint32 FavoritesTable::getLidByTarget(const QVariant &target) {
     if (query.next())
         result = query.value(0).toInt();
     query.finish();
+    db->unlock();
     return result;
 }
 
@@ -203,6 +213,7 @@ qint32 FavoritesTable::getLidByTarget(const QVariant &target) {
 // Add a new record
 qint32 FavoritesTable::add(const FavoritesRecord &record) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Insert into datastore (lid, key, data) values (:lid, :key, :value)");
 
     qint32 lid = record.lid;
@@ -234,7 +245,10 @@ qint32 FavoritesTable::add(const FavoritesRecord &record) {
     query.bindValue(":key", FAVORITES_PARENT);
     query.bindValue(":data", record.parent);
     query.exec();
+
     query.finish();
+    db->unlock();
+
     return lid;
 }
 
@@ -243,6 +257,7 @@ qint32 FavoritesTable::add(const FavoritesRecord &record) {
 qint32 FavoritesTable::insert(const FavoritesRecord &record) {
     NSqlQuery query(db);
     NSqlQuery subQuery(db);
+    db->lockForWrite();
     query.prepare("Select lid, data from datastore where key=:key and lid in (select lid from datastore where key=:parentkey and data=0) order by data");
     query.bindValue(":key", FAVORITES_ORDER);
     query.bindValue(":parentkey", FAVORITES_PARENT);
@@ -261,6 +276,7 @@ qint32 FavoritesTable::insert(const FavoritesRecord &record) {
         newOrder++;
     }
     query.finish();
+    db->unlock();
     return add(record);
 }
 
@@ -269,14 +285,17 @@ qint32 FavoritesTable::insert(const FavoritesRecord &record) {
 // Does this favorite have any children?
 bool FavoritesTable::childrenFound(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("select lid from datastore where key=:key and data=:lid limit 1");
     query.bindValue(":key", FAVORITES_PARENT);
     query.bindValue(":lid", lid);
     query.exec();
     if (query.next()) {
         query.finish();
+        db->unlock();
         return true;
     }
     query.finish();
+    db->unlock();
     return false;
 }

@@ -38,6 +38,7 @@ SearchTable::SearchTable(DatabaseConnection *db)
 // Get the LIDs for all searches
 void SearchTable::getAll(QList<qint32> &lids) {
     lids.empty();
+    db->lockForRead();
     NSqlQuery query(db);
     query.prepare("Select lid from datastore where key=:key");
     query.bindValue(":key", SEARCH_GUID);
@@ -46,10 +47,12 @@ void SearchTable::getAll(QList<qint32> &lids) {
         lids.append(query.value(0).toInt());
     }
     query.finish();
+    db->unlock();
 }
 
 // Given a record's name as a std::string, we return the lid
 qint32 SearchTable::findByName(string &name) {
+    db->lockForRead();
     QLOG_TRACE() << "Entering SearchTable::findByName()";
     qint32 retval = 0;
     NSqlQuery query(db);
@@ -60,6 +63,7 @@ qint32 SearchTable::findByName(string &name) {
     if (query.next())
         retval = query.value(0).toInt();
     query.finish();
+    db->unlock();
     return retval;
 }
 
@@ -79,12 +83,14 @@ qint32 SearchTable::findByName(QString &name) {
 // the first time a record is synchronized
 void SearchTable::updateGuid(qint32 lid, Guid &guid) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", guid);
     query.bindValue(":lid", lid);
     query.bindValue(":key", SEARCH_GUID);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
@@ -104,9 +110,11 @@ void SearchTable::sync(qint32 lid, SavedSearch &search) {
     NSqlQuery query(db);
 
     if (lid > 0) {
+        db->lockForWrite();
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
         query.exec();
+        db->unlock();
     } else {
         ConfigStore cs(db);
         lid = cs.incrementLidCounter();
@@ -122,6 +130,7 @@ void SearchTable::sync(qint32 lid, SavedSearch &search) {
 qint32 SearchTable::getLid(QString guid) {
     qint32 retval = 0;
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":data", guid);
     query.bindValue(":key", SEARCH_GUID);
@@ -129,6 +138,7 @@ qint32 SearchTable::getLid(QString guid) {
     if (query.next())
         retval = query.value(0).toInt();
     query.finish();
+    db->unlock();
     return retval;
 }
 
@@ -149,6 +159,7 @@ void SearchTable::add(qint32 l, SavedSearch &t, bool isDirty) {
         lid = cs.incrementLidCounter();
 
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
 
     if (t.guid.isSet()) {
@@ -201,6 +212,7 @@ void SearchTable::add(qint32 l, SavedSearch &t, bool isDirty) {
     query.bindValue(":data", isDirty);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
@@ -209,6 +221,7 @@ void SearchTable::add(qint32 l, SavedSearch &t, bool isDirty) {
 bool SearchTable::get(SavedSearch &search ,qint32 lid) {
 
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -239,6 +252,7 @@ bool SearchTable::get(SavedSearch &search ,qint32 lid) {
         }
     }
     query.finish();
+    db->unlock();
     return true;
 }
 
@@ -264,6 +278,7 @@ bool SearchTable::get(SavedSearch &search, string guid) {
 bool SearchTable::isDirty(qint32 lid) {
     bool retval = false;
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", SEARCH_ISDIRTY);
@@ -271,6 +286,7 @@ bool SearchTable::isDirty(qint32 lid) {
     if (query.next())
         retval = query.value(0).toBool();
     query.finish();
+    db->unlock();
     return retval;
 }
 
@@ -292,15 +308,18 @@ bool SearchTable::isDirty(string guid) {
 // Does this search exist?
 bool SearchTable::exists(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", SEARCH_GUID);
     query.exec();
     if (query.next()) {
         query.finish();
+        db->unlock();
         return true;
     }
     query.finish();
+    db->unlock();
     return false;
 }
 
@@ -308,12 +327,14 @@ bool SearchTable::exists(qint32 lid) {
 // Set the search as "dirty" so it is synchronized next time
 void SearchTable::setDirty(qint32 lid, bool dirty) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", dirty);
     query.bindValue(":lid", lid);
     query.bindValue(":key", SEARCH_ISDIRTY);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
@@ -325,7 +346,8 @@ void SearchTable::deleteSearch(qint32 lid) {
     get(s, lid);
     if (s.updateSequenceNum.isSet() && s.updateSequenceNum > 0) {
         NSqlQuery query(db);
-        query.prepare("Delet from DataStore where key=:key and lid=:lid");
+        db->lockForWrite();
+        query.prepare("Delete from DataStore where key=:key and lid=:lid");
         query.bindValue(":lid", lid);
         query.bindValue(":key", SEARCH_ISDELETED);
         query.exec();
@@ -335,6 +357,7 @@ void SearchTable::deleteSearch(qint32 lid) {
         query.bindValue(":key", SEARCH_ISDELETED);
         query.exec();
         query.finish();
+        db->unlock();
         setDirty(lid,true);
     } else {
         expunge(lid);
@@ -344,10 +367,12 @@ void SearchTable::deleteSearch(qint32 lid) {
 
 void SearchTable::expunge(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
@@ -392,15 +417,18 @@ bool SearchTable::update(qint32 lid, SavedSearch &s, bool isDirty=true) {
 // Is this search deleted?
 bool SearchTable::isDeleted(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and lid=:lid and data='true'");
     query.bindValue(":lid", lid);
     query.bindValue(":key", SEARCH_ISDELETED);
     query.exec();
     if (query.next()) {
         query.finish();
+        db->unlock();
         return true;
     }
     query.finish();
+    db->unlock();
     return false;
 }
 
@@ -410,6 +438,7 @@ bool SearchTable::isDeleted(qint32 lid) {
 qint32 SearchTable::getAllDirty(QList<qint32> &lids) {
     NSqlQuery query(db);
     lids.clear();
+    db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data='true'");
     query.bindValue(":key", SEARCH_ISDIRTY);
     query.exec();
@@ -417,6 +446,7 @@ qint32 SearchTable::getAllDirty(QList<qint32> &lids) {
         lids.append(query.value(0).toInt());
     }
     query.finish();
+    db->unlock();
     return lids.size();
 }
 
@@ -425,11 +455,13 @@ qint32 SearchTable::getAllDirty(QList<qint32> &lids) {
 // Update the USN
 void SearchTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", usn);
     query.bindValue(":lid", lid);
     query.bindValue(":key", SEARCH_UPDATE_SEQUENCE_NUMBER);
     query.exec();
+    db->unlock();
     query.finish();
 }
 
@@ -438,6 +470,7 @@ void SearchTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
 QString SearchTable::getGuid(qint32 lid) {
     QString retval = "";
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", SEARCH_GUID);
     query.bindValue(":lid", lid);
@@ -446,5 +479,6 @@ QString SearchTable::getGuid(qint32 lid) {
         retval = query.value(0).toString();
     }
     query.finish();
+    db->unlock();
     return retval;
 }

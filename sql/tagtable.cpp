@@ -41,6 +41,7 @@ TagTable::TagTable(DatabaseConnection *db)
 // Given a tag's name as a std::string, we return the lid
 qint32 TagTable::findByName(string &name, qint32 account) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:name");
     query.bindValue(":key", TAG_NAME);
     query.bindValue(":name", QString::fromStdString(name));
@@ -50,10 +51,12 @@ qint32 TagTable::findByName(string &name, qint32 account) {
         qint32 lid = query.value(0).toInt();
         if (account == 0 || owningAccount(lid) == account) {
             query.finish();
+            db->unlock();
             return lid;
         }
     }
     query.finish();
+    db->unlock();
     return 0;
 }
 
@@ -70,15 +73,18 @@ qint32 TagTable::findByName(QString &name, qint32 account) {
 // Determine if a lid belongs to a linked notebook
 bool TagTable::isLinked(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from datastore where key=:key and lid=:lid");
     query.bindValue(":key", TAG_OWNING_ACCOUNT);
     query.bindValue(":lid", lid);
     query.exec();
     if (query.next()) {
         query.finish();
+        db->unlock();
         return true;
     }
     query.finish();
+    db->unlock();
     return false;
 }
 
@@ -87,6 +93,7 @@ bool TagTable::isLinked(qint32 lid) {
 qint32 TagTable::owningAccount(qint32 lid) {
     qint32 retval = 0;
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select data from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_OWNING_ACCOUNT);
@@ -94,12 +101,14 @@ qint32 TagTable::owningAccount(qint32 lid) {
     if (query.next())
         retval = query.value(0).toInt();
     query.finish();
+    db->unlock();
     return retval;
 }
 
 // Get a list of all tags
 qint32 TagTable::getAll(QList<qint32> &tags) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("select distinct lid from DataStore where key=:key");
     query.bindValue(":key", TAG_GUID);
     query.exec();
@@ -107,6 +116,7 @@ qint32 TagTable::getAll(QList<qint32> &tags) {
         tags.append(query.value(0).toInt());
     }
     query.finish();
+    db->unlock();
     return tags.size();
 }
 
@@ -121,12 +131,14 @@ void TagTable::updateGuid(qint32 lid, Guid &guid) {
     getGuid(oldGuid, lid);
 
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", guid);
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_GUID);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
@@ -148,10 +160,12 @@ void TagTable::update(Tag &tag, bool dirty=true) {
     if (lid > 0) {
         NSqlQuery query(db);
         // Delete the old record
+        db->lockForWrite();
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
         query.exec();
         query.finish();
+        db->unlock();
         qint32 account = owningAccount(lid);
         add(lid, tag, dirty,account);
 
@@ -176,10 +190,12 @@ qint32 TagTable::sync(qint32 l, Tag &tag, qint32 account) {
     if (lid > 0) {
         NSqlQuery query(db);
         // Delete the old record
+        db->lockForWrite();
         query.prepare("Delete from DataStore where lid=:lid");
         query.bindValue(":lid", lid);
         query.exec();
         query.finish();
+        db->unlock();
     } else {
         ConfigStore cs(db);
         lid = cs.incrementLidCounter();
@@ -196,6 +212,7 @@ qint32 TagTable::sync(qint32 l, Tag &tag, qint32 account) {
 qint32 TagTable::getLid(QString guid) {
     qint32 retval = 0;
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":data", guid);
     query.bindValue(":key", TAG_GUID);
@@ -203,6 +220,7 @@ qint32 TagTable::getLid(QString guid) {
     if (query.next())
         retval = query.value(0).toInt();
     query.finish();
+    db->unlock();
     return retval;
 }
 
@@ -223,6 +241,7 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
         lid = cs.incrementLidCounter();
 
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
 
     if (t.guid.isSet()) {
@@ -259,7 +278,9 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
                 tempTag.guid = t.parentGuid;
                 tempTag.name="<no name>";
                 tempTag.updateSequenceNum = 0;
+                db->unlock();
                 add(parentLid, tempTag, false, account);
+                db->lockForWrite();
             }
             query.bindValue(":lid", lid);
             query.bindValue(":key", TAG_PARENT_LID);
@@ -280,6 +301,7 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
         query.exec();
     }
     query.finish();
+    db->unlock();
     return lid;
 }
 
@@ -289,11 +311,13 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
 bool TagTable::get(Tag &tag, qint32 lid) {
 
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
     if (query.size() == 0) {
         query.finish();
+        db->unlock();
         return false;
     }
     while (query.next()) {
@@ -319,6 +343,7 @@ bool TagTable::get(Tag &tag, qint32 lid) {
         }
     }
     query.finish();
+    db->unlock();
     return true;
 }
 
@@ -344,6 +369,7 @@ bool TagTable::get(Tag &tag, string guid) {
 bool TagTable::isDirty(qint32 lid) {
     NSqlQuery query(db);
     bool retval = false;
+    db->lockForRead();
     query.prepare("Select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_ISDIRTY);
@@ -351,6 +377,7 @@ bool TagTable::isDirty(qint32 lid) {
     if (query.next())
         retval = query.value(0).toBool();
     query.finish();
+    db->unlock();
     return retval;
 }
 
@@ -387,30 +414,32 @@ void TagTable::setDirty(QString guid, bool dirty) {
 void TagTable::setDirty(qint32 lid, bool dirty) {
     //bool retval = false;
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Update DataStore set data=:dirty where key=:key and lid=:lid");
     query.bindValue(":dirty", dirty);
     query.bindValue(":key", TAG_ISDIRTY);
     query.bindValue(":lid", lid);
     query.exec();
-//    if (query.next())
-//        retval = query.value(0).toBool();
-//    query.finish();
-//    return retval;
+    query.finish();
+    db->unlock();
 }
 
 
 // Does this tag exist?
 bool TagTable::exists(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and lid=:lid");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_GUID);
     query.exec();
     if (query.next()) {
         query.finish();
+        db->unlock();
         return true;
     }
     query.finish();
+    db->unlock();
     return false;
 }
 
@@ -433,6 +462,7 @@ bool TagTable::exists(string guid) {
 bool TagTable::getGuid(QString &guid, qint32 lid) {
 
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select data, data from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_GUID);
@@ -440,9 +470,11 @@ bool TagTable::getGuid(QString &guid, qint32 lid) {
     while (query.next()) {
         guid = query.value(0).toString();
         query.finish();
+        db->unlock();
         return true;
     }
     query.finish();
+    db->unlock();
     return false;
 }
 
@@ -470,11 +502,13 @@ void TagTable::deleteTag(qint32 lid) {
         NSqlQuery query(db);
         get(tag, currentLid);
         if (tag.updateSequenceNum.isSet() && tag.updateSequenceNum > 0) {
+            db->lockForWrite();
             query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
             query.bindValue(":lid", currentLid);
             query.bindValue(":key", TAG_ISDELETED);
             query.bindValue(":data", true);
             query.exec();
+            db->unlock();
         } else {
             expunge(currentLid);
         }
@@ -494,10 +528,12 @@ void TagTable::expunge(qint32 lid) {
     QString tagGuid;
     this->getGuid(tagGuid, lid);
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
     query.finish();
+    db->unlock();
 
     NoteTable noteTable(db);
     QList<int> notes;
@@ -524,6 +560,7 @@ void TagTable::expunge(QString guid) {
 // Is this search deleted?
 bool TagTable::isDeleted(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from DataStore where lid=:lid and key=:key and data=:data");
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_ISDELETED);
@@ -531,9 +568,11 @@ bool TagTable::isDeleted(qint32 lid) {
     query.exec();
     if (query.next()) {
         query.finish();
+        db->unlock();
         return true;
     }
     query.finish();
+    db->unlock();
     return false;
 }
 
@@ -541,10 +580,12 @@ bool TagTable::isDeleted(qint32 lid) {
 qint32 TagTable::findChildren(QList<qint32> &list, QString parentGuid) {
     qint32 parentLid = getLid(parentGuid);
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:parent");
     query.bindValue(":key", TAG_PARENT_LID);
     query.bindValue(":parent", parentLid);
     query.exec();
+    db->unlock();
 
     // Now find all the children for each found tag
     while (query.next()) {
@@ -565,6 +606,7 @@ qint32 TagTable::findChildren(QList<qint32> &list, QString parentGuid) {
 // Get all dirty lids
 qint32 TagTable::getAllDirty(QList<qint32> &lids) {
     NSqlQuery query(db);
+    db->lockForRead();
     lids.clear();
     query.prepare("Select lid from DataStore where key=:key and data='true'");
     query.bindValue(":key", TAG_ISDIRTY);
@@ -573,6 +615,7 @@ qint32 TagTable::getAllDirty(QList<qint32> &lids) {
         lids.append(query.value(0).toInt());
     }
     query.finish();
+    db->unlock();
     return lids.size();
 }
 
@@ -581,12 +624,14 @@ qint32 TagTable::getAllDirty(QList<qint32> &lids) {
 // Update the USN
 void TagTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Update DataStore set data=:data where key=:key and lid=:lid");
     query.bindValue(":data", usn);
     query.bindValue(":lid", lid);
     query.bindValue(":key", TAG_UPDATE_SEQUENCE_NUMBER);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
@@ -595,11 +640,13 @@ void TagTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
 // they were updated locally
 void TagTable::resetLinkedTagsDirty() {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Delete from datastore where key=:key and lid in (select lid from datastore where key=:linkedkey and data > 0)");
     query.bindValue(":key", TAG_ISDIRTY);
     query.bindValue(":linkedkey", TAG_OWNING_ACCOUNT);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
@@ -609,14 +656,17 @@ void TagTable::resetLinkedTagsDirty() {
 // Get all dirty lids
 int TagTable::getNewUnsequencedCount() {
     NSqlQuery query(db);
+    db->lockForRead();
+    qint32 retval = 0;
     query.prepare("Select count(lid) from DataStore where key=:key and data=0");
     query.bindValue(":key", TAG_UPDATE_SEQUENCE_NUMBER);
     query.exec();
     while(query.next()) {
-        return query.value(0).toInt();
+       retval = query.value(0).toInt();
     }
     query.finish();
-    return 0;
+    db->unlock();
+    return retval;
 }
 
 
@@ -627,6 +677,7 @@ int TagTable::getNewUnsequencedCount() {
 void TagTable::cleanupLinkedTags() {
     // Delete the parent records from the children
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from datastore where data in (select lid from datastore where lid in (select lid from datastore where data='<no name>' and key=:nameKey and lid in (select lid from datastore where key=:owningKey)) and key=:parentKey)");
     query.bindValue(":parentKey", TAG_PARENT_LID);
     query.bindValue(":nameKey", TAG_NAME);
@@ -639,6 +690,7 @@ void TagTable::cleanupLinkedTags() {
     query.bindValue(":nameKey", TAG_NAME);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
@@ -681,6 +733,7 @@ void TagTable::getNameMap(QHash<QString,QString> &nameMap) {
 // Find any invalid parent records
 void TagTable::findMissingParents(QList<qint32> &lids) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("select data from datastore where key=:parentKey and data not in (select lid from datastore where key=:guidKey)");
     query.bindValue(":parentKey", TAG_PARENT_LID);
     query.bindValue(":guidKey", TAG_GUID);
@@ -692,15 +745,18 @@ void TagTable::findMissingParents(QList<qint32> &lids) {
         lids.append(lid);
     }
     query.finish();
+    db->unlock();
 }
 
 
 // Remove any invalid parent records
 void TagTable::cleanupMissingParents() {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from datastore where key=:parentKey and data not in (select lid from datastore where key=:guidKey)");
     query.bindValue(":parentKey", TAG_PARENT_LID);
     query.bindValue(":guidKey", TAG_GUID);
     query.exec();
     query.finish();
+    db->unlock();
 }

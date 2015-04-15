@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 Global::Global()
 {
 
+    dbLock = new QReadWriteLock(QReadWriteLock::Recursive);
     listView = ListViewWide;
     FilterCriteria *criteria = new FilterCriteria();
     shortcutKeys = new ShortcutKeys();

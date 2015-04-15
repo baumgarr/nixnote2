@@ -32,12 +32,18 @@ ConfigStore::ConfigStore(DatabaseConnection *conn)
 {
 
     db = conn;
+    db->lockForRead();
     // Check if the database exists.  If not, create it.
     NSqlQuery sql(db);
     sql.exec("Select * from sqlite_master where type='table' and name='ConfigStore';");
-    if (!sql.next())
+    if (!sql.next()) {
+        db->unlock();
+        sql.finish();
         this->createTable();
+        return;
+    }
     sql.finish();
+    db->unlock();
 }
 
 
@@ -50,17 +56,21 @@ void ConfigStore::createTable() {
     QLOG_DEBUG() << "Creating table ConfigStore";
     NSqlQuery sql(db);
 
+    db->lockForWrite();
     // build the SQL command & cretae the table
     QString command("Create table if not exists ConfigStore (" +
                   QString("key integer primary key not null unique,") +
                   QString("value blob)"));
     if (!sql.exec(command)) {
         QLOG_ERROR() << "Creation of ConfigStore table failed: " << sql.lastError();
+        sql.finish();
+        db->unlock();
     } else {
         // insert default values into the new table
         this->initTable();
+        sql.finish();
+        db->unlock();
     }
-    sql.finish();
 }
 
 
@@ -72,6 +82,7 @@ void ConfigStore::initTable() {
     QLOG_TRACE() << "Entering ConfigStore::initTable()";
 
     QLOG_DEBUG() << "Initializing table ConfigStore";
+    db->lockForWrite();
     NSqlQuery sql(db);
     sql.prepare("Insert into ConfigStore (key, value) values (:key, :value);");
     sql.bindValue(":key", CONFIG_STORE_LID);
@@ -80,6 +91,7 @@ void ConfigStore::initTable() {
         QLOG_ERROR() << "Insertion of initial counter failed: " << sql.lastError();
     }
     sql.finish();
+    db->unlock();
 }
 
 
@@ -88,6 +100,7 @@ void ConfigStore::initTable() {
 // local ID.  This number never changes
 //*******************************************************************
 qint32 ConfigStore::incrementLidCounter() {
+    db->lockForWrite();
     NSqlQuery sql(db);
     // Prepare the SQL statement & fetch the row
     sql.prepare("Select value from ConfigStore where key=:key");
@@ -101,6 +114,7 @@ qint32 ConfigStore::incrementLidCounter() {
         // Now that we have the next lid, increment the number & save it
         qint32 sequence = QVariant(sql.value(0)).toInt();
         sequence++;
+        db->lockForWrite();
         sql.prepare("Update ConfigStore set value=:lid where key=:key;");
         sql.bindValue(":lid",sequence);
         sql.bindValue(":key", CONFIG_STORE_LID);
@@ -108,10 +122,12 @@ qint32 ConfigStore::incrementLidCounter() {
             QLOG_ERROR() << "Error updating sequence number: " << sql.lastError();
         }
         sql.finish();
+        db->unlock();
         // Return the next lid to the caller
         return sequence;
     }
     sql.finish();
+    db->unlock();
     return -1;
 }
 
@@ -122,6 +138,7 @@ qint32 ConfigStore::incrementLidCounter() {
 void ConfigStore::saveSetting(int key, QByteArray value) {
     NSqlQuery sql(db);
     // Prepare the SQL statement & fetch the row
+    db->lockForWrite();
     sql.prepare("Delete from ConfigStore where key=:key");
     sql.bindValue(":key", key);
     sql.exec();
@@ -131,6 +148,7 @@ void ConfigStore::saveSetting(int key, QByteArray value) {
     sql.bindValue(":value", value);
     sql.exec();
     sql.finish();
+    db->unlock();
 }
 
 
@@ -138,6 +156,7 @@ void ConfigStore::saveSetting(int key, QByteArray value) {
 // Return a value from the DB
 //*******************************************************************
 bool ConfigStore::getSetting(QByteArray &value, int key) {
+    db->lockForRead();
     NSqlQuery sql(db);
     sql.prepare("select value from ConfigStore where key=:key");
     sql.bindValue(":key", key);
@@ -145,8 +164,10 @@ bool ConfigStore::getSetting(QByteArray &value, int key) {
     while (sql.next()) {
         value = sql.value(0).toByteArray();
         sql.finish();
+        db->unlock();
         return true;
     }
     sql.finish();
+    db->unlock();
     return false;
 }

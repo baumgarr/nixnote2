@@ -82,10 +82,12 @@ qint32 LinkedNotebookTable::sync(qint32 lid, LinkedNotebook &notebook) {
         lastUSN = getLastUpdateSequenceNumber(lid);
         // Delete the old record
         NSqlQuery query(db);
+        db->lockForWrite();
         query.prepare("Delete from DataStore where lid=:lid and key>=3200 and key<3300");
         query.bindValue(":lid", lid);
         query.exec();
         query.finish();
+        db->unlock();
     }
 
     if (lid == 0) {
@@ -128,6 +130,7 @@ qint32 LinkedNotebookTable::sync(qint32 lid, LinkedNotebook &notebook) {
 qint32 LinkedNotebookTable::getLid(QString guid) {
 
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":data", guid);
     query.bindValue(":key", LINKEDNOTEBOOK_GUID);
@@ -136,6 +139,7 @@ qint32 LinkedNotebookTable::getLid(QString guid) {
     if (query.next())
         retval = query.value(0).toInt();
     query.finish();
+    db->unlock();
     return retval;
 }
 
@@ -153,6 +157,7 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
     NSqlQuery query(db);
     ConfigStore cs(db);
 
+    db->lockForWrite();
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     qint32 lid = l;
     if (lid == 0) {
@@ -267,6 +272,7 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
     }
 
     query.finish();
+    db->unlock();
     return lid;
 }
 
@@ -274,6 +280,7 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
 // Return a notebook structure given the LID
 bool LinkedNotebookTable::get(LinkedNotebook &notebook, qint32 lid) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select key, data from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
@@ -318,6 +325,7 @@ bool LinkedNotebookTable::get(LinkedNotebook &notebook, qint32 lid) {
         }
     }
     query.finish();
+    db->unlock();
     return true;
 }
 
@@ -342,6 +350,7 @@ bool LinkedNotebookTable::get(LinkedNotebook &notebook, string guid) {
 // Get a list of all notebooks
 qint32 LinkedNotebookTable::getAll(QList<qint32> &books) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("select distinct lid from DataStore where key=:key");
     query.bindValue(":key", LINKEDNOTEBOOK_GUID);
     query.exec();
@@ -349,6 +358,7 @@ qint32 LinkedNotebookTable::getAll(QList<qint32> &books) {
         books.append(query.value(0).toInt());
     }
     query.finish();
+    db->unlock();
     return books.size();
 }
 
@@ -356,6 +366,7 @@ qint32 LinkedNotebookTable::getAll(QList<qint32> &books) {
 // Get all notebooks for a particular stack
 qint32 LinkedNotebookTable::getStack(QList<qint32> &retval, QString &stack){
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("select distinct lid from DataStore where key=:key and data=:stack");
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.bindValue(":stack", stack);
@@ -364,6 +375,7 @@ qint32 LinkedNotebookTable::getStack(QList<qint32> &retval, QString &stack){
         retval.append(query.value(0).toInt());
     }
     query.finish();
+    db->unlock();
     return retval.size();
 
 }
@@ -373,6 +385,7 @@ qint32 LinkedNotebookTable::getStack(QList<qint32> &retval, QString &stack){
 // Get the guid for a particular lid
 bool LinkedNotebookTable::getGuid(QString &retval, qint32 lid){
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("select data from DataStore where key=:key and lid=:lid");
     query.bindValue(":key", LINKEDNOTEBOOK_GUID);
     query.bindValue(":lid", lid);
@@ -380,9 +393,11 @@ bool LinkedNotebookTable::getGuid(QString &retval, qint32 lid){
     while (query.next()) {
         retval = query.value(0).toString();
         query.finish();
+        db->unlock();
         return true;
     }
     query.finish();
+    db->unlock();
     return false;
 
 }
@@ -412,21 +427,25 @@ bool LinkedNotebookTable::update(LinkedNotebook &notebook, bool isDirty) {
         oldname = oldBook.shareName;
     if (oldname != newname) {
         NSqlQuery query(db);
+        db->lockForWrite();
         query.prepare("Update notetable set notebook=:name where notebooklid=:lid");
         query.bindValue(":name", newname);
         query.bindValue(":lid", lid);
         query.exec();
         query.finish();
+        db->unlock();
     }
     return true;
 }
 
 void LinkedNotebookTable::expunge(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
@@ -445,20 +464,20 @@ void LinkedNotebookTable::renameStack(QString oldName, QString newName) {
     QList<qint32> lids;
     findByStack(lids, oldName);
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("Update Datastore set data=:newname where key=:key and data=:oldname");
     query.bindValue(":newname", newName);
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.bindValue(":oldName", oldName);
     query.exec();
     query.finish();
-
-//    for (qint32 i=0; i<lids.size(); i++)
-//        setDirty(lids[i], true);
+    db->unlock();
 }
 
 
 void LinkedNotebookTable::findByStack(QList<qint32> &lids, QString stackName) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:name");
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.bindValue(":name", stackName);
@@ -467,6 +486,7 @@ void LinkedNotebookTable::findByStack(QList<qint32> &lids, QString stackName) {
         lids.append(query.value(0).toInt());
     }
     query.finish();
+    db->unlock();
 }
 
 
@@ -478,6 +498,7 @@ bool LinkedNotebookTable::isDeleted(qint32 lid) {
 
 void LinkedNotebookTable::getStacks(QStringList &stacks) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select distinct data from DataStore where key=:key");
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.exec();
@@ -485,11 +506,13 @@ void LinkedNotebookTable::getStacks(QStringList &stacks) {
         stacks.append(query.value(0).toString());
     }
     query.finish();
+    db->unlock();
 }
 
 
 bool LinkedNotebookTable::isStacked(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("Select data from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
@@ -498,23 +521,27 @@ bool LinkedNotebookTable::isStacked(qint32 lid) {
     if (query.next())
         retval = true;
     query.finish();
+    db->unlock();
     return retval;
 }
 
 
 void LinkedNotebookTable::removeFromStack(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from DataStore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
 
 qint32 LinkedNotebookTable::getLastUpdateSequenceNumber(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("select data from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
@@ -524,6 +551,7 @@ qint32 LinkedNotebookTable::getLastUpdateSequenceNumber(qint32 lid) {
         retval = query.value(0).toInt();
     }
     query.finish();
+    db->unlock();
     return retval;
 }
 
@@ -531,6 +559,7 @@ qint32 LinkedNotebookTable::getLastUpdateSequenceNumber(qint32 lid) {
 
 void LinkedNotebookTable::setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN) {
     NSqlQuery query(db);
+    db->lockForWrite();
     query.prepare("delete from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_LAST_USN);
@@ -542,11 +571,13 @@ void LinkedNotebookTable::setLastUpdateSequenceNumber(qint32 lid, qint32 lastUSN
     query.bindValue(":data", lastUSN);
     query.exec();
     query.finish();
+    db->unlock();
 }
 
 
 bool LinkedNotebookTable::exists(qint32 lid) {
     NSqlQuery query(db);
+    db->lockForRead();
     query.prepare("select lid from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_SHARE_NAME);
@@ -555,5 +586,6 @@ bool LinkedNotebookTable::exists(qint32 lid) {
     if (query.next())
         retval = true;
     query.finish();
+    db->unlock();
     return retval;
 }

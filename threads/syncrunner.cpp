@@ -40,6 +40,7 @@ extern Global global;
 SyncRunner::SyncRunner()
 {
     init = false;
+    finalSync = false;
 }
 
 SyncRunner::~SyncRunner() {
@@ -179,7 +180,8 @@ void SyncRunner::evernoteSync() {
     TagTable tagTable(db);
     tagTable.findMissingParents(lids);
     for (int i=0; i<lids.size(); i++) {
-        emit(tagExpunged(lids[i]));
+        if (!finalSync)
+            emit(tagExpunged(lids[i]));
     }
     tagTable.cleanupMissingParents();
 
@@ -377,7 +379,8 @@ void SyncRunner::syncRemoteExpungedNotebooks(QList<Guid> guids) {
     for (int i=0; i<guids.size(); i++) {
         int lid = notebookTable.getLid(guids[i]);
         notebookTable.expunge(guids[i]);
-        emit notebookExpunged(lid);
+        if (!finalSync)
+            emit notebookExpunged(lid);
     }
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteExpungedNotebooks";
 }
@@ -390,7 +393,8 @@ void SyncRunner::syncRemoteExpungedTags(QList<Guid> guids) {
     for (int i=0; i<guids.size(); i++) {
         int lid = tagTable.getLid(guids[i]);
         tagTable.expunge(guids[i]);
-        emit tagExpunged(lid);
+        if (!finalSync)
+            emit tagExpunged(lid);
     }
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteExpungedTags";
 }
@@ -403,7 +407,8 @@ void SyncRunner::syncRemoteExpungedSavedSearches(QList<Guid> guids) {
     for (int i=0; i<guids.size(); i++) {
         int lid = searchTable.getLid(guids[i]);
         searchTable.expunge(guids[i]);
-        emit searchExpunged(lid);
+        if (!finalSync)
+            emit searchExpunged(lid);
     }
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteExpungedSavedSearches";
 }
@@ -448,10 +453,12 @@ void SyncRunner::syncRemoteTags(QList<Tag> tags, qint32 account) {
         QString parentGuid = "";
         if (t.parentGuid.isSet())
             parentGuid = t.parentGuid;
-        if (t.name.isSet())
-            emit tagUpdated(lid, t.name, parentGuid, account);
-        else
-            emit(tagUpdated(lid, "", parentGuid, account));
+        if (!finalSync) {
+            if (t.name.isSet())
+                emit tagUpdated(lid, t.name, parentGuid, account);
+            else
+                emit(tagUpdated(lid, "", parentGuid, account));
+            }
     }
 
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteTags";
@@ -473,10 +480,12 @@ void SyncRunner::syncRemoteSearches(QList<SavedSearch> searches) {
             searchTable.sync(t);
             lid = searchTable.getLid(t.guid);
         }
-        if (t.name.isSet())
-            emit searchUpdated(lid, t.name);
-        else
-            emit searchUpdated(lid, "");
+        if (!finalSync) {
+            if (t.name.isSet())
+                emit searchUpdated(lid, t.name);
+            else
+                emit searchUpdated(lid, "");
+        }
     }
 
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteSearches";
@@ -535,10 +544,12 @@ void SyncRunner::syncRemoteNotebooks(QList<Notebook> books, qint32 account) {
             if (lbook.username.isSet())
                 stack = QString::fromStdString(username);
         }
-        if (t.name.isSet())
-            emit notebookUpdated(lid, t.name, stack, false, shared);
-        else
-            emit notebookUpdated(lid, "", stack, false, shared);
+        if (!finalSync) {
+            if (t.name.isSet())
+                emit notebookUpdated(lid, t.name, stack, false, shared);
+            else
+                emit notebookUpdated(lid, "", stack, false, shared);
+        }
     }
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteNotebooks";
 }
@@ -559,7 +570,8 @@ void SyncRunner::syncRemoteNotes(QList<Note> notes, qint32 account) {
                 qint32 newLid = noteTable.duplicateNote(lid);
                 qint32 conflictNotebook = bookTable.getConflictNotebook();
                 noteTable.updateNotebook(newLid, conflictNotebook, true);
-                emit noteUpdated(newLid);
+                if (!finalSync)
+                    emit noteUpdated(newLid);
              }
             noteTable.sync(lid, notes.at(i), account);
         } else {
@@ -571,7 +583,8 @@ void SyncRunner::syncRemoteNotes(QList<Note> notes, qint32 account) {
             delete global.cache[lid];
             global.cache.remove(lid);
         }
-        emit noteUpdated(lid);
+        if (!finalSync)
+            emit noteUpdated(lid);
     }
 
     QLOG_TRACE() << "Leaving SyncRunner::syncRemoteNotes";
@@ -609,8 +622,8 @@ void SyncRunner::syncRemoteLinkedNotebooksChunk(QList<LinkedNotebook> books) {
             sharename = lbk.shareName;
         if (lbk.username.isSet())
             username = lbk.username;
-        emit notebookUpdated(lid, sharename,
-                             username, true, false);
+        if (!finalSync)
+            emit notebookUpdated(lid, sharename, username, true, false);
     }
 }
 
@@ -659,7 +672,8 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
                 more = false;
                 if (comm->error.type == CommunicationError::EDAMNotFoundException) {
                     ltable.expunge(lids[i]);
-                    emit(notebookExpunged(lids[i]));
+                    if (!finalSync)
+                        emit(notebookExpunged(lids[i]));
                 } else {
                     this->communicationErrorHandler();
                     error = true;
@@ -698,7 +712,8 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
                 more = false;
                 if (comm->error.type == CommunicationError::EDAMNotFoundException) {
                     ltable.expunge(lids[i]);
-                    emit(notebookExpunged(lids[i]));
+                    if (!finalSync)
+                        emit(notebookExpunged(lids[i]));
                 } else {
                     this->communicationErrorHandler();
                     error = true;
@@ -765,7 +780,8 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
                 noteTable.updateGuid(validLids[i], note.guid);
             noteTable.setUpdateSequenceNumber(validLids[i], usn);
             noteTable.setDirty(validLids[i], false);
-            emit(noteSynchronized(validLids[i], false));
+            if (!finalSync)
+                emit(noteSynchronized(validLids[i], false));
         } else {
             error = true;
         }
@@ -780,7 +796,8 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
             maxUsn = usn;
             noteTable.setUpdateSequenceNumber(deletedLids[i], usn);
             noteTable.setDirty(deletedLids[i], false);
-            emit(noteSynchronized(deletedLids[i], false));
+            if (!finalSync)
+                emit(noteSynchronized(deletedLids[i], false));
         }
     }
     return maxUsn;
@@ -1007,7 +1024,8 @@ qint32 SyncRunner::uploadPersonalNotes() {
             maxUsn = usn;
             noteTable.setUpdateSequenceNumber(deletedLids[i], usn);
             noteTable.setDirty(deletedLids[i], false);
-            emit(noteSynchronized(deletedLids[i], false));
+            if (!finalSync)
+                emit(noteSynchronized(deletedLids[i], false));
         }
     }
 
@@ -1026,7 +1044,8 @@ qint32 SyncRunner::uploadPersonalNotes() {
         if (usn > maxUsn) {
             maxUsn = usn;
         }
-        emit(noteSynchronized(movedLids[i], false));
+        if (!finalSync)
+            emit(noteSynchronized(movedLids[i], false));
     }
 
 
@@ -1047,7 +1066,8 @@ qint32 SyncRunner::uploadPersonalNotes() {
                 noteTable.updateGuid(validLids[i], note.guid);
             noteTable.setUpdateSequenceNumber(validLids[i], usn);
             noteTable.setDirty(validLids[i], false);
-            emit(noteSynchronized(validLids[i], false));
+            if (!finalSync)
+                emit(noteSynchronized(validLids[i], false));
         } else {
             error = true;
         }

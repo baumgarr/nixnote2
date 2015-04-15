@@ -165,7 +165,7 @@ public:
     QList<FilterCriteria*> filterCriteria;
     qint32 filterPosition;
 
-    QReadWriteLock  dbLock;                               // Database read/write lock mutex
+    QReadWriteLock  *dbLock;                               // Database read/write lock mutex
 
     QHash<int, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
 

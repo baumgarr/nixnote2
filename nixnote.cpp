@@ -987,6 +987,7 @@ void NixNote::closeEvent(QCloseEvent *event) {
     global.settings->endGroup();
     if (syncOnShutdown && !finalSync && global.accountsManager->oauthTokenFound()) {
         finalSync = true;
+        syncRunner.finalSync = true;
         hide();
         connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(close()));
         synchronize();
