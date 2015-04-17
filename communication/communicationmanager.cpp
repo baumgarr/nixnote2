@@ -889,8 +889,9 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
     postData->addQueryItem("auth", authToken);
 
     QEventLoop loop;
-    if (networkAccessManager == NULL)
+    if (networkAccessManager == NULL) {
         networkAccessManager = new QNetworkAccessManager(this);
+    }
     QObject::connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
 
     int position = 0;
@@ -915,12 +916,13 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
             QLOG_ERROR() << "Error fetching ink note slice " << reply->errorString();
         }
     }
+    QObject::disconnect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
     QPair<QString, QImage*> *newPair = new QPair<QString, QImage*>();
     newPair->first = guid;
     newPair->second = newImage;
     inkNoteList->append(newPair);
 
-    QObject::disconnect(&loop, SLOT(quit()));
+    //QObject::disconnect(&loop, SLOT(quit()));
 }
 
 
