@@ -223,9 +223,12 @@ void AccountMaintenanceDialog::removeOAuth() {
     if (nameList->selectedItems().count() <= 0)
         return;
     QString name = nameList->selectedItems()[0]->text();
+    QString currentName = global.accountsManager->getName();
     for (int i=0; i<names.size(); i++) {
         if (names[i] == name) {
             global.accountsManager->setOAuthToken(ids[i], "");
+            if (currentName == names[i])
+                global.accountsManager->setOAuthToken("");
         }
     }
     loadData();

@@ -24,30 +24,40 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QList>
 #include <QtXml>
 
+
+
+//********************************************************
+//********************************************************
+//* This class manages the accounts.conf file.  It
+//* stores the oauth key, server URL, consumer key, and
+//* the unique ID of each account.
+//********************************************************
+//********************************************************
+
 class AccountsManager : public QObject
 {
     Q_OBJECT
 private:
-    QDomDocument doc;
-    QDomNode currentNode;
-    void save();
+    QDomDocument doc;                                       // XML dom doc to parse out accounts.conf
+    QDomNode currentNode;                                   // node to parse out accounts.conf
+    void save();                                            // Save accounts.conf file.
 
 public:
-    explicit AccountsManager(int id, QObject *parent = 0);
-    int currentId;
-    QString configFile;
-    bool oauthTokenFound();
-    QList<int> idList();
-    int addId(int id, QString name, QString oauth="", QString server="");
-    int getNewIdNumber();
-    QStringList nameList();
-    QString getOAuthToken();
-    void setOAuthToken(QString token);
-    void setOAuthToken(int id, QString token);
-    void setName(QString name, int id=0);
-    QString getServer();
-    QString getName();
-    bool removeId(int id);
+    explicit AccountsManager(int id, QObject *parent = 0);   // Constructor
+    int currentId;                                           // ID currently in use
+    QString configFile;                                      // Configuration (accounts.conf) file
+    bool oauthTokenFound();                                  // Do we have a good oauth token?
+    QList<int> idList();                                     // List of all IDs
+    int addId(int id, QString name, QString oauth="", QString server="");        // Add a new account
+    int getNewIdNumber();                                    // Increment the ID number (used for a new account)
+    QStringList nameList();                                  // Get a list of account names
+    QString getOAuthToken();                                 // Get the oauth token for the current account
+    void setOAuthToken(QString token);                       // Set the oauth token for the current account
+    void setOAuthToken(int id, QString token);               // set oauth token for a specific account
+    void setName(QString name, int id=0);                    // Set the name of a specificaccount
+    QString getServer();                                     // Get the URL of the server for the current account
+    QString getName();                                       // Get the name of the current account in use
+    bool removeId(int id);                                   // Delete an account
 
 signals:
     

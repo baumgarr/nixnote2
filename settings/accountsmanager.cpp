@@ -22,6 +22,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
+
+//********************************************
+//* Constructor
+//********************************************
 AccountsManager::AccountsManager(int id, QObject *parent) :
     QObject(parent)
 {
@@ -62,6 +66,10 @@ AccountsManager::AccountsManager(int id, QObject *parent) :
 }
 
 
+
+//********************************************
+//* Do we have a good oauth token?
+//********************************************
 bool AccountsManager::oauthTokenFound() {
 
     if (this->getOAuthToken().length() > 0)
@@ -70,6 +78,11 @@ bool AccountsManager::oauthTokenFound() {
         return false;
 }
 
+
+
+//********************************************
+//* Get a list of account IDs
+//********************************************
 QList<int> AccountsManager::idList() {
     QList<int> ids;
     QDomNodeList nodes = doc.elementsByTagName("account");
@@ -82,6 +95,12 @@ QList<int> AccountsManager::idList() {
     return ids;
 }
 
+
+
+
+//********************************************
+//* get a list of defined account names
+//********************************************
 QStringList AccountsManager::nameList() {
     QStringList names;
     QDomNodeList nodes = doc.elementsByTagName("account");
@@ -94,6 +113,12 @@ QStringList AccountsManager::nameList() {
     return names;
 }
 
+
+
+//********************************************
+//* Get an oauth token for the account
+//* currently in use
+//********************************************
 QString AccountsManager::getOAuthToken() {
     QDomElement element = currentNode.toElement();
     QDomNode consumerNode = element.firstChildElement("consumerKey");
@@ -103,6 +128,12 @@ QString AccountsManager::getOAuthToken() {
     return tokenNode.toElement().text();
 }
 
+
+
+//********************************************
+//* Set the oauth token for the current
+//* account.
+//********************************************
 void AccountsManager::setOAuthToken(QString token) {
     QString server = this->getServer();
     QString name = this->getName();
@@ -123,6 +154,10 @@ void AccountsManager::setOAuthToken(QString token) {
 
 
 
+
+//********************************************
+//* Change the name for an account
+//********************************************
 void AccountsManager::setName(QString name, int id) {
     QString server = this->getServer();
     QString token = this->getOAuthToken();
@@ -134,6 +169,10 @@ void AccountsManager::setName(QString name, int id) {
 }
 
 
+
+//********************************************
+//* Set the server for an acocunt
+//********************************************
 QString AccountsManager::getServer() {
     QDomElement element = currentNode.toElement();
     QDomNode tokenNode = element.firstChildElement("server");
@@ -145,6 +184,9 @@ QString AccountsManager::getServer() {
 
 
 
+//********************************************
+//* Get the name of the account in use
+//********************************************
 QString AccountsManager::getName() {
     QDomElement element = currentNode.toElement();
     QDomNode tokenNode = element.firstChildElement("name");
@@ -153,6 +195,10 @@ QString AccountsManager::getName() {
 }
 
 
+
+//********************************************
+//* Add an account
+//********************************************
 int AccountsManager::addId(int id, QString name, QString oauth, QString server) {
     if (id <=0)
         id = getNewIdNumber();
@@ -194,6 +240,10 @@ int AccountsManager::addId(int id, QString name, QString oauth, QString server) 
 }
 
 
+
+//********************************************
+//* save to accounts.conf
+//********************************************
 void AccountsManager::save() {
     QFile xmlFile(configFile);
     xmlFile.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -202,6 +252,10 @@ void AccountsManager::save() {
 }
 
 
+
+//********************************************
+//* Remove an account
+//********************************************
 bool AccountsManager::removeId(int id) {
     QDomNodeList nodes = doc.elementsByTagName("account");
     for (int i=0; i<nodes.size(); i++) {
@@ -218,6 +272,11 @@ bool AccountsManager::removeId(int id) {
 }
 
 
+
+//********************************************
+//* Increment the account to the next ID number
+//* available.
+//********************************************
 int AccountsManager::getNewIdNumber() {
     QList<int> numbers = idList();
     for (int i=1; ;i++)
@@ -226,7 +285,10 @@ int AccountsManager::getNewIdNumber() {
 }
 
 
-
+//********************************************
+//* set the oauth token for a specific
+//* account.
+//********************************************
 void AccountsManager::setOAuthToken(int id, QString token) {
     AccountsManager manager(id);
     manager.setOAuthToken(token);
