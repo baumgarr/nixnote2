@@ -45,7 +45,9 @@ using namespace std;
 //*********************************************
 extern Global global;
 
-
+//*********************************************************************
+//* Segmentation fault.  This is triggered to print a stack trace.
+//*********************************************************************
 void fault_handler(int sig) {
   void *array[30];
   size_t size;
@@ -59,8 +61,13 @@ void fault_handler(int sig) {
   exit(1);
 }
 
-//using namespace cv;
 
+
+
+//using namespace cv;
+//*********************************************************************
+//* Main entry point to the program.
+//*********************************************************************
 int main(int argc, char *argv[])
 {
     signal(SIGSEGV, fault_handler);   // install our handler

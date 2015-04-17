@@ -156,7 +156,6 @@ private:
     void setupTrashTree();
     void setupSynchronizedNotebookTree();
     void setupTabWindow();
-    void initializeGlobalSettings();
     void waitCursor(bool value);
     void saveContents();
     void saveNoteColumnPositions();

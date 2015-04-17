@@ -129,8 +129,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     this->setFont(f);
 
     db = new DatabaseConnection("nixnote");  // Startup the database
-    QLOG_TRACE() << "Setting up global settings";
-    this->initializeGlobalSettings();
 
     // Setup the sync thread
     QLOG_TRACE() << "Setting up counter thread";
@@ -705,12 +703,7 @@ void NixNote::setupGui() {
 }
 
 
-//******************************************************************************
-//* This initializes some environment options based upon the command line
-//******************************************************************************
-void NixNote::initializeGlobalSettings() {
 
-}
 
 //**************************************************************
 //* Move sync, couter, & index objects to their appropriate
@@ -720,6 +713,12 @@ void NixNote::counterThreadStarted() {
     counterRunner.moveToThread(&counterThread);
 }
 
+
+
+
+//***************************************************************
+//* Signal received when the syncRunner thread has started
+//***************************************************************
 void NixNote::syncThreadStarted() {
     syncRunner.moveToThread(&syncThread);
     global.settings->beginGroup("Sync");
@@ -736,20 +735,14 @@ void NixNote::indexThreadStarted() {
 }
 
 
+
+
 //******************************************************************************
 //* This function sets up the note list window.  This is what the users select
 //* view a specific note
 //******************************************************************************
 void NixNote::setupNoteList() {
     QLOG_TRACE() << "Starting NixNote.setupNoteList()";
-
-//    global.settings->beginGroup("SaveState");
-//    int value = global.settings->value("listView", 1).toInt();
-//    global.settings->endGroup();
-//    if (value == 1)
-//        global.listView = Global::ListViewWide;
-//    else
-//        global.listView= Global::listViewNarrow;
 
     // Setup a generic widget to hold the search & note table
     topRightWidget  = new QWidget(this);
@@ -766,9 +759,6 @@ void NixNote::setupNoteList() {
     else
         mainSplitter->addWidget(topRightWidget);
 
-//    noteTableView->contextMenu->insertAction(noteTableView->deleteNoteAction, newNoteButton);
-//    noteTableView->contextMenu->insertSeparator(noteTableView->deleteNoteAction);
-
     connect(noteTableView, SIGNAL(newNote()), this, SLOT(newNote()));
     connect(noteTableView, SIGNAL(notesDeleted(QList<qint32>,bool)), this, SLOT(notesDeleted(QList<qint32>)));
     connect(noteTableView, SIGNAL(notesRestored(QList<qint32>)), this, SLOT(notesRestored(QList<qint32>)));
@@ -779,6 +769,8 @@ void NixNote::setupNoteList() {
 }
 
 
+
+// Signal received when a note has been synchronized
 void NixNote::noteSynchronized(qint32 lid, bool value) {
     noteTableView->refreshCell(lid, NOTE_TABLE_IS_DIRTY_POSITION, value);
 }
@@ -965,6 +957,7 @@ void NixNote::closeNixNote() {
 }
 
 
+
 //*****************************************************************************
 //* Close the program
 //*****************************************************************************
@@ -1115,7 +1108,11 @@ void NixNote::closeEvent(QCloseEvent *event) {
 
 
 
-
+//*************************************************************
+//* Function called on shutdown to save all of the note
+//* table column positions.  These values are restored the
+//* next time NixNote starts.
+//**************************************************************
 void NixNote::saveNoteColumnPositions() {
     int position = noteTableView->horizontalHeader()->visualIndex(NOTE_TABLE_ALTITUDE_POSITION);
     global.setColumnPosition("noteTableAltitudePosition", position);
@@ -1166,6 +1163,12 @@ void NixNote::saveNoteColumnPositions() {
 }
 
 
+
+//*************************************************************
+//* Function called on shutdown to save all of the note
+//* table column widths.  These values are restored the
+//* next time NixNote starts.
+//**************************************************************
 void NixNote::saveNoteColumnWidths() {
     int width;
     width = noteTableView->columnWidth(NOTE_TABLE_ALTITUDE_POSITION);
@@ -1213,6 +1216,8 @@ void NixNote::saveNoteColumnWidths() {
 }
 
 
+
+
 //*****************************************************************************
 //* The sync timer has expired
 //*****************************************************************************
@@ -1225,6 +1230,9 @@ void NixNote::syncTimerExpired() {
     tabWindow->saveAllNotes();
     emit(syncRequested());
 }
+
+
+
 
 //******************************************************************************
 //* User synchronize was requested
@@ -1264,6 +1272,7 @@ void NixNote::synchronize() {
 }
 
 
+
 //********************************************************************************
 //* Disconnect from Evernote
 //********************************************************************************
@@ -1276,7 +1285,11 @@ void NixNote::disconnect() {
 
 
 
-
+//********************************************************
+//* Function called when a sync has completed.  It stops
+//* the spinning sync icon and resets it to the default
+//* value.
+//*********************************************************
 void NixNote::syncButtonReset() {
     pauseIndexing(false);
     if (syncIcons.size() == 0)
@@ -1284,6 +1297,7 @@ void NixNote::syncButtonReset() {
     syncButtonTimer.stop();
     syncButton->setIcon(syncIcons[0]);
 }
+
 
 
 //*****************************************************
@@ -1320,6 +1334,11 @@ void NixNote::updateSyncButton() {
 
 
 
+
+//************************************************************
+//* Open a new note.  If newWindow is true it is an external
+//* note request.
+//************************************************************
 void NixNote::openNote(bool newWindow) {
     saveContents();
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
@@ -1344,6 +1363,10 @@ void NixNote::openNote(bool newWindow) {
 
 
 
+
+//**************************************************************
+//* Open a note in an external window.
+//**************************************************************
 void NixNote::openExternalNote(qint32 lid) {
     tabWindow->openNote(lid, NTabWidget::ExternalWindow);
 }
@@ -1400,6 +1423,11 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
 }
 
 
+
+//******************************************************************
+//* Check if the notebook selected is read-only.  With
+//* read-only notes the editor and a lot of actions are disabled.
+//******************************************************************
 void NixNote::checkReadOnlyNotebook() {
     qint32 lid = tabWindow->currentBrowser()->lid;
     Note n;
@@ -1419,16 +1447,30 @@ void NixNote::checkReadOnlyNotebook() {
 }
 
 
+
+
+//*********************************************
+//* User clicked the -> "forward" button
+//* to go to the next history position.
+//*********************************************
 void NixNote::rightButtonTriggered() {
     global.filterPosition++;
     updateSelectionCriteria();
 }
 
 
+
+
+//*********************************************
+//* User clicked the <- "back" button
+//* to go to the previous history position.
+//*********************************************
 void NixNote::leftButtonTriggered() {
     global.filterPosition--;
     updateSelectionCriteria();
 }
+
+
 
 
 //**************************************************
@@ -1508,6 +1550,8 @@ void NixNote::databaseBackup(bool backup) {
     waitCursor(false);
 
 }
+
+
 
 
 //**************************************************
@@ -1634,6 +1678,8 @@ void NixNote::setMessage(QString text, int timeout) {
 
 
 
+
+// Notification slot that the sync has completed.
 void NixNote::notifySyncComplete() {
     bool show;
     global.settings->beginGroup("Sync");
@@ -1649,6 +1695,9 @@ void NixNote::notifySyncComplete() {
     if (global.syncAndExit)
         this->closeNixNote();
 }
+
+
+
 
 //*******************************************************
 //* Check for dirty notes and save the contents
@@ -1666,6 +1715,10 @@ void NixNote::saveContents() {
 }
 
 
+
+//********************************************
+//* Reset values back to the unset values
+//********************************************
 void NixNote::resetView() {
     FilterCriteria *criteria = new FilterCriteria();
     global.filterCriteria[global.filterPosition]->duplicate(*criteria);
@@ -1688,8 +1741,9 @@ void NixNote::resetView() {
 }
 
 
-
+//*****************************
 // Create a new note
+//*****************************
 void NixNote::newNote() {
     if (noteButton->property("currentNoteButton").toInt() != NewTextNote) {
         noteButton->setText(newNoteButton->text());
@@ -1735,6 +1789,10 @@ void NixNote::newNote() {
 }
 
 
+
+//**********************************************
+//* Create a new note in an external window.
+//**********************************************
 void NixNote::newExternalNote() {
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
            QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
@@ -1768,11 +1826,15 @@ void NixNote::newExternalNote() {
 
 }
 
+
+
 // Slot for when notes have been deleted from the notes list.
 void NixNote::notesDeleted(QList<qint32> lids) {
     lids=lids;
     updateSelectionCriteria();
 }
+
+
 
 // Slot for when notes have been deleted from the notes list.
 void NixNote::notesRestored(QList<qint32> lids) {
@@ -1797,23 +1859,31 @@ void NixNote::openEvernoteSupport() {
     QDesktopServices::openUrl(QUrl(server));
 }
 
+
+
+//*****************************************
+//* Open the user account dialog box.
+//*****************************************
 void NixNote::openAccount() {
     AccountDialog dialog;
     dialog.exec();
 }
 
 
+
+//*******************************
+//* Open Help/About dialog box.
+//*******************************
 void NixNote::openAbout() {
-//    QMessageBox::about(this, tr(" NixNote 2 Alpha #5"),
-//                       tr("This is ALPHA software. "
-//                          "Use it at your own risk. "
-//                          "\n\nLicensed under the Gnu Public License v2.\n\nBuilt on "
-//                          ) + __TIMESTAMP__);
     AboutDialog about;
     about.exec();
 }
 
 
+
+//**********************************************
+//* Show/Hide the left display panel.
+//**********************************************
 void NixNote::toggleLeftPanel() {
     bool visible;
     if (leftPanel->isVisible()) {
@@ -1829,6 +1899,10 @@ void NixNote::toggleLeftPanel() {
 }
 
 
+
+//************************************************
+//* Show/Hide the note table.
+//************************************************
 void NixNote::toggleNoteList() {
     bool value;
     if (topRightWidget->isVisible()) {
@@ -1844,6 +1918,10 @@ void NixNote::toggleNoteList() {
 }
 
 
+
+//****************************************************
+//* Show/hide the note editor/tab window.
+//****************************************************
 void NixNote::toggleTabWindow() {
     bool value;
     if (tabWindow->isVisible()) {
@@ -1860,6 +1938,9 @@ void NixNote::toggleTabWindow() {
 }
 
 
+//**************************************
+//* Toggle the main window toolbar.
+//**************************************
 void NixNote::toggleToolbar() {
     if (toolBar->isVisible())
         toolBar->hide();
@@ -1869,6 +1950,9 @@ void NixNote::toggleToolbar() {
 
 
 
+//*****************************************
+//* Show/hide the window statusbar.
+//*****************************************
 void NixNote::toggleStatusbar() {
     if (statusBar()->isVisible())
         statusBar()->hide();
@@ -1880,6 +1964,10 @@ void NixNote::toggleStatusbar() {
 }
 
 
+
+//**********************************************
+//* View the current note's history.
+//**********************************************
 void NixNote::viewNoteHistory() {
     this->saveContents();
     statusBar()->clearMessage();
@@ -1963,10 +2051,20 @@ void NixNote::viewNoteHistory() {
 }
 
 
+
+//****************************************
+//* Search for text within a note
+//****************************************
 void NixNote::findInNote() {
     findReplaceWindow->showFind();
 }
 
+
+
+//*******************************************
+//* Search for the next occurrence of text
+//* in a note.
+//*******************************************
 void NixNote::findNextInNote() {
     findReplaceWindow->showFind();
     QString find = findReplaceWindow->findLine->text();
@@ -1975,6 +2073,12 @@ void NixNote::findNextInNote() {
             findReplaceWindow->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
 }
 
+
+
+//*******************************************
+//* Search for the previous occurrence of
+//* text in a note.
+//*******************************************
 void NixNote::findPrevInNote() {
     findReplaceWindow->showFind();
     QString find = findReplaceWindow->findLine->text();
@@ -1984,6 +2088,15 @@ void NixNote::findPrevInNote() {
 
 }
 
+
+
+
+//*******************************************
+//* This just does a null find to reset the
+//* text in a note so nothing is highlighted.
+//* This is triggered when the find dialog
+//* box is hidden.
+//*******************************************
 void NixNote::findReplaceWindowHidden() {
     for (int i=0; i<tabWindow->browserList->size(); i++) {
         NBrowserWindow *b;
@@ -1992,11 +2105,22 @@ void NixNote::findReplaceWindowHidden() {
     }
 }
 
+
+
+//**************************************
+//* Show find & replace dialog box.
+//**************************************
 void NixNote::findReplaceInNote() {
     findReplaceWindow->showFindReplace();
 }
 
 
+
+//***************************************
+//* Find/replace button pressed, so we
+//* need to highlight all the occurrences
+//* in a note.
+//***************************************
 void NixNote::findReplaceInNotePressed() {
     QString find = findReplaceWindow->findLine->text();
     QString replace = findReplaceWindow->replaceLine->text();
@@ -2014,6 +2138,11 @@ void NixNote::findReplaceInNotePressed() {
 }
 
 
+
+
+//*************************************************
+//* Replace All button pressed.
+//*************************************************
 void NixNote::findReplaceAllInNotePressed() {
     QString find = findReplaceWindow->findLine->text();
     QString replace = findReplaceWindow->replaceLine->text();
@@ -2033,6 +2162,11 @@ void NixNote::findReplaceAllInNotePressed() {
 
 
 
+
+//**************************************************************
+//* This queries she shared memory segment at occasional
+//* intervals.  This is useful for cross-program communication.
+//**************************************************************
 void NixNote::heartbeatTimerTriggered() {
     char *buffer = (char*)malloc(global.sharedMemory->size()); //Why not new?
     global.sharedMemory->lock();
@@ -2115,6 +2249,8 @@ void NixNote::heartbeatTimerTriggered() {
 }
 
 
+
+
 // Open the dialog status dialog box.
 void NixNote::openDatabaseStatus() {
     DatabaseStatus dbstatus;
@@ -2153,7 +2289,10 @@ void NixNote::fastPrintNote() {
 
 
 
-
+//***********************************************************
+//* Toggle the window visibility.  Used when closing to
+//* the tray.
+//************************************************************
 void NixNote::toggleVisible() {
     if (minimizeToTray) {
         if (isMinimized()) {
@@ -2182,6 +2321,10 @@ void NixNote::toggleVisible() {
         }
     }
 }
+
+
+
+
 
 // The tray icon was activated.  If it was double clicked we restore the
 // gui.
@@ -2226,18 +2369,11 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 }
 
 
-//void NixNote::trayIconBehavior()  {
-//    //closeToTray = closeToTrayAction->isChecked();
-//    //minimizeToTray = minimizeToTrayAction->isChecked();
 
-//    global.settings->beginGroup("SaveState");
-//    global.settings->setValue("closeToTray", closeToTray);
-//    global.settings->setValue("minimizeToTray",  minimizeToTray);
-//    global.settings->endGroup();
-
-//}
-
-
+//*******************************************************
+//* Event triggered when the window state is changing.
+//* Useful when hiding & restoring from the tray.
+//*******************************************************
 void NixNote::changeEvent(QEvent *e) {
     if (e->type() == QEvent::WindowStateChange && e->type()) {
         if (isMinimized() && minimizeToTray && !unhidingWindow) {
@@ -2251,6 +2387,9 @@ void NixNote::changeEvent(QEvent *e) {
 
 
 
+//*****************************************************
+//* Open the Edit/Preferences dialog box.
+//*****************************************************
 void NixNote::openPreferences() {
     PreferencesDialog prefs;
     prefs.exec();
@@ -2277,6 +2416,10 @@ void NixNote::openPreferences() {
 }
 
 
+
+//************************************************
+//* Set the user debug level.
+//************************************************
 void NixNote::setDebugLevel() {
     global.settings->beginGroup("Debugging");
     int level = global.settings->value("messageLevel", -1).toInt();
@@ -2303,6 +2446,10 @@ void NixNote::setDebugLevel() {
 }
 
 
+
+//**************************************************************
+//* Set the automatic sync timer interval.
+//**************************************************************
 void NixNote::setSyncTimer() {
     global.settings->beginGroup("Sync");
     bool automaticSync = global.settings->value("syncAutomatically", false).toBool();
@@ -2323,6 +2470,11 @@ void NixNote::setSyncTimer() {
 }
 
 
+
+
+//*********************************************************************
+//* Switch user account.
+//*********************************************************************
 void NixNote::switchUser() {
     QAction *userSwitch;
     QList<int> checkedEntries;
@@ -2365,6 +2517,10 @@ void NixNote::switchUser() {
 }
 
 
+
+//*********************************************************************
+//* Add another user account.
+//*********************************************************************
 void NixNote::addAnotherUser() {
     AddUserAccountDialog dialog;
     dialog.exec();
@@ -2383,14 +2539,18 @@ void NixNote::addAnotherUser() {
 }
 
 
-
+//*********************************************************************
+//* Edit a user account
+//*********************************************************************
 void NixNote::userMaintenance() {
     AccountMaintenanceDialog dialog(menuBar, this);
     dialog.exec();
 }
 
 
-
+//*********************************************************************
+//* Show the note list in a wide view above the editor.
+//*********************************************************************
 void NixNote::viewNoteListWide() {
     menuBar->blockSignals(true);
     menuBar->viewNoteListNarrow->setChecked(false);
@@ -2409,6 +2569,10 @@ void NixNote::viewNoteListWide() {
 }
 
 
+
+//*********************************************************************
+//* Show the note list in a narrow view between the editor & left panel.
+//*********************************************************************
 void NixNote::viewNoteListNarrow() {
 
     menuBar->blockSignals(true);
@@ -2426,6 +2590,7 @@ void NixNote::viewNoteListNarrow() {
     noteTableView->repositionColumns();
     noteTableView->resizeColumns();
 }
+
 
 
 // This is called via global.resourceWatcher when a resource
@@ -2456,7 +2621,9 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
 }
 
 
-
+//*********************************************************************
+//* Screen capture request.
+//*********************************************************************
 void NixNote::screenCapture() {
     if (noteButton->property("currentNoteButton").toInt() != NewScreenNote) {
         noteButton->setText(screenCaptureButton->text());
@@ -2679,6 +2846,8 @@ void NixNote::newWebcamNote() {
 }
 
 
+
+
 // Delete the note we are currently viewing
 void NixNote::deleteCurrentNote() {
     qint32 lid = tabWindow->currentBrowser()->lid;
@@ -2724,6 +2893,7 @@ void NixNote::deleteCurrentNote() {
 
 
 
+
 // Duplicate the current note
 void NixNote::duplicateCurrentNote() {
     tabWindow->currentBrowser()->saveNoteContent();
@@ -2752,6 +2922,8 @@ void NixNote::pinCurrentNote() {
 }
 
 
+
+
 // "Unpin" the current note so it doesn't appear in every search
 void NixNote::unpinCurrentNote() {
     qint32 lid = tabWindow->currentBrowser()->lid;
@@ -2761,10 +2933,14 @@ void NixNote::unpinCurrentNote() {
 }
 
 
+
+
 // Run the spell checker
 void NixNote::spellCheckCurrentNote() {
     tabWindow->currentBrowser()->spellCheckPressed();
 }
+
+
 
 
 // Pause/unpause indexing.
@@ -2782,6 +2958,7 @@ void NixNote::openMessageLog() {
     LogViewer viewer;
     viewer.exec();
 }
+
 
 
 // Note button has been pressed, so we need to know what type of note to create
@@ -2881,6 +3058,8 @@ void NixNote::reloadIcons() {
     if (!f.exists() && newThemeName != "")
         menuBar->themeInformationAction->setVisible(false);
 }
+
+
 
 
 // Show/Hide the favorites tree on the left side
