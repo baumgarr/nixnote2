@@ -271,6 +271,7 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
     if (t.parentGuid.isSet()) {
         QString parentGuid = t.parentGuid;
         if (parentGuid != "") {
+            db->unlock();
             qint32 parentLid = getLid(t.parentGuid);
             if (parentLid == 0) {
                 Tag tempTag;
@@ -278,10 +279,9 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
                 tempTag.guid = t.parentGuid;
                 tempTag.name="<no name>";
                 tempTag.updateSequenceNum = 0;
-                db->unlock();
                 add(parentLid, tempTag, false, account);
-                db->lockForWrite();
             }
+            db->lockForWrite();
             query.bindValue(":lid", lid);
             query.bindValue(":key", TAG_PARENT_LID);
             query.bindValue(":data", parentLid);
