@@ -408,6 +408,7 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
     if (readOnly) {
         noteTitle.setFocusPolicy(Qt::NoFocus);
         tagEditor.setEnabled(false);
+        buttonBar->setVisible(false);
         tagEditor.setFocusPolicy(Qt::NoFocus);
         //authorEditor.setFocusPolicy(Qt::NoFocus);
         //locationEditor.setFocusPolicy(Qt::NoFocus);
@@ -2772,5 +2773,8 @@ void NBrowserWindow::focusCheck() {
         buttonBarVisible = true;
     if (!global.autoHideEditorToolbar)
         buttonBarVisible = true;
+
+    if (!editor->page()->isContentEditable())
+        buttonBarVisible = false;
     buttonBar->setVisible(buttonBarVisible);
 }
