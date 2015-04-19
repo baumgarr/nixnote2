@@ -348,27 +348,27 @@ some window managers)</source>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1035"/>
         <source> minutes.</source>
-        <translation type="unfinished"></translation>
+        <translation> Minuten.</translation>
     </message>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1037"/>
         <source> minute.</source>
-        <translation type="unfinished"></translation>
+        <translation> Minute.</translation>
     </message>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1041"/>
         <source>EDAMSystemException </source>
-        <translation type="unfinished"></translation>
+        <translation>EDAMSystemException </translation>
     </message>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1043"/>
         <source>EDAMSystemException: Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation>EDAMSystemException: Unbekannter Fehler</translation>
     </message>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1064"/>
         <source>EDAMNotFoundException: Note not found</source>
-        <translation type="unfinished"></translation>
+        <translation>EDAMSystemException: Notiz nicht gefunden</translation>
     </message>
 </context>
 <context>
@@ -376,12 +376,12 @@ some window managers)</source>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="35"/>
         <source>Database Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Datenbank Status</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="47"/>
         <source>Total Notes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamte Notizen:</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="49"/>
@@ -406,7 +406,7 @@ some window managers)</source>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="60"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
 </context>
 <context>
@@ -433,7 +433,7 @@ some window managers)</source>
         <location filename="../gui/browserWidgets/dateeditor.cpp" line="46"/>
         <source>Subject:</source>
         <translatorcomment>Was ist der Unterschied zu Updated? Der Zeitstempel ist der Gleiche</translatorcomment>
-        <translation type="unfinished">Geändert:</translation>
+        <translation>Geändert:</translation>
     </message>
 </context>
 <context>
@@ -466,17 +466,17 @@ some window managers)</source>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="50"/>
         <source>Info</source>
-        <translation type="unfinished"></translation>
+        <translation>Info</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="51"/>
         <source>Warnings</source>
-        <translation type="unfinished"></translation>
+        <translation>Warnungen</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="52"/>
         <source>Errors</source>
-        <translation type="unfinished"></translation>
+        <translation>Fehler</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="53"/>
@@ -490,178 +490,178 @@ some window managers)</source>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="36"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="120"/>
         <source>Undo</source>
-        <translation type="unfinished"></translation>
+        <translation>Rückgängig</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="37"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="122"/>
         <source>Redo</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="38"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="125"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausschneiden</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="39"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="127"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieren</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="40"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="129"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Einfügen</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="41"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="131"/>
         <source>Remove Formatting</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatierung entfernen</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="42"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="136"/>
         <source>Bold</source>
-        <translation type="unfinished"></translation>
+        <translation>Fett</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="43"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="143"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="144"/>
         <source>Italics</source>
-        <translation type="unfinished"></translation>
+        <translation>Kursiv</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="44"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="150"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="151"/>
         <source>Underline</source>
-        <translation type="unfinished"></translation>
+        <translation>Unterstrichen</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="45"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="155"/>
         <source>Strikethrough</source>
-        <translation type="unfinished"></translation>
+        <translation>Durchgestrichen</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="46"/>
         <source>Align Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Linksbündig</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="47"/>
         <source>Align Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Zentriert</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="48"/>
         <source>Align Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtsbündig</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="49"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="165"/>
         <source>Horizontal Line</source>
-        <translation type="unfinished"></translation>
+        <translation>Horizontale Linie</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="50"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="168"/>
         <source>Shift Right</source>
-        <translation type="unfinished"></translation>
+        <translation>Einzug erhöhen</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="51"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="170"/>
         <source>Shift Left</source>
-        <translation type="unfinished"></translation>
+        <translation>Einzug vermindern</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="52"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="173"/>
         <source>Bullet List</source>
-        <translation type="unfinished"></translation>
+        <translation>Aufzählungszeichen</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="53"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="175"/>
         <source>Number List</source>
-        <translation type="unfinished"></translation>
+        <translation>Nummerierung</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="54"/>
         <source>Font</source>
-        <translation type="unfinished"></translation>
+        <translation>Schriftart</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="55"/>
         <source>Font Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Schriftgrad</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="56"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="191"/>
         <source>Font Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Schriftfarbe</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="57"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="200"/>
         <source>Highlight</source>
-        <translation type="unfinished"></translation>
+        <translation>Hervorheben</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="58"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="203"/>
         <source>Todo</source>
-        <translation type="unfinished"></translation>
+        <translation>Checkbox</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="206"/>
         <source>Spell Check</source>
-        <translation type="unfinished"></translation>
+        <translation>Rechtschreibprüfung</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="209"/>
         <source>Insert Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabelle einfügen</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="61"/>
         <source>HTML Entities</source>
-        <translation type="unfinished"></translation>
+        <translation>HTML Zeichenreferenz</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="158"/>
         <source>Left Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>linksbündig</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="160"/>
         <source>Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Zentrieren</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="162"/>
         <source>Right Justify</source>
-        <translation type="unfinished"></translation>
+        <translation>rechtsbündig</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="212"/>
         <source>Insert HTML Entities</source>
-        <translation type="unfinished"></translation>
+        <translation>HTML Zeichenreferenz einfügen</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="530"/>
         <source>Times</source>
-        <translation type="unfinished"></translation>
+        <translation>Vorlagen</translation>
     </message>
 </context>
 <context>
@@ -669,52 +669,52 @@ some window managers)</source>
     <message>
         <location filename="../dialog/encryptdialog.cpp" line="29"/>
         <source>Encrypt Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Text verschlüsseln</translation>
     </message>
     <message>
         <location filename="../dialog/encryptdialog.cpp" line="45"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Passwort</translation>
     </message>
     <message>
         <location filename="../dialog/encryptdialog.cpp" line="47"/>
         <source>Verify</source>
-        <translation type="unfinished"></translation>
+        <translation>Bestätigen</translation>
     </message>
     <message>
         <location filename="../dialog/encryptdialog.cpp" line="49"/>
         <source>Hint</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinweis</translation>
     </message>
     <message>
         <location filename="../dialog/encryptdialog.cpp" line="51"/>
         <source>Remember Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Passwort wiederholen</translation>
     </message>
     <message>
         <location filename="../dialog/encryptdialog.cpp" line="59"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../dialog/encryptdialog.cpp" line="63"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../dialog/encryptdialog.cpp" line="110"/>
         <source>Password must be at least 4 characters</source>
-        <translation type="unfinished"></translation>
+        <translation>Passwort muss mindestens 4 Zeichen enthalten</translation>
     </message>
     <message>
         <location filename="../dialog/encryptdialog.cpp" line="114"/>
         <source>Passwords do not match</source>
-        <translation type="unfinished"></translation>
+        <translation>Passwörter stimmen nicht überein</translation>
     </message>
     <message>
         <location filename="../dialog/encryptdialog.cpp" line="118"/>
         <source>Hint must be entered</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinweis eingeben</translation>
     </message>
 </context>
 <context>
@@ -722,37 +722,37 @@ some window managers)</source>
     <message>
         <location filename="../dialog/endecryptdialog.cpp" line="35"/>
         <source>Decrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>Entschlüsseln</translation>
     </message>
     <message>
         <location filename="../dialog/endecryptdialog.cpp" line="51"/>
         <source>Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Passwort</translation>
     </message>
     <message>
         <location filename="../dialog/endecryptdialog.cpp" line="52"/>
         <source>Hint</source>
-        <translation type="unfinished"></translation>
+        <translation>Hinweis</translation>
     </message>
     <message>
         <location filename="../dialog/endecryptdialog.cpp" line="59"/>
         <source>Permanently Decrypt</source>
-        <translation type="unfinished"></translation>
+        <translation>Dauerhaft Entschlüsseln</translation>
     </message>
     <message>
         <location filename="../dialog/endecryptdialog.cpp" line="61"/>
         <source>Remember Password</source>
-        <translation type="unfinished"></translation>
+        <translation>Passwort wiederholen</translation>
     </message>
     <message>
         <location filename="../dialog/endecryptdialog.cpp" line="66"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../dialog/endecryptdialog.cpp" line="70"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -760,52 +760,52 @@ some window managers)</source>
     <message>
         <location filename="../xml/exportdata.cpp" line="53"/>
         <source>Cannot open file.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei kann nicht geöffnet werden.</translation>
     </message>
     <message>
         <location filename="../xml/exportdata.cpp" line="60"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation>Exportieren</translation>
     </message>
     <message>
         <location filename="../xml/exportdata.cpp" line="77"/>
         <source>Backup</source>
-        <translation type="unfinished"></translation>
+        <translation>Sichern</translation>
     </message>
     <message>
         <location filename="../xml/exportdata.cpp" line="106"/>
         <source>Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>Schlagwörter</translation>
     </message>
     <message>
         <location filename="../xml/exportdata.cpp" line="140"/>
         <source>Notebooks</source>
-        <translation type="unfinished"></translation>
+        <translation>Notizbücher</translation>
     </message>
     <message>
         <location filename="../xml/exportdata.cpp" line="346"/>
         <source>Searches</source>
-        <translation type="unfinished"></translation>
+        <translation>Suchen</translation>
     </message>
     <message>
         <location filename="../xml/exportdata.cpp" line="388"/>
         <source>Linked Notebooks</source>
-        <translation type="unfinished"></translation>
+        <translation>Verlinkte Notizbücher</translation>
     </message>
     <message>
         <location filename="../xml/exportdata.cpp" line="428"/>
         <source>Shared Notebooks</source>
-        <translation type="unfinished"></translation>
+        <translation>Geteilte Notizbücher</translation>
     </message>
     <message>
         <location filename="../xml/exportdata.cpp" line="480"/>
         <source>Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Notizen</translation>
     </message>
     <message>
         <location filename="../xml/exportdata.cpp" line="708"/>
         <source>Backup Canceled</source>
-        <translation type="unfinished"></translation>
+        <translation>Sicherung abgebrochen</translation>
     </message>
 </context>
 <context>
@@ -849,27 +849,27 @@ some window managers)</source>
     <message>
         <location filename="../gui/findreplace.cpp" line="43"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Weiter</translation>
     </message>
     <message>
         <location filename="../gui/findreplace.cpp" line="44"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>vorheriges</translation>
     </message>
     <message>
         <location filename="../gui/findreplace.cpp" line="45"/>
         <source>Match case</source>
-        <translation type="unfinished"></translation>
+        <translation>Übereinstimmung</translation>
     </message>
     <message>
         <location filename="../gui/findreplace.cpp" line="54"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>Ersetzen</translation>
     </message>
     <message>
         <location filename="../gui/findreplace.cpp" line="55"/>
         <source>Replace all</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle ersetzen</translation>
     </message>
 </context>
 <context>
@@ -877,12 +877,12 @@ some window managers)</source>
     <message>
         <location filename="../dialog/htmlentitiesdialog.cpp" line="33"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../dialog/htmlentitiesdialog.cpp" line="34"/>
         <source>Close</source>
-        <translation type="unfinished"></translation>
+        <translation>Schließen</translation>
     </message>
     <message>
         <location filename="../dialog/htmlentitiesdialog.cpp" line="35"/>
@@ -911,38 +911,38 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../xml/importdata.cpp" line="58"/>
         <source>Imported Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Importierte Notizen</translation>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="101"/>
         <source>Scaning File</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei durchsuchen</translation>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="102"/>
         <location filename="../xml/importdata.cpp" line="112"/>
         <source> notes found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Notizen gefunden.</translation>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="121"/>
         <source>Importing</source>
-        <translation type="unfinished"></translation>
+        <translation>Importieren</translation>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="122"/>
         <source>Importing Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Notizen importieren</translation>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="124"/>
         <source>Restore</source>
-        <translation type="unfinished"></translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="125"/>
         <source>Restoring Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Notizen wiederherstellen</translation>
     </message>
 </context>
 <context>
@@ -950,24 +950,24 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../xml/importenex.cpp" line="40"/>
         <source>Imported Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Importierte Notizen</translation>
     </message>
     <message>
         <location filename="../xml/importenex.cpp" line="83"/>
         <source>Scaning File</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei durchsuchen</translation>
     </message>
     <message>
         <location filename="../xml/importenex.cpp" line="84"/>
         <location filename="../xml/importenex.cpp" line="94"/>
         <source> notes found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Notizen gefunden.</translation>
     </message>
     <message>
         <location filename="../xml/importenex.cpp" line="101"/>
         <location filename="../xml/importenex.cpp" line="102"/>
         <source>Importing Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Notizen importieren</translation>
     </message>
 </context>
 <context>
@@ -1029,112 +1029,112 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="17"/>
         <source>Date Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Datumsformat</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="20"/>
         <source>MM/dd/yy - </source>
-        <translation type="unfinished"></translation>
+        <translation>MM/tt/jj -  </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="21"/>
         <source>MM/dd/yyyy - </source>
-        <translation type="unfinished"></translation>
+        <translation>MM/tt/jjjj -  </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="22"/>
         <source>M/dd/yyyy - </source>
-        <translation type="unfinished"></translation>
+        <translation>M/tt/jjjj -  </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="23"/>
         <source>M/d/yyyy - </source>
-        <translation type="unfinished"></translation>
+        <translation>M/t/jjjj -  </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="24"/>
         <source>dd/MM/yy - </source>
-        <translation type="unfinished"></translation>
+        <translation>tt/MM/jj -  </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="25"/>
         <source>d/M/yy - </source>
-        <translation type="unfinished"></translation>
+        <translation>t/M/yy - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="26"/>
         <source>dd/MM/yyyy - </source>
-        <translation type="unfinished"></translation>
+        <translation>tt/MM/jjjj - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="27"/>
         <source>d/M/yyyy - </source>
-        <translation type="unfinished"></translation>
+        <translation>t/M/jjjj - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="28"/>
         <source>yyyy-MM-dd - </source>
-        <translation type="unfinished"></translation>
+        <translation>jjjj-MM-tt - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="29"/>
         <source>yy-MM-dd - </source>
-        <translation type="unfinished"></translation>
+        <translation>jj-MM-tt - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="32"/>
         <source>Time Format</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitformat</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="35"/>
         <source>HH:mm:ss - </source>
-        <translation type="unfinished"></translation>
+        <translation>HH:mm:ss - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="36"/>
         <source>HH:mm:ss a - </source>
-        <translation type="unfinished"></translation>
+        <translation>HH:mm:ss a - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="37"/>
         <source>HH:mm - </source>
-        <translation type="unfinished"></translation>
+        <translation>HH:mm - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="38"/>
         <source>HH:mm a - </source>
-        <translation type="unfinished"></translation>
+        <translation>HH:mm a - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="39"/>
         <source>hh:mm:ss - </source>
-        <translation type="unfinished"></translation>
+        <translation>hh:mm:ss - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="40"/>
         <source>hh:mm:ss a- </source>
-        <translation type="unfinished"></translation>
+        <translation>hh:mm:ss a- </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="41"/>
         <source>h:mm:ss a - </source>
-        <translation type="unfinished"></translation>
+        <translation>h:mm:ss a - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="42"/>
         <source>hh:mm - </source>
-        <translation type="unfinished"></translation>
+        <translation>hh:mm - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="43"/>
         <source>hh:mm a - </source>
-        <translation type="unfinished"></translation>
+        <translation>hh:mm a - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="44"/>
         <source>h:mm a - </source>
-        <translation type="unfinished"></translation>
+        <translation>h:mm a - </translation>
     </message>
 </context>
 <context>
@@ -1142,32 +1142,32 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../dialog/locationdialog.cpp" line="10"/>
         <source>Location</source>
-        <translation type="unfinished"></translation>
+        <translation>Standort</translation>
     </message>
     <message>
         <location filename="../dialog/locationdialog.cpp" line="17"/>
         <source>Longitude</source>
-        <translation type="unfinished"></translation>
+        <translation>Längengrad</translation>
     </message>
     <message>
         <location filename="../dialog/locationdialog.cpp" line="19"/>
         <source>Latitude</source>
-        <translation type="unfinished"></translation>
+        <translation>Breitengrad</translation>
     </message>
     <message>
         <location filename="../dialog/locationdialog.cpp" line="21"/>
         <source>Altitude</source>
-        <translation type="unfinished"></translation>
+        <translation>Höhenlage</translation>
     </message>
     <message>
         <location filename="../dialog/locationdialog.cpp" line="26"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="../dialog/locationdialog.cpp" line="29"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -2397,27 +2397,27 @@ Using this in a note link can cause problems unless you synchronize it first.</s
     <message>
         <location filename="../gui/ntrashtree.cpp" line="55"/>
         <source>Trash</source>
-        <translation type="unfinished"></translation>
+        <translation>Papierkorb</translation>
     </message>
     <message>
         <location filename="../gui/ntrashtree.cpp" line="67"/>
         <source>Restore Deleted Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>gleöschte Notizen wiederherstellen</translation>
     </message>
     <message>
         <location filename="../gui/ntrashtree.cpp" line="70"/>
         <source>Empty Trash</source>
-        <translation type="unfinished"></translation>
+        <translation>Papierkorb leeren</translation>
     </message>
     <message>
         <location filename="../gui/ntrashtree.cpp" line="240"/>
         <source>Verify Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen bestätigen</translation>
     </message>
     <message>
         <location filename="../gui/ntrashtree.cpp" line="241"/>
         <source>Are you sure you want to permanently delete these notes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Wollen Sie wirklich die Notizen permanent löschen?</translation>
     </message>
 </context>
 <context>
@@ -2425,97 +2425,97 @@ Using this in a note link can cause problems unless you synchronize it first.</s
     <message>
         <location filename="../gui/nwebview.cpp" line="54"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Öffnen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="58"/>
         <source>Cut</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausschneiden</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="63"/>
         <source>Copy</source>
-        <translation type="unfinished"></translation>
+        <translation>Kopieren</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="68"/>
         <source>Paste</source>
-        <translation type="unfinished"></translation>
+        <translation>Einfügen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="73"/>
         <source>Paste as Unformatted Text</source>
-        <translation type="unfinished"></translation>
+        <translation>Als unfomtierten Text einfügen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="78"/>
         <source>Remove Formatting</source>
-        <translation type="unfinished"></translation>
+        <translation>Formatierung entfernen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="85"/>
         <source>Background Color</source>
-        <translation type="unfinished"></translation>
+        <translation>Hintergrundfarbe</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="86"/>
         <source>White</source>
-        <translation type="unfinished"></translation>
+        <translation>Weiß</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="89"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>Rot</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="92"/>
         <source>Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Blau</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="95"/>
         <source>Green</source>
-        <translation type="unfinished"></translation>
+        <translation>Grün</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="98"/>
         <source>Yellow</source>
-        <translation type="unfinished"></translation>
+        <translation>Gelb</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="101"/>
         <source>Black</source>
-        <translation type="unfinished"></translation>
+        <translation>Schwarz</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="104"/>
         <source>Grey</source>
-        <translation type="unfinished"></translation>
+        <translation>Grau</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="107"/>
         <source>Purple</source>
-        <translation type="unfinished"></translation>
+        <translation>Violett</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="110"/>
         <source>Brown</source>
-        <translation type="unfinished"></translation>
+        <translation>Braun</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="113"/>
         <source>Orange</source>
-        <translation type="unfinished"></translation>
+        <translation>Orange</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="116"/>
         <source>Powder Blue</source>
-        <translation type="unfinished"></translation>
+        <translation>Taubenblau</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="123"/>
         <source>To-do</source>
-        <translation type="unfinished"></translation>
+        <translation>To-Do</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="130"/>
@@ -2525,93 +2525,94 @@ Using this in a note link can cause problems unless you synchronize it first.</s
     <message>
         <location filename="../gui/nwebview.cpp" line="137"/>
         <source>Encrypted Selected Text</source>
-        <translation type="unfinished"></translation>
+        <translation>markierten Text verschlüsseln</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="142"/>
         <source>Insert Hyperlink</source>
-        <translation type="unfinished"></translation>
+        <translation>Hyperlink einfügen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="147"/>
         <source>Quick Link</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>Was ist damit gemeint? Welche Verwendugn liegt vor?</translatorcomment>
+        <translation type="unfinished">Quick Link</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="152"/>
         <source>Remove Hyperlink</source>
-        <translation type="unfinished"></translation>
+        <translation>Link entfernen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="157"/>
         <source>Attach File</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei anhängen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="163"/>
         <source>Insert LaTeX Formula</source>
-        <translation type="unfinished"></translation>
+        <translation>LaTeX Formular einfügen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="169"/>
         <source>Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabelle</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="171"/>
         <source>Insert Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Tabelle einfügen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="176"/>
         <source>Insert Row</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeile einfügen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="180"/>
         <source>Insert Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Spalte einfügen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="185"/>
         <source>Delete Row</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeile löschen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="189"/>
         <source>Delete Column</source>
-        <translation type="unfinished"></translation>
+        <translation>Spalte löschen</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="195"/>
         <source>Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="197"/>
         <source>Save Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Bild speichern</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="205"/>
         <source>Rotate Left</source>
-        <translation type="unfinished"></translation>
+        <translation>nach links rotieren</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="209"/>
         <source>Rotate Right</source>
-        <translation type="unfinished"></translation>
+        <translation>nach rechts rotieren</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="215"/>
         <source>Save Attachment</source>
-        <translation type="unfinished"></translation>
+        <translation>Anhang speichern</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="459"/>
         <location filename="../gui/nwebview.cpp" line="489"/>
         <source>Save File</source>
-        <translation type="unfinished"></translation>
+        <translation>Datei speichern</translation>
     </message>
 </context>
 <context>
@@ -3355,7 +3356,7 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../dialog/spellcheckdialog.cpp" line="64"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
