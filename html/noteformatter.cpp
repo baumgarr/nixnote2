@@ -448,6 +448,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
             buildInkNote(enmedia, hash);
             return;
     }
+
     ResourceTable resTable(global.db);
     QString contextFileName;
     qint32 resLid = resTable.getLidByHashHex(note.guid, hash);
@@ -456,11 +457,20 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
     if (!r.data.isSet())
         resourceError = true;
     else {
-
         // If we are running the formatter and we are not generating a thumbnail
         QString mimetype = "";
         if (r.mime.isSet())
             mimetype = r.mime;
+
+
+        // Check that we don't have a locked PDF.  If we do, then disable PDF previews.
+        if (mimetype == "application/pdf") {
+            QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) +".pdf";
+            Poppler::Document *doc = Poppler::Document::load(file);
+            if (doc->isLocked())
+                pdfPreview = false;
+        }
+
         if (mimetype == "application/pdf" && pdfPreview && !thumbnail) {
            modifyPdfTags(resLid, enmedia);
            return;

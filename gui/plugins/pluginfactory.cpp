@@ -54,14 +54,9 @@ QObject *PluginFactory::create(const QString &mimeType, const QUrl &url,
         view = new PopplerViewer(argumentValues[argumentNames.indexOf("type")],
                 argumentValues[argumentNames.indexOf("lid")]);
 
-        //QNetworkRequest request(url);
-        //QNetworkReply *reply = manager->get(request);
-        //connect(reply, SIGNAL(finished()), reply, SLOT(deleteLater()));
-
-        if (view->doc != NULL)
-            return (QObject*)view;
-        else
+        if (view->doc == NULL || view->doc->isLocked())
             return 0;
+        return (QObject*)view;
     }
     return 0;
 }

@@ -37,9 +37,11 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
     printImageFile = global.fileManager.getTmpDirPath() + QString::number(lid) +QString("-print.png");
     QString file = global.fileManager.getDbaDirPath() + reslid +".pdf";
     doc = Poppler::Document::load(file);
-    if (doc == NULL)
+    if (doc == NULL || doc->isLocked())
         return;
+
     currentPage = 0;
+
     totalPages = doc->numPages();
 
     image = new QImage(doc->page(currentPage)->renderToImage());

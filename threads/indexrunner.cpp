@@ -300,7 +300,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
 
     QString text = "";
     Poppler::Document *doc = Poppler::Document::load(file);
-    if (doc == NULL) {
+    if (doc == NULL || doc->isEncrypted() || doc->isLocked()) {
         indexTimer->start();
         return;
     }
@@ -323,8 +323,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
 
 
 
-// Index any PDFs that are attached.  Basically it turns the PDF into text and adds it the same
-// way as a note's body
+// Index any files that are attached.
 void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     if (!officeFound)
         return;
