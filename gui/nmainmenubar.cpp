@@ -399,7 +399,7 @@ void NMainMenuBar::setupNoteMenu() {
     noteMenu = this->addMenu(tr("&Note"));
 
     newNoteAction = new QAction(tr("New Note"), noteMenu);
-    setupShortcut(deleteNoteAction, QString("File_Note_New"));
+    setupShortcut(newNoteAction, QString("File_Note_Add"));
     newNoteAction->setFont(font);
     noteMenu->addAction(newNoteAction);
     connect(newNoteAction, SIGNAL(triggered()), parent, SLOT(newNote()));

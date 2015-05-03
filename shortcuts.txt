@@ -1,7 +1,7 @@
 File_Note_Add			Ctrl+N		// Add a new note
 File_Note_Reindex				// Reindex the current note
 File_Note_Modify_Tags				// Change current note tags
-File_Note_Delete				// Delete a tag
+File_Note_Delete                Ctrl+Shift+D	// Delete a tag
 File_Note_Restore				// Restore from the trash
 File_Note_Duplicate				// Duplicate the current note
 File_Note_Merge					// Merge multiple notes
