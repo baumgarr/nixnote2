@@ -29,6 +29,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <stdio.h>
 #include <stdlib.h>
 
+// The following include is needed for demangling names on a backtrace
+#include <cxxabi.h>
+
 extern Global global;
 
 
@@ -45,22 +48,7 @@ NSqlQuery::~NSqlQuery() {
     this->finish();
     if (db->dbLocked) {
         QLOG_TRACE() << "*** Warning: NSqlQuery Terminating with lock active";
-
-        global.settings->beginGroup("Debugging");
-        int level = global.settings->value("messageLevel", -1).toInt();
-        global.settings->endGroup();
-
-        // Setup the QLOG functions for debugging & messages
-        if (level == QsLogging::TraceLevel) {
-            void *array[30];
-            size_t size;
-
-            size = backtrace(array, 30);
-            if (size > 2)
-                // print out all the frames to stderr
-                backtrace_symbols_fd(array, 2, 2);
-            QLOG_TRACE() << "  ***  ";
-        }
+        this->stackDump();
     }
 }
 
@@ -76,6 +64,13 @@ bool NSqlQuery::exec() {
         if (i>10) {
             QLOG_ERROR() << "DB Locked:  Retry #" << i;
         }
+
+
+        // Print stack trace to see what is happening
+        if (i==10) {
+            this->stackDump();
+        }
+
         QTime dieTime= QTime::currentTime().addSecs(1);
         while( QTime::currentTime() < dieTime )
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
@@ -96,6 +91,11 @@ bool NSqlQuery::exec(const QString &query) {
             return false;
         if (i>10) {
             QLOG_ERROR() << "DB Locked:  Retry #" << i;
+        }
+
+        // Print stack dump to see what is happening
+        if (i==10) {
+            this->stackDump();
         }
         QTime dieTime= QTime::currentTime().addSecs(1);
         while( QTime::currentTime() < dieTime )
@@ -119,4 +119,75 @@ bool NSqlQuery::exec(const char *query) {
     QString q;
     q = QString::fromStdString(query);
     return this->exec(q);
+}
+
+
+
+
+void NSqlQuery::stackDump() {
+    void *array[30];
+    size_t size;
+    QLOG_ERROR() << "***** Dumping stack *****";
+
+    // get void*'s for all entries on the stack
+    size = backtrace(array, 30);
+    char **messages = backtrace_symbols(array, size);
+
+    for (size_t i = 1; i < size && messages != NULL; ++i)
+    {
+        char *mangled_name = 0, *offset_begin = 0, *offset_end = 0;
+
+        // find parantheses and +address offset surrounding mangled name
+        for (char *p = messages[i]; *p; ++p)
+        {
+            if (*p == '(')
+            {
+                mangled_name = p;
+            }
+            else if (*p == '+')
+            {
+                offset_begin = p;
+            }
+            else if (*p == ')')
+            {
+                offset_end = p;
+                break;
+            }
+        }
+
+        // if the line could be processed, attempt to demangle the symbol
+        if (mangled_name && offset_begin && offset_end &&
+            mangled_name < offset_begin)
+        {
+            *mangled_name++ = '\0';
+            *offset_begin++ = '\0';
+            *offset_end++ = '\0';
+
+            int status;
+            char * real_name = abi::__cxa_demangle(mangled_name, 0, 0, &status);
+
+            // if demangling is successful, output the demangled function name
+            if (status == 0)
+            {
+               QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i] << " : "
+                          << real_name << "+" << offset_begin << offset_end;
+
+            }
+            // otherwise, output the mangled function name
+            else
+            {
+                QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i] << " : "
+                          << mangled_name << "+" << offset_begin << offset_end;
+            }
+            free(real_name);
+        }
+        // otherwise, print the whole line
+        else
+        {
+            QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i];
+        }
+    }
+
+    free(messages);
+    QLOG_ERROR() << "**** Stack dump complete *****";
 }

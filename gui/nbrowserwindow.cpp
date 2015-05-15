@@ -613,27 +613,30 @@ void NBrowserWindow::saveNoteContent() {
 
         for (int i=0; i<oldLids.size(); i++) {
             if (!validLids.contains(oldLids[i])) {
+                QLOG_DEBUG() << "Expunging old lid " << oldLids[i];
                 resTable.expunge(oldLids[i]);
             }
         }
 
-
-
+        QLOG_DEBUG() << "Updating note content";
         table.updateNoteContent(lid, formatter.getEnml());
         editor->isDirty = false;
         if (thumbnailer == NULL)
             thumbnailer = new Thumbnailer(global.db);
+        QLOG_DEBUG() << "Beginning thumbnail";
         thumbnailer->render(lid);
+        QLOG_DEBUG() << "Thumbnail compleded";
 
         NoteCache* cache = global.cache[lid];
         if (cache != NULL) {
+            QLOG_DEBUG() << "Updating cache";
             QByteArray b;
             b.append(contents);
             cache->noteContent = b;
             global.cache.remove(lid);
             global.cache.insert(lid, cache);
         }
-
+        QLOG_DEBUG() << "Leaving saveNoteContent()";
         // Make sure the thumnailer is done
         //while(!thumbnailer.idle);
     }

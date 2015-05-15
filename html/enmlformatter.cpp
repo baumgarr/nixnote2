@@ -89,6 +89,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
     content.clear();
     content.append(tidyProcess.readAllStandardOutput());
+    tidyProcess.close();
     if (content == "") {
         formattingError = true;
         return "";
@@ -110,7 +111,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QEventLoop loop;
     page.mainFrame()->setContent(content);
     QObject::connect(&page, SIGNAL(loadFinished(bool)), &loop, SLOT(quit()));
-
+    loop.exit();
 
     QWebElement element = page.mainFrame()->documentElement();
     QStringList tags = findAllTags(element);
@@ -119,6 +120,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         QString tag = tags[i];
         QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
         foreach (QWebElement element, anchors) {
+            QLOG_DEBUG() << "Processing tag name: " << element.tagName();
             if (element.tagName().toLower() == "input") {
                 processTodo(element);
             } else if (element.tagName().toLower() == "a") {
@@ -423,6 +425,9 @@ void EnmlFormatter::postXmlFix() {
     // Fix the <br> tags
     content = content.replace("<br clear=\"none\">", "<br/>");
     pos = content.indexOf("<br");
+    if (pos > 0) {
+        QLOG_DEBUG() << "<br found.  Beginning fix";
+    }
     while (pos > 0) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
@@ -440,6 +445,9 @@ void EnmlFormatter::postXmlFix() {
     // Fix the <en-todo> tags
     content = content.replace("</en-todo>", "");
     pos = content.indexOf("<en-todo");
+    if (pos > 0) {
+        QLOG_DEBUG() << "<en-todo found.  Beginning fix";
+    }
     while (pos > 0) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
@@ -456,6 +464,9 @@ void EnmlFormatter::postXmlFix() {
     // Fix any <img> tags
     content = content.replace("</en-media>", "");
     pos = content.indexOf("<en-media");
+    if (pos > 0) {
+        QLOG_DEBUG() << "<en-media found.  Beginning fix";
+    }
     while (pos > 0) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
