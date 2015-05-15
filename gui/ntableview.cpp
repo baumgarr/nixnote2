@@ -158,6 +158,7 @@ NTableView::NTableView(QWidget *parent) :
         tableViewHeader->reminderTimeAction->setChecked(true);
     if (!isColumnHidden(NOTE_TABLE_REMINDER_TIME_DONE_POSITION))
         tableViewHeader->reminderTimeDoneAction->setChecked(true);
+
     if (!isColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION))
         tableViewHeader->reminderOrderAction->setChecked(true);
 
@@ -293,6 +294,10 @@ NTableView::NTableView(QWidget *parent) :
         verticalHeader()->setDefaultSectionSize(100);
 
     setDragEnabled(true);
+
+    // Hide this column because it isn't really used.
+    this->setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, true);
+
     QLOG_TRACE() << "Exiting NTableView constructor";
 
 }

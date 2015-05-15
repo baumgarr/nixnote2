@@ -117,6 +117,7 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
     reminderOrderAction = new QAction(this);
     reminderOrderAction->setText(tr("Reminder"));
     reminderOrderAction->setCheckable(true);
+    reminderOrderAction->setVisible(false);  // Hidden because it isn't really needed
     addAction(reminderOrderAction);
 
     reminderTimeAction = new QAction(this);
