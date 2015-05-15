@@ -1472,6 +1472,7 @@ bool NoteTable::isDeleted(qint32 lid) {
     query.bindValue(":lid", lid);
     query.exec();
     if (query.next()) {
+        db->unlock();
         bool active = query.value(0).toBool();
         query.finish();
         return !active;
