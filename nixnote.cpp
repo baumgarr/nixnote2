@@ -967,11 +967,11 @@ void NixNote::closeNixNote() {
 //* Close the program
 //*****************************************************************************
 void NixNote::closeEvent(QCloseEvent *event) {
-    if (closeToTray && !closeFlag) {
-        event->ignore();
-        hide();
-        return;
-    }
+//    if (closeToTray && !closeFlag) {
+//        event->ignore();
+//        hide();
+//        return;
+//    }
 
     saveContents();
 
@@ -2304,12 +2304,9 @@ void NixNote::toggleVisible() {
             setHidden(false);
             this->showNormal();
             this->setFocus();
-            unhidingWindow=true;
             return;
         } else {
             showMinimized();
-            this->setHidden(false);
-            unhidingWindow=false;
             this->setHidden(true);
             return;
         }
@@ -2317,10 +2314,8 @@ void NixNote::toggleVisible() {
         if (isMinimized()) {
             this->showNormal();
             this->setFocus();
-            unhidingWindow = true;
             return;
         } else {
-            this->unhidingWindow = true;
             this->showMinimized();
             return;
         }
@@ -2339,9 +2334,9 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     int newQuickNote = 2;
     int screenCapture = 3;
 
-    if (reason == QSystemTrayIcon::DoubleClick) {
+    if (reason == QSystemTrayIcon::MiddleClick) {
         global.settings->beginGroup("Appearance");
-        int value = global.settings->value("trayDoubleClickAction", 0).toInt();
+        int value = global.settings->value("trayMiddleClickAction", 0).toInt();
         global.settings->endGroup();
         if (value == showHide)
             toggleVisible();
@@ -2380,14 +2375,33 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 //* Useful when hiding & restoring from the tray.
 //*******************************************************
 void NixNote::changeEvent(QEvent *e) {
-    if (e->type() == QEvent::WindowStateChange && e->type()) {
-        if (isMinimized() && minimizeToTray && !unhidingWindow) {
-            e->accept();
-            unhidingWindow = false;
-            QTimer::singleShot(10, this, SLOT(hide()));
-            return;
+    return QMainWindow::changeEvent(e);
+//    if (e->type() == QEvent::WindowStateChange && e->type()) {
+//        if (isMinimized() && minimizeToTray && !unhidingWindow) {
+//            e->accept();
+//            unhidingWindow = false;
+//            QTimer::singleShot(10, this, SLOT(hide()));
+//            return;
+//        }
+//    }
+}
+
+bool NixNote::event(QEvent *event) {
+    if (event->type() == QEvent::WindowStateChange && isMinimized()) {
+        if (minimizeToTray) {
+            hide();
+            return false;
         }
     }
+    if (event->type() == QEvent::Close) {
+        if (global.closeToTray() && isVisible())  {
+            QLOG_DEBUG() << "overriding close event";
+            this->toggleVisible();
+            event->ignore();
+            return false;
+        }
+    }
+    return QMainWindow::event(event);
 }
 
 

@@ -51,11 +51,11 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     traySingleClickAction->addItem(tr("New Quick Note"), 2);
     traySingleClickAction->addItem(tr("Screen Capture"), 3);
 
-    trayDoubleClickAction = new QComboBox();
-    trayDoubleClickAction->addItem(tr("Show/Hide NixNote"), 0);
-    trayDoubleClickAction->addItem(tr("New Text Note"), 1);
-    trayDoubleClickAction->addItem(tr("New Quick Note"), 2);
-    trayDoubleClickAction->addItem(tr("Screen Capture"), 3);
+    trayMiddleClickAction = new QComboBox();
+    trayMiddleClickAction->addItem(tr("Show/Hide NixNote"), 0);
+    trayMiddleClickAction->addItem(tr("New Text Note"), 1);
+    trayMiddleClickAction->addItem(tr("New Quick Note"), 2);
+    trayMiddleClickAction->addItem(tr("Screen Capture"), 3);
 
 
     defaultGuiFontSizeChooser = new QComboBox();
@@ -112,8 +112,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(new QLabel(tr("Tray Icon Click Action")), row, 0);
     mainLayout->addWidget(traySingleClickAction, row++, 1);
 
-    mainLayout->addWidget(new QLabel(tr("Tray Icon Double Click Action")), row, 0);
-    mainLayout->addWidget(trayDoubleClickAction, row++, 1);
+    mainLayout->addWidget(new QLabel(tr("Tray Icon Middle Click Action")), row, 0);
+    mainLayout->addWidget(trayMiddleClickAction, row++, 1);
 
     mainLayout->addWidget(new QLabel(tr("Default GUI Font*")), row, 0);
     mainLayout->addWidget(defaultGuiFontChooser, row++, 1);
@@ -135,9 +135,9 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     int idx  = global.settings->value("traySingleClickAction", 0).toInt();
     idx = traySingleClickAction->findData(idx, Qt::UserRole);
     traySingleClickAction->setCurrentIndex(idx);
-    idx  = global.settings->value("trayDoubleClickAction", 0).toInt();
+    idx  = global.settings->value("trayMiddleClickAction", 0).toInt();
     idx = traySingleClickAction->findData(idx, Qt::UserRole);
-    trayDoubleClickAction->setCurrentIndex(idx);
+    trayMiddleClickAction->setCurrentIndex(idx);
 
     showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
     showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
@@ -177,7 +177,8 @@ void AppearancePreferences::saveValues() {
     global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();
     global.settings->setValue("autoHideEditorToolbar", global.autoHideEditorToolbar);
     global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
-    global.settings->setValue("trayDoubleClickAction", trayDoubleClickAction->currentIndex());
+    global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
+    global.settings->remove("trayDoubleClickAction");
     global.pdfPreview = showPDFs->isChecked();
     if (minimizeToTray!= NULL)
         global.settings->setValue("minimizeToTray", minimizeToTray->isChecked());

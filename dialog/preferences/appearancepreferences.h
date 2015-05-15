@@ -41,7 +41,7 @@ private:
     QComboBox *defaultGuiFontChooser;
     QCheckBox *autoHideEditorButtonbar;
     QComboBox *traySingleClickAction;
-    QComboBox *trayDoubleClickAction;
+    QComboBox *trayMiddleClickAction;
     QLabel *defaultNotebookOnStartupLabel;
     QPushButton *previewButton;
     bool webSettingsChanged;

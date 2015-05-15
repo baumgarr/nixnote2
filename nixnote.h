@@ -175,6 +175,7 @@ public:
     CounterRunner counterRunner;
     void closeEvent(QCloseEvent *event);
     //bool notify(QObject* receiver, QEvent* event);
+    bool event(QEvent *event);
     LineEdit *searchText;
     void setDebugLevel();
 
