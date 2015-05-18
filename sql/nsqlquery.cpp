@@ -47,7 +47,7 @@ NSqlQuery::NSqlQuery(DatabaseConnection *db) :
 NSqlQuery::~NSqlQuery() {
     this->finish();
     if (db->dbLocked) {
-        QLOG_TRACE() << "*** Warning: NSqlQuery Terminating with lock active";
+        QLOG_DEBUG() << "*** Warning: NSqlQuery Terminating with lock active";
         this->stackDump();
     }
 }
@@ -67,7 +67,7 @@ bool NSqlQuery::exec() {
 
 
         // Print stack trace to see what is happening
-        if (i==10) {
+        if (i==50) {
             this->stackDump();
         }
 
@@ -82,6 +82,7 @@ bool NSqlQuery::exec() {
 
 // Execute a SQL statement
 bool NSqlQuery::exec(const QString &query) {
+    int DEBUG_TRIGGER=50;
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec(query);
         if (rc) {
@@ -89,12 +90,12 @@ bool NSqlQuery::exec(const QString &query) {
         }
         if (lastError().number() != DATABASE_LOCKED)
             return false;
-        if (i>10) {
+        if (i>DEBUG_TRIGGER) {
             QLOG_ERROR() << "DB Locked:  Retry #" << i;
         }
 
         // Print stack dump to see what is happening
-        if (i==10) {
+        if (i==DEBUG_TRIGGER) {
             this->stackDump();
         }
         QTime dieTime= QTime::currentTime().addSecs(1);

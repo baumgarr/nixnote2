@@ -592,7 +592,6 @@ void NBrowserWindow::saveNoteContent() {
 
 
     if (this->editor->isDirty) {
-        NoteTable table(global.db);
         //QString contents = editor->editorPage->mainFrame()->toHtml();
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
         EnmlFormatter formatter;
@@ -619,6 +618,7 @@ void NBrowserWindow::saveNoteContent() {
         }
 
         QLOG_DEBUG() << "Updating note content";
+        NoteTable table(global.db);
         table.updateNoteContent(lid, formatter.getEnml());
         editor->isDirty = false;
         if (thumbnailer == NULL)

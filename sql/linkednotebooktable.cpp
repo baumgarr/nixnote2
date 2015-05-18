@@ -154,12 +154,14 @@ qint32 LinkedNotebookTable::getLid(string guid) {
 
 // Add a new notebook to the database
 qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
-    NSqlQuery query(db);
     ConfigStore cs(db);
     qint32 lid = l;
     if (lid == 0) {
         lid = cs.incrementLidCounter();
     }
+
+    NSqlQuery query(db);
+    NSqlQuery query2(db);
 
     db->lockForWrite();
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
@@ -251,7 +253,6 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
         query.bindValue(":data", sharename);
         query.exec();
 
-        NSqlQuery query2(db);
         query2.prepare("Update datastore set data=:name where key=:key and lid=:lid");
         query2.bindValue(":name", sharename);
         query2.bindValue(":key", NOTEBOOK_NAME);
@@ -275,6 +276,8 @@ qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
     db->unlock();
     return lid;
 }
+
+
 
 
 // Return a notebook structure given the LID

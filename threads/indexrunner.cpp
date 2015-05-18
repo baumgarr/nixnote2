@@ -399,12 +399,14 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
         QString text;
         text = txtFile.readAll();
         NSqlQuery sql(db);
+        db->lockForWrite();
         sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, 'recognition', :content)");
         sql.bindValue(":lid", lid);
         sql.bindValue(":weight", 100);
         sql.bindValue(":content", text);
         QLOG_DEBUG() << "Adding note resource to index DB";
         sql.exec();
+        db->unlock();
         txtFile.close();
     }
     QDir dir;
