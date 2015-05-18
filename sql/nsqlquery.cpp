@@ -40,6 +40,7 @@ NSqlQuery::NSqlQuery(DatabaseConnection *db) :
     QSqlQuery(db->conn)
 {
     this->db = db;
+    DEBUG_TRIGGER = 50;
 }
 
 
@@ -61,13 +62,14 @@ bool NSqlQuery::exec() {
             return true;
         if (lastError().number() != DATABASE_LOCKED)
             return false;
-        if (i>10) {
+        if (i>DEBUG_TRIGGER) {
             QLOG_ERROR() << "DB Locked:  Retry #" << i;
         }
 
 
         // Print stack trace to see what is happening
-        if (i==50) {
+        if (i==DEBUG_TRIGGER) {
+            QLOG_DEBUG() << "Dumping stack due to DB lock limit of " << DEBUG_TRIGGER << " being reached.";
             this->stackDump();
         }
 
@@ -82,7 +84,6 @@ bool NSqlQuery::exec() {
 
 // Execute a SQL statement
 bool NSqlQuery::exec(const QString &query) {
-    int DEBUG_TRIGGER=50;
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec(query);
         if (rc) {
@@ -96,6 +97,7 @@ bool NSqlQuery::exec(const QString &query) {
 
         // Print stack dump to see what is happening
         if (i==DEBUG_TRIGGER) {
+            QLOG_DEBUG() << "Dumping stack due to DB lock limit of " << DEBUG_TRIGGER << " being reached.";
             this->stackDump();
         }
         QTime dieTime= QTime::currentTime().addSecs(1);
