@@ -1435,8 +1435,11 @@ void NoteTable::setDirty(qint32 lid, bool dirty) {
 
     // If it is already set to the value, then we don't
     // need to do anything more.
-    if (isDirty(lid) == dirty)
+    if (isDirty(lid) == dirty) {
+        query.finish();
+        db->unlock();
         return;
+    }
 
     // If we got here, then the current dirty state doesn't match
     // what the caller wants.
@@ -1456,10 +1459,13 @@ void NoteTable::setDirty(qint32 lid, bool dirty) {
         query.bindValue(":key", NOTE_ISDIRTY);
         query.bindValue(":data", dirty);
         query.exec();
+        query.finish();
+        db->unlock();
         setIndexNeeded(lid, true);
+    } else {
+        query.finish();
+        db->unlock();
     }
-    query.finish();
-    db->unlock();
 }
 
 
@@ -1661,8 +1667,10 @@ qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, string guid) {
 
 
 void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
-    NSqlQuery query(db);
     db->lockForWrite();
+
+    NSqlQuery query(db);
+
     query.prepare("update datastore set data=:content where lid=:lid and key=:key");
     query.bindValue(":content", content);
     query.bindValue(":lid", lid);
@@ -1675,14 +1683,16 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":key", NOTE_CONTENT_LENGTH);
     query.exec();
 
-    setDirty(lid, isDirty);
-
     query.prepare("update datastore set data='true' where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
     query.finish();
+
     db->unlock();
+
+    setDirty(lid, isDirty);
+
 }
 
 

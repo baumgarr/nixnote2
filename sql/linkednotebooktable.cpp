@@ -156,13 +156,13 @@ qint32 LinkedNotebookTable::getLid(string guid) {
 qint32 LinkedNotebookTable::add(qint32 l, LinkedNotebook &t, bool isDirty) {
     NSqlQuery query(db);
     ConfigStore cs(db);
-
-    db->lockForWrite();
-    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     qint32 lid = l;
     if (lid == 0) {
         lid = cs.incrementLidCounter();
     }
+
+    db->lockForWrite();
+    query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
 
     query.bindValue(":lid", lid);
     query.bindValue(":key", LINKEDNOTEBOOK_GUID);

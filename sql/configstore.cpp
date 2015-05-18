@@ -101,6 +101,7 @@ void ConfigStore::initTable() {
 //*******************************************************************
 qint32 ConfigStore::incrementLidCounter() {
     db->lockForWrite();
+
     NSqlQuery sql(db);
     // Prepare the SQL statement & fetch the row
     sql.prepare("Select value from ConfigStore where key=:key");
@@ -123,6 +124,7 @@ qint32 ConfigStore::incrementLidCounter() {
         }
         sql.finish();
         db->unlock();
+
         // Return the next lid to the caller
         return sequence;
     }
