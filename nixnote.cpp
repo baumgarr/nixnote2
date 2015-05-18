@@ -607,51 +607,6 @@ void NixNote::setupGui() {
                 criteriaFound = true;
                 criteria->setTags(items);
             }
-            QString expandedTags = global.settings->value("expandedTags", "").toString();\
-            QLOG_DEBUG() << "Expanded Tags: " << expandedTags;
-            if (expandedTags != "") {
-                QStringList tags = expandedTags.split(" ");
-                for (int i=0; i<tags.size(); i++) {
-                    NTagViewItem *item;
-                    item = tagTreeView->dataStore[tags[i].toInt()];
-                    if (item != NULL)
-                        item->setExpanded(true);
-                }
-            }
-            QString expandedNotebooks = global.settings->value("expandedStacks", "").toString();
-            QLOG_DEBUG() << "Expanded Stacks: " << expandedNotebooks;
-            if (expandedNotebooks != "") {
-                QStringList books = expandedNotebooks.split(" ");
-                for (int i=0; i<books.size(); i++) {
-                    NNotebookViewItem *item;
-                    item = notebookTreeView->dataStore[books[i].toInt()];
-                    if (item != NULL && item->stack != "" && item->parent() != NULL) {
-                        item->parent()->setExpanded(true);
-                        QLOG_DEBUG() << "Parent of " << books[i] << " expanded.";
-                    }
-                }
-            }
-
-            searchTreeView->root->setExpanded(true);
-            QString collapsedTrees = global.settings->value("collapsedTrees", "").toString();
-            QLOG_DEBUG() << "collapsedTrees: " << collapsedTrees;
-            if (collapsedTrees != "") {
-                QStringList trees = collapsedTrees.split(" ");
-                for (int i=0; i<trees.size(); i++) {
-                    QString item = trees[i].toLower();
-                    if (item=="favorites")
-                        this->favoritesTreeView->root->setExpanded(false);
-                    if (item=="notebooks")
-                        this->notebookTreeView->root->setExpanded(false);
-                    if (item=="tags")
-                        this->tagTreeView->root->setExpanded(false);
-                    if (item=="attributes")
-                        this->attributeTree->root->setExpanded(false);
-                    if (item=="savedsearches")
-                        this->searchTreeView->root->setExpanded(false);
-                }
-            }
-
 
             global.settings->endGroup();
         }
@@ -705,6 +660,53 @@ void NixNote::setupGui() {
             this->setWindowState(Qt::WindowMinimized);
     }
 
+    // Restore expanded tags & stacks
+    global.settings->beginGroup("SaveState");
+    QString expandedTags = global.settings->value("expandedTags", "").toString();\
+    QLOG_DEBUG() << "Expanded Tags: " << expandedTags;
+    if (expandedTags != "") {
+        QStringList tags = expandedTags.split(" ");
+        for (int i=0; i<tags.size(); i++) {
+            NTagViewItem *item;
+            item = tagTreeView->dataStore[tags[i].toInt()];
+            if (item != NULL)
+                item->setExpanded(true);
+        }
+    }
+    QString expandedNotebooks = global.settings->value("expandedStacks", "").toString();
+    QLOG_DEBUG() << "Expanded Stacks: " << expandedNotebooks;
+    if (expandedNotebooks != "") {
+        QStringList books = expandedNotebooks.split(" ");
+        for (int i=0; i<books.size(); i++) {
+            NNotebookViewItem *item;
+            item = notebookTreeView->dataStore[books[i].toInt()];
+            if (item != NULL && item->stack != "" && item->parent() != NULL) {
+                item->parent()->setExpanded(true);
+                QLOG_DEBUG() << "Parent of " << books[i] << " expanded.";
+            }
+        }
+    }
+
+    searchTreeView->root->setExpanded(true);
+    QString collapsedTrees = global.settings->value("collapsedTrees", "").toString();
+    QLOG_DEBUG() << "collapsedTrees: " << collapsedTrees;
+    if (collapsedTrees != "") {
+        QStringList trees = collapsedTrees.split(" ");
+        for (int i=0; i<trees.size(); i++) {
+            QString item = trees[i].toLower();
+            if (item=="favorites")
+                this->favoritesTreeView->root->setExpanded(false);
+            if (item=="notebooks")
+                this->notebookTreeView->root->setExpanded(false);
+            if (item=="tags")
+                this->tagTreeView->root->setExpanded(false);
+            if (item=="attributes")
+                this->attributeTree->root->setExpanded(false);
+            if (item=="savedsearches")
+                this->searchTreeView->root->setExpanded(false);
+        }
+    }
+    global.settings->endGroup();
 }
 
 
