@@ -842,8 +842,12 @@ bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid)
 
 // Permanently delete a resource
 void ResourceTable::expunge(qint32 lid) {
-    if (db->dbLocked) {
-        QLOG_DEBUG() << "DB Locked!";
+    QLOG_DEBUG() << "Expunging Resource Stack Dump Requested";
+    global.stackDump(6);
+
+    if (!this->exists(lid)) {
+        QLOG_DEBUG() << "Attempting to delete non-existing resource: " << lid;
+        return;
     }
     NSqlQuery query(db);
     QLOG_DEBUG() << "Expunging resource : " << lid;

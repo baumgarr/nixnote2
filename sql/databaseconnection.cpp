@@ -29,7 +29,7 @@ extern Global global;
 //*****************************************
 DatabaseConnection::DatabaseConnection(QString connection)
 {
-    dbLocked = false;
+    dbLocked = Unlocked;
     QLOG_DEBUG() << "SQL drivers available: " << QSqlDatabase::drivers();
     QLOG_TRACE() << "Adding database SQLITE";
     conn = QSqlDatabase::addDatabase("QSQLITE", connection);
@@ -89,27 +89,30 @@ DatabaseConnection::~DatabaseConnection() {
 
 // Lock the database for a read request
 void DatabaseConnection::lockForRead() {
+    return;
     if (dbLocked)
         return;
     global.dbLock->lockForRead();
-    dbLocked = true;
+    dbLocked = Read;
 }
 
 
 // Lock the database for a read request
 void DatabaseConnection::lockForWrite() {
+    return;
     if (dbLocked)
         return;
     global.dbLock->lockForWrite();
-    dbLocked = true;
+    dbLocked = Write;
 }
 
 
 // Unlock the database
 void DatabaseConnection::unlock() {
-    if (!dbLocked)
+    return;
+    if (dbLocked == Unlocked)
         return;
-    dbLocked = false;
+    dbLocked = Unlocked;
     global.dbLock->unlock();
 }
 

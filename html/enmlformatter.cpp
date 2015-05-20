@@ -86,7 +86,21 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     tidyProcess.closeWriteChannel();
     tidyProcess.waitForFinished();
     QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
-    QLOG_DEBUG() << "Tidy Errors:" << tidyProcess.readAllStandardError();
+    QString errors(tidyProcess.readAllStandardError());
+    QStringList errorList = errors.split("\n");
+    for (int e=0; e<errorList.size(); e++) {
+        if (errorList[e].indexOf("<img> proprietary attribute \"type\"") < 0 &&
+                errorList[e].indexOf("<img> proprietary attribute \"oncontextmenu\"") < 0 &&
+                errorList[e].indexOf("<img> proprietary attribute \"hash\"") < 0 &&
+                errorList[e].indexOf("<img> proprietary attribute \"en-tag\"") < 0 &&
+                errorList[e].indexOf("<img> proprietary attribute \"lid\"") < 0 &&
+                errorList[e].indexOf("<img> proprietary attribute \"oncontextmenu\"") < 0 &&
+                errorList[e].indexOf("<img> lacks \"alt\" attribute") < 0
+            ) {
+            QLOG_DEBUG() << errorList[e];
+        }
+    }
+
     content.clear();
     content.append(tidyProcess.readAllStandardOutput());
     tidyProcess.close();
@@ -120,7 +134,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
         QString tag = tags[i];
         QWebElementCollection anchors = page.mainFrame()->findAllElements(tag);
         foreach (QWebElement element, anchors) {
-            QLOG_DEBUG() << "Processing tag name: " << element.tagName();
+            //QLOG_DEBUG() << "Processing tag name: " << element.tagName();
             if (element.tagName().toLower() == "input") {
                 processTodo(element);
             } else if (element.tagName().toLower() == "a") {
@@ -325,7 +339,7 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
 
 bool EnmlFormatter::isElementValid(QString element) {
     element = element.trimmed().toLower();
-    QLOG_DEBUG() << "Checking tag " << element;
+    //QLOG_DEBUG() << "Checking tag " << element;
     if (element == "a") return true;
     if (element == "abbr") return true;
     if (element == "acronym") return true;
@@ -395,8 +409,7 @@ bool EnmlFormatter::isElementValid(QString element) {
     if (element == "var") return true;
     if (element == "xmp") return true;
 
-    QLOG_DEBUG() << element << " is invalid";
-
+    QLOG_DEBUG() << "WARNING: " << element << " is invalid";
     return false;
 
 }

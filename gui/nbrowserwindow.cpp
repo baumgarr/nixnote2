@@ -610,6 +610,18 @@ void NBrowserWindow::saveNoteContent() {
         ResourceTable resTable(global.db);
         resTable.getResourceList(oldLids, lid);
 
+        QLOG_DEBUG() << "Valid Resource  LIDS:";
+        for (int i=0; i<validLids.size(); i++) {
+            QLOG_DEBUG() << " * " << i << " : " << validLids[i];
+        }
+
+
+        QLOG_DEBUG() << "Old Resource  LIDS:";
+        for (int i=0; i<oldLids.size(); i++) {
+            QLOG_DEBUG() << " * " << i << " : " << oldLids[i];
+        }
+
+
         for (int i=0; i<oldLids.size(); i++) {
             if (!validLids.contains(oldLids[i])) {
                 QLOG_DEBUG() << "Expunging old lid " << oldLids[i];

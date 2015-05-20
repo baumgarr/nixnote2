@@ -39,17 +39,27 @@ class DataStore;
 // Define the class used to access the table
 class DatabaseConnection
 {
+
+
 public:
     QSqlDatabase conn;              // The actual database connection
     ConfigStore *configStore;       // Table used to store program settings
     DataStore *dataStore;           // Table that contains the note data
-    bool dbLocked;
+    enum LockMethod {
+        Unlocked = 0,
+        Read = 1,
+        Write = 2
+    };
+
 
     DatabaseConnection(QString connection);           // Generic constructor
     ~DatabaseConnection();          // Destructor
     void lockForRead();
     void lockForWrite();
     void unlock();
+
+private:
+    LockMethod dbLocked;
 };
 
 #endif // DATABASECONNECTION_H

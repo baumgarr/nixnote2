@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
             printf("  --help or -?                  Show this message\n");
             printf("  --accountId=<id>              Start with specified user account\n");
             printf("  --dontStartMinimized          Override option to start minimized\n");
-            printf("  --disablIndexng               Override option to start minimized\n");
+            printf("  --disablIndexing              Disable all indexing\n");
             printf("  --openNote=<lid>              Open a specific note on startup\n");
             printf("  --forceSystemTrayAvailable    Force the program to accept that\n");
             printf("                                the desktop supports tray icons.\n");

@@ -149,8 +149,6 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     ResourceTable resTable(db);
     ConfigStore cs(db);
     NSqlQuery query(db);
-    NSqlQuery trans(db);
-    trans.exec("begin");
     qint32 position;
     qint32 lid = l;
     qint32 notebookLid = account;
@@ -426,7 +424,6 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             query.bindValue(":data", rt);
             query.exec();
         }
-        db->unlock();
     }
 
     // No determine some attributes of the note based upon the content
@@ -462,11 +459,9 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         }
     }
     query.finish();
-    trans.exec("commit");
-    trans.finish();
+    db->unlock();
 
     updateNoteList(lid, t, isDirty, account);
-    db->unlock();
     return lid;
 }
 

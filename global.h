@@ -195,6 +195,7 @@ public:
     QString getResourceFileName(QHash<QString, QString> &resourceList, QString key);    // Get the actual file path for a given icon theme
     QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme
     void getThemeNamesFromFile(QFile &file, QStringList &values);  // Get all themes available in a given file
+    void stackDump(int max=0);                                 // Utility to dump the running stack
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

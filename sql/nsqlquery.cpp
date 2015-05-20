@@ -49,7 +49,7 @@ NSqlQuery::~NSqlQuery() {
     this->finish();
     if (db->dbLocked) {
         QLOG_DEBUG() << "*** Warning: NSqlQuery Terminating with lock active";
-        this->stackDump();
+        global.stackDump();
     }
 }
 
@@ -70,7 +70,7 @@ bool NSqlQuery::exec() {
         // Print stack trace to see what is happening
         if (i==DEBUG_TRIGGER) {
             QLOG_DEBUG() << "Dumping stack due to DB lock limit of " << DEBUG_TRIGGER << " being reached.";
-            this->stackDump();
+            global.stackDump();
         }
 
         QTime dieTime= QTime::currentTime().addSecs(1);
@@ -98,7 +98,7 @@ bool NSqlQuery::exec(const QString &query) {
         // Print stack dump to see what is happening
         if (i==DEBUG_TRIGGER) {
             QLOG_DEBUG() << "Dumping stack due to DB lock limit of " << DEBUG_TRIGGER << " being reached.";
-            this->stackDump();
+            global.stackDump();
         }
         QTime dieTime= QTime::currentTime().addSecs(1);
         while( QTime::currentTime() < dieTime )
@@ -127,70 +127,3 @@ bool NSqlQuery::exec(const char *query) {
 
 
 
-void NSqlQuery::stackDump() {
-    void *array[30];
-    size_t size;
-    QLOG_ERROR() << "***** Dumping stack *****";
-
-    // get void*'s for all entries on the stack
-    size = backtrace(array, 30);
-    char **messages = backtrace_symbols(array, size);
-
-    for (size_t i = 1; i < size && messages != NULL; ++i)
-    {
-        char *mangled_name = 0, *offset_begin = 0, *offset_end = 0;
-
-        // find parantheses and +address offset surrounding mangled name
-        for (char *p = messages[i]; *p; ++p)
-        {
-            if (*p == '(')
-            {
-                mangled_name = p;
-            }
-            else if (*p == '+')
-            {
-                offset_begin = p;
-            }
-            else if (*p == ')')
-            {
-                offset_end = p;
-                break;
-            }
-        }
-
-        // if the line could be processed, attempt to demangle the symbol
-        if (mangled_name && offset_begin && offset_end &&
-            mangled_name < offset_begin)
-        {
-            *mangled_name++ = '\0';
-            *offset_begin++ = '\0';
-            *offset_end++ = '\0';
-
-            int status;
-            char * real_name = abi::__cxa_demangle(mangled_name, 0, 0, &status);
-
-            // if demangling is successful, output the demangled function name
-            if (status == 0)
-            {
-               QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i] << " : "
-                          << real_name << "+" << offset_begin << offset_end;
-
-            }
-            // otherwise, output the mangled function name
-            else
-            {
-                QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i] << " : "
-                          << mangled_name << "+" << offset_begin << offset_end;
-            }
-            free(real_name);
-        }
-        // otherwise, print the whole line
-        else
-        {
-            QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i];
-        }
-    }
-
-    free(messages);
-    QLOG_ERROR() << "**** Stack dump complete *****";
-}
