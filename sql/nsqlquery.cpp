@@ -47,10 +47,10 @@ NSqlQuery::NSqlQuery(DatabaseConnection *db) :
 // Destructor
 NSqlQuery::~NSqlQuery() {
     this->finish();
-    if (db->dbLocked) {
-        QLOG_DEBUG() << "*** Warning: NSqlQuery Terminating with lock active";
-        global.stackDump();
-    }
+//    if (db->dbLocked) {
+//        QLOG_DEBUG() << "*** Warning: NSqlQuery Terminating with lock active";
+//        global.stackDump();
+//    }
 }
 
 
