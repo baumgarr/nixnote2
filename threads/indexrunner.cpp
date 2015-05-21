@@ -286,12 +286,15 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 // Index any PDFs that are attached.  Basically it turns the PDF into text and adds it the same
 // way as a note's body
 void IndexRunner::indexPdf(qint32 lid, Resource &r) {
+    global.stackDump(4);
+    QLOG_DEBUG() << "Indexing PDF" << r.guid << " for " << lid;
     if (!keepRunning || pauseIndexing) {
         indexTimer->start();
         return;
     }
     ResourceTable rtable(db);
     qint32 reslid = rtable.getLid(r.guid);
+    QLOG_DEBUG() << "Resource LID: " << reslid;
     if (lid <= 0) {
         indexTimer->start();
         return;
