@@ -2757,10 +2757,14 @@ void NBrowserWindow::changeDisplayFontSize(QString size) {
 // This function is called when the cursor position within the document changes.  It should
 // change the combo box to the current font name.
 void NBrowserWindow::changeDisplayFontName(QString name) {
+    QLOG_DEBUG() << "Font Name:" << name;
     if (name.startsWith("'")) {
             name = name.mid(1);
-            name.chop(1);
+            int idx = name.indexOf("'");
+            if (idx > 0)
+                name = name.mid(0,idx);
     }
+    name = name.toLower();
     buttonBar->fontNames->blockSignals(true);
     int idx = buttonBar->fontNames->findData(name, Qt::UserRole);
     if (idx >=0)

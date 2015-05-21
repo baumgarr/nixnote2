@@ -535,7 +535,7 @@ void EditorButtonBar::loadFontNames() {
     bool first = true;
     //QFontDatabase fdb;
     for (int i = 0; i < fontFamilies.size(); i++) {
-        fontNames->addItem(fontFamilies[i], fontFamilies[i]);
+        fontNames->addItem(fontFamilies[i], fontFamilies[i].toLower());
         QFont f;
         global.getGuiFont(f);
         f.setFamily(fontFamilies[i]);
