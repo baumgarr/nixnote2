@@ -148,6 +148,7 @@ int main(int argc, char *argv[])
 
 
     // Show Qt version.  This is useful for debugging
+    QLOG_DEBUG() << "Program Home: " << global.fileManager.getProgramDirPath("");
     QLOG_INFO() << "Built on " << __DATE__ << " at " << __TIME__;
     QLOG_INFO() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
     //QLOG_INFO() << "Thrift version: " << PACKAGE_VERSION;
