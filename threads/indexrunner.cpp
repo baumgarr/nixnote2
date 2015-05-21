@@ -298,9 +298,11 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     }
     QString file = global.fileManager.getDbaDirPath() + QString::number(reslid) +".pdf";
 
+    QLOG_DEBUG() << "Indexing PDF: " << file;
     QString text = "";
     Poppler::Document *doc = Poppler::Document::load(file);
     if (doc == NULL || doc->isEncrypted() || doc->isLocked()) {
+        QLOG_DEBUG() << "Skipping encrypted/locked/Null file: " << file;
         indexTimer->start();
         return;
     }
