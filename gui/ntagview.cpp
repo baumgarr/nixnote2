@@ -243,8 +243,15 @@ void NTagView::loadData() {
     // Empty out the old data store
     QList<qint32> keys = dataStore.keys();
     for (int i=0; i<keys.size(); i++) {
-        NTagViewItem *ptr = dataStore.take(keys[i]);
-        delete ptr;
+        if (dataStore.contains(keys[i])) {
+            NTagViewItem *ptr = dataStore.take(keys[i]);
+            dataStore.remove(keys[i]);
+            if (ptr->parent() != NULL)
+                ptr->parent()->removeChild(ptr);
+            QLOG_DEBUG() << ptr;
+            ptr->setHidden(true);
+           // delete ptr;  << We can leak memory, but otherwise it sometimes gets confused and causes crashes
+        }
     }
 
     NSqlQuery query(global.db);

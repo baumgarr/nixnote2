@@ -184,6 +184,8 @@ void ImportEnex::processNoteNode() {
             note.content = textValue();
         }
         if (name == "note-attributes" && !reader->isEndElement()) {
+            NoteAttributes na;
+            note.attributes = na;
             processNoteAttributes(note.attributes);
         }
         if (name == "resource" && !reader->isEndElement()) {
@@ -288,15 +290,23 @@ void ImportEnex::processResource(Resource &resource) {
                 resource.width = shortValue();
             }
             if (name == "data") {
+                Data d;
+                resource.data = d;
                 processData("Data", resource.data);
             }
             if (name == "alternate-data") {
+                Data d;
+                resource.alternateData = d;
                 processData("AlternateData", resource.data);
             }
             if (name == "recognition-data") {
+                Data d;
+                resource.recognition = d;
                 processData("RecognitionData", resource.recognition);
             }
             if (name == "resource-attributes") {
+                ResourceAttributes ra;
+                resource.attributes = ra;
                 processResourceAttributes(resource.attributes);
             }
         }
