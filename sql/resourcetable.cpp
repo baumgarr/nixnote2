@@ -889,18 +889,25 @@ void ResourceTable::expunge(QString guid) {
 
 // Permanently delete a resource
 void ResourceTable::expungeByNote(qint32 notebookLid) {
-    NSqlQuery query(db);
-    db->lockForRead();
-    query.prepare("Select lid from datastore where data=:data and key=:key");
-    query.bindValue(":key", RESOURCE_NOTE_LID);
-    query.bindValue(":data", notebookLid);
-    query.exec();
-    db->unlock();
-    while(query.next()) {
-        qint32 lid = query.value(0).toInt();
-        expunge(lid);
+    QList<qint32> lids;
+    {
+        NSqlQuery query(db);
+        db->lockForRead();
+        query.prepare("Select lid from datastore where data=:data and key=:key");
+        query.bindValue(":key", RESOURCE_NOTE_LID);
+        query.bindValue(":data", notebookLid);
+        query.exec();
+        db->unlock();
+        while(query.next()) {
+            qint32 lid = query.value(0).toInt();
+            lids.append(lid);
+        }
+        query.finish();
     }
-    query.finish();
+
+    for (int i=0; i<lids.size(); i++) {
+        expunge(lids[i]);
+    }
 }
 
 
