@@ -40,6 +40,7 @@ class NSqlQuery : public QSqlQuery
 private:
     DatabaseConnection *db;
     int DEBUG_TRIGGER;
+    int INDEX_PAUSE_TRIGGER;
 public:
     explicit NSqlQuery(DatabaseConnection *db);   // Constructor
     ~NSqlQuery();                          // Destructor

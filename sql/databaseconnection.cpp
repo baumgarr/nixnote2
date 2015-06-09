@@ -30,6 +30,7 @@ extern Global global;
 DatabaseConnection::DatabaseConnection(QString connection)
 {
     dbLocked = Unlocked;
+    this->connection = connection;
     QLOG_DEBUG() << "SQL drivers available: " << QSqlDatabase::drivers();
     QLOG_TRACE() << "Adding database SQLITE";
     conn = QSqlDatabase::addDatabase("QSQLITE", connection);
@@ -116,5 +117,10 @@ void DatabaseConnection::unlock() {
     global.dbLock->unlock();
 }
 
+
+// Get the database connection name
+QString DatabaseConnection::getConnectionName() {
+    return connection;
+}
 
 

@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "settings/accountsmanager.h"
 #include "reminders/remindermanager.h"
 #include "sql/databaseconnection.h"
+#include "threads/indexrunner.h"
 
 #include <string>
 #include <QSharedMemory>
@@ -78,7 +79,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 using namespace std;
 
+
+// Forward declare future classes
 class DatabaseConnection;
+class IndexRunner;
+
+
 
 class Global
 {
@@ -196,6 +202,8 @@ public:
     QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme
     void getThemeNamesFromFile(QFile &file, QStringList &values);  // Get all themes available in a given file
     void stackDump(int max=0);                                 // Utility to dump the running stack
+
+    IndexRunner *indexRunner;                                    // Pointer to index thread
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

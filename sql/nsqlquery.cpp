@@ -40,7 +40,8 @@ NSqlQuery::NSqlQuery(DatabaseConnection *db) :
     QSqlQuery(db->conn)
 {
     this->db = db;
-    DEBUG_TRIGGER = 50;
+    DEBUG_TRIGGER = 100;
+    INDEX_PAUSE_TRIGGER = 10;
 }
 
 
@@ -56,14 +57,26 @@ NSqlQuery::~NSqlQuery() {
 
 // Generic exec().  A prepare should have been done already
 bool NSqlQuery::exec() {
+    bool indexPauseSave;
+    bool indexRestoreNeeded = false;
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec();
-        if (rc)
+        if (rc) {
+            if (indexRestoreNeeded)
+                global.indexRunner->pauseIndexing = indexPauseSave;
             return true;
+        }
         if (lastError().number() != DATABASE_LOCKED)
             return false;
         if (i>DEBUG_TRIGGER) {
             QLOG_ERROR() << "DB Locked:  Retry #" << i;
+        }
+
+        if (i == INDEX_PAUSE_TRIGGER && this->db->getConnectionName() != "indexrunner") {
+            QLOG_DEBUG() << "Pausing indexrunner due to db lock";
+            indexPauseSave = global.indexRunner->pauseIndexing;
+            indexRestoreNeeded = true;
+            global.indexRunner->pauseIndexing=true;
         }
 
 
@@ -77,6 +90,8 @@ bool NSqlQuery::exec() {
         while( QTime::currentTime() < dieTime )
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     }
+    if (indexRestoreNeeded)
+        global.indexRunner->pauseIndexing = indexPauseSave;
     return false;
 }
 
@@ -84,13 +99,25 @@ bool NSqlQuery::exec() {
 
 // Execute a SQL statement
 bool NSqlQuery::exec(const QString &query) {
+    bool indexPauseSave;
+    bool indexRestoreNeeded = false;
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec(query);
         if (rc) {
+            if (indexRestoreNeeded)
+                global.indexRunner->pauseIndexing = indexPauseSave;
             return true;
         }
         if (lastError().number() != DATABASE_LOCKED)
             return false;
+
+        if (i == INDEX_PAUSE_TRIGGER && this->db->getConnectionName() != "indexrunner") {
+            QLOG_DEBUG() << "Pausing indexrunner due to db lock";
+            indexPauseSave = global.indexRunner->pauseIndexing;
+            indexRestoreNeeded = true;
+            global.indexRunner->pauseIndexing=true;
+        }
+
         if (i>DEBUG_TRIGGER) {
             QLOG_ERROR() << "DB Locked:  Retry #" << i;
         }
@@ -102,8 +129,10 @@ bool NSqlQuery::exec(const QString &query) {
         }
         QTime dieTime= QTime::currentTime().addSecs(1);
         while( QTime::currentTime() < dieTime )
-        QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+            QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
     }
+    if (indexRestoreNeeded)
+        global.indexRunner->pauseIndexing = indexPauseSave;
     return false;
 }
 

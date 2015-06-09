@@ -57,9 +57,11 @@ public:
     void lockForRead();
     void lockForWrite();
     void unlock();
+    QString getConnectionName();
 
 private:
     LockMethod dbLocked;
+    QString connection;
 };
 
 #endif // DATABASECONNECTION_H

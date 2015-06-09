@@ -40,6 +40,8 @@ using namespace qevercloud;
 
 using namespace std;
 
+// Forward declare classes used later
+class DatabaseConnection;
 
 class IndexRecord : public QObject
 {
