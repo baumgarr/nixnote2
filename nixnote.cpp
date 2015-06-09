@@ -682,7 +682,7 @@ void NixNote::setupGui() {
             item = notebookTreeView->dataStore[books[i].toInt()];
             if (item != NULL && item->stack != "" && item->parent() != NULL) {
                 item->parent()->setExpanded(true);
-                QLOG_DEBUG() << "Parent of " << books[i] << " expanded.";
+                //QLOG_DEBUG() << "Parent of " << books[i] << " expanded.";
             }
         }
     }
@@ -1229,6 +1229,7 @@ void NixNote::saveNoteColumnWidths() {
 //* The sync timer has expired
 //*****************************************************************************
 void NixNote::syncTimerExpired() {
+    pauseIndexing(true);
     // If we are already connected, we are already synchronizing so there is nothing more to do
     if (global.connected == true)
         return;
