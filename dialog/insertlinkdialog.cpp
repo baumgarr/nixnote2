@@ -67,6 +67,8 @@ InsertLinkDialog::InsertLinkDialog(bool insert, QWidget *parent) :
 QString InsertLinkDialog::getUrl() {
     if (urlText.indexOf("://") > 0)
         return urlText;
+    if (urlText.trimmed().startsWith("mailto:", Qt::CaseInsensitive))
+        return urlText;
     if (urlText.trimmed() != "")
         return "http://"+urlText;
     return urlText;
