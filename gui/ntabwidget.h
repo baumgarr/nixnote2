@@ -69,6 +69,7 @@ signals:
     void noteUpdated(qint32);
     void tagCreated(qint32);
     void updateNoteList(qint32, int, QVariant); // A note was edited so we update the note list
+    void updateNoteTitle(QString uuid, qint32 lid, QString content);
 
 public slots:
     void closeTab(int index);

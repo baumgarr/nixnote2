@@ -825,3 +825,9 @@ void FavoritesView::reloadIcons() {
         }
     }
 }
+
+
+void FavoritesView::updateShortcutName(QString uuid, qint32 lid, QString content) {
+    Q_UNUSED(uuid);
+    this->itemRenamed(lid, "",content);
+}

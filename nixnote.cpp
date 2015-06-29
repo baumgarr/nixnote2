@@ -350,6 +350,7 @@ void NixNote::setupGui() {
     connect(notebookTreeView, SIGNAL(notebookRenamed(qint32,QString,QString)), favoritesTreeView, SLOT(itemRenamed(qint32, QString, QString)));
     connect(notebookTreeView, SIGNAL(stackDeleted(QString)), favoritesTreeView, SLOT(stackExpunged(QString)));
     connect(notebookTreeView, SIGNAL(stackRenamed(QString,QString)), favoritesTreeView, SLOT(stackRenamed(QString, QString)));
+    connect(tabWindow, SIGNAL(updateNoteTitle(QString,qint32,QString)), favoritesTreeView, SLOT(updateShortcutName(QString,qint32,QString)));
 
     QLOG_TRACE() << "Setting up left panel";
     leftPanel->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -2390,12 +2391,14 @@ void NixNote::changeEvent(QEvent *e) {
 }
 
 bool NixNote::event(QEvent *event) {
+
     if (event->type() == QEvent::WindowStateChange && isMinimized()) {
         if (minimizeToTray) {
             hide();
             return false;
         }
     }
+
     if (event->type() == QEvent::Close) {
         if (global.closeToTray() && isVisible())  {
             QLOG_DEBUG() << "overriding close event";

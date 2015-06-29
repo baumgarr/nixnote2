@@ -545,6 +545,7 @@ void NTabWidget::noteTitleEdited(QString uuid, qint32 lid, QString content) {
             externalList->at(i)->browser->noteTitle.blockSignals(false);
         }
     }
+    emit(updateNoteTitle(uuid, lid, content));
 }
 
 

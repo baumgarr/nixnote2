@@ -47,6 +47,7 @@ private:
 private slots:
     int calculateHeightRec(QTreeWidgetItem * item);
     void calculateHeight();
+    void updateShortcutName(QString uuid, qint32 lid, QString content);
 
 public:
     explicit FavoritesView(QWidget *parent = 0);
