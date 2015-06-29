@@ -75,6 +75,8 @@ public:
     QAction *insertQuickLinkAction;
     QAction *insertHtmlEntitiesAction;
 
+    QShortcut *attachFileShortcut;
+
     bool isDirty;
     NWebPage *editorPage;
     bool event(QEvent *event);

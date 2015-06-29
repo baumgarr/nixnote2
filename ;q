@@ -34,7 +34,7 @@ Edit_Cut			Ctrl+X		// Cut current selection to the clipboard
 Edit_Copy			Ctrl+C		// Copy the current selection to the clipboard
 Edit_Paste			Ctrl+V		// Paste
 Edit_Paste_Without_Formatting	Ctrl+Shift+V	// Paste as plain text
-Edit_Remove_Formatting                          // Remove selected formatting from text
+Edit_Remove_Formatting          F2              // Remove selected formatting from text
 Edit_Preferences				// Settings dialog box
 Edit_Image_Rotate_Left				// Rotate an image left
 Edit_Image_Rotate_Right				// Rotate an image to the right
@@ -44,10 +44,8 @@ Edit_Insert_Table_Column			// Insert a table row
 Edit_Delete_Table_Column			// Delete a table row
 
 Edit_Insert_Hyperlink		Ctrl+K		// Insert a hyperlink (Popup menu)
-Edit_Insert_Todo	                        // Insert a todo checkbox (Popup menu)
+Edit_Insert_Todo				// Insert a todo checkbox (Popup menu)
 Edit_Insert_QuickLink				// Insert a quick link to another note (Popup menu)
-Edit_Remove_Hyperlink                           // Remove hyperlink from text
-Edit_Insert_Html_Entities                       // Insert HTML Entities
 Edit_Encrypt_Text				// Encrypt selected text (Popup menu)
 Edit_Insert_Table				// Insert a table into a note (Popup menu)
 Edit_Attach_File                                // Attach a file

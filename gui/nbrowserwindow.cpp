@@ -180,6 +180,61 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     lid = -1;
     thumbnailer = NULL;
 
+
+    //Setup shortcuts for context menu
+    removeFormattingShortcut = new QShortcut(this);
+    this->setupShortcut(removeFormattingShortcut, "Edit_Remove_Formatting");
+    connect(removeFormattingShortcut, SIGNAL(activated()), this, SLOT(removeFormatButtonPressed()));
+    removeFormattingShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    insertHtmlEntitiesShortcut = new QShortcut(this);
+    this->setupShortcut(insertHtmlEntitiesShortcut, QString("Edit_Insert_Html_Entities"));
+    connect(insertHtmlEntitiesShortcut, SIGNAL(activated()),this, SLOT(insertHtmlEntities()));
+    insertHtmlEntitiesShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    insertHtmlEntitiesShortcut = new QShortcut(this);
+    this->setupShortcut(insertHtmlEntitiesShortcut, QString("Edit_Insert_Html_Entities"));
+    connect(insertHtmlEntitiesShortcut, SIGNAL(activated()),this, SLOT(insertHtmlEntities()));
+    insertHtmlEntitiesShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    encryptTextShortcut = new QShortcut(this);
+    this->setupShortcut(encryptTextShortcut, QString("Edit_Encrypt_Text"));
+    connect(encryptTextShortcut, SIGNAL(activated()),this, SLOT(encryptButtonPressed()));
+    encryptTextShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    insertHyperlinkShortcut = new QShortcut(this);
+    this->setupShortcut(insertHyperlinkShortcut, QString("Edit_Insert_Hyperlink"));
+    connect(insertHyperlinkShortcut, SIGNAL(activated()),this, SLOT(insertLinkButtonPressed()));
+    insertHyperlinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    insertQuicklinkShortcut = new QShortcut(this);
+    this->setupShortcut(insertQuicklinkShortcut, QString("Edit_Insert_QuickLink"));
+    connect(insertQuicklinkShortcut, SIGNAL(activated()),this, SLOT(insertQuickLinkButtonPressed()));
+    insertQuicklinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    removeHyperlinkShortcut = new QShortcut(this);
+    this->setupShortcut(removeHyperlinkShortcut, QString("Edit_Remove_Hyperlink"));
+    connect(removeHyperlinkShortcut, SIGNAL(activated()),this, SLOT(removeLinkButtonPressed()));
+    removeHyperlinkShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    attachFileShortcut = new QShortcut(this);
+    this->setupShortcut(attachFileShortcut, QString("Edit_Attach_File"));
+    connect(attachFileShortcut, SIGNAL(activated()),this, SLOT(attachFile()));
+    attachFileShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    attachFileShortcut = new QShortcut(this);
+    this->setupShortcut(attachFileShortcut, QString("Edit_Attach_File"));
+    connect(attachFileShortcut, SIGNAL(activated()),this, SLOT(attachFile()));
+    attachFileShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+    insertLatexShortcut = new QShortcut(this);
+    this->setupShortcut(insertLatexShortcut, QString("Edit_Insert_Latex"));
+    connect(insertLatexShortcut, SIGNAL(activated()),this, SLOT(insertLatexButtonPressed()));
+    insertLatexShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+
+
+
+
     // Restore the expand/collapse state
     global.settings->beginGroup("SaveState");
     int expandButton = global.settings->value("ExpandButton", EXPANDBUTTON_1).toInt();

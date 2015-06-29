@@ -90,6 +90,16 @@ private:
     Thumbnailer *thumbnailer;
     QTimer focusTimer;
 
+    // Shortcuts for context menu
+    QShortcut *attachFileShortcut;
+    QShortcut *removeFormattingShortcut;
+    QShortcut *insertQuicklinkShortcut;
+    QShortcut *insertHtmlEntitiesShortcut;
+    QShortcut *insertHyperlinkShortcut;
+    QShortcut *encryptTextShortcut;
+    QShortcut *removeHyperlinkShortcut;
+    QShortcut *insertLatexShortcut;
+
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
     QString uuid;
