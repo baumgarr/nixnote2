@@ -92,9 +92,9 @@ NSearchView::NSearchView(QWidget *parent) :
     //renameAction->setFont(f);
     renameAction->setShortcutContext(Qt::WidgetShortcut);
 
-    renameShortcut = new QShortcut(this);
-    renameShortcut->setKey(QKeySequence(Qt::Key_F2));
-    renameShortcut->setContext(Qt::WidgetShortcut);
+//    renameShortcut = new QShortcut(this);
+//    renameShortcut->setKey(QKeySequence(Qt::Key_F2));
+//    renameShortcut->setContext(Qt::WidgetShortcut);
 
     context.addSeparator();
     propertiesAction = context.addAction(tr("Properties"));
@@ -107,7 +107,7 @@ NSearchView::NSearchView(QWidget *parent) :
 
     connect(addShortcut, SIGNAL(activated()), this, SLOT(addRequested()));
     connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
-    connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
+    //connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     this->setFrameShape(QFrame::NoFrame);
 

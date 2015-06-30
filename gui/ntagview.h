@@ -41,7 +41,7 @@ private:
     QAction *renameAction;
     QAction *hideUnassignedAction;
     QAction *mergeAction;
-    QShortcut *renameShortcut;
+    //QShortcut *renameShortcut;
     QShortcut *addShortcut;
     QShortcut *deleteShortcut;
     TreeWidgetEditor *editor;

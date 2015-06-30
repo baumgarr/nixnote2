@@ -126,9 +126,9 @@ NNotebookView::NNotebookView(QWidget *parent) :
     renameAction = context.addAction(tr("Rename"));
     renameAction->setShortcutContext(Qt::WidgetShortcut);
 
-    renameShortcut = new QShortcut(this);
-    renameShortcut->setKey(QKeySequence(Qt::Key_F2));
-    renameShortcut->setContext(Qt::WidgetShortcut);
+    //renameShortcut = new QShortcut(this);
+    //renameShortcut->setKey(QKeySequence(Qt::Key_F2));
+    //renameShortcut->setContext(Qt::WidgetShortcut);
 
     context.addSeparator();
     propertiesAction = context.addAction(tr("Properties"));
@@ -140,7 +140,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
 
     connect(addShortcut, SIGNAL(activated()), this, SLOT(addRequested()));
     connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
-    connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
+    //connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
     connect(removeFromStackAction, SIGNAL(triggered()), this, SLOT(removeFromStackRequested()));
 
     this->setAcceptDrops(true);

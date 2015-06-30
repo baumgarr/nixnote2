@@ -2812,7 +2812,7 @@ void NBrowserWindow::changeDisplayFontSize(QString size) {
 // This function is called when the cursor position within the document changes.  It should
 // change the combo box to the current font name.
 void NBrowserWindow::changeDisplayFontName(QString name) {
-    QLOG_DEBUG() << "Font Name:" << name;
+    //QLOG_DEBUG() << "Font Name:" << name;
     if (name.startsWith("'")) {
             name = name.mid(1);
             int idx = name.indexOf("'");
@@ -2851,4 +2851,44 @@ void NBrowserWindow::focusCheck() {
     if (!editor->page()->isContentEditable())
         buttonBarVisible = false;
     buttonBar->setVisible(buttonBarVisible);
+}
+
+
+
+void NBrowserWindow::authorFocusShortcut() {
+    if (!this->dateEditor.authorEditor.isVisible()) {
+        this->changeExpandState(EXPANDBUTTON_3);
+        this->expandButton.setState(EXPANDBUTTON_3);
+    }
+    dateEditor.authorEditor.setFocus();
+}
+
+void NBrowserWindow::urlFocusShortcut() {
+    if (!this->urlEditor.isVisible()) {
+        this->changeExpandState(EXPANDBUTTON_2);
+        this->expandButton.setState(EXPANDBUTTON_2);
+    }
+    this->urlEditor.setFocus();
+}
+
+
+
+
+void NBrowserWindow::newTagFocusShortcut() {
+    if (!this->tagEditor.newTag.isVisible()) {
+        this->changeExpandState(EXPANDBUTTON_2);
+        this->expandButton.setState(EXPANDBUTTON_2);
+    }
+    tagEditor.newTag.setFocus();
+
+//    case EXPANDBUTTON_2:
+//        urlEditor.show();
+//        tagEditor.show();
+//        break;
+//    case EXPANDBUTTON_3:
+//        urlEditor.show();
+//        tagEditor.show();
+//        dateEditor.show();
+//        break;
+//    }
 }

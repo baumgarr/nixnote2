@@ -39,7 +39,7 @@ private:
     QAction *renameAction;
     QAction *newStackAction;
     QAction *removeFromStackAction;
-    QShortcut *renameShortcut;
+    //QShortcut *renameShortcut;
     QShortcut *addShortcut;
     QShortcut *deleteShortcut;
     TreeWidgetEditor *editor;

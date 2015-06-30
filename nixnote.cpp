@@ -706,6 +706,39 @@ void NixNote::setupGui() {
         }
     }
     global.settings->endGroup();
+
+
+    // Setup application-wide shortcuts
+    focusSearchShortcut = new QShortcut(this);
+    focusSearchShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusSearchShortcut, "Focus_Search");
+    connect(focusSearchShortcut, SIGNAL(activated()), searchText, SLOT(setFocus()));
+
+    focusTitleShortcut = new QShortcut(this);
+    focusTitleShortcut->setContext(Qt::WidgetShortcut);
+    this->setupShortcut(focusTitleShortcut, "Focus_Title");
+    connect(focusTitleShortcut, SIGNAL(activated()), &tabWindow->currentBrowser()->noteTitle, SLOT(setFocus()));
+
+    focusNoteShortcut = new QShortcut(this);
+    focusNoteShortcut->setContext(Qt::WidgetShortcut);
+    this->setupShortcut(focusNoteShortcut, "Focus_Note");
+    connect(focusNoteShortcut, SIGNAL(activated()), tabWindow->currentBrowser()->editor, SLOT(setFocus()));
+
+    focusTagShortcut = new QShortcut(this);
+    focusTagShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusTagShortcut, "Focus_Tag");
+    connect(focusTagShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(newTagFocusShortcut()));
+
+    focusUrlShortcut = new QShortcut(this);
+    focusUrlShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusUrlShortcut, "Focus_Url");
+    connect(focusUrlShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(urlFocusShortcut()));
+
+    focusAuthorShortcut = new QShortcut(this);
+    focusAuthorShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusAuthorShortcut, "Focus_Author");
+    connect(focusAuthorShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(authorFocusShortcut()));
+
 }
 
 
@@ -3213,3 +3246,11 @@ void NixNote::checkLeftPanelSeparators() {
 }
 
 
+
+// Load any shortcut keys
+void NixNote::setupShortcut(QShortcut *action, QString text) {
+    if (!global.shortcutKeys->containsAction(&text))
+        return;
+    QKeySequence key(global.shortcutKeys->getShortcut(&text));
+    action->setKey(key);
+}

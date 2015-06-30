@@ -107,9 +107,9 @@ NTagView::NTagView(QWidget *parent) :
 
     mergeAction = context.addAction(tr("Merge"));
 
-    renameShortcut = new QShortcut(this);
-    renameShortcut->setKey(QKeySequence(Qt::Key_F2));
-    renameShortcut->setContext(Qt::WidgetShortcut);
+//    renameShortcut = new QShortcut(this);
+//    renameShortcut->setKey(QKeySequence(Qt::Key_F2));
+//    renameShortcut->setContext(Qt::WidgetShortcut);
 
     context.addSeparator();
     hideUnassignedAction = context.addAction(tr("Hide Unassigned"));
@@ -127,7 +127,7 @@ NTagView::NTagView(QWidget *parent) :
     connect(mergeAction, SIGNAL(triggered()), this, SLOT(mergeRequested()));
     connect(addShortcut, SIGNAL(activated()), this, SLOT(addRequested()));
     connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
-    connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
+    //connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
 
     this->setItemDelegate(new NTagViewDelegate());
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);

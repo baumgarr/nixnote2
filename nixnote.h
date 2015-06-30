@@ -164,6 +164,14 @@ private:
     QSplashScreen *splashScreen;
     RemoteQuery *remoteQuery;
 
+    QShortcut *focusSearchShortcut;
+    QShortcut *focusTitleShortcut;
+    QShortcut *focusTagShortcut;
+    QShortcut *focusNoteShortcut;
+    QShortcut *focusUrlShortcut;
+    QShortcut *focusAuthorShortcut;
+    void setupShortcut(QShortcut *shortcut, QString keySequence);
+
 public:
     NixNote(QWidget *parent = 0);  // Constructor
     ~NixNote();   //Destructor

@@ -250,6 +250,9 @@ public slots:
     void printNodeName(QString node);
     void sendDateCreatedUpdateSignal();
     void sendDateSubjectUpdateSignal();
+    void newTagFocusShortcut();
+    void authorFocusShortcut();
+    void urlFocusShortcut();
 
 private slots:
     void sendTitleUpdateSignal();
