@@ -224,11 +224,11 @@ bool Global::showTrayIcon() {
 
 // Should we minimize to the tray
 bool Global::minimizeToTray() {
-    bool showTrayIcon;
+    bool minimizeToTray;
     settings->beginGroup("Appearance");
-    showTrayIcon = settings->value("minimizeToTray", false).toBool();
+    minimizeToTray = settings->value("minimizeToTray", false).toBool();
     settings->endGroup();
-    return showTrayIcon;
+    return minimizeToTray;
 }
 
 

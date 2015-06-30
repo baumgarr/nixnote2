@@ -480,10 +480,8 @@ void NixNote::setupGui() {
 
     // Setup the tray icon
     closeFlag = false;
-    global.settings->beginGroup("SaveState");
-    minimizeToTray = global.settings->value("minimizeToTray", false).toBool();
-    closeToTray = global.settings->value("closeToTray", false).toBool();
-    global.settings->endGroup();
+    minimizeToTray = global.minimizeToTray();
+    closeToTray = global.closeToTray();
     trayIcon = new QSystemTrayIcon(global.getIconResource(":trayIcon"), this);
     trayIconContextMenu = new TrayMenu(this);
     trayIconContextMenu->addAction(newNoteButton);
