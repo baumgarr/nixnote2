@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QCheckBox>
 #include <QLabel>
 #include <QComboBox>
+#include <QLineEdit>
 
 class SyncPreferences : public QWidget
 {
@@ -35,6 +36,13 @@ private:
     QCheckBox *syncOnStartup;
     QCheckBox *syncAutomatically;
     QCheckBox *syncOnShutdown;
+
+    QCheckBox *enableProxy;
+    QLineEdit *userId;
+    QLineEdit *password;
+    QLineEdit *port;
+    QLineEdit *host;
+
     int getSyncInterval();
 
 public:
@@ -51,6 +59,7 @@ public slots:
 private slots:
     void enableSyncStateChange();
     void enableSuccessfulSyncMessagesInTray();
+    void proxyCheckboxAltered(int state);
     
 };
 

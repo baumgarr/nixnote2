@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <QNetworkProxy>
 
 
 #include "application.h"
@@ -224,6 +225,27 @@ int main(int argc, char *argv[])
         w->hide();
     if (global.startMinimized)
         w->showMinimized();
+
+    // Setup the proxy
+    QNetworkProxy proxy;
+    proxy.setType(QNetworkProxy::HttpProxy);
+    if (global.isProxyEnabled()) {
+        QString host = global.getProxyHost();
+        int port = global.getProxyPort();
+        QString user = global.getProxyUserid();
+        QString password = global.getProxyPassword();
+
+        if (host.trimmed() != "")
+            proxy.setHostName(host.trimmed());
+        if (port > 0)
+            proxy.setPort(port);
+        if (user.trimmed() != "")
+            proxy.setUser(user.trimmed());
+        if (password.trimmed() != "")
+            proxy.setPassword(password.trimmed());
+
+        QNetworkProxy::setApplicationProxy(proxy);
+    }
 
     int rc = a->exec();
     QLOG_DEBUG() << "Unlocking memory";

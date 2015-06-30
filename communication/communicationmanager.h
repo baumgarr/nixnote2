@@ -94,6 +94,7 @@ private:
     QNetworkAccessManager *networkAccessManager;              // Network connection to download inknotes
     void handleEDAMSystemException(EDAMSystemException e);    // Error handler EDAM System Exception
     void handleEDAMNotFoundException(EDAMNotFoundException e);  // Error handler EDAM Not Found exception.
+    void handleStdException(const exception &ex);               // Handle std exception messages
     UserStore *userStore;                                     // UserStore class
     NoteStore *noteStore;                                     // Notestore class
     NoteStore *linkedNoteStore;                               // Linked notestore class

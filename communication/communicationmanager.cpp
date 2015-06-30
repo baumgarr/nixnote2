@@ -164,6 +164,10 @@ bool CommunicationManager::getUserInfo(User &user) {
         QLOG_ERROR() << "EDAMNotFoundException";
         handleEDAMNotFoundException(e);
         return false;
+    } catch (const std::exception &e) {
+        QLOG_DEBUG() << "Std exception: " << e.what();
+        handleStdException(e);
+        return false;
     }
     return true;
 }
@@ -1067,6 +1071,14 @@ void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) 
 
     error.message = tr("EDAMNotFoundException: Note not found");
     error.type = CommunicationError::EDAMNotFoundException;
+    error.code = 16;
+}
+
+
+
+void CommunicationManager::handleStdException(const std::exception &ex) {
+    error.message = QString(ex.what());
+    error.type = CommunicationError::StdException;
     error.code = 16;
 }
 

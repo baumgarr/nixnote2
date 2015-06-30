@@ -187,6 +187,19 @@ public:
     bool autoHideEditorToolbar;                               // Should the editor bar be hidden when focus is lost?
     ReminderManager *reminderManager;                         // Used to alert the user when a reminder time has expired
 
+    // These functions deal with proxy settings
+    void setProxyHost(QString proxy);
+    void setProxyPort(int port);
+    void setProxyPassword(QString password);
+    void setProxyUserid(QString userid);
+    QString getProxyHost();
+    int getProxyPort();
+    QString getProxyPassword();
+    QString getProxyUserid();
+    bool isProxyEnabled();
+    void setProxyEnabled(bool value);
+
+
 
     // These functions deal with the icon themes
     QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme

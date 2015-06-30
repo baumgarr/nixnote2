@@ -637,8 +637,95 @@ QString Global::getResourceFileName(QHash<QString,QString> &resourceList, QStrin
         // If we have a default resource
         QString fileName = key.remove(":");
         return fileManager.getImageDirPath("")+fileName;
-
 }
+
+
+
+
+
+
+// save the proxy address
+void Global::setProxyHost(QString proxy) {
+    settings->beginGroup("Proxy");
+    settings->setValue("hostName", proxy);
+    settings->endGroup();
+}
+
+
+// save the port for the proxy server
+void Global::setProxyPort(int port) {
+    settings->beginGroup("Proxy");
+    settings->setValue("port", port);
+    settings->endGroup();
+}
+
+// Save the proxy password
+void Global::setProxyPassword(QString password) {
+    settings->beginGroup("Proxy");
+    settings->setValue("password", password);
+    settings->endGroup();
+}
+
+
+// Save the proxy userid
+void Global::setProxyUserid(QString userid){
+    settings->beginGroup("Proxy");
+    settings->setValue("userid", userid);
+    settings->endGroup();
+}
+
+// get the proxy  hostname
+QString Global::getProxyHost() {
+    settings->beginGroup("Proxy");
+    QString value = settings->value("hostName", "").toString();
+    settings->endGroup();
+    return value;
+}
+
+// Get the proxy port number
+int Global::getProxyPort() {
+    settings->beginGroup("Proxy");
+    int value = settings->value("port", 0).toInt();
+    settings->endGroup();
+    return value;
+}
+
+// Get the proxy password
+QString Global::getProxyPassword() {
+    settings->beginGroup("Proxy");
+    QString value = settings->value("password", "").toString();
+    settings->endGroup();
+    return value;
+}
+
+// Get the proxy userid
+QString Global::getProxyUserid() {
+    settings->beginGroup("Proxy");
+    QString value = settings->value("userid", "").toString();
+    settings->endGroup();
+    return value;
+}
+
+// Get the proxy userid
+void Global::setProxyEnabled(bool value) {
+    settings->beginGroup("Proxy");
+    settings->setValue("enabled", value);
+    settings->endGroup();
+}
+
+// Get the proxy userid
+bool Global::isProxyEnabled() {
+    settings->beginGroup("Proxy");
+    bool value = settings->value("enabled", false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+
+
+
+
 
 
 void Global::stackDump(int max) {
@@ -710,6 +797,12 @@ void Global::stackDump(int max) {
     free(messages);
     QLOG_ERROR() << "**** Stack dump complete *****";
 }
+
+
+
+
+
+
 
 
 

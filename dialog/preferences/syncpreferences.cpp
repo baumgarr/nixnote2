@@ -20,6 +20,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "syncpreferences.h"
 #include "global.h"
 
+#include <QGroupBox>
+
 extern Global global;
 
 SyncPreferences::SyncPreferences(QWidget *parent) :
@@ -45,12 +47,44 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     enableSyncNotifications = new QCheckBox(tr("Enable sync notifications"), this);
     showGoodSyncMessagesInTray = new QCheckBox(tr("Show successful syncs"), this);
 
+    enableProxy = new QCheckBox(tr("Enable Proxy*"), this);
+    QLabel *hostLabel = new QLabel(tr("Proxy Hostname"), this);
+    QLabel *portLabel = new QLabel(tr("Proxy Port"), this);
+    QLabel *userLabel = new QLabel(tr("Proxy Username"), this);
+    QLabel *passwordLabel = new QLabel(tr("Proxy Password"),this);
+    QLabel *restartLabel = new QLabel(tr("Note: Restart required"),this);
+
+    host = new QLineEdit(this);
+    port = new QLineEdit(this);
+    userId = new QLineEdit(this);
+    password = new QLineEdit(this);
+
+    enableProxy->setChecked(global.isProxyEnabled());
+    host->setText(global.getProxyHost());
+    port->setText(QString::number(global.getProxyPort()));
+    port->setInputMask("0000");
+    userId->setText(global.getProxyUserid());
+    password->setText(global.getProxyPassword());
+    password->setEchoMode(QLineEdit::Password);
+
     mainLayout->addWidget(enableSyncNotifications,0,0);
     mainLayout->addWidget(showGoodSyncMessagesInTray, 0,1);
     mainLayout->addWidget(syncOnStartup,1,0);
     mainLayout->addWidget(syncOnShutdown,2,0);
     mainLayout->addWidget(syncAutomatically,3,0);
     mainLayout->addWidget(syncInterval, 3,1);
+
+    mainLayout->addWidget(enableProxy,4,0);
+    mainLayout->addWidget(hostLabel,6,0);
+    mainLayout->addWidget(host, 6,1);
+    mainLayout->addWidget(portLabel,7,0);
+    mainLayout->addWidget(port,7,1);
+    mainLayout->addWidget(userLabel, 8,0);
+    mainLayout->addWidget(userId,8,1);
+    mainLayout->addWidget(passwordLabel,9,0);
+    mainLayout->addWidget(password,9,1);
+    mainLayout->addWidget(restartLabel,4,1);
+    mainLayout->setAlignment(Qt::AlignTop);
 
     global.settings->beginGroup("Sync");
     int interval = global.settings->value("syncInterval", 15).toInt();
@@ -71,6 +105,10 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
 
     connect(syncAutomatically, SIGNAL(stateChanged(int)), this, SLOT(enableSyncStateChange()));
     connect(enableSyncNotifications, SIGNAL(toggled(bool)), this, SLOT(enableSuccessfulSyncMessagesInTray()));
+    connect(enableProxy, SIGNAL(stateChanged(int)), this, SLOT(proxyCheckboxAltered(int)));
+    if (!global.isProxyEnabled()) {
+        proxyCheckboxAltered(Qt::Unchecked);
+    }
 }
 
 
@@ -112,4 +150,22 @@ void SyncPreferences::saveValues() {
     global.settings->setValue("showGoodSyncMessagesInTray", showGoodSyncMessagesInTray ->isChecked());
     global.settings->endGroup();
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
+
+    global.setProxyEnabled(enableProxy->isChecked());
+    global.setProxyHost(host->text().trimmed());
+    global.setProxyPort(port->text().toInt());
+    global.setProxyUserid(userId->text().trimmed());
+    global.setProxyPassword(password->text().trimmed());
+}
+
+
+
+void SyncPreferences::proxyCheckboxAltered(int state) {
+    bool value = false;
+    if (state == Qt::Checked)
+        value = true;
+    host->setEnabled(value);
+    port->setEnabled(value);
+    userId->setEnabled(value);
+    password->setEnabled(value);
 }
