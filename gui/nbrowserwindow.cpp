@@ -298,6 +298,7 @@ void NBrowserWindow::setupShortcut(QShortcut *action, QString text) {
 
 // Load the note content into the window
 void NBrowserWindow::setContent(qint32 lid) {
+    QLOG_DEBUG() << "Setting note contents to " << lid;
 
     //hammer->timer.stop();
     // First, make sure we have a valid lid
@@ -310,6 +311,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     }
 
     // If we are already updating this note, we don't do anything
+    QLOG_DEBUG() << "this.lid:" << this->lid << " " << lid;
     if (lid == this->lid)
         return;
 
@@ -317,6 +319,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     if (this->editor->hasFocus())
         hasFocus = true;
 
+    QLOG_DEBUG() << "editor is dirty";
     if (this->editor->isDirty)
         this->saveNoteContent();
 
@@ -327,6 +330,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     NoteTable noteTable(global.db);
     Note n;
 
+    QLOG_DEBUG() << "Getting note";
     bool rc = noteTable.get(n, this->lid, false, false);
     if (!rc)
         return;
@@ -342,22 +346,27 @@ void NBrowserWindow::setContent(qint32 lid) {
         global.cache.remove(lid);
 
     if (!global.cache.contains(lid)) {
+        QLOG_DEBUG() << "Note not in cache";
         NoteFormatter formatter;
         if (criteria->isSearchStringSet())
             formatter.setHighlightText(criteria->getSearchString());
         formatter.setNote(n, global.pdfPreview);
         formatter.setHighlight();
+        QLOG_DEBUG() << "rebuilding note HTML";
         content = formatter.rebuildNoteHTML();
         if (!criteria->isSearchStringSet()) {
+            QLOG_DEBUG() << "criteria search string set";
             NoteCache *newCache = new NoteCache();
             newCache->isReadOnly = formatter.readOnly;
             newCache->isInkNote = formatter.inkNote;
             newCache->noteContent = content;
+            QLOG_DEBUG() << "adding to cache";
             global.cache.insert(lid, newCache);
         }
         readOnly = formatter.readOnly;
         inkNote = formatter.inkNote;
     } else {
+        QLOG_DEBUG() << "Fetching from cache";
         NoteCache *c = global.cache[lid];
         content = c->noteContent;
         readOnly = c->isReadOnly;
@@ -366,12 +375,14 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     setReadOnly(readOnly);
 
+    QLOG_DEBUG() << "Setting up note title";
     noteTitle.setTitle(lid, n.title, n.title);
     dateEditor.setNote(lid, n);
     //QLOG_DEBUG() << content;
     //editor->setContent(content,  "application/xhtml+xml");
     QWebSettings::setMaximumPagesInCache(0);
     QWebSettings::setObjectCacheCapacities(0, 0, 0);
+    QLOG_DEBUG() << "Setting editor contents";
     editor->setContent(content);
     // is this an ink note?
     if (inkNote)
@@ -379,6 +390,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     // Setup the alarm
     NoteAttributes attributes;
+    QLOG_DEBUG() << "Setting attributes";
     if (n.attributes.isSet())
         attributes = n.attributes;
     if (attributes.reminderTime.isSet()) {
@@ -413,6 +425,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
 
     // Set the tag names
+    QLOG_DEBUG() << "Setting tags";
     tagEditor.clear();
     QStringList names;
     QList<QString> tagNames;
@@ -431,6 +444,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     else
         tagEditor.setAccount(0);
 
+    QLOG_DEBUG() << "Setting notebook";
     this->lid = lid;
     notebookMenu.setCurrentNotebook(lid, n);
     NoteAttributes na;
@@ -440,6 +454,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         urlEditor.setUrl(lid, na.sourceURL);
     else
         urlEditor.setUrl(lid, "");
+    QLOG_DEBUG() << "Calling set source";
     setSource();
 
     if (criteria->isSearchStringSet()) {
@@ -449,6 +464,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         }
     }
 
+    QLOG_DEBUG() << "Checking thumbanail";
     if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
         hammer->render(this->lid);
     } /*else
@@ -456,6 +472,7 @@ void NBrowserWindow::setContent(qint32 lid) {
 
     if (hasFocus)
         this->editor->setFocus();
+    QLOG_DEBUG() << "Exiting setContent";
 }
 
 
