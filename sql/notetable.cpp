@@ -1148,11 +1148,18 @@ void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDir
 void NoteTable::updateUrl(qint32 noteLid, QString url, bool setAsDirty=false) {
     NSqlQuery query(db);
     db->lockForWrite();
-    query.prepare("Update DataStore set data=:url where lid=:lid and key=:key;");
-    query.bindValue(":url", url);
+    query.prepare("delete from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", noteLid);
     query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_URL);
     query.exec();
+
+    if (url.trimmed() != "") {
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+        query.bindValue(":lid", noteLid);
+        query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_URL);
+        query.bindValue(":url", url);
+        query.exec();
+    }
 
     if (setAsDirty) {
         setDirty(noteLid, setAsDirty);
