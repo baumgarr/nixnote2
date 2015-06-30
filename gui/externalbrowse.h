@@ -28,6 +28,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 class ExternalBrowse : public QMdiSubWindow
 {
     Q_OBJECT
+private:
+    QShortcut *focusTitleShortcut;
+    QShortcut *focusTagShortcut;
+    QShortcut *focusNoteShortcut;
+    QShortcut *focusUrlShortcut;
+    QShortcut *focusAuthorShortcut;
+    void setupShortcut(QShortcut *shortcut, QString keySequence);
+
 public:
     explicit ExternalBrowse(qint32 lid, QWidget *parent = 0);
     NBrowserWindow *browser;
