@@ -799,7 +799,7 @@ void NTableView::copyNoteLink() {
     } else
         localid = guid;
 
-    QString lidUrl = "evernote:///view/" + userid +"/" +shard + "/" +guid + "/" +localid;
+    QString lidUrl = "evernote:///view/" + userid +"/" +shard + "/" +guid + "/" +localid +"/";
     if (syncneeded) {
         QMessageBox msgBox;
         msgBox.setWindowTitle(tr("Unsynchronized Note"));
