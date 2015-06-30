@@ -40,7 +40,6 @@ Global::Global()
     dbLock = new QReadWriteLock(QReadWriteLock::Recursive);
     listView = ListViewWide;
     FilterCriteria *criteria = new FilterCriteria();
-    shortcutKeys = new ShortcutKeys();
     filterCriteria.push_back(criteria);
     filterPosition = 0;
 
@@ -74,6 +73,7 @@ Global::~Global() {
 //Initial global settings setup
 void Global::setup(StartupConfig startupConfig) {
     fileManager.setup(startupConfig.homeDirPath, startupConfig.programDirPath, startupConfig.accountId);
+    shortcutKeys = new ShortcutKeys();
     QString settingsFile = fileManager.getHomeDirPath("") + "nixnote.conf";
 
     globalSettings = new QSettings(settingsFile, QSettings::IniFormat);
