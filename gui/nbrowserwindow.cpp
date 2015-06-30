@@ -2770,6 +2770,12 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
         QString file  = urlList[i].toString();
         if (file.toLower().startsWith("file://"))
             attachFileSelected(file.mid(7));
+        else {
+            editor->setFocus();
+            global.clipboard->clear();
+            global.clipboard->setText(file, QClipboard::Clipboard);
+            this->editor->triggerPageAction(QWebPage::Paste);
+        }
     }
 }
 
