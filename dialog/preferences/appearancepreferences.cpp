@@ -34,6 +34,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout = new QGridLayout();
     mainLayout->setAlignment(Qt::AlignTop);
     setLayout(mainLayout);
+    int middleClickIndex = global.getMiddleClickAction();
 
     showTrayIcon = new QCheckBox(tr("Show tray icon"), this);
     showPDFs = new QCheckBox(tr("Display PDFs inline"), this);
@@ -57,6 +58,11 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     trayMiddleClickAction->addItem(tr("New Quick Note"), 2);
     trayMiddleClickAction->addItem(tr("Screen Capture"), 3);
 
+    mouseMiddleClickAction = new QComboBox();
+    mouseMiddleClickAction->addItem(tr("Open New Tab"), MOUSE_MIDDLE_CLICK_NEW_TAB);
+    mouseMiddleClickAction->addItem(tr("Open New Window"), MOUSE_MIDDLE_CLICK_NEW_WINDOW);
+    mouseMiddleClickAction->setCurrentIndex(middleClickIndex);
+
 
     defaultGuiFontSizeChooser = new QComboBox();
     defaultFontChooser = new QComboBox();
@@ -69,16 +75,6 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     loadFontNames(defaultGuiFontChooser, global.defaultGuiFont);
 
     windowThemeChooser = new QComboBox();
-//    windowThemeChooser->addItem(QIcon(":windowIcon0.png"), "", ":windowIcon0.png");
-//    windowThemeChooser->addItem(QIcon(":windowIcon1.png"), "", ":windowIcon1.png");
-//    windowThemeChooser->addItem(QIcon(":windowIcon2.png"), "", ":windowIcon2.png");
-//    windowThemeChooser->addItem(QIcon(":windowIcon3.png"), "", ":windowIcon3.png");
-//    windowThemeChooser->addItem(QIcon(":windowIcon4.png"), "", ":windowIcon4.png");
-//    windowThemeChooser->addItem(QIcon(":windowIcon5.png"), "", ":windowIcon5.png");
-//    windowThemeChooser->addItem(QIcon(":windowIcon6.png"), "", ":windowIcon6.png");
-//   // windowIconChooser->setSizePolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
-//    windowThemeChooser->adjustSize();
-//    windowThemeChooser->setIconSize(QSize(80,80));
     windowThemeChooser->addItem(tr("System Default"));
     windowThemeChooser->addItems(global.getThemeNames());
 
@@ -108,6 +104,9 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(autoStart, row++, 0);
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
+
+    mainLayout->addWidget(new QLabel(tr("Middle Click Open Behavior")), row,0);
+    mainLayout->addWidget(mouseMiddleClickAction, row++, 1);
 
     mainLayout->addWidget(new QLabel(tr("Tray Icon Click Action")), row, 0);
     mainLayout->addWidget(traySingleClickAction, row++, 1);
@@ -176,6 +175,7 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("showPDFs", showPDFs->isChecked());
     global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();
     global.settings->setValue("autoHideEditorToolbar", global.autoHideEditorToolbar);
+    global.settings->setValue("mouseMiddleClickOpen", mouseMiddleClickAction->currentIndex());
     global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
     global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
     global.settings->remove("trayDoubleClickAction");

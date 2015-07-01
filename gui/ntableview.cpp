@@ -488,6 +488,10 @@ void NTableView::mouseReleaseEvent(QMouseEvent *e) {
     } else if ( e->button() == Qt::LeftButton ) {
             this->openSelectedLids(false);
     } else if ( e->button() == Qt::MidButton ) {
+        int v = global.getMiddleClickAction();
+        if (v == MOUSE_MIDDLE_CLICK_NEW_WINDOW)
+            this->openNoteExternalWindowTriggered();
+        else
             this->openSelectedLids(true);
     }
 }

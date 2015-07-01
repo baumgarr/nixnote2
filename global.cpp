@@ -723,7 +723,19 @@ bool Global::isProxyEnabled() {
 
 
 
+// Mouse middle click actions
+void Global::setMiddleClickAction(int value) {
+    settings->beginGroup("Appearance");
+    settings->setValue("mouseMiddleClickOpen", value);
+    settings->endGroup();
+}
 
+int Global::getMiddleClickAction() {
+   settings->beginGroup("Appearance");
+   int value = settings->value("mouseMiddleClickOpen", 0).toInt();
+   settings->endGroup();
+   return value;
+}
 
 
 
