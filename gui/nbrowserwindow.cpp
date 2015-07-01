@@ -447,12 +447,16 @@ void NBrowserWindow::setContent(qint32 lid) {
     QLOG_DEBUG() << "Setting notebook";
     this->lid = lid;
     notebookMenu.setCurrentNotebook(lid, n);
+    QLOG_DEBUG() << "Setting URL";
     urlEditor.setUrl(lid, "");
     NoteAttributes na;
+    QLOG_DEBUG() << "Setting note attributes";
     if (n.attributes.isSet()) {
         na = n.attributes;
-        if (na.sourceURL.isSet())
+        if (na.sourceURL.isSet()) {
+            QLOG_DEBUG() << "Setting sourceUrl";
             urlEditor.setUrl(lid, na.sourceURL);
+        }
     }
 
     QLOG_DEBUG() << "Calling set source";

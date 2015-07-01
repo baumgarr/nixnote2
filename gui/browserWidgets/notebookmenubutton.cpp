@@ -52,9 +52,11 @@ void NotebookMenuButton::setCurrentNotebook(int lid, Note note) {
     currentNoteLid = lid;
     NotebookTable notebookTable(global.db);
     Notebook notebook;
+    QLOG_DEBUG() << "notebook guid:" << note.notebookGuid;
     notebookTable.get(notebook, note.notebookGuid);
     if (currentAction < actions.size())
         actions[currentAction]->setChecked(false);
+    QLOG_DEBUG() << "Setting notebook name";
     this->setText(notebook.name);
     for (int i=0; i<actions.size(); i++) {
         actions[i]->setChecked(false);
