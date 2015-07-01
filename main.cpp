@@ -101,7 +101,8 @@ int main(int argc, char *argv[])
             printf("  --help or -?                  Show this message\n");
             printf("  --accountId=<id>              Start with specified user account\n");
             printf("  --dontStartMinimized          Override option to start minimized\n");
-            printf("  --disablIndexing              Disable all indexing\n");
+            printf("  --disableEditing              Disable note editing\n");
+            printf("  --disableIndexing             Disable all indexing\n");
             printf("  --openNote=<lid>              Open a specific note on startup\n");
             printf("  --forceSystemTrayAvailable    Force the program to accept that\n");
             printf("                                the desktop supports tray icons.\n");
@@ -117,6 +118,9 @@ int main(int argc, char *argv[])
         if (parm.startsWith("--openNote=", Qt::CaseSensitive)) {
             parm = parm.mid(11);
             startupConfig.startupNoteLid = parm.toInt();
+        }
+        if (parm == "--disableEditing") {
+            startupConfig.disableEditing = true;
         }
         if (parm == "--dontStartMinimized") {
             startupConfig.forceNoStartMinimized = true;

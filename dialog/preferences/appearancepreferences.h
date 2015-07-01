@@ -61,6 +61,7 @@ public:
     QCheckBox *minimizeToTray;
     QCheckBox *closeToTray;
     QCheckBox *dynamicTotals;
+    QCheckBox *disableEditingOnStartup;
 
     enum DefaultNotebook {
         UseLastViewedNotebook = 0,

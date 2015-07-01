@@ -45,6 +45,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     dynamicTotals = new QCheckBox(tr("Show notebook and tag totals"), this);
     autoHideEditorButtonbar = new QCheckBox(tr("Auto-Hide editor toolbar"), this);
     autoHideEditorButtonbar->setChecked(global.autoHideEditorToolbar);
+    disableEditingOnStartup = new QCheckBox(tr("Disable note editing on statup"), this);
 
     traySingleClickAction = new QComboBox();
     traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
@@ -102,6 +103,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(dynamicTotals, row++, 0);
     mainLayout->addWidget(startMinimized, row++, 0);
     mainLayout->addWidget(autoStart, row++, 0);
+    mainLayout->addWidget(disableEditingOnStartup, row++, 0);
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
 
@@ -131,6 +133,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
     global.settings->beginGroup("Appearance");
 
+    disableEditingOnStartup->setChecked(global.settings->value("disableEditingOnStartup",false).toBool());
     int idx  = global.settings->value("traySingleClickAction", 0).toInt();
     idx = traySingleClickAction->findData(idx, Qt::UserRole);
     traySingleClickAction->setCurrentIndex(idx);
@@ -171,6 +174,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
 void AppearancePreferences::saveValues() {
     global.settings->beginGroup("Appearance");
+    global.settings->setValue("disableEditingOnStartup", disableEditingOnStartup->isChecked());
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
     global.settings->setValue("showPDFs", showPDFs->isChecked());
     global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();

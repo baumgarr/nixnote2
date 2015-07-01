@@ -42,6 +42,7 @@ public:
     bool forceStartMinimized;
     bool disableIndexing;
     bool forceSystemTrayAvailable;
+    bool disableEditing;
 };
 
 #endif // STARTUPCONFIG_H

@@ -482,7 +482,8 @@ void NBrowserWindow::setContent(qint32 lid) {
 
 
 void NBrowserWindow::setReadOnly(bool readOnly) {
-    if (readOnly) {
+    isReadOnly = readOnly;
+    if (readOnly || global.disableEditing) {
         noteTitle.setFocusPolicy(Qt::NoFocus);
         tagEditor.setEnabled(false);
         buttonBar->setVisible(false);

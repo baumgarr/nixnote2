@@ -208,6 +208,7 @@ public slots:
     void newNote();
     void noteButtonClicked();
     void newExternalNote();
+    void disableEditing();
     void setSyncTimer();
     void notesDeleted(QList<qint32> lid);
     void openTrunk();

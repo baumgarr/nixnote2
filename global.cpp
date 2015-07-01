@@ -140,6 +140,9 @@ void Global::setup(StartupConfig startupConfig) {
     defaultFontSize = settings->value("defaultFontSize",0).toInt();
     defaultGuiFontSize = settings->value("defaultGuiFontSize", 0).toInt();
     defaultGuiFont = settings->value("defaultGuiFont","").toString();
+    disableEditing = false;
+    if (settings->value("disableEditingOnStartup",false).toBool() || startupConfig.disableEditing)
+        disableEditing = true;
     settings->endGroup();
 
     if (defaultFont != "" && defaultFontSize > 0) {

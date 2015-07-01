@@ -31,4 +31,5 @@ StartupConfig::StartupConfig()
     this->disableIndexing = false;
     this->startupNoteLid = 0;
     this->forceSystemTrayAvailable=false;
+    this->disableEditing = false;
 }

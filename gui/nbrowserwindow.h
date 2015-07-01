@@ -118,6 +118,7 @@ public:
     //LocationEditor locationEditor;
     void setReadOnly(bool readOnly);
     NMainMenuBar *mainMenuBarHook;
+    bool isReadOnly;
 
     EditorButtonBar *buttonBar;
     QShortcut *focusNoteShortcut;

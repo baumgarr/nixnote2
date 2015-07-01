@@ -208,7 +208,7 @@ public:
     int getMiddleClickAction();
     void setMiddleClickAction(int value);
 
-
+    bool disableEditing;                                    // Disable all editing of notes
 
     // These functions deal with the icon themes
     QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme

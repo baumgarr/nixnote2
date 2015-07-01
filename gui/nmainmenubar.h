@@ -67,6 +67,7 @@ public:
     QAction *importNoteAction;
     QAction *accountDialogAction;
     QAction *pauseIndexingAction;
+    QAction *disableEditingAction;
     QAction *userMaintenanceAction;
     QAction *aboutAction;
 

@@ -2179,6 +2179,22 @@ void NixNote::findReplaceInNotePressed() {
 
 
 
+//**************************************************
+//* Temporarily disable all note editing
+//**************************************************
+void NixNote::disableEditing() {
+   global.disableEditing = !global.disableEditing;
+   for (int i=0; i<tabWindow->browserList->size(); i++) {
+        NBrowserWindow *browser = tabWindow->browserList->at(i);
+        browser->setReadOnly(global.disableEditing && browser->isReadOnly);
+   }
+   for (int i=0; i<tabWindow->externalList->size(); i++) {
+        NBrowserWindow *browser = tabWindow->externalList->at(i)->browser;
+        browser->setReadOnly(global.disableEditing && browser->isReadOnly);
+   }
+}
+
+
 
 //*************************************************
 //* Replace All button pressed.

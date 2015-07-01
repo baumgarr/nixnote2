@@ -434,6 +434,14 @@ void NMainMenuBar::setupToolsMenu() {
   pauseIndexingAction->setCheckable(true);
   toolsMenu->addAction(pauseIndexingAction);
 
+  disableEditingAction = new QAction(tr("Disable Editing"), this);
+  disableEditingAction->setToolTip(tr("Temporarily disable note editing"));
+  setupShortcut(disableEditingAction, QString("Tools_Disable_Editing"));
+  disableEditingAction->setCheckable(true);
+  disableEditingAction->setChecked(global.disableEditing);
+  connect(disableEditingAction, SIGNAL(triggered()), parent, SLOT(disableEditing()));
+  toolsMenu->addAction(disableEditingAction);
+
   accountDialogAction = new QAction(tr("Account"), this);
   accountDialogAction->setToolTip(tr("Account information"));
   connect(accountDialogAction, SIGNAL(triggered()), parent, SLOT(openAccount()));
