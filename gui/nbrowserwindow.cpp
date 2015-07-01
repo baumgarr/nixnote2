@@ -1692,20 +1692,25 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
          if (newlid <= 0)
              return;
 
-
-         // Setup a new filter
-         FilterCriteria *criteria = new FilterCriteria();
-         global.filterCriteria[global.filterPosition]->duplicate(*criteria);
-         criteria->unsetSelectedNotes();
-         criteria->unsetLid();
-         criteria->setLid(newlid);
-         global.appendFilter(criteria);
-         global.filterPosition++;
          bool newExternalWindow = false;
-         if (editor->middleClickActive) {
-            newExternalWindow = true;
+         bool newTab = false;
+         if (QApplication::keyboardModifiers() & Qt::ShiftModifier) {
+            if (global.getMiddleClickAction() == MOUSE_MIDDLE_CLICK_NEW_WINDOW)
+                newExternalWindow = true;
+            else
+                newTab = true;
+         } else {
+             // Setup a new filter
+             FilterCriteria *criteria = new FilterCriteria();
+             global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+             criteria->unsetSelectedNotes();
+             criteria->unsetLid();
+             criteria->setLid(newlid);
+             global.appendFilter(criteria);
+             global.filterPosition++;
          }
-         emit(evernoteLinkClicked(newlid, false, newExternalWindow));
+         emit(evernoteLinkClicked(newlid, newTab, newExternalWindow));
+
          return;
      }
      if (url.toString().startsWith("nnres:", Qt::CaseInsensitive)) {
@@ -2791,18 +2796,18 @@ void NBrowserWindow::hideHtmlEntities() {
 
 
 void NBrowserWindow::handleUrls(const QMimeData *mime) {
-
     QList<QUrl> urlList = mime->urls();
     for (int i=0; i<urlList.size(); i++) {
         QString file  = urlList[i].toString();
-        if (file.toLower().startsWith("file://"))
+        if (file.toLower().startsWith("file://")) {
             attachFileSelected(file.mid(7));
-        else {
-            editor->setFocus();
-            global.clipboard->clear();
-            global.clipboard->setText(file, QClipboard::Clipboard);
-            this->editor->triggerPageAction(QWebPage::Paste);
+            return;
         }
+
+        editor->setFocus();
+        global.clipboard->clear();
+        global.clipboard->setText(file, QClipboard::Clipboard);
+        this->editor->triggerPageAction(QWebPage::Paste);
     }
 }
 

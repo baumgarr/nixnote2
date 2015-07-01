@@ -26,8 +26,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <sql/resourcetable.h>
 #include "sql/nsqlquery.h"
 #include <QMessageBox>
-#include <sql/notetable.h>
 #include <QClipboard>
+#include <sql/notetable.h>
 #include <sql/configstore.h>
 #include "filters/filterengine.h"
 #include "sql/usertable.h"
@@ -452,6 +452,8 @@ void NTableView::refreshSelection() {
         historyList.append(criteria->getFavorite());
 
     QLOG_TRACE() << "Highlighting selected rows after refresh";
+    SelectionMode mode = selectionMode();
+    setSelectionMode(QAbstractItemView::MultiSelection);
     // Check the highlighted LIDs from the history selection.
     for (int i=0; i<historyList.size(); i++) {
         if (proxy->lidMap->contains(historyList[i])) {
@@ -464,6 +466,7 @@ void NTableView::refreshSelection() {
             }
         }
     }
+    setSelectionMode(mode);
     QLOG_TRACE() << "Highlighting complete";
 
     // Make sure at least one thing is selected

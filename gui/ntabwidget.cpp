@@ -300,9 +300,9 @@ void NTabWidget::evernoteLinkClicked(qint32 openLid, bool newTab, bool newWindow
     emit(updateSelectionRequested());
     if (newTab)
         openNote(openLid, NewTab);
-    if (newWindow)
+    else if (newWindow)
         openNote(openLid, ExternalWindow);
-    openNote(openLid, CurrentTab);
+    else openNote(openLid, CurrentTab);
 }
 
 

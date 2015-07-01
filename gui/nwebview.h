@@ -81,11 +81,8 @@ public:
     NWebPage *editorPage;
     bool event(QEvent *event);
     void keyPressEvent(QKeyEvent *);
-    void keyReleaseEvent(QKeyEvent *);
-    void mouseReleaseEvent(QMouseEvent *e);
     void downloadAttachment(QNetworkRequest *req);
     void focusLostNotify(QString text);
-    bool middleClickActive;
 
 signals:
     void noteChanged();
