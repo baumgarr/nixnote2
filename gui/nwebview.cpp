@@ -82,6 +82,11 @@ NWebView::NWebView(NBrowserWindow *parent) :
     contextMenu->addAction(removeFormattingAction);
     connect(removeFormattingAction, SIGNAL(triggered()), parent, SLOT(removeFormatButtonPressed()));
 
+    copyNoteUrlAction = new QAction(tr("Copy Note URL"), this);
+    this->setupShortcut(copyNoteUrlAction, "Edit_Copy_Note_Url");
+    contextMenu->addAction(copyNoteUrlAction);
+    connect(copyNoteUrlAction, SIGNAL(triggered()), parent, SLOT(copyNoteUrl()));
+
     contextMenu->addSeparator();
 
     QMenu *colorMenu = new QMenu(tr("Background Color"), this);

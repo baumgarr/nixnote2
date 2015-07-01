@@ -31,7 +31,7 @@ class ShortcutKeys : public QObject
 {
     Q_OBJECT
 private:
-    void loadCustomKeys();
+    void loadCustomKeys(QString fileName);
 
 public:
     explicit ShortcutKeys(QObject *parent = 0);

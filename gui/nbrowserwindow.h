@@ -99,6 +99,7 @@ private:
     QShortcut *encryptTextShortcut;
     QShortcut *removeHyperlinkShortcut;
     QShortcut *insertLatexShortcut;
+    QShortcut *copyNoteUrlShortcut;
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
@@ -254,6 +255,7 @@ public slots:
     void newTagFocusShortcut();
     void authorFocusShortcut();
     void urlFocusShortcut();
+    void copyNoteUrl();
 
 private slots:
     void sendTitleUpdateSignal();

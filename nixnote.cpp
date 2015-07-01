@@ -661,8 +661,7 @@ void NixNote::setupGui() {
 
     // Restore expanded tags & stacks
     global.settings->beginGroup("SaveState");
-    QString expandedTags = global.settings->value("expandedTags", "").toString();\
-    QLOG_DEBUG() << "Expanded Tags: " << expandedTags;
+    QString expandedTags = global.settings->value("expandedTags", "").toString();
     if (expandedTags != "") {
         QStringList tags = expandedTags.split(" ");
         for (int i=0; i<tags.size(); i++) {
@@ -673,7 +672,6 @@ void NixNote::setupGui() {
         }
     }
     QString expandedNotebooks = global.settings->value("expandedStacks", "").toString();
-    QLOG_DEBUG() << "Expanded Stacks: " << expandedNotebooks;
     if (expandedNotebooks != "") {
         QStringList books = expandedNotebooks.split(" ");
         for (int i=0; i<books.size(); i++) {
@@ -688,7 +686,6 @@ void NixNote::setupGui() {
 
     searchTreeView->root->setExpanded(true);
     QString collapsedTrees = global.settings->value("collapsedTrees", "").toString();
-    QLOG_DEBUG() << "collapsedTrees: " << collapsedTrees;
     if (collapsedTrees != "") {
         QStringList trees = collapsedTrees.split(" ");
         for (int i=0; i<trees.size(); i++) {
@@ -723,6 +720,11 @@ void NixNote::setupGui() {
     focusNoteShortcut->setContext(Qt::WidgetShortcut);
     this->setupShortcut(focusNoteShortcut, "Focus_Note");
     connect(focusNoteShortcut, SIGNAL(activated()), tabWindow->currentBrowser()->editor, SLOT(setFocus()));
+
+    copyNoteUrlShortcut = new QShortcut(this);
+    copyNoteUrlShortcut->setContext(Qt::WidgetShortcut);
+    this->setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
+    connect(copyNoteUrlShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(copyNoteUrl()));
 
     focusTagShortcut = new QShortcut(this);
     focusTagShortcut->setContext(Qt::WidgetWithChildrenShortcut);

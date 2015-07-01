@@ -143,6 +143,9 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     insertDatetimeShortcut = new QShortcut(this);
     setupShortcut(insertDatetimeShortcut, "Insert_DateTime");
     connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
+    copyNoteUrlShortcut = new QShortcut(this);
+    setupShortcut(copyNoteUrlShortcut, "Edit_Copy_Note_Url");
+    connect(copyNoteUrlShortcut, SIGNAL(activated()), this, SLOT(copyNoteUrl()));
 
 
     // Setup the signals
@@ -2913,21 +2916,27 @@ void NBrowserWindow::urlFocusShortcut() {
 
 
 
+void NBrowserWindow::copyNoteUrl() {
+    Note n;
+    NoteTable ntable(global.db);
+    ntable.get(n,this->lid,false,false);
+    UserTable utable(global.db);
+    User user;
+    utable.getUser(user);
+
+    QString href = "evernote:///view/" + QString::number(user.id) + QString("/") +
+           user.shardId +QString("/") +
+            n.guid +QString("/") +
+            n.guid + QString("/");
+    global.clipboard->setText(href, QClipboard::Clipboard);
+}
+
+
+
 void NBrowserWindow::newTagFocusShortcut() {
     if (!this->tagEditor.newTag.isVisible()) {
         this->changeExpandState(EXPANDBUTTON_2);
         this->expandButton.setState(EXPANDBUTTON_2);
     }
     tagEditor.newTag.setFocus();
-
-//    case EXPANDBUTTON_2:
-//        urlEditor.show();
-//        tagEditor.show();
-//        break;
-//    case EXPANDBUTTON_3:
-//        urlEditor.show();
-//        tagEditor.show();
-//        dateEditor.show();
-//        break;
-//    }
 }

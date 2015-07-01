@@ -52,6 +52,7 @@ Edit_Encrypt_Text				// Encrypt selected text (Popup menu)
 Edit_Insert_Table				// Insert a table into a note (Popup menu)
 Edit_Attach_File                                // Attach a file
 Edit_Insert_Latex				// Insert a LaTeX formula.
+Edit_Copy_Note_Url				// Copy the current note URL to the clipboard
 
 View_List_Narrow				// View with the list on the side
 View_List_Wide					// View with the list on the top
@@ -110,7 +111,7 @@ Insert_DateTime			Ctrl+;		// Insert the current date/time
 Focus_Title		      			// Focus on the current note title
 Focus_Tag					// Focus on the tag line
 Focus_Note					// Focus on the note itself
-Focus_Author					// Focus on the author field
+Focus_Author		        		// Focus on the author field
 Focus_Url					// Focus on the source URL field
 Focus_Search					// Focus on the search field
 

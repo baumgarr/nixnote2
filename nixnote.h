@@ -170,6 +170,7 @@ private:
     QShortcut *focusNoteShortcut;
     QShortcut *focusUrlShortcut;
     QShortcut *focusAuthorShortcut;
+    QShortcut *copyNoteUrlShortcut;
     void setupShortcut(QShortcut *shortcut, QString keySequence);
 
 public:

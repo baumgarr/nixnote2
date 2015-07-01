@@ -189,13 +189,15 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
 
     loadkey(QString("Insert_DateTime"), Insert_DateTime);
 
-    loadCustomKeys();
+    QString userFileName = global.fileManager.getHomeDirPath("") + QString("shortcuts.txt");
+    QString systemFileName = global.fileManager.getProgramDirPath("") + QString("shortcuts.txt");
+    loadCustomKeys(systemFileName);
+    loadCustomKeys(userFileName);
 
 }
 
 // Read in the custom keys (if they exist)
-void ShortcutKeys::loadCustomKeys() {
-    QString fileName = global.fileManager.getHomeDirPath("") + QString("shortcuts.txt");
+void ShortcutKeys::loadCustomKeys(QString fileName) {
     QFile file(fileName);
     file.open(QFile::ReadOnly);
     if (file.isOpen()) {

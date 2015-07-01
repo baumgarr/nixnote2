@@ -74,6 +74,7 @@ public:
     QAction *openAction;
     QAction *insertQuickLinkAction;
     QAction *insertHtmlEntitiesAction;
+    QAction *copyNoteUrlAction;
 
     QShortcut *attachFileShortcut;
 
