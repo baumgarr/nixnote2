@@ -1244,7 +1244,7 @@ void NBrowserWindow::insertQuickLinkButtonPressed() {
         QString href = "evernote:///view/" + QString::number(user.id) + QString("/") +
                user.shardId +QString("/") +
                 n.guid +QString("/") +
-                n.guid;
+                n.guid + QString("/");
 
         QString url = QString("<a href=\"") +href
                 +QString("\" title=\"") +text
@@ -1673,6 +1673,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
      }
      if (url.toString().startsWith("evernote:/view/", Qt::CaseInsensitive) ||
              url.toString().startsWith("evernote:///view/", Qt::CaseInsensitive)) {
+
          QStringList tokens;
          if (url.toString().startsWith("evernote:/view/", Qt::CaseInsensitive))
             tokens = url.toString().replace("evernote:/view/", "").split("/", QString::SkipEmptyParts);
@@ -1696,7 +1697,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
          criteria->setLid(newlid);
          global.appendFilter(criteria);
          global.filterPosition++;
-         emit(evernoteLinkClicked(newlid, false));
+         emit(evernoteLinkClicked(newlid, false, editor->shiftKeyDown));
          return;
      }
      if (url.toString().startsWith("nnres:", Qt::CaseInsensitive)) {

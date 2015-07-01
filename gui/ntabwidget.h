@@ -78,7 +78,7 @@ public slots:
     void tagCreationSignaled(qint32 lid);
     void noteSyncSignaled(qint32 lid);
     void noteUpdateSignaled(qint32);
-    void evernoteLinkClicked(qint32 openLid, bool newWindow);
+    void evernoteLinkClicked(qint32 openLid, bool newTab, bool newWindow);
 
     void saveAllNotes();
     void undoButtonPressed();

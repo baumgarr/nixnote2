@@ -148,7 +148,7 @@ public:
 signals:
     void noteUpdated(qint32);
     qint32 tagAdded(qint32);
-    void evernoteLinkClicked(qint32 lid, bool newWindow);
+    void evernoteLinkClicked(qint32 lid, bool newTab, bool newWindow);
     void updateNoteList(qint32 lid, int column, QVariant data);
     void noteContentEditedSignal(QString uuid, qint32 lid, QString content);
     void noteTitleEditedSignal(QString uuid, qint32 lid, QString content);

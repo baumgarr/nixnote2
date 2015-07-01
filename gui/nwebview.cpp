@@ -368,9 +368,15 @@ bool NWebView::event(QEvent *event)
 }
 
 
+void NWebView::keyReleaseEvent(QKeyEvent *e) {
+    shiftKeyDown = false;
+    QWebView::keyReleaseEvent(e);
+}
+
 void NWebView::keyPressEvent(QKeyEvent *e) {
     // This is done because if we set the content as editable, the scroll keys are
     // ignored by wbkit.
+    shiftKeyDown = false;
     if (e->key() == Qt::Key_PageUp || e->key() == Qt::Key_PageDown) {
         int bottom = this->page()->mainFrame()->geometry().bottom();
         int top = this->page()->mainFrame()->geometry().top();
@@ -379,6 +385,8 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
             scrollValue = -1*scrollValue;
         page()->mainFrame()->scroll(0,scrollValue);
     }
+    if (e->KeyPress && e->key() == Qt::Key_Shift)
+        shiftKeyDown = true;
     QWebView::keyPressEvent(e);
 }
 

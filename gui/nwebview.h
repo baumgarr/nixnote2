@@ -81,8 +81,10 @@ public:
     NWebPage *editorPage;
     bool event(QEvent *event);
     void keyPressEvent(QKeyEvent *);
+    void keyReleaseEvent(QKeyEvent *);
     void downloadAttachment(QNetworkRequest *req);
     void focusLostNotify(QString text);
+    bool shiftKeyDown;
 
 signals:
     void noteChanged();

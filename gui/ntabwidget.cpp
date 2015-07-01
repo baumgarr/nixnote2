@@ -291,17 +291,18 @@ void NTabWidget::setupConnections(NBrowserWindow *newBrowser) {
     connect(newBrowser, SIGNAL(noteTagsEditedSignal(QString,qint32,QStringList)), this,  SLOT(noteTagsEdited(QString,qint32,QStringList)));
     connect(newBrowser, SIGNAL(noteNotebookEditedSignal(QString,qint32,qint32,QString)), this,  SLOT(noteNotebookEdited(QString,qint32,qint32,QString)));
     connect(newBrowser, SIGNAL(noteDateEditedSignal(QString,qint32,int,QDateTime)), this,  SLOT(noteDateEdited(QString,qint32,int,QDateTime)));
-    connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool)), this, SLOT(evernoteLinkClicked(qint32, bool)));
+    connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool,bool)), this, SLOT(evernoteLinkClicked(qint32, bool,bool)));
 }
 
 
 
-void NTabWidget::evernoteLinkClicked(qint32 openLid, bool newWindow) {
+void NTabWidget::evernoteLinkClicked(qint32 openLid, bool newTab, bool newWindow) {
     emit(updateSelectionRequested());
-    if (newWindow)
+    if (newTab)
         openNote(openLid, NewTab);
-    else
-        openNote(openLid, CurrentTab);
+    if (newWindow)
+        openNote(openLid, ExternalWindow);
+    openNote(openLid, CurrentTab);
 }
 
 
@@ -398,7 +399,7 @@ void NTabWidget::setupExternalBrowserConnections(NBrowserWindow *newBrowser) {
     connect(newBrowser, SIGNAL(updateNoteList(qint32,int,QVariant)), this, SLOT(updateNoteListSignaled(qint32,int,QVariant)));
     connect(syncThread, SIGNAL(noteUpdated(qint32)), this, SLOT(noteSyncSignaled(qint32)));
     connect(newBrowser, SIGNAL(noteContentEditedSignal(QString,qint32,QString)), this,  SLOT(noteContentEdited(QString,qint32,QString)));
-    connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool)), this, SLOT(evernoteLinkClicked(qint32, bool)));
+    connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool,bool)), this, SLOT(evernoteLinkClicked(qint32, bool,bool)));
     connect(newBrowser, SIGNAL(noteTitleEditedSignal(QString,qint32,QString)), this,  SLOT(noteTitleEdited(QString,qint32,QString)));
     connect(newBrowser, SIGNAL(noteAuthorEditedSignal(QString,qint32,QString)), this,  SLOT(noteAuthorEdited(QString,qint32,QString)));
     connect(newBrowser, SIGNAL(noteLocationEditedSignal(QString,qint32,double,double,double,QString)), this,  SLOT(noteLocationEdited(QString,qint32,double,double,double,QString)));
