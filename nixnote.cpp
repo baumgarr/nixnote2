@@ -1107,7 +1107,6 @@ void NixNote::closeEvent(QCloseEvent *event) {
             }
         }
     }
-    QLOG_DEBUG() << "Setting expandedTags: " << savedLids.trimmed();
     global.settings->setValue("expandedTags", savedLids.trimmed());
 
     QString collapsedTrees = "";
@@ -1122,7 +1121,6 @@ void NixNote::closeEvent(QCloseEvent *event) {
         collapsedTrees= collapsedTrees + "attributes ";
     if (!searchTreeView->root->isExpanded())
         collapsedTrees= collapsedTrees + "savedsearches ";
-    QLOG_DEBUG() << "Setting collapsedTrees: " << collapsedTrees.trimmed();
     global.settings->setValue("collapsedTrees", collapsedTrees.trimmed());
 
     QHash<qint32, NNotebookViewItem*>::iterator books;
@@ -1135,7 +1133,6 @@ void NixNote::closeEvent(QCloseEvent *event) {
             }
         }
     }
-    QLOG_DEBUG() << "Setting expandedStacks: " << savedLids.trimmed();
     global.settings->setValue("expandedStacks", savedLids.trimmed());
 
     global.settings->endGroup();
