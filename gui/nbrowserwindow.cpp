@@ -1697,7 +1697,11 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
          criteria->setLid(newlid);
          global.appendFilter(criteria);
          global.filterPosition++;
-         emit(evernoteLinkClicked(newlid, false, editor->shiftKeyDown));
+         bool newExternalWindow = false;
+         if (editor->middleClickActive) {
+            newExternalWindow = true;
+         }
+         emit(evernoteLinkClicked(newlid, false, newExternalWindow));
          return;
      }
      if (url.toString().startsWith("nnres:", Qt::CaseInsensitive)) {
