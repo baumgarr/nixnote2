@@ -448,7 +448,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         tagEditor.setAccount(0);
 
     QLOG_DEBUG() << "Setting notebook";
-    this->lid = lid;
+    //this->lid = lid;
     notebookMenu.setCurrentNotebook(lid, n);
     QLOG_DEBUG() << "Setting URL";
     urlEditor.setUrl(lid, "");

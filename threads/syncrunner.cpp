@@ -75,7 +75,7 @@ void SyncRunner::synchronize() {
     error = false;
 
     comm->error.reset();
-    if (!comm->connect()) {
+    if (!comm->enConnect()) {
         this->communicationErrorHandler();
         error = true;
         emit syncComplete();
@@ -86,7 +86,7 @@ void SyncRunner::synchronize() {
     keepRunning = true;
     evernoteSync();
     emit syncComplete();
-    comm->disconnect();
+    comm->enDisconnect();
     global.connected=false;
 }
 

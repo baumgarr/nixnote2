@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/nsqlquery.h"
 #include "tagtable.h"
 #include "global.h"
+#include "utilities/noteindexer.h"
 
 #include <QSqlTableModel>
 #include <QtXml>
@@ -462,6 +463,10 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     db->unlock();
 
     updateNoteList(lid, t, isDirty, account);
+
+    // Experimental index helper
+    NoteIndexer indexer;
+    indexer.indexNote(lid);
     return lid;
 }
 
@@ -1074,6 +1079,10 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
 
+    // We don't really need to do anything after deleting the flag
+    if (!indexNeeded)
+        return;
+
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
@@ -1081,6 +1090,10 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     query.exec();
     query.finish();
     db->unlock();
+
+    // Experimental class to index at save
+    NoteIndexer indexer;
+    indexer.indexNote(lid);
 }
 
 
@@ -1690,6 +1703,8 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
     query.finish();
+    NoteIndexer indexer;
+    indexer.indexNote(lid);
 
     db->unlock();
 

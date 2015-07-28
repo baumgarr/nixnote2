@@ -71,6 +71,7 @@ class CommunicationManager : public QObject
     Q_OBJECT
 
 private:
+    bool inkNoteImageDownloaded;              // Is an inknote download ready?
     bool initComplete;                        // Has the class been properly initialized?
     DatabaseConnection *db;                   // Database connection
     bool initNoteStore();                     // Initialize the Notestore connection
@@ -106,12 +107,12 @@ public:
     CommunicationManager(DatabaseConnection *db);              // Constructor
     ~CommunicationManager();                                   // Destructor
     CommunicationError error;                                  // Used to report back errors
-    bool connect();                                            // Connect to Evernote
+    bool enConnect();                                            // Connect to Evernote
     bool getSyncState(QString authToken, SyncState &syncState);    // Download the last sync state
     bool getSyncChunk(SyncChunk &chunk, int start, int chunkSize, int type, bool fullSync, QString token="");   // Download a sync chunk
     bool getLinkedNotebookSyncState(SyncState &syncState, LinkedNotebook &book);         // Get the sync state of a linked notebook
     bool getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNotebook &book, int start, int chunkSize, bool fullSync);   // Get linked notebook sync chunk
-    void disconnect();                                         // Disconnect from evernote
+    void enDisconnect();                                         // Disconnect from evernote
     bool authenticateToLinkedNotebookShard(LinkedNotebook &book);    // Authenticate to a linked notebook account owner shard
     bool authenticateToLinkedNotebook(AuthenticationResult &authResult, LinkedNotebook &book);   // Authenticate to linked notebook account
     bool getUserInfo(User &user);                              // Get user information
@@ -143,6 +144,7 @@ public:
 
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);   // An inknote has been downloaded.
+
 };
 
 #endif // COMMUNICATIONMANAGER_H

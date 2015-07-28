@@ -184,7 +184,8 @@ SOURCES += main.cpp\
     filters/remotequery.cpp \
     gui/browserWidgets/fontnamecombobox.cpp \
     gui/browserWidgets/fontsizecombobox.cpp \
-    utilities/pixelconverter.cpp
+    utilities/pixelconverter.cpp \
+    utilities/noteindexer.cpp
 
 
 
@@ -342,7 +343,8 @@ HEADERS  += nixnote.h \
     filters/remotequery.h \
     gui/browserWidgets/fontnamecombobox.h \
     gui/browserWidgets/fontsizecombobox.h \
-    utilities/pixelconverter.h
+    utilities/pixelconverter.h \
+    utilities/noteindexer.h
 
 
 #INCLUDEPATH += /usr/local/include/thrift \
@@ -352,7 +354,7 @@ INCLUDEPATH += /usr/include/poppler/qt4
 #LIBS +=    -Wl,-L./lib -lthrift \
 #LIBS +=    -lthrift \
 LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
-           -lhunspell \
+           -lhunspell -lcurl \
            -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
 #           -Wl,-rpath=/usr/lib/nixnote2
 

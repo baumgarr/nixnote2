@@ -665,9 +665,18 @@ void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
 void FilterEngine::filterSearchStringAll(QStringList list) {
     // Filter out the records
     NSqlQuery sql(global.db), sqlnegative(global.db);
-    sql.prepare("Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content match :word)");
-    sqlnegative.prepare("Delete from filter where lid in (select lid from SearchIndex where weight>=:weight and content match :word)");
+
+    sql.prepare("Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content match :word) and lid not in (select data from DataStore where lid in (select lid from SearchIndex where weight>:weight2 and content match :word2))");
+    sqlnegative.prepare("Delete from filter where lid in (select lid from SearchIndex where weight>=:weight and content match :word) or lid in (select data from DataStore where lid in (select lid from SearchIndex where weight>:weight2 and content match :word2))");
+
     sql.bindValue(":weight", global.getMinimumRecognitionWeight());
+    sql.bindValue(":weight2", global.getMinimumRecognitionWeight());
+    sql.bindValue(":key", RESOURCE_NOTE_LID);
+
+    sqlnegative.bindValue(":weight", global.getMinimumRecognitionWeight());
+    sqlnegative.bindValue(":weight2", global.getMinimumRecognitionWeight());
+    sqlnegative.bindValue(":key2", RESOURCE_NOTE_LID);
+
     for (qint32 i=0; i<list.size(); i++) {
         QString string = list[i];
         string.remove(QChar('"'));
@@ -741,10 +750,13 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             if (string.startsWith("-")) {
                 string = string.remove(0,1);
                 sqlnegative.bindValue(":word", string.trimmed()+"*");
+                sqlnegative.bindValue(":word2", string.trimmed()+"*");
                 sqlnegative.exec();
             } else {
                 sql.bindValue(":word", string.trimmed()+"*");
+                sql.bindValue(":word2", string.trimmed()+"*");
                 sql.exec();
+                QLOG_DEBUG() << sql.lastError();
             }
         }
     }
@@ -1386,13 +1398,25 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
 void FilterEngine::filterSearchStringAny(QStringList list) {
     // Filter out the records
     NSqlQuery sql(global.db), sqlnegative(global.db);
-    sql.exec("create temporary table if not exists anylidsfilter (lid int);");
+    NSqlQuery resSql(global.db), resSqlNegative(global.db);
+
+    sql.exec("create table if not exists anylidsfilter (lid int);");
     sql.exec("delete from anylidsfilter");
 
-    sql.prepare("insert into anylidsfilter (lid) select lid from SearchIndex where weight>=:weight and content match :word");
-    sqlnegative.prepare("insert into anylidsfilter (lid) select lid from SearchIndex where lid not in (select lid from searchindex where weight>=:weight and content match :word)");
+    sql.exec("create table if not exists anylidsfilterRes (lid int);");
+    sql.exec("delete from anylidsfilterRes");
+
+    sql.prepare("insert into anylidsfilter (lid) select lid from SearchIndex where weight>=:weight and source='text' and content match :word");
+    resSql.prepare("insert into anylidsfilterRes (lid) select lid from SearchIndex where source='recognition' and weight>=:weight and content match :word");
+
+    sqlnegative.prepare("insert into anylidsfilter (lid) select lid from SearchIndex where lid not in (select lid from searchindex where source='text' and weight>=:weight and content match :word)");
+    resSqlNegative.prepare("insert into anylidsfilterRes (lid) select lid from SearchIndex where lid not in (select lid from searchindex where source='recognition' and weight>=:weight and content match :word)");
+
     sql.bindValue(":weight", global.getMinimumRecognitionWeight());
     sqlnegative.bindValue(":weight", global.getMinimumRecognitionWeight());
+
+    resSql.bindValue(":weight", global.getMinimumRecognitionWeight());
+    resSqlNegative.bindValue(":weight", global.getMinimumRecognitionWeight());
 
     // We start at the second entry because the first is "any:"
     for (qint32 i=1; i<list.size(); i++) {
@@ -1465,14 +1489,22 @@ void FilterEngine::filterSearchStringAny(QStringList list) {
                 string = string.remove(0,1);
                 sqlnegative.bindValue(":word", string.trimmed()+"*");
                 sqlnegative.exec();
+                resSqlNegative.bindValue(":word", string.trimmed()+"*");
+                resSqlNegative.exec();
             } else {
                 sql.bindValue(":word", string.trimmed()+"*");
                 sql.exec();
-                QLOG_DEBUG() << sql.lastError();
+                resSql.bindValue(":word", string.trimmed()+"*");
+                resSql.exec();
             }
         }
     }
 
+    // At this point we have two tables. One has resource LIDs and the other note LIDs.  We need to
+    // map the resource LIDs to note LIDs for the filter;
+    sql.prepare("insert into anylidsfilter (lid) select a.data from datastore a where a.key=:key and lid in (select lid from anylidsfilterRes)");
+    sql.bindValue(":key", RESOURCE_NOTE_LID);
+    sql.exec();
     sql.exec("delete from filter where lid not in (select lid from anylidsfilter)");
     sql.finish();
 }

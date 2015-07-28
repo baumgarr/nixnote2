@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include "notetable.h"
 #include "sql/nsqlquery.h"
+#include "resourcetable.h"
 
 extern Global global;
 //*****************************************
@@ -71,8 +72,6 @@ DatabaseConnection::DatabaseConnection(QString connection)
     QLOG_TRACE() << "Adding to filter table";
     tempTable.exec("insert into filter select distinct lid from NoteTable;");
     QLOG_TRACE() << "Addition complete";
-    //tempTable.bindValue(":key", NOTE_ACTIVE);
-    //tempTable.exec();
     tempTable.finish();
 
 

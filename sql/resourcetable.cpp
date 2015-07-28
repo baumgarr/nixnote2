@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "notetable.h"
 #include "utilities/mimereference.h"
 #include "sql/nsqlquery.h"
+#include "utilities/noteindexer.h"
 
 #include <QSqlTableModel>
 
@@ -693,6 +694,9 @@ qint32 ResourceTable::add(qint32 l, Resource &t, bool isDirty, int noteLid) {
     }
     query.finish();
     db->unlock();
+
+    NoteIndexer indexer;
+    indexer.indexResource(lid);
     return lid;
 }
 
@@ -794,6 +798,10 @@ void ResourceTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
         query.exec();
     }
     query.finish();
+
+    NoteIndexer indexer;
+    indexer.indexResource(lid);
+
     db->unlock();
 }
 

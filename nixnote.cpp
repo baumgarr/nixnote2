@@ -2041,7 +2041,7 @@ void NixNote::viewNoteHistory() {
     }
     NoteHistorySelect dialog;
     CommunicationManager comm(global.db);
-    if (comm.connect()) {
+    if (comm.enConnect()) {
         QList<NoteVersionId> versions;
         NoteTable ntable(global.db);
         QString guid = ntable.getGuid(tabWindow->currentBrowser()->lid);

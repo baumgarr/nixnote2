@@ -41,6 +41,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <netinet/tcp.h>
 #include <execinfo.h>
 
+#include <curl/curl.h>
+#include <curl/easy.h>
+
 extern Global global;
 
 
@@ -59,6 +62,10 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db)
     noteStore = NULL;
     myNoteStore = NULL;
     linkedNoteStore = NULL;
+    if (networkAccessManager == NULL) {
+        networkAccessManager = new QNetworkAccessManager(this);
+        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteFinished(QNetworkReply*)));
+    }
 }
 
 
@@ -80,7 +87,7 @@ CommunicationManager::~CommunicationManager() {
 
 
 // Connect to Evernote
-bool CommunicationManager::connect() {
+bool CommunicationManager::enConnect() {
     // Get the oAuth token
     OAuthTokenizer tokenizer;
     QString data = global.accountsManager->getOAuthToken();
@@ -117,7 +124,6 @@ bool CommunicationManager::initNoteStore() {
     noteStorePath = "/edam/note/" +user.shardId;
 
     QString noteStoreUrl = QString("https://")+evernoteHost+noteStorePath;
-    QLOG_DEBUG() << noteStoreUrl;
     myNoteStore = new NoteStore(noteStoreUrl, authToken, this);
     noteStore = myNoteStore;
     return true;
@@ -126,7 +132,7 @@ bool CommunicationManager::initNoteStore() {
 
 
 // Disconnect from Evernote's servers (for private notebooks)
-void CommunicationManager::disconnect() {
+void CommunicationManager::enDisconnect() {
     //noteStore->disconnect();
     userStore->disconnect();
     if (linkedNoteStore != NULL)
@@ -873,9 +879,19 @@ void CommunicationManager::checkForInkNotes(QList<Resource> &resources, QString 
 
 
 
+// Writer function called when curl has an image ready
+size_t curlWriter(void *ptr, size_t size, size_t nmemb, FILE *stream) {
+    size_t written;
+    written = fwrite(ptr, size, nmemb, stream);
+    return written;
+}
+
+
+
 // Download an ink note image
 void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QString shard, QString authToken) {
     UserTable userTable(db);
+    QImage *newImage = NULL;
     User u;
     userTable.getUser(u);
     if (shard == "")
@@ -886,49 +902,59 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
             +QString("/res/")
             +guid +QString(".ink?slice=");
     int sliceCount = 1+((r->height-1)/600);
+
     QSize size;
     size.setHeight(r->height);
     size.setWidth(r->width);
-    postData->clear();
-    postData->addQueryItem("auth", authToken);
 
-    QEventLoop loop;
-    if (networkAccessManager == NULL) {
-        networkAccessManager = new QNetworkAccessManager(this);
-    }
-    QObject::connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
 
-    int position = 0;
-    QImage *newImage = NULL;
-    for (int i=0; i<sliceCount && position >=0; i++) {
-        QUrl url(urlBase+QString::number(i+1));
+    QUrl postData;
+    postData.clear();
+    postData.addQueryItem("auth", authToken);
 
-        QNetworkRequest request(url);
+    CURL *curl;
+    FILE *fp;
+    CURLcode res;
 
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-        QNetworkReply *reply = networkAccessManager->post(request,postData->encodedQuery());
+    curl = curl_easy_init();
+    if (curl) {
+        int position = 0;
+        for (int i=0; i<sliceCount && position >=0; i++) {
 
-        // Execute the event loop here, now we will wait here until readyRead() signal is emitted
-        // which in turn will trigger event loop quit.
-        loop.exec();
-        QImage replyImage;
-        replyImage.loadFromData(reply->readAll());
-        if (newImage == NULL)
-            newImage= new QImage(size, replyImage.format());
-        position = inkNoteReady(newImage, &replyImage, position);
-        if (position == -1) {
-            QLOG_ERROR() << "Error fetching ink note slice " << reply->errorString();
+            QTemporaryFile tempFile;
+            tempFile.open();
+            tempFile.close();
+            fp = fopen(tempFile.fileName().toStdString().c_str(), "wb");
+
+            curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriter);
+            curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
+
+            QString url = urlBase+QString::number(i+1)+"&"+postData.encodedQuery();
+            curl_easy_setopt(curl, CURLOPT_URL, url.toStdString().c_str());
+            res = curl_easy_perform(curl);
+            fclose(fp);
+
+            // Now we have the file, let's read it and add it to the final image
+            QImage replyImage;
+            replyImage.load(tempFile.fileName(), "PNG");
+            tempFile.remove();
+            if (newImage == NULL) {
+                newImage = new QImage(size, replyImage.format());
+            }
+            position = inkNoteReady(newImage, &replyImage, position);
         }
+
+        // Cleanup
+        curl_easy_cleanup(curl);
+
+
+        // Start writing the resource
+        QPair<QString, QImage*> *newPair = new QPair<QString, QImage*>();
+        newPair->first = guid;
+        newPair->second = newImage;
+        inkNoteList->append(newPair);
     }
-    QObject::disconnect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), &loop, SLOT(quit()));
-    QPair<QString, QImage*> *newPair = new QPair<QString, QImage*>();
-    newPair->first = guid;
-    newPair->second = newImage;
-    inkNoteList->append(newPair);
-
-    //QObject::disconnect(&loop, SLOT(quit()));
 }
-
 
 
 // An ink note image is ready for retrieval
@@ -937,7 +963,8 @@ int CommunicationManager::inkNoteReady(QImage *img, QImage *replyImage, int posi
     position = position+replyImage->height();
     if (!replyImage->isNull()) {
         QPainter p(img);
-        p.drawImage(QRect(0,priorPosition, replyImage->width(), position), *replyImage);
+//        p.drawImage(QRect(0,priorPosition, replyImage->width(), position), *replyImage);
+        p.drawImage(QRect(0,priorPosition, replyImage->width(), replyImage->height()), *replyImage);
         p.end();
         return position;
     }
