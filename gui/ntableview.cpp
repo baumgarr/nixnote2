@@ -1007,7 +1007,8 @@ void NTableView::setColumnsVisible() {
 
     value = global.settings->value("reminderOrder", false).toBool();
     tableViewHeader->reminderOrderAction->setChecked(!value);
-    setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, value);
+    //setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, value);
+    setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, true);  // Column hidden because it isn't really needed
 
     value = global.settings->value("isPinned", false).toBool();
     tableViewHeader->pinnedAction->setChecked(!value);
