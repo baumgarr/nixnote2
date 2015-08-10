@@ -498,6 +498,9 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        if (EDAMErrorCode::ENML_VALIDATION == e.errorCode && note.content.isSet()) {
+            QLOG_DEBUG() << note.content.ref();
+        }
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
