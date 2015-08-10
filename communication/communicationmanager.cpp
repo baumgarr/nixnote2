@@ -935,6 +935,7 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
             QString url = urlBase+QString::number(i+1)+"&"+postData.encodedQuery();
             curl_easy_setopt(curl, CURLOPT_URL, url.toStdString().c_str());
             res = curl_easy_perform(curl);
+            QLOG_DEBUG() << "curl inknote result " << res;
             fclose(fp);
 
             // Now we have the file, let's read it and add it to the final image
