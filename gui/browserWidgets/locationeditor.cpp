@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/locationdialog.h"
 #include "sql/notetable.h"
 #include <QDesktopServices>
+#include <QWeakPointer>
 #include "global.h"
 
 extern Global global;
@@ -68,27 +69,32 @@ void LocationEditor::setActiveColor() {
 
 
 void LocationEditor::buttonClicked() {
-    LocationDialog dialog;
-    dialog.setLongitude(this->startLongitude);
-    dialog.setLatitude(this->startLatitude);
-    dialog.setAltitude(this->startAltitude);
-    dialog.exec();
+    const QWeakPointer<LocationDialog> dialogPtr(new LocationDialog(this));
+    if (LocationDialog *const dialog = dialogPtr.data()) {
+        dialog->setLongitude(this->startLongitude);
+        dialog->setLatitude(this->startLatitude);
+        dialog->setAltitude(this->startAltitude);
+        dialog->exec();
+    }
 
-    double lon = dialog.getLongitude();
-    double lat = dialog.getLatitude();
-    double alt = dialog.getAltitude();
-    startAltitude = alt;
-    startLongitude = lon;
-    startLatitude = lat;
-    if (dialog.okPressed()) {
-        NoteTable ntable(global.db);
-        if (lon == 0.0 && lat == 0.0) {
-            setText(defaultText);
-            ntable.resetGeography(currentLid, true);
-            return;
+    if (LocationDialog *const dialog = dialogPtr.data()) {
+        const double lon = dialog->getLongitude();
+        const double lat = dialog->getLatitude();
+        const double alt = dialog->getAltitude();
+        startAltitude = alt;
+        startLongitude = lon;
+        startLatitude = lat;
+        if (dialog->okPressed()) {
+            NoteTable ntable(global.db);
+            if (lon == 0.0 && lat == 0.0) {
+                setText(defaultText);
+                ntable.resetGeography(currentLid, true);
+            } else {
+                setText(dialog->locationText());
+                ntable.setGeography(currentLid, lon,lat,alt, true);
+            }
         }
-        this->setText(dialog.locationText());
-        ntable.setGeography(currentLid, lon,lat,alt, true);
+        delete dialog;
     }
 }
 
