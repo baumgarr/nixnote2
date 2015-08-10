@@ -836,8 +836,8 @@ void NBrowserWindow::pasteButtonPressed() {
             // to a normal paste.
             if (goodrc) {
                 QString url = QString("<a href=\"") +global.clipboard->text()
-                        +QString("\" title=") +n.title
-                        +QString(" >") +n.title +QString("</a>");
+                        +QString("\" title=\"") +n.title
+                        +QString("\" >") +n.title +QString("</a>");
                 QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
                 editor->page()->mainFrame()->evaluateJavaScript(script);
                 return;
@@ -1146,8 +1146,8 @@ void NBrowserWindow::insertLinkButtonPressed() {
             return;
         QString dUrl = dialog.getUrl().trimmed().replace("'", "\\'");
         QString url = QString("<a href=\"") +dUrl
-                +QString("\" title=") +dUrl
-                +QString(" >") +selectedText +QString("</a>");
+                +QString("\" title=\"") +dUrl
+                +QString("\" >") +selectedText +QString("</a>");
         QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
         editor->page()->mainFrame()->evaluateJavaScript(script);
         return;
@@ -1992,7 +1992,7 @@ void NBrowserWindow::editLatex(QString guid) {
     // do the actual insert into the note
 
     QString buffer;
-    buffer.append("<a onmouseover=\"cursor:&apos;hand&apos; title=\"");
+    buffer.append("<a onmouseover=\"cursor:&apos;hand&apos;\" title=\"");
     buffer.append(text);
     buffer.append("\" href=\"latex://");
     buffer.append(QString::number(newlid));
