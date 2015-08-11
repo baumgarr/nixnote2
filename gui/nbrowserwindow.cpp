@@ -258,33 +258,132 @@ void NBrowserWindow::setupToolBar() {
 
     // Toolbar action
     connect(buttonBar->undoButtonAction, SIGNAL(triggered()), this, SLOT(undoButtonPressed()));
+    QShortcut *undoButtonShortcut = new QShortcut(this);
+    undoButtonShortcut->setKey(buttonBar->undoButtonAction->shortcut());
+    connect(undoButtonShortcut, SIGNAL(activated()), this, SLOT(undoButtonPressed()));
+
     connect(buttonBar->redoButtonAction, SIGNAL(triggered()), this, SLOT(redoButtonPressed()));
+    QShortcut *redoButtonShortcut = new QShortcut(this);
+    redoButtonShortcut->setKey(buttonBar->redoButtonAction->shortcut());
+    connect(redoButtonShortcut, SIGNAL(activated()), this, SLOT(redoButtonPressed()));
+
     connect(buttonBar->cutButtonAction, SIGNAL(triggered()), this, SLOT(cutButtonPressed()));
+    QShortcut *cutButtonShortcut = new QShortcut(this);
+    cutButtonShortcut->setKey(buttonBar->cutButtonAction->shortcut());
+    connect(cutButtonShortcut, SIGNAL(activated()), this, SLOT(cutButtonPressed()));
+
     connect(buttonBar->copyButtonAction, SIGNAL(triggered()), this, SLOT(copyButtonPressed()));
+    QShortcut *copyButtonShortcut = new QShortcut(this);
+    copyButtonShortcut->setKey(buttonBar->copyButtonAction->shortcut());
+    connect(copyButtonShortcut, SIGNAL(activated()), this, SLOT(copyButtonPressed()));
+
     connect(buttonBar->pasteButtonAction, SIGNAL(triggered()), this, SLOT(pasteButtonPressed()));
+    QShortcut *pasteButtonShortcut = new QShortcut(this);
+    pasteButtonShortcut->setKey(buttonBar->pasteButtonAction->shortcut());
+    connect(pasteButtonShortcut, SIGNAL(activated()), this, SLOT(pasteButtonPressed()));
+
     connect(buttonBar->removeFormatButtonAction, SIGNAL(triggered()), this, SLOT(removeFormatButtonPressed()));
+    QShortcut *removeFormatButtonShortcut = new QShortcut(this);
+    removeFormatButtonShortcut->setKey(buttonBar->removeFormatButtonAction->shortcut());
+    connect(removeFormatButtonShortcut, SIGNAL(activated()), this, SLOT(removeFormatButtonPressed()));
+
     connect(buttonBar->boldButtonWidget, SIGNAL(clicked()), this, SLOT(boldButtonPressed()));
+    QShortcut *buttonBarShortcut = new QShortcut(this);
+    buttonBarShortcut->setKey(buttonBar->boldButtonWidget->shortcut());
+    connect(buttonBarShortcut, SIGNAL(activated()), this, SLOT(boldButtonPressed()));
+
     connect(buttonBar->italicButtonWidget, SIGNAL(clicked()), this, SLOT(italicsButtonPressed()));
+    QShortcut *italicsButtonShortcut = new QShortcut(this);
+    italicsButtonShortcut->setKey(buttonBar->italicButtonWidget->shortcut());
+    connect(italicsButtonShortcut, SIGNAL(activated()), this, SLOT(italicsButtonPressed()));
+
     connect(buttonBar->underlineButtonWidget, SIGNAL(clicked()), this, SLOT(underlineButtonPressed()));
+    QShortcut *underlineButtonShortcut = new QShortcut(this);
+    underlineButtonShortcut->setKey(buttonBar->underlineButtonWidget->shortcut());
+    connect(underlineButtonShortcut, SIGNAL(activated()), this, SLOT(underlineButtonPressed()));
+
     connect(buttonBar->leftJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignLeftButtonPressed()));
+    QShortcut *leftJustifyButtonShortcut = new QShortcut(this);
+    leftJustifyButtonShortcut->setKey(buttonBar->leftJustifyButtonAction->shortcut());
+    connect(leftJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignLeftButtonPressed()));
+
     connect(buttonBar->rightJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignRightButtonPressed()));
+    QShortcut *rightJustifyButtonShortcut = new QShortcut(this);
+    rightJustifyButtonShortcut->setKey(buttonBar->rightJustifyButtonAction->shortcut());
+    connect(rightJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignRightButtonPressed()));
+
     connect(buttonBar->centerJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignCenterButtonPressed()));
+    QShortcut *centerJustifyButtonShortcut = new QShortcut(this);
+    centerJustifyButtonShortcut->setKey(buttonBar->centerJustifyButtonAction->shortcut());
+    connect(centerJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignCenterButtonPressed()));
+
     connect(buttonBar->strikethroughButtonAction, SIGNAL(triggered()), this, SLOT(strikethroughButtonPressed()));
+    QShortcut *strikethroughButtonShortcut = new QShortcut(this);
+    strikethroughButtonShortcut->setKey(buttonBar->strikethroughButtonAction->shortcut());
+    connect(strikethroughButtonShortcut, SIGNAL(activated()), this, SLOT(strikethroughButtonPressed()));
+
     connect(buttonBar->hlineButtonAction, SIGNAL(triggered()), this, SLOT(horizontalLineButtonPressed()));
+    QShortcut *hlineButtonActionShortcut = new QShortcut(this);
+    hlineButtonActionShortcut->setKey(buttonBar->hlineButtonAction->shortcut());
+    connect(hlineButtonActionShortcut, SIGNAL(activated()), this, SLOT(horizontalLineButtonPressed()));
+
     connect(buttonBar->shiftRightButtonAction, SIGNAL(triggered()), this, SLOT(shiftRightButtonPressed()));
+    QShortcut *shiftRightButtonShortcut = new QShortcut(this);
+    shiftRightButtonShortcut->setKey(buttonBar->shiftRightButtonAction->shortcut());
+    connect(shiftRightButtonShortcut, SIGNAL(activated()), this, SLOT(shiftRightButtonPressed()));
+
     connect(buttonBar->shiftLeftButtonAction, SIGNAL(triggered()), this, SLOT(shiftLeftButtonPressed()));
+    QShortcut *shiftLeftButtonShortcut = new QShortcut(this);
+    shiftLeftButtonShortcut->setKey(buttonBar->shiftLeftButtonAction->shortcut());
+    connect(shiftLeftButtonShortcut, SIGNAL(activated()), this, SLOT(shiftLeftButtonPressed()));
+
     connect(buttonBar->bulletListButtonAction, SIGNAL(triggered()), this, SLOT(bulletListButtonPressed()));
+    QShortcut *bulletListButtonShortcut = new QShortcut(this);
+    bulletListButtonShortcut->setKey(buttonBar->bulletListButtonAction->shortcut());
+    connect(bulletListButtonShortcut, SIGNAL(activated()), this, SLOT(bulletListButtonPressed()));
+
     connect(buttonBar->numberListButtonAction, SIGNAL(triggered()), this, SLOT(numberListButtonPressed()));
+    QShortcut *numberListButtonShortcut = new QShortcut(this);
+    numberListButtonShortcut->setKey(buttonBar->numberListButtonAction->shortcut());
+    connect(numberListButtonShortcut, SIGNAL(activated()), this, SLOT(numberListButtonPressed()));
+
     connect(buttonBar->todoButtonAction, SIGNAL(triggered()), this, SLOT(todoButtonPressed()));
+    QShortcut *todoButtonShortcut = new QShortcut(this);
+    todoButtonShortcut->setKey(buttonBar->todoButtonAction->shortcut());
+    connect(todoButtonShortcut, SIGNAL(activated()), this, SLOT(todoButtonPressed()));
+
     connect(buttonBar->spellCheckButtonAction, SIGNAL(triggered()), this, SLOT(spellCheckPressed()));
+    QShortcut *spellCheckButtonShortcut = new QShortcut(this);
+    spellCheckButtonShortcut->setKey(buttonBar->spellCheckButtonAction->shortcut());
+    connect(spellCheckButtonShortcut, SIGNAL(activated()), this, SLOT(spellCheckPressed()));
+
     connect(buttonBar->fontSizes, SIGNAL(currentIndexChanged(int)), this, SLOT(fontSizeSelected(int)));
+
     connect(buttonBar->fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
+
     connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
+    QShortcut *fontColorButtonShortcut = new QShortcut(this);
+    fontColorButtonShortcut->setKey(buttonBar->fontColorButtonWidget->shortcut());
+    connect(fontColorButtonShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
+
     connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
+
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
+    QShortcut *fontHighlightColorShortcut = new QShortcut(this);
+    fontHighlightColorShortcut->setKey(buttonBar->highlightColorButtonWidget->shortcut());
+    connect(fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
+
     connect(buttonBar->insertTableButtonAction, SIGNAL(triggered()), this, SLOT(insertTableButtonPressed()));
+    QShortcut *insertTableShortcut = new QShortcut(this);
+    insertTableShortcut->setKey(buttonBar->insertTableButtonAction->shortcut());
+    connect(insertTableShortcut, SIGNAL(activated()), this, SLOT(insertTableButtonPressed()));
+
     connect(buttonBar->htmlEntitiesButtonAction, SIGNAL(triggered()), this, SLOT(insertHtmlEntities()));
+    QShortcut *htmlEntitiesButtonShortcut = new QShortcut(this);
+    htmlEntitiesButtonShortcut->setKey(buttonBar->htmlEntitiesButtonAction->shortcut());
+    connect(htmlEntitiesButtonShortcut, SIGNAL(activated()), this, SLOT(insertHtmlEntities()));
 }
 
 
@@ -844,6 +943,7 @@ void NBrowserWindow::pasteButtonPressed() {
             QString url = this->buildPasteUrl(urltext);
             QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
             editor->page()->mainFrame()->evaluateJavaScript(script);
+            return;
         }
 
 
