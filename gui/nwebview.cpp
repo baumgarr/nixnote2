@@ -388,6 +388,13 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
             scrollValue = -1*scrollValue;
         page()->mainFrame()->scroll(0,scrollValue);
     }
+
+    // Hard override of paste because I can't seem to get it any other way.
+    if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier)) {
+        parent->pasteButtonPressed();
+        e->accept();
+        return;
+    }
     QWebView::keyPressEvent(e);
 }
 
