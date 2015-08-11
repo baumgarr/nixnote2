@@ -123,7 +123,7 @@ public:
     string username;                       // This is probably obsolete
     string password;                       // This is probably obsolete
     bool connected;                        // Are we currently connected to Evernote?
-    bool disableIndexing;                  // Stop indexing
+    bool enableIndexing;                   // background indexing
     bool pdfPreview;                       // Should we view PDFs inline?
     bool showGoodSyncMessagesInTray;       // Should we show good sync messages in the tray, or just errors?
     QSharedMemory *sharedMemory;           // Shared memory key.  Useful to prevent multiple instances and for cross memory communication

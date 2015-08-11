@@ -102,7 +102,7 @@ void Global::setup(StartupConfig startupConfig) {
     this->startupNote = startupConfig.startupNoteLid;
     startupConfig.accountId = accountId;
     accountsManager = new AccountsManager(startupConfig.accountId);
-    disableIndexing = startupConfig.disableIndexing;
+    enableIndexing = startupConfig.enableIndexing;
 
     cryptCounter = 0;
     attachmentNameDelimeter = "------";

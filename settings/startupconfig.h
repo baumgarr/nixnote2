@@ -40,7 +40,7 @@ public:
     int accountId;
     qint32 startupNoteLid;
     bool forceStartMinimized;
-    bool disableIndexing;
+    bool enableIndexing;
     bool forceSystemTrayAvailable;
     bool disableEditing;
 };

@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
             printf("  --accountId=<id>              Start with specified user account\n");
             printf("  --dontStartMinimized          Override option to start minimized\n");
             printf("  --disableEditing              Disable note editing\n");
-            printf("  --disableIndexing             Disable all indexing\n");
+            printf("  --enableIndexing              Enable background Indexing (can cause problems)\n");
             printf("  --openNote=<lid>              Open a specific note on startup\n");
             printf("  --forceSystemTrayAvailable    Force the program to accept that\n");
             printf("                                the desktop supports tray icons.\n");
@@ -134,8 +134,8 @@ int main(int argc, char *argv[])
         if (parm == "--syncAndExit") {
             startupConfig.syncAndExit = true;
         }
-        if (parm == "--disableIndexing") {
-            startupConfig.disableIndexing = true;
+        if (parm == "--enableIndexing") {
+            startupConfig.enableIndexing = true;
         }
         if (parm == "--forceSystemTrayAvailable") {
             startupConfig.forceSystemTrayAvailable = true;

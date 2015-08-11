@@ -433,6 +433,7 @@ void NMainMenuBar::setupToolsMenu() {
   connect(pauseIndexingAction, SIGNAL(triggered()), parent, SLOT(pauseIndexing()));
   pauseIndexingAction->setCheckable(true);
   toolsMenu->addAction(pauseIndexingAction);
+  pauseIndexingAction->setVisible(global.enableIndexing);
 
   disableEditingAction = new QAction(tr("Disable Editing"), this);
   disableEditingAction->setToolTip(tr("Temporarily disable note editing"));
@@ -461,6 +462,7 @@ void NMainMenuBar::setupToolsMenu() {
   setupShortcut(reindexDatabaseAction, QString("Tools_Database_Reindex"));
   connect(reindexDatabaseAction, SIGNAL(triggered()), parent, SLOT(reindexDatabase()));
   toolsMenu->addAction(reindexDatabaseAction);
+  reindexDatabaseAction->setVisible(global.enableIndexing);
 
   toolsMenu->addSeparator();
 

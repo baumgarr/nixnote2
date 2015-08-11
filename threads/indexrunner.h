@@ -72,7 +72,7 @@ private:
     void flushCache();
 
 public:
-    bool disableIndexing;
+    bool enableIndexing;
     bool keepRunning;
     bool pauseIndexing;
     void initialize();

@@ -28,7 +28,7 @@ StartupConfig::StartupConfig()
     this->syncAndExit = false;
     this->startupNewNote = false;
     this->forceStartMinimized = false;
-    this->disableIndexing = false;
+    this->enableIndexing = false;
     this->startupNoteLid = 0;
     this->forceSystemTrayAvailable=false;
     this->disableEditing = false;

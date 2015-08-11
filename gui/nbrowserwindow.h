@@ -118,7 +118,7 @@ public:
     //AuthorEditor authorEditor;
     //LocationEditor locationEditor;
     void setReadOnly(bool readOnly);
-    NMainMenuBar *mainMenuBarHook;
+    //NMainMenuBar *mainMenuBarHook;
     bool isReadOnly;
     QString buildPasteUrl(QString url);
 
