@@ -770,6 +770,21 @@ void NBrowserWindow::copyButtonPressed() {
 }
 
 
+// Build URL from pasted text
+QString NBrowserWindow::buildPasteUrl(QString url) {
+    if (url.toLower().startsWith("http://") ||
+        url.toLower().startsWith("https://") ||
+        url.toLower().startsWith("mailto://") ||
+        url.toLower().startsWith("ftp://")) {
+        QString newUrl = QString("<a href=\"") +global.clipboard->text()
+                +QString("\" title=\"") +url
+                +QString("\" >") +url +QString("</a>");
+        return newUrl;
+    }
+    return url;
+}
+
+
 // The paste button was pressed
 void NBrowserWindow::pasteButtonPressed() {
     if (forceTextPaste) {
@@ -787,16 +802,30 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
+    QLOG_DEBUG() << "Have URL?: " << mime->hasUrls();
+
     if (mime->hasUrls()) {
         QList<QUrl> urls = mime->urls();
         for (int i=0; i<urls.size(); i++) {
+            QLOG_DEBUG() << urls[i].toString();
             if (urls[i].toString().startsWith("file://")) {
                 QString fileName = urls[i].toString().mid(7);
                 attachFileSelected(fileName);
 //                addAttachment(fileName);
                 this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
             }
+
+            // If inserting a URL
+            if (urls[i].toString().toLower().startsWith("https://") ||
+                    urls[i].toString().toLower().startsWith("http://") ||
+                    urls[i].toString().toLower().startsWith("ftp://") || \
+                    urls[i].toString().toLower().startsWith("mailto::")) {
+                QString url = this->buildPasteUrl(urls[i].toString());
+                QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+                editor->page()->mainFrame()->evaluateJavaScript(script);
+            }
         }
+
         this->editor->setFocus();
         microFocusChanged();
         return;
@@ -807,6 +836,17 @@ void NBrowserWindow::pasteButtonPressed() {
 
     if (mime->hasText()) {
         QString urltext = mime->text();
+
+        if (urltext.toLower().startsWith("https://") ||
+            urltext.toLower().startsWith("http://") ||
+            urltext.toLower().startsWith("ftp://") || \
+            urltext.toLower().startsWith("mailto::")) {
+            QString url = this->buildPasteUrl(urltext);
+            QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+            editor->page()->mainFrame()->evaluateJavaScript(script);
+        }
+
+
         if (urltext.toLower().mid(0,17) == "evernote:///view/") {
             urltext = urltext.mid(17);
             int pos = urltext.indexOf("/");

@@ -120,6 +120,7 @@ public:
     void setReadOnly(bool readOnly);
     NMainMenuBar *mainMenuBarHook;
     bool isReadOnly;
+    QString buildPasteUrl(QString url);
 
     EditorButtonBar *buttonBar;
     QShortcut *focusNoteShortcut;
