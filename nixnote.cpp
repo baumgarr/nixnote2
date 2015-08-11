@@ -1811,8 +1811,32 @@ void NixNote::newNote() {
         n.notebookGuid = notebookTable.getDefaultNotebookGuid();
     } else {
         NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
+        qint32 lid = item->lid;
+
+        // If we have a stack, we find the first notebook (in alphabetical order) for the new note.
+        if (lid == 0) {
+            QString stackName = notebookTreeView->selectedItems().at(0)->data(0, Qt::DisplayRole).toString();
+            QList<qint32> notebooks;
+            notebookTable.getStack(notebooks, stackName);
+            QString priorName;
+            Notebook book;
+            if (notebooks.size() > 0) {
+                for (int i=0; i<notebooks.size(); i++) {
+                    qint32 priorLid = notebooks[i];
+                    notebookTable.get(book, priorLid);
+                    QString currentName = "";
+                    if (book.name.isSet())
+                        currentName = book.name;
+                    if (currentName.toUpper() < priorName.toUpper() || priorName == "") {
+                        lid = notebooks[i];
+                    }
+                    priorLid = notebooks[i];
+                    priorName = currentName;
+                }
+            }
+        }
         QString notebookGuid;
-        notebookTable.getGuid(notebookGuid, item->lid);
+        notebookTable.getGuid(notebookGuid, lid);
         n.notebookGuid = notebookGuid;
     }
     NoteTable table(global.db);

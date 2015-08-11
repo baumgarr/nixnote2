@@ -70,7 +70,8 @@ void NotebookMenuButton::setCurrentNotebook(int lid, Note note) {
         }
     }
     notebookLid = notebookTable.getLid(note.notebookGuid);
-    notebookName = notebook.name;
+    if (notebook.name.isSet())
+        notebookName = notebook.name;
     blockSignals(false);
 }
 
