@@ -36,12 +36,14 @@ void NTrashViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
     QStyleOptionViewItemV4 options = option;
     initStyleOption(&options, index);
 
-    if (global.countBehavior == Global::CountNone)
-        return;
-
     painter->save();
 
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
+
+    if (global.countBehavior == Global::CountNone) {
+        painter->restore();
+        return;
+    }
 
     NTrashTree  *tree = (NTrashTree*)options.widget;
     qint32 count = tree->count;
