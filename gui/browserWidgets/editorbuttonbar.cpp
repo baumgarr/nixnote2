@@ -274,7 +274,7 @@ void EditorButtonBar::saveVisibleButtons() {
     value = italicButtonAction->isVisible();
     global.settings->setValue("italicButtonVisible", value);
 
-    value = underlineButtonAction->isVisible();
+    value = hlineButtonAction->isVisible();
     global.settings->setValue("hlineButtonVisible", value);
 
     value = underlineButtonAction->isVisible();
