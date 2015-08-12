@@ -5,6 +5,21 @@
 #include "exceptions.h"
 
 
+
+//************************************************************
+//* Customization for stack dump
+//************************************************************
+// The following include is needed for demangling names on a backtrace
+#include <cxxabi.h>
+#include <execinfo.h>
+#include "logger/qslog.h"
+
+//****************************
+//* Ending customization
+//****************************
+
+
+
 /**
  * All the library lives in this namespace.
  */
@@ -126,6 +141,85 @@ public:
      */
     operator T&() {
         if(!isSet_) {
+
+            //*********************************
+            // Beginning customized dump
+            //*********************************
+
+            int max = 10;
+            void *array[30];
+            size_t size;
+            QLOG_ERROR() << "***** Dumping stack *****";
+
+            // get void*'s for all entries on the stack
+            size = backtrace(array, 30);
+            char **messages = backtrace_symbols(array, size);
+
+            if (max > 0)
+                size = max+1;  // We add one here because we always skip the first thing on the stack (this function).
+            for (size_t i = 1; i < size && messages != NULL; ++i)
+            {
+                char *mangled_name = 0, *offset_begin = 0, *offset_end = 0;
+
+                // find parantheses and +address offset surrounding mangled name
+                for (char *p = messages[i]; *p; ++p)
+                {
+                    if (*p == '(')
+                    {
+                        mangled_name = p;
+                    }
+                    else if (*p == '+')
+                    {
+                        offset_begin = p;
+                    }
+                    else if (*p == ')')
+                    {
+                        offset_end = p;
+                        break;
+                    }
+                }
+
+                // if the line could be processed, attempt to demangle the symbol
+                if (mangled_name && offset_begin && offset_end &&
+                    mangled_name < offset_begin)
+                {
+                    *mangled_name++ = '\0';
+                    *offset_begin++ = '\0';
+                    *offset_end++ = '\0';
+
+                    int status;
+                    char * real_name = abi::__cxa_demangle(mangled_name, 0, 0, &status);
+
+                    // if demangling is successful, output the demangled function name
+                    if (status == 0)
+                    {
+                       QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i] << " : "
+                                  << real_name << "+" << offset_begin << offset_end;
+
+                    }
+                    // otherwise, output the mangled function name
+                    else
+                    {
+                        QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i] << " : "
+                                  << mangled_name << "+" << offset_begin << offset_end;
+                    }
+                    free(real_name);
+                }
+                // otherwise, print the whole line
+                else
+                {
+                    QLOG_ERROR() << "[bt]: (" << i << ") " << messages[i];
+                }
+            }
+
+            free(messages);
+            QLOG_ERROR() << "**** Stack dump complete *****";
+
+
+
+            //*********************************
+            // Ending customized dump
+            //*********************************
 
             throw EverCloudException("qevercloud::Optional: nonexistent value access2");
         }
