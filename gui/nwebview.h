@@ -48,6 +48,7 @@ public:
     explicit NWebView(NBrowserWindow *parent = 0);
     NBrowserWindow *parent;
     NTitleEditor *titleEditor;
+    QString pasteSequence;
     QMenu *contextMenu;
     QMenu *tableMenu;
     QMenu *imageMenu;

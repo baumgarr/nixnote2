@@ -129,7 +129,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   copyButtonAction = this->addAction(global.getIconResource(":copyIcon"), tr("Copy"));
   this->setupShortcut(copyButtonAction, "Edit_Copy");
   pasteButtonAction = this->addAction(global.getIconResource(":pasteIcon"), tr("Paste"));
-  this->setupShortcut(pasteButtonAction, "Edit_Paste");
+  //this->setupShortcut(pasteButtonAction, "Edit_Paste");  // This is captured in NWebView via a keyevent statement
   removeFormatButtonAction = this->addAction(global.getIconResource(":eraserIcon"), tr("Remove Formatting"));
   this->setupShortcut(removeFormatButtonAction, "Edit_Remove_Formatting");
 
