@@ -2339,6 +2339,7 @@ void NBrowserWindow::printReady(bool ok) {
         QString name = global.settings->value("printerName", "").toString();
         QPrinter::OutputFormat format = static_cast<QPrinter::OutputFormat>(global.settings->value("outputFormat", 0).toUInt());
         QPrinter::PaperSize pageSize  = static_cast<QPrinter::PageSize>(global.settings->value("pageSize", 2).toUInt());
+        QPrinter::ColorMode colorMode  = static_cast<QPrinter::ColorMode>(global.settings->value("colorMode", 1).toUInt());
         QString fileName = global.settings->value("outputFileName", "").toString();
         global.settings->endGroup();
 
@@ -2347,6 +2348,7 @@ void NBrowserWindow::printReady(bool ok) {
         printer->setPageSize(pageSize);
         printer->setOutputFormat(format);
         printer->setOrientation(orientation);
+        printer->setColorMode(colorMode);
         if (format == QPrinter::PdfFormat) {
             if (fileName == "")
                 error = true;
@@ -2375,6 +2377,7 @@ void NBrowserWindow::printReady(bool ok) {
             global.settings->setValue("outputFormat", printer->outputFormat());
             global.settings->setValue("outputFileName", printer->outputFileName());
             global.settings->setValue("pageSize", printer->pageSize());
+            global.settings->setValue("colorMode", printer->colorMode());
             global.settings->endGroup();
         }
     } else
