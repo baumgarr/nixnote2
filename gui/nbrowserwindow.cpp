@@ -2333,22 +2333,24 @@ void NBrowserWindow::printReady(bool ok) {
 
     QPrinter *printer;
 
-    if (fastPrint) {
-        global.settings->beginGroup("Printer");
-        QPrinter::Orientation orientation = static_cast<QPrinter::Orientation>(global.settings->value("orientation").toUInt());
-        QString name = global.settings->value("printerName", "").toString();
-        QPrinter::OutputFormat format = static_cast<QPrinter::OutputFormat>(global.settings->value("outputFormat", 0).toUInt());
-        QPrinter::PaperSize pageSize  = static_cast<QPrinter::PageSize>(global.settings->value("pageSize", 2).toUInt());
-        QPrinter::ColorMode colorMode  = static_cast<QPrinter::ColorMode>(global.settings->value("colorMode", 1).toUInt());
-        QString fileName = global.settings->value("outputFileName", "").toString();
-        global.settings->endGroup();
+    global.settings->beginGroup("Printer");
+    QPrinter::Orientation orientation = static_cast<QPrinter::Orientation>(global.settings->value("orientation").toUInt());
+    QString name = global.settings->value("printerName", "").toString();
+    QPrinter::OutputFormat format = static_cast<QPrinter::OutputFormat>(global.settings->value("outputFormat", 0).toUInt());
+    QPrinter::PaperSize pageSize  = static_cast<QPrinter::PageSize>(global.settings->value("pageSize", 2).toUInt());
+    QPrinter::ColorMode colorMode  = static_cast<QPrinter::ColorMode>(global.settings->value("colorMode", 1).toUInt());
+    QString fileName = global.settings->value("outputFileName", "").toString();
+    global.settings->endGroup();
 
-        bool error = false;
-        printer = new QPrinter();
-        printer->setPageSize(pageSize);
-        printer->setOutputFormat(format);
-        printer->setOrientation(orientation);
-        printer->setColorMode(colorMode);
+    bool error = false;
+    printer = new QPrinter();
+    printer->setPageSize(pageSize);
+    printer->setOutputFormat(format);
+    printer->setOrientation(orientation);
+    printer->setColorMode(colorMode);
+
+
+    if (fastPrint) {
         if (format == QPrinter::PdfFormat) {
             if (fileName == "")
                 error = true;
@@ -2367,7 +2369,12 @@ void NBrowserWindow::printReady(bool ok) {
     }
 
     if (!fastPrint) {
-        QPrintDialog dialog;
+        if (format == QPrinter::PdfFormat && fileName.trimmed() != "")
+            printer->setOutputFileName(fileName);
+        if (name.trimmed() != "")
+            printer->setPrinterName(name);
+
+        QPrintDialog dialog(printer);
         if (dialog.exec() ==  QDialog::Accepted) {
             printer = dialog.printer();
             printPage->print(printer);
