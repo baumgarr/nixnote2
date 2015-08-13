@@ -1849,7 +1849,11 @@ void NixNote::newNote() {
     global.filterPosition++;
     openNote(false);
     updateSelectionCriteria();
-    tabWindow->currentBrowser()->editor->setFocus();
+
+    if (global.newNoteFocusToTitle())
+        tabWindow->currentBrowser()->noteTitle.setFocus();
+    else
+        tabWindow->currentBrowser()->editor->setFocus();
 }
 
 
@@ -1911,6 +1915,12 @@ void NixNote::newExternalNote() {
     qint32 lid = table.add(0,n,true);
     tabWindow->openNote(lid, NTabWidget::ExternalWindow);
     updateSelectionCriteria();
+
+
+    if (global.newNoteFocusToTitle())
+        tabWindow->externalList->at(lid)->browser->noteTitle.setFocus();
+    else
+        tabWindow->externalList->at(lid)->browser->noteTitle.setFocus();
 
 }
 
@@ -2985,7 +2995,12 @@ void NixNote::newWebcamNote() {
     global.filterPosition++;
     openNote(false);
     updateSelectionCriteria();
-    tabWindow->currentBrowser()->editor->setFocus();
+
+    if (global.newNoteFocusToTitle())
+        tabWindow->currentBrowser()->noteTitle.setFocus();
+    else
+        tabWindow->currentBrowser()->editor->setFocus();
+
     return;
 }
 

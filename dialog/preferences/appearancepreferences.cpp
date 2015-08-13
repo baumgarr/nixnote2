@@ -46,6 +46,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     autoHideEditorButtonbar = new QCheckBox(tr("Auto-Hide editor toolbar"), this);
     autoHideEditorButtonbar->setChecked(global.autoHideEditorToolbar);
     disableEditingOnStartup = new QCheckBox(tr("Disable note editing on statup"), this);
+    newNoteFocusOnTitle = new QCheckBox(tr("Focus on Note Title on New Note"), this);
 
     traySingleClickAction = new QComboBox();
     traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
@@ -104,6 +105,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(startMinimized, row++, 0);
     mainLayout->addWidget(autoStart, row++, 0);
     mainLayout->addWidget(disableEditingOnStartup, row++, 0);
+    mainLayout->addWidget(newNoteFocusOnTitle, row++, 0);
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
 
@@ -168,11 +170,14 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
             closeToTray->setEnabled(false);
     }
 
+    newNoteFocusOnTitle->setChecked(global.newNoteFocusToTitle());
+
     this->setFont(global.getGuiFont(font()));
 }
 
 
 void AppearancePreferences::saveValues() {
+    global.setNewNoteFocusToTitle(newNoteFocusOnTitle->isChecked());
     global.settings->beginGroup("Appearance");
     global.settings->setValue("disableEditingOnStartup", disableEditingOnStartup->isChecked());
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
