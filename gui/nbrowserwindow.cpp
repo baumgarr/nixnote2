@@ -858,9 +858,24 @@ void NBrowserWindow::cutButtonPressed() {
 
 // The copy button was pressed
 void NBrowserWindow::copyButtonPressed() {
-    this->editor->triggerPageAction(QWebPage::Copy);
-    this->editor->setFocus();
+//    editor->downloadImageAction()->setEnabled(true);
+//    selectedFileName = f;
+//    selectedFileLid = l.toInt();
+
+    // If we have text selected
+    if (this->editor->selectedText().trimmed() != "") {
+        this->editor->triggerPageAction(QWebPage::Copy);
+        this->editor->setFocus();
+    } else {
+        // If we have an image selected, we copy it to the clipboard.
+        if (editor->downloadImageAction()->isEnabled()) {
+            QString fileName = global.fileManager.getDbaDirPath()+selectedFileName;
+            QApplication::clipboard()->setPixmap(QPixmap(fileName));
+        }
+    }
+
     microFocusChanged();
+
 }
 
 
