@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "numberdelegate.h"
 #include <QApplication>
 #include <QMouseEvent>
+#include <QShortcut>
 #include <sql/resourcetable.h>
 #include "sql/nsqlquery.h"
 #include <QMessageBox>
@@ -222,6 +223,12 @@ NTableView::NTableView(QWidget *parent) :
     contextMenu->addAction(deleteNoteAction);
     connect(deleteNoteAction, SIGNAL(triggered()), this, SLOT(deleteSelectedNotes()));
     deleteNoteAction->setFont(global.getGuiFont(font()));
+    deleteNoteAction->setShortcut(QKeySequence::Delete);
+
+    QShortcut *deleteShortcut = new QShortcut(this);
+    deleteShortcut->setKey(QKeySequence(Qt::Key_Delete));
+    deleteShortcut->setContext(Qt::WidgetShortcut);
+    connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteSelectedNotes()));
 
     restoreNoteAction = new QAction(tr("Restore Note"), this);
     contextMenu->addAction(restoreNoteAction);
