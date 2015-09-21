@@ -184,9 +184,19 @@ QString Global::getProgramDirPath() {
 }
 
 
+void Global::setDeleteConfirmation(bool value) {
+    settings->beginGroup("Appearance");
+    settings->setValue("confirmDeletes", value);
+    settings->endGroup();
+}
+
+
 // Should we confirm all deletes?
 bool Global::confirmDeletes() {
-    return true;
+    settings->beginGroup("Appearance");
+    bool confirmDeletes = settings->value("confirmDeletes", true).toBool();
+    settings->endGroup();
+    return confirmDeletes;
 }
 
 

@@ -128,6 +128,7 @@ public:
     bool showGoodSyncMessagesInTray;       // Should we show good sync messages in the tray, or just errors?
     QSharedMemory *sharedMemory;           // Shared memory key.  Useful to prevent multiple instances and for cross memory communication
     bool confirmDeletes();                 // Should we confirm deletes?
+    void setDeleteConfirmation(bool value);  // Set delete confirmation
     QString tagBehavior();                 // Should inactive tags be shown?
     bool newNoteFocusToTitle();            // Should we focus on the note title when a new note has been created?
     void setNewNoteFocusToTitle(bool focus); // Set if we should focus on the title when a new note is created

@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLabel>
 #include <QComboBox>
 #include <QPushButton>
+#include <QScrollArea>
 
 class AppearancePreferences : public QWidget
 {
@@ -46,6 +47,7 @@ private:
     QLabel *defaultNotebookOnStartupLabel;
     QPushButton *previewButton;
     bool webSettingsChanged;
+    QScrollArea *scrollArea;
     void loadFontNames(QComboBox *combo, QString defaultFont);
 
 
@@ -59,6 +61,7 @@ public:
     QCheckBox *autoStart;
     QCheckBox *startMinimized;
     QCheckBox *minimizeToTray;
+    QCheckBox *confirmDeletes;
     QCheckBox *closeToTray;
     QCheckBox *dynamicTotals;
     QCheckBox *disableEditingOnStartup;

@@ -3027,15 +3027,17 @@ void NixNote::deleteCurrentNote() {
 
     msg = typeDelete + tr("this note?");
 
-    QMessageBox msgBox;
-    msgBox.setWindowTitle(tr("Verify Delete"));
-    msgBox.setText(msg);
-    msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
-    msgBox.setIcon(QMessageBox::Question);
-    msgBox.setDefaultButton(QMessageBox::Yes);
-    int rc = msgBox.exec();
-    if (rc != QMessageBox::Yes)
-        return;
+    if (global.confirmDeletes()) {
+        QMessageBox msgBox;
+        msgBox.setWindowTitle(tr("Verify Delete"));
+        msgBox.setText(msg);
+        msgBox.setStandardButtons(QMessageBox::Yes|QMessageBox::No);
+        msgBox.setIcon(QMessageBox::Question);
+        msgBox.setDefaultButton(QMessageBox::Yes);
+        int rc = msgBox.exec();
+        if (rc != QMessageBox::Yes)
+            return;
+    }
 
     NoteTable ntable(global.db);
     NSqlQuery sql(global.db);

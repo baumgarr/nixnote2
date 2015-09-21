@@ -40,6 +40,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     showPDFs = new QCheckBox(tr("Display PDFs inline"), this);
     showSplashScreen = new QCheckBox(tr("Show splash screen on startup"), this);
     autoStart = new QCheckBox(tr("Start automatically at login"), this);
+    confirmDeletes = new QCheckBox(tr("Confirm Deletes"), this);
     showMissedReminders = new QCheckBox(tr("Show missed reminders on startup"), this);
     startMinimized = new QCheckBox(tr("Always Start minimized"), this);
     dynamicTotals = new QCheckBox(tr("Show notebook and tag totals"), this);
@@ -87,25 +88,29 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     defaultNotebookOnStartup->addItem(tr("Select Default Notebook"), UseDefaultNotebook);
     defaultNotebookOnStartup->addItem(tr("View All Notebooks"), UseAllNotebooks);
 
+    confirmDeletes->setChecked(global.confirmDeletes());
+
     int row=0;
     minimizeToTray = NULL;
     closeToTray = NULL;
-    mainLayout->addWidget(showTrayIcon,row++,0);
+    mainLayout->addWidget(showTrayIcon,row,0);
+    mainLayout->addWidget(showSplashScreen, row++,1);
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
         minimizeToTray = new QCheckBox(tr("Minimize to tray"));
         closeToTray = new QCheckBox(tr("Close to tray"));
-        mainLayout->addWidget(minimizeToTray, row++, 0);
-        mainLayout->addWidget(closeToTray, row++, 0);
+        mainLayout->addWidget(minimizeToTray, row, 0);
+        mainLayout->addWidget(closeToTray, row++, 1);
     }
-    mainLayout->addWidget(showSplashScreen, row++,0);
-    mainLayout->addWidget(autoHideEditorButtonbar, row++, 0);
-    mainLayout->addWidget(showPDFs, row++,0);
-    mainLayout->addWidget(showMissedReminders, row++, 0);
-    mainLayout->addWidget(dynamicTotals, row++, 0);
-    mainLayout->addWidget(startMinimized, row++, 0);
-    mainLayout->addWidget(autoStart, row++, 0);
-    mainLayout->addWidget(disableEditingOnStartup, row++, 0);
-    mainLayout->addWidget(newNoteFocusOnTitle, row++, 0);
+    mainLayout->addWidget(autoHideEditorButtonbar, row, 0);
+    mainLayout->addWidget(showPDFs, row++, 1);
+    mainLayout->addWidget(showMissedReminders, row, 0);
+    mainLayout->addWidget(dynamicTotals, row++, 1);
+    mainLayout->addWidget(startMinimized, row, 0);
+    mainLayout->addWidget(autoStart, row++, 1);
+    mainLayout->addWidget(disableEditingOnStartup, row, 0);
+    mainLayout->addWidget(newNoteFocusOnTitle, row++, 1);
+    mainLayout->addWidget(confirmDeletes, row++, 0);
+
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
 
@@ -178,6 +183,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
 void AppearancePreferences::saveValues() {
     global.setNewNoteFocusToTitle(newNoteFocusOnTitle->isChecked());
+    global.setDeleteConfirmation(this->confirmDeletes->isChecked());
     global.settings->beginGroup("Appearance");
     global.settings->setValue("disableEditingOnStartup", disableEditingOnStartup->isChecked());
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
