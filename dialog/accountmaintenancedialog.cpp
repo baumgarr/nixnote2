@@ -89,7 +89,11 @@ void AccountMaintenanceDialog::loadData() {
     if (ids.size() >= 2) {
         deleteButton->setEnabled(true);
     }
+
     nameList->sortItems();
+    if (ids.size() >= 1) {
+        nameList->item(0)->setSelected(true);
+    }
 
 }
 
