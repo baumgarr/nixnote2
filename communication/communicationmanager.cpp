@@ -492,10 +492,12 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
         QLOG_ERROR() << "ThriftException:";
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
+        QLOG_ERROR() << "Note title: " << note.title;
         error.type = CommunicationError::ThriftException;
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        QLOG_ERROR() << "Note title: " << note.title;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
         if (EDAMErrorCode::ENML_VALIDATION == e.errorCode && note.content.isSet()) {
@@ -504,10 +506,12 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
+        QLOG_ERROR() << "Note title: " << note.title;
         handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException";
+        QLOG_ERROR() << "Note title: " << note.title;
         handleEDAMNotFoundException(e);
         return false;
     }
