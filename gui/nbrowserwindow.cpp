@@ -2218,22 +2218,24 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
     // Get the image from the clipboard and save it into a QByteArray
     // that can be saved
     QImage img = qvariant_cast<QImage>(mime->imageData());
+//    QClipboard *clipboard = global.clipboard;
+//    QImage img = clipboard->pixmap().toImage();
     QByteArray imageBa;
     QBuffer b(&imageBa);
     b.open(QIODevice::WriteOnly);
-    img.save(&b, "JPG");
+    img.save(&b, "PNG");
 
     QString script_start = "document.execCommand('insertHTML', false, '";
     QString script_end = "');";
 
     Resource newRes;
-    qint32 rlid = createResource(newRes, 0, imageBa, "image/jpeg", false, "");
+    qint32 rlid = createResource(newRes, 0, imageBa, "image/png", false, "");
     if (rlid <= 0)
         return;
 
     // The resource is done, now we need to add it to the
     // note body
-    QString g =  QString::number(rlid)+QString(".jpg");
+    QString g =  QString::number(rlid)+QString(".png");
     QString path = global.fileManager.getDbaDirPath() + g;
 
     // do the actual insert into the note
@@ -2246,7 +2248,7 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
          hash = d.bodyHash;
     buffer.append("<img src=\"file://");
     buffer.append(path);
-    buffer.append("\" type=\"image/jpeg\" hash=\"");
+    buffer.append("\" type=\"image/png\" hash=\"");
     buffer.append(hash.toHex());
     buffer.append("\" onContextMenu=\"window.browser.imageContextMenu(&apos;");
     buffer.append(QString::number(rlid));
