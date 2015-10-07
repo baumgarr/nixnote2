@@ -707,6 +707,10 @@
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
+        <source>To-do</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="205"/>
         <source>Todo</source>
         <translation type="unfinished"></translation>
@@ -981,7 +985,7 @@
     </message>
     <message>
         <location filename="../dialog/htmlentitiesdialog.cpp" line="36"/>
-        <source>Save enities list</source>
+        <source>Save entities list</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1005,7 +1009,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="101"/>
-        <source>Scaning File</source>
+        <source>Scanning File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1044,7 +1048,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     </message>
     <message>
         <location filename="../xml/importenex.cpp" line="83"/>
-        <source>Scaning File</source>
+        <source>Scanning File</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1092,7 +1096,7 @@ See http://www.w3schools.com/charsets/ for list.</source>
     </message>
     <message>
         <location filename="../dialog/insertlinkdialog.cpp" line="45"/>
-        <source>Url</source>
+        <source>URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1852,11 +1856,6 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="310"/>
-        <source>Show &amp;Attribute Fliter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../gui/nmainmenubar.cpp" line="317"/>
         <source>Show T&amp;rash</source>
         <translation type="unfinished"></translation>
@@ -1942,6 +1941,11 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/nmainmenubar.cpp" line="431"/>
+        <source>Temporarily pause indexing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../gui/nmainmenubar.cpp" line="438"/>
         <source>Disable &amp;Editing</source>
         <translation type="unfinished"></translation>
@@ -1984,11 +1988,6 @@ Unable to decrypt.</source>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="423"/>
         <source>Disconnect from Evernote</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../gui/nmainmenubar.cpp" line="431"/>
-        <source>Temporarily pause indexng</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2079,6 +2078,11 @@ Unable to decrypt.</source>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="509"/>
         <source>View current program messages</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="310"/>
+        <source>Show &amp;Attribute Filter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2664,7 +2668,7 @@ Using this in a note link can cause problems unless you synchronize it first.</s
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="112"/>
-        <source>Grey</source>
+        <source>Gray</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2874,16 +2878,6 @@ Until tidy is installed you cannot save any notes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1614"/>
-        <source>This is used to restore a database from backups.
-It is HIGHLY recommened that this only be used to populate
-an empty database.  Restoring into a database that
- already has data can cause problems.
-
-Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../nixnote.cpp" line="1617"/>
         <source>Confirm Restore</source>
         <translation type="unfinished"></translation>
@@ -2971,6 +2965,16 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../nixnote.cpp" line="1588"/>
         <source>Note extract complete.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1614"/>
+        <source>This is used to restore a database from backups.
+It is HIGHLY recommended that this only be used to populate
+an empty database.  Restoring into a database that
+ already has data can cause problems.
+
+Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3347,7 +3351,7 @@ any key or using the right or middle mouse buttons.</source>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="182"/>
-        <source>Source Url</source>
+        <source>Source URL</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

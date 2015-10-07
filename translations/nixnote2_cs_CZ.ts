@@ -715,6 +715,10 @@
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
+        <source>To-do</source>
+        <translation type="unfinished">TODO (úkol)</translation>
+    </message>
+    <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="205"/>
         <source>Todo</source>
         <translation>TODO (úkol)</translation>
@@ -991,8 +995,8 @@
     </message>
     <message>
         <location filename="../dialog/htmlentitiesdialog.cpp" line="36"/>
-        <source>Save enities list</source>
-        <translation>Uložit výběr znaků</translation>
+        <source>Save entities list</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/htmlentitiesdialog.cpp" line="71"/>
@@ -1016,8 +1020,8 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="101"/>
-        <source>Scaning File</source>
-        <translation>Zpracovávám importní soubor</translation>
+        <source>Scanning File</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="102"/>
@@ -1055,8 +1059,8 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
     </message>
     <message>
         <location filename="../xml/importenex.cpp" line="83"/>
-        <source>Scaning File</source>
-        <translation>Zpracovávám importní soubor</translation>
+        <source>Scanning File</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../xml/importenex.cpp" line="84"/>
@@ -1103,8 +1107,8 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
     </message>
     <message>
         <location filename="../dialog/insertlinkdialog.cpp" line="45"/>
-        <source>Url</source>
-        <translation>URL</translation>
+        <source>URL</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/insertlinkdialog.cpp" line="50"/>
@@ -1869,11 +1873,6 @@ Dešifrování selhalo.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="310"/>
-        <source>Show &amp;Attribute Fliter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../gui/nmainmenubar.cpp" line="317"/>
         <source>Show T&amp;rash</source>
         <translation type="unfinished"></translation>
@@ -1959,6 +1958,11 @@ Dešifrování selhalo.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../gui/nmainmenubar.cpp" line="431"/>
+        <source>Temporarily pause indexing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../gui/nmainmenubar.cpp" line="438"/>
         <source>Disable &amp;Editing</source>
         <translation type="unfinished"></translation>
@@ -2002,11 +2006,6 @@ Dešifrování selhalo.</translation>
         <location filename="../gui/nmainmenubar.cpp" line="423"/>
         <source>Disconnect from Evernote</source>
         <translation>Odpojit od Evernote</translation>
-    </message>
-    <message>
-        <location filename="../gui/nmainmenubar.cpp" line="431"/>
-        <source>Temporarily pause indexng</source>
-        <translation>Indexování dočasně pozastaveno</translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="447"/>
@@ -2097,6 +2096,11 @@ Dešifrování selhalo.</translation>
         <location filename="../gui/nmainmenubar.cpp" line="509"/>
         <source>View current program messages</source>
         <translation>Zobrazit aktuální logy programu</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="310"/>
+        <source>Show &amp;Attribute Filter</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="516"/>
@@ -2683,8 +2687,8 @@ Použití odkazu na tuto poznámku může způsobit problémy pokud poznámku p�
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="112"/>
-        <source>Grey</source>
-        <translation>Šedá</translation>
+        <source>Gray</source>
+        <translation type="unfinished">Šedá</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="115"/>
@@ -2897,21 +2901,6 @@ Dokud nebude tidy nainstalován, nebude možné ukládat žádné poznámky.</tr
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1614"/>
-        <source>This is used to restore a database from backups.
-It is HIGHLY recommened that this only be used to populate
-an empty database.  Restoring into a database that
- already has data can cause problems.
-
-Are you sure you want to continue?</source>
-        <translation>Tato funkce se používá k obnovení databáze ze zálohy.
-Je velmi DOPORUČENO obnovovat data pouze do prázdné
-databáze. Obnova dat do databáze, která již obsahuje nějaká
-data, může způsobit nevratné problémy a ztrátu dat.
-
-Opravdu chcete pokračovat?</translation>
-    </message>
-    <message>
         <location filename="../nixnote.cpp" line="1617"/>
         <source>Confirm Restore</source>
         <translation>Potvrzení obnovení</translation>
@@ -3001,6 +2990,16 @@ Opravdu chcete pokračovat?</translation>
         <source>Note extract complete.</source>
         <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
         <translation>Export poznámky dokončen.</translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1614"/>
+        <source>This is used to restore a database from backups.
+It is HIGHLY recommended that this only be used to populate
+an empty database.  Restoring into a database that
+ already has data can cause problems.
+
+Are you sure you want to continue?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../nixnote.cpp" line="1641"/>
@@ -3377,8 +3376,8 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="182"/>
-        <source>Source Url</source>
-        <translation>Zdrojová URL</translation>
+        <source>Source URL</source>
+        <translation type="unfinished">Zdrojová URL</translation>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="183"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="fr_FR">
+<TS version="2.0" language="fr_FR">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -707,6 +707,10 @@
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="59"/>
+        <source>To-do</source>
+        <translation type="unfinished">À faire</translation>
+    </message>
+    <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="205"/>
         <source>Todo</source>
         <translation>À faire</translation>
@@ -981,8 +985,8 @@
     </message>
     <message>
         <location filename="../dialog/htmlentitiesdialog.cpp" line="36"/>
-        <source>Save enities list</source>
-        <translation>Sauvegarder la liste d&apos;entités</translation>
+        <source>Save entities list</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/htmlentitiesdialog.cpp" line="71"/>
@@ -1006,8 +1010,8 @@ Voir http://www.w3schools.com/charsets/ pour la liste.</translation>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="101"/>
-        <source>Scaning File</source>
-        <translation>Parcours du fichier</translation>
+        <source>Scanning File</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../xml/importdata.cpp" line="102"/>
@@ -1045,8 +1049,8 @@ Voir http://www.w3schools.com/charsets/ pour la liste.</translation>
     </message>
     <message>
         <location filename="../xml/importenex.cpp" line="83"/>
-        <source>Scaning File</source>
-        <translation>Parcours du fichier</translation>
+        <source>Scanning File</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../xml/importenex.cpp" line="84"/>
@@ -1093,8 +1097,8 @@ Voir http://www.w3schools.com/charsets/ pour la liste.</translation>
     </message>
     <message>
         <location filename="../dialog/insertlinkdialog.cpp" line="45"/>
-        <source>Url</source>
-        <translation>URL</translation>
+        <source>URL</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/insertlinkdialog.cpp" line="50"/>
@@ -1856,11 +1860,6 @@ Impossible de déchiffrer.</translation>
         <translation>Afficher les &amp;recherches sauvegardées</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="310"/>
-        <source>Show &amp;Attribute Fliter</source>
-        <translation>Afficher le filtre d&apos;&amp;attributs</translation>
-    </message>
-    <message>
         <location filename="../gui/nmainmenubar.cpp" line="317"/>
         <source>Show T&amp;rash</source>
         <translation>Afficher la c&amp;orbeille</translation>
@@ -1946,6 +1945,11 @@ Impossible de déchiffrer.</translation>
         <translation>Mettre l&apos;indexaction en &amp;pause</translation>
     </message>
     <message>
+        <location filename="../gui/nmainmenubar.cpp" line="431"/>
+        <source>Temporarily pause indexing</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../gui/nmainmenubar.cpp" line="438"/>
         <source>Disable &amp;Editing</source>
         <translation>Désactiver l&apos;é&amp;dition</translation>
@@ -1989,11 +1993,6 @@ Impossible de déchiffrer.</translation>
         <location filename="../gui/nmainmenubar.cpp" line="423"/>
         <source>Disconnect from Evernote</source>
         <translation>Se déconnecter d&apos;Evernote</translation>
-    </message>
-    <message>
-        <location filename="../gui/nmainmenubar.cpp" line="431"/>
-        <source>Temporarily pause indexng</source>
-        <translation>Mettre temporairement l&apos;indexation en pause</translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="447"/>
@@ -2084,6 +2083,11 @@ Impossible de déchiffrer.</translation>
         <location filename="../gui/nmainmenubar.cpp" line="509"/>
         <source>View current program messages</source>
         <translation>Voir les messages actuels du programme</translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="310"/>
+        <source>Show &amp;Attribute Filter</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="516"/>
@@ -2669,8 +2673,8 @@ L&apos;utiliser dans un lien peut causer des problèmes à moins que vous ne la 
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="112"/>
-        <source>Grey</source>
-        <translation>Gris</translation>
+        <source>Gray</source>
+        <translation type="unfinished">Gris</translation>
     </message>
     <message>
         <location filename="../gui/nwebview.cpp" line="115"/>
@@ -2880,21 +2884,6 @@ Tant que tidy n&apos;est pas installé, vous ne pourrez pas sauvegarder des note
         <translation>Fermer</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1614"/>
-        <source>This is used to restore a database from backups.
-It is HIGHLY recommened that this only be used to populate
-an empty database.  Restoring into a database that
- already has data can cause problems.
-
-Are you sure you want to continue?</source>
-        <translation>Ceci est utilisé pour restaurer une base de données.
-Il est FORTEMENT recommandé de n&apos;utiliser cette fonctionnalité
-que pour remplir une base vierge.  Restaurer dans une base de données
-qui contient déjà des données peut créer des problèmes.
-
-Souhaitez-vous continuer ?</translation>
-    </message>
-    <message>
         <location filename="../nixnote.cpp" line="1617"/>
         <source>Confirm Restore</source>
         <translation>Confirmer la restauration</translation>
@@ -2983,6 +2972,16 @@ Souhaitez-vous continuer ?</translation>
         <location filename="../nixnote.cpp" line="1588"/>
         <source>Note extract complete.</source>
         <translation>Extraction des notes complète.</translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="1614"/>
+        <source>This is used to restore a database from backups.
+It is HIGHLY recommended that this only be used to populate
+an empty database.  Restoring into a database that
+ already has data can cause problems.
+
+Are you sure you want to continue?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../nixnote.cpp" line="1641"/>
@@ -3359,8 +3358,8 @@ en appuyant sur n&apos;importe quelle touche.</translation>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="182"/>
-        <source>Source Url</source>
-        <translation>URL source</translation>
+        <source>Source URL</source>
+        <translation type="unfinished">URL source</translation>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="183"/>
