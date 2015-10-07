@@ -56,7 +56,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     fontSizeVisible = contextMenu->addAction(tr("Font Size"));
     fontColorVisible = contextMenu->addAction(tr("Font Color"));
     highlightVisible = contextMenu->addAction(tr("Highlight"));
-    todoVisible = contextMenu->addAction(tr("Todo"));
+    todoVisible = contextMenu->addAction(tr("To-do"));
     spellCheckButtonVisible = contextMenu->addAction(tr("Spell Check"));
     insertTableButtonVisible = contextMenu->addAction(tr("Insert Table"));
     htmlEntitiesButtonVisible = contextMenu->addAction(tr("HTML Entities"));

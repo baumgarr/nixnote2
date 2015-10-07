@@ -33,7 +33,7 @@ HtmlEntitiesDialog::HtmlEntitiesDialog(QWidget *parent) :
     cancelString = tr("Cancel");
     closeString = tr("Close");
     editString = tr("Edit entries list");
-    saveString = tr("Save enities list");
+    saveString = tr("Save entities list");
     defaultEntities.append("&larr;");
     defaultEntities.append("&rarr;");
     defaultEntities.append("&lArr;");

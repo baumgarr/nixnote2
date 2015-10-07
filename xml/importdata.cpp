@@ -98,7 +98,7 @@ void ImportData::import(QString file) {
 
     int recCnt = 0;
     QMessageBox mb;
-    mb.setWindowTitle(tr("Scaning File"));
+    mb.setWindowTitle(tr("Scanning File"));
     mb.setText(QString::number(recCnt) + tr(" notes found."));
     QPushButton *cancelButton = mb.addButton(QMessageBox::Cancel);
     connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));

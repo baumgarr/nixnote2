@@ -307,7 +307,7 @@ void NMainMenuBar::setupViewMenu() {
     viewMenu->addAction(viewSearchTree);
     connect(viewSearchTree , SIGNAL(triggered()), parent, SLOT(toggleSavedSearchTree()));
 
-    viewAttributesTree = new QAction(tr("Show &Attribute Fliter"), this);
+    viewAttributesTree = new QAction(tr("Show &Attribute Filter"), this);
     setupShortcut(viewAttributesTree, "View_Attributes_List");
     viewAttributesTree ->setCheckable(true);
     viewAttributesTree ->setChecked(true);
@@ -428,7 +428,7 @@ void NMainMenuBar::setupToolsMenu() {
   disconnectAction->setVisible(false);  /// We can probably delete this whole menu option
 
   pauseIndexingAction = new QAction(tr("Pause &Indexing"), this);
-  pauseIndexingAction->setToolTip(tr("Temporarily pause indexng"));
+  pauseIndexingAction->setToolTip(tr("Temporarily pause indexing"));
   setupShortcut(pauseIndexingAction, QString("Tools_Pause_Indexing"));
   connect(pauseIndexingAction, SIGNAL(triggered()), parent, SLOT(pauseIndexing()));
   pauseIndexingAction->setCheckable(true);

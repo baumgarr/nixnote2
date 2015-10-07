@@ -42,7 +42,7 @@ InsertLinkDialog::InsertLinkDialog(bool insert, QWidget *parent) :
 
     url = new QLineEdit("");
 
-    input->addWidget(new QLabel(tr("Url")), 1,1);
+    input->addWidget(new QLabel(tr("URL")), 1,1);
     input->addWidget(url, 1, 2);
     input->setContentsMargins(10, 10,  -10, -10);
     grid->addLayout(input, 1,1);

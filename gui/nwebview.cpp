@@ -109,7 +109,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     action = setupColorMenuOption(tr("Black"));
     colorMenu->addAction(action);
     connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundBlack()));
-    action = setupColorMenuOption(tr("Grey"));
+    action = setupColorMenuOption(tr("Gray"));
     colorMenu->addAction(action);
     connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundGrey()));
     action = setupColorMenuOption(tr("Purple"));
