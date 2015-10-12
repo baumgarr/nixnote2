@@ -2520,7 +2520,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
         return;
     }
 
-    if (mime == "application/pdf") {
+    if (mime == "application/pdf" && global.pdfPreview) {
         // The resource is done, now we need to add it to the
         // note body
         QString g =  QString::number(rlid)+extension;
