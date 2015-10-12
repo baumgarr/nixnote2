@@ -140,4 +140,22 @@ private:
       QsLogging::Logger::Helper(QsLogging::FatalLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
 #endif
 
+namespace qevercloud {
+   template<typename T>
+   class Optional;
+}
+
+template<typename T>
+QDebug operator<<(QDebug dbg, const qevercloud::Optional<T> &opt)
+{
+   if (opt.isSet())
+   {
+      return dbg << opt.ref();
+   }
+   else
+   {
+      return dbg << "(unset)";
+   }
+}
+
 #endif // QSLOG_H
