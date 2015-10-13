@@ -421,38 +421,38 @@
 <context>
     <name>CommunicationManager</name>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="606"/>
+        <location filename="../communication/communicationmanager.cpp" line="622"/>
         <source>Linked notebook notestore URL missing.</source>
         <translation>URL notestore du cahier de notes lié manquante.</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1074"/>
-        <location filename="../communication/communicationmanager.cpp" line="1076"/>
+        <location filename="../communication/communicationmanager.cpp" line="1090"/>
+        <location filename="../communication/communicationmanager.cpp" line="1092"/>
         <source>API rate limit exceeded.  Please try again in </source>
         <translation>Ratio limite de l&apos;API dépassé.  Réessayer dans </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1074"/>
+        <location filename="../communication/communicationmanager.cpp" line="1090"/>
         <source> minutes.</source>
         <translation> minutes.</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1076"/>
+        <location filename="../communication/communicationmanager.cpp" line="1092"/>
         <source> minute.</source>
         <translation> minute.</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1080"/>
+        <location filename="../communication/communicationmanager.cpp" line="1096"/>
         <source>EDAMSystemException </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1082"/>
+        <location filename="../communication/communicationmanager.cpp" line="1098"/>
         <source>EDAMSystemException: Unknown error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1103"/>
+        <location filename="../communication/communicationmanager.cpp" line="1119"/>
         <source>EDAMNotFoundException: Note not found</source>
         <translation></translation>
     </message>

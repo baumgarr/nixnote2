@@ -426,39 +426,39 @@
 <context>
     <name>CommunicationManager</name>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="606"/>
+        <location filename="../communication/communicationmanager.cpp" line="622"/>
         <source>Linked notebook notestore URL missing.</source>
         <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
         <translation>Chybějící URL úložiště pro přilinkovaný poznámkový blok.</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1074"/>
-        <location filename="../communication/communicationmanager.cpp" line="1076"/>
+        <location filename="../communication/communicationmanager.cpp" line="1090"/>
+        <location filename="../communication/communicationmanager.cpp" line="1092"/>
         <source>API rate limit exceeded.  Please try again in </source>
         <translation>Překročen limit rychlosti API.  Prosím zkuste to znovu za </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1074"/>
+        <location filename="../communication/communicationmanager.cpp" line="1090"/>
         <source> minutes.</source>
         <translation> minut(y).</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1076"/>
+        <location filename="../communication/communicationmanager.cpp" line="1092"/>
         <source> minute.</source>
         <translation> minutu.</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1080"/>
+        <location filename="../communication/communicationmanager.cpp" line="1096"/>
         <source>EDAMSystemException </source>
         <translation>Systémová chyba protokolu EDAM </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1082"/>
+        <location filename="../communication/communicationmanager.cpp" line="1098"/>
         <source>EDAMSystemException: Unknown error</source>
         <translation>Systémová chyba protokolu EDAM: Neznámá chyba</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1103"/>
+        <location filename="../communication/communicationmanager.cpp" line="1119"/>
         <source>EDAMNotFoundException: Note not found</source>
         <translation>Chyba protokolu EDAM (nenalezeno): Poznámka nenalezena</translation>
     </message>
