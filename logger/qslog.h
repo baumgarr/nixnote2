@@ -117,27 +117,27 @@ private:
 #else
 #define QLOG_TRACE_IN() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel ){} \
-      else  QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')' << "Entering" << __func__  << ":"
+      else (QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')' << "Entering" << __func__  << ":")
    #define QLOG_TRACE_OUT() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel ){} \
-      else  QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')' << "Exiting" << __func__ << ":"
+      else (QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')' << "Exiting" << __func__ << ":")
    #define QLOG_TRACE() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::TraceLevel ){} \
-      else  QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
+      else (QsLogging::Logger::Helper(QsLogging::TraceLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
    #define QLOG_DEBUG() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::DebugLevel ){} \
-      else QsLogging::Logger::Helper(QsLogging::DebugLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
+      else (QsLogging::Logger::Helper(QsLogging::DebugLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
    #define QLOG_INFO()  \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::InfoLevel ){} \
-      else QsLogging::Logger::Helper(QsLogging::InfoLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
+      else (QsLogging::Logger::Helper(QsLogging::InfoLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
    #define QLOG_WARN()  \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::WarnLevel ){} \
-      else QsLogging::Logger::Helper(QsLogging::WarnLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
+      else (QsLogging::Logger::Helper(QsLogging::WarnLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
    #define QLOG_ERROR() \
       if( QsLogging::Logger::instance().loggingLevel() > QsLogging::ErrorLevel ){} \
-      else QsLogging::Logger::Helper(QsLogging::ErrorLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
+      else (QsLogging::Logger::Helper(QsLogging::ErrorLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
    #define QLOG_FATAL() \
-      QsLogging::Logger::Helper(QsLogging::FatalLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')'
+      (QsLogging::Logger::Helper(QsLogging::FatalLevel).stream() << '('<< __FILE__ << '@' << __LINE__ << ')')
 #endif
 
 namespace qevercloud {

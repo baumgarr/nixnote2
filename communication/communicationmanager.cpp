@@ -368,21 +368,25 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
         }
     } catch (ThriftException e) {
         QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
+        QLOG_ERROR().maybeSpace() << "Exception Type:" << e.type();
+        QLOG_ERROR().maybeSpace() << "Exception Msg:" << e.what() << endl;
+        QLOG_ERROR() << "Tag name: " << tag.name << endl;
         error.type = CommunicationError::ThriftException;
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        QLOG_ERROR().maybeSpace() << "Tag name: " << tag.name << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
+        QLOG_ERROR().maybeSpace() << "Tag name: " << tag.name << endl;
         handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException";
+        QLOG_ERROR().maybeSpace() << "Tag name: " << tag.name << endl;
         handleEDAMNotFoundException(e);
         return 0;
     }
@@ -490,24 +494,36 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
 
     } catch (ThriftException e) {
         QLOG_ERROR() << "ThriftException:";
-        QLOG_ERROR() << "Exception Type:" << e.type();
-        QLOG_ERROR() << "Exception Msg:" << e.what();
+        QLOG_ERROR().maybeSpace() << "Exception Type:" << e.type();
+        QLOG_ERROR().maybeSpace() << "Exception Msg:" << e.what() << endl;
+        QLOG_ERROR() << "Note title: " << note.title << endl;
         error.type = CommunicationError::ThriftException;
         return 0;
     } catch (EDAMUserException e) {
-        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode;
+        QLOG_ERROR().maybeSpace() << "Note title: " << note.title << endl;
+        switch (e.errorCode) {
+        case EDAMErrorCode::BAD_DATA_FORMAT:
+        case EDAMErrorCode::DATA_CONFLICT:
+        case EDAMErrorCode::ENML_VALIDATION:
+          QLOG_DEBUG() << "==== Dumping note content BEGIN ====" << endl
+                       << note.content << endl
+                       << "==== Dumping note content END ====" << endl;
+          break;
+
+        default: break;
+        }
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
-        if (EDAMErrorCode::ENML_VALIDATION == e.errorCode && note.content.isSet()) {
-            QLOG_DEBUG() << note.content.ref();
-        }
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
+        QLOG_ERROR().maybeSpace() << "Note title: " << note.title << endl;
         handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException";
+        QLOG_ERROR().maybeSpace() << "Note title: " << note.title << endl;
         handleEDAMNotFoundException(e);
         return false;
     }
