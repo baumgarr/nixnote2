@@ -64,7 +64,7 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db)
     linkedNoteStore = NULL;
     if (networkAccessManager == NULL) {
         networkAccessManager = new QNetworkAccessManager(this);
-        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteFinished(QNetworkReply*)));
+//        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteFinished(QNetworkReply*)));
     }
 }
 
