@@ -1,7 +1,7 @@
 #!/bin/sh
 export DEB_BUILD_HARDENING=0
 
-version="2.0-alpha5"
+version="2.0-beta4"
 package_dir=$(cd `dirname $0` && pwd)
 
 
@@ -18,11 +18,13 @@ fi
 arch="i386"
 case "$(uname -m)" in
    "x86_64" ) arch="amd64";;
+   "i686" ) arch="i686";;
 esac
 
 rpmdir="i386"
 case "$(uname -m)" in
    "x86_64" ) rpmdir="x86_64";;
+   "i686" ) rpmdir="i686";;
 esac
 
 #Do any parameter overrides
@@ -36,6 +38,7 @@ version=`echo $version | sed -e 's/[-]/_/g'`
 case "$arch" in
    "amd64" ) lib="lib64";;
    "i386" ) lib="lib32";;
+   "i686" ) lib="lib32";;
 esac
 
 ##################################################
