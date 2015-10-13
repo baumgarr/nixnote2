@@ -15,7 +15,6 @@ package_dir=$(cd `dirname $0` && pwd)
 arch="i386"
 case "$(uname -m)" in
    "x86_64" ) arch="amd64";;
-   "i686" ) arch="i686";;
 esac
 
 #Do any parameter overrides
