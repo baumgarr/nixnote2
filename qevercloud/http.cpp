@@ -7,6 +7,7 @@
 #include <QEventLoop>
 #include <QtNetwork>
 #include <QSharedPointer>
+#include <QUrl>
 
 /** @cond HIDDEN_SYMBOLS  */
 
@@ -64,7 +65,7 @@ void ReplyFetcher::checkForTimeout()
 {
     const int connectionTimeout = 30*1000;
     if((lastNetworkTime_ - QDateTime::currentMSecsSinceEpoch()) > connectionTimeout) {
-        setError("Connection timeout.");
+        setError(QStringLiteral("Connection timeout."));
     }
 }
 
@@ -86,9 +87,9 @@ void ReplyFetcher::onError()
 
 void ReplyFetcher::onSslErrors(QList<QSslError> l)
 {
-    QString errorText = "SSL Errors:\n";
+    QString errorText = QStringLiteral("SSL Errors:\n");
     foreach(QSslError e, l) {
-        errorText += e.errorString() + "\n";
+        errorText += e.errorString().append('\n');
     }
     setError(errorText);
 }
@@ -100,12 +101,13 @@ void ReplyFetcher::setError(QString errorText)
     errorText_ = errorText;
     disconnect(reply.data());
     emit replyFetched(this);
+
 }
 
 QByteArray simpleDownload(QNetworkAccessManager* nam, QNetworkRequest request, QByteArray postData = QByteArray(), int* httpStatusCode = 0) {
     ReplyFetcher f;
     QEventLoop loop;
-    QObject::connect(&f, SIGNAL(replyFetched(QObject*)), &loop, SLOT(quit()));
+    QObject::connect(&f, SIGNAL(replyFetched(qevercloud::ReplyFetcher*)), &loop, SLOT(quit()));
     f.start(nam, request, postData);
     loop.exec(QEventLoop::ExcludeUserInputEvents);
     if(httpStatusCode) *httpStatusCode = f.httpStatusCode();
@@ -115,16 +117,27 @@ QByteArray simpleDownload(QNetworkAccessManager* nam, QNetworkRequest request, Q
     return f.receivedData();
 }
 
-QByteArray askEvernote(QString url, QByteArray postData) {
-    int httpStatusCode = 0;
+QNetworkRequest createEvernoteRequest(QString url)
+{
     QNetworkRequest request;
     request.setUrl(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-thrift");
-    request.setRawHeader("User-Agent", "NixNote2");
+    request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-thrift"));
+
+#if QT_VERSION < 0x050000
+    request.setRawHeader("User-Agent", QString("QEverCloud %1.%2").arg(libraryVersion / 10000).arg(libraryVersion % 10000).toLatin1());
+#else
+    request.setHeader(QNetworkRequest::UserAgentHeader, QStringLiteral("QEverCloud %1.%2").arg(libraryVersion / 10000).arg(libraryVersion % 10000));
+#endif
+
     request.setRawHeader("Accept", "application/x-thrift");
-    QByteArray reply = simpleDownload(evernoteNetworkAccessManager(), request, postData, &httpStatusCode);
+    return request;
+}
+
+QByteArray askEvernote(QString url, QByteArray postData) {
+    int httpStatusCode = 0;
+    QByteArray reply = simpleDownload(evernoteNetworkAccessManager(), createEvernoteRequest(url), postData, &httpStatusCode);
     if(httpStatusCode != 200) {
-        throw EverCloudException(QString("HTTP Status Code = %1").arg(httpStatusCode));
+        throw EverCloudException(QStringLiteral("HTTP Status Code = %1").arg(httpStatusCode));
     }
     return reply;
 }
@@ -136,9 +149,15 @@ QByteArray Thumbnail::download(Guid guid, bool isPublic, bool isResourceGuid)
     QPair<QNetworkRequest, QByteArray> request = createPostRequest(guid, isPublic, isResourceGuid);
     QByteArray reply = simpleDownload(evernoteNetworkAccessManager(), request.first, request.second, &httpStatusCode);
     if(httpStatusCode != 200) {
-        throw EverCloudException(QString("HTTP Status Code = %1").arg(httpStatusCode));
+        throw EverCloudException(QStringLiteral("HTTP Status Code = %1").arg(httpStatusCode));
     }
     return reply;
+}
+
+AsyncResult* Thumbnail::downloadAsync(Guid guid, bool isPublic, bool isResourceGuid)
+{
+    QPair<QNetworkRequest, QByteArray> pair = createPostRequest(guid, isPublic, isResourceGuid);
+    return new AsyncResult(pair.first, pair.second);
 }
 
 QPair<QNetworkRequest, QByteArray> Thumbnail::createPostRequest(Guid guid, bool isPublic, bool isResourceGuid)
@@ -148,31 +167,32 @@ QPair<QNetworkRequest, QByteArray> Thumbnail::createPostRequest(Guid guid, bool 
 
     QString urlPattern;
     if(isResourceGuid) {
-        urlPattern = "https://%1/shard/%2/thm/res/%3";
+        urlPattern = QStringLiteral("https://%1/shard/%2/thm/res/%3");
     } else {
-        urlPattern = "https://%1/shard/%2/thm/note/%3";
+        urlPattern = QStringLiteral("https://%1/shard/%2/thm/note/%3");
     }
     QString url = urlPattern.arg(host_).arg(shardId_).arg(guid);
     QString ext;
     switch(imageType_) {
-        case ImageType::BMP: ext = ".bmp"; break;
-        case ImageType::GIF: ext = ".gif"; break;
-        case ImageType::JPEG: ext = ".jpg"; break;
-        default: ext = ".png"; break;
+        case ImageType::BMP: ext = QStringLiteral(".bmp"); break;
+        case ImageType::GIF: ext = QStringLiteral(".gif"); break;
+        case ImageType::JPEG: ext = QStringLiteral(".jpg"); break;
+        default: ext = QStringLiteral(".png"); break;
     }
     url += ext;
     if(size_ != 300) {
-        url += QString("?size=%1").arg(size_);
+        url += QStringLiteral("?size=%1").arg(size_);
     }
     request.setUrl(QUrl(url));
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
+    request.setHeader(QNetworkRequest::ContentTypeHeader, QStringLiteral("application/x-www-form-urlencoded"));
 
     if(!isPublic) {
-        postData = "auth=" + QUrl::toPercentEncoding(authenticationToken_);
+        postData = QByteArray("auth=")+ QUrl::toPercentEncoding(authenticationToken_);
     }
 
     return qMakePair(request, postData);
 }
+
 
 
 }

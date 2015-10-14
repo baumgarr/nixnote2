@@ -2,8 +2,14 @@
 #include "http.h"
 #include <QVBoxLayout>
 #include <QNetworkReply>
+
+#ifdef USE_QT_WEB_ENGINE
+#include <QWebEngineHistory>
+#else
 #include <QWebSettings>
 #include <QWebHistory>
+#endif
+
 #include <QUuid>
 #include <cstring>
 
@@ -39,9 +45,15 @@ void setNonceGenerator(quint64 (*nonceGenerator)())
 
 
 qevercloud::EvernoteOAuthWebView::EvernoteOAuthWebView(QWidget *parent)
+#ifdef USE_QT_WEB_ENGINE
+    : QWebEngineView(parent), isSucceeded_(false)
+#else
     : QWebView(parent), isSucceeded_(false)
+#endif
 {
+#ifndef USE_QT_WEB_ENGINE
     page()->setNetworkAccessManager(evernoteNetworkAccessManager());
+#endif
 }
 
 void qevercloud::EvernoteOAuthWebView::setSizeHint(QSize sizeHint)
@@ -60,14 +72,19 @@ void qevercloud::EvernoteOAuthWebView::authenticate(QString host, QString consum
 
     qint64 timestamp = QDateTime::currentMSecsSinceEpoch()/1000;
     qint64 nonce = nonceGenerator()();
-    oauthUrlBase_ = QString("https://%1/oauth?oauth_consumer_key=%2&oauth_signature=%3&oauth_signature_method=PLAINTEXT&oauth_timestamp=%4&oauth_nonce=%5")
+    oauthUrlBase_ = QStringLiteral("https://%1/oauth?oauth_consumer_key=%2&oauth_signature=%3&oauth_signature_method=PLAINTEXT&oauth_timestamp=%4&oauth_nonce=%5")
             .arg(host).arg(consumerKey).arg(consumerSecret).arg(timestamp).arg(nonce);
 
     // step 1: acquire temporary token
     ReplyFetcher* replyFetcher = new ReplyFetcher();
-    connect(replyFetcher, SIGNAL(replyFetched(QObject*)), this, SLOT(temporaryFinished(QObject*)));
-    QUrl url(oauthUrlBase_ + "&oauth_callback=nnoauth");
+    connect(replyFetcher, QEC_SIGNAL(ReplyFetcher,replyFetched,qevercloud::ReplyFetcher*),
+            this, QEC_SLOT(EvernoteOAuthWebView,temporaryFinished,QObject*));
+    QUrl url(oauthUrlBase_ + QStringLiteral("&oauth_callback=nnoauth"));
+#ifdef USE_QT_WEB_ENGINE
+    replyFetcher->start(evernoteNetworkAccessManager(), url);
+#else
     replyFetcher->start(page()->networkAccessManager(), url);
+#endif
 }
 
 void qevercloud::EvernoteOAuthWebView::temporaryFinished(QObject *rf)
@@ -77,12 +94,12 @@ void qevercloud::EvernoteOAuthWebView::temporaryFinished(QObject *rf)
         setError(replyFetcher->errorText());
     } else {
         QString reply = QString(replyFetcher->receivedData());
-        int index = reply.indexOf("&oauth_token_secret");
+        int index = reply.indexOf(QStringLiteral("&oauth_token_secret"));
         QString token = reply.left(index);
 
         // step 2: directing a user to the login page
         connect(this, SIGNAL(urlChanged(QUrl)), this, SLOT(onUrlChanged(QUrl)));
-        QUrl loginUrl(QString("https://%1//OAuth.action?%2").arg(host_).arg(token));
+        QUrl loginUrl(QStringLiteral("https://%1//OAuth.action?%2").arg(host_).arg(token));
         this->setUrl(loginUrl);
     }
     replyFetcher->deleteLater();
@@ -92,17 +109,23 @@ void qevercloud::EvernoteOAuthWebView::onUrlChanged(const QUrl &url)
 {
     // step 3: catch the rediret to our callback url (nnoauth)
     QString s = url.toString();
-    if(s.contains("nnoauth?") && s.contains("?oauth_token=")) {
-        if(s.contains("&oauth_verifier=")) { // success
-            QString token = s.mid(s.indexOf("?oauth_token=") + QString("?oauth_token=").length());
+    QString oauthMarker = QStringLiteral("?oauth_token=");
+    if(s.contains(QStringLiteral("nnoauth?")) && s.contains(oauthMarker)) {
+        if(s.contains(QStringLiteral("&oauth_verifier="))) { // success
+            QString token = s.mid(s.indexOf(oauthMarker) + oauthMarker.length());
 
             // step 4: acquire permanent token
             ReplyFetcher* replyFetcher = new ReplyFetcher();
-            connect(replyFetcher, SIGNAL(replyFetched(QObject*)), this, SLOT(permanentFinished(QObject*)));
-            QUrl url(oauthUrlBase_ + QString("&oauth_token=%1").arg(token));
+            connect(replyFetcher, QEC_SIGNAL(ReplyFetcher,replyFetched,qevercloud::ReplyFetcher*),
+                    this, QEC_SLOT(EvernoteOAuthWebView,permanentFinished,QObject*));
+            QUrl url(oauthUrlBase_ + QStringLiteral("&oauth_token=%1").arg(token));
+#ifdef USE_QT_WEB_ENGINE
+            replyFetcher->start(evernoteNetworkAccessManager(), url);
+#else
             replyFetcher->start(page()->networkAccessManager(), url);
+#endif
         } else {
-            setError("Authentification failed.");
+            setError(QStringLiteral("Authentification failed."));
         }
         disconnect(this, SIGNAL(urlChanged(QUrl)), this, SLOT(onUrlChanged(QUrl)));
         QMetaObject::invokeMethod(this, "clearHtml", Qt::QueuedConnection);
@@ -126,12 +149,12 @@ void qevercloud::EvernoteOAuthWebView::permanentFinished(QObject *rf)
             int pos = decoded.indexOf('=');
             params[decoded.left(pos).trimmed()] = decoded.mid(pos + 1);
         }
-        oauthResult_.noteStoreUrl = params["edam_noteStoreUrl"];
-        oauthResult_.expires = Timestamp(params["edam_expires"].toLongLong());
-        oauthResult_.shardId = params["edam_shard"];
-        oauthResult_.userId = params["edam_userId"].toInt();
-        oauthResult_.webApiUrlPrefix = params["edam_webApiUrlPrefix"];
-        oauthResult_.authenticationToken = params["oauth_token"];
+        oauthResult_.noteStoreUrl = params[QStringLiteral("edam_noteStoreUrl")];
+        oauthResult_.expires = Timestamp(params[QStringLiteral("edam_expires")].toLongLong());
+        oauthResult_.shardId = params[QStringLiteral("edam_shard")];
+        oauthResult_.userId = params[QStringLiteral("edam_userId")].toInt();
+        oauthResult_.webApiUrlPrefix = params[QStringLiteral("edam_webApiUrlPrefix")];
+        oauthResult_.authenticationToken = params[QStringLiteral("oauth_token")];
 
         emit authenticationFinished(true);
         emit authenticationSuceeded();
@@ -173,7 +196,9 @@ qevercloud::EvernoteOAuthDialog::EvernoteOAuthDialog(QString consumerKey, QStrin
 
 qevercloud::EvernoteOAuthDialog::~EvernoteOAuthDialog()
 {
+#ifndef USE_QT_WEB_ENGINE
     QWebSettings::clearMemoryCaches();
+#endif
 }
 
 int qevercloud::EvernoteOAuthDialog::exec()
