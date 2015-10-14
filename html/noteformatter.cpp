@@ -68,8 +68,10 @@ void NoteFormatter::setNote(Note n, bool pdfPreview) {
     QString contentClass;
     if (attributes.contentClass.isSet())
         contentClass = attributes.contentClass;
-    if (contentClass != "")
+    if (contentClass != "") {
+        QLOG_DEBUG() << "Content class not empty.  Setting read-only.";
         readOnly = true;
+    }
 }
 
 
@@ -141,11 +143,15 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     if (!formatError && !readOnly) {
         NotebookTable ntable(global.db);
         qint32 notebookLid = ntable.getLid(note.notebookGuid);
-        if (ntable.isReadOnly(notebookLid))
+        if (ntable.isReadOnly(notebookLid)) {
+            QLOG_DEBUG() << "Notebook is read-only.  Marking note read-only.";
             readOnly = true;
+        }
     }
-    if (note.active.isSet() && !note.active)
+    if (note.active.isSet() && !note.active) {
+        QLOG_DEBUG() << "Note is inactive.  Setting to read-only.";
         readOnly = true;
+    }
     QLOG_TRACE() << "Done rebuiling HTML";
     return content;
 }
@@ -425,6 +431,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
         }
     } else {
         resourceError = true;
+        QLOG_DEBUG() << "Resource error.  Setting note to read-only.";
         readOnly = true;
     }
 
@@ -443,6 +450,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
 // Modify the en-media tag into an attachment
 void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, QString appl) {
     if (appl.toLower() == "vnd.evernote.ink") {
+            QLOG_DEBUG() << "Note is ink-note.  Setting to read-only.";
             inkNote = true;
             readOnly = true;
             buildInkNote(enmedia, hash);
