@@ -2376,7 +2376,11 @@ void NBrowserWindow::printReady(bool ok) {
         }
         if (error) {
             fastPrint = false;
+
+            // Re-initialize printer object so we don't have any bugus
+            // values from settings.
             delete printer;
+            printer = new QPrinter();
         }
     }
 
