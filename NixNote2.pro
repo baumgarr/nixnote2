@@ -172,6 +172,8 @@ SOURCES += main.cpp\
     qevercloud/http.cpp \
     qevercloud/services_nongenerated.cpp \
     qevercloud/oauth.cpp \
+    qevercloud/AsyncResult.cpp \
+    qevercloud/EventLoopFinisher.cpp \
     qevercloud/generated/constants.cpp \
     qevercloud/generated/services.cpp \
     qevercloud/generated/types.cpp \
@@ -325,13 +327,19 @@ HEADERS  += nixnote.h \
     qevercloud/http.h \
     qevercloud/impl.h \
     qevercloud/oauth.h \
-#    qevercloud/pubilc.h \
+    qevercloud/public.h \
     qevercloud/thrift.h \
     qevercloud/thumbnail.h \
+    qevercloud/AsyncResult.h \
+    qevercloud/EventLoopFinisher.h \
+    qevercloud/EverCloudException.h \
+    qevercloud/Optional.h \
+    qevercloud/qt4helpers.h \
     qevercloud/generated/constants.h \
     qevercloud/generated/services.h \
     qevercloud/generated/types.h \
-#    qevercoud/generated/types_impl.h \
+    qevercloud/generated/types_impl.h \
+    qevercloud/generated/EDAMErrorCode.h \
     qevercloud/include/QEverCloud.h \
     qevercloud/include/QEverCloudOAuth.h \
     gui/traymenu.h \
