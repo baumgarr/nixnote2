@@ -1,3 +1,13 @@
+NixNote (2.0-beta-4) stable; urgency=low
+  * Added the ability to auto-hide the editor tool bar.
+  * Added the ability to show/hide more GUI componennts.
+  * Added the ability to customize tray icon actions.               
+  * Added more command line options.
+  * Various GUI enhancements.
+  * Lots of bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Tue, 13 Oct 2015 14:00:00 -0400
+
+
 NixNote (2.0-beta-3) stable; urgency=low
   * Added the ability to change GUI fonts & font sizes.
   * Added the ability to change GUI icons.
