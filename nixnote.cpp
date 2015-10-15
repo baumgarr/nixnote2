@@ -1769,7 +1769,7 @@ void NixNote::resetView() {
     criteria->resetSavedSearch = true;
     criteria->resetSearchString = true;
     criteria->resetTags = true;
-    criteria->unsetFavorite();;
+    criteria->unsetFavorite();
     criteria->unsetNotebook();
     criteria->unsetDeletedOnly();
     criteria->unsetTags();
