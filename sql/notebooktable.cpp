@@ -883,36 +883,68 @@ QString NotebookTable::getDefaultNotebookGuid() {
 
 // Is this notebook read-only?
 bool NotebookTable::isReadOnly(qint32 notebookLid) {
+    // If this is a local notebook we automatically have read/write
     if (notebookLid <= 0)
         return true;
-    else {
-        SharedNotebook sharedNotebook;
-        SharedNotebookTable stable(db);   
-        bool found = stable.get(sharedNotebook, notebookLid);
-        if (found) {
-            UserTable userTable(db);
-            User user;
-            userTable.getUser(user);
-            QString username = "";
-            QString shareusername = "";
-            if (user.username.isSet())
-                username = user.username;
-            if (sharedNotebook.username.isSet())
-                shareusername = sharedNotebook.username;
-            if (shareusername == username)
-                return false;
-            if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK)
-                return true;
-            if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
-                return true;
-        } else {
-            LinkedNotebookTable ltable(db);
-            LinkedNotebook linkedNotebook;
-            found = ltable.get(linkedNotebook, notebookLid);
-            if (found && linkedNotebook.uri.isSet())
-              return true;
-        }
+
+    SharedNotebook sharedNotebook;
+    SharedNotebookTable stable(db);
+    bool found = stable.get(sharedNotebook, notebookLid);
+
+    // If this is a shared notebook check the owner & & priv.
+    if (found) {
+        UserTable userTable(db);
+        User user;
+        userTable.getUser(user);
+        QString username = "";
+        QString shareusername = "";
+        if (user.username.isSet())
+            username = user.username;
+        if (sharedNotebook.username.isSet())
+            shareusername = sharedNotebook.username;
+        QLOG_DEBUG() << "Shared Notebook properties:";
+        QLOG_DEBUG() << "   share user name: " << shareusername;
+        QLOG_DEBUG() << "   username: " << username;
+        QLOG_DEBUG() << "   privileges: " << sharedNotebook.privilege;
+        if (shareusername == username)
+            return false;
+        if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK)
+            return true;
+        if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
+            return true;
+
+        // By default we have read/write
+        return false;
     }
+
+    // Check privileges for linked notebooks
+    LinkedNotebookTable ltable(db);
+    LinkedNotebook linkedNotebook;
+    found = ltable.get(linkedNotebook, notebookLid);
+    QLOG_DEBUG() << "Linked Notebook Found: " << found;
+    QLOG_DEBUG() << "Linked Notebook URI set: " << linkedNotebook.uri.isSet();
+
+    if (found && linkedNotebook.uri.isSet()) {
+        UserTable userTable(db);
+        User user;
+        userTable.getUser(user);
+        QString username = "";
+        QString linkedusername = "";
+        if (user.username.isSet())
+            username = user.username;
+        if (linkedNotebook.username.isSet())
+            linkedusername =linkedNotebook.username;
+
+        QLOG_DEBUG() << "Linked Notebook properties:";
+        QLOG_DEBUG() << "   linked notebook user name: " << linkedusername;
+        QLOG_DEBUG() << "   username: " << username;
+
+        if (linkedusername == username) {
+            return false;
+        }
+        return true;
+    }
+    // Default privileges for non-linked & non-shared & non-local notebooks.
     return false;
 }
 
