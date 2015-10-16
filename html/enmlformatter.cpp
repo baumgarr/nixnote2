@@ -143,6 +143,8 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                 fixObjectNode(element);
             } else if (element.tagName().toLower() == "img") {
                 fixImgNode(element);
+            } else if (element.tagName().toLower() == "span"){
+                fixSpanNode(element);
             } else if (!isElementValid(element.tagName()))
                 element.removeFromDocument();
         }
@@ -207,6 +209,10 @@ void EnmlFormatter::processTodo(QWebElement &node) {
 }
 
 
+
+void EnmlFormatter::fixSpanNode(QWebElement &e) {
+    e.removeAttribute("id");
+}
 
 
 
