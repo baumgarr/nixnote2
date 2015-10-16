@@ -1,5 +1,5 @@
-#ifndef QEVERCLOUD_HTTPL_H
-#define QEVERCLOUD_HTTPL_H
+#ifndef QEVERCLOUD_HTTP_H
+#define QEVERCLOUD_HTTP_H
 
 #include <QString>
 #include <QByteArray>
@@ -32,7 +32,7 @@ public:
     int httpStatusCode() {return httpStatusCode_;}
 
 signals:
-    void replyFetched(QObject*); // sends itself
+    void replyFetched(qevercloud::ReplyFetcher*); // sends itself
 
 private slots:
     void onFinished();
@@ -52,11 +52,11 @@ private:
     qint64 lastNetworkTime_;
 };
 
+QNetworkRequest createEvernoteRequest(QString url);
 QByteArray askEvernote(QString url, QByteArray postData);
-
 
 }
 
 /** @endcond */
 
-#endif // QEVERCLOUD_HTTPL_H
+#endif // QEVERCLOUD_HTTP_H

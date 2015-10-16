@@ -9,7 +9,8 @@
 #include <QString>
 #include <QStringList>
 #include <QByteArray>
-#include "../globals.h"
+#include <QDateTime>
+#include "../Optional.h"
 #include "../impl.h"
 #include "types.h"
 
