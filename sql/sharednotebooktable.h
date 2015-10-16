@@ -57,7 +57,7 @@ public:
 
     // DB Read Functions
     qint32 getLid(qlonglong id);               // given a guid, return the lid
-    bool get(SharedNotebook &notebook, qint32 lid);     // Get a shared notebook given a lid
+    bool get(SharedNotebook &notebook, qint32 lid, QString username);     // Get a shared notebook given a lid
     bool isDirty(qint32 lid);                  // Check if a shared notebook is dirty
     bool exists(qint32 lid);                   // Does this shared notebook exist?
     bool exists(qlonglong id);                 // Does this shared notebook exist?
@@ -68,6 +68,7 @@ public:
     qint32 findByShareKey(string key);         // Find by the share key
     qint32 findByNotebookGuid(string key);     // Find by the notebook Guid
     qint32 findByNotebookGuid(QString key);    // Find by the notebook Guid
+    qint32 getShareUsers(QStringList &users, qint32 lid);
 
 
     // DB Write Functions
