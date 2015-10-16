@@ -364,9 +364,11 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
 
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
-    QShortcut *fontHighlightColorShortcut = new QShortcut(this);
-    fontHighlightColorShortcut->setKey(buttonBar->highlightColorButtonWidget->shortcut());
-    connect(fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+    //QShortcut *fontHighlightColorShortcut = new QShortcut(this);
+    //fontHighlightColorShortcut->setKey(buttonBar->highlightColorButtonWidget->shortcut());
+    //fontHighlightColorShortcut->setKey(QKeySequence("Ctrl+B"));
+    //connect(fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+    connect(buttonBar->highlightColorAction, SIGNAL(triggered()), this, SLOT(fontHighlightClicked()));
 
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
 

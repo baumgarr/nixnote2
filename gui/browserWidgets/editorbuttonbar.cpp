@@ -201,6 +201,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   highlightColorButtonWidget->setIcon(global.getIconResource(":fontHighlightIcon"));
   highlightColorButtonWidget->setToolTip(tr("Highlight"));
   highlightColorAction = this->addWidget(highlightColorButtonWidget);
+  this->setupShortcut(highlightColorAction, "Format_Highlight");
 
   todoButtonAction = this->addAction(global.getIconResource(":todoIcon"), tr("Todo"));
   this->setupShortcut(todoButtonAction, "Edit_Insert_Todo");
