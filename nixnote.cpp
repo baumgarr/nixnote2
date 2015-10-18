@@ -109,7 +109,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     nixnoteTranslator->load(global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm"));
     QApplication::instance()->installTranslator(nixnoteTranslator);
 
-
     connect(&syncThread, SIGNAL(started()), this, SLOT(syncThreadStarted()));
     connect(&counterThread, SIGNAL(started()), this, SLOT(counterThreadStarted()));
     connect(&indexThread, SIGNAL(started()), this, SLOT(indexThreadStarted()));
@@ -152,10 +151,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(attributeTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(trashTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(searchText, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-    // Setup file watcher
-    importManager = new FileWatcherManager(this);
-    connect(importManager, SIGNAL(fileImported(qint32,qint32)), this, SLOT(updateSelectionCriteria()));
-    importManager->setup();
     connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
     hammer = new Thumbnailer(global.db);
@@ -208,6 +203,15 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 
     //QDesktopServices::setUrlHandler("evernote", this, "showDesktopUrl");
     remoteQuery = new RemoteQuery();
+
+
+    // Setup file watcher
+    importManager = new FileWatcherManager(this);
+    connect(importManager, SIGNAL(fileImported(qint32,qint32)), this, SLOT(updateSelectionCriteria()));
+    connect(importManager, SIGNAL(fileImported()), this, SLOT(updateSelectionCriteria()));
+    importManager->setup();
+    this->updateSelectionCriteria(true);  // This is only needed in case we imported something at statup.
+
 
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
@@ -1801,7 +1805,7 @@ void NixNote::newNote() {
     Note n;
     NotebookTable notebookTable(global.db);
     n.content = newNoteBody;
-    n.title = "Untitled note";
+    n.title = tr("Untitled note");
     QString uuid = QUuid::createUuid();
     uuid = uuid.mid(1);
     uuid.chop(1);
@@ -2296,6 +2300,11 @@ void NixNote::heartbeatTimerTriggered() {
 
     QByteArray data = QByteArray::fromRawData(buffer, global.sharedMemory->size());
     //QLOG_ERROR() << "Shared memory data: " << data;
+    if (data.startsWith("SYNCHRONIZE")) {
+        QLOG_DEBUG() << "Sync requested by shared memory segment.";
+        this->synchronize();
+        return;
+    }
     if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
         QLOG_ERROR() << "Immediate shutdown requested by shared memory segment.";
         this->closeNixNote();
@@ -2303,7 +2312,7 @@ void NixNote::heartbeatTimerTriggered() {
     }
     if (data.startsWith("SHOW_WINDOW")) {
         this->raise();
-        this->show();
+        this->showMaximized();
         return;
     }
     if (data.startsWith("QUERY:")) {

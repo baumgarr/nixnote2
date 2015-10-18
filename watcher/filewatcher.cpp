@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/resourcetable.h"
 #include "utilities/mimereference.h"
 #include "sql/filewatchertable.h"
+#include "xml/batchimport.h"
 
 #include <QDirIterator>
 
@@ -57,9 +58,22 @@ void FileWatcher::saveDirectory(QString dir){
 }
 
 void FileWatcher::saveFile(QString file) {
-    Note newNote;
-    NoteTable ntable(global.db);
+    QFileInfo fileInfo(file);
 
+    // If we have a dbi import file
+    QLOG_DEBUG() << fileInfo.dir().absolutePath() + QDir::separator();
+    QLOG_DEBUG() << global.fileManager.getDbiDirPath();
+    if ((fileInfo.dir().absolutePath() + QDir::separator()) == global.fileManager.getDbiDirPath()) {
+        BatchImport importer;
+        importer.import(file);
+        emit(nnexImported());
+        QFile f(file);
+        f.remove();
+        return;
+    }
+
+
+    // If we have a user-import file
     QFile f(file);
     f.open(QIODevice::ReadOnly);
     QByteArray data = f.readAll();
@@ -67,7 +81,8 @@ void FileWatcher::saveFile(QString file) {
     if (f.size() == 0)
         return;
 
-    QLOG_DEBUG() << data;
+    Note newNote;
+    NoteTable ntable(global.db);
     ConfigStore cs(global.db);
     qint32 lid = cs.incrementLidCounter();
 

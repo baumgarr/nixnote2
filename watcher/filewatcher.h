@@ -49,6 +49,7 @@ private:
 
 signals:
     void fileImported(qint32 noteLid, qint32 ressourceLid);
+    void nnexImported();
     
 public slots:
     void saveFile(QString file);

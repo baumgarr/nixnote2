@@ -75,6 +75,9 @@ private:
     QString dbaDirPath;
     QDir dbaDir;
 
+    QString dbiDirPath;
+    QDir dbiDir;
+
     QString thumbnailDirPath;
     QDir thumbnailDir;
 
@@ -107,6 +110,9 @@ public:
     QString getDbaDirPath();
     QString getDbaDirPath(QString relativePath);
     QString getDbaDirPathSpecialChar(QString relativePath);
+    QString getDbiDirPath();
+    QString getDbiDirPath(QString relativePath);
+    QString getDbiDirPathSpecialChar(QString relativePath);
     QString getThumbnailDirPath();
     QString getThumbnailDirPath(QString relativePath);
     QString getThumbnailDirPathSpecialChar(QString relativePath);
