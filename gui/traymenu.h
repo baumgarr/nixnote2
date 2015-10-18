@@ -29,6 +29,7 @@ class TrayMenu : public QMenu
 private:
     QList<QAction*> actions;
     QMenu *pinnedMenu;
+    QMenu *favoriteNotesMenu;
     QMenu *recentlyUpdatedMenu;
     QSignalMapper *signalMapper;
     void buildMenu(QMenu *actionMenu, QList<QPair<qint32, QString> > records);
@@ -36,7 +37,8 @@ private:
 public:
     enum ActionMenuType {
         PinnedMenu,
-        RecentMenu
+        RecentMenu,
+        FavoriteNotesMenu
     };
 
     explicit TrayMenu(QWidget *parent = 0);

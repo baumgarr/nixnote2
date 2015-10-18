@@ -500,6 +500,8 @@ void NixNote::setupGui() {
     connect(screenCaptureButton, SIGNAL(triggered()), this, SLOT(screenCapture()));
 
     trayIconContextMenu->addSeparator();
+    QMenu *favoritesMenu = trayIconContextMenu->addMenu(tr("Shortcut Notes"));
+    trayIconContextMenu->setActionMenu(TrayMenu::FavoriteNotesMenu, favoritesMenu);
     QMenu *pinnedMenu = trayIconContextMenu->addMenu(tr("Pinned Notes"));
     trayIconContextMenu->setActionMenu(TrayMenu::PinnedMenu, pinnedMenu);
     QMenu *recentMenu = trayIconContextMenu->addMenu(tr("Recently Updated Notes"));
