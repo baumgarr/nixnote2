@@ -1284,11 +1284,19 @@ void NBrowserWindow::fontColorClicked() {
 
 
 void NBrowserWindow::insertLinkButtonPressed() {
-    QString text = editor->selectedText();
-    if (text.trimmed() == "" && currentHyperlink.trimmed() == "")
+    QString text = editor->selectedText().trimmed();
+    if (text == "" && currentHyperlink == "")
         return;
 
     InsertLinkDialog dialog(insertHyperlink);
+
+    // If we have a link already highlighted, set it to the dialog.
+    if (text.startsWith("http://", Qt::CaseInsensitive) ||
+            text.startsWith("ftp://", Qt::CaseInsensitive) ||
+            text.startsWith("mailto:", Qt::CaseInsensitive)) {
+        dialog.setUrl(text);
+    }
+
     if (currentHyperlink != NULL && currentHyperlink != "") {
         dialog.setUrl(currentHyperlink);
     }
