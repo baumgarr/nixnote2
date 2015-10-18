@@ -47,6 +47,8 @@ public slots:
 //    void gainedFocus(bool focus);
     void notebookSelectionChanged(qint32 notebook);
     void loadCompleter();
+    void mouseCompleterSelection(QString);
+    void enterPressed();
 
 signals:
   void focussed(bool hasFocus);
