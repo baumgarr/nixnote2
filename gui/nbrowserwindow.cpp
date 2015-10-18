@@ -1292,6 +1292,7 @@ void NBrowserWindow::insertLinkButtonPressed() {
 
     // If we have a link already highlighted, set it to the dialog.
     if (text.startsWith("http://", Qt::CaseInsensitive) ||
+            text.startsWith("https://", Qt::CaseInsensitive) ||
             text.startsWith("ftp://", Qt::CaseInsensitive) ||
             text.startsWith("mailto:", Qt::CaseInsensitive)) {
         dialog.setUrl(text);
