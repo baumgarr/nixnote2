@@ -2,7 +2,13 @@
 #define QEVERCLOUD_OAUTH_H
 
 #include "./generated/types.h"
+#include "qt4helpers.h"
+
+#ifdef USE_QT_WEB_ENGINE
+#include <QWebEngineView>
+#else
 #include <QWebView>
+#endif
 #include <QDialog>
 
 /** @page oauth_include Reasons for QEverCloudOAuth.h header file
@@ -45,7 +51,11 @@ void setNonceGenerator(quint64 (*nonceGenerator)());
  * By deafult EvernoteOAuthWebView uses qrand() for generating nonce so do not forget to call qsrand()
  * in your application. See @link setNonceGenerator @endlink If you want more control over nonce generation.
  */
+#ifdef USE_QT_WEB_ENGINE
+class EvernoteOAuthWebView: public QWebEngineView {
+#else
 class EvernoteOAuthWebView: public QWebView {
+#endif
     Q_OBJECT
 public:
     EvernoteOAuthWebView(QWidget* parent = 0);
@@ -142,7 +152,7 @@ if(d.exec() == QDialog::Accepted) {
  *
  * %Note that you have to include @link oauth_include QEverCloudOAuth.h header@endlink.
  *
- * By deafult EvernoteOAuthDialog uses qrand() for generating nonce so do not forget to call qsrand()
+ * By default EvernoteOAuthDialog uses qrand() for generating nonce so do not forget to call qsrand()
  * in your application. See @link setNonceGenerator @endlink If you want more control over nonce generation.
  */
 
@@ -163,7 +173,7 @@ public:
      * @param consumerSecret
      * along with this
     */
-    EvernoteOAuthDialog(QString consumerKey, QString consumerSecret, QString host = "www.evernote.com", QWidget* parent = 0);
+    EvernoteOAuthDialog(QString consumerKey, QString consumerSecret, QString host = QStringLiteral("www.evernote.com"), QWidget* parent = 0);
     ~EvernoteOAuthDialog();
 
     /**
@@ -193,11 +203,19 @@ public:
      * @return
      *   QDialog::Accepted on a succesful authentication.
      */
+#if QT_VERSION < 0x050000
     int exec();
+#else
+    virtual int exec() Q_DECL_OVERRIDE;
+#endif
 
     /** Shows the dialog as a window modal dialog, returning immediately.
      */
+#if QT_VERSION < 0x050000
     void open();
+#else
+    virtual void open() Q_DECL_OVERRIDE;
+#endif
 
 private:
    EvernoteOAuthWebView* webView_;
