@@ -48,6 +48,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     centerJustifyVisible = contextMenu->addAction(tr("Align Center"));
     rightJustifyVisible = contextMenu->addAction(tr("Align Right"));
     hlineVisible = contextMenu->addAction(tr("Horizontal Line"));
+    insertDatetimeVisible = contextMenu->addAction(tr("Insert Date && Time"));
     shiftRightVisible = contextMenu->addAction(tr("Shift Right"));
     shiftLeftVisible = contextMenu->addAction(tr("Shift Left"));
     buttonListVisible = contextMenu->addAction(tr("Bullet List"));
@@ -89,6 +90,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     spellCheckButtonVisible->setChecked(true);
     insertTableButtonVisible->setCheckable(true);
     htmlEntitiesButtonVisible->setCheckable(true);
+    insertDatetimeVisible->setCheckable(true);
 
     connect(undoVisible, SIGNAL(triggered()), this, SLOT(toggleUndoButtonVisible()));
     connect(redoVisible, SIGNAL(triggered()), this, SLOT(toggleRedoButtonVisible()));
@@ -100,6 +102,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(italicVisible, SIGNAL(triggered()), this, SLOT(toggleItalicButtonVisible()));
     connect(underlineVisible, SIGNAL(triggered()), this, SLOT(toggleUnderlineButtonVisible()));
     connect(strikethroughVisible, SIGNAL(triggered()), this, SLOT(toggleStrikethroughButtonVisible()));
+    connect(insertDatetimeVisible, SIGNAL(triggered()), this, SLOT(toggleInsertDatetimeVisible()));
     connect(leftJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleLeftJustifyButtonVisible()));
     connect(centerJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleCenterJustifyButtonVisible()));
     connect(rightJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleRightJustifyButtonVisible()));
@@ -116,7 +119,6 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(insertTableButtonVisible, SIGNAL(triggered()), this, SLOT(toggleInsertTableButtonVisible()));
     connect(spellCheckButtonVisible, SIGNAL(triggered()), this, SLOT(toggleSpellCheckButtonVisible()));
     connect(htmlEntitiesButtonVisible, SIGNAL(triggered()), this, SLOT(toggleHtmlEntitiesButtonVisible()));
-
 
 
   undoButtonAction = this->addAction(global.getIconResource(":undoIcon"), tr("Undo"));
@@ -166,6 +168,13 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
   hlineButtonAction = this->addAction(global.getIconResource(":hlineIcon"), tr("Horizontal Line"));
   this->setupShortcut(hlineButtonAction, "Format_Horizontal_Line");
+
+  insertDatetimeButtonWidget = new QToolButton(this);
+  insertDatetimeButtonWidget->setIcon(global.getIconResource(":dateTime"));
+  insertDatetimeButtonWidget->setText(tr("Insert Date & Time"));
+  insertDatetimeButtonWidget->setToolTip(tr("Insert Date & Time"));
+  insertDatetimeButtonAction = this->addWidget(insertDatetimeButtonWidget);
+  //this->setupShortcut(insertDatetimeButtonWidget, "Insert_Datetime");  // This shortcut is handled elsewhere
 
   shiftRightButtonAction = this->addAction(global.getIconResource(":shiftRightIcon"), tr("Shift Right"));
   this->setupShortcut(shiftRightButtonAction, "Format_Indent_Increase");
@@ -329,6 +338,9 @@ void EditorButtonBar::saveVisibleButtons() {
     value = htmlEntitiesButtonAction->isVisible();
     global.settings->setValue("htmlEntitiesButtonVisible", value);
 
+    value = insertDatetimeButtonAction->isVisible();
+    global.settings->setValue("insertDatetimeButtonVisible", value);
+
     global.settings->endGroup();
 }
 
@@ -416,6 +428,9 @@ void EditorButtonBar::setupVisibleButtons() {
         htmlEntitiesButtonVisible->setChecked(htmlEntitiesButtonAction->isVisible());
     }
 
+    insertDatetimeButtonAction->setVisible(global.settings->value("insertDatetimeButtonVisible", true).toBool());
+    insertDatetimeVisible->setChecked(insertDatetimeButtonAction->isVisible());
+
     global.settings->endGroup();
 }
 
@@ -459,6 +474,10 @@ void EditorButtonBar::toggleUnderlineButtonVisible() {
 }
 void EditorButtonBar::toggleStrikethroughButtonVisible() {
     strikethroughButtonAction->setVisible(strikethroughVisible->isChecked());
+    saveVisibleButtons();
+}
+void EditorButtonBar::toggleInsertDatetimeVisible() {
+    insertDatetimeButtonAction->setVisible(insertDatetimeVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleLeftJustifyButtonVisible() {

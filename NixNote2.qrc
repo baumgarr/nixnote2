@@ -63,5 +63,6 @@
         <file alias="screenCaptureIcon">images/screenCapture.png</file>
         <file alias="favoritesIcon">images/favorites.png</file>
         <file alias="trayIcon">images/trayicon.png</file>
+        <file alias="dateTime">images/datetime.png</file>
     </qresource>
 </RCC>

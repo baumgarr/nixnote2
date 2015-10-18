@@ -381,6 +381,12 @@ void NBrowserWindow::setupToolBar() {
     QShortcut *htmlEntitiesButtonShortcut = new QShortcut(this);
     htmlEntitiesButtonShortcut->setKey(buttonBar->htmlEntitiesButtonAction->shortcut());
     connect(htmlEntitiesButtonShortcut, SIGNAL(activated()), this, SLOT(insertHtmlEntities()));
+
+    connect(buttonBar->insertDatetimeButtonAction, SIGNAL(triggered()), this, SLOT(insertDatetime()));
+    connect(buttonBar->insertDatetimeButtonWidget,SIGNAL(clicked()), this, SLOT(insertDatetime()));
+    QShortcut *insertDatetimeShortcut = new QShortcut(this);
+    insertDatetimeShortcut->setKey(buttonBar->insertDatetimeButtonAction->shortcut());
+    connect(insertDatetimeShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
 }
 
 
