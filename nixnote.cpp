@@ -1927,12 +1927,25 @@ void NixNote::newExternalNote() {
     tabWindow->openNote(lid, NTabWidget::ExternalWindow);
     updateSelectionCriteria();
 
+    // Find the position in the external window array & set the focus.
+    int pos = -1;
+    for (int i=0; i<tabWindow->externalList->size(); i++) {
+        if (tabWindow->externalList->at(i)->browser->lid == lid) {
+            pos = i;
+            i = tabWindow->externalList->size();
+        }
+    }
 
+    // This shouldn't happen, but just in case...
+    if (pos < 0)
+        return;
+
+    // Set the focus
     if (global.newNoteFocusToTitle()) {
-        tabWindow->externalList->at(lid)->browser->noteTitle.setFocus();
-        tabWindow->currentBrowser()->noteTitle.selectAll();
+        tabWindow->externalList->at(pos)->browser->noteTitle.setFocus();
+        tabWindow->externalList->at(pos)->browser->noteTitle.selectAll();
     } else
-        tabWindow->externalList->at(lid)->browser->noteTitle.setFocus();
+        tabWindow->externalList->at(pos)->browser->editor->setFocus();
 
 }
 
