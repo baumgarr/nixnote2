@@ -53,7 +53,9 @@ fi
 cd $package_dir
 echo "Building tar"
 cp $source_dir/install.sh $package_dir/nixnote2/
+cp $source_dir/uninstall.sh $package_dir/nixnote2/
 tar -czf $package_dir/nixnote2-${version}_${arch}.tar.gz ./nixnote2
 rm $package_dir/nixnote2/install.sh
+rm $package_dir/nixnote2/uninstall.sh
 cd -
 
