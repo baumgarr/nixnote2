@@ -850,15 +850,11 @@ bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid)
 
 // Permanently delete a resource
 void ResourceTable::expunge(qint32 lid) {
-    QLOG_DEBUG() << "Expunging Resource Stack Dump Requested";
-    global.stackDump(6);
 
     if (!this->exists(lid)) {
-        QLOG_DEBUG() << "Attempting to delete non-existing resource: " << lid;
         return;
     }
     NSqlQuery query(db);
-    QLOG_DEBUG() << "Expunging resource : " << lid;
     db->lockForWrite();
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
@@ -867,7 +863,6 @@ void ResourceTable::expunge(qint32 lid) {
     db->unlock();
 
     // Delete the physical files (resource)
-    QLOG_DEBUG() << "Deleting resource file";
     QDir myDir(global.fileManager.getDbaDirPath());
     QString num = QString::number(lid);
     QStringList filter;
@@ -878,7 +873,6 @@ void ResourceTable::expunge(qint32 lid) {
     }
 
     // Delete the physical files (thumbnail)
-    QLOG_DEBUG() << "Deleting thumbnail";
     QDir myTDir(global.fileManager.getThumbnailDirPath());
     list = myTDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
     for (int i=0; i<list.size(); i++) {
