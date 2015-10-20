@@ -104,10 +104,10 @@ void FindReplace::showFind() {
     replaceAllButton->hide();
     caseSensitive->hide();
 
-    if (isHidden())
+    if (isHidden()) {
         show();
-
-
+        this->findLine->setFocus();
+    }
 }
 
 

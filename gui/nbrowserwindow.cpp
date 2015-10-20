@@ -298,19 +298,8 @@ void NBrowserWindow::setupToolBar() {
     connect(underlineButtonShortcut, SIGNAL(activated()), this, SLOT(underlineButtonPressed()));
 
     connect(buttonBar->leftJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignLeftButtonPressed()));
-    QShortcut *leftJustifyButtonShortcut = new QShortcut(this);
-    leftJustifyButtonShortcut->setKey(buttonBar->leftJustifyButtonAction->shortcut());
-    connect(leftJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignLeftButtonPressed()));
-
     connect(buttonBar->rightJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignRightButtonPressed()));
-    QShortcut *rightJustifyButtonShortcut = new QShortcut(this);
-    rightJustifyButtonShortcut->setKey(buttonBar->rightJustifyButtonAction->shortcut());
-    connect(rightJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignRightButtonPressed()));
-
     connect(buttonBar->centerJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignCenterButtonPressed()));
-    QShortcut *centerJustifyButtonShortcut = new QShortcut(this);
-    centerJustifyButtonShortcut->setKey(buttonBar->centerJustifyButtonAction->shortcut());
-    connect(centerJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignCenterButtonPressed()));
 
     connect(buttonBar->strikethroughButtonAction, SIGNAL(triggered()), this, SLOT(strikethroughButtonPressed()));
     QShortcut *strikethroughButtonShortcut = new QShortcut(this);

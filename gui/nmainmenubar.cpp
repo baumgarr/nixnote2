@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QAbstractAnimation>
 #include <QFileIconProvider>
 #include <QDesktopServices>
+#include <QShortcut>
 
 extern Global global;
 
@@ -66,7 +67,6 @@ void NMainMenuBar::setupFileMenu() {
     connect(printAction, SIGNAL(triggered()), parent, SLOT(printNote()));
     setupShortcut(printAction, QString("File_Print"));
     fileMenu->addAction(printAction);
-
     fileMenu->addSeparator();
 
     backupDatabaseAction = new QAction(tr("&Backup Database"), this);

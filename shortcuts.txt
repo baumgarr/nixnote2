@@ -21,13 +21,15 @@ File_Tag_Icon					// Modify the selected tag(s) icon.
 File_SavedSearch_Add				// Add a notebook
 File_SavedSearch_Edit				// Edit an existing notebook
 File_SavedSearch_Delete				// Delete the existing notebook
-File_Email			Ctrl+Shift+E	// Email note
 File_Print			Ctrl+P		// Print
 File_Selective_Sync				// Selective sync setup
 File_Empty_Trash				// Purge all delete notes
 File_Exit			Ctrl+Q		// I'm outahere
 
-Edit_Find_In_Note		Ctrl+F		// Search only within the current note
+Edit_Search_Find		Ctrl+F		// Search only within the current note
+Edit_Search_Find_Next		Ctrl+G		// Find the next occurrence within the current note
+Edit_Search_Find_Prev		Ctrl+Shift+G	// Find the previous occurrence within the current note
+Edit_Search_Find_Replace	Ctrl+H		// Find & Replace within the current note
 Edit_Undo			Ctrl+Z		// Undo last change
 Edit_Redo			Ctrl+Y		// Redo the last undone change
 Edit_Cut			Ctrl+X		// Cut current selection to the clipboard
@@ -86,7 +88,7 @@ Format_Horizontal_Line				// Href line
 Format_Superscript		Ctrl+=		// Set superscript
 Format_Subscript		Ctrl+Shift+=	// Subscript
 Format_Alignment_Left		Ctrl+L		// Left align text
-Format_Alignment_Center		Ctrl+C		// Center text
+Format_Alignment_Center	        Ctrl+E		// Center text
 Format_Alignment_Right		Ctrl+R		// Right align text
 Format_List_Bullet		Ctrl+Shift+B	// Bullet list
 Format_List_Numbered		Ctrl+Shift+N	// Numbered list 

@@ -104,7 +104,6 @@ public:
     ColorMenu *fontColorMenuWidget;
     QToolButton *highlightColorButtonWidget;
     ColorMenu *highlightColorMenuWidget;
-
     void setupShortcut(QToolButton *action, QString text);
     void setupShortcut(QAction *action, QString text);
 

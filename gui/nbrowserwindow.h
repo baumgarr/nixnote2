@@ -129,6 +129,8 @@ public:
     QWebView *printPage;
     bool fastPrint;
 
+    //QShortcut *leftJustifyButtonShortcut;
+
     QHBoxLayout line2Layout;
     QHBoxLayout line3Layout;
     qint32 lid;
