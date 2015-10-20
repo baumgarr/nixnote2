@@ -283,19 +283,19 @@ void NBrowserWindow::setupToolBar() {
     connect(removeFormatButtonShortcut, SIGNAL(activated()), this, SLOT(removeFormatButtonPressed()));
 
     connect(buttonBar->boldButtonWidget, SIGNAL(clicked()), this, SLOT(boldButtonPressed()));
-    QShortcut *buttonBarShortcut = new QShortcut(this);
-    buttonBarShortcut->setKey(buttonBar->boldButtonWidget->shortcut());
-    connect(buttonBarShortcut, SIGNAL(activated()), this, SLOT(boldButtonPressed()));
+    //QShortcut *buttonBarShortcut = new QShortcut(this);
+    //buttonBarShortcut->setKey(buttonBar->boldButtonWidget->shortcut());
+    //connect(buttonBarShortcut, SIGNAL(activated()), this, SLOT(boldButtonPressed()));
 
     connect(buttonBar->italicButtonWidget, SIGNAL(clicked()), this, SLOT(italicsButtonPressed()));
-    QShortcut *italicsButtonShortcut = new QShortcut(this);
-    italicsButtonShortcut->setKey(buttonBar->italicButtonWidget->shortcut());
-    connect(italicsButtonShortcut, SIGNAL(activated()), this, SLOT(italicsButtonPressed()));
+    //QShortcut *italicsButtonShortcut = new QShortcut(this);
+    //italicsButtonShortcut->setKey(buttonBar->italicButtonWidget->shortcut());
+    //connect(italicsButtonShortcut, SIGNAL(activated()), this, SLOT(italicsButtonPressed()));
 
     connect(buttonBar->underlineButtonWidget, SIGNAL(clicked()), this, SLOT(underlineButtonPressed()));
-    QShortcut *underlineButtonShortcut = new QShortcut(this);
-    underlineButtonShortcut->setKey(buttonBar->underlineButtonWidget->shortcut());
-    connect(underlineButtonShortcut, SIGNAL(activated()), this, SLOT(underlineButtonPressed()));
+    //QShortcut *underlineButtonShortcut = new QShortcut(this);
+    //underlineButtonShortcut->setKey(buttonBar->underlineButtonWidget->shortcut());
+    //connect(underlineButtonShortcut, SIGNAL(activated()), this, SLOT(underlineButtonPressed()));
 
     connect(buttonBar->leftJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignLeftButtonPressed()));
     connect(buttonBar->rightJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignRightButtonPressed()));
@@ -1058,7 +1058,8 @@ QString NBrowserWindow::fixEncryptionPaste(QString data) {
 
 // The bold button was pressed / toggled
 void NBrowserWindow::boldButtonPressed() {
-    this->editor->triggerPageAction(QWebPage::ToggleBold);
+    QAction *action = editor->page()->action(QWebPage::ToggleBold);
+    action->activate(QAction::Trigger);
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -1067,7 +1068,8 @@ void NBrowserWindow::boldButtonPressed() {
 
 // The toggled button was pressed/toggled
 void NBrowserWindow::italicsButtonPressed() {
-    this->editor->triggerPageAction(QWebPage::ToggleItalic);
+    QAction *action = editor->page()->action(QWebPage::ToggleItalic);
+    action->activate(QAction::Trigger);
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -1667,6 +1669,7 @@ void NBrowserWindow::attachFile() {
      else
          editor->encryptAction->setEnabled(false);
 
+
     QString js = QString("function getCursorPos() {")
         +QString("var cursorPos;")
         +QString("if (window.getSelection) {")
@@ -1675,7 +1678,9 @@ void NBrowserWindow::attachFile() {
         +QString("   var workingNode = window.getSelection().anchorNode.parentNode;")
         +QString("   while(workingNode != null) { ")
         //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
-        +QString("      if (workingNode.nodeName=='TABLE') { if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea(); }")
+        +QString("      if (workingNode.nodeName=='TABLE') {")
+        +QString("          if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
+        +QString("      }")
         +QString("      if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
         +QString("      if (workingNode.nodeName=='I') window.browserWindow.italicsActive();")
         +QString("      if (workingNode.nodeName=='U') window.browserWindow.underlineActive();")
@@ -1683,7 +1688,12 @@ void NBrowserWindow::attachFile() {
         +QString("      if (workingNode.nodeName=='OL') window.browserWindow.setInsideList();")
         +QString("      if (workingNode.nodeName=='LI') window.browserWindow.setInsideList();")
         +QString("      if (workingNode.nodeName=='TBODY') window.browserWindow.setInsideTable();")
-        +QString("      if (workingNode.nodeName=='A') {for(var x = 0; x < workingNode.attributes.length; x++ ) {if (workingNode.attributes[x].nodeName.toLowerCase() == 'href') window.browserWindow.setInsideLink(workingNode.attributes[x].nodeValue);}}")
+        +QString("      if (workingNode.nodeName=='A') {")
+        +QString("           for(var x = 0; x < workingNode.attributes.length; x++ ) {")
+        +QString("              if (workingNode.attributes[x].nodeName.toLowerCase() == 'href')")
+        +QString("                  window.browserWindow.setInsideLink(workingNode.attributes[x].nodeValue);")
+        +QString("           }")
+        +QString("      }")
         +QString("      if (workingNode.nodeName=='SPAN') {")
         +QString("         if (workingNode.getAttribute('style') == 'text-decoration: underline;') window.browserWindow.underlineActive();")
         +QString("      }")
@@ -1703,7 +1713,7 @@ void NBrowserWindow::attachFile() {
                   QString("      window.browserWindow.changeDisplayFontName(font);") +
                   QString("} getFontSize();");
     editor->page()->mainFrame()->evaluateJavaScript(js2);
-}
+ }
 
  void NBrowserWindow::printNodeName(QString v) {
      QLOG_DEBUG() << v;
