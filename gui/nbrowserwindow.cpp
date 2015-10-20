@@ -1670,12 +1670,15 @@ void NBrowserWindow::attachFile() {
          editor->encryptAction->setEnabled(false);
 
 
+         //     +QString("            window.browserWindow.printNodeName(workingNode.firstChild.nodeValue);")
     QString js = QString("function getCursorPos() {")
         +QString("var cursorPos;")
+        +QString("var insideUrl=false;")
         +QString("if (window.getSelection) {")
         +QString("   var selObj = window.getSelection();")
         +QString("   var selRange = selObj.getRangeAt(0);")
         +QString("   var workingNode = window.getSelection().anchorNode.parentNode;")
+        +QString("    window.browserWindow.printNodeName(workingNode.firstChild.nodeValue);")
         +QString("   while(workingNode != null) { ")
         //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
         +QString("      if (workingNode.nodeName=='TABLE') {")
@@ -1689,6 +1692,7 @@ void NBrowserWindow::attachFile() {
         +QString("      if (workingNode.nodeName=='LI') window.browserWindow.setInsideList();")
         +QString("      if (workingNode.nodeName=='TBODY') window.browserWindow.setInsideTable();")
         +QString("      if (workingNode.nodeName=='A') {")
+        +QString("           insideUrl = true;")
         +QString("           for(var x = 0; x < workingNode.attributes.length; x++ ) {")
         +QString("              if (workingNode.attributes[x].nodeName.toLowerCase() == 'href')")
         +QString("                  window.browserWindow.setInsideLink(workingNode.attributes[x].nodeValue);")
