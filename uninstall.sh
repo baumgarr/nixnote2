@@ -10,5 +10,6 @@ fi
 
 rm /usr/share/applications/nixnote2.desktop
 rm -rf /usr/share/nixnote2
+rm /usr/bin/nixnote2
 
 echo "Uninstall completed"

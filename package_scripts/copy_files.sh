@@ -4,7 +4,7 @@ version="2.0-alpha5"
 arch="amd64"
 
 package_dir=$(cd `dirname $0` && pwd)
-source_dir=".."
+source_dir="$package_dir/.."
 
 
 ####################################################
