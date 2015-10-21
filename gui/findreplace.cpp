@@ -107,6 +107,7 @@ void FindReplace::showFind() {
     if (isHidden()) {
         show();
         this->findLine->setFocus();
+        this->findLine->selectAll();
     }
 }
 

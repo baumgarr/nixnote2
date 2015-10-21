@@ -2180,7 +2180,10 @@ void NixNote::viewNoteHistory() {
 //* Search for text within a note
 //****************************************
 void NixNote::findInNote() {
-    findReplaceWindow->showFind();
+    if (!findReplaceWindow->isVisible())
+        findReplaceWindow->showFind();
+    else
+        findReplaceWindow->hide();
 }
 
 
