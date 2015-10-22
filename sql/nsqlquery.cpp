@@ -55,10 +55,24 @@ NSqlQuery::~NSqlQuery() {
 }
 
 
+QString getLastExecutedQuery(const QSqlQuery& query)
+{
+    QString str = query.lastQuery();
+    QMapIterator<QString, QVariant> it(query.boundValues());
+    while (it.hasNext())
+    {
+      it.next();
+      str.replace(it.key(),it.value().toString());
+    }
+    return str;
+}
+
+
 // Generic exec().  A prepare should have been done already
 bool NSqlQuery::exec() {
     bool indexPauseSave;
     bool indexRestoreNeeded = false;
+    QLOG_DEBUG() << "Sending SQL:" << getLastExecutedQuery(*this);
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec();
         if (rc) {
@@ -101,6 +115,7 @@ bool NSqlQuery::exec() {
 bool NSqlQuery::exec(const QString &query) {
     bool indexPauseSave;
     bool indexRestoreNeeded = false;
+    QLOG_DEBUG() << "Sending SQL:" << query;
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec(query);
         if (rc) {

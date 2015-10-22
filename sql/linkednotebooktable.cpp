@@ -471,7 +471,7 @@ void LinkedNotebookTable::renameStack(QString oldName, QString newName) {
     query.prepare("Update Datastore set data=:newname where key=:key and data=:oldname");
     query.bindValue(":newname", newName);
     query.bindValue(":key", LINKEDNOTEBOOK_STACK);
-    query.bindValue(":oldName", oldName);
+    query.bindValue(":oldname", oldName);
     query.exec();
     query.finish();
     db->unlock();

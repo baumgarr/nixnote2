@@ -101,9 +101,9 @@ void UserTable::createTable() {
 void UserTable::updateUser(User &user) {
     NSqlQuery query(db);
     db->lockForWrite();
-    query.prepare("delete from UserTable where key != :last_date and key != :last_number;");
-    query.bindValue(":key1", USER_SYNC_LAST_DATE);
-    query.bindValue(":key2", USER_SYNC_LAST_NUMBER);
+    query.prepare("delete from UserTable where key != :lastdate and key != :lastnumber;");
+    query.bindValue(":lastdate", USER_SYNC_LAST_DATE);
+    query.bindValue(":lastnumber", USER_SYNC_LAST_NUMBER);
     query.exec();
 
     if (user.id.isSet()) {

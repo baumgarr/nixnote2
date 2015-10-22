@@ -1170,7 +1170,7 @@ void NoteTable::updateUrl(qint32 noteLid, QString url, bool setAsDirty=false) {
         query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
         query.bindValue(":lid", noteLid);
         query.bindValue(":key", NOTE_ATTRIBUTE_SOURCE_URL);
-        query.bindValue(":url", url);
+        query.bindValue(":data", url);
         query.exec();
     }
 
@@ -1236,7 +1236,7 @@ void NoteTable::updateAuthor(qint32 noteLid, QString author, bool setAsDirty=fal
     }
 
     query.prepare("Update NoteTable set Author=:author where lid=:lid");
-    query.bindValue(":url", author);
+    query.bindValue(":author", author);
     query.bindValue(":lid", noteLid);
     query.exec();
     query.finish();

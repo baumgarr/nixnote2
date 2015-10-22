@@ -79,7 +79,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
 
     // Now, re-insert any pinned notes
     sql.prepare("Insert into filter (lid) select lid from Datastore where key=:key and lid not in (select lid from filter)");
-    sql.bindValue(":closedNotebooks", NOTE_ISPINNED);
+    sql.bindValue(":key", NOTE_ISPINNED);
     sql.exec();
 
 
@@ -671,11 +671,11 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
 
     sql.bindValue(":weight", global.getMinimumRecognitionWeight());
     sql.bindValue(":weight2", global.getMinimumRecognitionWeight());
-    sql.bindValue(":key", RESOURCE_NOTE_LID);
+    //sql.bindValue(":key", RESOURCE_NOTE_LID);
 
     sqlnegative.bindValue(":weight", global.getMinimumRecognitionWeight());
     sqlnegative.bindValue(":weight2", global.getMinimumRecognitionWeight());
-    sqlnegative.bindValue(":key2", RESOURCE_NOTE_LID);
+    //sqlnegative.bindValue(":key2", RESOURCE_NOTE_LID);
 
     for (qint32 i=0; i<list.size(); i++) {
         QString string = list[i];
@@ -781,7 +781,7 @@ void FilterEngine::filterSearchStringIntitleAll(QString string) {
             string = QString("%") +string +QString("%");
         tagSql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :title)");
         tagSql.bindValue(":key", NOTE_TITLE);
-        tagSql.bindValue(":data", string);
+        tagSql.bindValue(":title", string);
 
         tagSql.exec();
         tagSql.finish();
@@ -1660,7 +1660,7 @@ void FilterEngine::filterSearchStringIntitleAny(QString string) {
             string = QString("%") +string +QString("%");
         tagSql.prepare("insert into anylidsfilter (lid) select lid from datastore where key=:key and data like :title");
         tagSql.bindValue(":key", NOTE_TITLE);
-        tagSql.bindValue(":data", string);
+        tagSql.bindValue(":title", string);
 
         tagSql.exec();
         tagSql.finish();
@@ -1676,7 +1676,7 @@ void FilterEngine::filterSearchStringIntitleAny(QString string) {
             string = QString("%") +string +QString("%");
         tagSql.prepare("insert into anylidsfilter (lid) select lid from datastore where lid not in (select lid from datastore where key=:key and data like :title)");
         tagSql.bindValue(":key", NOTE_TITLE);
-        tagSql.bindValue(":data", string);
+        tagSql.bindValue(":title", string);
 
         tagSql.exec();
         tagSql.finish();

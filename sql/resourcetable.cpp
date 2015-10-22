@@ -141,7 +141,7 @@ qint32 ResourceTable::getLid(string resourceGuid) {
 qint32 ResourceTable::getLid(QString resourceGuid) {
     NSqlQuery query(db);
     db->lockForRead();
-    query.prepare("Select lid from DataStore where key=:key and data=:guid");
+    query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":data", resourceGuid);
     query.exec();
@@ -1042,7 +1042,7 @@ void ResourceTable::updateNoteLid(qint32 resourceLid, qint32 newNoteLid) {
     query.prepare("Update datastore set data=:newNoteLid where lid=:resourceLid and key=:key");
     query.bindValue(":newNoteLid", newNoteLid);
     query.bindValue(":lid", resourceLid);
-    query.bindValue(":key", RESOURCE_NOTE_LID);
+    query.bindValue(":resourceLid", RESOURCE_NOTE_LID);
     query.exec();
     query.finish();
     db->unlock();
@@ -1074,7 +1074,7 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
     NSqlQuery query(db);
     qint32 prevLid = -1;
     db->lockForRead();
-    query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");
+    query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
     query.bindValue(":key2", RESOURCE_NOTE_LID);
     query.bindValue(":noteLid", noteLid);
     query.exec();
@@ -1135,11 +1135,11 @@ void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool 
     db->lockForRead();
     QHash<qint32, Resource*> lidMap;
     if (fullLoad){
-        query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");
+        query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
         query.bindValue(":key2", RESOURCE_NOTE_LID);
         query.bindValue(":noteLid", noteLid);
     } else {
-        query.prepare("Select key, data, lid from datastore where key=:key and lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");
+        query.prepare("Select key, data, lid from datastore where key=:key and lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
         query.bindValue(":key", RESOURCE_GUID);
         query.bindValue(":key2", RESOURCE_NOTE_LID);
         query.bindValue(":noteLid", noteLid);

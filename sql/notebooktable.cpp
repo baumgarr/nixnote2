@@ -754,7 +754,7 @@ void NotebookTable::renameStack(QString oldName, QString newName) {
     query.prepare("Update Datastore set data=:newname where key=:key and data=:oldname");
     query.bindValue(":newname", newName);
     query.bindValue(":key", NOTEBOOK_STACK);
-    query.bindValue(":oldName", oldName);
+    query.bindValue(":oldname", oldName);
     query.exec();
     query.finish();
     db->unlock();
@@ -982,7 +982,7 @@ int NotebookTable::getNewUnsequencedCount() {
     NSqlQuery query(db);
     query.prepare("Select count(lid) from DataStore where key=:key and data=0 and lid not in (select lid from datastore where key=:localkey and data='true')");
     query.bindValue(":key", NOTEBOOK_UPDATE_SEQUENCE_NUMBER);
-    query.bindValue(":localKey", NOTEBOOK_IS_LOCAL);
+    query.bindValue(":localkey", NOTEBOOK_IS_LOCAL);
     query.exec();
     qint32 retval = 0;
     while(query.next()) {
