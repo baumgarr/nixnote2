@@ -830,9 +830,9 @@ bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid)
     resourceList.clear();
     db->lockForRead();
     NSqlQuery query(db);
-    query.prepare("Select lid from DataStore where key=:key and data=:notelid");
+    query.prepare("Select lid from DataStore where key=:key and data=:noteLid");
     query.bindValue(":key", RESOURCE_NOTE_LID);
-    query.bindValue(":notelid", noteLid);
+    query.bindValue(":noteLid", noteLid);
     query.exec();
     while (query.next()) {
         int resLid = query.value(0).toInt();

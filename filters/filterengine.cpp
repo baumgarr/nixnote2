@@ -794,7 +794,7 @@ void FilterEngine::filterSearchStringIntitleAll(QString string) {
         string = string.replace("*", "%");
         if (string.indexOf("%") < 0)
             string = QString("%") +string +QString("%");
-        tagSql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :title)");
+        tagSql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
         tagSql.bindValue(":key", NOTE_TITLE);
         tagSql.bindValue(":data", string);
 

@@ -423,7 +423,7 @@ qint32 SharedNotebookTable::findByNotebookGuid(QString id) {
     db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:id");
     query.bindValue(":key", SHAREDNOTEBOOK_NOTEBOOK_GUID);
-    query.bindValue(":data", id);
+    query.bindValue(":id", id);
     query.exec();
     while (query.next()) {
         qint32 retval = query.value(0).toInt();
