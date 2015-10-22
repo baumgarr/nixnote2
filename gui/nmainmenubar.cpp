@@ -184,7 +184,7 @@ void NMainMenuBar::setupEditMenu() {
     editMenu->addAction(pasteAsTextAction);
 
     removeFormattingAction = new QAction(tr("Remo&ve Formatting"), this);
-    setupShortcut(removeFormattingAction, QString("Edit_Remove_Formatting"));
+    //setupShortcut(removeFormjattingAction, QString("Edit_Remove_Formatting")); // For some reason this one makes the editorButtonBar one ambiguous
     editMenu->addAction(removeFormattingAction);
 
     editMenu->addSeparator();
@@ -387,7 +387,7 @@ void NMainMenuBar::setupNoteMenu() {
     noteMenu->addSeparator();
 
     spellCheckAction = new QAction(tr("&Spell Check"), noteMenu);
-    setupShortcut(spellCheckAction, QString("File_Note_Spell_Check"));
+    // setupShortcut(spellCheckAction, QString("Tools_Spell_Check"));  This shortcut is done by the editor button bar
     noteMenu->addAction(spellCheckAction);
     connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
 

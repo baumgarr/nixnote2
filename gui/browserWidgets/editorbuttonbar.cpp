@@ -53,7 +53,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     insertDatetimeVisible = contextMenu->addAction(tr("Insert Date && Time"));
     shiftRightVisible = contextMenu->addAction(tr("Shift Right"));
     shiftLeftVisible = contextMenu->addAction(tr("Shift Left"));
-    buttonListVisible = contextMenu->addAction(tr("Bullet List"));
+    bulletListVisible = contextMenu->addAction(tr("Bullet List"));
     numberListVisible = contextMenu->addAction(tr("Number List"));
     fontVisible = contextMenu->addAction(tr("Font"));
     fontSizeVisible = contextMenu->addAction(tr("Font Size"));
@@ -82,7 +82,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     hlineVisible->setCheckable(true);
     shiftRightVisible->setCheckable(true);
     shiftLeftVisible->setCheckable(true);
-    buttonListVisible->setCheckable(true);
+    bulletListVisible->setCheckable(true);
     numberListVisible->setCheckable(true);
     todoVisible->setCheckable(true);
     fontColorVisible->setCheckable(true);
@@ -115,7 +115,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(hlineVisible, SIGNAL(triggered()), this, SLOT(toggleHlineButtonVisible()));
     connect(shiftRightVisible, SIGNAL(triggered()), this, SLOT(toggleShiftRightButtonVisible()));
     connect(shiftLeftVisible, SIGNAL(triggered()), this, SLOT(toggleShiftLeftButtonVisible()));
-    connect(buttonListVisible, SIGNAL(triggered()), this, SLOT(toggleButtonListButtonVisible()));
+    connect(bulletListVisible, SIGNAL(triggered()), this, SLOT(toggleBulletListButtonVisible()));
     connect(numberListVisible, SIGNAL(triggered()), this, SLOT(toggleNumberListButtonVisible()));
     connect(fontVisible, SIGNAL(triggered()), this, SLOT(toggleFontButtonVisible()));
     connect(fontSizeVisible, SIGNAL(triggered()), this, SLOT(toggleFontSizeButtonVisible()));
@@ -128,75 +128,104 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
 
   undoButtonAction = this->addAction(global.getIconResource(":undoIcon"), tr("Undo"));
-  this->setupShortcut(undoButtonAction, "Edit_Undo");
+  undoButtonShortcut = new QShortcut(this);
+  setupShortcut(undoButtonShortcut, "Edit_Undo");
+
   redoButtonAction = this->addAction(global.getIconResource(":redoIcon"), tr("Redo"));
-  this->setupShortcut(redoButtonAction, "Edit_Redo");
+  redoButtonShortcut = new QShortcut(this);
+  setupShortcut(redoButtonShortcut, "Edit_Redo");
+  redoButtonShortcut->setContext(Qt::WidgetShortcut);
 
   cutButtonAction = this->addAction(global.getIconResource(":cutIcon"), tr("Cut"));
-  this->setupShortcut(cutButtonAction, "Edit_Cut");
+  cutButtonShortcut = new QShortcut(this);
+  setupShortcut(cutButtonShortcut, "Edit_Cut");
+
   copyButtonAction = this->addAction(global.getIconResource(":copyIcon"), tr("Copy"));
-  this->setupShortcut(copyButtonAction, "Edit_Copy");
+  copyButtonShortcut = new QShortcut(this);
+  setupShortcut(copyButtonShortcut, "Edit_Copy");
+
   pasteButtonAction = this->addAction(global.getIconResource(":pasteIcon"), tr("Paste"));
   //this->setupShortcut(pasteButtonAction, "Edit_Paste");  // This is captured in NWebView via a keyevent statement
+
   removeFormatButtonAction = this->addAction(global.getIconResource(":eraserIcon"), tr("Remove Formatting"));
-  this->setupShortcut(removeFormatButtonAction, "Edit_Remove_Formatting");
+  removeFormatButtonShortcut = new QShortcut(this);
+  this->setupShortcut(removeFormatButtonShortcut, "Edit_Remove_Formatting");
+  QLOG_DEBUG() << removeFormatButtonShortcut->key();
 
   boldButtonWidget = new QToolButton(this);
   boldButtonWidget->setIcon(global.getIconResource(":boldIcon"));
   boldButtonWidget->setText(tr("Bold"));
-  this->setupShortcut(boldButtonWidget, "Format_Bold");
   boldButtonAction = this->addWidget(boldButtonWidget);
-
+  boldButtonShortcut = new QShortcut(this);
+  this->setupShortcut(boldButtonShortcut, "Format_Bold");
 
   italicButtonWidget = new QToolButton(this);
   italicButtonWidget->setIcon(global.getIconResource(":italicsIcon"));
   italicButtonWidget->setText(tr("Italics"));
   italicButtonWidget->setToolTip(tr("Italics"));
   italicButtonAction = this->addWidget(italicButtonWidget);
-  this->setupShortcut(italicButtonWidget, "Format_Italic");
+  italicButtonShortcut = new QShortcut(this);
+  this->setupShortcut(italicButtonShortcut, "Format_Italic");
 
   underlineButtonWidget = new QToolButton(this);
   underlineButtonWidget->setIcon(global.getIconResource(":underlineIcon"));
   underlineButtonWidget->setText(tr("Underline"));
   underlineButtonWidget->setToolTip(tr("Underline"));
   underlineButtonAction = this->addWidget(underlineButtonWidget);
-  this->setupShortcut(underlineButtonWidget, "Format_Underline");
+  underlineButtonShortcut = new QShortcut(this);
+  this->setupShortcut(underlineButtonShortcut, "Format_Underline");
 
   strikethroughButtonAction = this->addAction(global.getIconResource(":strikethroughIcon"), tr("Strikethrough"));
-  this->setupShortcut(strikethroughButtonAction, "Format_Strikethrough");
+  strikethroughButtonShortcut = new QShortcut(this);
+  this->setupShortcut(strikethroughButtonShortcut, "Format_Strikethrough");
 
   superscriptButtonAction = this->addAction(global.getIconResource(":superscriptIcon"), tr("Superscript"));
-  this->setupShortcut(superscriptButtonAction, "Format_Superscript");
+  superscriptButtonShortcut = new QShortcut(this);
+  this->setupShortcut(superscriptButtonShortcut, "Format_Superscript");
+
   subscriptButtonAction = this->addAction(global.getIconResource(":subscriptIcon"), tr("Subscript"));
-  this->setupShortcut(subscriptButtonAction, "Format_Subscript");
+  subscriptButtonShortcut = new QShortcut(this);
+  this->setupShortcut(subscriptButtonShortcut, "Format_Subscript");
+
+  centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlignIcon"), tr("Center"));
+  centerJustifyButtonShortcut = new QShortcut(this);
+  this->setupShortcut(centerJustifyButtonShortcut, "Format_Alignment_Center");
+
+  rightJustifyButtonAction = this->addAction(global.getIconResource(":rightAlignIcon"), tr("Right Justify"));
+  rightJustifyButtonShortcut = new QShortcut(this);
+  this->setupShortcut(rightJustifyButtonShortcut, "Format_Alignment_Right");
 
   leftJustifyButtonAction = this->addAction(global.getIconResource(":leftAlignIcon"), tr("Left Justify"));
-  this->setupShortcut(leftJustifyButtonAction, "Format_Alignment_Left");
-  centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlignIcon"), tr("Center"));
-  this->setupShortcut(centerJustifyButtonAction, "Format_Alignment_Center");
-  rightJustifyButtonAction = this->addAction(global.getIconResource(":rightAlignIcon"), tr("Right Justify"));
-  this->setupShortcut(rightJustifyButtonAction, "Format_Alignment_Right");
+  leftJustifyButtonShortcut = new QShortcut(this);
+  this->setupShortcut(leftJustifyButtonShortcut, "Format_Alignment_Left");
 
   hlineButtonAction = this->addAction(global.getIconResource(":hlineIcon"), tr("Horizontal Line"));
-  this->setupShortcut(hlineButtonAction, "Format_Horizontal_Line");
+  hlineButtonShortcut = new QShortcut(this);
+  this->setupShortcut(hlineButtonShortcut, "Format_Horizontal_Line");
 
   insertDatetimeButtonWidget = new QToolButton(this);
   insertDatetimeButtonWidget->setIcon(global.getIconResource(":dateTime"));
   insertDatetimeButtonWidget->setText(tr("Insert Date & Time"));
   insertDatetimeButtonWidget->setToolTip(tr("Insert Date & Time"));
   insertDatetimeButtonAction = this->addWidget(insertDatetimeButtonWidget);
-  //this->setupShortcut(insertDatetimeButtonWidget, "Insert_Datetime");  // This shortcut is handled elsewhere
+  insertDatetimeButtonShortcut = new QShortcut(this);
+  insertDatetimeButtonShortcut->setKey(insertDatetimeButtonWidget->shortcut());
 
   shiftRightButtonAction = this->addAction(global.getIconResource(":shiftRightIcon"), tr("Shift Right"));
-  this->setupShortcut(shiftRightButtonAction, "Format_Indent_Increase");
+  shiftRightButtonShortcut = new QShortcut(this);
+  this->setupShortcut(shiftRightButtonShortcut, "Format_Indent_Increase");
+
   shiftLeftButtonAction = this->addAction(global.getIconResource(":shiftLeftIcon"), tr("Shift Left"));
-  this->setupShortcut(shiftLeftButtonAction, "Format_Indent_Decrease");
+  shiftLeftButtonShortcut = new QShortcut(this);
+  this->setupShortcut(shiftLeftButtonShortcut, "Format_Indent_Decrease");
 
   bulletListButtonAction = this->addAction(global.getIconResource(":bulletListIcon"), tr("Bullet List"));
-  this->setupShortcut(bulletListButtonAction, "Format_List_Bullet");
-  numberListButtonAction = this->addAction(global.getIconResource(":numberListIcon"), tr("Number List"));
-  this->setupShortcut(numberListButtonAction, "Format_List_Numbered");
+  bulletListButtonShortcut = new QShortcut(this);
+  this->setupShortcut(bulletListButtonShortcut, "Format_List_Bullet");
 
+  numberListButtonAction = this->addAction(global.getIconResource(":numberListIcon"), tr("Number List"));
+  numberListButtonShortcut = new QShortcut(this);
+  this->setupShortcut(numberListButtonShortcut, "Format_List_Numbered");
 
   fontNames = new FontNameComboBox(this);
   fontSizes = new FontSizeComboBox(this);
@@ -221,20 +250,25 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   highlightColorButtonWidget->setIcon(global.getIconResource(":fontHighlightIcon"));
   highlightColorButtonWidget->setToolTip(tr("Highlight"));
   highlightColorAction = this->addWidget(highlightColorButtonWidget);
-  this->setupShortcut(highlightColorAction, "Format_Highlight");
+  highlightColorShortcut = new QShortcut(this);
+  this->setupShortcut(highlightColorShortcut, "Format_Highlight");
 
   todoButtonAction = this->addAction(global.getIconResource(":todoIcon"), tr("Todo"));
-  this->setupShortcut(todoButtonAction, "Edit_Insert_Todo");
+  todoButtonShortcut = new QShortcut(this);
+  this->setupShortcut(todoButtonShortcut, "Edit_Insert_Todo");
 
   spellCheckButtonAction = this->addAction(global.getIconResource(":spellCheckIcon"), tr("Spell Check"));
-  this->setupShortcut(spellCheckButtonAction, "Note_Spell_Check");
+  spellCheckButtonShortcut = new QShortcut(this);
+  this->setupShortcut(spellCheckButtonShortcut, "Tools_Spell_Check");
 
   insertTableButtonAction = this->addAction(global.getIconResource(":gridIcon"), tr("Insert Table"));
-  this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
+  insertTableButtonShortcut = new QShortcut(this);
+  this->setupShortcut(insertTableButtonShortcut, "Edit_Insert_Table");
 
   htmlEntitiesButtonAction = this->addAction(global.getIconResource(":htmlentitiesIcon"), tr("Insert HTML Entities"));
-//  this->setupShortcut(insertTableButtonAction, "Edit_Insert_Table");
-
+  htmlEntitiesButtonShortcut = new QShortcut(this);
+  setupShortcut(htmlEntitiesButtonShortcut, "Edit_Insert_Html_Entities");
+  htmlEntitiesButtonShortcut->setContext(Qt::WidgetShortcut);
 }
 
 
@@ -254,7 +288,7 @@ EditorButtonBar::~EditorButtonBar() {
     delete hlineVisible;
     delete shiftRightVisible;
     delete shiftLeftVisible;
-    delete buttonListVisible;
+    delete bulletListVisible;
     delete numberListVisible;
     delete fontVisible;
     delete fontSizeVisible;
@@ -420,7 +454,7 @@ void EditorButtonBar::setupVisibleButtons() {
     shiftRightVisible->setChecked(shiftRightButtonAction->isVisible());
 
     bulletListButtonAction->setVisible(global.settings->value("bulletListButtonVisible", true).toBool());
-    buttonListVisible->setChecked(bulletListButtonAction->isVisible());
+    bulletListVisible->setChecked(bulletListButtonAction->isVisible());
 
     numberListButtonAction->setVisible(global.settings->value("numberListButtonVisible", true).toBool());
     numberListVisible->setChecked(numberListButtonAction->isVisible());
@@ -441,15 +475,13 @@ void EditorButtonBar::setupVisibleButtons() {
     fontColorVisible->setChecked(fontColorAction->isVisible());
 
     highlightColorAction->setVisible(global.settings->value("highlightButtonVisible", true).toBool());
-    highlightColorAction->setChecked(highlightColorAction->isVisible());
+    highlightVisible->setChecked(highlightColorAction->isVisible());
 
     spellCheckButtonAction->setVisible(global.settings->value("spelLCheckButtonVisible", true).toBool());
     spellCheckButtonVisible->setChecked(spellCheckButtonAction->isVisible());
 
-    if (htmlEntitiesButtonVisible->isVisible()) {
-        htmlEntitiesButtonAction->setVisible(global.settings->value("htmlEntitiesButtonVisible", true).toBool());
-        htmlEntitiesButtonVisible->setChecked(htmlEntitiesButtonAction->isVisible());
-    }
+    htmlEntitiesButtonAction->setVisible(global.settings->value("htmlEntitiesButtonVisible", true).toBool());
+    htmlEntitiesButtonVisible->setChecked(htmlEntitiesButtonAction->isVisible());
 
     insertDatetimeButtonAction->setVisible(global.settings->value("insertDatetimeButtonVisible", true).toBool());
     insertDatetimeVisible->setChecked(insertDatetimeButtonAction->isVisible());
@@ -535,8 +567,8 @@ void EditorButtonBar::toggleShiftLeftButtonVisible() {
     shiftLeftButtonAction->setVisible(shiftLeftVisible->isChecked());
     saveVisibleButtons();
 }
-void EditorButtonBar::toggleButtonListButtonVisible() {
-    bulletListButtonAction->setVisible(buttonListVisible->isChecked());
+void EditorButtonBar::toggleBulletListButtonVisible() {
+    bulletListButtonAction->setVisible(bulletListVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleNumberListButtonVisible() {
@@ -629,22 +661,29 @@ void EditorButtonBar::loadFontSizeComboBox(QString name) {
 }
 
 
-void EditorButtonBar::setupShortcut(QAction *action, QString text) {
+//void EditorButtonBar::setupShortcut(QAction *action, QString text) {
+//    if (!global.shortcutKeys->containsAction(&text))
+//        return;
+//    QKeySequence key(global.shortcutKeys->getShortcut(&text));
+//    action->setShortcut(key);
+//}
+
+
+
+void EditorButtonBar::setupShortcut(QShortcut *shortcut, QString text) {
     if (!global.shortcutKeys->containsAction(&text))
         return;
     QKeySequence key(global.shortcutKeys->getShortcut(&text));
-    action->setShortcut(key);
+    shortcut->setKey(key);
 }
 
 
-
-
-void EditorButtonBar::setupShortcut(QToolButton *action, QString text) {
-    if (!global.shortcutKeys->containsAction(&text))
-        return;
-    QKeySequence key(global.shortcutKeys->getShortcut(&text));
-    action->setShortcut(key);
-}
+//void EditorButtonBar::setupShortcut(QToolButton *action, QString text) {
+//    if (!global.shortcutKeys->containsAction(&text))
+//        return;
+//    QKeySequence key(global.shortcutKeys->getShortcut(&text));
+//    action->setShortcut(key);
+//}
 
 
 void EditorButtonBar::reloadIcons() {

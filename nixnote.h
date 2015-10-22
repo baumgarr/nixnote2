@@ -94,7 +94,6 @@ private:
     QLabel *leftSeparator5;
     NTrashTree *trashTree;
     NTagView *tagTreeView;
-    NTabWidget *tabWindow;
     QSplitter *mainSplitter;
     QSplitter *leftPanelSplitter;
     WidgetPanel *leftPanel;
@@ -187,6 +186,7 @@ public:
     bool event(QEvent *event);
     LineEdit *searchText;
     void setDebugLevel();
+    NTabWidget *tabWindow;
 
 
 
