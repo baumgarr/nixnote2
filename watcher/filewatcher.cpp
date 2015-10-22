@@ -193,12 +193,16 @@ void FileWatcher::addDirectory(QString root) {
     QStringList files;
     if (includeSubdirectories) {
         setupSubDirectories(dirs, files, root);
-        addPaths(dirs);
-        addPaths(files);
+        if (!dirs.isEmpty())
+           addPaths(dirs);
+        if (!files.isEmpty())
+            addPaths(files);
     } else {
         setupDirectory(files, root);
-        addPath(root);
-        addPaths(files);
+        if (!root.isEmpty())
+            addPath(root);
+        if (!files.isEmpty())
+            addPaths(files);
     }
     if (scanType == ImportDelete) {
         for (int i=0; i<files.size(); i++) {

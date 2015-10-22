@@ -755,7 +755,7 @@ qint32 ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
         QByteArray b;
         b.append(hash);
         query2.prepare("Select lid from DataStore where data like :hash and key=:key and lid=:lid");
-        query2.bindValue(":data", hash);
+        query2.bindValue(":hash", hash);
         query2.bindValue(":key", RESOURCE_DATA_HASH);
         query2.bindValue(":lid", lid);
         query2.exec();
