@@ -64,5 +64,7 @@
         <file alias="favoritesIcon">images/favorites.png</file>
         <file alias="trayIcon">images/trayicon.png</file>
         <file alias="dateTime">images/datetime.png</file>
+        <file alias="subscriptIcon">images/subscript.png</file>
+        <file alias="superscriptIcon">images/superscript.png</file>
     </qresource>
 </RCC>

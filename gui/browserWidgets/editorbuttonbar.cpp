@@ -42,6 +42,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     removeFormatVisible = contextMenu->addAction(tr("Remove Formatting"));
     boldVisible = contextMenu->addAction(tr("Bold"));
     italicVisible = contextMenu->addAction(tr("Italics"));
+    superscriptVisible = contextMenu->addAction(tr("Superscript"));
+    subscriptVisible = contextMenu->addAction(tr("Subscript"));
     underlineVisible = contextMenu->addAction(tr("Underline"));
     strikethroughVisible = contextMenu->addAction(tr("Strikethrough"));
     leftJustifyVisible = contextMenu->addAction(tr("Align Left"));
@@ -72,6 +74,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     italicVisible->setCheckable(true);
     underlineVisible->setCheckable(true);
     strikethroughVisible->setCheckable(true);
+    superscriptVisible->setCheckable(true);
+    subscriptVisible->setCheckable(true);
     leftJustifyVisible->setCheckable(true);
     centerJustifyVisible->setCheckable(true);
     rightJustifyVisible->setCheckable(true);
@@ -102,6 +106,8 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(italicVisible, SIGNAL(triggered()), this, SLOT(toggleItalicButtonVisible()));
     connect(underlineVisible, SIGNAL(triggered()), this, SLOT(toggleUnderlineButtonVisible()));
     connect(strikethroughVisible, SIGNAL(triggered()), this, SLOT(toggleStrikethroughButtonVisible()));
+    connect(superscriptVisible, SIGNAL(triggered()), this, SLOT(toggleSuperscriptButtonVisible()));
+    connect(subscriptVisible, SIGNAL(triggered()), this, SLOT(toggleSubscriptButtonVisible()));
     connect(insertDatetimeVisible, SIGNAL(triggered()), this, SLOT(toggleInsertDatetimeVisible()));
     connect(leftJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleLeftJustifyButtonVisible()));
     connect(centerJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleCenterJustifyButtonVisible()));
@@ -158,6 +164,11 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
 
   strikethroughButtonAction = this->addAction(global.getIconResource(":strikethroughIcon"), tr("Strikethrough"));
   this->setupShortcut(strikethroughButtonAction, "Format_Strikethrough");
+
+  superscriptButtonAction = this->addAction(global.getIconResource(":superscriptIcon"), tr("Superscript"));
+  this->setupShortcut(superscriptButtonAction, "Format_Superscript");
+  subscriptButtonAction = this->addAction(global.getIconResource(":subscriptIcon"), tr("Subscript"));
+  this->setupShortcut(subscriptButtonAction, "Format_Subscript");
 
   leftJustifyButtonAction = this->addAction(global.getIconResource(":leftAlignIcon"), tr("Left Justify"));
   this->setupShortcut(leftJustifyButtonAction, "Format_Alignment_Left");
@@ -293,6 +304,12 @@ void EditorButtonBar::saveVisibleButtons() {
     value = strikethroughButtonAction->isVisible();
     global.settings->setValue("strikethroughButtonVisible", value);
 
+    value = superscriptButtonAction->isVisible();
+    global.settings->setValue("superscriptButtonVisible", value);
+
+    value = subscriptButtonAction->isVisible();
+    global.settings->setValue("subscriptButtonVisible", value);
+
     value = leftJustifyButtonAction->isVisible();
     global.settings->setValue("leftJustifyButtonVisible", value);
 
@@ -377,6 +394,12 @@ void EditorButtonBar::setupVisibleButtons() {
 
     strikethroughButtonAction->setVisible(global.settings->value("strikethroughButtonVisible", true).toBool());
     strikethroughVisible->setChecked(strikethroughButtonAction->isVisible());
+
+    superscriptButtonAction->setVisible(global.settings->value("superscriptButtonVisible", true).toBool());
+    superscriptVisible->setChecked(superscriptButtonAction->isVisible());
+
+    subscriptButtonAction->setVisible(global.settings->value("subscriptButtonVisible", true).toBool());
+    subscriptVisible->setChecked(subscriptButtonAction->isVisible());
 
     hlineButtonAction->setVisible(global.settings->value("hlineButtonVisible", true).toBool());
     hlineVisible->setChecked(hlineButtonAction->isVisible());
@@ -474,6 +497,14 @@ void EditorButtonBar::toggleUnderlineButtonVisible() {
 }
 void EditorButtonBar::toggleStrikethroughButtonVisible() {
     strikethroughButtonAction->setVisible(strikethroughVisible->isChecked());
+    saveVisibleButtons();
+}
+void EditorButtonBar::toggleSuperscriptButtonVisible() {
+    superscriptButtonAction->setVisible(superscriptVisible->isChecked());
+    saveVisibleButtons();
+}
+void EditorButtonBar::toggleSubscriptButtonVisible() {
+    subscriptButtonAction->setVisible(subscriptVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleInsertDatetimeVisible() {

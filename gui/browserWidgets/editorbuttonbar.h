@@ -74,6 +74,8 @@ public:
     QAction *italicButtonAction;
     QAction *underlineButtonAction;
     QAction *strikethroughButtonAction;
+    QAction *subscriptButtonAction;
+    QAction *superscriptButtonAction;
     QAction *insertDatetimeButtonAction;
     QAction *leftJustifyButtonAction;
     QAction *centerJustifyButtonAction;
@@ -93,6 +95,8 @@ public:
     QAction *spellCheckButtonVisible;
     QAction *htmlEntitiesButtonAction;
     QAction *htmlEntitiesButtonVisible;
+    QAction *subscriptVisible;
+    QAction *superscriptVisible;
     FontNameComboBox *fontNames;
     FontSizeComboBox *fontSizes;
 
@@ -126,6 +130,8 @@ public slots:
     void toggleItalicButtonVisible();
     void toggleUnderlineButtonVisible();
     void toggleStrikethroughButtonVisible();
+    void toggleSuperscriptButtonVisible();
+    void toggleSubscriptButtonVisible();
     void toggleInsertDatetimeVisible();
     void toggleLeftJustifyButtonVisible();
     void toggleCenterJustifyButtonVisible();

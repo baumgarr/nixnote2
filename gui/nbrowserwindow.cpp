@@ -306,6 +306,9 @@ void NBrowserWindow::setupToolBar() {
     //strikethroughButtonShortcut->setKey(buttonBar->strikethroughButtonAction->shortcut());
     //connect(strikethroughButtonShortcut, SIGNAL(activated()), this, SLOT(strikethroughButtonPressed()));
 
+    connect(buttonBar->subscriptButtonAction, SIGNAL(triggered()), this, SLOT(subscriptButtonPressed()));
+    connect(buttonBar->superscriptButtonAction, SIGNAL(triggered()), this, SLOT(superscriptButtonPressed()));
+
     connect(buttonBar->hlineButtonAction, SIGNAL(triggered()), this, SLOT(horizontalLineButtonPressed()));
     //QShortcut *hlineButtonActionShortcut = new QShortcut(this);
     //hlineButtonActionShortcut->setKey(buttonBar->hlineButtonAction->shortcut());
@@ -3131,4 +3134,17 @@ void NBrowserWindow::newTagFocusShortcut() {
         this->expandButton.setState(EXPANDBUTTON_2);
     }
     tagEditor.newTag.setFocus();
+}
+
+
+// User pressed the superscript editor button
+void NBrowserWindow::superscriptButtonPressed() {
+    editor->page()->mainFrame()->evaluateJavaScript("document.execCommand('superscript')");
+}
+
+
+
+// User pressed the subscript editor button
+void NBrowserWindow::subscriptButtonPressed() {
+    editor->page()->mainFrame()->evaluateJavaScript("document.execCommand('subscript');");
 }

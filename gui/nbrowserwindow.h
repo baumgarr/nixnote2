@@ -192,6 +192,8 @@ public slots:
     void italicsButtonPressed();
     void underlineButtonPressed();
     void strikethroughButtonPressed();
+    void superscriptButtonPressed();
+    void subscriptButtonPressed();
     void alignLeftButtonPressed();
     void alignCenterButtonPressed();
     void alignRightButtonPressed();
