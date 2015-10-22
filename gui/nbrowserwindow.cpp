@@ -394,7 +394,6 @@ void NBrowserWindow::setupShortcut(QShortcut *action, QString text) {
 void NBrowserWindow::setContent(qint32 lid) {
     QLOG_DEBUG() << "Setting note contents to " << lid;
 
-    //hammer->timer.stop();
     // First, make sure we have a valid lid
     if (lid == -1) {
         blockSignals(true);
@@ -430,14 +429,29 @@ void NBrowserWindow::setContent(qint32 lid) {
         return;
 
     QByteArray content;
-    bool inkNote;
-    bool readOnly;
+    bool inkNote = false;
+    bool readOnly = false;
 
     // If we are searching, we never pull from the cache since the search string may
     // have changed since the last time.
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     if (criteria->isSearchStringSet() && criteria->getSearchString().trimmed() != "")
         global.cache.remove(lid);
+
+    QLOG_DEBUG() << "Checking if note is in cache";
+    if (global.cache.contains(lid)) {
+        QLOG_DEBUG() << "Fetching from cache";
+        NoteCache *c = global.cache[lid];
+        if (c == NULL || c->noteContent == NULL) {
+            QLOG_DEBUG() << "Invalid note found in cache.  Removing it.";
+            global.cache.remove(lid);
+        } else {
+            QLOG_DEBUG() << "Setting content from cache.";
+            content = c->noteContent;
+            readOnly = c->isReadOnly;
+            inkNote = c->isInkNote;
+        }
+    }
 
     if (!global.cache.contains(lid)) {
         QLOG_DEBUG() << "Note not in cache";
@@ -459,12 +473,6 @@ void NBrowserWindow::setContent(qint32 lid) {
         }
         readOnly = formatter.readOnly;
         inkNote = formatter.inkNote;
-    } else {
-        QLOG_DEBUG() << "Fetching from cache";
-        NoteCache *c = global.cache[lid];
-        content = c->noteContent;
-        readOnly = c->isReadOnly;
-        inkNote = c->isInkNote;
     }
 
     setReadOnly(readOnly);
@@ -472,8 +480,6 @@ void NBrowserWindow::setContent(qint32 lid) {
     QLOG_DEBUG() << "Setting up note title";
     noteTitle.setTitle(lid, n.title, n.title);
     dateEditor.setNote(lid, n);
-    //QLOG_DEBUG() << content;
-    //editor->setContent(content,  "application/xhtml+xml");
     QWebSettings::setMaximumPagesInCache(0);
     QWebSettings::setObjectCacheCapacities(0, 0, 0);
     QLOG_DEBUG() << "Setting editor contents";
