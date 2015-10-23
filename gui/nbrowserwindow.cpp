@@ -403,7 +403,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     if (global.cache.contains(lid)) {
         QLOG_DEBUG() << "Fetching from cache";
         NoteCache *c = global.cache[lid];
-        if (c == NULL || c->noteContent == NULL) {
+        if (c == NULL || c->noteContent == (char*)NULL) {
             QLOG_DEBUG() << "Invalid note found in cache.  Removing it.";
             global.cache.remove(lid);
         } else {
