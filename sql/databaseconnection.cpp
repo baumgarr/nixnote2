@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "notetable.h"
 #include "sql/nsqlquery.h"
 #include "resourcetable.h"
+#include "sql/databaseupgrade.h"
+
 
 extern Global global;
 //*****************************************
@@ -63,7 +65,15 @@ DatabaseConnection::DatabaseConnection(QString connection)
         while (tempTable.next()) {
             QLOG_DEBUG() << tempTable.value(0).toString();
         }
-        QLOG_DEBUG() << "*****************";
+
+        int value = global.getDatabaseVersion();
+        if (value < 2){
+            QLOG_DEBUG() << "*****************";
+            QLOG_DEBUG() << "Upgrading Database";
+            DatabaseUpgrade dbu;
+            dbu.fixSql();
+        }
+        global.setDatabaseVersion(2);
     }
 
     QLOG_TRACE() << "Creating filter table";

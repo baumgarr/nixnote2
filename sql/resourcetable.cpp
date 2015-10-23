@@ -811,7 +811,7 @@ qint32 ResourceTable::getIndexNeeded(QList<qint32> &lids) {
     NSqlQuery query(db);
     lids.clear();
     db->lockForRead();
-    query.prepare("Select lid from DataStore where key=:key and data='true'");
+    query.prepare("Select lid from DataStore where key=:key and data=1");
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
     query.exec();
     while (query.next()) {
@@ -951,7 +951,7 @@ qint32 ResourceTable::getCount() {
 qint32 ResourceTable::getUnindexedCount() {
     NSqlQuery query(db);
     db->lockForRead();
-    query.prepare("Select count(lid) from DataStore where key=:key and data='true'");
+    query.prepare("Select count(lid) from DataStore where key=:key and data=1");
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
     query.exec();
     qint32 retval =0;
@@ -1025,7 +1025,7 @@ void ResourceTable::reindexAllResources() {
     query.bindValue(":indexKey", RESOURCE_INDEX_NEEDED);
     query.exec();
 
-    query.prepare("insert into datastore (lid, key, data) select lid, :indexKey, 'true' from datastore where key=:key;");
+    query.prepare("insert into datastore (lid, key, data) select lid, :indexKey, 1 from datastore where key=:key;");
     query.bindValue(":indexKey", RESOURCE_INDEX_NEEDED);
     query.bindValue(":key", RESOURCE_GUID);
     query.exec();

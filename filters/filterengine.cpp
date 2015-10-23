@@ -356,16 +356,16 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
         sql.bindValue(":encryptedkey", NOTE_HAS_ENCRYPT);
         break;
     case CONTAINS_TODO_ITEMS:
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where (key=:comp or key=:uncomp) and data='true')");
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where (key=:comp or key=:uncomp) and data=1)");
         sql.bindValue(":comp", NOTE_HAS_TODO_COMPLETED);
         sql.bindValue(":uncomp", NOTE_HAS_TODO_UNCOMPLETED);
         break;
     case CONTAINS_FINISHED_TODO_ITEMS:
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:comp and data='true')");
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:comp and data=1)");
         sql.bindValue(":comp", NOTE_HAS_TODO_COMPLETED);
         break;
     case CONTAINS_UNFINISHED_TODO_ITEMS:
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:uncomp and data='true')");
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:uncomp and data=1)");
         sql.bindValue(":uncomp", NOTE_HAS_TODO_UNCOMPLETED);
         break;
     case CONTAINS_PDF_DOCUMENT:
@@ -563,7 +563,7 @@ void FilterEngine::filterTrash(FilterCriteria *criteria) {
             || (criteria->isDeletedOnlySet() && !criteria->getDeletedOnly()))
     {
         NSqlQuery sql(global.db);
-        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:type and data='true')");
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:type and data=1)");
         sql.bindValue(":type", NOTE_ACTIVE);
         sql.exec();
         sql.finish();
@@ -574,7 +574,7 @@ void FilterEngine::filterTrash(FilterCriteria *criteria) {
 
     // Filter out the records
     NSqlQuery sql(global.db);
-    sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:type and data='false')");
+    sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:type and data=0)");
     sql.bindValue(":type", NOTE_ACTIVE);
     sql.exec();
     sql.finish();

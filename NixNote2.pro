@@ -188,7 +188,8 @@ SOURCES += main.cpp\
     gui/browserWidgets/fontsizecombobox.cpp \
     utilities/pixelconverter.cpp \
     utilities/noteindexer.cpp \
-    xml/batchimport.cpp
+    xml/batchimport.cpp \
+    sql/databaseupgrade.cpp
 
 
 
@@ -354,7 +355,8 @@ HEADERS  += nixnote.h \
     gui/browserWidgets/fontsizecombobox.h \
     utilities/pixelconverter.h \
     utilities/noteindexer.h \
-    xml/batchimport.h
+    xml/batchimport.h \
+    sql/databaseupgrade.h
 
 
 #INCLUDEPATH += /usr/local/include/thrift \

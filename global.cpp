@@ -766,6 +766,24 @@ void Global::setNewNoteFocusToTitle(bool focus) {
 }
 
 
+
+// What version of the database are we using?
+int Global::getDatabaseVersion() {
+    settings->beginGroup("SaveState");
+    int value = settings->value("databaseVersion", 1).toInt();
+    settings->endGroup();
+    return value;
+}
+
+
+// What version of the database are we using?
+void Global::setDatabaseVersion(int value) {
+    settings->beginGroup("SaveState");
+    settings->setValue("databaseVersion", value);
+    settings->endGroup();
+    return;
+}
+
 void Global::stackDump(int max) {
     void *array[30];
     size_t size;

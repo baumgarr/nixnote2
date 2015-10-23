@@ -855,7 +855,7 @@ qint32 NotebookTable::getDefaultNotebookLid() {
     db->lockForRead();
     NSqlQuery query(db);
     qint32 retval = 0;
-    query.exec("Select lid from datastore where key=3007 and data='true'");
+    query.exec("Select lid from datastore where key=3007 and data=1");
     if (query.next()) {
         retval = query.value(0).toInt();
     } else {
@@ -980,7 +980,7 @@ qint32 NotebookTable::getConflictNotebook() {
 int NotebookTable::getNewUnsequencedCount() {
     db->lockForRead();
     NSqlQuery query(db);
-    query.prepare("Select count(lid) from DataStore where key=:key and data=0 and lid not in (select lid from datastore where key=:localkey and data='true')");
+    query.prepare("Select count(lid) from DataStore where key=:key and data=0 and lid not in (select lid from datastore where key=:localkey and data=1)");
     query.bindValue(":key", NOTEBOOK_UPDATE_SEQUENCE_NUMBER);
     query.bindValue(":localkey", NOTEBOOK_IS_LOCAL);
     query.exec();
@@ -1000,7 +1000,7 @@ qint32 NotebookTable::getAllDirty(QList<qint32> &lids) {
     NSqlQuery query(db);
     lids.clear();
     db->lockForRead();
-    query.prepare("Select lid from DataStore where key=:key and data='true'");
+    query.prepare("Select lid from DataStore where key=:key and data=1");
     query.bindValue(":key", NOTEBOOK_ISDIRTY);
     query.exec();
     while(query.next()) {
@@ -1127,7 +1127,7 @@ void NotebookTable::closeNotebook(qint32 lid) {
     query.bindValue(":key", NOTEBOOK_IS_CLOSED);
     query.exec();
 
-    query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, 'true')");
+    query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, 1)");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_IS_CLOSED);
     query.exec();

@@ -190,7 +190,8 @@ public:
     void appendFilter(FilterCriteria *criteria);
     void setupDateTimeFormat();                               // Setup the user's desired date & time format
     QFont getGuiFont(QFont f);                                // Get the user's desired GUI font
-
+    int getDatabaseVersion();                                 // What DB version are we using?
+    void setDatabaseVersion(int value);                       // Save the current database version
     bool nonAsciiSortBug;                                     // Workaround for non-ASCII characters in tag name sorting
     bool autoHideEditorToolbar;                               // Should the editor bar be hidden when focus is lost?
     ReminderManager *reminderManager;                         // Used to alert the user when a reminder time has expired

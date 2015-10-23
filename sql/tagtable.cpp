@@ -608,7 +608,7 @@ qint32 TagTable::getAllDirty(QList<qint32> &lids) {
     NSqlQuery query(db);
     db->lockForRead();
     lids.clear();
-    query.prepare("Select lid from DataStore where key=:key and data='true'");
+    query.prepare("Select lid from DataStore where key=:key and data=1");
     query.bindValue(":key", TAG_ISDIRTY);
     query.exec();
     while(query.next()) {

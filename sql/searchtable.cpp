@@ -418,7 +418,7 @@ bool SearchTable::update(qint32 lid, SavedSearch &s, bool isDirty=true) {
 bool SearchTable::isDeleted(qint32 lid) {
     NSqlQuery query(db);
     db->lockForRead();
-    query.prepare("Select lid from DataStore where key=:key and lid=:lid and data='true'");
+    query.prepare("Select lid from DataStore where key=:key and lid=:lid and data=1");
     query.bindValue(":lid", lid);
     query.bindValue(":key", SEARCH_ISDELETED);
     query.exec();
@@ -439,7 +439,7 @@ qint32 SearchTable::getAllDirty(QList<qint32> &lids) {
     NSqlQuery query(db);
     lids.clear();
     db->lockForRead();
-    query.prepare("Select lid from DataStore where key=:key and data='true'");
+    query.prepare("Select lid from DataStore where key=:key and data=1");
     query.bindValue(":key", SEARCH_ISDIRTY);
     query.exec();
     while(query.next()) {
