@@ -1041,8 +1041,8 @@ void ResourceTable::updateNoteLid(qint32 resourceLid, qint32 newNoteLid) {
     db->lockForWrite();
     query.prepare("Update datastore set data=:newNoteLid where lid=:resourceLid and key=:key");
     query.bindValue(":newNoteLid", newNoteLid);
-    query.bindValue(":lid", resourceLid);
-    query.bindValue(":resourceLid", RESOURCE_NOTE_LID);
+    query.bindValue(":resourceLid", resourceLid);
+    query.bindValue(":key", RESOURCE_NOTE_LID);
     query.exec();
     query.finish();
     db->unlock();
