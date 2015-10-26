@@ -60,6 +60,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDateTime>
 #include <QPrintDialog>
 #include <QPrinterInfo>
+#include <QPrintPreviewDialog>
+#include <QPaintEngine>
 #include <iostream>
 #include <istream>
 
@@ -179,6 +181,10 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     printPage = new QWebView();
     printPage->setVisible(false);
     connect(printPage, SIGNAL(loadFinished(bool)), this, SLOT(printReady(bool)));
+
+    printPreviewPage = new QWebView();
+    printPreviewPage->setVisible(false);
+
     hammer = new Thumbnailer(global.db);
     lid = -1;
     thumbnailer = NULL;
@@ -2296,13 +2302,12 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
 }
 
 
-// Print the contents of a note.  Basically it loops through the
-// note and repaces the <object> tags with <img> tags.  The plugin
-// object should be creating temporary images for the print.
-void NBrowserWindow::printNote() {
-    QString contents = editor->editorPage->mainFrame()->toHtml();
 
+QString NBrowserWindow::stripContentsForPrint() {
     // Start removing object tags
+    QString contents = this->editor->selectedHtml().trimmed();
+    if (contents == "")
+       contents = editor->editorPage->mainFrame()->toHtml();
     int pos = contents.indexOf("<object");
     while (pos>=0) {
         int endPos = contents.indexOf(">", pos);
@@ -2314,10 +2319,46 @@ void NBrowserWindow::printNote() {
 
         pos = contents.indexOf("<object", endPos);
     }
+//    contents = contents.replace("</head>", "<style>@media print {* { background: #666; color: #555; } html { font: 100%*4.5 georgia, serif; }</style></head>");
+//    contents = contents.replace("</head>", "<style>@media print {a @bottom-right { content: counter(page) \" of \" counter(pages); } }</style></head>");
+    return contents;
+}
+
+
+// Do a print preview of this note.  This works
+// in much the same way as printNote().  It removes all the
+// <object> tags & replaces them with <img>.
+void NBrowserWindow::printPreviewNote() {
+    QString contents = stripContentsForPrint();
 
     // Load the print page.  When it is ready the printReady() slot will
     // do the actual print
-    printPage->setContent(contents.toUtf8());
+    printPreviewPage->setHtml(contents.toUtf8());
+    //printPreviewPage->setContent(contents.toUtf8());
+    QPrinter printer(QPrinter::HighResolution);
+    QPrintPreviewDialog preview(&printer, this);
+    preview.setWindowFlags(Qt::Window);
+    connect(&preview, SIGNAL(paintRequested(QPrinter *)), this, SLOT(printPreviewReady(QPrinter*)));
+    preview.exec();
+}
+
+
+// Slot for when the printPreview is ready.
+void NBrowserWindow::printPreviewReady(QPrinter *printer) {
+   printPreviewPage->print(printer);
+}
+
+
+
+// Print the contents of a note.  Basically it loops through the
+// note and repaces the <object> tags with <img> tags.  The plugin
+// object should be creating temporary images for the print.
+void NBrowserWindow::printNote() {
+    QString contents = stripContentsForPrint();
+
+    // Load the print page.  When it is ready the printReady() slot will
+    // do the actual print
+    printPage->setHtml(contents.toUtf8());
 }
 
 
@@ -2380,7 +2421,6 @@ void NBrowserWindow::printReady(bool ok) {
         QPrintDialog dialog(printer);
         if (dialog.exec() ==  QDialog::Accepted) {
             printer = dialog.printer();
-            printPage->print(printer);
             global.settings->beginGroup("Printer");
             global.settings->setValue("orientation", printer->orientation());
             global.settings->setValue("printerName", printer->printerName());
@@ -2389,9 +2429,16 @@ void NBrowserWindow::printReady(bool ok) {
             global.settings->setValue("pageSize", printer->pageSize());
             global.settings->setValue("colorMode", printer->colorMode());
             global.settings->endGroup();
+            printPage->print(printer);
         }
-    } else
+    } else {
         printPage->print(printer);
+//        QPainter p;
+//        p.begin(printer);
+//        printPage->resize(printer->paperRect().size());
+//        printPage->render(&p);
+//        p.end();
+    }
 
     this->fastPrint = false;
 }

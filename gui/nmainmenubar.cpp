@@ -61,6 +61,11 @@ void NMainMenuBar::setupFileMenu() {
     fileMenu->setFont(f);
 
 
+    printPreviewAction = new QAction(tr("Print Preview Note"), this);
+    printPreviewAction->setToolTip(tr("Print preview of this note"));
+    connect(printPreviewAction, SIGNAL(triggered()), parent, SLOT(printPreviewNote()));
+    setupShortcut(printPreviewAction, QString("File_Print_Preview"));
+    fileMenu->addAction(printPreviewAction);
 
     printAction = new QAction(tr("&Print Note"), this);
     printAction->setToolTip(tr("Print this note"));
@@ -68,6 +73,7 @@ void NMainMenuBar::setupFileMenu() {
     setupShortcut(printAction, QString("File_Print"));
     fileMenu->addAction(printAction);
     fileMenu->addSeparator();
+
 
     backupDatabaseAction = new QAction(tr("&Backup Database"), this);
     backupDatabaseAction->setToolTip(tr("Backup database to a file"));

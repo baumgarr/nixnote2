@@ -55,6 +55,7 @@ public:
     QAction *exitAction;
     QAction *openCloseAction;
     QAction *printAction;
+    QAction *printPreviewAction;
     QAction *synchronizeAction;
     QAction *importFoldersDialogAction;
     QAction *addUserAction;

@@ -241,6 +241,7 @@ public slots:
     void heartbeatTimerTriggered();
     void notesRestored(QList<qint32>);
     void printNote();
+    void printPreviewNote();
     void fastPrintNote();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void toggleVisible();

@@ -101,6 +101,8 @@ private:
     QShortcut *insertLatexShortcut;
     QShortcut *copyNoteUrlShortcut;
 
+    QString stripContentsForPrint();
+
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
     QString uuid;
@@ -127,6 +129,7 @@ public:
     QShortcut *focusTitleShortcut;
     QShortcut *insertDatetimeShortcut;
     QWebView *printPage;
+    QWebView *printPreviewPage;
     bool fastPrint;
 
     //QShortcut *leftJustifyButtonShortcut;
@@ -145,6 +148,7 @@ public:
     void clear();
     void setupShortcut(QShortcut *action, QString text);
     void contentChanged();
+    void printPreviewNote();
     void printNote();
     void updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash);
     void insertHtml(QString html);
@@ -185,6 +189,7 @@ public slots:
     void redoButtonPressed();
     void cutButtonPressed();
     void copyButtonPressed();
+    void printPreviewReady(QPrinter *printer);
     void pasteButtonPressed();
     void pasteWithoutFormatButtonPressed();
     void boldButtonPressed();

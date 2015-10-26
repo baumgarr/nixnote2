@@ -2430,6 +2430,13 @@ void NixNote::printNote() {
 
 
 // Print the current note
+void NixNote::printPreviewNote() {
+    tabWindow->currentBrowser()->printPreviewNote();
+}
+
+
+
+// Print the current note
 void NixNote::fastPrintNote() {
     tabWindow->currentBrowser()->fastPrint = true;
     tabWindow->currentBrowser()->printNote();
