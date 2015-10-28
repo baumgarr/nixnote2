@@ -37,13 +37,15 @@ AccountDialog::AccountDialog(QWidget *parent) :
     this->setWindowTitle(tr("Account Information"));
     QGridLayout *grid = new QGridLayout();
     setLayout(grid);
-    QLabel *premium = new QLabel(tr("Free"));
+    QLabel *premium = new QLabel(tr("Normal"));
     User user;
     UserTable userTable(global.db);
     userTable.getUser(user);
     if (user.privilege.isSet()) {
         if (user.privilege == PrivilegeLevel::PREMIUM)
             premium->setText(tr("Premium"));
+        if (user.privilege == PrivilegeLevel::VIP)
+            premium->setText(tr("VIP"));
         if (user.privilege == PrivilegeLevel::MANAGER)
             premium->setText(tr("Manager"));
         if (user.privilege == PrivilegeLevel::SUPPORT)
