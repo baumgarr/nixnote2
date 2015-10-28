@@ -72,7 +72,12 @@ EmailDialog::EmailDialog(QWidget *parent) :
     connect(toAddress, SIGNAL(textChanged(QString)), this, SLOT(toAddressChanged()));
     connect(ccAddress, SIGNAL(textChanged(QString)), this, SLOT(toAddressChanged()));
     connect(bccAddress, SIGNAL(textChanged(QString)), this, SLOT(toAddressChanged()));
+    connect(ccSelf, SIGNAL(toggled(bool)), this, SLOT(toAddressChanged()));
+    cancelButton->setAutoDefault(false);
     sendButton->setEnabled(false);
+    sendButton->setAutoDefault(true);
+    sendButton->setAutoExclusive(true);
+    toAddress->setFocus();
 }
 
 
@@ -103,7 +108,7 @@ void EmailDialog::toAddressChanged() {
     int cci = cc.indexOf("@");
     int bcci = bcc.indexOf("@");
 
-    if (toi <=0 && cci <= 0 && bcci <= 0)
+    if (toi <=0 && cci <= 0 && bcci <= 0 && !ccSelf->isChecked())
         sendButton->setEnabled(false);
     else
         sendButton->setEnabled(true);
