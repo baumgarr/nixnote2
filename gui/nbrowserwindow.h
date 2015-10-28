@@ -56,6 +56,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/browserWidgets/reminderbutton.h"
 #include "html/thumbnailer.h"
+#include "email/mimemessage.h"
 
 class ToolbarWidgetAction;
 
@@ -190,6 +191,8 @@ public slots:
     void cutButtonPressed();
     void copyButtonPressed();
     void printPreviewReady(QPrinter *printer);
+    void emailNote();
+    void prepareEmailMessage(MimeMessage *message, QString note);
     void pasteButtonPressed();
     void pasteWithoutFormatButtonPressed();
     void boldButtonPressed();

@@ -66,5 +66,6 @@
         <file alias="dateTime">images/datetime.png</file>
         <file alias="subscriptIcon">images/subscript.png</file>
         <file alias="superscriptIcon">images/superscript.png</file>
+        <file alias="emailIcon">images/emailIcon.png</file>
     </qresource>
 </RCC>

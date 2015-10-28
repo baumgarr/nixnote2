@@ -291,6 +291,11 @@ void NixNote::setupGui() {
 //  syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
     toolBar->addSeparator();
     printNoteButton = toolBar->addAction(global.getIconResource(":printerIcon"), tr("Print"));
+    printNoteButton->setToolTip(tr("Print the current note"));
+
+    emailButton = toolBar->addAction(global.getIconResource(":emailIcon"), tr("Email"));
+    emailButton->setToolTip(tr("Email the current note"));
+
     noteButton = new QToolButton();
     toolBar->addSeparator();
     newNoteButton = new QAction(noteButton);
@@ -327,6 +332,7 @@ void NixNote::setupGui() {
     connect(newWebcamNoteButton, SIGNAL(triggered()), this, SLOT(newWebcamNote()));
     connect(newNoteButton, SIGNAL(triggered()), this, SLOT(noteButtonClicked()));
     connect(usageButton, SIGNAL(triggered()), this, SLOT(openAccount()));
+    connect(emailButton, SIGNAL(triggered()), this, SLOT(emailNote()));
 
     QLOG_TRACE() << "Adding main splitter";
     mainSplitter = new QSplitter(Qt::Horizontal);
@@ -2425,6 +2431,13 @@ void NixNote::openImportFolders() {
 void NixNote::printNote() {
     tabWindow->currentBrowser()->fastPrint = false;
     tabWindow->currentBrowser()->printNote();
+}
+
+
+
+// Print the current note
+void NixNote::emailNote() {
+    tabWindow->currentBrowser()->emailNote();
 }
 
 

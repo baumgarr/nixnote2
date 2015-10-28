@@ -61,6 +61,13 @@ void NMainMenuBar::setupFileMenu() {
     fileMenu->setFont(f);
 
 
+    emailAction = new QAction(tr("Email Note"), this);
+    emailAction->setToolTip(tr("Email a copy of this note"));
+    connect(emailAction, SIGNAL(triggered()), parent, SLOT(emailNote()));
+    setupShortcut(emailAction, QString("File_Email"));
+    fileMenu->addAction(emailAction);
+
+
     printPreviewAction = new QAction(tr("Print Preview Note"), this);
     printPreviewAction->setToolTip(tr("Print preview of this note"));
     connect(printPreviewAction, SIGNAL(triggered()), parent, SLOT(printPreviewNote()));

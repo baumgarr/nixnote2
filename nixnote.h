@@ -127,6 +127,7 @@ private:
     QAction *newExternalNoteButton;
     QAction *trunkButton;
     QAction *usageButton;
+    QAction *emailButton;
     QAction *toolsAccountAction;
 
     QAction *showAction;
@@ -240,6 +241,7 @@ public slots:
     void checkReadOnlyNotebook();
     void heartbeatTimerTriggered();
     void notesRestored(QList<qint32>);
+    void emailNote();
     void printNote();
     void printPreviewNote();
     void fastPrintNote();
@@ -274,7 +276,6 @@ public slots:
     void openMessageLog();
     void showDesktopUrl(const QUrl &url);
     void reloadIcons();
-
 signals:
     void syncRequested();
     void updateCounts();

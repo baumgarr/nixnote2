@@ -189,7 +189,21 @@ SOURCES += main.cpp\
     utilities/pixelconverter.cpp \
     utilities/noteindexer.cpp \
     xml/batchimport.cpp \
-    sql/databaseupgrade.cpp
+    sql/databaseupgrade.cpp \
+    email/emailaddress.cpp \
+    email/mimeattachment.cpp \
+    email/mimecontentformatter.cpp \
+    email/mimefile.cpp \
+    email/mimehtml.cpp \
+    email/mimeinlinefile.cpp \
+    email/mimemessage.cpp \
+    email/mimemultipart.cpp \
+    email/mimepart.cpp \
+    email/mimetext.cpp \
+    email/quotedprintable.cpp \
+    email/smtpclient.cpp \
+    dialog/preferences/emailpreferences.cpp \
+    dialog/emaildialog.cpp
 
 
 
@@ -356,7 +370,22 @@ HEADERS  += nixnote.h \
     utilities/pixelconverter.h \
     utilities/noteindexer.h \
     xml/batchimport.h \
-    sql/databaseupgrade.h
+    sql/databaseupgrade.h \
+    email/emailaddress.h \
+    email/mimeattachment.h \
+    email/mimecontentformatter.h \
+    email/mimefile.h \
+    email/mimehtml.h \
+    email/mimeinlinefile.h \
+    email/mimemessage.h \
+    email/mimemultipart.h \
+    email/mimepart.h \
+    email/mimetext.h \
+    email/quotedprintable.h \
+    email/smtpclient.h \
+    email/smtpexports.h \
+    dialog/preferences/emailpreferences.h \
+    dialog/emaildialog.h
 
 
 #INCLUDEPATH += /usr/local/include/thrift \

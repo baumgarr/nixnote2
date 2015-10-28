@@ -27,6 +27,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/usertable.h"
 #include "sql/resourcetable.h"
 #include "sql/linkednotebooktable.h"
+#include "email/smtpclient.h"
+#include "email/mimehtml.h"
+#include "email/mimemessage.h"
+#include "email/mimeinlinefile.h"
 #include "global.h"
 #include "gui/browserWidgets/colormenu.h"
 #include "gui/plugins/pluginfactory.h"
@@ -36,6 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/insertlatexdialog.h"
 #include "dialog/endecryptdialog.h"
 #include "dialog/encryptdialog.h"
+#include "dialog/emaildialog.h"
 #include "sql/configstore.h"
 #include "utilities/encrypt.h"
 #include "utilities/mimereference.h"
@@ -2303,6 +2308,191 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
 
 
 
+
+// Prepare the email for sending.  This function scans through
+// the email for images & attachments.  The resulting
+// MimeMessage has all of the email contents.
+void NBrowserWindow::prepareEmailMessage(MimeMessage *message, QString note) {
+    MimeHtml *text = new MimeHtml();
+
+    // Prepare the massage the same as if we were printing it.
+    QString contents = this->stripContentsForPrint();
+    QString textContents = editor->page()->currentFrame()->toPlainText();
+    QStringList images;
+    QStringList attachments;
+
+    // Now, go thgough & reformat all the img tags.
+    int cidCount=0;
+    int pos = contents.indexOf("src=\"file:");
+    while (pos>=0) {
+        QString localFile = contents.mid(pos+13);
+        int endPos = localFile.indexOf("\"");
+        localFile = localFile.mid(0,endPos);
+        images.append(localFile);
+        endPos = pos+endPos;
+        QString part1 = contents.mid(0,pos);
+        QString part2 = contents.mid(endPos+14);
+        cidCount++;
+        contents = part1 + "src='cid:file" +QString::number(cidCount) +"'" + part2;
+
+        pos = contents.indexOf("src=\"file:", pos+5);
+    }
+
+    // next, look for all the attachments
+    pos = contents.indexOf("href=\"nnres:");
+    while (pos>=0) {
+        QString localFile = contents.mid(pos+12);
+        int endPos = localFile.indexOf("\"");
+        localFile = localFile.mid(0,endPos);
+        attachments.append(localFile);
+        cidCount++;
+        pos = contents.indexOf("href=\"nnres:", pos+5);
+    }
+
+    // If the user adds a note, then prepend it to the beginning.
+    if (note.trimmed() != "") {
+        int pos = contents.indexOf("<body");
+        int endPos = contents.indexOf(">", pos);
+        contents.insert(endPos+1,  Qt::escape(note)+"<p><p><hr><p>");
+    }
+    text->setHtml(contents);
+    message->addPart(text);
+
+
+    // Add all the images
+    for (int i=0; i<images.size(); i++) {
+        MimeReference mimeRef;
+        QString localFile = images[i];
+        QString mime = mimeRef.getMimeFromFileName(localFile);
+        MimeInlineFile *file = new MimeInlineFile(new QFile(localFile));
+        file->setContentId("file"+QString::number(i+1));
+        file->setContentType(mime);
+        message->addPart(file);
+    }
+
+    // Add all the attachments
+    for (int i=0; i<attachments.size(); i++) {
+        MimeReference mimeRef;
+        QString localFile = attachments[i];
+        QString mime = mimeRef.getMimeFromFileName(localFile);
+        MimeInlineFile *file = new MimeInlineFile(new QFile(localFile));
+        file->setContentType(mime);
+        message->addPart(file);
+    }
+
+    return;
+
+}
+
+
+
+
+
+// Email current note.
+void NBrowserWindow::emailNote() {
+    global.settings->beginGroup("Email");
+    QString server = global.settings->value("smtpServer", "").toString();
+    int port = global.settings->value("smtpPort", 25).toInt();
+    QString smtpConnectionType = global.settings->value("smtpConnectionType", "TcpConnection").toString();
+    QString userid = global.settings->value("userid", "").toString();
+    QString password = global.settings->value("password", "").toString();
+    QString senderEmail = global.settings->value("senderEmail", "").toString();
+    QString senderName = global.settings->value("senderName", "").toString();
+    global.settings->endGroup();
+
+    if (senderEmail.trimmed() == "" || server.trimmed() == "") {
+        QMessageBox::critical(this, tr("Setup Error"),
+             tr("SMTP Server has not been setup.\n\nPlease specify server settings\nin the Preferences menu."), QMessageBox::Ok);
+        return;
+    }
+
+    EmailDialog emailDialog;
+    emailDialog.subject->setText(noteTitle.text());
+    emailDialog.exec();
+    if (emailDialog.cancelPressed)
+        return;
+
+    QStringList toAddresses = emailDialog.getToAddresses();
+    QStringList ccAddresses = emailDialog.getCcAddresses();
+    QStringList bccAddresses = emailDialog.getBccAddresses();
+
+    if (senderName.trimmed() == "")
+        senderName = senderEmail;
+
+    SmtpClient::ConnectionType type = SmtpClient::TcpConnection;
+    if (smtpConnectionType == "SslConnection")
+        type = SmtpClient::SslConnection;
+    if (smtpConnectionType == "TlsConnection")
+        type = SmtpClient::TlsConnection;
+
+    SmtpClient smtp(server, port, type);
+
+    // We need to set the username (your email address) and password
+    // for smtp authentification.
+    smtp.setUser(userid);
+    smtp.setPassword(password);
+
+    // Now we create a MimeMessage object. This is the email.
+    MimeMessage message;
+
+    EmailAddress sender(senderEmail, senderName);
+    message.setSender(&sender);
+
+    for (int i=0; i<toAddresses.size(); i++) {
+        EmailAddress *to = new EmailAddress(toAddresses[i], toAddresses[i]);
+        message.addRecipient(to);
+    }
+
+    for (int i=0; i<ccAddresses.size(); i++) {
+        EmailAddress *cc = new EmailAddress(ccAddresses[i], ccAddresses[i]);
+        message.addRecipient(cc);
+    }
+
+
+    if (emailDialog.ccSelf->isChecked()) {
+        EmailAddress *cc = new EmailAddress(senderEmail, senderName);
+        message.addRecipient(cc);
+    }
+
+    for (int i=0; i<bccAddresses.size(); i++) {
+        EmailAddress *bcc = new EmailAddress(bccAddresses[i], bccAddresses[i]);
+        message.addRecipient(bcc);
+    }
+
+    // Set the subject
+    message.setSubject(emailDialog.subject->text().trimmed());
+
+    // Build the note content
+    prepareEmailMessage(&message, emailDialog.note->toPlainText());
+
+    // Send the actual message.
+    if (!smtp.connectToHost()) {
+        QLOG_ERROR()<< "Failed to connect to host!";
+        QMessageBox::critical(this, tr("Connection Error"), tr("Unable to connect to host."), QMessageBox::Ok);
+        return;
+    }
+
+    if (!smtp.login()) {
+        QLOG_ERROR() << "Failed to login!";
+        QMessageBox::critical(this, tr("Login Error"), tr("Unable to login."), QMessageBox::Ok);
+        return;
+    }
+
+    if (!smtp.sendMail(message)) {
+        QMessageBox::critical(this, tr("Send Error"), tr("Unable to send email."), QMessageBox::Ok);
+        QLOG_ERROR() << "Failed to send mail!";
+        return;
+    }
+
+    smtp.quit();
+    QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
+}
+
+
+
+
+
+// Strip the contents from the current webview in preparation for printing.
 QString NBrowserWindow::stripContentsForPrint() {
     // Start removing object tags
     QString contents = this->editor->selectedHtml().trimmed();
@@ -2362,6 +2552,7 @@ void NBrowserWindow::printNote() {
 }
 
 
+// Print output is ready.
 void NBrowserWindow::printReady(bool ok) {
     if (!ok) {
         QMessageBox msgBox;
