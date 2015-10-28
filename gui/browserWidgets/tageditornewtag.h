@@ -49,6 +49,7 @@ public slots:
     void loadCompleter();
     void mouseCompleterSelection(QString);
     void enterPressed();
+    void keyPressEvent(QKeyEvent * event);
 
 signals:
   void focussed(bool hasFocus);

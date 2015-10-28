@@ -249,3 +249,12 @@ void TagEditorNewTag::notebookSelectionChanged(qint32 notebook) {
     loadCompleter();
     QLOG_TRACE_OUT() << typeid(*this).name();
 }
+
+
+void TagEditorNewTag::keyPressEvent(QKeyEvent * event) {
+    if (event->key() == Qt::Key_Comma)
+        this->enterPressed();
+    else
+        QLineEdit::keyPressEvent(event);
+
+}
