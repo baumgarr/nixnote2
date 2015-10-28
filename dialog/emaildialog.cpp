@@ -117,7 +117,7 @@ void EmailDialog::toAddressChanged() {
 
 
 QStringList EmailDialog::tokenizeString(QString value) {
-    QStringList values =  value.split(QRegExp(",|;"), QString::SkipEmptyParts);
+    QStringList values =  value.split(QRegExp(",|;|\\s+"), QString::SkipEmptyParts);
     for (int i=0; i<values.size(); i++) {
         values[i] = values[i].trimmed();
     }

@@ -16,6 +16,11 @@
   See the LICENSE file for more details.
 */
 
+
+#include "global.h"
+
+extern Global global;
+
 #include "smtpclient.h"
 
 #include <QFileInfo>
@@ -355,39 +360,50 @@ bool SmtpClient::sendMail(MimeMessage& email)
         // Send the MAIL command with the sender
         sendMessage("MAIL FROM: <" + email.getSender().getAddress() + ">");
 
+        QLOG_DEBUG() << "Sending From: " << email.getSender().getAddress();
         waitForResponse();
 
+        QLOG_DEBUG() << "SMTP Response Code: " << responseCode;
         if (responseCode != 250) return false;
 
         // Send RCPT command for each recipient
         QList<EmailAddress*>::const_iterator it, itEnd;
         // To (primary recipients)
+        QLOG_DEBUG() << "Sending to primary recipients";
         for (it = email.getRecipients().begin(), itEnd = email.getRecipients().end();
              it != itEnd; ++it)
         {
+            QLOG_DEBUG() << "Sending: " << "RCPT TO: <" + (*it)->getAddress() + ">";
             sendMessage("RCPT TO: <" + (*it)->getAddress() + ">");
             waitForResponse();
 
+            QLOG_DEBUG() << "SMTP Response Code: " << responseCode;
             if (responseCode != 250) return false;
         }
 
         // Cc (carbon copy)
+        QLOG_DEBUG() << "Sending to cc recipients";
         for (it = email.getRecipients(MimeMessage::Cc).begin(), itEnd = email.getRecipients(MimeMessage::Cc).end();
              it != itEnd; ++it)
         {
+            QLOG_DEBUG() << "Sending: " << "RCPT TO: <" + (*it)->getAddress() + ">";
             sendMessage("RCPT TO: <" + (*it)->getAddress() + ">");
             waitForResponse();
 
+            QLOG_DEBUG() << "SMTP Response Code: " << responseCode;
             if (responseCode != 250) return false;
         }
 
         // Bcc (blind carbon copy)
+        QLOG_DEBUG() << "Sending to bcc recipients";
         for (it = email.getRecipients(MimeMessage::Bcc).begin(), itEnd = email.getRecipients(MimeMessage::Bcc).end();
              it != itEnd; ++it)
         {
+            QLOG_DEBUG() << "Sending: " << "RCPT TO: <" + (*it)->getAddress() + ">";
             sendMessage("RCPT TO: <" + (*it)->getAddress() + ">");
             waitForResponse();
 
+            QLOG_DEBUG() << "SMTP Response Code: " << responseCode;
             if (responseCode != 250) return false;
         }
 
@@ -395,6 +411,7 @@ bool SmtpClient::sendMail(MimeMessage& email)
         sendMessage("DATA");
         waitForResponse();
 
+        QLOG_DEBUG() << "SMTP Send Data Response: " << responseCode;
         if (responseCode != 354) return false;
 
         sendMessage(email.toString());
@@ -404,14 +421,17 @@ bool SmtpClient::sendMail(MimeMessage& email)
 
         waitForResponse();
 
+        QLOG_DEBUG() << "SMTP Response Code: " << responseCode;
         if (responseCode != 250) return false;
     }
     catch (ResponseTimeoutException)
     {
+        QLOG_DEBUG() << "SendTimeoutException";
         return false;
     }
     catch (SendMessageTimeoutException)
     {
+        QLOG_DEBUG() << "SendMessageTimeoutException";
         return false;
     }
 
