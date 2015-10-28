@@ -2365,6 +2365,16 @@ void NBrowserWindow::prepareEmailMessage(MimeMessage *message, QString note) {
         QString localFile = images[i];
         QString mime = mimeRef.getMimeFromFileName(localFile);
         MimeInlineFile *file = new MimeInlineFile(new QFile(localFile));
+        QString lidFile = localFile.mid(localFile.lastIndexOf(QDir::separator())+1);
+        qint32 lid = lidFile.mid(0,lidFile.lastIndexOf(".")).toInt();
+        ResourceTable rtable(global.db);
+        Resource r;
+        ResourceAttributes ra;
+        if (rtable.get(r, lid, false) && r.attributes.isSet()) {
+            ra = r.attributes;
+            if (ra.fileName.isSet())
+                file->setContentName(ra.fileName);
+        }
         file->setContentId("file"+QString::number(i+1));
         file->setContentType(mime);
         message->addPart(file);
@@ -2376,11 +2386,8 @@ void NBrowserWindow::prepareEmailMessage(MimeMessage *message, QString note) {
         QString localFile = attachments[i];
         QString mime = mimeRef.getMimeFromFileName(localFile);
         MimeInlineFile *file = new MimeInlineFile(new QFile(localFile));
-        QLOG_DEBUG() << localFile;
         QString lidFile = localFile.mid(localFile.lastIndexOf(QDir::separator())+1);
-        QLOG_DEBUG() << lidFile;
         qint32 lid = lidFile.mid(0,lidFile.lastIndexOf(".")).toInt();
-        QLOG_DEBUG() << lid;
         ResourceTable rtable(global.db);
         Resource r;
         ResourceAttributes ra;
