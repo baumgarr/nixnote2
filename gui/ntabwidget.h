@@ -26,12 +26,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "threads/syncrunner.h"
 #include "gui/externalbrowse.h"
 #include "dialog/htmlentitiesdialog.h"
+#include "nixnote.h"
 
 #include <QTabBar>
 #include <QStackedWidget>
 
 class SyncRunner;
 class NBrowserWindow;
+class NixNote;
 
 class NTabWidget : public QWidget
 {
@@ -43,9 +45,10 @@ private:
     NNotebookView *notebookTreeView;
     SyncRunner *syncThread;
     HtmlEntitiesDialog *htmlEntities;
+    NixNote *parent;
 
 public:
-    explicit NTabWidget(SyncRunner *s, NNotebookView *n, NTagView *t);
+    explicit NTabWidget(NixNote *p, SyncRunner *s, NNotebookView *n, NTagView *t);
     ~NTabWidget();
     QTabBar *tabBar;
     QVBoxLayout vboxlayout;

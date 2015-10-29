@@ -94,7 +94,6 @@ private:
     QLabel *leftSeparator5;
     NTrashTree *trashTree;
     NTagView *tagTreeView;
-    NTabWidget *tabWindow;
     QSplitter *mainSplitter;
     QSplitter *leftPanelSplitter;
     WidgetPanel *leftPanel;
@@ -128,6 +127,7 @@ private:
     QAction *newExternalNoteButton;
     QAction *trunkButton;
     QAction *usageButton;
+    QAction *emailButton;
     QAction *toolsAccountAction;
 
     QAction *showAction;
@@ -187,6 +187,7 @@ public:
     bool event(QEvent *event);
     LineEdit *searchText;
     void setDebugLevel();
+    NTabWidget *tabWindow;
 
 
 
@@ -240,7 +241,9 @@ public slots:
     void checkReadOnlyNotebook();
     void heartbeatTimerTriggered();
     void notesRestored(QList<qint32>);
+    void emailNote();
     void printNote();
+    void printPreviewNote();
     void fastPrintNote();
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void toggleVisible();
@@ -273,7 +276,6 @@ public slots:
     void openMessageLog();
     void showDesktopUrl(const QUrl &url);
     void reloadIcons();
-
 signals:
     void syncRequested();
     void updateCounts();

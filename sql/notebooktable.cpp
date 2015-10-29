@@ -754,7 +754,7 @@ void NotebookTable::renameStack(QString oldName, QString newName) {
     query.prepare("Update Datastore set data=:newname where key=:key and data=:oldname");
     query.bindValue(":newname", newName);
     query.bindValue(":key", NOTEBOOK_STACK);
-    query.bindValue(":oldName", oldName);
+    query.bindValue(":oldname", oldName);
     query.exec();
     query.finish();
     db->unlock();
@@ -855,7 +855,7 @@ qint32 NotebookTable::getDefaultNotebookLid() {
     db->lockForRead();
     NSqlQuery query(db);
     qint32 retval = 0;
-    query.exec("Select lid from datastore where key=3007 and data='true'");
+    query.exec("Select lid from datastore where key=3007 and data=1");
     if (query.next()) {
         retval = query.value(0).toInt();
     } else {
@@ -883,36 +883,65 @@ QString NotebookTable::getDefaultNotebookGuid() {
 
 // Is this notebook read-only?
 bool NotebookTable::isReadOnly(qint32 notebookLid) {
+    // If this is a local notebook we automatically have read/write
     if (notebookLid <= 0)
         return true;
-    else {
-        SharedNotebook sharedNotebook;
-        SharedNotebookTable stable(db);   
-        bool found = stable.get(sharedNotebook, notebookLid);
-        if (found) {
-            UserTable userTable(db);
-            User user;
-            userTable.getUser(user);
-            QString username = "";
-            QString shareusername = "";
-            if (user.username.isSet())
-                username = user.username;
-            if (sharedNotebook.username.isSet())
-                shareusername = sharedNotebook.username;
-            if (shareusername == username)
-                return false;
-            if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK)
-                return true;
-            if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
-                return true;
-        } else {
-            LinkedNotebookTable ltable(db);
-            LinkedNotebook linkedNotebook;
-            found = ltable.get(linkedNotebook, notebookLid);
-            if (found && linkedNotebook.uri.isSet())
-              return true;
-        }
+
+    bool found = false;
+    UserTable userTable(db);
+    User user;
+    userTable.getUser(user);
+    QString username = "";
+    if (user.username.isSet())
+        username = user.username;
+
+    SharedNotebook sharedNotebook;
+    SharedNotebookTable stable(db);
+
+    found = stable.get(sharedNotebook, notebookLid, username);
+
+    // If this is a shared notebook check the owner & & priv.
+    if (found) {
+        QString shareusername = "";
+        if (sharedNotebook.username.isSet())
+            shareusername = sharedNotebook.username;
+        QLOG_DEBUG() << "Shared Notebook properties:";
+        QLOG_DEBUG() << "   share user name: " << shareusername;
+        QLOG_DEBUG() << "   username: " << username;
+        QLOG_DEBUG() << "   privileges: " << sharedNotebook.privilege;
+        if (!sharedNotebook.privilege.isSet())
+            return true;
+        if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK)
+            return true;
+        if (sharedNotebook.privilege == SharedNotebookPrivilegeLevel::READ_NOTEBOOK_PLUS_ACTIVITY)
+            return true;
+
+        // By default we have read/write
+        return false;
     }
+
+
+
+
+    // Check privileges for linked notebooks
+    LinkedNotebookTable ltable(db);
+    LinkedNotebook linkedNotebook;
+    QString linkedusername = "";
+    found = ltable.get(linkedNotebook, notebookLid);
+    QLOG_DEBUG() << "Linked Notebook Found: " << found;
+    QLOG_DEBUG() << "Linked Notebook URI set: " << linkedNotebook.uri.isSet();
+
+    if (found && linkedNotebook.uri.isSet()) {
+        if (linkedNotebook.username.isSet())
+            linkedusername =linkedNotebook.username;
+
+        QLOG_DEBUG() << "Linked Notebook properties:";
+        QLOG_DEBUG() << "   linked notebook user name: " << linkedusername;
+        QLOG_DEBUG() << "   username: " << username;
+
+        return true;
+    }
+    // Default privileges for non-linked & non-shared & non-local notebooks.
     return false;
 }
 
@@ -951,9 +980,9 @@ qint32 NotebookTable::getConflictNotebook() {
 int NotebookTable::getNewUnsequencedCount() {
     db->lockForRead();
     NSqlQuery query(db);
-    query.prepare("Select count(lid) from DataStore where key=:key and data=0 and lid not in (select lid from datastore where key=:localkey and data='true')");
+    query.prepare("Select count(lid) from DataStore where key=:key and data=0 and lid not in (select lid from datastore where key=:localkey and data=1)");
     query.bindValue(":key", NOTEBOOK_UPDATE_SEQUENCE_NUMBER);
-    query.bindValue(":localKey", NOTEBOOK_IS_LOCAL);
+    query.bindValue(":localkey", NOTEBOOK_IS_LOCAL);
     query.exec();
     qint32 retval = 0;
     while(query.next()) {
@@ -971,7 +1000,7 @@ qint32 NotebookTable::getAllDirty(QList<qint32> &lids) {
     NSqlQuery query(db);
     lids.clear();
     db->lockForRead();
-    query.prepare("Select lid from DataStore where key=:key and data='true'");
+    query.prepare("Select lid from DataStore where key=:key and data=1");
     query.bindValue(":key", NOTEBOOK_ISDIRTY);
     query.exec();
     while(query.next()) {
@@ -1098,7 +1127,7 @@ void NotebookTable::closeNotebook(qint32 lid) {
     query.bindValue(":key", NOTEBOOK_IS_CLOSED);
     query.exec();
 
-    query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, 'true')");
+    query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, 1)");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTEBOOK_IS_CLOSED);
     query.exec();

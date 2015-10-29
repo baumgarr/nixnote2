@@ -57,10 +57,27 @@ TagEditorNewTag::TagEditorNewTag(QWidget *parent) :
 
 //    connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
     completer = new QCompleter(this);
+    connect(completer, SIGNAL(activated(QString)), this, SLOT(mouseCompleterSelection(QString)));
     loadCompleter();
+    connect(this, SIGNAL(returnPressed()), this, SLOT(enterPressed()));
     hide();
     QLOG_TRACE_OUT() << typeid(*this).name();
 }
+
+
+void TagEditorNewTag::mouseCompleterSelection(QString value) {
+    QLOG_DEBUG() << "Mouse selection completer for tag: " << value;
+    QKeyEvent *event = new QKeyEvent (QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier);
+    QCoreApplication::postEvent (this, event);
+}
+
+
+void TagEditorNewTag::enterPressed() {
+    QLOG_DEBUG() << "Enter pressed in new tag";
+    QKeyEvent *event = new QKeyEvent (QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier);
+    QCoreApplication::postEvent (this, event);
+}
+
 
 
 //***********************************************************
@@ -231,4 +248,13 @@ void TagEditorNewTag::notebookSelectionChanged(qint32 notebook) {
     account = notebook;
     loadCompleter();
     QLOG_TRACE_OUT() << typeid(*this).name();
+}
+
+
+void TagEditorNewTag::keyPressEvent(QKeyEvent * event) {
+    if (event->key() == Qt::Key_Comma)
+        this->enterPressed();
+    else
+        QLineEdit::keyPressEvent(event);
+
 }

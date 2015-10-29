@@ -27,6 +27,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/usertable.h"
 #include "sql/resourcetable.h"
 #include "sql/linkednotebooktable.h"
+#include "email/smtpclient.h"
+#include "email/mimehtml.h"
+#include "email/mimemessage.h"
+#include "email/mimeinlinefile.h"
 #include "global.h"
 #include "gui/browserWidgets/colormenu.h"
 #include "gui/plugins/pluginfactory.h"
@@ -36,6 +40,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/insertlatexdialog.h"
 #include "dialog/endecryptdialog.h"
 #include "dialog/encryptdialog.h"
+#include "dialog/emaildialog.h"
 #include "sql/configstore.h"
 #include "utilities/encrypt.h"
 #include "utilities/mimereference.h"
@@ -60,6 +65,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDateTime>
 #include <QPrintDialog>
 #include <QPrinterInfo>
+#include <QPrintPreviewDialog>
+#include <QPaintEngine>
 #include <iostream>
 #include <istream>
 
@@ -179,6 +186,10 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     printPage = new QWebView();
     printPage->setVisible(false);
     connect(printPage, SIGNAL(loadFinished(bool)), this, SLOT(printReady(bool)));
+
+    printPreviewPage = new QWebView();
+    printPreviewPage->setVisible(false);
+
     hammer = new Thumbnailer(global.db);
     lid = -1;
     thumbnailer = NULL;
@@ -189,11 +200,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     this->setupShortcut(removeFormattingShortcut, "Edit_Remove_Formatting");
     connect(removeFormattingShortcut, SIGNAL(activated()), this, SLOT(removeFormatButtonPressed()));
     //removeFormattingShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-
-    insertHtmlEntitiesShortcut = new QShortcut(this);
-    this->setupShortcut(insertHtmlEntitiesShortcut, QString("Edit_Insert_Html_Entities"));
-    connect(insertHtmlEntitiesShortcut, SIGNAL(activated()),this, SLOT(insertHtmlEntities()));
-    //insertHtmlEntitiesShortcut->setContext(Qt::WidgetWithChildrenShortcut);
 
     insertHtmlEntitiesShortcut = new QShortcut(this);
     this->setupShortcut(insertHtmlEntitiesShortcut, QString("Edit_Insert_Html_Entities"));
@@ -253,132 +259,95 @@ void NBrowserWindow::setupToolBar() {
 
     // Toolbar action
     connect(buttonBar->undoButtonAction, SIGNAL(triggered()), this, SLOT(undoButtonPressed()));
-    QShortcut *undoButtonShortcut = new QShortcut(this);
-    undoButtonShortcut->setKey(buttonBar->undoButtonAction->shortcut());
-    connect(undoButtonShortcut, SIGNAL(activated()), this, SLOT(undoButtonPressed()));
+    connect(buttonBar->undoButtonShortcut, SIGNAL(activated()), this, SLOT(undoButtonPressed()));
 
     connect(buttonBar->redoButtonAction, SIGNAL(triggered()), this, SLOT(redoButtonPressed()));
-    QShortcut *redoButtonShortcut = new QShortcut(this);
-    redoButtonShortcut->setKey(buttonBar->redoButtonAction->shortcut());
-    connect(redoButtonShortcut, SIGNAL(activated()), this, SLOT(redoButtonPressed()));
+    connect(buttonBar->redoButtonShortcut, SIGNAL(activated()), this, SLOT(redoButtonPressed()));
 
     connect(buttonBar->cutButtonAction, SIGNAL(triggered()), this, SLOT(cutButtonPressed()));
-    QShortcut *cutButtonShortcut = new QShortcut(this);
-    cutButtonShortcut->setKey(buttonBar->cutButtonAction->shortcut());
-    connect(cutButtonShortcut, SIGNAL(activated()), this, SLOT(cutButtonPressed()));
+    connect(buttonBar->cutButtonShortcut, SIGNAL(activated()), this, SLOT(cutButtonPressed()));
 
     connect(buttonBar->copyButtonAction, SIGNAL(triggered()), this, SLOT(copyButtonPressed()));
-    QShortcut *copyButtonShortcut = new QShortcut(this);
-    copyButtonShortcut->setKey(buttonBar->copyButtonAction->shortcut());
-    connect(copyButtonShortcut, SIGNAL(activated()), this, SLOT(copyButtonPressed()));
+    connect(buttonBar->copyButtonShortcut, SIGNAL(activated()), this, SLOT(copyButtonPressed()));
 
     connect(buttonBar->pasteButtonAction, SIGNAL(triggered()), this, SLOT(pasteButtonPressed()));
-    QShortcut *pasteButtonShortcut = new QShortcut(this);
-    pasteButtonShortcut->setKey(buttonBar->pasteButtonAction->shortcut());
-    connect(pasteButtonShortcut, SIGNAL(activated()), this, SLOT(pasteButtonPressed()));
+    //connect(buttonBar->pasteButtonShortcut, SIGNAL(activated()), this, SLOT(pasteButtonPressed()));  // Handled via NWebView
 
     connect(buttonBar->removeFormatButtonAction, SIGNAL(triggered()), this, SLOT(removeFormatButtonPressed()));
-    QShortcut *removeFormatButtonShortcut = new QShortcut(this);
-    removeFormatButtonShortcut->setKey(buttonBar->removeFormatButtonAction->shortcut());
-    connect(removeFormatButtonShortcut, SIGNAL(activated()), this, SLOT(removeFormatButtonPressed()));
+    connect(buttonBar->removeFormatButtonShortcut, SIGNAL(activatedAmbiguously()), this, SLOT(removeFormatButtonPressed()));
 
     connect(buttonBar->boldButtonWidget, SIGNAL(clicked()), this, SLOT(boldButtonPressed()));
-    QShortcut *buttonBarShortcut = new QShortcut(this);
-    buttonBarShortcut->setKey(buttonBar->boldButtonWidget->shortcut());
-    connect(buttonBarShortcut, SIGNAL(activated()), this, SLOT(boldButtonPressed()));
+    connect(buttonBar->boldButtonShortcut, SIGNAL(activated()), this, SLOT(boldButtonPressed()));
 
     connect(buttonBar->italicButtonWidget, SIGNAL(clicked()), this, SLOT(italicsButtonPressed()));
-    QShortcut *italicsButtonShortcut = new QShortcut(this);
-    italicsButtonShortcut->setKey(buttonBar->italicButtonWidget->shortcut());
-    connect(italicsButtonShortcut, SIGNAL(activated()), this, SLOT(italicsButtonPressed()));
+    connect(buttonBar->italicButtonShortcut, SIGNAL(activated()), this, SLOT(italicsButtonPressed()));
 
     connect(buttonBar->underlineButtonWidget, SIGNAL(clicked()), this, SLOT(underlineButtonPressed()));
-    QShortcut *underlineButtonShortcut = new QShortcut(this);
-    underlineButtonShortcut->setKey(buttonBar->underlineButtonWidget->shortcut());
-    connect(underlineButtonShortcut, SIGNAL(activated()), this, SLOT(underlineButtonPressed()));
+    connect(buttonBar->underlineButtonShortcut, SIGNAL(activated()), this, SLOT(underlineButtonPressed()));
 
     connect(buttonBar->leftJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignLeftButtonPressed()));
-    QShortcut *leftJustifyButtonShortcut = new QShortcut(this);
-    leftJustifyButtonShortcut->setKey(buttonBar->leftJustifyButtonAction->shortcut());
-    connect(leftJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignLeftButtonPressed()));
+    connect(buttonBar->leftJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignLeftButtonPressed()));
 
     connect(buttonBar->rightJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignRightButtonPressed()));
-    QShortcut *rightJustifyButtonShortcut = new QShortcut(this);
-    rightJustifyButtonShortcut->setKey(buttonBar->rightJustifyButtonAction->shortcut());
-    connect(rightJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignRightButtonPressed()));
+    connect(buttonBar->rightJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignRightButtonPressed()));
 
     connect(buttonBar->centerJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignCenterButtonPressed()));
-    QShortcut *centerJustifyButtonShortcut = new QShortcut(this);
-    centerJustifyButtonShortcut->setKey(buttonBar->centerJustifyButtonAction->shortcut());
-    connect(centerJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignCenterButtonPressed()));
+    connect(buttonBar->centerJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignCenterButtonPressed()));
 
     connect(buttonBar->strikethroughButtonAction, SIGNAL(triggered()), this, SLOT(strikethroughButtonPressed()));
-    QShortcut *strikethroughButtonShortcut = new QShortcut(this);
-    strikethroughButtonShortcut->setKey(buttonBar->strikethroughButtonAction->shortcut());
-    connect(strikethroughButtonShortcut, SIGNAL(activated()), this, SLOT(strikethroughButtonPressed()));
+    connect(buttonBar->strikethroughButtonShortcut, SIGNAL(activated()), this, SLOT(strikethroughButtonPressed()));
+
+    connect(buttonBar->subscriptButtonAction, SIGNAL(triggered()), this, SLOT(subscriptButtonPressed()));
+    connect(buttonBar->subscriptButtonShortcut, SIGNAL(activated()), this, SLOT(subscriptButtonPressed()));
+
+    connect(buttonBar->superscriptButtonAction, SIGNAL(triggered()), this, SLOT(superscriptButtonPressed()));
+    connect(buttonBar->superscriptButtonShortcut, SIGNAL(activated()), this, SLOT(superscriptButtonPressed()));
 
     connect(buttonBar->hlineButtonAction, SIGNAL(triggered()), this, SLOT(horizontalLineButtonPressed()));
-    QShortcut *hlineButtonActionShortcut = new QShortcut(this);
-    hlineButtonActionShortcut->setKey(buttonBar->hlineButtonAction->shortcut());
-    connect(hlineButtonActionShortcut, SIGNAL(activated()), this, SLOT(horizontalLineButtonPressed()));
+    connect(buttonBar->hlineButtonShortcut, SIGNAL(activated()), this, SLOT(horizontalLineButtonPressed()));
 
     connect(buttonBar->shiftRightButtonAction, SIGNAL(triggered()), this, SLOT(shiftRightButtonPressed()));
-    QShortcut *shiftRightButtonShortcut = new QShortcut(this);
-    shiftRightButtonShortcut->setKey(buttonBar->shiftRightButtonAction->shortcut());
-    connect(shiftRightButtonShortcut, SIGNAL(activated()), this, SLOT(shiftRightButtonPressed()));
+    connect(buttonBar->shiftRightButtonShortcut, SIGNAL(activated()), this, SLOT(shiftRightButtonPressed()));
 
     connect(buttonBar->shiftLeftButtonAction, SIGNAL(triggered()), this, SLOT(shiftLeftButtonPressed()));
-    QShortcut *shiftLeftButtonShortcut = new QShortcut(this);
-    shiftLeftButtonShortcut->setKey(buttonBar->shiftLeftButtonAction->shortcut());
-    connect(shiftLeftButtonShortcut, SIGNAL(activated()), this, SLOT(shiftLeftButtonPressed()));
+    connect(buttonBar->shiftLeftButtonShortcut, SIGNAL(activated()), this, SLOT(shiftLeftButtonPressed()));
 
     connect(buttonBar->bulletListButtonAction, SIGNAL(triggered()), this, SLOT(bulletListButtonPressed()));
-    QShortcut *bulletListButtonShortcut = new QShortcut(this);
-    bulletListButtonShortcut->setKey(buttonBar->bulletListButtonAction->shortcut());
-    connect(bulletListButtonShortcut, SIGNAL(activated()), this, SLOT(bulletListButtonPressed()));
+    connect(buttonBar->bulletListButtonShortcut, SIGNAL(activated()), this, SLOT(bulletListButtonPressed()));
 
     connect(buttonBar->numberListButtonAction, SIGNAL(triggered()), this, SLOT(numberListButtonPressed()));
-    QShortcut *numberListButtonShortcut = new QShortcut(this);
-    numberListButtonShortcut->setKey(buttonBar->numberListButtonAction->shortcut());
-    connect(numberListButtonShortcut, SIGNAL(activated()), this, SLOT(numberListButtonPressed()));
+    connect(buttonBar->numberListButtonShortcut, SIGNAL(activated()), this, SLOT(numberListButtonPressed()));
 
     connect(buttonBar->todoButtonAction, SIGNAL(triggered()), this, SLOT(todoButtonPressed()));
-    QShortcut *todoButtonShortcut = new QShortcut(this);
-    todoButtonShortcut->setKey(buttonBar->todoButtonAction->shortcut());
-    connect(todoButtonShortcut, SIGNAL(activated()), this, SLOT(todoButtonPressed()));
+    connect(buttonBar->todoButtonShortcut, SIGNAL(activated()), this, SLOT(todoButtonPressed()));
 
     connect(buttonBar->spellCheckButtonAction, SIGNAL(triggered()), this, SLOT(spellCheckPressed()));
-    QShortcut *spellCheckButtonShortcut = new QShortcut(this);
-    spellCheckButtonShortcut->setKey(buttonBar->spellCheckButtonAction->shortcut());
-    connect(spellCheckButtonShortcut, SIGNAL(activated()), this, SLOT(spellCheckPressed()));
+    connect(buttonBar->spellCheckButtonShortcut, SIGNAL(activated()), this, SLOT(spellCheckPressed()));
 
     connect(buttonBar->fontSizes, SIGNAL(currentIndexChanged(int)), this, SLOT(fontSizeSelected(int)));
 
     connect(buttonBar->fontNames, SIGNAL(currentIndexChanged(int)), this, SLOT(fontNameSelected(int)));
 
     connect(buttonBar->fontColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontColorClicked()));
-    QShortcut *fontColorButtonShortcut = new QShortcut(this);
-    fontColorButtonShortcut->setKey(buttonBar->fontColorButtonWidget->shortcut());
-    connect(fontColorButtonShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
+    //connect(fontColorButtonShortcut, SIGNAL(activated()), this, SLOT(fontColorClicked()));
 
     connect(buttonBar->fontColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontColorClicked()));
 
     connect(buttonBar->highlightColorButtonWidget, SIGNAL(clicked()), this, SLOT(fontHighlightClicked()));
-    QShortcut *fontHighlightColorShortcut = new QShortcut(this);
-    fontHighlightColorShortcut->setKey(buttonBar->highlightColorButtonWidget->shortcut());
-    connect(fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+    //connect(fontHighlightColorShortcut, SIGNAL(activated()), this, SLOT(fontHighlightClicked()));
+    connect(buttonBar->highlightColorAction, SIGNAL(triggered()), this, SLOT(fontHighlightClicked()));
 
     connect(buttonBar->highlightColorMenuWidget->getMenu(), SIGNAL(triggered(QAction*)), this, SLOT(fontHighlightClicked()));
 
     connect(buttonBar->insertTableButtonAction, SIGNAL(triggered()), this, SLOT(insertTableButtonPressed()));
-    QShortcut *insertTableShortcut = new QShortcut(this);
-    insertTableShortcut->setKey(buttonBar->insertTableButtonAction->shortcut());
-    connect(insertTableShortcut, SIGNAL(activated()), this, SLOT(insertTableButtonPressed()));
+    connect(buttonBar->insertTableButtonShortcut, SIGNAL(activated()), this, SLOT(insertTableButtonPressed()));
 
     connect(buttonBar->htmlEntitiesButtonAction, SIGNAL(triggered()), this, SLOT(insertHtmlEntities()));
-    QShortcut *htmlEntitiesButtonShortcut = new QShortcut(this);
-    htmlEntitiesButtonShortcut->setKey(buttonBar->htmlEntitiesButtonAction->shortcut());
-    connect(htmlEntitiesButtonShortcut, SIGNAL(activated()), this, SLOT(insertHtmlEntities()));
+    connect(buttonBar->htmlEntitiesButtonShortcut, SIGNAL(activated()), this, SLOT(insertHtmlEntities()));
+
+    connect(buttonBar->insertDatetimeButtonAction, SIGNAL(triggered()), this, SLOT(insertDatetime()));
+    connect(buttonBar->insertDatetimeButtonWidget,SIGNAL(clicked()), this, SLOT(insertDatetime()));
+    connect(buttonBar->insertDatetimeButtonShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
 }
 
 
@@ -397,7 +366,6 @@ void NBrowserWindow::setupShortcut(QShortcut *action, QString text) {
 void NBrowserWindow::setContent(qint32 lid) {
     QLOG_DEBUG() << "Setting note contents to " << lid;
 
-    //hammer->timer.stop();
     // First, make sure we have a valid lid
     if (lid == -1) {
         blockSignals(true);
@@ -433,14 +401,29 @@ void NBrowserWindow::setContent(qint32 lid) {
         return;
 
     QByteArray content;
-    bool inkNote;
-    bool readOnly;
+    bool inkNote = false;
+    bool readOnly = false;
 
     // If we are searching, we never pull from the cache since the search string may
     // have changed since the last time.
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     if (criteria->isSearchStringSet() && criteria->getSearchString().trimmed() != "")
         global.cache.remove(lid);
+
+    QLOG_DEBUG() << "Checking if note is in cache";
+    if (global.cache.contains(lid)) {
+        QLOG_DEBUG() << "Fetching from cache";
+        NoteCache *c = global.cache[lid];
+        if (c == NULL || c->noteContent == (char*)NULL) {
+            QLOG_DEBUG() << "Invalid note found in cache.  Removing it.";
+            global.cache.remove(lid);
+        } else {
+            QLOG_DEBUG() << "Setting content from cache.";
+            content = c->noteContent;
+            readOnly = c->isReadOnly;
+            inkNote = c->isInkNote;
+        }
+    }
 
     if (!global.cache.contains(lid)) {
         QLOG_DEBUG() << "Note not in cache";
@@ -462,12 +445,6 @@ void NBrowserWindow::setContent(qint32 lid) {
         }
         readOnly = formatter.readOnly;
         inkNote = formatter.inkNote;
-    } else {
-        QLOG_DEBUG() << "Fetching from cache";
-        NoteCache *c = global.cache[lid];
-        content = c->noteContent;
-        readOnly = c->isReadOnly;
-        inkNote = c->isInkNote;
     }
 
     setReadOnly(readOnly);
@@ -475,8 +452,6 @@ void NBrowserWindow::setContent(qint32 lid) {
     QLOG_DEBUG() << "Setting up note title";
     noteTitle.setTitle(lid, n.title, n.title);
     dateEditor.setNote(lid, n);
-    //QLOG_DEBUG() << content;
-    //editor->setContent(content,  "application/xhtml+xml");
     QWebSettings::setMaximumPagesInCache(0);
     QWebSettings::setObjectCacheCapacities(0, 0, 0);
     QLOG_DEBUG() << "Setting editor contents";
@@ -939,9 +914,9 @@ void NBrowserWindow::pasteButtonPressed() {
         microFocusChanged();
         return;
     }
-    QLOG_DEBUG() << "HTML:" << mime->hasHtml() << " " << mime->html();
-    QLOG_DEBUG() << "Color:" << mime->hasColor();
-    QLOG_DEBUG() << "Url:" << mime->hasUrls();
+    //QLOG_DEBUG() << "HTML:" << mime->hasHtml() << " " << mime->html();
+    //QLOG_DEBUG() << "Color:" << mime->hasColor();
+    //QLOG_DEBUG() << "Url:" << mime->hasUrls();
 
     if (mime->hasText()) {
         QString urltext = mime->text();
@@ -1061,7 +1036,8 @@ QString NBrowserWindow::fixEncryptionPaste(QString data) {
 
 // The bold button was pressed / toggled
 void NBrowserWindow::boldButtonPressed() {
-    this->editor->triggerPageAction(QWebPage::ToggleBold);
+    QAction *action = editor->page()->action(QWebPage::ToggleBold);
+    action->activate(QAction::Trigger);
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -1070,7 +1046,8 @@ void NBrowserWindow::boldButtonPressed() {
 
 // The toggled button was pressed/toggled
 void NBrowserWindow::italicsButtonPressed() {
-    this->editor->triggerPageAction(QWebPage::ToggleItalic);
+    QAction *action = editor->page()->action(QWebPage::ToggleItalic);
+    action->activate(QAction::Trigger);
     this->editor->setFocus();
     microFocusChanged();
 }
@@ -1276,11 +1253,20 @@ void NBrowserWindow::fontColorClicked() {
 
 
 void NBrowserWindow::insertLinkButtonPressed() {
-    QString text = editor->selectedText();
-    if (text.trimmed() == "" && currentHyperlink.trimmed() == "")
+    QString text = editor->selectedText().trimmed();
+    if (text == "" && currentHyperlink == "")
         return;
 
     InsertLinkDialog dialog(insertHyperlink);
+
+    // If we have a link already highlighted, set it to the dialog.
+    if (text.startsWith("http://", Qt::CaseInsensitive) ||
+            text.startsWith("https://", Qt::CaseInsensitive) ||
+            text.startsWith("ftp://", Qt::CaseInsensitive) ||
+            text.startsWith("mailto:", Qt::CaseInsensitive)) {
+        dialog.setUrl(text);
+    }
+
     if (currentHyperlink != NULL && currentHyperlink != "") {
         dialog.setUrl(currentHyperlink);
     }
@@ -1661,15 +1647,21 @@ void NBrowserWindow::attachFile() {
      else
          editor->encryptAction->setEnabled(false);
 
+
+         //     +QString("            window.browserWindow.printNodeName(workingNode.firstChild.nodeValue);")
     QString js = QString("function getCursorPos() {")
         +QString("var cursorPos;")
+        +QString("var insideUrl=false;")
         +QString("if (window.getSelection) {")
         +QString("   var selObj = window.getSelection();")
         +QString("   var selRange = selObj.getRangeAt(0);")
         +QString("   var workingNode = window.getSelection().anchorNode.parentNode;")
+        //+QString("    window.browserWindow.printNodeName(workingNode.firstChild.nodeValue);")
         +QString("   while(workingNode != null) { ")
         //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
-        +QString("      if (workingNode.nodeName=='TABLE') { if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea(); }")
+        +QString("      if (workingNode.nodeName=='TABLE') {")
+        +QString("          if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
+        +QString("      }")
         +QString("      if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
         +QString("      if (workingNode.nodeName=='I') window.browserWindow.italicsActive();")
         +QString("      if (workingNode.nodeName=='U') window.browserWindow.underlineActive();")
@@ -1677,7 +1669,13 @@ void NBrowserWindow::attachFile() {
         +QString("      if (workingNode.nodeName=='OL') window.browserWindow.setInsideList();")
         +QString("      if (workingNode.nodeName=='LI') window.browserWindow.setInsideList();")
         +QString("      if (workingNode.nodeName=='TBODY') window.browserWindow.setInsideTable();")
-        +QString("      if (workingNode.nodeName=='A') {for(var x = 0; x < workingNode.attributes.length; x++ ) {if (workingNode.attributes[x].nodeName.toLowerCase() == 'href') window.browserWindow.setInsideLink(workingNode.attributes[x].nodeValue);}}")
+        +QString("      if (workingNode.nodeName=='A') {")
+        +QString("           insideUrl = true;")
+        +QString("           for(var x = 0; x < workingNode.attributes.length; x++ ) {")
+        +QString("              if (workingNode.attributes[x].nodeName.toLowerCase() == 'href')")
+        +QString("                  window.browserWindow.setInsideLink(workingNode.attributes[x].nodeValue);")
+        +QString("           }")
+        +QString("      }")
         +QString("      if (workingNode.nodeName=='SPAN') {")
         +QString("         if (workingNode.getAttribute('style') == 'text-decoration: underline;') window.browserWindow.underlineActive();")
         +QString("      }")
@@ -1697,7 +1695,7 @@ void NBrowserWindow::attachFile() {
                   QString("      window.browserWindow.changeDisplayFontName(font);") +
                   QString("} getFontSize();");
     editor->page()->mainFrame()->evaluateJavaScript(js2);
-}
+ }
 
  void NBrowserWindow::printNodeName(QString v) {
      QLOG_DEBUG() << v;
@@ -2309,13 +2307,220 @@ qint32 NBrowserWindow::createResource(Resource &r, int sequence, QByteArray data
 }
 
 
-// Print the contents of a note.  Basically it loops through the
-// note and repaces the <object> tags with <img> tags.  The plugin
-// object should be creating temporary images for the print.
-void NBrowserWindow::printNote() {
-    QString contents = editor->editorPage->mainFrame()->toHtml();
 
+
+// Prepare the email for sending.  This function scans through
+// the email for images & attachments.  The resulting
+// MimeMessage has all of the email contents.
+void NBrowserWindow::prepareEmailMessage(MimeMessage *message, QString note) {
+    MimeHtml *text = new MimeHtml();
+
+    // Prepare the massage the same as if we were printing it.
+    QString contents = this->stripContentsForPrint();
+    QString textContents = editor->page()->currentFrame()->toPlainText();
+    QStringList images;
+    QStringList attachments;
+
+    // Now, go thgough & reformat all the img tags.
+    int cidCount=0;
+    int pos = contents.indexOf("src=\"file:");
+    while (pos>=0) {
+        QString localFile = contents.mid(pos+13);
+        int endPos = localFile.indexOf("\"");
+        localFile = localFile.mid(0,endPos);
+        images.append(localFile);
+        endPos = pos+endPos;
+        QString part1 = contents.mid(0,pos);
+        QString part2 = contents.mid(endPos+14);
+        cidCount++;
+        contents = part1 + "src='cid:file" +QString::number(cidCount) +"'" + part2;
+
+        pos = contents.indexOf("src=\"file:", pos+5);
+    }
+
+    // next, look for all the attachments
+    pos = contents.indexOf("href=\"nnres:");
+    while (pos>=0) {
+        QString localFile = contents.mid(pos+12);
+        int endPos = localFile.indexOf("\"");
+        localFile = localFile.mid(0,endPos);
+        attachments.append(localFile);
+        cidCount++;
+        pos = contents.indexOf("href=\"nnres:", pos+5);
+    }
+
+    // If the user adds a note, then prepend it to the beginning.
+    if (note.trimmed() != "") {
+        int pos = contents.indexOf("<body");
+        int endPos = contents.indexOf(">", pos);
+        contents.insert(endPos+1,  Qt::escape(note)+"<p><p><hr><p>");
+    }
+    text->setHtml(contents);
+    message->addPart(text);
+
+
+    // Add all the images
+    for (int i=0; i<images.size(); i++) {
+        MimeReference mimeRef;
+        QString localFile = images[i];
+        QString mime = mimeRef.getMimeFromFileName(localFile);
+        MimeInlineFile *file = new MimeInlineFile(new QFile(localFile));
+        QString lidFile = localFile.mid(localFile.lastIndexOf(QDir::separator())+1);
+        qint32 lid = lidFile.mid(0,lidFile.lastIndexOf(".")).toInt();
+        ResourceTable rtable(global.db);
+        Resource r;
+        ResourceAttributes ra;
+        if (rtable.get(r, lid, false) && r.attributes.isSet()) {
+            ra = r.attributes;
+            if (ra.fileName.isSet())
+                file->setContentName(ra.fileName);
+        }
+        file->setContentId("file"+QString::number(i+1));
+        file->setContentType(mime);
+        message->addPart(file);
+    }
+
+    // Add all the attachments
+    for (int i=0; i<attachments.size(); i++) {
+        MimeReference mimeRef;
+        QString localFile = attachments[i];
+        QString mime = mimeRef.getMimeFromFileName(localFile);
+        MimeInlineFile *file = new MimeInlineFile(new QFile(localFile));
+        QString lidFile = localFile.mid(localFile.lastIndexOf(QDir::separator())+1);
+        qint32 lid = lidFile.mid(0,lidFile.lastIndexOf(".")).toInt();
+        ResourceTable rtable(global.db);
+        Resource r;
+        ResourceAttributes ra;
+        if (rtable.get(r, lid, false) && r.attributes.isSet()) {
+            ra = r.attributes;
+            if (ra.fileName.isSet())
+                file->setContentName(ra.fileName);
+        }
+        file->setContentType(mime);
+        message->addPart(file);
+    }
+
+    return;
+
+}
+
+
+
+
+
+// Email current note.
+void NBrowserWindow::emailNote() {
+    global.settings->beginGroup("Email");
+    QString server = global.settings->value("smtpServer", "").toString();
+    int port = global.settings->value("smtpPort", 25).toInt();
+    QString smtpConnectionType = global.settings->value("smtpConnectionType", "TcpConnection").toString();
+    QString userid = global.settings->value("userid", "").toString();
+    QString password = global.settings->value("password", "").toString();
+    QString senderEmail = global.settings->value("senderEmail", "").toString();
+    QString senderName = global.settings->value("senderName", "").toString();
+    global.settings->endGroup();
+
+    if (senderEmail.trimmed() == "" || server.trimmed() == "") {
+        QMessageBox::critical(this, tr("Setup Error"),
+             tr("SMTP Server has not been setup.\n\nPlease specify server settings\nin the Preferences menu."), QMessageBox::Ok);
+        return;
+    }
+
+    emit(setMessage("Sending Email. Please be patient."));
+    EmailDialog emailDialog;
+    emailDialog.subject->setText(noteTitle.text());
+    emailDialog.exec();
+    if (emailDialog.cancelPressed)
+        return;
+
+    QStringList toAddresses = emailDialog.getToAddresses();
+    QStringList ccAddresses = emailDialog.getCcAddresses();
+    QStringList bccAddresses = emailDialog.getBccAddresses();
+
+    if (senderName.trimmed() == "")
+        senderName = senderEmail;
+
+    SmtpClient::ConnectionType type = SmtpClient::TcpConnection;
+    if (smtpConnectionType == "SslConnection")
+        type = SmtpClient::SslConnection;
+    if (smtpConnectionType == "TlsConnection")
+        type = SmtpClient::TlsConnection;
+
+    SmtpClient smtp(server, port, type);
+    smtp.setResponseTimeout(-1);
+
+    // We need to set the username (your email address) and password
+    // for smtp authentification.
+    smtp.setUser(userid);
+    smtp.setPassword(password);
+
+    // Now we create a MimeMessage object. This is the email.
+    MimeMessage message;
+
+    EmailAddress sender(senderEmail, senderName);
+    message.setSender(&sender);
+
+    for (int i=0; i<toAddresses.size(); i++) {
+        EmailAddress *to = new EmailAddress(toAddresses[i], toAddresses[i]);
+        message.addRecipient(to);
+    }
+
+    for (int i=0; i<ccAddresses.size(); i++) {
+        EmailAddress *cc = new EmailAddress(ccAddresses[i], ccAddresses[i]);
+        message.addRecipient(cc);
+    }
+
+
+    if (emailDialog.ccSelf->isChecked()) {
+        EmailAddress *cc = new EmailAddress(senderEmail, senderName);
+        message.addRecipient(cc);
+    }
+
+    for (int i=0; i<bccAddresses.size(); i++) {
+        EmailAddress *bcc = new EmailAddress(bccAddresses[i], bccAddresses[i]);
+        message.addRecipient(bcc);
+    }
+
+    // Set the subject
+    message.setSubject(emailDialog.subject->text().trimmed());
+
+    // Build the note content
+    prepareEmailMessage(&message, emailDialog.note->toPlainText());
+
+    // Send the actual message.
+    if (!smtp.connectToHost()) {
+        QLOG_ERROR()<< "Failed to connect to host!";
+        QMessageBox::critical(this, tr("Connection Error"), tr("Unable to connect to host."), QMessageBox::Ok);
+        return;
+    }
+
+    if (!smtp.login()) {
+        QLOG_ERROR() << "Failed to login!";
+        QMessageBox::critical(this, tr("Login Error"), tr("Unable to login."), QMessageBox::Ok);
+        return;
+    }
+
+    if (!smtp.sendMail(message)) {
+        QMessageBox::critical(this, tr("Send Error"), tr("Unable to send email."), QMessageBox::Ok);
+        QLOG_ERROR() << "Failed to send mail!";
+        return;
+    }
+
+    smtp.quit();
+    emit(setMessage("Message Sent"));
+//    QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
+}
+
+
+
+
+
+// Strip the contents from the current webview in preparation for printing.
+QString NBrowserWindow::stripContentsForPrint() {
     // Start removing object tags
+    QString contents = this->editor->selectedHtml().trimmed();
+    if (contents == "")
+       contents = editor->editorPage->mainFrame()->toHtml();
     int pos = contents.indexOf("<object");
     while (pos>=0) {
         int endPos = contents.indexOf(">", pos);
@@ -2327,13 +2532,50 @@ void NBrowserWindow::printNote() {
 
         pos = contents.indexOf("<object", endPos);
     }
-
-    // Load the print page.  When it is ready the printReady() slot will
-    // do the actual print
-    printPage->setContent(contents.toUtf8());
+//    contents = contents.replace("</head>", "<style>@media print {* { background: #666; color: #555; } html { font: 100%*4.5 georgia, serif; }</style></head>");
+//    contents = contents.replace("</head>", "<style>@media print {a @bottom-right { content: counter(page) \" of \" counter(pages); } }</style></head>");
+    return contents;
 }
 
 
+// Do a print preview of this note.  This works
+// in much the same way as printNote().  It removes all the
+// <object> tags & replaces them with <img>.
+void NBrowserWindow::printPreviewNote() {
+    QString contents = stripContentsForPrint();
+
+    // Load the print page.  When it is ready the printReady() slot will
+    // do the actual print
+    printPreviewPage->setHtml(contents.toUtf8());
+    //printPreviewPage->setContent(contents.toUtf8());
+    QPrinter printer(QPrinter::HighResolution);
+    QPrintPreviewDialog preview(&printer, this);
+    preview.setWindowFlags(Qt::Window);
+    connect(&preview, SIGNAL(paintRequested(QPrinter *)), this, SLOT(printPreviewReady(QPrinter*)));
+    preview.exec();
+}
+
+
+// Slot for when the printPreview is ready.
+void NBrowserWindow::printPreviewReady(QPrinter *printer) {
+   printPreviewPage->print(printer);
+}
+
+
+
+// Print the contents of a note.  Basically it loops through the
+// note and repaces the <object> tags with <img> tags.  The plugin
+// object should be creating temporary images for the print.
+void NBrowserWindow::printNote() {
+    QString contents = stripContentsForPrint();
+
+    // Load the print page.  When it is ready the printReady() slot will
+    // do the actual print
+    printPage->setHtml(contents.toUtf8());
+}
+
+
+// Print output is ready.
 void NBrowserWindow::printReady(bool ok) {
     if (!ok) {
         QMessageBox msgBox;
@@ -2376,7 +2618,11 @@ void NBrowserWindow::printReady(bool ok) {
         }
         if (error) {
             fastPrint = false;
+
+            // Re-initialize printer object so we don't have any bugus
+            // values from settings.
             delete printer;
+            printer = new QPrinter();
         }
     }
 
@@ -2389,7 +2635,6 @@ void NBrowserWindow::printReady(bool ok) {
         QPrintDialog dialog(printer);
         if (dialog.exec() ==  QDialog::Accepted) {
             printer = dialog.printer();
-            printPage->print(printer);
             global.settings->beginGroup("Printer");
             global.settings->setValue("orientation", printer->orientation());
             global.settings->setValue("printerName", printer->printerName());
@@ -2398,9 +2643,16 @@ void NBrowserWindow::printReady(bool ok) {
             global.settings->setValue("pageSize", printer->pageSize());
             global.settings->setValue("colorMode", printer->colorMode());
             global.settings->endGroup();
+            printPage->print(printer);
         }
-    } else
+    } else {
         printPage->print(printer);
+//        QPainter p;
+//        p.begin(printer);
+//        printPage->resize(printer->paperRect().size());
+//        printPage->render(&p);
+//        p.end();
+    }
 
     this->fastPrint = false;
 }
@@ -3101,4 +3353,17 @@ void NBrowserWindow::newTagFocusShortcut() {
         this->expandButton.setState(EXPANDBUTTON_2);
     }
     tagEditor.newTag.setFocus();
+}
+
+
+// User pressed the superscript editor button
+void NBrowserWindow::superscriptButtonPressed() {
+    editor->page()->mainFrame()->evaluateJavaScript("document.execCommand('superscript')");
+}
+
+
+
+// User pressed the subscript editor button
+void NBrowserWindow::subscriptButtonPressed() {
+    editor->page()->mainFrame()->evaluateJavaScript("document.execCommand('subscript');");
 }

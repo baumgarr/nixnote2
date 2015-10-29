@@ -485,39 +485,56 @@ void TagTable::deleteTag(qint32 lid) {
     if (!exists(lid))
         return;
 
-    // First find all the children & delete them
+    // First find the current tag we want to delet.
+    // If it has a parent, then we save it because
+    // when we delete the current tag all of the children
+    // will be promoted to the current tag's parent
+    Tag currentTag;
+    QString newParent = "";
+    get(currentTag, lid);
+    if (currentTag.parentGuid.isSet())
+        newParent = currentTag.parentGuid;
+
+    // Now, get a list of all the children.
+    // The children will now be given a new parent
     QList<qint32> list;
-    QString parentGuid;
-    getGuid(parentGuid, lid);
-    findChildren(list, parentGuid);
-    getGuid(parentGuid, lid);
+    QString currentGuid;
+    getGuid(currentGuid, lid);
+    findChildren(list, currentGuid);
+    for (int i=0; i<list.size(); i++) {
+        Tag childTag;
+        get(childTag, list[i]);
+        childTag.parentGuid = newParent;
+        update(childTag, true);
+    }
 
-    // Now add this lid to the list to be deleted
-    list.append(lid);
 
-    for (qint32 i=0; i<list.size(); i++) {
-        NoteTable noteTable(db);
-        Tag tag;
-        qint32 currentLid = list[i];
-        NSqlQuery query(db);
-        get(tag, currentLid);
-        if (tag.updateSequenceNum.isSet() && tag.updateSequenceNum > 0) {
-            db->lockForWrite();
-            query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
-            query.bindValue(":lid", currentLid);
-            query.bindValue(":key", TAG_ISDELETED);
-            query.bindValue(":data", true);
-            query.exec();
-            db->unlock();
-        } else {
-            expunge(currentLid);
-        }
-        query.finish();
-        QList<qint32> noteLids;
-        noteTable.findNotesByTag(noteLids, currentLid);
-        for (int j=0; j<noteLids.size(); j++) {
-            noteTable.removeTag(noteLids[j], currentLid, true);
-        }
+    // Now, we need to delete the actual tag.
+    NoteTable noteTable(db);
+    NSqlQuery query(db);
+    if (currentTag.updateSequenceNum.isSet() && currentTag.updateSequenceNum > 0) {
+        db->lockForWrite();
+        query.prepare("delete from DataStore where lid=:lid and key=:key");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", TAG_ISDELETED);
+        query.exec();
+        query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", TAG_ISDELETED);
+        query.bindValue(":data", true);
+        query.exec();
+        db->unlock();
+        setDirty(lid, true);
+    } else {
+        expunge(lid);
+    }
+    query.finish();
+
+    // Now, find all the notes with this tag and remove them.
+    QList<qint32> noteLids;
+    noteTable.findNotesByTag(noteLids, lid);
+    for (int j=0; j<noteLids.size(); j++) {
+        noteTable.removeTag(noteLids[j], lid, false);
     }
 }
 
@@ -608,7 +625,7 @@ qint32 TagTable::getAllDirty(QList<qint32> &lids) {
     NSqlQuery query(db);
     db->lockForRead();
     lids.clear();
-    query.prepare("Select lid from DataStore where key=:key and data='true'");
+    query.prepare("Select lid from DataStore where key=:key and data=1");
     query.bindValue(":key", TAG_ISDIRTY);
     query.exec();
     while(query.next()) {

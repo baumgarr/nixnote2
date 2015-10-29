@@ -19,6 +19,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "traymenu.h"
 #include "sql/notetable.h"
+#include "sql/favoritestable.h"
 #include "global.h"
 
 extern Global global;
@@ -37,6 +38,8 @@ void TrayMenu::setActionMenu(ActionMenuType type, QMenu *menu)  {
         pinnedMenu = menu;
     if (type == RecentMenu)
         recentlyUpdatedMenu = menu;
+    if (type == FavoriteNotesMenu)
+        favoriteNotesMenu = menu;
 }
 
 void TrayMenu::buildActionMenu() {
@@ -54,6 +57,23 @@ void TrayMenu::buildActionMenu() {
     records.clear();;
     noteTable.getRecentlyUpdated(records);
     buildMenu(recentlyUpdatedMenu, records);
+
+    records.clear();
+    FavoritesTable ftable(global.db);
+    QList<qint32> lids;
+    ftable.getAll(lids);
+    for (int i=0; i<lids.size(); i++) {
+        FavoritesRecord record;
+        ftable.get(record, lids[i]);
+        if (record.type == FavoritesRecord::Note) {
+            QPair<qint32, QString> pair;
+            pair.first = record.target.toInt();
+            pair.second = record.displayName;
+            records.append(pair);
+        }
+    }
+    favoriteNotesMenu->clear();
+    buildMenu(favoriteNotesMenu, records);
 }
 
 

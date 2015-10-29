@@ -56,6 +56,7 @@ public:
     QAction *copyAction;
     QAction *pasteAction;
     QAction *removeFormattingAction;
+    QAction *insertDateTimeAction;
     QAction *pasteWithoutFormatAction;
     QAction *todoAction;
     QAction *encryptAction;

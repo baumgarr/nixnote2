@@ -56,6 +56,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/browserWidgets/editorbuttonbar.h"
 #include "gui/browserWidgets/reminderbutton.h"
 #include "html/thumbnailer.h"
+#include "email/mimemessage.h"
 
 class ToolbarWidgetAction;
 
@@ -101,6 +102,8 @@ private:
     QShortcut *insertLatexShortcut;
     QShortcut *copyNoteUrlShortcut;
 
+    QString stripContentsForPrint();
+
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
     QString uuid;
@@ -127,7 +130,10 @@ public:
     QShortcut *focusTitleShortcut;
     QShortcut *insertDatetimeShortcut;
     QWebView *printPage;
+    QWebView *printPreviewPage;
     bool fastPrint;
+
+    //QShortcut *leftJustifyButtonShortcut;
 
     QHBoxLayout line2Layout;
     QHBoxLayout line3Layout;
@@ -143,6 +149,7 @@ public:
     void clear();
     void setupShortcut(QShortcut *action, QString text);
     void contentChanged();
+    void printPreviewNote();
     void printNote();
     void updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash);
     void insertHtml(QString html);
@@ -163,6 +170,7 @@ signals:
     void noteLocationEditedSignal(QString uuid, qint32 lid, double longitude, double latitude, double altitude, QString name);
     void noteAlarmEditedSignal(QString uuid, qint32 lid, bool strikeout, QString text);
     void showHtmlEntities();
+    void setMessage(QString msg);
 
 public slots:
     void changeExpandState(int value);
@@ -183,6 +191,9 @@ public slots:
     void redoButtonPressed();
     void cutButtonPressed();
     void copyButtonPressed();
+    void printPreviewReady(QPrinter *printer);
+    void emailNote();
+    void prepareEmailMessage(MimeMessage *message, QString note);
     void pasteButtonPressed();
     void pasteWithoutFormatButtonPressed();
     void boldButtonPressed();
@@ -190,6 +201,8 @@ public slots:
     void italicsButtonPressed();
     void underlineButtonPressed();
     void strikethroughButtonPressed();
+    void superscriptButtonPressed();
+    void subscriptButtonPressed();
     void alignLeftButtonPressed();
     void alignCenterButtonPressed();
     void alignRightButtonPressed();

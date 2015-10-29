@@ -77,14 +77,14 @@ void CounterRunner::countNotebooks() {
     }
 
     NSqlQuery query(db);
-    query.exec(" select data, count(data) from datastore where key=5011 and lid not in (select lid from datastore where data='false' and key=5010) group by data;");
+    query.exec(" select data, count(data) from datastore where key=5011 and lid not in (select lid from datastore where data=0 and key=5010) group by data;");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
         qint32 total = query.value(1).toInt();
         allNotebooks[lid] = total;
     }
 
-    query.exec("select notebooklid, count(notebooklid) from notetable where lid in (select lid from filter) and lid not in (select lid from datastore where data='false' and key=5010) group by notebooklid;");
+    query.exec("select notebooklid, count(notebooklid) from notetable where lid in (select lid from filter) and lid not in (select lid from datastore where data=0 and key=5010) group by notebooklid;");
 
     while(query.next()) {
         qint32 lid = query.value(0).toInt();
@@ -115,7 +115,7 @@ void CounterRunner::countTags() {
     }
 
     NSqlQuery query(db);
-    query.exec(" select data, count(data) from datastore where key=5012 and lid not in (select lid from datastore where data='false' and key=5010) group by data;");
+    query.exec(" select data, count(data) from datastore where key=5012 and lid not in (select lid from datastore where data=0 and key=5010) group by data;");
     while (query.next()) {
         qint32 lid = query.value(0).toInt();
         qint32 total = query.value(1).toInt();
@@ -123,7 +123,7 @@ void CounterRunner::countTags() {
     }
 
     // Start counting
-    query.prepare("select data, count(lid) from datastore where key=:key and lid in (select lid from filter) and lid not in (select lid from datastore where data='false' and key=5010) group by data;");
+    query.prepare("select data, count(lid) from datastore where key=:key and lid in (select lid from filter) and lid not in (select lid from datastore where data=0 and key=5010) group by data;");
     query.bindValue(":key", NOTE_TAG_LID);
     query.exec();
     while(query.next()) {

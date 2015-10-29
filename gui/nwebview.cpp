@@ -147,6 +147,11 @@ NWebView::NWebView(NBrowserWindow *parent) :
     this->setupShortcut(encryptAction, "Edit_Encrypt_Text");
     connect(encryptAction, SIGNAL(triggered()), parent, SLOT(encryptButtonPressed()));
 
+    insertDateTimeAction = new QAction(tr("Insert Date && Time"), this);
+    this->setupShortcut(insertDateTimeAction, "Insert_DateTime");
+    contextMenu->addAction(insertDateTimeAction);
+    connect(insertDateTimeAction, SIGNAL(triggered()), parent, SLOT(insertDatetime()));
+
     insertLinkAction = new QAction(tr("Insert Hyperlink"), this);
     contextMenu->addAction(insertLinkAction);
     this->setupShortcut(insertLinkAction, "Edit_Insert_Hyperlink");

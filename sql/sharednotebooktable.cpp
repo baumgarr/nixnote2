@@ -189,14 +189,14 @@ qint32 SharedNotebookTable::add(qint32 l, const SharedNotebook &t, bool isDirty)
 }
 
 
-
-
 // given a LID, return a shared notebook record
-bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid){
+bool SharedNotebookTable::get(SharedNotebook &notebook, qint32 lid, QString username){
     NSqlQuery query(db);
     db->lockForRead();
-    query.prepare("Select key, data from DataStore where lid=:lid");
+    query.prepare("select key, data from datastore where lid in (Select lid from DataStore where lid=:lid and key=:key and data=:data)");
     query.bindValue(":lid", lid);
+    query.bindValue(":key", SHAREDNOTEBOOK_USERNAME);
+    query.bindValue(":data", username);
     query.exec();
     bool returnVal = false;
     while (query.next()) {
@@ -375,7 +375,7 @@ qint32 SharedNotebookTable::findById(qlonglong id) {
     db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:id");
     query.bindValue(":key", SHAREDNOTEBOOK_ID);
-    query.bindValue(":data", id);
+    query.bindValue(":id", id);
     query.exec();
     if (query.next()) {
         qint32 retval = 0;
@@ -396,7 +396,7 @@ qint32 SharedNotebookTable::findByShareKey(QString id) {
     db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:id");
     query.bindValue(":key", SHAREDNOTEBOOK_SHARE_KEY);
-    query.bindValue(":data", id);
+    query.bindValue(":id", id);
     query.exec();
     while (query.next()) {
         qint32 retval = query.value(0).toInt();
@@ -423,7 +423,7 @@ qint32 SharedNotebookTable::findByNotebookGuid(QString id) {
     db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:id");
     query.bindValue(":key", SHAREDNOTEBOOK_NOTEBOOK_GUID);
-    query.bindValue(":data", id);
+    query.bindValue(":id", id);
     query.exec();
     while (query.next()) {
         qint32 retval = query.value(0).toInt();
@@ -438,8 +438,31 @@ qint32 SharedNotebookTable::findByNotebookGuid(QString id) {
 }
 
 
-
 // Find a shared notebook by the GUID
 qint32 SharedNotebookTable::findByNotebookGuid(string id) {
     return findByNotebookGuid(QString::fromStdString(id));
+}
+
+
+
+
+//Find users for a specific shared notebook
+qint32 SharedNotebookTable::getShareUsers(QStringList &users, qint32 lid) {
+    qint32 retval = 0;
+    users.clear();
+
+    NSqlQuery query(db);
+    db->lockForRead();
+    query.prepare("Select data from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", SHAREDNOTEBOOK_USERNAME);
+    query.exec();
+    while (query.next()) {
+        retval++;
+        users.append(query.value(0).toString());
+    }
+    query.finish();
+    db->unlock();
+    return retval;
+
 }

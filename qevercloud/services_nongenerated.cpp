@@ -13,7 +13,7 @@
 qevercloud::UserStore::UserStore(QString host, QString authenticationToken, QObject *parent): QObject(parent)
 {
     QUrl url;
-    url.setScheme("https");
+    url.setScheme(QStringLiteral("https"));
     url.setHost(host);
     url.setPath("/edam/user");
     url_ = url.toString(QUrl::StripTrailingSlash);

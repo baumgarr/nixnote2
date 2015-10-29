@@ -55,10 +55,24 @@ NSqlQuery::~NSqlQuery() {
 }
 
 
+QString getLastExecutedQuery(const QSqlQuery& query)
+{
+    QString str = query.lastQuery();
+    QMapIterator<QString, QVariant> it(query.boundValues());
+    while (it.hasNext())
+    {
+      it.next();
+      str.replace(it.key(),it.value().toString());
+    }
+    return str;
+}
+
+
 // Generic exec().  A prepare should have been done already
 bool NSqlQuery::exec() {
     bool indexPauseSave;
     bool indexRestoreNeeded = false;
+    //QLOG_DEBUG() << "Sending SQL:" << getLastExecutedQuery(*this);
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec();
         if (rc) {
@@ -101,6 +115,7 @@ bool NSqlQuery::exec() {
 bool NSqlQuery::exec(const QString &query) {
     bool indexPauseSave;
     bool indexRestoreNeeded = false;
+    //QLOG_DEBUG() << "Sending SQL:" << query;
     for (int i=1; i<1000; i++) {
         bool rc = QSqlQuery::exec(query);
         if (rc) {
@@ -153,6 +168,45 @@ bool NSqlQuery::exec(const char *query) {
     return this->exec(q);
 }
 
+
+
+#if QT_VERSION < 0x050000
+
+// Override bindValue for SQL fix
+void NSqlQuery::bindValue(const QString & placeholder, const QVariant & val, QSql::ParamType paramType) {
+    if (val.type() == QVariant::Bool) {
+        if (val.toBool() == true)
+            QSqlQuery::bindValue(placeholder, 1, paramType);
+        else
+           QSqlQuery::bindValue(placeholder, 0, paramType);
+        return;
+    }
+    QSqlQuery::bindValue(placeholder, val, paramType);
+}
+
+void NSqlQuery::bindValue(int pos, const QVariant &val, QSql::ParamType paramType) {
+    if (val.type() == QVariant::Bool) {
+        if (val.toBool() == true)
+            QSqlQuery::bindValue(pos, 1, paramType);
+        else
+           QSqlQuery::bindValue(pos, 0, paramType);
+        return;
+    }
+    QSqlQuery::bindValue(pos, val, paramType);
+}
+
+#endif
+
+
+void NSqlQuery::addBindValue(const QVariant &val, QSql::ParamType paramType) {
+    if (val.type() == QVariant::Bool) {
+        if (val.toBool() == true)
+            QSqlQuery::addBindValue(1, paramType);
+        else
+           QSqlQuery::addBindValue(0, paramType);
+    }
+    QSqlQuery::addBindValue(val, paramType);
+}
 
 
 

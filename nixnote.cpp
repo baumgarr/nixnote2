@@ -109,7 +109,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     nixnoteTranslator->load(global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm"));
     QApplication::instance()->installTranslator(nixnoteTranslator);
 
-
     connect(&syncThread, SIGNAL(started()), this, SLOT(syncThreadStarted()));
     connect(&counterThread, SIGNAL(started()), this, SLOT(counterThreadStarted()));
     connect(&indexThread, SIGNAL(started()), this, SLOT(indexThreadStarted()));
@@ -152,10 +151,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(attributeTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(trashTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(searchText, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-    // Setup file watcher
-    importManager = new FileWatcherManager(this);
-    connect(importManager, SIGNAL(fileImported(qint32,qint32)), this, SLOT(updateSelectionCriteria()));
-    importManager->setup();
     connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
     hammer = new Thumbnailer(global.db);
@@ -208,6 +203,15 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 
     //QDesktopServices::setUrlHandler("evernote", this, "showDesktopUrl");
     remoteQuery = new RemoteQuery();
+
+
+    // Setup file watcher
+    importManager = new FileWatcherManager(this);
+    connect(importManager, SIGNAL(fileImported(qint32,qint32)), this, SLOT(updateSelectionCriteria()));
+    connect(importManager, SIGNAL(fileImported()), this, SLOT(updateSelectionCriteria()));
+    importManager->setup();
+    this->updateSelectionCriteria(true);  // This is only needed in case we imported something at statup.
+
 
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
@@ -287,6 +291,11 @@ void NixNote::setupGui() {
 //  syncButton->setPriority(QAction::LowPriority);   // Hide the text by the icon
     toolBar->addSeparator();
     printNoteButton = toolBar->addAction(global.getIconResource(":printerIcon"), tr("Print"));
+    printNoteButton->setToolTip(tr("Print the current note"));
+
+    emailButton = toolBar->addAction(global.getIconResource(":emailIcon"), tr("Email"));
+    emailButton->setToolTip(tr("Email the current note"));
+
     noteButton = new QToolButton();
     toolBar->addSeparator();
     newNoteButton = new QAction(noteButton);
@@ -323,6 +332,7 @@ void NixNote::setupGui() {
     connect(newWebcamNoteButton, SIGNAL(triggered()), this, SLOT(newWebcamNote()));
     connect(newNoteButton, SIGNAL(triggered()), this, SLOT(noteButtonClicked()));
     connect(usageButton, SIGNAL(triggered()), this, SLOT(openAccount()));
+    connect(emailButton, SIGNAL(triggered()), this, SLOT(emailNote()));
 
     QLOG_TRACE() << "Adding main splitter";
     mainSplitter = new QSplitter(Qt::Horizontal);
@@ -496,6 +506,8 @@ void NixNote::setupGui() {
     connect(screenCaptureButton, SIGNAL(triggered()), this, SLOT(screenCapture()));
 
     trayIconContextMenu->addSeparator();
+    QMenu *favoritesMenu = trayIconContextMenu->addMenu(tr("Shortcut Notes"));
+    trayIconContextMenu->setActionMenu(TrayMenu::FavoriteNotesMenu, favoritesMenu);
     QMenu *pinnedMenu = trayIconContextMenu->addMenu(tr("Pinned Notes"));
     trayIconContextMenu->setActionMenu(TrayMenu::PinnedMenu, pinnedMenu);
     QMenu *recentMenu = trayIconContextMenu->addMenu(tr("Recently Updated Notes"));
@@ -949,7 +961,7 @@ void NixNote::setupSynchronizedNotebookTree() {
 //*****************************************************************************
 void NixNote::setupTabWindow() {
     QLOG_TRACE() << "Starting NixNote.setupTabWindow()";
-    tabWindow = new NTabWidget(&syncRunner, notebookTreeView, tagTreeView);
+    tabWindow = new NTabWidget(this, &syncRunner, notebookTreeView, tagTreeView);
     findReplaceWindow = new FindReplace(this);
     QWidget *tabPanel = new QWidget(this);
     tabPanel->setLayout(new QVBoxLayout());
@@ -979,6 +991,7 @@ void NixNote::setupTabWindow() {
     connect(menuBar->viewExtendedInformation, SIGNAL(triggered()), tabWindow, SLOT(viewExtendedInformation()));
 
     connect(findReplaceWindow->nextButton, SIGNAL(clicked()), this, SLOT(findNextInNote()));
+    connect(findReplaceWindow->findLine, SIGNAL(returnPressed()), this, SLOT(findNextInNote()));
     connect(findReplaceWindow->prevButton, SIGNAL(clicked()), this, SLOT(findPrevInNote()));
     connect(findReplaceWindow->replaceButton, SIGNAL(clicked()), this, SLOT(findReplaceInNotePressed()));
     connect(findReplaceWindow->replaceAllButton, SIGNAL(clicked()), this, SLOT(findReplaceAllInNotePressed()));
@@ -1283,6 +1296,9 @@ void NixNote::synchronize() {
         return;
 
     this->pauseIndexing(true);
+
+    if (tabWindow->currentBrowser()->noteTitle.hasFocus())
+        tabWindow->currentBrowser()->noteTitle.checkNoteTitleChange();
 
     if (!global.accountsManager->oauthTokenFound()) {
         QString consumerKey = "baumgarr-3523";
@@ -1769,6 +1785,7 @@ void NixNote::resetView() {
     criteria->resetSavedSearch = true;
     criteria->resetSearchString = true;
     criteria->resetTags = true;
+    criteria->unsetFavorite();
     criteria->unsetNotebook();
     criteria->unsetDeletedOnly();
     criteria->unsetTags();
@@ -1797,7 +1814,7 @@ void NixNote::newNote() {
     Note n;
     NotebookTable notebookTable(global.db);
     n.content = newNoteBody;
-    n.title = "Untitled note";
+    n.title = tr("Untitled note");
     QString uuid = QUuid::createUuid();
     uuid = uuid.mid(1);
     uuid.chop(1);
@@ -1917,12 +1934,25 @@ void NixNote::newExternalNote() {
     tabWindow->openNote(lid, NTabWidget::ExternalWindow);
     updateSelectionCriteria();
 
+    // Find the position in the external window array & set the focus.
+    int pos = -1;
+    for (int i=0; i<tabWindow->externalList->size(); i++) {
+        if (tabWindow->externalList->at(i)->browser->lid == lid) {
+            pos = i;
+            i = tabWindow->externalList->size();
+        }
+    }
 
+    // This shouldn't happen, but just in case...
+    if (pos < 0)
+        return;
+
+    // Set the focus
     if (global.newNoteFocusToTitle()) {
-        tabWindow->externalList->at(lid)->browser->noteTitle.setFocus();
-        tabWindow->currentBrowser()->noteTitle.selectAll();
+        tabWindow->externalList->at(pos)->browser->noteTitle.setFocus();
+        tabWindow->externalList->at(pos)->browser->noteTitle.selectAll();
     } else
-        tabWindow->externalList->at(lid)->browser->noteTitle.setFocus();
+        tabWindow->externalList->at(pos)->browser->editor->setFocus();
 
 }
 
@@ -2156,7 +2186,10 @@ void NixNote::viewNoteHistory() {
 //* Search for text within a note
 //****************************************
 void NixNote::findInNote() {
-    findReplaceWindow->showFind();
+    if (!findReplaceWindow->isVisible())
+        findReplaceWindow->showFind();
+    else
+        findReplaceWindow->hide();
 }
 
 
@@ -2292,6 +2325,11 @@ void NixNote::heartbeatTimerTriggered() {
 
     QByteArray data = QByteArray::fromRawData(buffer, global.sharedMemory->size());
     //QLOG_ERROR() << "Shared memory data: " << data;
+    if (data.startsWith("SYNCHRONIZE")) {
+        QLOG_DEBUG() << "Sync requested by shared memory segment.";
+        this->synchronize();
+        return;
+    }
     if (data.startsWith("IMMEDIATE_SHUTDOWN")) {
         QLOG_ERROR() << "Immediate shutdown requested by shared memory segment.";
         this->closeNixNote();
@@ -2299,7 +2337,7 @@ void NixNote::heartbeatTimerTriggered() {
     }
     if (data.startsWith("SHOW_WINDOW")) {
         this->raise();
-        this->show();
+        this->showMaximized();
         return;
     }
     if (data.startsWith("QUERY:")) {
@@ -2393,6 +2431,20 @@ void NixNote::openImportFolders() {
 void NixNote::printNote() {
     tabWindow->currentBrowser()->fastPrint = false;
     tabWindow->currentBrowser()->printNote();
+}
+
+
+
+// Print the current note
+void NixNote::emailNote() {
+    tabWindow->currentBrowser()->emailNote();
+}
+
+
+
+// Print the current note
+void NixNote::printPreviewNote() {
+    tabWindow->currentBrowser()->printPreviewNote();
 }
 
 

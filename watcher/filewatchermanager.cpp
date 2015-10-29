@@ -46,8 +46,17 @@ void FileWatcherManager::signalImported(qint32 noteLid, qint32 resourceLid) {
 }
 
 
+void FileWatcherManager::signalImported() {
+    emit fileImported();
+}
+
 void FileWatcherManager::setup() {
     this->reset();
+
+    // Setup the dbi file for batch creation of notes
+    FileWatcher *dbi = new FileWatcher(global.fileManager.getDbiDirPath(), FileWatcher::ImportDelete, 0, false, 0);
+    connect(dbi, SIGNAL(nnexImported()), this, SLOT(signalImported()));
+    importDelete.append(dbi);
 
     QList<qint32> lids;
     FileWatcherTable ft(global.db);

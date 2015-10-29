@@ -29,8 +29,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-NTabWidget::NTabWidget(SyncRunner *s, NNotebookView *n, NTagView *t)
+NTabWidget::NTabWidget(NixNote *p, SyncRunner *s, NNotebookView *n, NTagView *t)
 {
+    parent = p;
     syncThread = s;
     notebookTreeView = n;
     tagTreeView = t;
@@ -84,6 +85,7 @@ void NTabWidget::addBrowser(NBrowserWindow *v, QString title) {
         tabBar->setHidden(false);
 
     connect(v, SIGNAL(showHtmlEntities()), this, SLOT(showHtmlEntities()));
+    connect(v, SIGNAL(setMessage(QString)), parent, SLOT(setMessage(QString)));
     return;
 }
 

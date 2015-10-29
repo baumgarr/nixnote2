@@ -55,6 +55,7 @@ private:
     void scanTags();
     void fixNode(const QDomNode &node);
     void postXmlFix();
+    void fixSpanNode(QWebElement &e);
     QByteArray fixEncryptionTags(QByteArray newContent);
 
 public:

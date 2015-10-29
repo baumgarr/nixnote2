@@ -170,7 +170,7 @@ void FavoritesTable::setOrder(QList< QPair< qint32, qint32 > > order) {
     for (int i=0; i<order.size(); i++) {
         query.bindValue(":lid", order[i].first);
         query.bindValue(":key", FAVORITES_ORDER);
-        query.bindValue(":data", order[i].second);
+        query.bindValue(":value", order[i].second);
         query.exec();
     }
     query.finish();
@@ -185,7 +185,7 @@ void FavoritesTable::expunge(qint32 lid) {
     NSqlQuery query(db);
     db->lockForWrite();
     query.prepare("delete from datastore where lid=:key");
-    query.bindValue(":lid", lid);
+    query.bindValue(":key", lid);
     query.exec();
     query.finish();
     db->unlock();
@@ -214,7 +214,7 @@ qint32 FavoritesTable::getLidByTarget(const QVariant &target) {
 qint32 FavoritesTable::add(const FavoritesRecord &record) {
     NSqlQuery query(db);
     db->lockForWrite();
-    query.prepare("Insert into datastore (lid, key, data) values (:lid, :key, :value)");
+    query.prepare("Insert into datastore (lid, key, data) values (:lid, :key, :data)");
 
     qint32 lid = record.lid;
     ConfigStore cs(db);

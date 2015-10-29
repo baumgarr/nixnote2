@@ -5,7 +5,7 @@
 #include <QByteArray>
 #include <QString>
 #include <QNetworkAccessManager>
-
+#include "AsyncResult.h"
 
 namespace qevercloud {
 
@@ -99,13 +99,11 @@ public:
      * true if guid denotes a resource and false if it denotes a note.
      * @return downloaded data.
      *
-     * The function uses the same library facilities that are used to make Evernote request and
-     * shares their limitations. It's (quasi-)synchronous, stores all downloaded data in the
-     * memory, have no bandwidth control etc but for downloading thumbnails it shoud be good
-     * enough usually. If it's not use @link createPostRequest @endlink to generate POST requests and handle it
-     * in the way you see fit.
      */
     QByteArray download(Guid guid, bool isPublic = false, bool isResourceGuid = false);
+
+    /** Asynchronous version of @link download @endlink function*/
+    AsyncResult* downloadAsync(Guid guid, bool isPublic = false, bool isResourceGuid = false);
 
     /**
      * @brief Prepares a POST request for a thumbnail download.
@@ -119,6 +117,7 @@ public:
      * @return a pair of QNetworkRequest for the POST request and data that must be posted with the request.
      */
     QPair<QNetworkRequest, QByteArray> createPostRequest(qevercloud::Guid guid, bool isPublic = false, bool isResourceGuid = false);
+
 private:
     QString host_;
     QString shardId_;

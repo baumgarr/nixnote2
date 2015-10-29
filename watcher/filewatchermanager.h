@@ -40,9 +40,11 @@ public:
     
 signals:
     void fileImported(qint32 noteLid, qint32 resourceLid);
+    void fileImported();
     
 public slots:
     void signalImported(qint32 noteLid, qint32 resourceLid);
+    void signalImported();
     
 };
 

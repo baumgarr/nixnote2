@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QAbstractAnimation>
 #include <QFileIconProvider>
 #include <QDesktopServices>
+#include <QShortcut>
 
 extern Global global;
 
@@ -60,14 +61,26 @@ void NMainMenuBar::setupFileMenu() {
     fileMenu->setFont(f);
 
 
+    emailAction = new QAction(tr("Email Note"), this);
+    emailAction->setToolTip(tr("Email a copy of this note"));
+    connect(emailAction, SIGNAL(triggered()), parent, SLOT(emailNote()));
+    setupShortcut(emailAction, QString("File_Email"));
+    fileMenu->addAction(emailAction);
+
+
+    printPreviewAction = new QAction(tr("Print Preview Note"), this);
+    printPreviewAction->setToolTip(tr("Print preview of this note"));
+    connect(printPreviewAction, SIGNAL(triggered()), parent, SLOT(printPreviewNote()));
+    setupShortcut(printPreviewAction, QString("File_Print_Preview"));
+    fileMenu->addAction(printPreviewAction);
 
     printAction = new QAction(tr("&Print Note"), this);
     printAction->setToolTip(tr("Print this note"));
     connect(printAction, SIGNAL(triggered()), parent, SLOT(printNote()));
     setupShortcut(printAction, QString("File_Print"));
     fileMenu->addAction(printAction);
-
     fileMenu->addSeparator();
+
 
     backupDatabaseAction = new QAction(tr("&Backup Database"), this);
     backupDatabaseAction->setToolTip(tr("Backup database to a file"));
@@ -184,7 +197,7 @@ void NMainMenuBar::setupEditMenu() {
     editMenu->addAction(pasteAsTextAction);
 
     removeFormattingAction = new QAction(tr("Remo&ve Formatting"), this);
-    setupShortcut(removeFormattingAction, QString("Edit_Remove_Formatting"));
+    //setupShortcut(removeFormjattingAction, QString("Edit_Remove_Formatting")); // For some reason this one makes the editorButtonBar one ambiguous
     editMenu->addAction(removeFormattingAction);
 
     editMenu->addSeparator();
@@ -387,7 +400,7 @@ void NMainMenuBar::setupNoteMenu() {
     noteMenu->addSeparator();
 
     spellCheckAction = new QAction(tr("&Spell Check"), noteMenu);
-    setupShortcut(spellCheckAction, QString("File_Note_Spell_Check"));
+    // setupShortcut(spellCheckAction, QString("Tools_Spell_Check"));  This shortcut is done by the editor button bar
     noteMenu->addAction(spellCheckAction);
     connect(spellCheckAction, SIGNAL(triggered()), parent, SLOT(spellCheckCurrentNote()));
 

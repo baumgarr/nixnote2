@@ -141,7 +141,7 @@ qint32 ResourceTable::getLid(string resourceGuid) {
 qint32 ResourceTable::getLid(QString resourceGuid) {
     NSqlQuery query(db);
     db->lockForRead();
-    query.prepare("Select lid from DataStore where key=:key and data=:guid");
+    query.prepare("Select lid from DataStore where key=:key and data=:data");
     query.bindValue(":key", RESOURCE_GUID);
     query.bindValue(":data", resourceGuid);
     query.exec();
@@ -755,7 +755,7 @@ qint32 ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
         QByteArray b;
         b.append(hash);
         query2.prepare("Select lid from DataStore where data like :hash and key=:key and lid=:lid");
-        query2.bindValue(":data", hash);
+        query2.bindValue(":hash", hash);
         query2.bindValue(":key", RESOURCE_DATA_HASH);
         query2.bindValue(":lid", lid);
         query2.exec();
@@ -811,7 +811,7 @@ qint32 ResourceTable::getIndexNeeded(QList<qint32> &lids) {
     NSqlQuery query(db);
     lids.clear();
     db->lockForRead();
-    query.prepare("Select lid from DataStore where key=:key and data='true'");
+    query.prepare("Select lid from DataStore where key=:key and data=1");
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
     query.exec();
     while (query.next()) {
@@ -830,9 +830,9 @@ bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid)
     resourceList.clear();
     db->lockForRead();
     NSqlQuery query(db);
-    query.prepare("Select lid from DataStore where key=:key and data=:notelid");
+    query.prepare("Select lid from DataStore where key=:key and data=:noteLid");
     query.bindValue(":key", RESOURCE_NOTE_LID);
-    query.bindValue(":notelid", noteLid);
+    query.bindValue(":noteLid", noteLid);
     query.exec();
     while (query.next()) {
         int resLid = query.value(0).toInt();
@@ -850,15 +850,11 @@ bool ResourceTable::getResourceList(QList<qint32> &resourceList, qint32 noteLid)
 
 // Permanently delete a resource
 void ResourceTable::expunge(qint32 lid) {
-    QLOG_DEBUG() << "Expunging Resource Stack Dump Requested";
-    global.stackDump(6);
 
     if (!this->exists(lid)) {
-        QLOG_DEBUG() << "Attempting to delete non-existing resource: " << lid;
         return;
     }
     NSqlQuery query(db);
-    QLOG_DEBUG() << "Expunging resource : " << lid;
     db->lockForWrite();
     query.prepare("delete from DataStore where lid=:lid");
     query.bindValue(":lid", lid);
@@ -867,7 +863,6 @@ void ResourceTable::expunge(qint32 lid) {
     db->unlock();
 
     // Delete the physical files (resource)
-    QLOG_DEBUG() << "Deleting resource file";
     QDir myDir(global.fileManager.getDbaDirPath());
     QString num = QString::number(lid);
     QStringList filter;
@@ -878,7 +873,6 @@ void ResourceTable::expunge(qint32 lid) {
     }
 
     // Delete the physical files (thumbnail)
-    QLOG_DEBUG() << "Deleting thumbnail";
     QDir myTDir(global.fileManager.getThumbnailDirPath());
     list = myTDir.entryList(filter, QDir::Files, QDir::NoSort);	// filter resource files
     for (int i=0; i<list.size(); i++) {
@@ -957,7 +951,7 @@ qint32 ResourceTable::getCount() {
 qint32 ResourceTable::getUnindexedCount() {
     NSqlQuery query(db);
     db->lockForRead();
-    query.prepare("Select count(lid) from DataStore where key=:key and data='true'");
+    query.prepare("Select count(lid) from DataStore where key=:key and data=1");
     query.bindValue(":key", RESOURCE_INDEX_NEEDED);
     query.exec();
     qint32 retval =0;
@@ -1031,7 +1025,7 @@ void ResourceTable::reindexAllResources() {
     query.bindValue(":indexKey", RESOURCE_INDEX_NEEDED);
     query.exec();
 
-    query.prepare("insert into datastore (lid, key, data) select lid, :indexKey, 'true' from datastore where key=:key;");
+    query.prepare("insert into datastore (lid, key, data) select lid, :indexKey, 1 from datastore where key=:key;");
     query.bindValue(":indexKey", RESOURCE_INDEX_NEEDED);
     query.bindValue(":key", RESOURCE_GUID);
     query.exec();
@@ -1047,7 +1041,7 @@ void ResourceTable::updateNoteLid(qint32 resourceLid, qint32 newNoteLid) {
     db->lockForWrite();
     query.prepare("Update datastore set data=:newNoteLid where lid=:resourceLid and key=:key");
     query.bindValue(":newNoteLid", newNoteLid);
-    query.bindValue(":lid", resourceLid);
+    query.bindValue(":resourceLid", resourceLid);
     query.bindValue(":key", RESOURCE_NOTE_LID);
     query.exec();
     query.finish();
@@ -1080,7 +1074,7 @@ void ResourceTable::getResourceMap(QHash<QString, qint32> &hashMap, QHash<qint32
     NSqlQuery query(db);
     qint32 prevLid = -1;
     db->lockForRead();
-    query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");
+    query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
     query.bindValue(":key2", RESOURCE_NOTE_LID);
     query.bindValue(":noteLid", noteLid);
     query.exec();
@@ -1141,11 +1135,11 @@ void ResourceTable::getAllResources(QList<Resource> &list, qint32 noteLid, bool 
     db->lockForRead();
     QHash<qint32, Resource*> lidMap;
     if (fullLoad){
-        query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");
+        query.prepare("Select key, data, lid from datastore where lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
         query.bindValue(":key2", RESOURCE_NOTE_LID);
         query.bindValue(":noteLid", noteLid);
     } else {
-        query.prepare("Select key, data, lid from datastore where key=:key and lid in (select lid from datastore where key=:key2 and data=:notelid) order by lid");
+        query.prepare("Select key, data, lid from datastore where key=:key and lid in (select lid from datastore where key=:key2 and data=:noteLid) order by lid");
         query.bindValue(":key", RESOURCE_GUID);
         query.bindValue(":key2", RESOURCE_NOTE_LID);
         query.bindValue(":noteLid", noteLid);

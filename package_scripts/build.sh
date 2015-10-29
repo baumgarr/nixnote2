@@ -53,6 +53,12 @@ then
   sudo $package_dir/rpm.sh arch=$arch version=$version
 fi
 
+read -p "Build Gentoo ebuild (y/n): " yn
+if [ "$yn" = "y" ] 
+then
+  sudo $package_dir/gentoo.sh version=$version
+fi
+
 # Cleanup
 echo "Cleaning up"
 sudo rm -rf $package_dir/nixnote2

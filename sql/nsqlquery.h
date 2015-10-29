@@ -48,6 +48,13 @@ public:
     bool exec(const QString &query);       // Execute SQL statement
     bool exec(const string query);         // Execute SQL statement
     bool exec(const char *query);          // Execute SQL statement
+
+#if QT_VERSION < 0x050000
+    // Overrides for SQLite fix in Qt 4.8
+    void bindValue(const QString & placeholder, const QVariant & val, QSql::ParamType paramType = QSql::In);
+    void bindValue(int pos, const QVariant & val, QSql::ParamType paramType = QSql::In);
+    void addBindValue(const QVariant & val, QSql::ParamType paramType = QSql::In);
+#endif
 };
 
 #endif // NSQLQUERY_H
