@@ -170,6 +170,7 @@ signals:
     void noteLocationEditedSignal(QString uuid, qint32 lid, double longitude, double latitude, double altitude, QString name);
     void noteAlarmEditedSignal(QString uuid, qint32 lid, bool strikeout, QString text);
     void showHtmlEntities();
+    void setMessage(QString msg);
 
 public slots:
     void changeExpandState(int value);

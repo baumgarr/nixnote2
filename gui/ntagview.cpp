@@ -867,7 +867,6 @@ void NTagView::hideUnassignedTags() {
     if (hideUnassigned != true) {
         for (int i=0; i<keys.size(); i++) {
             item = dataStore[keys[i]];
-            QLOG_DEBUG() << keys[i];
             if (item != NULL) {
                 if (item->account == accountFilter)
                     item->setHidden(false);

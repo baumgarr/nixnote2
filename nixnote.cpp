@@ -961,7 +961,7 @@ void NixNote::setupSynchronizedNotebookTree() {
 //*****************************************************************************
 void NixNote::setupTabWindow() {
     QLOG_TRACE() << "Starting NixNote.setupTabWindow()";
-    tabWindow = new NTabWidget(&syncRunner, notebookTreeView, tagTreeView);
+    tabWindow = new NTabWidget(this, &syncRunner, notebookTreeView, tagTreeView);
     findReplaceWindow = new FindReplace(this);
     QWidget *tabPanel = new QWidget(this);
     tabPanel->setLayout(new QVBoxLayout());

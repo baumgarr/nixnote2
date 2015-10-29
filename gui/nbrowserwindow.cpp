@@ -2426,6 +2426,7 @@ void NBrowserWindow::emailNote() {
         return;
     }
 
+    emit(setMessage("Sending Email. Please be patient."));
     EmailDialog emailDialog;
     emailDialog.subject->setText(noteTitle.text());
     emailDialog.exec();
@@ -2446,6 +2447,7 @@ void NBrowserWindow::emailNote() {
         type = SmtpClient::TlsConnection;
 
     SmtpClient smtp(server, port, type);
+    smtp.setResponseTimeout(-1);
 
     // We need to set the username (your email address) and password
     // for smtp authentification.
@@ -2505,7 +2507,8 @@ void NBrowserWindow::emailNote() {
     }
 
     smtp.quit();
-    QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
+    emit(setMessage("Message Sent"));
+//    QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
 }
 
 
