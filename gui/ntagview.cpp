@@ -736,11 +736,13 @@ void NTagView::mergeRequested() {
 void NTagView::deleteRequested() {
     QList<QTreeWidgetItem*> items = selectedItems();
 
-    qint32 lid = items[0]->data(NAME_POSITION, Qt::UserRole).toInt();
     if (global.confirmDeletes()) {
         QMessageBox msgBox;
         msgBox.setIcon(QMessageBox::Question);
-        msgBox.setText(tr("Are you sure you want to delete this tag?"));
+        if (items.size() == 1)
+            msgBox.setText(tr("Are you sure you want to delete this tag?"));
+        else
+            msgBox.setText(tr("Are you sure you want to delete all selected tags?"));
         msgBox.setWindowTitle(tr("Verify Delete"));
         msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         msgBox.setDefaultButton(QMessageBox::No);
@@ -748,15 +750,21 @@ void NTagView::deleteRequested() {
         if (ret == QMessageBox::No)
             return;
     }
-    TagTable table(global.db);
-    table.deleteTag(lid);
-//    NTagViewItem *ptr = (NTagViewItem*)items[0];
-//    ptr->setHidden(true);
 
-    // Now remove it in the datastore
-    NTagViewItem *ptr = dataStore.take(items[0]->data(NAME_POSITION, Qt::UserRole).toInt());
-    emit(tagDeleted(lid, ptr->data(NAME_POSITION, Qt::DisplayRole).toString()));
-    delete ptr;
+    for (int i=0; i<items.size(); i++) {
+        // Delete from the DB
+        qint32 lid = items[i]->data(NAME_POSITION, Qt::UserRole).toInt();
+        TagTable table(global.db);
+        table.deleteTag(lid);
+
+        // Now remove selected tags
+        NTagViewItem *ptr = dataStore.take(items[i]->data(NAME_POSITION, Qt::UserRole).toInt());
+        QList<QTreeWidgetItem*> children = ptr->takeChildren();
+        ptr->parent()->addChildren(children);
+        ptr->parent()->removeChild(ptr);
+        emit(tagDeleted(lid, ptr->data(NAME_POSITION, Qt::DisplayRole).toString()));
+        delete ptr;
+    }
 }
 
 
@@ -859,6 +867,7 @@ void NTagView::hideUnassignedTags() {
     if (hideUnassigned != true) {
         for (int i=0; i<keys.size(); i++) {
             item = dataStore[keys[i]];
+            QLOG_DEBUG() << keys[i];
             if (item != NULL) {
                 if (item->account == accountFilter)
                     item->setHidden(false);
