@@ -73,6 +73,7 @@ void NMainMenuBar::setupFileMenu() {
     connect(printPreviewAction, SIGNAL(triggered()), parent, SLOT(printPreviewNote()));
     setupShortcut(printPreviewAction, QString("File_Print_Preview"));
     fileMenu->addAction(printPreviewAction);
+    printPreviewAction->setVisible(false);  // for some reason images don't show up in print preview, so this is useless.  Check again in Qt5
 
     printAction = new QAction(tr("&Print Note"), this);
     printAction->setToolTip(tr("Print this note"));
