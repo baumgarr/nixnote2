@@ -2632,7 +2632,33 @@ void NBrowserWindow::printNote() {
             printPage->print(printer);
         }
     } else {
-        printPage->print(printer);
+            printPage->print(printer);
+//        QTextDocument td;
+//        td.setHtml(printPage->toHtml());
+//        td.setPageSize(printer->pageRect().size());
+//            QRect innerRect = printer->pageRect();
+//            innerRect.setTop(innerRect.top() + 20);
+//            innerRect.setBottom(innerRect.bottom() - 30);
+//            QRect contentRect = QRect(QPoint(0,0), td.size().toSize());
+//            QRect currentRect = QRect(QPoint(0,0), innerRect.size());
+//            QPainter painter(printer);
+//            int count = 0;
+//            painter.save();
+//            painter.translate(0, 30);
+//            while (currentRect.intersects(contentRect) && count < td.pageCount()) {
+//                td.drawContents(&painter, currentRect);
+//                count++;
+//                currentRect.translate(0, currentRect.height());
+//                painter.restore();
+//                painter.drawText(10, 10, editor->title());
+//                painter.drawText(10, printer->pageRect().bottom() - 10, QString("Page %1 of %2").arg(count).arg(td.pageCount()));
+//                painter.save();
+//                painter.translate(0, -currentRect.height() * count + 30);
+//                if (currentRect.intersects(contentRect) && count < td.pageCount())
+//                    printer->newPage();
+//            }
+//            painter.restore();
+//            painter.end();
     }
 
     this->fastPrint = false;
