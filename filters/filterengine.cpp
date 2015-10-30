@@ -746,17 +746,51 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
                 string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
             filterSearchStringDateAll(string);
         }
-        else { // Filter not found
+        else if (string.startsWith("-*")) {   // Negative postfix search.  FTS doesn't do this.
+            string = string.mid(1);
+            string = string.replace("*", "%");
+            if (!string.endsWith("%"))
+                string = string +QString("%");
+            NSqlQuery prefix(global.db);
+            prefix.prepare("Delete from filter where lid in (select lid from SearchIndex where weight>=:weight and content like :word) or lid in (select data from DataStore where lid in (select lid from SearchIndex where weight>:weight2 and content like :word2))");
+
+            prefix.bindValue(":weight", global.getMinimumRecognitionWeight());
+            prefix.bindValue(":weight2", global.getMinimumRecognitionWeight());
+            prefix.bindValue(":word", string);
+            prefix.bindValue(":word2", string);
+            prefix.exec();
+        }
+        else if (string.startsWith("*")) {    // Postfix search.  FTS doesn't do this.
+            string = string.replace("*", "%");
+            if (!string.endsWith("%"))
+                string = string +QString("%");
+            NSqlQuery prefix(global.db);
+            prefix.prepare("Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content like :word) and lid not in (select data from DataStore where lid in (select lid from SearchIndex where weight>:weight2 and content like :word2))");
+
+            prefix.bindValue(":weight", global.getMinimumRecognitionWeight());
+            prefix.bindValue(":weight2", global.getMinimumRecognitionWeight());
+            prefix.bindValue(":word", string);
+            prefix.bindValue(":word2", string);
+            prefix.exec();
+        }
+        else { // Filter not found.  Use FTS search
             if (string.startsWith("-")) {
-                string = string.remove(0,1);
-                sqlnegative.bindValue(":word", string.trimmed()+"*");
-                sqlnegative.bindValue(":word2", string.trimmed()+"*");
+                string = string.remove(0,1).trimmed();
+                if (!string.endsWith("*"))
+                    string = string +QString("*");
+                if (!string.startsWith("*"))
+                    string = QString("*") + string;
+                sqlnegative.bindValue(":word", string);
+                sqlnegative.bindValue(":word2", string);
                 sqlnegative.exec();
             } else {
-                sql.bindValue(":word", string.trimmed()+"*");
-                sql.bindValue(":word2", string.trimmed()+"*");
+                if (!string.endsWith("*"))
+                    string = string +QString("*");
+                if (!string.startsWith("*"))
+                    string = QString("*") + string;
+                sql.bindValue(":word", string);
+                sql.bindValue(":word2", string);
                 sql.exec();
-                QLOG_DEBUG() << sql.lastError();
             }
         }
     }
@@ -777,8 +811,10 @@ void FilterEngine::filterSearchStringIntitleAll(QString string) {
         // Filter out the records
         NSqlQuery tagSql(global.db);
         string = string.replace("*", "%");
-        if (string.indexOf("%") < 0)
-            string = QString("%") +string +QString("%");
+        if (!string.endsWith("%"))
+            string = string +QString("%");
+        if (!string.startsWith("%"))
+            string = QString("%") + string;
         tagSql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :title)");
         tagSql.bindValue(":key", NOTE_TITLE);
         tagSql.bindValue(":title", string);
