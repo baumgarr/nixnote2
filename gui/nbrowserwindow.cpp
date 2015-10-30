@@ -183,11 +183,11 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     buttonBar->setupVisibleButtons();
 
-    printPage = new QWebView();
+    printPage = new QTextEdit();
     printPage->setVisible(false);
-    connect(printPage, SIGNAL(loadFinished(bool)), this, SLOT(printReady(bool)));
+    //connect(printPage, SIGNAL(loadFinished(bool)), this, SLOT(printReady(bool)));
 
-    printPreviewPage = new QWebView();
+    printPreviewPage = new QTextEdit();
     printPreviewPage->setVisible(false);
 
     hammer = new Thumbnailer(global.db);
@@ -2532,9 +2532,7 @@ QString NBrowserWindow::stripContentsForPrint() {
 
         pos = contents.indexOf("<object", endPos);
     }
-//    contents = contents.replace("</head>", "<style>@media print {* { background: #666; color: #555; } html { font: 100%*4.5 georgia, serif; }</style></head>");
-//    contents = contents.replace("</head>", "<style>@media print {a @bottom-right { content: counter(page) \" of \" counter(pages); } }</style></head>");
-    return contents;
+    return contents.replace("src=\"file:////", "src=\"/");
 }
 
 
@@ -2547,7 +2545,6 @@ void NBrowserWindow::printPreviewNote() {
     // Load the print page.  When it is ready the printReady() slot will
     // do the actual print
     printPreviewPage->setHtml(contents.toUtf8());
-    //printPreviewPage->setContent(contents.toUtf8());
     QPrinter printer(QPrinter::HighResolution);
     QPrintPreviewDialog preview(&printer, this);
     preview.setWindowFlags(Qt::Window);
@@ -2571,19 +2568,8 @@ void NBrowserWindow::printNote() {
 
     // Load the print page.  When it is ready the printReady() slot will
     // do the actual print
+    printPage->setDocumentTitle(editor->title());
     printPage->setHtml(contents.toUtf8());
-}
-
-
-// Print output is ready.
-void NBrowserWindow::printReady(bool ok) {
-    if (!ok) {
-        QMessageBox msgBox;
-        msgBox.setText(tr("Error loading document for printing.\nPrinting aborted."));
-        msgBox.setWindowTitle(tr("Print Error"));
-        msgBox.exec();
-        return;
-    }
 
     QPrinter *printer;
 
@@ -2647,11 +2633,6 @@ void NBrowserWindow::printReady(bool ok) {
         }
     } else {
         printPage->print(printer);
-//        QPainter p;
-//        p.begin(printer);
-//        printPage->resize(printer->paperRect().size());
-//        printPage->render(&p);
-//        p.end();
     }
 
     this->fastPrint = false;

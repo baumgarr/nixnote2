@@ -129,8 +129,8 @@ public:
     QShortcut *focusNoteShortcut;
     QShortcut *focusTitleShortcut;
     QShortcut *insertDatetimeShortcut;
-    QWebView *printPage;
-    QWebView *printPreviewPage;
+    QTextEdit *printPage;
+    QTextEdit *printPreviewPage;
     bool fastPrint;
 
     //QShortcut *leftJustifyButtonShortcut;
@@ -280,7 +280,6 @@ private slots:
     void sendTagUpdateSignal();
     void sendUrlUpdateSignal();
     void newTagAdded(qint32);
-    void printReady(bool ok);
     void focusCheck();
 
 };
