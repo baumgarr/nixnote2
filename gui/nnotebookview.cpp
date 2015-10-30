@@ -219,7 +219,7 @@ void NNotebookView::mousePressEvent(QMouseEvent *event)
     QModelIndex item = indexAt(event->pos());
     bool selected = selectionModel()->isSelected(indexAt(event->pos()));
     QTreeView::mousePressEvent(event);
-    if (selected)
+    if (selected && (event->buttons() & Qt::LeftButton))
         selectionModel()->select(item, QItemSelectionModel::Deselect);
 
     for (int i=0; i<this->selectedItems() .size(); i++) {

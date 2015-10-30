@@ -223,7 +223,7 @@ void NTagView::mousePressEvent(QMouseEvent *event)
     if (!(event->buttons() & Qt::LeftButton))
             return;
     QTreeView::mousePressEvent(event);
-    if (selected)
+    if (selected && (event->buttons() & Qt::LeftButton))
         selectionModel()->select(item, QItemSelectionModel::Deselect);
 
     for (int i=0; i<this->selectedItems() .size(); i++) {
