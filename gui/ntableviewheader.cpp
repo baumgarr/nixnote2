@@ -30,7 +30,11 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
     QHeaderView(orientation, parent)
 {
 
+#if QT_VERSION < 0x050000
     setClickable(true);
+#else
+    setSectionsClickable(true);
+#endif
     setSortIndicatorShown(true);
     setContextMenuPolicy(Qt::ActionsContextMenu);
 

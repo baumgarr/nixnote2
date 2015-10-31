@@ -638,19 +638,6 @@ void ExportData::createNode(QString nodeName, QString value) {
 
 
 
-
-
-
-void ExportData::createNode(QString nodeName, bool value) {
-    if (value)
-        writer->writeTextElement(nodeName, "true");
-    else
-        writer->writeTextElement(nodeName, "false");
-    return;
-}
-
-
-
 void ExportData::createNode(QString nodeName, QByteArray value) {
     writer->writeTextElement(nodeName, value.toHex());
     return;
@@ -658,7 +645,7 @@ void ExportData::createNode(QString nodeName, QByteArray value) {
 
 
 
-void ExportData::createNode(QString nodeName, QBool value) {
+void ExportData::createNode(QString nodeName, bool value) {
     if (value)
         writer->writeTextElement(nodeName, "true");
     else

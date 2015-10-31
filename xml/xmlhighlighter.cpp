@@ -136,7 +136,11 @@ void XmlHighlighter::highlightBlock(const QString& text)
 
     for (; i < text.length(); i++)
     {
+#if QT_VERSION < 0x050000
         switch (text.at(i).toAscii())
+#else
+        switch (text.at(i).toLatin1())
+#endif
         {
         case '<':
             brackets++;

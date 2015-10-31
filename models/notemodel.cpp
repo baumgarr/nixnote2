@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/nsqlquery.h"
 
 #include <QString>
-#include <QtSql/QSqlDatabase>
+#include <QSqlDatabase>
 #include <QtSql>
 
 

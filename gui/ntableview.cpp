@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "numberdelegate.h"
 #include <QApplication>
 #include <QMouseEvent>
+#include <QDrag>
 #include <QShortcut>
 #include <sql/resourcetable.h>
 #include "sql/nsqlquery.h"
@@ -55,7 +56,11 @@ NTableView::NTableView(QWidget *parent) :
 
     tableViewHeader = new NTableViewHeader(Qt::Horizontal, this);
     this->setHorizontalHeader(tableViewHeader);
+#if QT_VERSION < 0x050000
     this->horizontalHeader()->setMovable(true);
+#else
+    this->horizontalHeader()->setSectionsMovable(true);
+#endif
 
     QLOG_TRACE() << "Setting up edit triggers";
     this->setEditTriggers(QAbstractItemView::NoEditTriggers);

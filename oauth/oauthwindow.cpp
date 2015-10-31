@@ -87,7 +87,11 @@ OAuthWindow::OAuthWindow(QMainWindow *parent) :
 
     // Turn on TLS (sometimes it isn't on by default)
     QSslConfiguration config = QSslConfiguration::defaultConfiguration();
+#if QT_VERSION < 0x050000
     config.setProtocol(QSsl::TlsV1);
+#else
+    config.setProtocol(QSsl::TlsV1_0);
+#endif
     config.setProtocol(QSsl::SslV3);
     QSslConfiguration::setDefaultConfiguration(config);
 

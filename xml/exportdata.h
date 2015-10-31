@@ -48,7 +48,6 @@ private:
     void createBinaryNode(QString nodeName, string value);
     void createTimestampNode(QString nodeName, Timestamp value);
     void createNode(QString nodeName, bool value);
-    void createNode(QString nodeName, QBool value);
     void createNode(QString nodeName, double value);
     void createNode(QString nodename, int64_t value);
     void writeTags();

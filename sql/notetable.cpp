@@ -185,7 +185,11 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
         query.bindValue(":key", NOTE_CONTENT);
         QByteArray b;
         QString content = t.content;
+#if QT_VERSION < 0x050000
         b.append(content.toAscii());
+#else
+        b.append(content.toLatin1());
+#endif
         query.bindValue(":data", b);
         query.exec();
     }

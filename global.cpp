@@ -23,7 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <limits.h>
 #include <unistd.h>
 #include <QWebSettings>
-#include <QtGui/QDesktopWidget>
+#include <QDesktopWidget>
 #include <QApplication>
 
 // The following include is needed for demangling names on a backtrace

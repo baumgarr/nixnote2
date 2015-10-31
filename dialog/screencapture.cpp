@@ -22,9 +22,8 @@
 
 #include "screencapture.h"
 
-#include <QtGui/QDesktopWidget>
-#include <QtGui/QApplication>
-
+#include <QDesktopWidget>
+#include <QApplication>
 
 ScreenCapture::ScreenCapture(QWidget *parent) :
     QDialog(parent)
@@ -108,7 +107,7 @@ void ScreenCapture::drawBackGround()
     QRect txtRect = QApplication::desktop()->screenGeometry(QApplication::desktop()->primaryScreen());
     QString txtTip = QApplication::tr("Use your mouse to draw a rectangle to screenshot or exit pressing\nany key or using the right or middle mouse buttons.");
 
-    txtRect.setHeight(qRound(txtRect.height() / 10)); // rounded val of text rect height
+    txtRect.setHeight(qRound(txtRect.height() / 10.f)); // rounded val of text rect height
 
     painter.setPen(QPen(Qt::red)); // ste message rect border color
     painter.setBrush(QBrush(QColor(255, 255, 255, 180), Qt::SolidPattern));

@@ -19,6 +19,7 @@
 #include <QSyntaxHighlighter>
 #include <QTextCharFormat>
 #include <QColor>
+#include <QTextEdit>
 
 class XmlHighlighter : public QSyntaxHighlighter
 {

@@ -4,7 +4,22 @@
 #
 #-------------------------------------------------
 
-QT       += core gui webkit sql network xml
+greaterThan(QT_MAJOR_VERSION, 4) {
+    QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
+    DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
+    INCLUDEPATH += /usr/include/poppler/qt5
+    LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
+               -lhunspell -lcurl \
+           -    lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
+}
+
+equals(QT_MAJOR_VERSION, 4) {
+    QT       += core gui webkit sql network xml
+    INCLUDEPATH += /usr/include/poppler/qt4
+    LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
+               -lhunspell -lcurl \
+               -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
+}
 
 TARGET = nixnote2
 TEMPLATE = app
@@ -388,18 +403,6 @@ HEADERS  += nixnote.h \
     dialog/emaildialog.h
 
 
-#INCLUDEPATH += /usr/local/include/thrift \
-#            /usr/include/thrift \
-INCLUDEPATH += /usr/include/poppler/qt4
 
-#LIBS +=    -Wl,-L./lib -lthrift \
-#LIBS +=    -lthrift \
-LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
-           -lhunspell -lcurl \
-           -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
-#           -Wl,-rpath=/usr/lib/nixnote2
-
-#QMAKE_CXXFLAGS += `dpkg-buildflags --get CFLAGS`
 QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
-#QMAKE_LFLAGS += `dpkg-buildflags --get LDFLAGS`
 QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro

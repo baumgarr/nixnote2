@@ -21,7 +21,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define REMOTEQUERY_H
 
 #include <QObject>
+#if QT_VERSION < 0x050000
 #include <QtDBus/QtDBus>
+#else
+#include <QtDBus>
+#endif
 #include <QList>
 #include <QString>
 #include "sql/notetable.h"

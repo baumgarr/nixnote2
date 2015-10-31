@@ -926,8 +926,11 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
     size.setHeight(r->height);
     size.setWidth(r->width);
 
-
+#if QT_VERSION < 0x050000
     QUrl postData;
+#else
+    QUrlQuery postData;
+#endif
     postData.clear();
     postData.addQueryItem("auth", authToken);
 
@@ -948,7 +951,11 @@ void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QStri
             curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, curlWriter);
             curl_easy_setopt(curl, CURLOPT_WRITEDATA, fp);
 
+#if QT_VERSION < 0x050000
             QString url = urlBase+QString::number(i+1)+"&"+postData.encodedQuery();
+#else
+            QString url = urlBase+QString::number(i+1)+"&"+postData.query();
+#endif
             curl_easy_setopt(curl, CURLOPT_URL, url.toStdString().c_str());
             res = curl_easy_perform(curl);
             QLOG_DEBUG() << "curl inknote result " << res;

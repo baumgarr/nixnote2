@@ -79,13 +79,14 @@ void LogViewer::loadData() {
 
 
 void LogViewer::saveData() {
-    QFileDialog fd;
+//    QFileDialog fd;
+    QFileDialog fd(0, tr("Save Log"), QDir::homePath(), tr("NixNote Log (*.log);;All Files (*.*)"));
     fd.setFileMode(QFileDialog::AnyFile);
     fd.setConfirmOverwrite(true);
-    fd.setWindowTitle(tr("Save Log"));
-    fd.setFilter(tr("NixNote Log (*.log);;All Files (*.*)"));
+//    fd.setWindowTitle(tr("Save Log"));
+//    fd.setFilter(tr("NixNote Log (*.log);;All Files (*.*)"));
     fd.setAcceptMode(QFileDialog::AcceptSave);
-        fd.setDirectory(QDir::homePath());
+//       fd.setDirectory(QDir::homePath());
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
         return;
     }

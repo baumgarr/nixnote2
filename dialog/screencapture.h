@@ -24,12 +24,12 @@
 #define SCREENCAPTURE_H
 
 #include <QDialog>
-#include <QtGui/QDialog>
-#include <QtGui/QMouseEvent>
-#include <QtGui/QPainter>
-#include <QtGui/QPixmap>
-#include <QtCore/QSize>
-#include <QtCore/QPoint>
+#include <QDialog>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QPixmap>
+#include <QSize>
+#include <QPoint>
 
 class ScreenCapture : public QDialog
 {

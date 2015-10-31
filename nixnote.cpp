@@ -100,8 +100,9 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     }
     global.settings->endGroup();
 
-
+#if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
+#endif
     this->setDebugLevel();
 
     QTranslator *nixnoteTranslator = new QTranslator();
@@ -1553,19 +1554,21 @@ void NixNote::databaseBackup(bool backup) {
         }
     }
 
-    QFileDialog fd;
+    QString caption, directory;
+    if (backup)
+        caption = tr("Backup Database");
+    else
+        caption = tr("Export Notes");
+    if (saveLastPath == "")
+        directory = QDir::homePath();
+    else
+        directory = saveLastPath;
+
+    QFileDialog fd(0, caption, directory, tr("NixNote Export (*.nnex);;All Files (*.*)"));
     fd.setFileMode(QFileDialog::AnyFile);
     fd.setConfirmOverwrite(true);
-    if (backup)
-        fd.setWindowTitle(tr("Backup Database"));
-    else
-        fd.setWindowTitle(tr("Export Notes"));
-    fd.setFilter(tr("NixNote Export (*.nnex);;All Files (*.*)"));
     fd.setAcceptMode(QFileDialog::AcceptSave);
-    if (saveLastPath == "")
-        fd.setDirectory(QDir::homePath());
-    else
-        fd.setDirectory(saveLastPath);
+
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
         QLOG_DEBUG() << "Database restore canceled in file dialog.";
         return;
@@ -1643,24 +1646,26 @@ void NixNote::databaseRestore(bool fullRestore) {
         }
     }
 
-    QFileDialog fd;
-    fd.setFileMode(QFileDialog::ExistingFile);
-    fd.setConfirmOverwrite(true);
-    if (fullRestore)
-        fd.setWindowTitle(tr("Restore Database"));
-    else
-        fd.setWindowTitle(tr("Import Notes"));
+    QString caption, directory, filter;
 
     if (fullRestore) {
-        fd.setFilter(tr("NixNote Export (*.nnex);;All Files (*.*)"));
+        caption = tr("Restore Database");
+        filter = tr("NixNote Export (*.nnex);;All Files (*.*)");
     } else {
-        fd.setFilter(tr("NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)"));
+        caption = tr("Import Notes");
+        filter = tr("NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)");
     }
-    fd.setAcceptMode(QFileDialog::AcceptOpen);
+
     if (saveLastPath == "")
-        fd.setDirectory(QDir::homePath());
+        directory = QDir::homePath();
     else
-        fd.setDirectory(saveLastPath);
+        directory = saveLastPath;
+
+    QFileDialog fd(0, caption, directory, filter);
+    fd.setFileMode(QFileDialog::ExistingFile);
+    fd.setConfirmOverwrite(true);
+    fd.setAcceptMode(QFileDialog::AcceptOpen);
+
     if (fd.exec() == 0 || fd.selectedFiles().size() == 0) {
         QLOG_DEBUG() << "Database restore canceled in file dialog.";
         return;
@@ -1815,7 +1820,7 @@ void NixNote::newNote() {
     NotebookTable notebookTable(global.db);
     n.content = newNoteBody;
     n.title = tr("Untitled note");
-    QString uuid = QUuid::createUuid();
+    QString uuid = QUuid::createUuid().toString();
     uuid = uuid.mid(1);
     uuid.chop(1);
     n.guid = uuid;
@@ -1888,7 +1893,7 @@ void NixNote::newExternalNote() {
     NotebookTable notebookTable(global.db);
     n.content = newNoteBody;
     n.title = "Untitled note";
-    QString uuid = QUuid::createUuid();
+    QString uuid = QUuid::createUuid().toString();
     uuid = uuid.mid(1);
     uuid.chop(1);
     n.guid = uuid;

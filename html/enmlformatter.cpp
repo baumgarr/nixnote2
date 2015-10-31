@@ -24,6 +24,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/encrypt.h"
 
 #include <QFileIconProvider>
+#include <QWebPage>
+#include <QWebFrame>
 #include <QIcon>
 #include <QMessageBox>
 

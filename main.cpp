@@ -18,13 +18,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "nixnote.h"
 #include "global.h"
 #include "settings/startupconfig.h"
 
 #include "logger/qslog.h"
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 #include <QDir>
 #include <iostream>
 #include <QMessageBox>
