@@ -86,6 +86,8 @@ public:
     QAction *noteTitleColorMagentaAction;
 
     void getSelectedLids(QList<qint32> &lids);
+    QList<qint32> priorLidOrder;
+    QList<qint32> priorSelectedLids;
     bool isLidSelected(qint32 lid);
     qint32 selectAnyNoteFromList();
     void resizeColumns();
