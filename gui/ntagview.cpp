@@ -220,8 +220,8 @@ void NTagView::mousePressEvent(QMouseEvent *event)
 {
     QModelIndex item = indexAt(event->pos());
     bool selected = selectionModel()->isSelected(indexAt(event->pos()));
-    if (!(event->buttons() & Qt::LeftButton))
-            return;
+//    if (!(event->buttons() & Qt::LeftButton))
+//            return;
     QTreeView::mousePressEvent(event);
     if (selected && (event->buttons() & Qt::LeftButton))
         selectionModel()->select(item, QItemSelectionModel::Deselect);
