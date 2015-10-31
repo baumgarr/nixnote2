@@ -344,6 +344,7 @@ void ImportData::processResource(Resource &resource) {
     while(!atEnd) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
+            QLOG_DEBUG() << name;
             if (name == "guid") {
                 resource.guid = textValue();
             }
@@ -377,6 +378,8 @@ void ImportData::processResource(Resource &resource) {
 //            if (name == "dirty")
 //                isDirty = booleanValue();
             if (name == "data") {
+                Data data;
+                resource.data = data;
                 processData("Data", resource.data);
             }
             if (name == "alternatedata") {
