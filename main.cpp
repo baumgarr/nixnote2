@@ -164,11 +164,16 @@ int main(int argc, char *argv[])
     // with any other instance that may be running.  If another instance
     // is found we need to either show that one or kill this one.
     bool memInitNeeded = true;
+    QLOG_DEBUG() << "Creating shared segment";
     if( !global.sharedMemory->create( 512*1024, QSharedMemory::ReadWrite) ) {
         // Attach to it and detach.  This is done in case it crashed.
+        QLOG_DEBUG() << "Attaching to shared segment";
         global.sharedMemory->attach();
+        QLOG_DEBUG() << "Detaching segment";
         global.sharedMemory->detach();
+        QLOG_DEBUG() << "Creating segment";
         if( !global.sharedMemory->create( 512*1024, QSharedMemory::ReadWrite) ) {
+            QLOG_DEBUG() << "segment created";
             if (startupConfig.startupNewNote) {
                 global.sharedMemory->attach();
                 global.sharedMemory->lock();
@@ -187,12 +192,14 @@ int main(int argc, char *argv[])
                 exit(0);  // Exit this one
             }
             // If we've gotten this far, we need to either stop this instance or stop the other
+            QLOG_DEBUG() << "Multiple instance found";
             global.settings->beginGroup("Debugging");
             QString startup = global.settings->value("onMultipleInstances", "SHOW_OTHER").toString();
             global.settings->endGroup();
             global.sharedMemory->attach();
             global.sharedMemory->lock();
             void *dataptr = global.sharedMemory->data();
+            QLOG_DEBUG() << "Multiple instance found: startup option " << startup;
             if (startup == "SHOW_OTHER") {
                 memcpy(dataptr, "SHOW_WINDOW", 11);  // Tell the other guy to show himself
                 QLOG_INFO() << "Another NixNote was found.  Stopping this instance";
@@ -206,12 +213,14 @@ int main(int argc, char *argv[])
         }
     }
     if (memInitNeeded) {
+        QLOG_DEBUG() << "Initializing shared memory segment";
         global.sharedMemory->lock();
+        QLOG_DEBUG() << "Overriting segment";
         memset(global.sharedMemory->data(), 0, global.sharedMemory->size());
+        QLOG_DEBUG() << "unlocking segment";
         global.sharedMemory->unlock();
     }
-
-
+    QLOG_DEBUG() << "Shared memory segment initialized.";
 
     // Save the clipboard
     global.clipboard = QApplication::clipboard();
