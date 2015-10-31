@@ -195,8 +195,6 @@ void NSqlQuery::bindValue(int pos, const QVariant &val, QSql::ParamType paramTyp
     QSqlQuery::bindValue(pos, val, paramType);
 }
 
-#endif
-
 
 void NSqlQuery::addBindValue(const QVariant &val, QSql::ParamType paramType) {
     if (val.type() == QVariant::Bool) {
@@ -208,5 +206,7 @@ void NSqlQuery::addBindValue(const QVariant &val, QSql::ParamType paramType) {
     QSqlQuery::addBindValue(val, paramType);
 }
 
+
+#endif
 
 
