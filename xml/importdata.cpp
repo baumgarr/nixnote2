@@ -344,7 +344,6 @@ void ImportData::processResource(Resource &resource) {
     while(!atEnd) {
         if (reader->isStartElement()) {
             QString name = reader->name().toString().toLower();
-            QLOG_DEBUG() << name;
             if (name == "guid") {
                 resource.guid = textValue();
             }
