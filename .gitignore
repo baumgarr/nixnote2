@@ -40,6 +40,11 @@ nixnote2
 #compiled translations
 translations/*.qm
 
+#Makefiles
+Makefile
+Makefile.debug
+Makefile.release
+
 #KDE workfile
 .directory
 /.project
