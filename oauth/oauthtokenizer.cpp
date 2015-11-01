@@ -29,7 +29,7 @@ void OAuthTokenizer::tokenize(QString decoded) {
   QStringList tokens;
   for (;decoded.length()>0;) {
       int i=decoded.indexOf("&");
-      if (i>0) {
+      if (i != -1) {
           tokens.append(decoded.left(i));
           decoded=decoded.right(decoded.length()-i-1);
       } else {

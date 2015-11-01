@@ -723,12 +723,12 @@ QString MimeReference::getExtensionFromMime(QString key, QString filename) {
             else
                 filename = key;
             int pos = filename.lastIndexOf(".");
-            if (pos>0) {
+            if (pos != -1) {
                 filename = filename.mid(pos);
                 return filename;
             } else {
                 int pos = filename.lastIndexOf("/");
-                if (pos>0) {
+                if (pos != -1) {
                     pos++;
                     filename = filename.mid(pos);
                     return "."+filename;
@@ -764,7 +764,7 @@ QString MimeReference::getMimeFromExtension(string fileExtension) {
 
 QString MimeReference::getMimeFromFileName(QString fileName) {
     int pos = fileName.lastIndexOf(".");
-    if (pos >=0)
+    if (pos != -1)
         fileName = fileName.mid(pos);
     return getMimeFromExtension(fileName);
 }

@@ -1579,7 +1579,7 @@ void NixNote::databaseBackup(bool backup) {
     fileNames = fd.selectedFiles();
     saveLastPath = fileNames[0];
     int pos = saveLastPath.lastIndexOf("/");
-    if (pos > 0)
+    if (pos != -1)
         saveLastPath.truncate(pos);
 
     if (backup)
@@ -1676,7 +1676,7 @@ void NixNote::databaseRestore(bool fullRestore) {
     fileNames = fd.selectedFiles();
     saveLastPath = fileNames[0];
     int pos = saveLastPath.lastIndexOf("/");
-    if (pos > 0)
+    if (pos != -1)
         saveLastPath.truncate(pos);
 
     if (fullRestore)
@@ -2790,7 +2790,7 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
     QString dba = global.fileManager.getDbaDirPath();
     shortName.replace(dba, "");
     int pos = shortName.indexOf(".");
-    if (pos > 0)
+    if (pos != -1)
         shortName = shortName.mid(0,pos);
     qint32 lid = shortName.toInt();
     QFile file(resourceFile);

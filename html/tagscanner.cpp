@@ -40,7 +40,7 @@ void TagScanner::setData(QString data) {
     qint32 position = content.indexOf(QString("<"), Qt::CaseInsensitive);
 
     // Scan through & find all of the tags in a note
-    while (position >=0) {
+    while (position != -1) {
         TagScannerRecord newRec;
 
         newRec.startPosition = position;   // Position of the <
@@ -65,10 +65,8 @@ void TagScanner::setData(QString data) {
 qint32 TagScanner::findAll(QList<TagScannerRecord> &recs, QString tagName) {
     recs.clear();
     qint32 position = content.indexOf(QString("<")+tagName, Qt::CaseInsensitive);
-    if (position > 0)
-        return 0;
 
-    while (position >=0) {
+    while (position != -1) {
         TagScannerRecord newRec;
         newRec.startPosition = position;
         newRec.endPosition = content.indexOf(QString(">"), position);

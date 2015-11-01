@@ -45,7 +45,7 @@ QString NumberDelegate::displayText(const QVariant &value, const QLocale &locale
            }
        }
        QString rval =  QString().number(value);
-       if (rval.indexOf(".") > 0)
+       if (rval.contains("."))
           rval.truncate(rval.indexOf(".")+2);
        if (rval.endsWith(".0"))
            rval.truncate(rval.indexOf(".0"));

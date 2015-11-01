@@ -155,7 +155,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     insertLinkAction = new QAction(tr("Insert Hyperlink"), this);
     contextMenu->addAction(insertLinkAction);
     this->setupShortcut(insertLinkAction, "Edit_Insert_Hyperlink");
-    connect(insertLinkAction, SIGNAL(triggered()),parent, SLOT(insertLinkButtonPressed()));    
+    connect(insertLinkAction, SIGNAL(triggered()),parent, SLOT(insertLinkButtonPressed()));
 
     insertQuickLinkAction = new QAction(tr("Quick Link"), this);
     contextMenu->addAction(insertQuickLinkAction);
@@ -470,7 +470,7 @@ void NWebView::downloadRequested(QNetworkRequest req) {
     if (urlString.startsWith("nnres:")) {
         int pos = urlString.indexOf(global.attachmentNameDelimeter);
         QString extension = "";
-        if (pos > 0) {
+        if (pos != -1) {
             extension = urlString.mid(pos+global.attachmentNameDelimeter.length());
             urlString = urlString.mid(0,pos);
         }

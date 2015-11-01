@@ -65,7 +65,7 @@ InsertLinkDialog::InsertLinkDialog(bool insert, QWidget *parent) :
 
 // Get the password
 QString InsertLinkDialog::getUrl() {
-    if (urlText.indexOf("://") > 0)
+    if (urlText.contains("://"))
         return urlText;
     if (urlText.trimmed().startsWith("mailto:", Qt::CaseInsensitive))
         return urlText;

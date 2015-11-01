@@ -171,14 +171,14 @@ QString NoteFormatter::preHtmlFormat(QString note) {
     QString content = note.replace("<br></br>", "<br/>");
 
     pos = content.indexOf("<en-media");
-    while (pos > 0) {
+    while (pos != -1) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
 
         // Check the next /> end tag.  If it is before the end
         // of the current tag or if it doesn't exist then we
         // need to fix the end of the img
-        if (tagEndPos <= 0 || tagEndPos < endPos) {
+        if (tagEndPos == -1 || tagEndPos < endPos) {
             content = content.mid(0, endPos) + QByteArray("></en-media>") +content.mid(endPos+1);
         }
         pos = content.indexOf("<en-media", pos+1);
@@ -274,7 +274,7 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     enCryptLen = anchors.count();
     for (qint32 i=0; i<anchors.count(); i++) {
         QWebElement element = anchors.at(i);
-        if (!element.attribute("href").toLower().startsWith("latex://"))
+        if (!element.attribute("href").toLower().startsWith("latex:///"))
             element.setAttribute("title", element.attribute("href"));
         else {
             element.setAttribute("title", element.attribute("title").toLower().replace("http://latex.codecogs.com/gif.latex?",""));
@@ -423,7 +423,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
                 enMedia.setAttribute("en-tag", "en-latex");
                 newText.setAttribute("onMouseOver", "style.cursor='pointer'");
                 newText.setAttribute("title", sourceUrl);
-                newText.setAttribute("href", "latex://"+QString::number(resLid));
+                newText.setAttribute("href", "latex:///"+QString::number(resLid));
             }
             enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
                                  +QString::number(resLid) +"', '"

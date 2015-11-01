@@ -1574,10 +1574,10 @@ void NBrowserWindow::rotateImage(qreal degrees) {
 void NBrowserWindow::updateImageHash(QByteArray newhash) {
     QString content = editor->page()->mainFrame()->toHtml();
     int pos = content.indexOf("<img ");
-    for (; pos>0; pos=content.indexOf("<img ", pos+1) ) {
+    for (; pos != -1; pos=content.indexOf("<img ", pos+1) ) {
         int endPos = content.indexOf(">", pos);
         QString section = content.mid(pos, endPos-pos);
-        if (section.indexOf("lid=\"" +QString::number(selectedFileLid) + "\"") > 0) {
+        if (section.contains("lid=\"" +QString::number(selectedFileLid) + "\"")) {
             ResourceTable rtable(global.db);
             QString oldhash = section.mid(section.indexOf("hash=\"")+6);
             oldhash = oldhash.mid(0,oldhash.indexOf("\""));
@@ -1823,8 +1823,8 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 
  // The user clicked a link in the note
  void NBrowserWindow::linkClicked(const QUrl url) {
-     if (url.toString().startsWith("latex://", Qt::CaseInsensitive)) {
-         editLatex(url.toString().mid(8));
+     if (url.toString().startsWith("latex:///", Qt::CaseInsensitive)) {
+         editLatex(url.toString().mid(9));
          return;
      }
      if (url.toString().startsWith("evernote:/view/", Qt::CaseInsensitive) ||
@@ -1874,7 +1874,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
          int index = fullName.lastIndexOf(".");
          QString guid = "";
          QString type = "";
-         if (index >-1) {
+         if (index != -1) {
              type = fullName.mid(index);
              guid = fullName.mid(0,index).replace(global.fileManager.getDbaDirPath(),"");
          } else
@@ -1917,7 +1917,7 @@ void NBrowserWindow::clear() {
     sourceEdit->blockSignals(true);
     editor->blockSignals(true);
     sourceEdit->setPlainText("");
-    editor->setContent("<html><body></body></html>"); 
+    editor->setContent("<html><body></body></html>");
     sourceEdit->setReadOnly(true);
     editor->page()->setContentEditable(false);
     lid = -1;
@@ -1956,9 +1956,9 @@ void NBrowserWindow::setSource() {
     QString text = editor->editorPage->mainFrame()->toHtml();
     sourceEdit->blockSignals(true);
     int body = text.indexOf("<body", Qt::CaseInsensitive);
-    if (body > 0) {
+    if (body != -1) {
         body = text.indexOf(">",body);
-        if (body > 0) {
+        if (body != -1) {
             sourceEditHeader =text.mid(0, body+1);
             text = text.mid(body+1);
         }
@@ -2075,14 +2075,12 @@ void NBrowserWindow::editLatex(QString guid) {
     QString outfile = global.fileManager.getDbaDirPath() + QString::number(newlid) +QString(".gif");
 
     // Run it through "mimetex" to create the gif
-        text = text.replace("'", "\\'");
     QProcess latexProcess;
     QStringList args;
     args.append("-e");
     args.append(outfile);
     args.append(text);
-    QString formula = "mimetex -e "+outfile +" '" +text +"'";
-    QLOG_DEBUG() << "Formula:" << formula;
+    QLOG_DEBUG() << "Formula:" << "mimetex -e "+outfile +" '" +text +"'";
     //latexProcess.start(formula, QIODevice::ReadWrite|QIODevice::Unbuffered);
     latexProcess.start("mimetex", args, QIODevice::ReadWrite|QIODevice::Unbuffered);
 
@@ -2141,8 +2139,8 @@ void NBrowserWindow::editLatex(QString guid) {
 
     QString buffer;
     buffer.append("<a onmouseover=\"cursor:&apos;hand&apos;\" title=\"");
-    buffer.append(text);
-    buffer.append("\" href=\"latex://");
+    buffer.append(text.remove(QRegExp("[^a-zA-Z +-*/^{}()]")));
+    buffer.append("\" href=\"latex:///");
     buffer.append(QString::number(newlid));
     buffer.append("\">");
     buffer.append("<img src=\"file://");
@@ -2168,19 +2166,19 @@ void NBrowserWindow::editLatex(QString guid) {
     } else {
         QString oldHtml = editor->page()->mainFrame()->toHtml();
         int startPos = oldHtml.indexOf("<a");
-        int endPos = oldHtml.indexOf("</a>", startPos);
-        while (startPos > 0) {
-            if (endPos > 0) {
+        while (startPos != -1) {
+	    int endPos = oldHtml.indexOf("</a>", startPos);
+            if (endPos != -1) {
                 QString slice = oldHtml.mid(startPos, endPos-startPos+4);
-                if (slice.indexOf("lid=\""+guid+"\"") && slice.indexOf("en-latex")) {
+                if (slice.contains("lid=\""+guid+"\"") && slice.contains("en-latex")) {
                     oldHtml.replace(slice, buffer);
                 }
                 startPos = oldHtml.indexOf("<a", endPos);
                 editor->page()->mainFrame()->setHtml(oldHtml);
-                editor->reload();
-                contentChanged();
             }
         }
+	editor->reload();
+	contentChanged();
     }
 }
 
@@ -2340,7 +2338,7 @@ void NBrowserWindow::prepareEmailMessage(MimeMessage *message, QString note) {
 
     // next, look for all the attachments
     pos = contents.indexOf("href=\"nnres:");
-    while (pos>=0) {
+    while (pos != -1) {
         QString localFile = contents.mid(pos+12);
         int endPos = localFile.indexOf("\"");
         localFile = localFile.mid(0,endPos);
@@ -2522,7 +2520,7 @@ QString NBrowserWindow::stripContentsForPrint() {
     if (contents == "")
        contents = editor->editorPage->mainFrame()->toHtml();
     int pos = contents.indexOf("<object");
-    while (pos>=0) {
+    while (pos != -1) {
         int endPos = contents.indexOf(">", pos);
         QString lidString = contents.mid(contents.indexOf("lid=", pos)+5);
         lidString = lidString.mid(0,lidString.indexOf("\" "));
@@ -2690,10 +2688,10 @@ void NBrowserWindow::updateResourceHash(qint32 noteLid, QByteArray oldHash, QByt
     int endPos;
     int hashPos = -1;
     QString hashString = "hash=\"" +oldHash.toHex() +"\"";
-    while (pos>0) {
+    while (pos != -1) {
         endPos = content.indexOf(">", pos);  // Find the matching end of the tag
         hashPos = content.indexOf(hashString, pos);
-        if (hashPos < endPos && hashPos > 0) {  // If we found the hash, begin the update
+        if (hashPos < endPos && hashPos != -1) {  // If we found the hash, begin the update
             QString startString = content.mid(0, hashPos);
             QString endString = content.mid(hashPos+hashString.length());
             QString newContent = startString + "hash=\"" +newHash.toHex() +"\"" +endString;
@@ -2725,7 +2723,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
     MimeReference mimeRef;
     QString extension = filename;
     int endPos = filename.lastIndexOf(".");
-    if (endPos>0)
+    if (endPos != -1)
         extension = extension.mid(endPos);
     QString mime =  mimeRef.getMimeFromExtension(extension);
     Resource newRes;
@@ -2996,7 +2994,7 @@ void NBrowserWindow::removeEncryption(QString id, QString plainText, bool perman
     QString text = html;
     int imagePos = html.indexOf("<img");
     int endPos;
-    for ( ;imagePos>0; ) {
+    for ( ;imagePos != -1; ) {
         // Find the end tag
         endPos = text.indexOf(">", imagePos);
         QString tag = text.mid(imagePos-1,endPos);
@@ -3279,13 +3277,13 @@ void NBrowserWindow::changeDisplayFontName(QString name) {
     if (name.startsWith("'")) {
             name = name.mid(1);
             int idx = name.indexOf("'");
-            if (idx > 0)
+            if (idx != -1)
                 name = name.mid(0,idx);
     }
     name = name.toLower();
     buttonBar->fontNames->blockSignals(true);
     int idx = buttonBar->fontNames->findData(name, Qt::UserRole);
-    if (idx >=0)
+    if (idx != -1)
         buttonBar->fontNames->setCurrentIndex(idx);
     buttonBar->fontNames->blockSignals(false);
 }
