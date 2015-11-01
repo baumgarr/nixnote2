@@ -188,7 +188,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
 #if QT_VERSION < 0x050000
         b.append(content.toAscii());
 #else
-        b.append(content.toLatin1());
+        b.append(content);
 #endif
         query.bindValue(":data", b);
         query.exec();
