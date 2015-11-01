@@ -171,14 +171,14 @@ QString NoteFormatter::preHtmlFormat(QString note) {
     QString content = note.replace("<br></br>", "<br/>");
 
     pos = content.indexOf("<en-media");
-    while (pos > 0) {
+    while (pos != -1) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
 
         // Check the next /> end tag.  If it is before the end
         // of the current tag or if it doesn't exist then we
         // need to fix the end of the img
-        if (tagEndPos <= 0 || tagEndPos < endPos) {
+        if (tagEndPos == -1 || tagEndPos < endPos) {
             content = content.mid(0, endPos) + QByteArray("></en-media>") +content.mid(endPos+1);
         }
         pos = content.indexOf("<en-media", pos+1);

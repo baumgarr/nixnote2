@@ -124,14 +124,11 @@ void EmailDialog::toAddressChanged() {
     bcc = bccAddress->text().trimmed();
     cc = ccAddress->text().trimmed();
 
-    int toi = to.indexOf("@");
-    int cci = cc.indexOf("@");
-    int bcci = bcc.indexOf("@");
-
-    if (toi <=0 && cci <= 0 && bcci <= 0 && !ccSelf->isChecked())
-        sendButton->setEnabled(false);
-    else
+    if (to.contains("@") || cc.contains("@") || bcc.contains("@") ||
+	ccSelf->isChecked())
         sendButton->setEnabled(true);
+    else
+        sendButton->setEnabled(false);
 }
 
 

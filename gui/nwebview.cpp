@@ -470,7 +470,7 @@ void NWebView::downloadRequested(QNetworkRequest req) {
     if (urlString.startsWith("nnres:")) {
         int pos = urlString.indexOf(global.attachmentNameDelimeter);
         QString extension = "";
-        if (pos > 0) {
+        if (pos != -1) {
             extension = urlString.mid(pos+global.attachmentNameDelimeter.length());
             urlString = urlString.mid(0,pos);
         }

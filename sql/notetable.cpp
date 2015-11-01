@@ -150,7 +150,6 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     ResourceTable resTable(db);
     ConfigStore cs(db);
     NSqlQuery query(db);
-    qint32 position;
     qint32 lid = l;
     qint32 notebookLid = account;
 
@@ -439,24 +438,22 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     else
         content = "";
 
-    position = content.indexOf("<en-crypt");
-    if (position > 0) {
+    if (content.contains("<en-crypt")) {
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_HAS_ENCRYPT);
         query.bindValue(":data", true);
         query.exec();
     }
-    position = content.indexOf("<en-todo");
-    if (position > 0) {
-        position = content.indexOf("<en-todo checked=\"true\"");
-        if (position > 0) {
+
+    if (content.contains("<en-todo")) {
+        if (content.contains("<en-todo checked=\"true\"")) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_COMPLETED);
             query.bindValue(":data", true);
             query.exec();
         }
-        position = qMax(content.indexOf("<en-todo checked=\"false\""), content.indexOf("<en-todo>"));
-        if (position > 0) {
+        if (content.contains("<en-todo checked=\"false\"") ||
+	    content.contains("<en-todo>")) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
             query.bindValue(":data", true);
@@ -639,13 +636,13 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
     QString content;
     if (t.content.isSet())
         content = t.content;
-    if (content.indexOf("<en-crypt") > 0)
+    if (content.contains("<en-crypt"))
         hasEncryption = true;
     else
         hasEncryption = false;
     query.bindValue(":hasEncryption", hasEncryption);
     bool hasTodo;
-    if (content.indexOf("<en-todo") > 0)
+    if (content.contains("<en-todo"))
         hasTodo = true;
     else
         hasTodo = false;
@@ -1958,10 +1955,10 @@ void NoteTable::updateEnmediaHash(qint32 lid, QByteArray oldHash, QByteArray new
         int endPos;
         int hashPos = -1;
         QString hashString = "hash=\"" +oldHash.toHex() +"\"";
-        while (pos>0) {
+        while (pos != -1) {
             endPos = content.indexOf(">", pos);  // Find the matching end of the tag
             hashPos = content.indexOf(hashString, pos);
-            if (hashPos < endPos && hashPos > 0) {  // If we found the hash, begin the update
+            if (hashPos < endPos && hashPos != -1) {  // If we found the hash, begin the update
                 QString startString = content.mid(0, hashPos);
                 QString endString = content.mid(hashPos+hashString.length());
                 QString newContent = startString + "hash=\"" +newHash.toHex() +"\"" +endString;

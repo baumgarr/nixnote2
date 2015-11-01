@@ -136,7 +136,7 @@ void NTitleEditor::setTitleFromContent(QString s) {
     if (s.trimmed() == "")
         s = tr("Untitled note");
     int newline = s.indexOf("\n");
-    if (newline >= 0)
+    if (newline != -1)
         s = s.mid(0,newline);
     s = cleanupTitle(s);
     blockSignals(true);

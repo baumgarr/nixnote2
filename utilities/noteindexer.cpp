@@ -61,14 +61,14 @@ void NoteIndexer::indexNote(qint32 lid) {
     content.remove(startPos,endPos-startPos);
 
     // Remove encrypted text
-    while (content.indexOf("<en-crypt") > 0) {
+    while (content.contains("<en-crypt")) {
         startPos = content.indexOf("<en-crypt");
         endPos = content.indexOf("</en-crypt>") + 11;
         content = content.mid(0,startPos)+content.mid(endPos);
     }
 
     // Remove any XML tags
-    while (content.indexOf(QChar('<'))>=0) {
+    while (content.contains(QChar('<'))) {
         startPos = content.indexOf(QChar('<'));
         endPos = content.indexOf(QChar('>'),startPos)+1;
         content.remove(startPos,endPos-startPos);
@@ -215,4 +215,3 @@ void NoteIndexer::indexPdf(qint32 reslid) {
     sql.bindValue(":content", text);
     sql.exec();
 }
-

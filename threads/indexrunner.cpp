@@ -198,19 +198,19 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
 
 
     // Start looking through the note
-    qint32 startPos =content.indexOf(QChar('<'));
+    qint32 startPos = content.indexOf(QChar('<'));
     qint32 endPos = content.indexOf(QChar('>'),startPos)+1;
     content.remove(startPos,endPos-startPos);
 
     // Remove encrypted text
-    while (keepRunning && !pauseIndexing && content.indexOf("<en-crypt") > 0) {
+    while (keepRunning && !pauseIndexing && content.contains("<en-crypt")) {
         startPos = content.indexOf("<en-crypt");
         endPos = content.indexOf("</en-crypt>") + 11;
         content = content.mid(0,startPos)+content.mid(endPos);
     }
 
     // Remove any XML tags
-    while (keepRunning && !pauseIndexing && content.indexOf(QChar('<'))>=0) {
+    while (keepRunning && !pauseIndexing && content.contains(QChar('<'))) {
         startPos = content.indexOf(QChar('<'));
         endPos = content.indexOf(QChar('>'),startPos)+1;
         content.remove(startPos,endPos-startPos);
@@ -350,7 +350,8 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
     if (attributes.fileName.isSet()) {
         extension = attributes.fileName;
         int i = extension.indexOf(".");
-        extension = extension.mid(i);
+	if (i != -1)
+	  extension = extension.mid(i);
     }
     if (extension != ".doc"  && extension != ".xls"  && extension != ".ppt" &&
         extension != ".docx" && extension != ".xlsx" && extension != ".pptx" &&
@@ -468,4 +469,3 @@ void IndexRunner::flushCache() {
                     finish.toMSecsSinceEpoch() - start.toMSecsSinceEpoch()
                     << " milliseconds.";
 }
-
