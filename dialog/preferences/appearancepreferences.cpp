@@ -48,6 +48,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     autoHideEditorButtonbar->setChecked(global.autoHideEditorToolbar);
     disableEditingOnStartup = new QCheckBox(tr("Disable note editing on statup"), this);
     newNoteFocusOnTitle = new QCheckBox(tr("Focus on Note Title on New Note"), this);
+    forceWebFonts = new QCheckBox(tr("Limit Editor to Web Fonts*"), this);
+    forceWebFonts->setChecked(global.forceWebFonts);
 
     traySingleClickAction = new QComboBox();
     traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
@@ -109,7 +111,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(autoStart, row++, 1);
     mainLayout->addWidget(disableEditingOnStartup, row, 0);
     mainLayout->addWidget(newNoteFocusOnTitle, row++, 1);
-    mainLayout->addWidget(confirmDeletes, row++, 0);
+    mainLayout->addWidget(confirmDeletes, row, 0);
+    mainLayout->addWidget(forceWebFonts, row++, 1);
 
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
@@ -186,6 +189,7 @@ void AppearancePreferences::saveValues() {
     global.setDeleteConfirmation(this->confirmDeletes->isChecked());
     global.settings->beginGroup("Appearance");
     global.settings->setValue("disableEditingOnStartup", disableEditingOnStartup->isChecked());
+    global.settings->setValue("forceWebFonts", forceWebFonts->isChecked());
     global.settings->setValue("showTrayIcon", showTrayIcon->isChecked());
     global.settings->setValue("showPDFs", showPDFs->isChecked());
     global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();

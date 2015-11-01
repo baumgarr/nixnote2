@@ -168,6 +168,7 @@ public:
     bool forceStartMinimized;                             // Force it to start minimized, despiet the user's settings
     bool startMinimized;                                  // Do user prefernces say to start minimized?
     bool syncAndExit;                                     // Should we just start, do a sync, and then quit?
+    bool forceWebFonts;
     qint32 startupNote;                                   // Initial note to startup with.
 
     qint32 minIndexInterval;                              // Minimum interval to check for any unindexed notes.

@@ -611,12 +611,40 @@ void EditorButtonBar::toggleHtmlEntitiesButtonVisible() {
 
 // Load the list of font names
 void EditorButtonBar::loadFontNames() {
+    if (global.forceWebFonts){
+        QStringList fontFamilies;
+        fontFamilies.append("Gotham");
+        fontFamilies.append("Georgia");
+        fontFamilies.append("Helvetica");
+        fontFamilies.append("Courier New");
+        fontFamilies.append("Times New Roman");
+        fontFamilies.append("Times");
+        fontFamilies.append("Trebuchet");
+        fontFamilies.append("Verdana");
+        fontFamilies.sort();
+        bool first = true;
+
+        for (int i = 0; i < fontFamilies.size(); i++) {
+            fontNames->addItem(fontFamilies[i], fontFamilies[i].toLower());
+            QFont f;
+            global.getGuiFont(f);
+            f.setFamily(fontFamilies[i]);
+            fontNames->setItemData(i, QVariant(f), Qt::FontRole);
+            if (first) {
+                loadFontSizeComboBox(fontFamilies[i]);
+                first=false;
+            }
+        }
+        return;
+    }
+
+    // Load up the list of font names
     QFontDatabase fonts;
     QStringList fontFamilies = fonts.families();
     fontFamilies.append(tr("Times"));
     fontFamilies.sort();
     bool first = true;
-    //QFontDatabase fdb;
+
     for (int i = 0; i < fontFamilies.size(); i++) {
         fontNames->addItem(fontFamilies[i], fontFamilies[i].toLower());
         QFont f;

@@ -63,6 +63,7 @@ public:
     QCheckBox *minimizeToTray;
     QCheckBox *confirmDeletes;
     QCheckBox *closeToTray;
+    QCheckBox *forceWebFonts;
     QCheckBox *dynamicTotals;
     QCheckBox *disableEditingOnStartup;
     QCheckBox *newNoteFocusOnTitle;
