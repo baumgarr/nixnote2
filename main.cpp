@@ -165,6 +165,7 @@ int main(int argc, char *argv[])
     // is found we need to either show that one or kill this one.
     bool memInitNeeded = true;
     QLOG_DEBUG() << "Creating shared segment";
+    QLOG_DEBUG() << global.sharedMemory;
     if( !global.sharedMemory->create( 512*1024, QSharedMemory::ReadWrite) ) {
         // Attach to it and detach.  This is done in case it crashed.
         QLOG_DEBUG() << "Attaching to shared segment";

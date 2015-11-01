@@ -19,6 +19,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #ifndef USERTABLE_H
 #define USERTABLE_H
+
+#include <QtGlobal>
 #if QT_VERSION < 0x050000
 #include <Q_LONG>
 #endif

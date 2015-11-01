@@ -10,7 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     INCLUDEPATH += /usr/include/poppler/qt5
     LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
                -lhunspell -lcurl \
-           -    lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
+               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
 }
 
 equals(QT_MAJOR_VERSION, 4) {
