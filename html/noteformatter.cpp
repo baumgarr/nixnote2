@@ -274,7 +274,7 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     enCryptLen = anchors.count();
     for (qint32 i=0; i<anchors.count(); i++) {
         QWebElement element = anchors.at(i);
-        if (!element.attribute("href").toLower().startsWith("latex://"))
+        if (!element.attribute("href").toLower().startsWith("latex:///"))
             element.setAttribute("title", element.attribute("href"));
         else {
             element.setAttribute("title", element.attribute("title").toLower().replace("http://latex.codecogs.com/gif.latex?",""));
@@ -423,7 +423,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
                 enMedia.setAttribute("en-tag", "en-latex");
                 newText.setAttribute("onMouseOver", "style.cursor='pointer'");
                 newText.setAttribute("title", sourceUrl);
-                newText.setAttribute("href", "latex://"+QString::number(resLid));
+                newText.setAttribute("href", "latex:///"+QString::number(resLid));
             }
             enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
                                  +QString::number(resLid) +"', '"

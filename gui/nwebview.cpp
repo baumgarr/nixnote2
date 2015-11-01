@@ -155,7 +155,7 @@ NWebView::NWebView(NBrowserWindow *parent) :
     insertLinkAction = new QAction(tr("Insert Hyperlink"), this);
     contextMenu->addAction(insertLinkAction);
     this->setupShortcut(insertLinkAction, "Edit_Insert_Hyperlink");
-    connect(insertLinkAction, SIGNAL(triggered()),parent, SLOT(insertLinkButtonPressed()));    
+    connect(insertLinkAction, SIGNAL(triggered()),parent, SLOT(insertLinkButtonPressed()));
 
     insertQuickLinkAction = new QAction(tr("Quick Link"), this);
     contextMenu->addAction(insertQuickLinkAction);

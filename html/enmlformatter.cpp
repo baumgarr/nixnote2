@@ -311,7 +311,7 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
         e.setOuterXml(newXml);
     }
     QString latex = e.attribute("href", "");
-    if (latex.toLower().startsWith("latex://")) {
+    if (latex.toLower().startsWith("latex:///")) {
         removeInvalidAttributes(e);
         e.removeAttribute("title");
         e.removeAttribute("href");

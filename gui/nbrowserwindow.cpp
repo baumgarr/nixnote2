@@ -1823,8 +1823,8 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 
  // The user clicked a link in the note
  void NBrowserWindow::linkClicked(const QUrl url) {
-     if (url.toString().startsWith("latex://", Qt::CaseInsensitive)) {
-         editLatex(url.toString().mid(8));
+     if (url.toString().startsWith("latex:///", Qt::CaseInsensitive)) {
+         editLatex(url.toString().mid(9));
          return;
      }
      if (url.toString().startsWith("evernote:/view/", Qt::CaseInsensitive) ||
@@ -1917,7 +1917,7 @@ void NBrowserWindow::clear() {
     sourceEdit->blockSignals(true);
     editor->blockSignals(true);
     sourceEdit->setPlainText("");
-    editor->setContent("<html><body></body></html>"); 
+    editor->setContent("<html><body></body></html>");
     sourceEdit->setReadOnly(true);
     editor->page()->setContentEditable(false);
     lid = -1;
@@ -2075,14 +2075,12 @@ void NBrowserWindow::editLatex(QString guid) {
     QString outfile = global.fileManager.getDbaDirPath() + QString::number(newlid) +QString(".gif");
 
     // Run it through "mimetex" to create the gif
-        text = text.replace("'", "\\'");
     QProcess latexProcess;
     QStringList args;
     args.append("-e");
     args.append(outfile);
     args.append(text);
-    QString formula = "mimetex -e "+outfile +" '" +text +"'";
-    QLOG_DEBUG() << "Formula:" << formula;
+    QLOG_DEBUG() << "Formula:" << "mimetex -e "+outfile +" '" +text +"'";
     //latexProcess.start(formula, QIODevice::ReadWrite|QIODevice::Unbuffered);
     latexProcess.start("mimetex", args, QIODevice::ReadWrite|QIODevice::Unbuffered);
 
@@ -2141,8 +2139,8 @@ void NBrowserWindow::editLatex(QString guid) {
 
     QString buffer;
     buffer.append("<a onmouseover=\"cursor:&apos;hand&apos;\" title=\"");
-    buffer.append(text);
-    buffer.append("\" href=\"latex://");
+    buffer.append(text.remove(QRegExp("[^a-zA-Z +-*/^{}()]")));
+    buffer.append("\" href=\"latex:///");
     buffer.append(QString::number(newlid));
     buffer.append("\">");
     buffer.append("<img src=\"file://");
@@ -2168,19 +2166,19 @@ void NBrowserWindow::editLatex(QString guid) {
     } else {
         QString oldHtml = editor->page()->mainFrame()->toHtml();
         int startPos = oldHtml.indexOf("<a");
-        int endPos = oldHtml.indexOf("</a>", startPos);
-        while (startPos > 0) {
-            if (endPos > 0) {
+        while (startPos != -1) {
+	    int endPos = oldHtml.indexOf("</a>", startPos);
+            if (endPos != -1) {
                 QString slice = oldHtml.mid(startPos, endPos-startPos+4);
-                if (slice.indexOf("lid=\""+guid+"\"") && slice.indexOf("en-latex")) {
+                if (slice.contains("lid=\""+guid+"\"") && slice.contains("en-latex")) {
                     oldHtml.replace(slice, buffer);
                 }
                 startPos = oldHtml.indexOf("<a", endPos);
                 editor->page()->mainFrame()->setHtml(oldHtml);
-                editor->reload();
-                contentChanged();
             }
         }
+	editor->reload();
+	contentChanged();
     }
 }
 
