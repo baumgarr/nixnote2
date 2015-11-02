@@ -124,10 +124,45 @@ void EmailDialog::toAddressChanged() {
     bcc = bccAddress->text().trimmed();
     cc = ccAddress->text().trimmed();
 
-    if (to.contains("@") || cc.contains("@") || bcc.contains("@") ||
-	ccSelf->isChecked())
+    // Setup regular expression to test email addresses
+    QRegExp mailREX("\\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}\\b");
+    mailREX.setCaseSensitivity(Qt::CaseInsensitive);
+    mailREX.setPatternSyntax(QRegExp::RegExp);
+
+    // Check if "to" address is valid
+    bool validTo = true;
+    QStringList toList = tokenizeString(to);
+    for (int i=0; i<toList.size(); i++) {
+        if (!mailREX.exactMatch(toList[i]))
+            validTo = false;
+    }
+
+    // check if "cc" address is valid
+    bool validCc = true;
+    QStringList ccList = tokenizeString(cc);
+    for (int i=0; i<ccList.size(); i++) {
+        if (!mailREX.exactMatch(ccList[i]))
+            validCc = false;
+    }
+
+    // Check if "bcc" address is valid
+    bool validBcc = true;
+    QStringList bccList = tokenizeString(bcc);
+    for (int i=0; i<bccList.size(); i++) {
+        if (!mailREX.exactMatch(bccList[i]))
+            validBcc = false;
+    }
+
+    // If we have all vaild email addresses or ccSelf is checked, then
+    // we can send an email.
+    if ((validTo && validCc && validBcc) || ccSelf->isChecked())
         sendButton->setEnabled(true);
     else
+        sendButton->setEnabled(false);
+
+    // If no emails are specified and we are not going to cc oursel,
+    // then we can't send.
+    if (to == "" && cc == "" && bcc == "" && !ccSelf->isChecked())
         sendButton->setEnabled(false);
 }
 
