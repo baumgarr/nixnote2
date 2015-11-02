@@ -53,8 +53,6 @@ void ReminderManager::reloadTimers() {
 
 
 void ReminderManager::timerPop() {
-    if (trayIcon == NULL)
-        return;
     checkReminders();
 }
 
@@ -84,7 +82,7 @@ void ReminderManager::checkReminders() {
         }
     }
     if (msg.trimmed() != "")
-        trayIcon->showMessage(tr("Reminders Due"), msg);
+        emit showMessage(tr("Reminders Due"), msg);
     global.setLastReminderTime(now.currentMSecsSinceEpoch());
 }
 

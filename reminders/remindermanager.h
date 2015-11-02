@@ -34,13 +34,13 @@ private:
 
 public:
     explicit ReminderManager(QObject *parent = 0);
-    QSystemTrayIcon *trayIcon;
     void reloadTimers();
     void checkReminders();
     void updateReminder(qint32 lid, QDateTime time);
     void remove(qint32 lid);
     
 signals:
+    void showMessage(QString, QString);
     
 public slots:
     void timerPop();

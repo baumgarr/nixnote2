@@ -69,6 +69,9 @@ class SyncRunner;
 class IndexRunner;
 class CounterRunner;
 class NTabWidget;
+class Thumbnailer;
+class NTableView;
+class SyncRunner;
 
 // Define the actual class
 class NixNote : public QMainWindow
@@ -190,7 +193,6 @@ public:
     NTabWidget *tabWindow;
 
 
-
 public slots:
     void closeNixNote();
     void synchronize();
@@ -276,6 +278,8 @@ public slots:
     void openMessageLog();
     void showDesktopUrl(const QUrl &url);
     void reloadIcons();
+    void showMessage(QString title, QString msg, int timeout=10000);
+
 signals:
     void syncRequested();
     void updateCounts();

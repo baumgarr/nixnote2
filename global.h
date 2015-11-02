@@ -208,6 +208,7 @@ public:
     QString getProxyUserid();
     bool isProxyEnabled();
     void setProxyEnabled(bool value);
+    QString systemNotifier();
 
     // Middle click settings
     int getMiddleClickAction();

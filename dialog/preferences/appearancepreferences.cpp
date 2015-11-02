@@ -79,6 +79,10 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     connect(defaultGuiFontChooser, SIGNAL(currentIndexChanged(QString)), this, SLOT(loadGuiFontSizes(QString)));
     loadFontNames(defaultGuiFontChooser, global.defaultGuiFont);
 
+    systemNotifier = new QComboBox();
+    systemNotifier->addItem(tr("Qt Default"), "qt");
+    systemNotifier->addItem(tr("notify-send"), "notify-send");
+
     windowThemeChooser = new QComboBox();
     windowThemeChooser->addItem(tr("System Default"));
     windowThemeChooser->addItems(global.getThemeNames());
@@ -116,6 +120,9 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
+
+    mainLayout->addWidget(new QLabel(tr("Notification Service")), row, 0);
+    mainLayout->addWidget(systemNotifier, row++, 1);
 
     mainLayout->addWidget(new QLabel(tr("Middle Click Open Behavior")), row,0);
     mainLayout->addWidget(mouseMiddleClickAction, row++, 1);
@@ -181,10 +188,26 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     newNoteFocusOnTitle->setChecked(global.newNoteFocusToTitle());
 
     this->setFont(global.getGuiFont(font()));
+
+    // Check if Tidy is installed
+    QProcess notifyProcess;
+    notifyProcess.start("notify-send -?");
+    notifyProcess.waitForFinished();
+    QLOG_DEBUG() << notifyProcess.exitCode();
+    if (notifyProcess.exitCode()) {
+        systemNotifier->setEnabled(false);
+    } else {
+        QString notifier = global.systemNotifier();
+        int idx = systemNotifier->findData(notifier, Qt::UserRole);
+        systemNotifier->setCurrentIndex(idx);
+    }
 }
 
 
 void AppearancePreferences::saveValues() {
+    int index = systemNotifier->currentIndex();
+    QString sysnotifier = systemNotifier->itemData(index, Qt::UserRole).toString();
+
     global.setNewNoteFocusToTitle(newNoteFocusOnTitle->isChecked());
     global.setDeleteConfirmation(this->confirmDeletes->isChecked());
     global.settings->beginGroup("Appearance");
@@ -197,6 +220,7 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("mouseMiddleClickOpen", mouseMiddleClickAction->currentIndex());
     global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
     global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
+    global.settings->setValue("systemNotifier", sysnotifier);
     global.settings->remove("trayDoubleClickAction");
     global.pdfPreview = showPDFs->isChecked();
     if (minimizeToTray!= NULL)
@@ -217,7 +241,7 @@ void AppearancePreferences::saveValues() {
         global.settings->setValue("countBehavior", 2);
         global.countBehavior = Global::CountNone;
     }
-    int index = defaultNotebookOnStartup->currentIndex();
+    index = defaultNotebookOnStartup->currentIndex();
     int value = defaultNotebookOnStartup->itemData(index).toInt();
     global.settings->setValue("startupNotebook", value);
 

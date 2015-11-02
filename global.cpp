@@ -785,6 +785,18 @@ void Global::setDatabaseVersion(int value) {
     return;
 }
 
+
+// What is doing the system notification?
+QString Global::systemNotifier() {
+    settings->beginGroup("Appearance");
+    QString value = settings->value("systemNotifier", "qt").toString();
+    settings->endGroup();
+    return value;
+}
+
+
+
+
 void Global::stackDump(int max) {
     void *array[30];
     size_t size;
@@ -854,7 +866,6 @@ void Global::stackDump(int max) {
     free(messages);
     QLOG_ERROR() << "**** Stack dump complete *****";
 }
-
 
 
 

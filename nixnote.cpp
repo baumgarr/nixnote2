@@ -161,8 +161,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 
     // Setup reminders
     global.reminderManager = new ReminderManager();
-    global.reminderManager = new ReminderManager();
-    global.reminderManager->trayIcon = trayIcon;
+    connect(global.reminderManager, SIGNAL(showMessage(QString,QString)), this, SLOT(showMessage(QString,QString,int)));
     global.reminderManager->reloadTimers();
 
     global.settings->beginGroup("Appearance");
@@ -212,7 +211,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(importManager, SIGNAL(fileImported()), this, SLOT(updateSelectionCriteria()));
     importManager->setup();
     this->updateSelectionCriteria(true);  // This is only needed in case we imported something at statup.
-
 
     QLOG_DEBUG() << "Exiting NixNote constructor";
 }
@@ -1749,15 +1747,30 @@ void NixNote::notifySyncComplete() {
     if (!show)
         return;
     if (syncRunner.error) {
-        trayIcon->showMessage(tr("Sync Error"), tr("Sync completed with errors."));
+        showMessage(tr("Sync Error"), tr("Sync completed with errors."));
     } else
         if (global.showGoodSyncMessagesInTray)
-            trayIcon->showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
+            showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
     if (global.syncAndExit)
         this->closeNixNote();
 }
 
 
+
+void NixNote::showMessage(QString title, QString msg, int timeout) {
+    if (global.systemNotifier() == "notify-send") {
+        QProcess notifyProcess;
+        QStringList arguments;
+        arguments  << title << msg << "-t" << QString::number(timeout);
+        notifyProcess.start(QString("notify-send"), arguments, QIODevice::ReadWrite|QIODevice::Unbuffered);
+        notifyProcess.waitForFinished();
+        QLOG_DEBUG() << "notify-send completed: " << notifyProcess.waitForFinished()
+                     << " Return Code: " << notifyProcess.state();
+        return;
+    }
+    trayIcon->showMessage(title, msg);
+
+}
 
 
 //*******************************************************
