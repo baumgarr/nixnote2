@@ -2424,12 +2424,12 @@ void NBrowserWindow::emailNote() {
         return;
     }
 
-    emit(setMessage("Sending Email. Please be patient."));
     EmailDialog emailDialog;
     emailDialog.subject->setText(noteTitle.text());
     emailDialog.exec();
     if (emailDialog.cancelPressed)
         return;
+    emit(setMessage("Sending Email. Please be patient."));
 
     QStringList toAddresses = emailDialog.getToAddresses();
     QStringList ccAddresses = emailDialog.getCcAddresses();
