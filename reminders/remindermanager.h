@@ -40,7 +40,7 @@ public:
     void remove(qint32 lid);
     
 signals:
-    void showMessage(QString, QString);
+    void showMessage(QString, QString, int);
     
 public slots:
     void timerPop();

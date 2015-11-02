@@ -82,7 +82,7 @@ void ReminderManager::checkReminders() {
         }
     }
     if (msg.trimmed() != "")
-        emit showMessage(tr("Reminders Due"), msg);
+        emit showMessage(tr("Reminders Due"), msg, 10000);
     global.setLastReminderTime(now.currentMSecsSinceEpoch());
 }
 

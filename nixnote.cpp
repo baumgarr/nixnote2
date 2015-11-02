@@ -161,7 +161,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 
     // Setup reminders
     global.reminderManager = new ReminderManager();
-    connect(global.reminderManager, SIGNAL(showMessage(QString,QString)), this, SLOT(showMessage(QString,QString,int)));
+    connect(global.reminderManager, SIGNAL(showMessage(QString,QString,int)), this, SLOT(showMessage(QString,QString,int)));
     global.reminderManager->reloadTimers();
 
     global.settings->beginGroup("Appearance");
