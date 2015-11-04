@@ -1605,7 +1605,10 @@ void NBrowserWindow::imageContextMenu(QString l, QString f) {
 
 void NBrowserWindow::attachFile() {
     QFileDialog fileDialog;
-    fileDialog.setDirectory(QDir::homePath());
+    if (attachFilePath != "")
+        fileDialog.setDirectory(attachFilePath);
+    else
+        fileDialog.setDirectory(QDir::homePath());
     fileDialog.setFileMode(QFileDialog::ExistingFile);
     connect(&fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(attachFileSelected(QString)));
     fileDialog.exec();
@@ -2713,6 +2716,11 @@ void NBrowserWindow::updateResourceHash(qint32 noteLid, QByteArray oldHash, QByt
 void NBrowserWindow::attachFileSelected(QString filename) {
     // Read in the file
     QFile file(filename);
+
+    // Save prior path for future use
+    QFileInfo fileInfo(file);
+    attachFilePath = fileInfo.path();
+
     file.open(QIODevice::ReadOnly);
     QByteArray ba = file.readAll();
     file.close();

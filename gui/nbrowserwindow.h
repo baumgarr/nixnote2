@@ -90,6 +90,7 @@ private:
     Thumbnailer *hammer;
     Thumbnailer *thumbnailer;
     QTimer focusTimer;
+    QString attachFilePath;  // Save path of last selected attachment.
 
     // Shortcuts for context menu
     QShortcut *attachFileShortcut;
