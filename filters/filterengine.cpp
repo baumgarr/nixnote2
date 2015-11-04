@@ -525,35 +525,39 @@ void FilterEngine::filterTags(FilterCriteria *criteria) {
         return;
 
     QList<QTreeWidgetItem*> tags = criteria->getTags();
-    QList<int> selectedTags;
+    NSqlQuery query(global.db);
     for (qint32 i=0; i<tags.size(); i++) {
-        selectedTags.push_back(tags[i]->data(0,Qt::UserRole).toInt());
+        query.prepare("Delete from filter where lid not in (select lid from datastore where key=:notetagkey and data=:data)");
+        query.bindValue(":notetagkey", NOTE_TAG_LID);
+        query.bindValue(":data", tags[i]->data(0,Qt::UserRole).toInt())  ;
+        query.exec();
     }
+    query.finish();
 
-    NoteTable noteTable(global.db);
-    TagTable tagTable(global.db);
-    QList<qint32> goodNotes;
-    for (qint32 i=0; i<selectedTags.size(); i++) {
-        QList<qint32> notes;
-        QString tagGuid;
-        tagTable.getGuid(tagGuid, selectedTags[i]);
-        noteTable.getNotesWithTag(notes, tagGuid);
-        for (qint32 j=0; j<notes.size(); j++) {
-            if (!goodNotes.contains(notes[j]))
-                goodNotes.append(notes[j]);
-        }
-    }
+//    NoteTable noteTable(global.db);
+//    TagTable tagTable(global.db);
+//    QList<qint32> goodNotes;
+//    for (qint32 i=0; i<selectedTags.size(); i++) {
+//        QList<qint32> notes;
+//        QString tagGuid;
+//        tagTable.getGuid(tagGuid, selectedTags[i]);
+//        noteTable.getNotesWithTag(notes, tagGuid);
+//        for (qint32 j=0; j<notes.size(); j++) {
+//            if (!goodNotes.contains(notes[j]))
+//                goodNotes.append(notes[j]);
+//        }
+//    }
 
-    NSqlQuery sql(global.db);
-    sql.exec("create temporary table if not exists goodLids (lid integer)");
-    sql.exec("delete from goodLids");
-    sql.prepare("insert into goodLids (lid) values (:note)");
-    for (qint32 i=0; i<goodNotes.size(); i++) {
-        sql.bindValue(":note", goodNotes[i]);
-        sql.exec();
-    }
-    sql.exec("delete from filter where lid not in (select lid from goodLids)" );
-    sql.finish();
+//    NSqlQuery sql(global.db);
+//    sql.exec("create temporary table if not exists goodLids (lid integer)");
+//    sql.exec("delete from goodLids");
+//    sql.prepare("insert into goodLids (lid) values (:note)");
+//    for (qint32 i=0; i<goodNotes.size(); i++) {
+//        sql.bindValue(":note", goodNotes[i]);
+//        sql.exec();
+//    }
+//    sql.exec("delete from filter where lid not in (select lid from goodLids)" );
+//    sql.finish();
 }
 
 
