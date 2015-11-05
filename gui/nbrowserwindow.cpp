@@ -1188,15 +1188,41 @@ void NBrowserWindow::fontSizeSelected(int index) {
 
     if (size <= 0)
         return;
+    QLOG_DEBUG() << editor->selectedHtml();
 
-    QString text = editor->selectedText();
+    QString text = editor->selectedHtml();
     if (text.trimmed() == "")
         return;
 
+    // Go througth the selected HTML and strip out all of the existing font-sizes.
+    // This allows for the font size to be changed multiple times.  Without this the inner most font
+    // size would always win.
+    for (int i=text.indexOf("<"); i>=0; i=text.indexOf("<",i+1)) {
+        QString text1="";
+        QString text2="";
+        text1 = text.mid(0,i);
+        QString interior = text.mid(i);
+        if (!interior.startsWith("</")) {
+            int endPos = text.indexOf(">",i);
+            if (endPos>0) {
+                interior = text.mid(i,endPos-i);
+                text2 = text.mid(endPos);
+            }
+            // Now that we have a substring, look for the font-size
+            if (interior.contains("font-size:")) {
+                interior = interior.mid(0,interior.indexOf("font-size:"))+
+                        //QString::number(size)+
+                        interior.mid(interior.indexOf("pt;")+3);
+                text = text1+interior+text2;
+            }
+        }
+    }
+
+    // Start building a new font span.
     int idx = buttonBar->fontNames->currentIndex();
     QString font = buttonBar->fontNames->itemText(idx);
 
-    QString newText = "<span style=\"font-size:" +QString::number(size) +"pt; font-family:"+font+";\">"+text+"</span>";
+    QString newText = "<span style=\"font-size: " +QString::number(size) +"pt; font-family:"+font+";\">"+text+"</span>";
     QString script = QString("document.execCommand('insertHtml', false, '"+newText+"');");
     editor->page()->mainFrame()->evaluateJavaScript(script);
 
