@@ -62,7 +62,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     enableProxy->setChecked(global.isProxyEnabled());
     host->setText(global.getProxyHost());
     port->setText(QString::number(global.getProxyPort()));
-    port->setInputMask("0000");
+    port->setInputMask("00000");
     userId->setText(global.getProxyUserid());
     password->setText(global.getProxyPassword());
     password->setEchoMode(QLineEdit::Password);
