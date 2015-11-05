@@ -1,4 +1,4 @@
-.TH NIXNOTE "1" "January 2014" "nixnote2"
+.TH NIXNOTE "1" "November 2015" "nixnote2"
 .SH NAME
 NixNote \- An open source Evernote client.
 .SH SYNOPSIS
@@ -6,6 +6,22 @@ NixNote is an open source clone of Evernote. Evernote is a collection of softwar
 .SH OPTIONS
 .IP "--accountID=<id>"
 The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. 
+.IP "--enableIndexing"
+Enable  background indexing thread.  This can be useful in doing a total database reindex, but can also cause performance issues.
+.IP "--disableEditing"
+Place notes in a read-only mode by default.
+.IP "--dontStartMinimized"
+Ignore user settings and do not start minimized.
+.IP "--forceSystemTrayAvailable"
+NixNote will only show a system tray if it can ensure the window manager can handle it.  This option forces NixNote to try and show a tray icon.
+.IP "--help or -?"
+Display command line options.
+.IP "--openNote=<lid>"
+Start NixNote and show this specific note on startup.
+.IP "--startMinimized"
+Start NixNote in a minimized state by default.
+.IP "--syncAndExit"
+Do a sync with Evernote and exit NixNote.
 
 .SH AUTHORS
 NixNote is developed by Randy Baumgarte <randy@fbn.cx>.
