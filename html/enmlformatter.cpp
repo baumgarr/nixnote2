@@ -312,9 +312,9 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
     QString latex = e.attribute("href", "");
     if (latex.toLower().startsWith("latex:///")) {
         removeInvalidAttributes(e);
-        e.removeAttribute("title");
-        e.removeAttribute("href");
-        e.setOuterXml(e.toInnerXml());
+        QString formula = e.attribute("title");
+        e.setAttribute("href", QString("http://latex.codecogs.com/gif.latex?%1").arg(formula));
+        //e.setOuterXml(e.toInnerXml());
     }
     removeInvalidAttributes(e);
 }

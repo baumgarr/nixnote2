@@ -1188,7 +1188,6 @@ void NBrowserWindow::fontSizeSelected(int index) {
 
     if (size <= 0)
         return;
-    QLOG_DEBUG() << editor->selectedHtml();
 
     QString text = editor->selectedHtml();
     if (text.trimmed() == "")

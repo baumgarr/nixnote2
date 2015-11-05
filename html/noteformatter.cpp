@@ -274,10 +274,13 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
     enCryptLen = anchors.count();
     for (qint32 i=0; i<anchors.count(); i++) {
         QWebElement element = anchors.at(i);
-        if (!element.attribute("href").toLower().startsWith("latex:///"))
+        if (!element.attribute("href").toLower().startsWith("http://latex.codecogs.com/gif.latex?")) {
             element.setAttribute("title", element.attribute("href"));
-        else {
-            element.setAttribute("title", element.attribute("title").toLower().replace("http://latex.codecogs.com/gif.latex?",""));
+        } else {
+            QString formula = element.attribute("href").toLower().replace("http://latex.codecogs.com/gif.latex?","");
+            element.setAttribute("title", formula);
+            QString resLid = element.firstChild().attribute("lid","");
+            element.setAttribute("href", "latex:///"+resLid);
         }
     }
 
@@ -422,6 +425,7 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
                 QWebElement newText = enMedia.lastChild();
                 enMedia.setAttribute("en-tag", "en-latex");
                 newText.setAttribute("onMouseOver", "style.cursor='pointer'");
+                sourceUrl.replace("http://latex.codecogs.com/gif.latex?","");
                 newText.setAttribute("title", sourceUrl);
                 newText.setAttribute("href", "latex:///"+QString::number(resLid));
             }

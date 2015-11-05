@@ -47,6 +47,7 @@ InsertLatexDialog::InsertLatexDialog(QWidget *parent) :
     ok.setText(tr("OK"));
     connect(&ok, SIGNAL(clicked()), this, SLOT(accept()));
     ok.setEnabled(false);
+    ok.setDefault(true);
 
     QPushButton *cancel = new QPushButton(tr("Cancel"), this);
     connect(cancel, SIGNAL(clicked()), this, SLOT(reject()));
