@@ -1921,6 +1921,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 void NBrowserWindow::showSource(bool value) {
      setSource();
      sourceEdit->setVisible(value);
+     sourceEditorTimer->setInterval(1000);
      if (!value)
          sourceEditorTimer->stop();
      else
