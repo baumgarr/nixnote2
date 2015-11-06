@@ -499,7 +499,17 @@ void FilterEngine::filterIndividualNotebook(QString &notebook) {
     sql.finish();
 }
 
+
+// Filter based on stack name
 void FilterEngine::filterStack(QString &stack) {
+    bool negative = false;
+    if (stack.startsWith("-")) {
+        negative=true;
+        stack = stack.mid(1);
+    }
+    if (stack.startsWith("stack:"))
+        stack = stack.mid(stack.indexOf("stack:")+6);
+
     NotebookTable notebookTable(global.db);
     QList<qint32> books;
     QList<qint32> stackBooks;
@@ -507,8 +517,17 @@ void FilterEngine::filterStack(QString &stack) {
     notebookTable.getStack(stackBooks, stack);
 
     NSqlQuery sql(global.db);
-    sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:type and data=:notebookLid)");
-    sql.bindValue(":type", NOTE_NOTEBOOK_LID);
+    if (negative) {
+        sql.exec("create temporary table if not exists goodLids (lid integer)");
+        sql.exec("delete from goodLids");
+        sql.prepare("insert into goodLids (lid) select lid from DataStore where key=:key");
+        sql.bindValue(":key", NOTEBOOK_GUID);
+        sql.exec();
+        sql.prepare("delete from goodLids where lid=:notebookLid");
+    } else {
+        sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:type and data=:notebookLid)");
+        sql.bindValue(":type", NOTE_NOTEBOOK_LID);
+    }
 
     for (qint32 i=0; i<books.size(); i++) {
         if (!stackBooks.contains(books[i])) {
@@ -516,10 +535,18 @@ void FilterEngine::filterStack(QString &stack) {
             sql.exec();
         }
     }
+
+    if (negative) {
+        sql.prepare("delete from filter where lid in (select lid from DataStore where key=:key and data in (select lid from goodLids))");
+        sql.bindValue(":key", NOTE_NOTEBOOK_LID);
+        sql.exec();
+    }
     sql.finish();
 }
 
 
+
+// Filter tags
 void FilterEngine::filterTags(FilterCriteria *criteria) {
     if (!criteria->isSet() || !criteria->isTagsSet())
         return;
@@ -689,6 +716,10 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
         if (string.startsWith("notebook:", Qt::CaseInsensitive) ||
                 string.startsWith("-notebook:", Qt::CaseInsensitive)) {
             filterSearchStringNotebookAll(string);
+        }
+        else if (string.startsWith("stack:", Qt::CaseInsensitive) ||
+                string.startsWith("-stack:", Qt::CaseInsensitive)) {
+            filterStack(string);
         }
         else if (string.startsWith("todo:", Qt::CaseInsensitive) ||
                 string.startsWith("-todo:", Qt::CaseInsensitive)) {
