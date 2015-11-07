@@ -431,7 +431,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         if (criteria->isSearchStringSet())
             formatter.setHighlightText(criteria->getSearchString());
         formatter.setNote(n, global.pdfPreview);
-        formatter.setHighlight();
+        //formatter.setHighlight();
         QLOG_DEBUG() << "rebuilding note HTML";
         content = formatter.rebuildNoteHTML();
         if (!criteria->isSearchStringSet()) {
@@ -796,7 +796,7 @@ void NBrowserWindow::saveNoteContent() {
             b.append(contents);
             cache->noteContent = b;
             global.cache.remove(lid);
-            global.cache.insert(lid, cache);
+//            global.cache.insert(lid, cache);
         }
         QLOG_DEBUG() << "Leaving saveNoteContent()";
         // Make sure the thumnailer is done

@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QGraphicsPixmapItem>
 #include <QImage>
 #include <QPushButton>
+#include "filters/filterengine.h"
 #include <global.h>
 
 extern Global global;
@@ -36,6 +37,7 @@ extern Global global;
 PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWidget *parent) :
     QWidget(parent)
 {
+    pageLabel = new QLabel(this);
     this->mimeType = mimeType;
     this->lid = reslid.toInt();
     printImageFile = global.fileManager.getTmpDirPath() + QString::number(lid) +QString("-print.png");
@@ -48,17 +50,34 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
 
     totalPages = doc->numPages();
 
-    image = new QImage(doc->page(currentPage)->renderToImage());
+    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+    searchHits.empty();
+    QList<QRectF> searchLocations;
+    if (criteria->isSearchStringSet() && criteria->getSearchString() != "") {
+        FilterEngine engine;
+        if (engine.resourceContains(lid, criteria->getSearchString(), &searchHits)) {
+            pageLabel->setStyleSheet("QLabel { background-color : yellow; }");
+            findNextPage(searchHits, &searchLocations);
+        }
+    }
+
+
+    image = new QImage(doc->page(currentPage)->renderToImage());    
+
+    QPixmap finalPix = highlightImage();
+
     scene = new QGraphicsScene();
     view = new PopplerGraphicsView(scene);
     view->filename = file;
-    item = new QGraphicsPixmapItem(QPixmap::fromImage(*image));
-    image->save(printImageFile);   // This is in case we want to print a note.  Otherwise it isn't used.
+    item = new QGraphicsPixmapItem(finalPix);
+    finalPix.save(printImageFile);   // This is in case we want to print a note.  Otherwise it isn't used.
     scene->addItem(item);
+
     view->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout();
-    pageLabel = new QLabel(tr("Page ") +QString::number(currentPage+1) + QString(tr(" of ") +QString::number(totalPages)), this);
+    pageLabel->setText(tr("Page ") +QString::number(currentPage+1) + QString(tr(" of ") +QString::number(totalPages)));
+
     pageLeft = new QPushButton();
     pageRight = new QPushButton();
     pageRight->setMaximumWidth(30);
@@ -79,7 +98,8 @@ PopplerViewer::PopplerViewer(const QString &mimeType, const QString &reslid, QWi
     if (totalPages == 1) {
         pageRight->setEnabled(false);
     }
-    pageLeft->setEnabled(false);
+    if (currentPage == 1)
+        pageLeft->setEnabled(false);
 }
 
 
@@ -92,7 +112,8 @@ void PopplerViewer::pageRightPressed() {
         image->save(printImageFile);
         if (item != NULL)
             delete item;
-        item = new QGraphicsPixmapItem(QPixmap::fromImage(*image));
+        QPixmap finalPix = highlightImage();
+        item = new QGraphicsPixmapItem(finalPix);
         scene->addItem(item);
         if (currentPage+1 == totalPages)
             pageRight->setEnabled(false);
@@ -112,7 +133,10 @@ void PopplerViewer::pageLeftPressed() {
         image = new QImage(doc->page(currentPage)->renderToImage());
         if (item != NULL)
             delete item;
-        item = new QGraphicsPixmapItem(QPixmap::fromImage(*image));
+
+        QPixmap finalPix = highlightImage();
+        item = new QGraphicsPixmapItem(finalPix);
+
         scene->addItem(item);
         if (currentPage==0)
             pageLeft->setEnabled(false);
@@ -121,3 +145,64 @@ void PopplerViewer::pageLeftPressed() {
     }
 }
 
+
+// Search for the next page containing text
+void PopplerViewer::findNextPage(QStringList searchHits, QList<QRectF> *searchLocations) {
+
+    int page = currentPage;
+    bool found = false;
+    QLOG_DEBUG() << searchHits.size();
+    searchLocations->clear();
+
+    while (page < doc->numPages() && !found) {
+        for (int i=0; i<searchHits.size(); i++) {
+            QList<QRectF> results = doc->page(page)->search(searchHits[i], Poppler::Page::CaseInsensitive);
+            searchLocations->append(results);
+            if (results.size() > 0) {
+                currentPage = page;
+                return;
+            }
+        }
+        page++;
+    }
+}
+
+
+QPixmap PopplerViewer::highlightImage() {
+    // Highlight any search terms
+    QPixmap overlayPix(image->size());
+    overlayPix.fill(Qt::transparent);
+    QPainter p2(&overlayPix);
+    p2.setBackgroundMode(Qt::TransparentMode);
+    p2.setRenderHint(QPainter::Antialiasing,true);
+    QColor yellow(Qt::yellow);
+    p2.setBrush(yellow);
+
+    QList<QRectF> searchLocations;
+    for (int i=0; i<searchHits.size(); i++) {
+        searchLocations.append(doc->page(currentPage)->search(searchHits[i], Poppler::Page::CaseInsensitive));
+    }
+    for (int i=0; i<searchLocations.size(); i++) {
+        QRectF highlightRect = searchLocations[i];
+        p2.drawRect(highlightRect.x(), highlightRect.y(), highlightRect.width(), highlightRect.height());
+    }
+    if (searchLocations.size() > 0)
+        pageLabel->setStyleSheet("QLabel { background-color : yellow; }");
+    else
+        pageLabel->setStyleSheet("");
+
+
+
+    // Create the actual overlay.  We do this in two steps to avoid
+    // constantly painting the same area
+    QPixmap finalPix(image->size());
+    finalPix.fill(Qt::transparent);
+    QPainter p3(&finalPix);
+    p3.setBackgroundMode(Qt::TransparentMode);
+    p3.setRenderHint(QPainter::Antialiasing,true);
+    p3.drawPixmap(0,0,QPixmap::fromImage(*image));
+    p3.setOpacity(0.4);
+    p3.drawPixmap(0,0,overlayPix);
+    p3.end();
+    return finalPix;
+}

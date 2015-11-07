@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/linkednotebooktable.h"
 #include "global.h"
 #include "filters/filtercriteria.h"
+#include "filters/filterengine.h"
 #include "utilities/mimereference.h"
 
 #include <QFileSystemModel>
@@ -63,7 +64,7 @@ void NoteFormatter::setNote(Note n, bool pdfPreview) {
     this->pdfPreview = pdfPreview;
     this->note = n;
     content = "";
-    this->enableHighlight = true;
+    //this->enableHighlight = true;
     readOnly = false;
     inkNote = false;
     NoteAttributes attributes;
@@ -89,13 +90,13 @@ QString NoteFormatter::getPage() {
 
 /* If we have search criteria, then we highlight the text matching
   those results in the note. */
-void NoteFormatter::setHighlight() {
-    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
-    if (criteria->isSearchStringSet())
-        enableHighlight = true;
-    else
-        enableHighlight = false;
-}
+//void NoteFormatter::setHighlight() {
+//    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
+//    if (criteria->isSearchStringSet())
+//        enableHighlight = true;
+//    else
+//        enableHighlight = false;
+//}
 
 /* If we are here because we are viewing note history, then we
   set the flag here.  Note history is almost the same as a regular
@@ -562,7 +563,14 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
 // Build an icon for any attachments
 QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 
+    FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     // First get the icon for this type of file
+    resourceHighlight = false;
+    if (criteria->isSearchStringSet() && criteria->getSearchString() != "") {
+        FilterEngine engine;
+        resourceHighlight = engine.resourceContains(lid, criteria->getSearchString(), NULL);
+    }
+
     QString fileName = global.fileManager.getDbaDirPath(QString::number(lid) +appl);
     QIcon icon;
     QFileInfo info(fileName);
@@ -596,7 +604,10 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     QPoint textPoint(40,15);
     QPoint sizePoint(40,29);
     QPixmap pixmap(width,37);
-    pixmap.fill();
+    if (resourceHighlight) {
+        pixmap.fill(Qt::yellow);
+    } else
+        pixmap.fill();
 
     p.begin(&pixmap);
     p.setFont(font);
@@ -615,6 +626,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
         size = size/1024;
         unit= QString("MB");
     }
+
     p.drawText(sizePoint, QString::number(size).trimmed() +" " +unit);
     p.drawRect(0,0,width-1,37-1);   // Draw a rectangle around the image.
     p.end();

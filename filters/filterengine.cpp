@@ -2083,3 +2083,69 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) 
         sql.finish();
     }
 }
+
+
+
+// Check if a resource contains a specific search string.  Used in highlighting PDFs & attachments
+bool FilterEngine::resourceContains(qint32 resourceLid, QString searchString, QStringList *returnHits) {
+    bool returnValue = false;
+    if (returnHits != NULL)
+        returnHits->empty();
+    NSqlQuery query(global.db);
+    query.prepare("select lid from SearchIndex where lid=:resourceLid and weight>=:weight and content match :word");
+    QStringList terms;
+    splitSearchTerms(terms, searchString);
+    for (int i=0; i<terms.size(); i++) {
+
+        // ignore special search terms
+        if (!searchString.startsWith("notebook:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-notebook:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("stack:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-stack:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("todo:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-todo:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("tag:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-tag:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("intitle:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-intitle:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("resource:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-resource:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("longitude:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-longitude:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("latitude:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-latitude:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("altitude:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-altitude:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("author:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-author:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("source:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-source:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("sourceapplication:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-sourceapplication:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("contentclass:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-contentclass:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("recotype:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-recotype:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("placename:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-placename:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("created:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-created:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("updated:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-updated:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("subjectdate:", Qt::CaseInsensitive) &&
+                !searchString.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
+                    query.bindValue(":resourceLid", resourceLid);
+                    query.bindValue(":weight", global.getMinimumRecognitionWeight());
+                    query.bindValue(":word", terms[i]);
+                    query.exec();
+                    if (query.next()) {
+                        returnValue = true;
+                        if (returnHits != NULL)
+                            returnHits->append(terms[i]);
+                        else
+                            return true;
+                    }
+        }
+    }
+    return returnValue;
+}

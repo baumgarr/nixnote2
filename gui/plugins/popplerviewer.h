@@ -57,6 +57,10 @@ private:
     QPushButton *pageRight;
     qint32 lid;
     QString printImageFile;
+    QStringList searchHits;
+    void findNextPage(QStringList searchHits, QList<QRectF> *searchLocations);
+    QPixmap highlightImage();
+
 
 public:
     Poppler::Document *doc;

@@ -182,7 +182,7 @@ public:
 
     QReadWriteLock  *dbLock;                               // Database read/write lock mutex
 
-    QHash<int, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
+    QHash<qint32, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
 
     void setup(StartupConfig config);                         // Setup the global variables
     QString getProgramDirPath();                              // Get the path the program is executing from
