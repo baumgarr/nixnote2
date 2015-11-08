@@ -1232,7 +1232,7 @@ void NBrowserWindow::fontSizeSelected(int index) {
 
 
 void NBrowserWindow::insertHtml(QString html) {
-    QString script = QString("document.execCommand('insertHtml', false, '"+html+"');");
+    QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(html);
     editor->page()->mainFrame()->evaluateJavaScript(script);
     microFocusChanged();
 }
@@ -3254,10 +3254,17 @@ void NBrowserWindow::hideHtmlEntities() {
 
 void NBrowserWindow::handleUrls(const QMimeData *mime) {
     QList<QUrl> urlList = mime->urls();
+    bool ctrlModifier = QApplication::keyboardModifiers() & Qt::ControlModifier;
     for (int i=0; i<urlList.size(); i++) {
         QString file  = urlList[i].toString();
-        if (file.toLower().startsWith("file://")) {
+        if (file.toLower().startsWith("file://") && !ctrlModifier) {
             attachFileSelected(file.mid(7));
+            return;
+        }
+        if (file.toLower().startsWith("file://") && ctrlModifier) {
+            QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(file).arg(file).arg(file);
+            QLOG_DEBUG() << url;
+            insertHtml(url);
             return;
         }
 

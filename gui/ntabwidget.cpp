@@ -439,7 +439,10 @@ void NTabWidget::noteContentEdited(QString uuid, qint32 lid, QString content) {
     // Invalidate the cache (if needed)
     if (global.cache.contains(lid)) {
         NoteCache *cache = global.cache[lid];
-        cache->noteContent = content.toUtf8();
+        if (cache != NULL)
+            cache->noteContent = content.toUtf8();
+        else
+            global.cache.remove(lid);
     }
 }
 
