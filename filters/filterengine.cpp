@@ -2087,12 +2087,18 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) 
 
 
 // Check if a resource contains a specific search string.  Used in highlighting PDFs & attachments
+// This funciton is used in two different ways.  If the *returnHits pointer is NULL, it searches
+// for the first match in a PDF and exits with true/false if a match is found.  If the pointer is
+// not null, it will return a list of all of the searchString terms that are found.  This is useful
+// in knowing what to highlight in a PDF.
 bool FilterEngine::resourceContains(qint32 resourceLid, QString searchString, QStringList *returnHits) {
     bool returnValue = false;
     if (returnHits != NULL)
         returnHits->empty();
     NSqlQuery query(global.db);
+    NSqlQuery query2(global.db);
     query.prepare("select lid from SearchIndex where lid=:resourceLid and weight>=:weight and content match :word");
+    query2.prepare("select lid from SearchIndex where lid=:resourceLid and weight>=:weight and content like :word");
     QStringList terms;
     splitSearchTerms(terms, searchString);
     for (int i=0; i<terms.size(); i++) {
@@ -2134,17 +2140,35 @@ bool FilterEngine::resourceContains(qint32 resourceLid, QString searchString, QS
                 !searchString.startsWith("-updated:", Qt::CaseInsensitive) &&
                 !searchString.startsWith("subjectdate:", Qt::CaseInsensitive) &&
                 !searchString.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
+            QString term = terms[i];
+            if (term.endsWith("*"))
+                term.chop(1);
+            if (term.startsWith("*")) {
+                term = term.mid(1);
+                query2.bindValue(":resourceLid", resourceLid);
+                query2.bindValue(":weight", global.getMinimumRecognitionWeight());
+                query2.bindValue(":word", "%"+term+"%");
+                query2.exec();
+                if (query2.next()) {
+                    returnValue = true;
+                    if (returnHits != NULL)
+                        returnHits->append(term);
+                    else
+                        return true;
+                }
+            } else {
                     query.bindValue(":resourceLid", resourceLid);
                     query.bindValue(":weight", global.getMinimumRecognitionWeight());
-                    query.bindValue(":word", terms[i]);
+                    query.bindValue(":word", term);
                     query.exec();
                     if (query.next()) {
                         returnValue = true;
                         if (returnHits != NULL)
-                            returnHits->append(terms[i]);
+                            returnHits->append(term);
                         else
                             return true;
                     }
+            }
         }
     }
     return returnValue;
