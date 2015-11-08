@@ -151,7 +151,6 @@ void PopplerViewer::findNextPage(QStringList searchHits, QList<QRectF> *searchLo
 
     int page = currentPage;
     bool found = false;
-    QLOG_DEBUG() << searchHits.size();
     searchLocations->clear();
 
     while (page < doc->numPages() && !found) {
