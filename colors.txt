@@ -1,0 +1,8 @@
+# This file is used to add custom colors to the background color options for a note.
+# All lines are in the value of "text name"="color value".  The "text name" is the 
+# display name that appears in the title.  The "color value" is either the color
+# name or the hex value of the color.
+#
+# All lines beginning with a # are treated as a comment.
+#
+#Light Gray=cccccc

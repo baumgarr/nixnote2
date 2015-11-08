@@ -26,6 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMenu>
 #include <QNetworkRequest>
 #include <QAction>
+#include <QSignalMapper>
 
 #include "gui/nbrowserwindow.h"
 #include "gui/browserWidgets/ntitleeditor.h"
@@ -43,6 +44,7 @@ class NWebView : public QWebView
 private:
     QAction *setupColorMenuOption(QString color);
     void setupShortcut(QAction *action, QString text);
+    QSignalMapper *backgroundColorMapper;
 
 public:
     explicit NWebView(NBrowserWindow *parent = 0);
@@ -96,17 +98,7 @@ public slots:
     void editAlert();
     void decryptText(QString id, QString text, QString hint);
     void contextMenuEvent(QContextMenuEvent *event);
-    void setBackgroundWhite();
-    void setBackgroundRed();
-    void setBackgroundBlue();
-    void setBackgroundGreen();
-    void setBackgroundYellow();
-    void setBackgroundBlack();
-    void setBackgroundPurple();
-    void setBackgroundBrown();
-    void setBackgroundGrey();
-    void setBackgroundOrange();
-    void setBackgroundPowderBlue();
+    void setBackgroundColor(QString color);
     void printNodeName(QString s);
     void setTitleEditor(NTitleEditor *editor);
     void focusOutEvent(QFocusEvent *e);

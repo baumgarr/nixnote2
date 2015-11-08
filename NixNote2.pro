@@ -218,7 +218,8 @@ SOURCES += main.cpp\
     email/quotedprintable.cpp \
     email/smtpclient.cpp \
     dialog/preferences/emailpreferences.cpp \
-    dialog/emaildialog.cpp
+    dialog/emaildialog.cpp \
+    settings/colorsettings.cpp
 
 
 
@@ -400,7 +401,8 @@ HEADERS  += nixnote.h \
     email/smtpclient.h \
     email/smtpexports.h \
     dialog/preferences/emailpreferences.h \
-    dialog/emaildialog.h
+    dialog/emaildialog.h \
+    settings/colorsettings.h
 
 
 

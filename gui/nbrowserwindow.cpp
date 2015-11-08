@@ -1844,6 +1844,9 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
          +QString("}")
          +QString("changeBackground('" +value+"');");
      editor->page()->mainFrame()->evaluateJavaScript(js);
+     NoteTable noteTable(global.db);
+     noteTable.setDirty(this->lid, true);
+     this->editor->isDirty = true;
      editor->setFocus();
      microFocusChanged();
  }

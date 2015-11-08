@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMessageBox>
 #include <QtWebKit>
 #include <QFileDialog>
+#include "settings/colorsettings.h"
 
 //#include "./libencrypt/encrypt_global.h"
 //#include "./libencrypt/encrypt.h"
@@ -91,39 +92,20 @@ NWebView::NWebView(NBrowserWindow *parent) :
 
     QMenu *colorMenu = new QMenu(tr("Background Color"), this);
     colorMenu->setFont(global.getGuiFont(font()));
-    QAction *action = setupColorMenuOption(tr("White"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundWhite()));
-    action = setupColorMenuOption(tr("Red"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundRed()));
-    action = setupColorMenuOption(tr("Blue"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundBlue()));
-    action = setupColorMenuOption(tr("Green"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundGreen()));
-    action = setupColorMenuOption(tr("Yellow"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundYellow()));
-    action = setupColorMenuOption(tr("Black"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundBlack()));
-    action = setupColorMenuOption(tr("Gray"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundGrey()));
-    action = setupColorMenuOption(tr("Purple"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundPurple()));
-    action = setupColorMenuOption(tr("Brown"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundBrown()));
-    action = setupColorMenuOption(tr("Orange"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundOrange()));
-    action = setupColorMenuOption(tr("Powder Blue"));
-    colorMenu->addAction(action);
-    connect(action, SIGNAL(triggered()), this, SLOT(setBackgroundPowderBlue()));
+
+    // Build the background color menu
+    backgroundColorMapper = new QSignalMapper(this);
+    QAction *action;
+    ColorSettings colorSettings;
+    QList< QPair<QString,QString> > colorList = colorSettings.colorList();
+    for (int i=0; i<colorList.size(); i++) {
+        action = colorMenu->addAction(colorList[i].first);
+        backgroundColorMapper->setMapping(action, colorList[i].second);
+        connect(action, SIGNAL(triggered()), backgroundColorMapper, SLOT(map()));
+        connect(backgroundColorMapper, SIGNAL(mapped(QString)), this, SLOT(setBackgroundColor(QString)));
+    }
+
+//    QAction *action = setupColorMenuOption(tr("White"));
 
     contextMenu->addMenu(colorMenu);
     contextMenu->addSeparator();
@@ -421,17 +403,7 @@ void NWebView::downloadAttachment(QNetworkRequest *req) {
 
 
 
-void NWebView::setBackgroundWhite() { parent->setBackgroundColor("white"); }
-void NWebView::setBackgroundRed() { parent->setBackgroundColor("red"); }
-void NWebView::setBackgroundBlue() { parent->setBackgroundColor("blue"); }
-void NWebView::setBackgroundGreen() { parent->setBackgroundColor("green"); }
-void NWebView::setBackgroundYellow() { parent->setBackgroundColor("yellow"); }
-void NWebView::setBackgroundBlack() { parent->setBackgroundColor("black"); }
-void NWebView::setBackgroundPurple() { parent->setBackgroundColor("purple"); }
-void NWebView::setBackgroundBrown() { parent->setBackgroundColor("brown"); }
-void NWebView::setBackgroundGrey() { parent->setBackgroundColor("grey"); }
-void NWebView::setBackgroundOrange() { parent->setBackgroundColor("orange"); }
-void NWebView::setBackgroundPowderBlue() { parent->setBackgroundColor("powderblue"); }
+void NWebView::setBackgroundColor(QString color) { parent->setBackgroundColor(color); }
 
 void NWebView::printNodeName(QString s) {
     QLOG_DEBUG() << s;
