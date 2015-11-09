@@ -1174,8 +1174,19 @@ void NBrowserWindow::todoButtonPressed() {
             "<input TYPE=\"CHECKBOX\" " +
             QString("onMouseOver=\"style.cursor=\\'hand\\'\" ") +
             QString("onClick=\"if(!checked) removeAttribute(\\'checked\\'); else setAttribute(\\'checked\\', \\'checked\\'); editorWindow.editAlert();\" />");
-    editor->page()->mainFrame()->evaluateJavaScript(
-            script_start + todo + script_end);
+
+    QString selectedText = editor->selectedText().trimmed();
+    QRegExp regex("\\r?\\n");
+    QStringList items = selectedText.split(regex);
+    if (items.size() == 0)
+        items.append(" ");
+    QString newLineChar = "<div><br><div>";
+    for (int i=0; i<items.size(); i++) {
+        if (i == items.size()-1)
+            newLineChar = "";
+           editor->page()->mainFrame()->evaluateJavaScript(
+                script_start +todo +items[i] +newLineChar + script_end);
+    }
     editor->setFocus();
     microFocusChanged();
 }
@@ -1663,6 +1674,9 @@ void NBrowserWindow::attachFile() {
      editor->rotateImageRightAction->setEnabled(false);
      editor->rotateImageLeftAction->setEnabled(false);
 
+//     QLOG_DEBUG() << editor->page()->inputMethodQuery(Qt::ImCursorPosition).toInt();
+//     QLOG_DEBUG() << editor->page()->inputMethodQuery(Qt::ImSurroundingText).toString();
+
      insertHyperlink = true;
      currentHyperlink ="";
      insideList = false;
@@ -1684,7 +1698,7 @@ void NBrowserWindow::attachFile() {
         +QString("   var selObj = window.getSelection();")
         +QString("   var selRange = selObj.getRangeAt(0);")
         +QString("   var workingNode = window.getSelection().anchorNode.parentNode;")
-        //+QString("    window.browserWindow.printNodeName(workingNode.firstChild.nodeValue);")
+        //+QString("    window.browserWindow.printNodeName(workingNode.nodeName);")
         +QString("   while(workingNode != null) { ")
         //+QString("      window.browserWindow.printNodeName(workingNode.nodeName);")
         +QString("      if (workingNode.nodeName=='TABLE') {")
