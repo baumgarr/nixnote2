@@ -511,7 +511,7 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
     else
         noteStore = linkedNoteStore;
     try {
-        if (note.updateSequenceNum > 0)
+        if (note.updateSequenceNum.isSet() && note.updateSequenceNum > 0)
             note = noteStore->updateNote(note, token);
         else
             note = noteStore->createNote(note, token);
