@@ -252,6 +252,29 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
         return;
     }
 
+    // Add filename or source url to search index
+    if (r.attributes.isSet()) {
+        NSqlQuery sql(db);
+        ResourceAttributes a = r.attributes;
+        if (a.fileName.isSet()) {
+            sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, :source, :content)");
+            sql.bindValue(":lid", lid);
+            sql.bindValue(":weight", 100);
+            sql.bindValue(":source", "recognition");
+            sql.bindValue(":content", QString(a.fileName));
+            sql.exec();
+        }
+        if (a.sourceURL.isSet()) {
+            sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, :source, :content)");
+            sql.bindValue(":lid", lid);
+            sql.bindValue(":weight", 100);
+            sql.bindValue(":source", "recognition");
+            sql.bindValue(":content", QString(a.sourceURL));
+            sql.exec();
+        }
+    }
+
+
     // Make sure we have something to look through.
     Data recognition;
     if (r.recognition.isSet())
