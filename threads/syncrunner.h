@@ -38,14 +38,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "qevercloud/include/QEverCloud.h"
 using namespace qevercloud;
 
-
-//using namespace apache::thrift;
-//using namespace apache::thrift::protocol;
-//using namespace boost;
-//using namespace apache::thrift::transport;
-//using namespace evernote::edam;
-//using namespace std;
-
 class SyncRunner : public QObject
 {
     Q_OBJECT

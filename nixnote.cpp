@@ -70,6 +70,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/accountmaintenancedialog.h"
 #include "communication/communicationmanager.h"
 #include "utilities/encrypt.h"
+#include <boost/shared_ptr.hpp>
+
 
 
 #include "gui/nmainmenubar.h"
@@ -82,6 +84,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "qevercloud/include/QEverCloudOAuth.h"
 
 using namespace qevercloud;
+using namespace boost;
 
 extern Global global;
 class SyncRunner;

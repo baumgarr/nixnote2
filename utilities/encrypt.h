@@ -47,7 +47,7 @@ public:
     int encrypt(QString &result, QString text, QString passphrase);
     int decrypt(QString &result, QString text, QString passphrase, QString cipher, int length);
     int decrypt(QString &result, QString text, QString passphrase);
-    QByteArray CRC32(QByteArray ba);
+    //QByteArray CRC32(QByteArray ba);
 };
 
 #endif // ENCRYPT_H

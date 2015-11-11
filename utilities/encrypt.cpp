@@ -22,7 +22,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <algorithm>
 #include <stdexcept>
 #include "global.h"
-#include <boost/crc.hpp>
 #include <QCryptographicHash>
 
 extern Global global;
@@ -176,14 +175,14 @@ int EnCrypt::runner(QString &result, QString text, QString passphrase, QString m
 }
 
 
-QByteArray EnCrypt::CRC32(QByteArray ba) {
-    boost::crc_32_type result;
-    result.process_bytes(ba.constData(), ba.size());
-    qulonglong  crc = result.checksum();
-    QByteArray rc;
-    rc.setNum(crc,16);
-    return rc.mid(0,4).toUpper();
-}
+//QByteArray EnCrypt::CRC32(QByteArray ba) {
+//    boost::crc_32_type result;
+//    result.process_bytes(ba.constData(), ba.size());
+//    qulonglong  crc = result.checksum();
+//    QByteArray rc;
+//    rc.setNum(crc,16);
+//    return rc.mid(0,4).toUpper();
+//}
 
 
 

@@ -47,8 +47,6 @@ using namespace qevercloud;
 
 typedef unsigned int SOCKET;
 
-//using boost::shared_ptr;
-
 using namespace std;
 
 //* Userid/password key & secret
