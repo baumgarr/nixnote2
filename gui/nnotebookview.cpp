@@ -335,7 +335,11 @@ void NNotebookView::rebuildTree() {
         }
     }
 
-    // Hide any empty stacks
+    // unhide any empty stacks.  They were hidden above but
+    // we look for any children that are visible.  If they are
+    // visible we make the parent visible.  This way, any stack
+    // that has all hidden chilren are visible, but others are
+    // hidden.
     QHashIterator<qint32, NNotebookViewItem *> h(dataStore);
     while (h.hasNext()) {
         h.next();
