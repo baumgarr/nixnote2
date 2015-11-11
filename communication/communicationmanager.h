@@ -101,6 +101,10 @@ private:
     NoteStore *linkedNoteStore;                               // Linked notestore class
     NoteStore *myNoteStore;                                   // local account notestore class
     void processSyncChunk(SyncChunk &chunk, QString token);   // Deal with a sync chunk.
+    void debugTag(Tag tag);                                   // Dump a tag to the log
+    void debugNote(Note note);
+    void debugField(Optional<QString> field, QString name);
+    void debugField(Optional<qint32> field, QString name);
 
 
 public:
