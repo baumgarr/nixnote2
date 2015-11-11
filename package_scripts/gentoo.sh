@@ -1,6 +1,7 @@
 #!/bin/sh
 
 version="2.0-beta4"
+eversion="2.0_beta4"
 package_dir=$(cd `dirname $0` && pwd)
 
 
@@ -25,15 +26,15 @@ echo "**************************************************"
 
 # Cleanup any old stuff
 
-if [ -e "$package_dir/nixnote2-${version}.ebuild" ] 
+if [ -e "$package_dir/nixnote2-${eversion}.ebuild" ] 
 then
-   rm $package_dir/nixnote2-${version}.ebuild
+   rm $package_dir/nixnote2-${eversion}.ebuild
 fi
 
-cp $package_dir/gentoo/ebuild $package_dir/nixnote2-${version}.ebuild
+cp $package_dir/gentoo/ebuild $package_dir/nixnote2-${eversion}.ebuild
 
 
 #edit the spec file to update the version & architecture
-sed -i "s/__TAG__/$tag/g" $package_dir/nixnote2-${version}.ebuild
-sed -i "s/__VERSION__/$version/g" $package_dir/nixnote2-${version}.ebuild
+sed -i "s/__TAG__/$tag/g" $package_dir/nixnote2-${eversion}.ebuild
+sed -i "s/__VERSION__/$version/g" $package_dir/nixnote2-${eversion}.ebuild
 
