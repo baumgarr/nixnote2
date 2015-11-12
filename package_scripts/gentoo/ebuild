@@ -47,7 +47,7 @@ RDEPEND="${DEPEND}
 		app-text/htmltidy"
 
 src_prepare() {
-
+	lupdate -pro NixNote2.pro -no-obsolete
 	lrelease NixNote2.pro
 	
 	if use qt4; then
