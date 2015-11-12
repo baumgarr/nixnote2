@@ -43,8 +43,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
-using namespace boost;
-
 //* Constructor
 NTableView::NTableView(QWidget *parent) :
     QTableView(parent)

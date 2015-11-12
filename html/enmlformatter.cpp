@@ -167,7 +167,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     b.append(content);
     b.append("</en-note>");
     content.clear();
-    content = b.replace("<body ", "<en-note ");
+    content = b.replace("<body", "<en-note");
 
     postXmlFix();
     return content;

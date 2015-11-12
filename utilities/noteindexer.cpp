@@ -122,6 +122,27 @@ void NoteIndexer::indexResource(qint32 lid) {
 
 
     resourceTable.get(r, lid, false);
+
+    if (r.attributes.isSet()) {
+        ResourceAttributes a = r.attributes;
+        if (a.fileName.isSet()) {
+            sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, :source, :content)");
+            sql.bindValue(":lid", lid);
+            sql.bindValue(":weight", 100);
+            sql.bindValue(":source", "recognition");
+            sql.bindValue(":content", QString(a.fileName));
+            sql.exec();
+        }
+        if (a.sourceURL.isSet()) {
+            sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, :source, :content)");
+            sql.bindValue(":lid", lid);
+            sql.bindValue(":weight", 100);
+            sql.bindValue(":source", "recognition");
+            sql.bindValue(":content", QString(a.sourceURL));
+            sql.exec();
+        }
+    }
+
     indexRecognition(lid, r);
     QString mime = "";
     if (r.mime.isSet())

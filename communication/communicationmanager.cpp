@@ -43,6 +43,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <curl/curl.h>
 #include <curl/easy.h>
+#include "utilities/debugtool.h"
 
 extern Global global;
 
@@ -312,19 +313,27 @@ qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        DebugTool d;
+        d.dumpSavedSearch(search);
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        DebugTool d;
+        d.dumpSavedSearch(search);
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
         handleEDAMSystemException(e);
+        DebugTool d;
+        d.dumpSavedSearch(search);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException";
         handleEDAMNotFoundException(e);
+        DebugTool d;
+        d.dumpSavedSearch(search);
         return false;
     }
 }
@@ -371,6 +380,8 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
         QLOG_ERROR().maybeSpace() << "Exception Type:" << e.type();
         QLOG_ERROR().maybeSpace() << "Exception Msg:" << e.what() << endl;
         QLOG_ERROR() << "Tag name: " << tag.name << endl;
+        DebugTool d;
+        d.dumpTag(tag);
         error.type = CommunicationError::ThriftException;
         return 0;
     } catch (EDAMUserException e) {
@@ -378,15 +389,21 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
         QLOG_ERROR().maybeSpace() << "Tag name: " << tag.name << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        DebugTool d;
+        d.dumpTag(tag);
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
         QLOG_ERROR().maybeSpace() << "Tag name: " << tag.name << endl;
+        DebugTool d;
+        d.dumpTag(tag);
         handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException";
         QLOG_ERROR().maybeSpace() << "Tag name: " << tag.name << endl;
+        DebugTool d;
+        d.dumpTag(tag);
         handleEDAMNotFoundException(e);
         return 0;
     }
@@ -433,18 +450,26 @@ qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        DebugTool d;
+        d.dumpNotebook(notebook);
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        DebugTool d;
+        d.dumpNotebook(notebook);
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
         handleEDAMSystemException(e);
+        DebugTool d;
+        d.dumpNotebook(notebook);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException";
+        DebugTool d;
+        d.dumpNotebook(notebook);
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -486,7 +511,7 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
     else
         noteStore = linkedNoteStore;
     try {
-        if (note.updateSequenceNum > 0)
+        if (note.updateSequenceNum.isSet() && note.updateSequenceNum > 0)
             note = noteStore->updateNote(note, token);
         else
             note = noteStore->createNote(note, token);
@@ -496,34 +521,29 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
         QLOG_ERROR() << "ThriftException:";
         QLOG_ERROR().maybeSpace() << "Exception Type:" << e.type();
         QLOG_ERROR().maybeSpace() << "Exception Msg:" << e.what() << endl;
-        QLOG_ERROR() << "Note title: " << note.title << endl;
+        DebugTool d;
+        d.dumpNote(note);
         error.type = CommunicationError::ThriftException;
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode;
-        QLOG_ERROR().maybeSpace() << "Note title: " << note.title << endl;
-        switch (e.errorCode) {
-        case EDAMErrorCode::BAD_DATA_FORMAT:
-        case EDAMErrorCode::DATA_CONFLICT:
-        case EDAMErrorCode::ENML_VALIDATION:
-          QLOG_DEBUG() << "==== Dumping note content BEGIN ====" << endl
-                       << note.content << endl
-                       << "==== Dumping note content END ====" << endl;
-          break;
-
-        default: break;
-        }
+        DebugTool d;
+        d.dumpNote(note);
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
         QLOG_ERROR().maybeSpace() << "Note title: " << note.title << endl;
+        DebugTool d;
+        d.dumpNote(note);
         handleEDAMSystemException(e);
         return 0;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException";
         QLOG_ERROR().maybeSpace() << "Note title: " << note.title << endl;
+        DebugTool d;
+        d.dumpNote(note);
         handleEDAMNotFoundException(e);
         return false;
     }
@@ -1141,3 +1161,6 @@ void CommunicationManager::loadTagGuidMap() {
     TagTable tagTable(db);
     tagTable.getGuidMap(*this->tagGuidMap);
 }
+
+
+

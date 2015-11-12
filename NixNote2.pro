@@ -219,7 +219,8 @@ SOURCES += main.cpp\
     email/smtpclient.cpp \
     dialog/preferences/emailpreferences.cpp \
     dialog/emaildialog.cpp \
-    settings/colorsettings.cpp
+    settings/colorsettings.cpp \
+    utilities/debugtool.cpp
 
 
 
@@ -402,7 +403,8 @@ HEADERS  += nixnote.h \
     email/smtpexports.h \
     dialog/preferences/emailpreferences.h \
     dialog/emaildialog.h \
-    settings/colorsettings.h
+    settings/colorsettings.h \
+    utilities/debugtool.h
 
 
 

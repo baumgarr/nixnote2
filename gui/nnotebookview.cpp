@@ -301,10 +301,6 @@ void NNotebookView::rebuildTree() {
         i.next();
         NNotebookViewItem *widget = i.value();
         if (widget != NULL) {
-            if (closedLids.contains(widget->lid))
-                widget->setHidden(true);
-            else
-                widget->setHidden(false);
             if (i.value()->stack != "") {
                 NNotebookViewItem *stackWidget = NULL;
                 if (stackStore.contains(i.value()->stack)) {
@@ -320,6 +316,10 @@ void NNotebookView::rebuildTree() {
                 stackWidget->childrenLids.append(i.key());
                 stackWidget->addChild(i.value());
             }
+            if (closedLids.contains(widget->lid))
+                widget->setHidden(true);
+            else
+                widget->setHidden(false);
         }
     }
 
@@ -330,7 +330,21 @@ void NNotebookView::rebuildTree() {
         if (s.value()->childCount() == 0) {
             root->removeChild(s.value());
             stackStore.remove(s.key());
+        } else {
+            s.value()->setHidden(true);  // hide by default.  We'll unhide later when chirdren are found
         }
+    }
+
+    // unhide any empty stacks.  They were hidden above but
+    // we look for any children that are visible.  If they are
+    // visible we make the parent visible.  This way, any stack
+    // that has all hidden chilren are visible, but others are
+    // hidden.
+    QHashIterator<qint32, NNotebookViewItem *> h(dataStore);
+    while (h.hasNext()) {
+        h.next();
+        if (h.value()->parent() != NULL && !h.value()->isHidden())
+            h.value()->parent()->setHidden(false);
     }
 
     this->sortByColumn(NAME_POSITION, Qt::AscendingOrder);

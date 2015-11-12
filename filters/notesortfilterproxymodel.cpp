@@ -49,6 +49,9 @@ bool NoteSortFilterProxyModel::lessThan(const QModelIndex &left, const QModelInd
     QVariant leftData = this->sourceModel()->data(left);
     QVariant rightData = this->sourceModel()->data(right);
 
+    if (left.column() == NOTE_TABLE_IS_DIRTY_POSITION)
+        return leftData.toBool() < rightData.toBool();
+
     if (leftData.type() == QVariant::Invalid || rightData.type() == QVariant::Invalid)
         return true;
 

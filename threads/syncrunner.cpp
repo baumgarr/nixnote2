@@ -1053,7 +1053,10 @@ qint32 SyncRunner::uploadPersonalNotes() {
     for (int i=0; i<validLids.size(); i++) {
         Note note;
         noteTable.get(note, validLids[i],true, true);
-        qint32 oldUsn = note.updateSequenceNum;
+
+        qint32 oldUsn=0;
+        if (note.updateSequenceNum.isSet())
+            oldUsn = note.updateSequenceNum;
         usn = comm->uploadNote(note);
         if (usn == 0) {
             this->communicationErrorHandler();
