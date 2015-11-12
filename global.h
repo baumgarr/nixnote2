@@ -210,6 +210,17 @@ public:
     void setProxyEnabled(bool value);
     QString systemNotifier();
 
+    // Search Behavior
+    void setClearNotebookOnSearch(bool value);
+    void setClearSearchOnNotebook(bool value);
+    void setClearTagsOnSearch(bool value);
+    void setTagSelectionOr(bool value);
+    bool getClearNotebookOnSearch();
+    bool getClearSearchOnNotebook();
+    bool getClearTagsOnSearch();
+    bool getTagSelectionOr();
+
+
     // Middle click settings
     int getMiddleClickAction();
     void setMiddleClickAction(int value);

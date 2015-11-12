@@ -452,9 +452,6 @@ void NNotebookView::buildSelection() {
             newFilter->setSelectedNotes(lids);
         }
     }
-    global.filterCriteria.push_back(newFilter);
-    filterPosition++;
-    global.filterPosition++;
 
     if (selectedItems.size() > 0) {
         newFilter->setNotebook(*(selectedItems[0]));
@@ -469,6 +466,10 @@ void NNotebookView::buildSelection() {
     newFilter->resetSavedSearch = true;
     newFilter->resetTags = true;
     newFilter->resetSearchString = true;
+
+    filterPosition++;
+    global.filterPosition++;
+    global.filterCriteria.push_back(newFilter);
 
     emit updateSelectionRequested();
     emit notebookSelectionChanged(notebookLid);

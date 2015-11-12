@@ -31,7 +31,11 @@ class SearchPreferences : public QWidget
     Q_OBJECT
 private:
     QSpinBox *weight;
-    QCheckBox *syncAttachments;
+    QCheckBox *syncAttachments;  // Disabled for performance reasons
+    QCheckBox *clearSearchOnNotebook;   // Clear search text when notebook changes?
+    QCheckBox *clearNotebookOnSearch;   // Clear notebook on search text changes
+    QCheckBox *clearTagsOnSearch;      // Clear tag selection on search text changes
+    QCheckBox *tagSelectionOr;          // "OR" tag selections.
 
 public:
     explicit SearchPreferences(QWidget *parent = 0);

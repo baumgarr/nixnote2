@@ -405,10 +405,10 @@ void NTagView::buildSelection() {
             global.filterCriteria.removeLast();
     }
 
+    FilterCriteria *oldFilter = global.filterCriteria[global.filterPosition];
+
     filterPosition++;
     FilterCriteria *newFilter = new FilterCriteria();
-    global.filterCriteria.push_back(newFilter);
-    global.filterPosition++;
 
     if (selectedItems.size() > 0) {
         newFilter->setTags(selectedItems);
@@ -418,6 +418,15 @@ void NTagView::buildSelection() {
     newFilter->resetSavedSearch = true;
     newFilter->resetFavorite = true;
     newFilter->resetTags = true;
+    newFilter->resetNotebook=true;
+    if (oldFilter!= NULL && oldFilter->isNotebookSet()) {
+        QTreeWidgetItem *notebook =oldFilter->getNotebook();
+        if (notebook!= NULL)
+            newFilter->setNotebook(*notebook);
+    }
+
+    global.filterCriteria.push_back(newFilter);
+    global.filterPosition++;
 
     emit updateSelectionRequested();
 

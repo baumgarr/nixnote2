@@ -31,17 +31,41 @@ SearchPreferences::SearchPreferences(QWidget *parent) :
     QGridLayout *mainLayout = new QGridLayout(this);
     setLayout(mainLayout);
 
+    int row=0;
+
     syncAttachments = new QCheckBox(tr("Index Attachments"));
-    mainLayout->addWidget(syncAttachments,0,0);
+    mainLayout->addWidget(syncAttachments,row++,0);
     syncAttachments->setChecked(global.synchronizeAttachments());
 
+    // Disabled for performance reasons
+    syncAttachments->setChecked(false);
+    syncAttachments->setVisible(false);
+
+    clearNotebookOnSearch = new QCheckBox(tr("Clear Notebook Selection on Search Text Changes"));
+    mainLayout->addWidget(clearNotebookOnSearch,row++,0);
+    clearNotebookOnSearch->setChecked(global.getClearNotebookOnSearch());
+
+    clearTagsOnSearch = new QCheckBox(tr("Clear Tag Selection on Search Text Changes"));
+    mainLayout->addWidget(clearTagsOnSearch,row++,0);
+    clearTagsOnSearch->setChecked(global.getClearTagsOnSearch());
+
+    clearSearchOnNotebook = new QCheckBox(tr("Clear Search Text on Notebook Changes"));
+    mainLayout->addWidget(clearSearchOnNotebook,row++,0);
+    clearSearchOnNotebook->setChecked(global.getClearSearchOnNotebook());
+
+    tagSelectionOr = new QCheckBox(tr("Show Any Matching Tags When Selecting Multiple Tags"));
+    mainLayout->addWidget(tagSelectionOr,row++,0);
+    tagSelectionOr->setChecked(global.getTagSelectionOr());
+
     weight = new QSpinBox(this);
-    mainLayout->addWidget(new QLabel(tr("Minimum Image Recognition Weight")), 1,0);
-    mainLayout->addWidget(weight,1,1);
+    mainLayout->addWidget(new QLabel(tr("Minimum Image Recognition Weight")), row,0);
+    mainLayout->addWidget(weight,row++,1);
     weight->setMinimum(1);
     weight->setMaximum(100);
     weight->setValue(global.getMinimumRecognitionWeight());
     this->setFont(global.getGuiFont(font()));
+
+    mainLayout->setAlignment(Qt::AlignTop);
 
 }
 
@@ -50,5 +74,9 @@ SearchPreferences::SearchPreferences(QWidget *parent) :
 
 void SearchPreferences::saveValues() {
     global.setMinimumRecognitionWeight(weight->value());
-    global.setSynchronizeAttachments(syncAttachments->isChecked());
+    //global.setSynchronizeAttachments(syncAttachments->isChecked());
+    global.setClearNotebookOnSearch(clearNotebookOnSearch->isChecked());
+    global.setClearTagsOnSearch(clearNotebookOnSearch->isChecked());
+    global.setClearSearchOnNotebook(clearSearchOnNotebook->isChecked());
+    global.setTagSelectionOr(tagSelectionOr->isChecked());
 }

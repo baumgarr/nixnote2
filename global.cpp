@@ -336,6 +336,60 @@ int Global::getMinimumRecognitionWeight() {
     return value;
 }
 
+void Global::setClearNotebookOnSearch(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("clearNotebookOnSearch",value);
+    settings->endGroup();
+}
+
+
+void Global::setClearTagsOnSearch(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("clearTagsOnSearch",value);
+    settings->endGroup();
+}
+
+void Global::setClearSearchOnNotebook(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("clearSearchOnNotebook",value);
+    settings->endGroup();
+}
+
+void Global::setTagSelectionOr(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("tagSelectionOr",value);
+    settings->endGroup();
+}
+
+bool Global::getClearNotebookOnSearch() {
+    settings->beginGroup("Search");
+    bool value = settings->value("clearNotebookOnSearch",false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+bool Global::getClearSearchOnNotebook() {
+    settings->beginGroup("Search");
+    bool value = settings->value("clearSearchOnNotebook",false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+bool Global::getClearTagsOnSearch() {
+    settings->beginGroup("Search");
+    bool value = settings->value("clearTagsOnSearch",false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+bool Global::getTagSelectionOr() {
+    settings->beginGroup("Search");
+    bool value = settings->value("tagSelectionOr",false).toBool();
+    settings->endGroup();
+    return value;
+}
+
 
 
 // Save the minimum recognition weight for an item to be included in a serch result

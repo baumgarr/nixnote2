@@ -87,8 +87,14 @@ extern Global global;
      global.filterPosition++;
 
      newFilter->setSearchString(text());
-     newFilter->resetNotebook = true;
-     newFilter->resetTags = true;
+     if (!global.getClearNotebookOnSearch() && oldFilter->isNotebookSet())
+         newFilter->setNotebook(*oldFilter->getNotebook());
+     if (!global.getClearTagsOnSearch() && oldFilter->isTagsSet()) {
+         QList<QTreeWidgetItem*> items = oldFilter->getTags();
+         newFilter->setTags(items);
+     }
+     newFilter->resetTags=true;
+     newFilter->resetNotebook=true;
      newFilter->resetAttribute = true;
      newFilter->resetFavorite = true;
      newFilter->resetDeletedOnly = true;
