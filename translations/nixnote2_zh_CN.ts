@@ -259,7 +259,7 @@
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="51"/>
         <source>Limit Editor to Web Fonts*</source>
-        <translation type="unfinished">编辑器只使用Web字体</translation>
+        <translation type="unfinished">编辑器只使用Web字体*</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="55"/>
