@@ -4,17 +4,18 @@
 
 EAPI=5
 
-inherit qmake-utils
+inherit qmake-utils versionator
 
 
 if [[ "${PV}" == "9999" ]] ; then
 	inherit git-r3
-	EGIT_REPO_URI="https://github.com/baumgarr/Nixnote2.git"
+	EGIT_REPO_URI="https://github.com/baumgarr/${PN}.git"
 	SLOT="0/9999"
 else
-	SRC_URI="https://github.com/baumgarr/Nixnote2/archive/__TAG__.tar.gz -> Nixnote2-__VERSION__.tar.gz"
+	MY_PV="$(replace_version_separator 2 '-')"
+	SRC_URI="https://github.com/baumgarr/${PN}/archive/v${MY_PV}.tar.gz -> ${PN}-${MY_PV}.tar.gz"
 	SLOT="0/2"   
-	S="${WORKDIR}/Nixnote2-__VERSION__"
+	S="${WORKDIR}/${PN}-${MY_PV}"
 fi
 
 DESCRIPTION="Nixnote - A clone of Evernote for Linux"
