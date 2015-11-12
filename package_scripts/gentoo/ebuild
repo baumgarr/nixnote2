@@ -51,10 +51,10 @@ src_prepare() {
 	lrelease NixNote2.pro
 	
 	if use qt4; then
-		eqmake4 NixNote2.pro
+		eqmake4 NixNote2.pro || die "qmake failed"
 	fi
 	if use qt5; then
-		eqmake5 NixNote2.pro
+		eqmake5 NixNote2.pro || die "qmake failed"
 	fi
 }
 
