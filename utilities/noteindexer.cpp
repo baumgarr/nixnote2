@@ -110,19 +110,23 @@ void NoteIndexer::addTextIndex(int lid, QString content) {
 
 
 
-void NoteIndexer::indexResource(qint32 lid) {
+void NoteIndexer::indexResource(qint32 lid, DatabaseConnection *db) {
+    // Since this can be called from multiple threads, we need to know which DB connection we are using.
+
+    QLOG_DEBUG() << "Fetching resource for index using " << db->getConnectionName();
     Resource r;
-    NSqlQuery sql(global.db);
-    ResourceTable resourceTable(global.db);
+    ResourceTable resourceTable(db);
+    resourceTable.get(r, lid, false);
+
+    NSqlQuery sql(db);
 
     // Delete the old index
+    QLOG_DEBUG() << "Deleting old resource from index";
     sql.prepare("Delete from SearchIndex where lid=:lid");
     sql.bindValue(":lid", lid);
     sql.exec();
 
-
-    resourceTable.get(r, lid, false);
-
+    QLOG_DEBUG() << "Adding attributes to index.";
     if (r.attributes.isSet()) {
         ResourceAttributes a = r.attributes;
         if (a.fileName.isSet()) {

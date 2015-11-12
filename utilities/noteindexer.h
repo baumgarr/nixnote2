@@ -43,7 +43,7 @@ public:
     NoteIndexer();
     void indexNote(qint32 lid);
     void addTextIndex(qint32 lid, QString content);
-    void indexResource(qint32 lid);
+    void indexResource(qint32 lid, DatabaseConnection *db);
     void indexRecognition(qint32 reslid, Resource &r);
     void indexPdf(qint32 reslid);
 };
