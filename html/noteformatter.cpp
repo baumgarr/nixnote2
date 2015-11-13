@@ -66,14 +66,15 @@ void NoteFormatter::setNote(Note n, bool pdfPreview) {
     readOnly = false;
     inkNote = false;
     NoteAttributes attributes;
-    if (note.attributes.isSet())
+    if (note.attributes.isSet()) {
         attributes = note.attributes;
-    QString contentClass;
-    if (attributes.contentClass.isSet())
-        contentClass = attributes.contentClass;
-    if (contentClass != "") {
-        QLOG_DEBUG() << "Content class not empty.  Setting read-only.";
-        readOnly = true;
+        QString contentClass;
+        if (attributes.contentClass.isSet())
+            contentClass = attributes.contentClass;
+        if (contentClass != "") {
+            QLOG_DEBUG() << "Content class not empty.  Setting read-only.";
+            readOnly = true;
+        }
     }
 }
 
@@ -109,11 +110,18 @@ void NoteFormatter::setNoteHistory(bool value) {
 QByteArray NoteFormatter::rebuildNoteHTML() {
     QLOG_TRACE() << "Rebuilding HTML";
 
-    ResourceTable resTable(global.db);
-    resTable.getResourceMap(hashMap, resourceMap, note.guid);
-
     formatError = false;
     readOnly = false;
+
+    ResourceTable resTable(global.db);
+    if (!note.guid.isSet())  {
+        formatError=true;
+        readOnly=true;
+        QLOG_TRACE() << "NOTE GUID IS NOT SET!!!";
+    } else {
+        QLOG_TRACE() << "getting resource from hash";
+        resTable.getResourceMap(hashMap, resourceMap, note.guid);
+    }
 
     QWebPage page;
     QEventLoop loop;
@@ -145,10 +153,12 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
 
     if (!formatError && !readOnly) {
         NotebookTable ntable(global.db);
-        qint32 notebookLid = ntable.getLid(note.notebookGuid);
-        if (ntable.isReadOnly(notebookLid)) {
-            QLOG_DEBUG() << "Notebook is read-only.  Marking note read-only.";
-            readOnly = true;
+        if (note.notebookGuid.isSet()) {
+            qint32 notebookLid = ntable.getLid(note.notebookGuid);
+            if (ntable.isReadOnly(notebookLid)) {
+                QLOG_DEBUG() << "Notebook is read-only.  Marking note read-only.";
+                readOnly = true;
+            }
         }
     }
     if (note.active.isSet() && !note.active) {
@@ -164,6 +174,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
 // This is to turn the <en-media/> tags into <en-media></en-media> tags because
 // QWebPage tends to miss the /> tag and it can cause some text to be missed
 QString NoteFormatter::preHtmlFormat(QString note) {
+    QLOG_TRACE_IN();
     int pos;
 
     // Correct <br></br> because Webkit messes it up.
@@ -182,6 +193,7 @@ QString NoteFormatter::preHtmlFormat(QString note) {
         }
         pos = content.indexOf("<en-media", pos+1);
     }
+    QLOG_TRACE_OUT();
     return content;
 }
 
@@ -194,6 +206,7 @@ QString NoteFormatter::preHtmlFormat(QString note) {
   HTML values, so we turn them into HTML.
   */
 void NoteFormatter::modifyTags(QWebPage &doc) {
+    QLOG_TRACE_IN();
     tempFiles.clear();
 
     // Modify en-media tags
@@ -282,7 +295,7 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
             element.setAttribute("href", "latex:///"+resLid);
         }
     }
-
+    QLOG_TRACE_OUT();
 }
 
 
@@ -292,6 +305,7 @@ void NoteFormatter::modifyTags(QWebPage &doc) {
 /* This function works the same as the addHighlight, but instead of highlighting
   text in a note, it highlights the text in an image. */
 QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
+    QLOG_TRACE_IN();
     if (highlightWords.size() == 0)
         return "";
 
@@ -381,6 +395,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     p3.end();
     finalPix.save(filename);
 
+    QLOG_TRACE_OUT();
     return "this.src='file://"+filename+"';";
 }
 
@@ -389,6 +404,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
 /* Modify an image tag.  Basically we turn it back into a picture, write out the file, and
   modify the ENML */
 void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
+    QLOG_TRACE_IN();
     QString mimetype = enMedia.attribute("type");
     qint32 resLid = 0;
     resLid = hashMap[hash];
@@ -450,12 +466,14 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
     // rename the <enmedia> tag to <img>
     enMedia.setOuterXml(enMedia.toOuterXml().replace("<en-media","<img"));
     enMedia.setOuterXml(enMedia.toOuterXml().replace("</en-media>","</img>"));
+    QLOG_TRACE_OUT();
 }
 
 
 
 // Modify the en-media tag into an attachment
 void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, QString appl) {
+    QLOG_TRACE_IN();
     if (appl.toLower() == "vnd.evernote.ink") {
             QLOG_DEBUG() << "Note is ink-note.  Setting to read-only.";
             inkNote = true;
@@ -554,12 +572,14 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
         enmedia.setOuterXml(enmedia.toOuterXml().replace("<en-media","<a"));
         enmedia.setOuterXml(enmedia.toOuterXml().replace("</en-media>","</a>"));
     }
+    QLOG_TRACE_OUT();
 }
 
 
 
 // Build an icon for any attachments
 QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
+    QLOG_TRACE_IN();
 
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     // First get the icon for this type of file
@@ -633,6 +653,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     QString tmpFile = global.fileManager.getTmpDirPath(QString::number(lid) + QString("_icon.png"));
     pixmap.save(tmpFile, "png");
     return tmpFile;
+    QLOG_TRACE_OUT();
 }
 
 
@@ -640,6 +661,7 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
 
 // Modify the en-to tag into an input field
 void NoteFormatter::modifyTodoTags(QWebElement &todo) {
+    QLOG_TRACE_IN();
     todo.setAttribute("type", "checkbox");
 
     // Checks the en-to tag wheter or not the todo-item is checked or not
@@ -653,6 +675,7 @@ void NoteFormatter::modifyTodoTags(QWebElement &todo) {
     todo.setAttribute("onClick", "if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();");
     todo.setAttribute("style", "cursor: hand;");
     todo.setOuterXml(todo.toOuterXml().replace("en-todo","input"));
+    QLOG_TRACE_OUT();
 }
 
 
@@ -661,6 +684,7 @@ void NoteFormatter::modifyTodoTags(QWebElement &todo) {
 
 /* If we have an ink note, then we need to pull the image and display it */
 bool NoteFormatter::buildInkNote(QWebElement &docElem, QString &hash) {
+    QLOG_TRACE_IN();
 
     ResourceTable resTable(global.db);
     qint32 resLid = resTable.getLidByHashHex(note.guid, hash);
@@ -676,12 +700,15 @@ bool NoteFormatter::buildInkNote(QWebElement &docElem, QString &hash) {
     k.replace("enmedia>", "img>");;
     docElem.setOuterXml(k);
 
+    QLOG_TRACE_OUT();
     return true;
 }
 
 
 
 void NoteFormatter::modifyPdfTags(qint32 resLid, QWebElement &enmedia) {
+    QLOG_TRACE_IN();
+
     enmedia.setAttribute("width", "100%");
     enmedia.setAttribute("height", "100%");
     enmedia.setAttribute("lid", QString::number(resLid));
@@ -689,13 +716,16 @@ void NoteFormatter::modifyPdfTags(qint32 resLid, QWebElement &enmedia) {
     x.replace("en-media", "object");
     enmedia.setOuterXml(x);
     x = enmedia.toOuterXml();
+    QLOG_TRACE_OUT();
 }
 
 
 void NoteFormatter::setHighlightText(QString text) {
+    QLOG_TRACE_IN();
     QStringList temp = text.split(" ");
     for (int i=0; i<temp.size(); i++) {
         if (temp[i].trimmed() != "")
             highlightWords.append(temp[i]);
     }
+    QLOG_TRACE_OUT();
 }

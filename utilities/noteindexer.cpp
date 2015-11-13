@@ -158,6 +158,7 @@ void NoteIndexer::indexResource(qint32 lid, DatabaseConnection *db) {
 //            indexAttachment(noteLid, r);
 //   }
 
+    QLOG_DEBUG() << "Resetting index needed.";
     sql.prepare("delete from DataStore where lid=:lid and key=:key");
     sql.bindValue(":lid", lid);
     sql.bindValue(":key", RESOURCE_INDEX_NEEDED);
