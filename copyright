@@ -3,15 +3,15 @@ Name: NixNote
 Maintainer: Randy Baumgarte <randy@fbn.cx>
 Source: http://github.com/baumgarr/Nixnote2/
 
-Copyright: 2006-2014 Randy Baumgarte <randy@fbn.cx>
+Copyright: 2006-2015 Randy Baumgarte <randy@fbn.cx>
 License: GPL-2+
 
 Files: icons/*
-Copyright: 2006-2014 Randy Baumgarte <randy@fbn.cx>
+Copyright: 2006-2015 Randy Baumgarte <randy@fbn.cx>
 License: GPL-2+
 
 Files: debian/*
-Copyright: 2006-2014 Randy Baumgarte <randy@fbn.cx>
+Copyright: 2006-2015 Randy Baumgarte <randy@fbn.cx>
 License: GPL-2+
 
 License: GPL-2+

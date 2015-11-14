@@ -1,3 +1,20 @@
+NixNote (2.0-beta-5) stable; urgency=low
+  * Added the ability to email notes.
+  * Searching will now highlight PDF results.
+  * Added Print Preview & the ability to only print s
+    elected text.
+  * Notes that are marked as shortcuts are now visible 
+    in the tray icon.
+  * Added the option to use notify-send instead of Qt's 
+    popup notification.
+  * A colors.txt file can be added to customize note
+    background color options.
+  * Basic support for nixnote2-cmd utility.
+  * Various GUI enhancements.
+  * Lots of bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Mon, 16 Nov 2015 14:00:00 -0400
+
+
 NixNote (2.0-beta-4) stable; urgency=low
   * Added the ability to auto-hide the editor tool bar.
   * Added the ability to show/hide more GUI componennts.

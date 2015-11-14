@@ -17,6 +17,7 @@ credit.txt:     Credit of nixnote developers
 gpl.txt:        License description of GPL v2.
 license.txt:    Legal notices for licenses and trademarks
 
+theme.ini: A file containing theme configuration options.
 shortcut_howto.txt: How-to document to setup shortcut keys.
-shurtcut_sample.txt: Its configuration sample
-
+shortcut_sample.txt: Its configuration sample
+colors.txt: A sample coniguration file to customize note bockground color options.
