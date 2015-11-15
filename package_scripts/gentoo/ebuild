@@ -52,8 +52,6 @@ DEPEND="dev-libs/boost
 RDEPEND="${DEPEND}
 		app-text/htmltidy"
 
-# S="${WORKDIR}/Nixnote2"
-
 src_prepare() {
 	lupdate -pro NixNote2.pro -no-obsolete || die
 	lrelease NixNote2.pro || die
