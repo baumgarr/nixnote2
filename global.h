@@ -219,6 +219,7 @@ public:
     bool getClearSearchOnNotebook();
     bool getClearTagsOnSearch();
     bool getTagSelectionOr();
+    void setDebugLevel();
 
 
     // Middle click settings

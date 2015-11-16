@@ -106,7 +106,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 #if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 #endif
-    this->setDebugLevel();
+    global.setDebugLevel();
 
     QTranslator *nixnoteTranslator = new QTranslator();
     QLOG_DEBUG() << "Looking for transaltions: " << global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm");
@@ -2633,38 +2633,10 @@ void NixNote::openPreferences() {
         }
         indexRunner.officeFound = global.synchronizeAttachments();
     }
-    setDebugLevel();
+    global.setDebugLevel();
 }
 
 
-
-//************************************************
-//* Set the user debug level.
-//************************************************
-void NixNote::setDebugLevel() {
-    global.settings->beginGroup("Debugging");
-    int level = global.settings->value("messageLevel", -1).toInt();
-    global.settings->endGroup();
-
-    // Setup the QLOG functions for debugging & messages
-    QsLogging::Logger& logger = QsLogging::Logger::instance();
-    if (level == QsLogging::TraceLevel)
-        logger.setLoggingLevel(QsLogging::TraceLevel);
-    else if (level == QsLogging::DebugLevel)
-        logger.setLoggingLevel(QsLogging::DebugLevel);
-    else if (level == QsLogging::InfoLevel || level == -1)
-        logger.setLoggingLevel(QsLogging::InfoLevel);
-    else if (level == QsLogging::WarnLevel)
-        logger.setLoggingLevel(QsLogging::WarnLevel);
-    else if (level == QsLogging::ErrorLevel)
-        logger.setLoggingLevel(QsLogging::ErrorLevel);
-    else if (level == QsLogging::FatalLevel)
-        logger.setLoggingLevel(QsLogging::FatalLevel);
-    else {
-        logger.setLoggingLevel(QsLogging::InfoLevel);
-        QLOG_WARN() << "Invalid message logging level " << level;
-    }
-}
 
 
 

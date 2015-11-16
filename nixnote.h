@@ -189,7 +189,6 @@ public:
     //bool notify(QObject* receiver, QEvent* event);
     bool event(QEvent *event);
     LineEdit *searchText;
-    void setDebugLevel();
     NTabWidget *tabWindow;
 
 
