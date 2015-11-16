@@ -39,11 +39,13 @@ using namespace std;
 
 class NoteIndexer
 {
+private:
+    DatabaseConnection *db;
 public:
-    NoteIndexer();
+    NoteIndexer(DatabaseConnection *db);
     void indexNote(qint32 lid);
     void addTextIndex(qint32 lid, QString content);
-    void indexResource(qint32 lid, DatabaseConnection *db);
+    void indexResource(qint32 lid);
     void indexRecognition(qint32 reslid, Resource &r);
     void indexPdf(qint32 reslid);
 };
