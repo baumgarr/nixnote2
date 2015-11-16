@@ -489,16 +489,28 @@ void NTableView::refreshSelection() {
         }
     }
     setSelectionMode(mode);
-    QLOG_TRACE() << "Highlighting complete";
+
+    if (criteria->isLidSet() && proxy->lidMap->contains(criteria->getLid())) {
+        int rowLocation = proxy->lidMap->value(criteria->getLid());
+        if (rowLocation >= 0) {
+            QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
+            QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
+            rowLocation = proxyIndex.row();
+            selectRow(proxyIndex.row());
+        }
+    }
 
     // Make sure at least one thing is selected
     QLOG_TRACE() << "Selecting one item if nothing else is selected";
     QModelIndexList l = selectedIndexes();
     if (l.size() == 0) {
-        qint32 rowLid;
-        rowLid = selectAnyNoteFromList();
-        criteria->setLid(rowLid);
+        if (!criteria->isLidSet() || !proxy->lidMap->contains(criteria->getLid())) {
+            qint32 rowLid;
+            rowLid = selectAnyNoteFromList();
+            criteria->setLid(rowLid);
+        }
     }
+    QLOG_TRACE() << "Highlighting complete";
 
     QLOG_TRACE() << "refleshSelection() complete";
     this->blockSignals(false);
