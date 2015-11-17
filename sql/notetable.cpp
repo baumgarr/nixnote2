@@ -466,7 +466,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     updateNoteList(lid, t, isDirty, account);
 
     // Experimental index helper
-    NoteIndexer indexer;
+    NoteIndexer indexer(db);
     indexer.indexNote(lid);
     return lid;
 }
@@ -1093,7 +1093,7 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     db->unlock();
 
     // Experimental class to index at save
-    NoteIndexer indexer;
+    NoteIndexer indexer(db);
     indexer.indexNote(lid);
 }
 
@@ -1704,7 +1704,7 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
     query.finish();
-    NoteIndexer indexer;
+    NoteIndexer indexer(db);
     indexer.indexNote(lid);
 
     db->unlock();

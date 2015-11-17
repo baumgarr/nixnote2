@@ -1901,11 +1901,13 @@ void NixNote::newNote() {
 
     FilterCriteria *criteria = new FilterCriteria();
     global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    criteria->unsetTags();
+    criteria->unsetSearchString();
     criteria->setLid(lid);
     global.filterCriteria.append(criteria);
     global.filterPosition++;
-    openNote(false);
     updateSelectionCriteria();
+    openNote(false);
 
     if (global.newNoteFocusToTitle()) {
         tabWindow->currentBrowser()->noteTitle.setFocus();

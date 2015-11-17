@@ -36,13 +36,14 @@ extern Global global;
 using namespace Poppler;
 
 
-NoteIndexer::NoteIndexer()
+NoteIndexer::NoteIndexer(DatabaseConnection *db)
 {
+    this->db = db;
 }
 
 
 void NoteIndexer::indexNote(qint32 lid) {
-    NoteTable ntable(global.db);
+    NoteTable ntable(db);
     Note n;
     ntable.get(n, lid,false,false);
 
@@ -87,7 +88,7 @@ void NoteIndexer::indexNote(qint32 lid) {
 
 void NoteIndexer::addTextIndex(int lid, QString content) {
     // Delete any old content
-    NSqlQuery sql(global.db);
+    NSqlQuery sql(db);
     sql.prepare("Delete from SearchIndex where lid=:lid and source=:source");
     sql.bindValue(":lid", lid);
     sql.bindValue(":source", "text");
@@ -110,7 +111,7 @@ void NoteIndexer::addTextIndex(int lid, QString content) {
 
 
 
-void NoteIndexer::indexResource(qint32 lid, DatabaseConnection *db) {
+void NoteIndexer::indexResource(qint32 lid) {
     // Since this can be called from multiple threads, we need to know which DB connection we are using.
 
     QLOG_DEBUG() << "Fetching resource for index using " << db->getConnectionName();
@@ -147,6 +148,7 @@ void NoteIndexer::indexResource(qint32 lid, DatabaseConnection *db) {
         }
     }
 
+    QLOG_TRACE() << "Indexing recognition";
     indexRecognition(lid, r);
     QString mime = "";
     if (r.mime.isSet())
@@ -169,14 +171,14 @@ void NoteIndexer::indexResource(qint32 lid, DatabaseConnection *db) {
 // Index any resources
 void NoteIndexer::indexRecognition(qint32 reslid, Resource &r) {
 
+    QLOG_TRACE_IN();
     if (!r.noteGuid.isSet() || !r.guid.isSet())
         return;
 
-    ResourceTable rtable(global.db);
     if (reslid <= 0)
         return;
 
-    NSqlQuery sql(global.db);
+    NSqlQuery sql(db);
 
     // Make sure we have something to look through.
     Data recognition;
@@ -192,8 +194,11 @@ void NoteIndexer::indexRecognition(qint32 reslid, Resource &r) {
     // look for text tags
     QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
 
+    QLOG_TRACE() << "Beginning insertion of recognition:";
+    QLOG_TRACE() << "Anchors found: " << anchors.length();
     sql.exec("begin;");
     for (unsigned int i=0;  i<anchors.length(); i++) {
+        QLOG_TRACE() << "Anchor: " << i;
         QApplication::processEvents();
         QDomElement enmedia = anchors.at(i).toElement();
         QString weight = enmedia.attribute("w");
@@ -208,7 +213,9 @@ void NoteIndexer::indexRecognition(qint32 reslid, Resource &r) {
             sql.exec();
         }
     }
+    QLOG_TRACE() << "Commiting";
     sql.exec("commit");
+    QLOG_TRACE_OUT();
 }
 
 
@@ -217,7 +224,9 @@ void NoteIndexer::indexRecognition(qint32 reslid, Resource &r) {
 // way as a note's body
 void NoteIndexer::indexPdf(qint32 reslid) {
 
-    NSqlQuery sql(global.db);
+    QLOG_TRACE_IN();
+
+    NSqlQuery sql(db);
     if (reslid <= 0)
         return;
 
@@ -233,6 +242,7 @@ void NoteIndexer::indexPdf(qint32 reslid) {
         text = text + doc->page(i)->text(rect) + QString(" ");
     }
 
+    QLOG_TRACE() << "Adding PDF";
     // Add the new content.  it is basically a text version of the note with a weight of 100.
     sql.prepare("Insert into SearchIndex (lid, weight, source, content) values (:lid, :weight, :source, :content)");
     sql.bindValue(":lid", reslid);
@@ -240,4 +250,5 @@ void NoteIndexer::indexPdf(qint32 reslid) {
     sql.bindValue(":source", "recognition");
     sql.bindValue(":content", text);
     sql.exec();
+    QLOG_TRACE_OUT();
 }

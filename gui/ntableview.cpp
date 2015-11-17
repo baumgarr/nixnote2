@@ -474,8 +474,8 @@ void NTableView::refreshSelection() {
         historyList.append(criteria->getFavorite());
 
     QLOG_TRACE() << "Highlighting selected rows after refresh";
+    SelectionMode mode = selectionMode();
     if (!criteria->isLidSet()) {
-        SelectionMode mode = selectionMode();
         setSelectionMode(QAbstractItemView::MultiSelection);
         // Check the highlighted LIDs from the history selection.
         for (int i=0; i<historyList.size(); i++) {
@@ -489,7 +489,6 @@ void NTableView::refreshSelection() {
                 }
             }
         }
-        setSelectionMode(mode);
     } else {
         if (proxy->lidMap->contains(criteria->getLid())) {
             for (int j=0; j<proxy->rowCount(); j++) {
@@ -501,16 +500,30 @@ void NTableView::refreshSelection() {
             }
         }
     }
-    QLOG_TRACE() << "Highlighting complete";
+
+    setSelectionMode(mode);
+
+    if (criteria->isLidSet() && proxy->lidMap->contains(criteria->getLid())) {
+        int rowLocation = proxy->lidMap->value(criteria->getLid());
+        if (rowLocation >= 0) {
+            QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
+            QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
+            rowLocation = proxyIndex.row();
+            selectRow(proxyIndex.row());
+        }
+    }
 
     // Make sure at least one thing is selected
     QLOG_TRACE() << "Selecting one item if nothing else is selected";
     QModelIndexList l = selectedIndexes();
     if (l.size() == 0) {
-        qint32 rowLid;
-        rowLid = selectAnyNoteFromList();
-        criteria->setLid(rowLid);
+        if (!criteria->isLidSet() || !proxy->lidMap->contains(criteria->getLid())) {
+            qint32 rowLid;
+            rowLid = selectAnyNoteFromList();
+            criteria->setLid(rowLid);
+        }
     }
+    QLOG_TRACE() << "Highlighting complete";
 
     // Save the list of selected notes
     QList<qint32> selectedNotes;
