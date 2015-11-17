@@ -474,21 +474,33 @@ void NTableView::refreshSelection() {
         historyList.append(criteria->getFavorite());
 
     QLOG_TRACE() << "Highlighting selected rows after refresh";
-    SelectionMode mode = selectionMode();
-    setSelectionMode(QAbstractItemView::MultiSelection);
-    // Check the highlighted LIDs from the history selection.
-    for (int i=0; i<historyList.size(); i++) {
-        if (proxy->lidMap->contains(historyList[i])) {
-            int rowLocation = proxy->lidMap->value(historyList[i]);
-            if (rowLocation >= 0) {
-                QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
-                QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
-                rowLocation = proxyIndex.row();
-                selectRow(proxyIndex.row());
+    if (!criteria->isLidSet()) {
+        SelectionMode mode = selectionMode();
+        setSelectionMode(QAbstractItemView::MultiSelection);
+        // Check the highlighted LIDs from the history selection.
+        for (int i=0; i<historyList.size(); i++) {
+            if (proxy->lidMap->contains(historyList[i])) {
+                int rowLocation = proxy->lidMap->value(historyList[i]);
+                if (rowLocation >= 0) {
+                    QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
+                    QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
+                    rowLocation = proxyIndex.row();
+                    selectRow(proxyIndex.row());
+                }
+            }
+        }
+        setSelectionMode(mode);
+    } else {
+        if (proxy->lidMap->contains(criteria->getLid())) {
+            for (int j=0; j<proxy->rowCount(); j++) {
+                QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
+                qint32 rowLid = idx.data().toInt();
+                if (rowLid == criteria->getLid()) {
+                     selectRow(j);
+                }
             }
         }
     }
-    setSelectionMode(mode);
     QLOG_TRACE() << "Highlighting complete";
 
     // Make sure at least one thing is selected
@@ -499,6 +511,20 @@ void NTableView::refreshSelection() {
         rowLid = selectAnyNoteFromList();
         criteria->setLid(rowLid);
     }
+
+    // Save the list of selected notes
+    QList<qint32> selectedNotes;
+    l = selectedIndexes();
+    for(int i=0; i<l.size(); i++) {
+        QModelIndex idx = l[i];
+        if (idx.column() == NOTE_TABLE_LID_POSITION) {
+            qint32 rowLid = idx.data().toInt();
+            selectedNotes.append(rowLid);
+            QLOG_DEBUG() << rowLid;
+        }
+    }
+    global.filterCriteria[global.filterPosition]->setSelectedNotes(selectedNotes);
+
 
     QLOG_TRACE() << "refleshSelection() complete";
     this->blockSignals(false);

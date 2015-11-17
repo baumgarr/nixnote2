@@ -145,7 +145,6 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     QLOG_TRACE() << "Setting up GUI";
     global.filterPosition = 0;
     this->setupGui();
-    this->openNote(false);
 
     QLOG_TRACE() << "Connecting signals";
     connect(favoritesTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
@@ -200,6 +199,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         this->showMinimized();
         this->newExternalNote();
     }
+
+    //this->openNote(false);
 
     // Init OAuth winwod
     //oauthWindow = NULL;
@@ -407,6 +408,7 @@ void NixNote::setupGui() {
     if (global.settings->value("isMaximized", false).toBool())
         this->setWindowState(Qt::WindowMaximized);
     QString lidListString = global.settings->value("openTabs", "").toString().trimmed();
+    QLOG_DEBUG() << lidListString;
     bool value = global.settings->value("leftPanelVisible", true).toBool();
     if (!value) {
         menuBar->viewLeftPanel->setChecked(false);
@@ -461,6 +463,7 @@ void NixNote::setupGui() {
         viewNoteListNarrow();
 
     QStringList lidList = lidListString.split(' ');
+    QLOG_DEBUG() << lidList.size();
     // If we have old notes we were viewing the last time
     if (lidList.size() > 0) {
         FilterCriteria *filter = global.filterCriteria[global.filterPosition];
