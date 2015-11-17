@@ -533,7 +533,6 @@ void NTableView::refreshSelection() {
         if (idx.column() == NOTE_TABLE_LID_POSITION) {
             qint32 rowLid = idx.data().toInt();
             selectedNotes.append(rowLid);
-            QLOG_DEBUG() << rowLid;
         }
     }
     global.filterCriteria[global.filterPosition]->setSelectedNotes(selectedNotes);

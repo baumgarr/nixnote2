@@ -93,5 +93,4 @@ void NoteHistorySelect::loadData(QList<NoteVersionId> &versions) {
 void NoteHistorySelect::enableImport() {
     importButton.setEnabled(true);
     usn = this->list.selectedItems().at(0)->data(Qt::UserRole).toInt();
-    QLOG_DEBUG() << usn;
 }

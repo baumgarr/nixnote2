@@ -408,7 +408,6 @@ void NixNote::setupGui() {
     if (global.settings->value("isMaximized", false).toBool())
         this->setWindowState(Qt::WindowMaximized);
     QString lidListString = global.settings->value("openTabs", "").toString().trimmed();
-    QLOG_DEBUG() << lidListString;
     bool value = global.settings->value("leftPanelVisible", true).toBool();
     if (!value) {
         menuBar->viewLeftPanel->setChecked(false);
@@ -463,7 +462,6 @@ void NixNote::setupGui() {
         viewNoteListNarrow();
 
     QStringList lidList = lidListString.split(' ');
-    QLOG_DEBUG() << lidList.size();
     // If we have old notes we were viewing the last time
     if (lidList.size() > 0) {
         FilterCriteria *filter = global.filterCriteria[global.filterPosition];
@@ -474,6 +472,9 @@ void NixNote::setupGui() {
             if (i>0)
                 filter = new FilterCriteria();
             int lid = lidList[i].toInt();
+            QList<qint32> selectedLids;
+            selectedLids.append(lid);
+            filter->setSelectedNotes(selectedLids);
             filter->setLid(lid);
             if (i>0)
                 global.filterCriteria.append(filter);
