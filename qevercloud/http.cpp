@@ -107,7 +107,7 @@ void ReplyFetcher::setError(QString errorText)
 QByteArray simpleDownload(QNetworkAccessManager* nam, QNetworkRequest request, QByteArray postData = QByteArray(), int* httpStatusCode = 0) {
     ReplyFetcher f;
     QEventLoop loop;
-    QObject::connect(&f, SIGNAL(replyFetched(qevercloud::ReplyFetcher*)), &loop, SLOT(quit()));
+    QObject::connect(&f, SIGNAL(replyFetched(QObject*)), &loop, SLOT(quit()));
     f.start(nam, request, postData);
     loop.exec(QEventLoop::ExcludeUserInputEvents);
     if(httpStatusCode) *httpStatusCode = f.httpStatusCode();
