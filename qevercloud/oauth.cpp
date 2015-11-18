@@ -77,7 +77,7 @@ void qevercloud::EvernoteOAuthWebView::authenticate(QString host, QString consum
 
     // step 1: acquire temporary token
     ReplyFetcher* replyFetcher = new ReplyFetcher();
-    connect(replyFetcher, QEC_SIGNAL(ReplyFetcher,replyFetched,qevercloud::ReplyFetcher*),
+    connect(replyFetcher, QEC_SIGNAL(ReplyFetcher,replyFetched,QObject*),
             this, QEC_SLOT(EvernoteOAuthWebView,temporaryFinished,QObject*));
     QUrl url(oauthUrlBase_ + QStringLiteral("&oauth_callback=nnoauth"));
 #ifdef USE_QT_WEB_ENGINE
@@ -116,7 +116,7 @@ void qevercloud::EvernoteOAuthWebView::onUrlChanged(const QUrl &url)
 
             // step 4: acquire permanent token
             ReplyFetcher* replyFetcher = new ReplyFetcher();
-            connect(replyFetcher, QEC_SIGNAL(ReplyFetcher,replyFetched,qevercloud::ReplyFetcher*),
+            connect(replyFetcher, QEC_SIGNAL(ReplyFetcher,replyFetched,QObject*),
                     this, QEC_SLOT(EvernoteOAuthWebView,permanentFinished,QObject*));
             QUrl url(oauthUrlBase_ + QStringLiteral("&oauth_token=%1").arg(token));
 #ifdef USE_QT_WEB_ENGINE
