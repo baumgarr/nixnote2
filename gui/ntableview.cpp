@@ -503,15 +503,15 @@ void NTableView::refreshSelection() {
 
     setSelectionMode(mode);
 
-    if (criteria->isLidSet() && proxy->lidMap->contains(criteria->getLid())) {
-        int rowLocation = proxy->lidMap->value(criteria->getLid());
-        if (rowLocation >= 0) {
-            QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
-            QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
-            rowLocation = proxyIndex.row();
-            selectRow(proxyIndex.row());
-        }
-    }
+//    if (criteria->isLidSet() && proxy->lidMap->contains(criteria->getLid())) {
+//        int rowLocation = proxy->lidMap->value(criteria->getLid());
+//        if (rowLocation >= 0) {
+//            QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
+//            QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
+//            rowLocation = proxyIndex.row();
+//            selectRow(proxyIndex.row());
+//        }
+//    }
 
     // Make sure at least one thing is selected
     QLOG_TRACE() << "Selecting one item if nothing else is selected";
@@ -536,7 +536,6 @@ void NTableView::refreshSelection() {
         }
     }
     global.filterCriteria[global.filterPosition]->setSelectedNotes(selectedNotes);
-
 
     QLOG_TRACE() << "refleshSelection() complete";
     this->blockSignals(false);
