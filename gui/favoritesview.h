@@ -41,7 +41,7 @@ private:
     QAction *deleteAction;
     QShortcut *deleteShortcut;
     int maxCount;
-    void dropRecord(qint32 lid, FavoritesRecord::FavoritesRecordType type, int row);
+    void addRecord(qint32 lid, FavoritesRecord::FavoritesRecordType type, int row);
     void buildTreeEntry(FavoritesViewItem *parent, const FavoritesRecord *record);
 
 private slots:
