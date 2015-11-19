@@ -37,12 +37,12 @@ void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opti
     QStyleOptionViewItemV4 options = option;
     initStyleOption(&options, index);
 
-    painter->save();
-
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
 
     if (global.countBehavior == Global::CountNone)
         return;
+
+    painter->save();
 
     qint32 lid = index.data(Qt::UserRole).toInt();
     if (lid > 0) {
