@@ -1142,22 +1142,22 @@
 <context>
     <name>FavoritesView</name>
     <message>
-        <location filename="../gui/favoritesview.cpp" line="67"/>
+        <location filename="../gui/favoritesview.cpp" line="68"/>
         <source>Shortcuts</source>
         <translation>快捷方式</translation>
     </message>
     <message>
-        <location filename="../gui/favoritesview.cpp" line="89"/>
+        <location filename="../gui/favoritesview.cpp" line="90"/>
         <source>Remove from shortcuts</source>
         <translation>从快捷方式里删除</translation>
     </message>
     <message>
-        <location filename="../gui/favoritesview.cpp" line="558"/>
-        <source>Are you sure you want to remove this favorite?</source>
-        <translation>确定要删除这个收藏？</translation>
+        <location filename="../gui/favoritesview.cpp" line="565"/>
+        <source>Are you sure you want to remove this shortcut?</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/favoritesview.cpp" line="559"/>
+        <location filename="../gui/favoritesview.cpp" line="566"/>
         <source>Verify Delete</source>
         <translation>删除确认</translation>
     </message>
@@ -2406,62 +2406,62 @@ Unable to decrypt.</source>
 <context>
     <name>NNotebookView</name>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="68"/>
+        <location filename="../gui/nnotebookview.cpp" line="69"/>
         <source>Notebooks</source>
         <translation>笔记本</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="85"/>
+        <location filename="../gui/nnotebookview.cpp" line="86"/>
         <source>Create New Notebook</source>
         <translation>新建笔记本</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="94"/>
+        <location filename="../gui/nnotebookview.cpp" line="95"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="102"/>
+        <location filename="../gui/nnotebookview.cpp" line="103"/>
         <source>Add to stack</source>
         <translation>添加到组</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="115"/>
+        <location filename="../gui/nnotebookview.cpp" line="116"/>
         <source>New stack</source>
         <translation>新建组</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="118"/>
+        <location filename="../gui/nnotebookview.cpp" line="119"/>
         <source>Remove from stack</source>
         <translation>从组中删除</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="122"/>
+        <location filename="../gui/nnotebookview.cpp" line="123"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="130"/>
+        <location filename="../gui/nnotebookview.cpp" line="131"/>
         <source>Properties</source>
         <translation>性质</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="640"/>
+        <location filename="../gui/nnotebookview.cpp" line="641"/>
         <source>Are you sure you want to delete this notebook?</source>
         <translation>确定要删除这个笔记本？</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="641"/>
+        <location filename="../gui/nnotebookview.cpp" line="642"/>
         <source>Verify Delete</source>
         <translation>删除确认</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="796"/>
+        <location filename="../gui/nnotebookview.cpp" line="797"/>
         <source>New Stack (</source>
         <translation>新建组(</translation>
     </message>
     <message>
-        <location filename="../gui/nnotebookview.cpp" line="796"/>
+        <location filename="../gui/nnotebookview.cpp" line="797"/>
         <source>)</source>
         <translation>)</translation>
     </message>
@@ -2469,7 +2469,7 @@ Unable to decrypt.</source>
 <context>
     <name>NSearchView</name>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="62"/>
+        <location filename="../gui/nsearchview.cpp" line="65"/>
         <source>Saved Searches</source>
         <translation>已保存搜索项</translation>
     </message>
@@ -2479,27 +2479,27 @@ Unable to decrypt.</source>
         <translation type="unfinished">创建保存的搜索项</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="84"/>
+        <location filename="../gui/nsearchview.cpp" line="83"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="92"/>
+        <location filename="../gui/nsearchview.cpp" line="90"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="101"/>
+        <location filename="../gui/nsearchview.cpp" line="94"/>
         <source>Properties</source>
         <translation>性质</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="389"/>
+        <location filename="../gui/nsearchview.cpp" line="404"/>
         <source>Are you sure you want to delete this saved search?</source>
         <translation>确定要删除这个搜索项？</translation>
     </message>
     <message>
-        <location filename="../gui/nsearchview.cpp" line="390"/>
+        <location filename="../gui/nsearchview.cpp" line="405"/>
         <source>Verify Delete</source>
         <translation>删除确认</translation>
     </message>
@@ -2626,32 +2626,32 @@ Unable to decrypt.</source>
         <translation>品红</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="605"/>
+        <location filename="../gui/ntableview.cpp" line="642"/>
         <source>Delete </source>
         <translation>删除 </translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="608"/>
+        <location filename="../gui/ntableview.cpp" line="645"/>
         <source>Permanently delete </source>
         <translation>永久删除 </translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="614"/>
+        <location filename="../gui/ntableview.cpp" line="651"/>
         <source>selected note?</source>
         <translation>已选笔记？</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="619"/>
+        <location filename="../gui/ntableview.cpp" line="656"/>
         <source>Verify Delete</source>
         <translation>删除确认</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="884"/>
+        <location filename="../gui/ntableview.cpp" line="921"/>
         <source>Unsynchronized Note</source>
         <translation>未同步笔记</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="885"/>
+        <location filename="../gui/ntableview.cpp" line="922"/>
         <source>This note has never been synchronized.
 Using this in a note link can cause problems unless you synchronize it first.</source>
         <translation>这个笔记从未同步过。
@@ -2769,48 +2769,48 @@ Using this in a note link can cause problems unless you synchronize it first.</s
 <context>
     <name>NTagView</name>
     <message>
-        <location filename="../gui/ntagview.cpp" line="66"/>
-        <location filename="../gui/ntagview.cpp" line="160"/>
+        <location filename="../gui/ntagview.cpp" line="67"/>
+        <location filename="../gui/ntagview.cpp" line="156"/>
         <source>Tags from Personal</source>
         <translation>个人标签</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="90"/>
+        <location filename="../gui/ntagview.cpp" line="91"/>
         <source>Create New Tag</source>
         <translation>新建标签</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="99"/>
+        <location filename="../gui/ntagview.cpp" line="100"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="106"/>
+        <location filename="../gui/ntagview.cpp" line="107"/>
         <source>Rename</source>
         <translation>重命名</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="109"/>
+        <location filename="../gui/ntagview.cpp" line="110"/>
         <source>Merge</source>
         <translation>合并</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="116"/>
+        <location filename="../gui/ntagview.cpp" line="113"/>
         <source>Hide Unassigned</source>
         <translation>隐藏未分配标签</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="122"/>
+        <location filename="../gui/ntagview.cpp" line="119"/>
         <source>Properties</source>
         <translation>性质</translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="158"/>
+        <location filename="../gui/ntagview.cpp" line="154"/>
         <source>Tags from </source>
         <translation>标签来自 </translation>
     </message>
     <message>
-        <location filename="../gui/ntagview.cpp" line="359"/>
+        <location filename="../gui/ntagview.cpp" line="351"/>
         <source>-&lt;Missing Tag&gt;-</source>
         <translation type="unfinished">-&lt;缺少 标签&gt;-</translation>
     </message>
@@ -3034,200 +3034,200 @@ Using this in a note link can cause problems unless you synchronize it first.</s
 <context>
     <name>NixNote</name>
     <message>
-        <location filename="../nixnote.cpp" line="196"/>
+        <location filename="../nixnote.cpp" line="195"/>
         <source>Tidy Not Found</source>
         <translation>未找到Tidy</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="196"/>
+        <location filename="../nixnote.cpp" line="195"/>
         <source>Tidy is not found on this system.
 Until tidy is installed you cannot save any notes.</source>
         <translation>系统中未找到Tidy。
 在安装Tidy之前你无法保存任何笔记。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="268"/>
+        <location filename="../nixnote.cpp" line="269"/>
         <source>ToolBar</source>
         <translation>工具栏</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="279"/>
+        <location filename="../nixnote.cpp" line="280"/>
         <source>Back</source>
         <translation>后退</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="280"/>
+        <location filename="../nixnote.cpp" line="281"/>
         <source>Next</source>
         <translation>前进</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="290"/>
+        <location filename="../nixnote.cpp" line="291"/>
         <source>All Notes</source>
         <translation>所有笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="292"/>
+        <location filename="../nixnote.cpp" line="293"/>
         <source>Sync</source>
         <translation>同步</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="295"/>
+        <location filename="../nixnote.cpp" line="296"/>
         <source>Print</source>
         <translation>打印</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="305"/>
+        <location filename="../nixnote.cpp" line="306"/>
         <source>New Text Note</source>
         <translation>新建文字笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="308"/>
+        <location filename="../nixnote.cpp" line="309"/>
         <source>New Webcam Note</source>
         <translation>新建摄像头笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="320"/>
+        <location filename="../nixnote.cpp" line="321"/>
         <source>Delete</source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="323"/>
+        <location filename="../nixnote.cpp" line="324"/>
         <source>Trunk</source>
         <translation>百宝箱</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="325"/>
+        <location filename="../nixnote.cpp" line="326"/>
         <source>Usage</source>
         <translation>用量</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="504"/>
-        <location filename="../nixnote.cpp" line="2873"/>
+        <location filename="../nixnote.cpp" line="508"/>
+        <location filename="../nixnote.cpp" line="2851"/>
         <source>Screen Capture</source>
         <translation>屏幕截图</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="520"/>
+        <location filename="../nixnote.cpp" line="524"/>
         <source>Show/Hide</source>
         <translation>显示/隐藏</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="532"/>
+        <location filename="../nixnote.cpp" line="536"/>
         <source>Close</source>
         <translation>关闭</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1653"/>
+        <location filename="../nixnote.cpp" line="1657"/>
         <source>Confirm Restore</source>
         <translation>确认恢复</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1669"/>
+        <location filename="../nixnote.cpp" line="1673"/>
         <source>Restore Database</source>
         <translation>恢复数据库</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1672"/>
+        <location filename="../nixnote.cpp" line="1676"/>
         <source>Import Notes</source>
         <translation>导入笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1584"/>
-        <location filename="../nixnote.cpp" line="1670"/>
+        <location filename="../nixnote.cpp" line="1588"/>
+        <location filename="../nixnote.cpp" line="1674"/>
         <source>NixNote Export (*.nnex);;All Files (*.*)</source>
         <translation>NixNote导出格式(*.nnex);;所有文件(*.*)</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="296"/>
+        <location filename="../nixnote.cpp" line="297"/>
         <source>Print the current note</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="298"/>
+        <location filename="../nixnote.cpp" line="299"/>
         <source>Email</source>
         <translation>发送邮件</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="299"/>
+        <location filename="../nixnote.cpp" line="300"/>
         <source>Email the current note</source>
         <translation type="unfinished">发送当前笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="501"/>
+        <location filename="../nixnote.cpp" line="505"/>
         <source>Quick Note</source>
         <translation type="unfinished">快速笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="511"/>
+        <location filename="../nixnote.cpp" line="515"/>
         <source>Shortcut Notes</source>
         <translation>已收藏笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="513"/>
+        <location filename="../nixnote.cpp" line="517"/>
         <source>Pinned Notes</source>
         <translation>已固定笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="515"/>
+        <location filename="../nixnote.cpp" line="519"/>
         <source>Recently Updated Notes</source>
         <translation>最近更新笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1309"/>
-        <location filename="../nixnote.cpp" line="2145"/>
+        <location filename="../nixnote.cpp" line="1313"/>
+        <location filename="../nixnote.cpp" line="2151"/>
         <source>Log in to Evernote</source>
         <translation>登录到Evernote</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1311"/>
-        <location filename="../nixnote.cpp" line="2147"/>
+        <location filename="../nixnote.cpp" line="1315"/>
+        <location filename="../nixnote.cpp" line="2153"/>
         <source>NixNote</source>
         <translation>NixNote</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1569"/>
-        <location filename="../nixnote.cpp" line="1615"/>
-        <location filename="../nixnote.cpp" line="1712"/>
+        <location filename="../nixnote.cpp" line="1573"/>
+        <location filename="../nixnote.cpp" line="1619"/>
+        <location filename="../nixnote.cpp" line="1716"/>
         <source>Error</source>
         <translation>错误</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1569"/>
+        <location filename="../nixnote.cpp" line="1573"/>
         <source>No notes selected.</source>
         <translation>未选择笔记。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1576"/>
+        <location filename="../nixnote.cpp" line="1580"/>
         <source>Backup Database</source>
         <translation>备份数据库</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1578"/>
+        <location filename="../nixnote.cpp" line="1582"/>
         <source>Export Notes</source>
         <translation>导出笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1603"/>
+        <location filename="../nixnote.cpp" line="1607"/>
         <source>Performing backup</source>
         <translation>正在备份</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1605"/>
+        <location filename="../nixnote.cpp" line="1609"/>
         <source>Performing export</source>
         <translation>正在导出</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1622"/>
+        <location filename="../nixnote.cpp" line="1626"/>
         <source>Database backup complete.</source>
         <translation>数据库备份完成。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1624"/>
+        <location filename="../nixnote.cpp" line="1628"/>
         <source>Note extract complete.</source>
         <translation>笔记解压完成。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1650"/>
+        <location filename="../nixnote.cpp" line="1654"/>
         <source>This is used to restore a database from backups.
 It is HIGHLY recommended that this only be used to populate
 an empty database.  Restoring into a database that
@@ -3240,137 +3240,137 @@ Are you sure you want to continue?</source>
 确定要继续吗？</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1673"/>
+        <location filename="../nixnote.cpp" line="1677"/>
         <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
         <translation>NixNote导出格式(*.nnex);;Evernote导出格式(*.enex);;所有文件(*.*)</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1700"/>
+        <location filename="../nixnote.cpp" line="1704"/>
         <source>Restoring database</source>
         <translation>正在恢复数据库</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1702"/>
+        <location filename="../nixnote.cpp" line="1706"/>
         <source>Importing Notes</source>
         <translation>正在导入笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1734"/>
+        <location filename="../nixnote.cpp" line="1738"/>
         <source>Database has been restored.</source>
         <translation>数据库已恢复。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1736"/>
+        <location filename="../nixnote.cpp" line="1740"/>
         <source>Notes have been imported.</source>
         <translation>笔记已导入。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1769"/>
+        <location filename="../nixnote.cpp" line="1773"/>
         <source>Sync Error</source>
         <translation>同步错误</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1769"/>
+        <location filename="../nixnote.cpp" line="1773"/>
         <source>Sync completed with errors.</source>
         <translation>同步完成（有错误）。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1772"/>
+        <location filename="../nixnote.cpp" line="1776"/>
         <source>Sync Complete</source>
         <translation>同步完成</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1772"/>
+        <location filename="../nixnote.cpp" line="1776"/>
         <source>Sync completed successfully.</source>
         <translation>同步完成（成功）。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1854"/>
+        <location filename="../nixnote.cpp" line="1858"/>
         <source>Untitled note</source>
         <translation>未命名笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2165"/>
+        <location filename="../nixnote.cpp" line="2171"/>
         <source>This feature is only available to premium users.</source>
         <translation>此功能仅付费用户可用。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2166"/>
+        <location filename="../nixnote.cpp" line="2172"/>
         <source>Premium Feature</source>
         <translation>高级功能</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2185"/>
+        <location filename="../nixnote.cpp" line="2191"/>
         <source>Error retrieving note.</source>
         <translation>检索笔记错误。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2186"/>
+        <location filename="../nixnote.cpp" line="2192"/>
         <source>Error retrieving note</source>
         <translation>检索笔记错误</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2208"/>
+        <location filename="../nixnote.cpp" line="2214"/>
         <source>Note restored</source>
         <translation>笔记已恢复</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2212"/>
+        <location filename="../nixnote.cpp" line="2218"/>
         <source>No versions of this note can be found.</source>
         <translation>未找到此笔记的旧版本。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2213"/>
+        <location filename="../nixnote.cpp" line="2219"/>
         <source>Note Not Found</source>
         <translation>未找到笔记</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2755"/>
+        <location filename="../nixnote.cpp" line="2733"/>
         <source>Switch to </source>
         <translation>切换到</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2928"/>
+        <location filename="../nixnote.cpp" line="2906"/>
         <source>Reindex Database</source>
         <translation>重建数据库索引</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2928"/>
+        <location filename="../nixnote.cpp" line="2906"/>
         <source>Reindex the entire database?</source>
         <translation>重建整个数据库的索引？</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2937"/>
+        <location filename="../nixnote.cpp" line="2915"/>
         <source>Notes will be reindexed.</source>
         <translation>笔记将重新索引。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2965"/>
+        <location filename="../nixnote.cpp" line="2943"/>
         <source>Unable to find webcam or capture image.</source>
         <translation>无法找到摄像头或捕获图像。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2966"/>
+        <location filename="../nixnote.cpp" line="2944"/>
         <source>Webcam Error</source>
         <translation>摄像头错误</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3110"/>
+        <location filename="../nixnote.cpp" line="3088"/>
         <source>Delete </source>
         <translation>删除</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3113"/>
+        <location filename="../nixnote.cpp" line="3091"/>
         <source>Permanently delete </source>
         <translation>永久删除</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3117"/>
+        <location filename="../nixnote.cpp" line="3095"/>
         <source>this note?</source>
         <translation>这个笔记？</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3121"/>
+        <location filename="../nixnote.cpp" line="3099"/>
         <source>Verify Delete</source>
         <translation>删除确认</translation>
     </message>
@@ -3378,17 +3378,17 @@ Are you sure you want to continue?</source>
 <context>
     <name>NoteFormatter</name>
     <message>
-        <location filename="../html/noteformatter.cpp" line="586"/>
+        <location filename="../html/noteformatter.cpp" line="606"/>
         <source>File</source>
         <translation>文件</translation>
     </message>
     <message>
-        <location filename="../html/noteformatter.cpp" line="617"/>
+        <location filename="../html/noteformatter.cpp" line="637"/>
         <source>Bytes</source>
         <translation>Bytes</translation>
     </message>
     <message>
-        <location filename="../html/noteformatter.cpp" line="621"/>
+        <location filename="../html/noteformatter.cpp" line="641"/>
         <source>KB</source>
         <translation>KB</translation>
     </message>
