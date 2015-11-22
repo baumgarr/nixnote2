@@ -845,10 +845,10 @@ void NixNote::setupSearchTree() {
     leftSeparator3 = new QLabel();
     leftSeparator3->setTextFormat(Qt::RichText);
     leftSeparator3->setText("<hr>");
-    leftPanel->addWidget(leftSeparator3);
+    leftPanel->addSeparator(leftSeparator3);
 
     searchTreeView = new NSearchView(leftPanel);
-    leftPanel->addWidget(searchTreeView);
+    leftPanel->addSearchView(searchTreeView);
     connect(&syncRunner, SIGNAL(searchUpdated(qint32, QString)), searchTreeView, SLOT(searchUpdated(qint32, QString)));
     connect(&syncRunner, SIGNAL(searchExpunged(qint32)), searchTreeView, SLOT(searchExpunged(qint32)));
     //connect(&syncRunner, SIGNAL(syncComplete()),searchTreeView, SLOT(re);
@@ -865,10 +865,10 @@ void NixNote::setupTagTree() {
     leftSeparator2 = new QLabel();
     leftSeparator2->setTextFormat(Qt::RichText);
     leftSeparator2->setText("<hr>");
-    leftPanel->addWidget(leftSeparator2);
+    leftPanel->addSeparator(leftSeparator2);
 
     tagTreeView = new NTagView(leftPanel);
-    leftPanel->addWidget(tagTreeView);
+    leftPanel->addTagView(tagTreeView);
     connect(&syncRunner, SIGNAL(tagUpdated(qint32, QString, QString, qint32)),tagTreeView, SLOT(tagUpdated(qint32, QString, QString, qint32)));
     connect(&syncRunner, SIGNAL(tagExpunged(qint32)), tagTreeView, SLOT(tagExpunged(qint32)));
     connect(&syncRunner, SIGNAL(syncComplete()),tagTreeView, SLOT(rebuildTree()));
@@ -891,10 +891,10 @@ void NixNote::setupAttributeTree() {
     leftseparator4 = new QLabel();
     leftseparator4->setTextFormat(Qt::RichText);
     leftseparator4->setText("<hr>");
-    leftPanel->addWidget(leftseparator4);
+    leftPanel->addSeparator(leftseparator4);
 
     attributeTree = new NAttributeTree(leftPanel);
-    leftPanel->addWidget(attributeTree);
+    leftPanel->addAttributeTree(attributeTree);
     QLOG_TRACE() << "Exiting NixNote.setupAttributeTree()";
 }
 
@@ -908,10 +908,10 @@ void NixNote::setupTrashTree() {
     leftSeparator5 = new QLabel();
     leftSeparator5->setTextFormat(Qt::RichText);
     leftSeparator5->setText("<hr>");
-    leftPanel->addWidget(leftSeparator5);
+    leftPanel->addSeparator(leftSeparator5);
 
     trashTree = new NTrashTree(leftPanel);
-    leftPanel->addWidget(trashTree);
+    leftPanel->addTrashTree(trashTree);
     QLOG_TRACE() << "Exiting NixNote.setupTrashTree()";
     connect(&counterRunner, SIGNAL(trashTotals(qint32)), trashTree, SLOT(updateTotals(qint32)));
 }
@@ -924,7 +924,7 @@ void NixNote::setupTrashTree() {
 void NixNote::setupFavoritesTree() {
     QLOG_TRACE() << "Starting NixNote.setupFavoritesdNotebookTree()";
     favoritesTreeView = new FavoritesView(leftPanel);
-    leftPanel->addWidget(favoritesTreeView);
+    leftPanel->addFavoritesView(favoritesTreeView);
 
 //    connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString,QString, bool, bool)),notebookTreeView, SLOT(notebookUpdated(qint32, QString, QString, bool, bool)));
     connect(&syncRunner, SIGNAL(notebookExpunged(qint32)), favoritesTreeView, SLOT(itemExpunged(qint32)));
@@ -937,7 +937,7 @@ void NixNote::setupFavoritesTree() {
     leftSeparator1 = new QLabel();
     leftSeparator1->setTextFormat(Qt::RichText);
     leftSeparator1->setText("<hr>");
-    leftPanel->addWidget(leftSeparator1);
+    leftPanel->addSeparator(leftSeparator1);
 
     QLOG_TRACE() << "Exiting NixNote.setupFavoritesTree()";
 }
@@ -950,7 +950,7 @@ void NixNote::setupFavoritesTree() {
 void NixNote::setupSynchronizedNotebookTree() {
     QLOG_TRACE() << "Starting NixNote.setupSynchronizedNotebookTree()";
     notebookTreeView = new NNotebookView(leftPanel);
-    leftPanel->addWidget(notebookTreeView);
+    leftPanel->addNotebookView(notebookTreeView);
     connect(&syncRunner, SIGNAL(notebookUpdated(qint32, QString,QString, bool, bool)),notebookTreeView, SLOT(notebookUpdated(qint32, QString, QString, bool, bool)));
     connect(&syncRunner, SIGNAL(syncComplete()),notebookTreeView, SLOT(rebuildTree()));
     connect(&syncRunner, SIGNAL(notebookExpunged(qint32)), notebookTreeView, SLOT(notebookExpunged(qint32)));

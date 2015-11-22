@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include "gui/favoritesviewdelegate.h"
 #include "gui/favoritesviewitem.h"
+#include "gui/widgetpanel.h"
 #include "sql/favoritesrecord.h"
 #include "sql/favoritestable.h"
 #include "sql/tagtable.h"
@@ -543,6 +544,9 @@ void FavoritesView::dragMoveEvent(QDragMoveEvent *event) {
             event->acceptProposedAction();
         return;
     }
+
+    WidgetPanel *parent = (WidgetPanel*)parentWidget();
+    parent->dragMoveHandler(event);
 }
 
 

@@ -23,6 +23,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/savedsearchproperties.h"
 #include "sql/searchtable.h"
 #include "gui/treewidgeteditor.h"
+#include "gui/widgetpanel.h"
 #include "sql/nsqlquery.h"
 
 #include <QHeaderView>
@@ -42,6 +43,8 @@ NSearchView::NSearchView(QWidget *parent) :
     QTreeWidget(parent)
 {
     this->setFont(global.getGuiFont(font()));
+    setAcceptDrops(false);
+    setDragEnabled(true);
 
     filterPosition = -1;
 
@@ -64,15 +67,11 @@ NSearchView::NSearchView(QWidget *parent) :
     this->loadData();
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    //QString qss = "QTreeWidget::branch:closed:has-children  {border-image: none; image: url(qss/branch-closed.png); } QTreeWidget::branch:open:has-children { border-image: none; image: url(qss/branch-open.png); }";
-    //this->setStyleSheet(qss + " QTreeWidget { background-color: rgb(216,216,216);  border: none  }");
-   // this->setStyleSheet(" QTreeWidget {  border: none; background-color:transparent; }");
     connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(calculateHeight()));
     connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(buildSelection()));
 
     addAction = context.addAction(tr("Create Saved Search"));
-    //addAction->setFont(f);
     addAction->setShortcut(QKeySequence(Qt::Key_Insert));
     addAction->setShortcutContext(Qt::WidgetShortcut);
 
@@ -82,7 +81,6 @@ NSearchView::NSearchView(QWidget *parent) :
 
     context.addSeparator();
     deleteAction = context.addAction(tr("Delete"));
-    //deleteAction->setFont(f);
     deleteAction->setShortcut(QKeySequence(Qt::Key_Delete));
 
     deleteShortcut = new QShortcut(this);
@@ -90,16 +88,10 @@ NSearchView::NSearchView(QWidget *parent) :
     deleteShortcut->setContext(Qt::WidgetShortcut);
 
     renameAction = context.addAction(tr("Rename"));
-    //renameAction->setFont(f);
     renameAction->setShortcutContext(Qt::WidgetShortcut);
-
-//    renameShortcut = new QShortcut(this);
-//    renameShortcut->setKey(QKeySequence(Qt::Key_F2));
-//    renameShortcut->setContext(Qt::WidgetShortcut);
 
     context.addSeparator();
     propertiesAction = context.addAction(tr("Properties"));
-    //propertiesAction->setFont(f);
 
     connect(addAction, SIGNAL(triggered()), this, SLOT(addRequested()));
     connect(deleteAction, SIGNAL(triggered()), this, SLOT(deleteRequested()));
@@ -108,7 +100,6 @@ NSearchView::NSearchView(QWidget *parent) :
 
     connect(addShortcut, SIGNAL(activated()), this, SLOT(addRequested()));
     connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
-    //connect(renameShortcut, SIGNAL(activated()), this, SLOT(renameRequested()));
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     this->setFrameShape(QFrame::NoFrame);
 
@@ -132,7 +123,7 @@ void NSearchView::mousePressEvent(QMouseEvent *event)
     QModelIndex item = indexAt(event->pos());
     bool selected = selectionModel()->isSelected(indexAt(event->pos()));
     QTreeView::mousePressEvent(event);
-    if (selected)
+    if (selected && (event->buttons() & Qt::LeftButton))
         selectionModel()->select(item, QItemSelectionModel::Deselect);
 
     for (int i=0; i<this->selectedItems() .size(); i++) {
@@ -163,6 +154,11 @@ void NSearchView::loadData() {
     query.finish();
 }
 
+
+//*************************************************************
+// This function is called when a search has been updated from
+// somewhere else.
+//*************************************************************
 void NSearchView::searchUpdated(qint32 lid, QString name) {
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
@@ -185,15 +181,16 @@ void NSearchView::searchUpdated(qint32 lid, QString name) {
 }
 
 
-
+//*************************************************************
+// This function is called when a search has been removed
+// during a sync.
+//*************************************************************
 void NSearchView::searchExpunged(qint32 lid) {
     // Check if it already exists
     if (this->dataStore.contains(lid)) {
         NSearchViewItem *item = this->dataStore.value(lid);
         item->parent()->removeChild(item);
-//        this->removeItemWidget(item, 0);
         this->dataStore.remove(lid);
-//        delete item;
     }
     this->resetSize();
 }
@@ -201,7 +198,9 @@ void NSearchView::searchExpunged(qint32 lid) {
 
 
 
-
+//*************************************************************
+// Calculate the tree height.
+//*************************************************************
 void NSearchView::calculateHeight()
 {
     int h = 0;
@@ -222,6 +221,8 @@ void NSearchView::calculateHeight()
     }
     setMaximumWidth(sizeHint().width());
 }
+
+
 
 int NSearchView::calculateHeightRec(QTreeWidgetItem * item)
 {
@@ -313,10 +314,6 @@ void NSearchView::updateSelection() {
         for (int i=0; i<selectedItems.size() && criteria->resetSavedSearch; i++) {
             selectedItems[i]->setSelected(false);
         }
-
-//        if (criteria->isNotebookSet()) {
-//            criteria->getNotebook()->setSelected(true);
-//        }
     }
     filterPosition = global.filterPosition;
 
@@ -325,6 +322,10 @@ void NSearchView::updateSelection() {
 
 
 
+//*************************************************************
+// This function is called when a user right-clicks on an
+// item to bring up the popup menu.
+//*************************************************************
 void NSearchView::contextMenuEvent(QContextMenuEvent *event) {
     QList<QTreeWidgetItem*> items = selectedItems();
     if (items.size() == 0) {
@@ -340,7 +341,10 @@ void NSearchView::contextMenuEvent(QContextMenuEvent *event) {
 }
 
 
-
+//*************************************************************
+// This function is called when a user clicks "add" from
+// the popup menu.
+//*************************************************************
 void NSearchView::addRequested() {
     SavedSearchProperties dialog;
     QList<QTreeWidgetItem*> items = selectedItems();
@@ -366,6 +370,11 @@ void NSearchView::addRequested() {
     dataStore.insert(lid, newWidget);
 }
 
+
+//*************************************************************
+// This function is called when a user clicks "properties"
+// from the popup menu.
+//*************************************************************
 void NSearchView::propertiesRequested() {
     SavedSearchProperties dialog;
     QList<QTreeWidgetItem*> items = selectedItems();
@@ -379,6 +388,12 @@ void NSearchView::propertiesRequested() {
     items[0]->setData(NAME_POSITION, Qt::DisplayRole, dialog.name.text().trimmed());
 }
 
+
+
+//*************************************************************
+// This function is called when a user clicks "delete" from
+// the popup menu.
+//*************************************************************
 void NSearchView::deleteRequested() {
     QList<QTreeWidgetItem*> items = selectedItems();
 
@@ -401,6 +416,12 @@ void NSearchView::deleteRequested() {
     emit searchDeleted(lid);
 }
 
+
+
+//*************************************************************
+// This function is called when a user clicks "rename" from
+// the popup menu.
+//*************************************************************
 void NSearchView::renameRequested() {
     editor = new TreeWidgetEditor(this);
     connect(editor, SIGNAL(editComplete()), this, SLOT(editComplete()));
@@ -417,6 +438,11 @@ void NSearchView::renameRequested() {
 }
 
 
+
+//*************************************************************
+// This function is called when a user has finished editing a
+// search.
+//*************************************************************
 void NSearchView::editComplete() {
     QString text = editor->text().trimmed();
     qint32 lid = editor->lid;
@@ -446,17 +472,13 @@ void NSearchView::editComplete() {
 
 QSize NSearchView::sizeHint() {
     return QTreeView::sizeHint();
-//    QSize sz = QTreeView::sizeHint();
-//    int width=0;
-//    for (int i=0; i<columnCount(); ++i) {
-//        width += 2 + columnWidth(i);
-//    }
-//    sz.setWidth(14+width+root->icon(0).availableSizes().at(0).width());  // Add some extra at the end for totals
-//    return sz;
 }
 
 
 
+//*************************************************************
+// Draw the branches of the tree.
+//*************************************************************
 void NSearchView::drawBranches(QPainter *painter, const QRect &rect, const QModelIndex &index) const {
     if (!index.child(0,0).isValid())
         return;
@@ -475,8 +497,13 @@ void NSearchView::drawBranches(QPainter *painter, const QRect &rect, const QMode
 
 
 
+//*************************************************************
+// Process mouse movements.
+//*************************************************************
 void NSearchView::mouseMoveEvent(QMouseEvent *event)
 {
+    QTreeView::mouseMoveEvent(event);
+
     if (currentItem() == NULL)
         return;
 
@@ -497,9 +524,17 @@ void NSearchView::mouseMoveEvent(QMouseEvent *event)
     drag->setMimeData(mimeData);
 
     drag->exec(Qt::MoveAction);
+    QTreeView::mouseMoveEvent(event);
 }
 
 
+
+//*************************************************************
+// Reload icens in the tree.  This is useful if the theme
+// changes.
+//*************************************************************
 void NSearchView::reloadIcons() {
     root->setIcon(NAME_POSITION,global.getIconResource(":searchIcon"));
 }
+
+

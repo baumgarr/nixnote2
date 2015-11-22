@@ -23,25 +23,54 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QScrollArea>
+#include <QLabel>
+#include <QTimer>
+#include "gui/favoritesview.h"
+#include "gui/nnotebookview.h"
+#include "gui/ntagview.h"
+#include "gui/nsearchview.h"
+#include "gui/nattributetree.h"
+#include "gui/ntrashtree.h"
+
 
 class WidgetPanel : public QWidget
 {
     Q_OBJECT
 private:
+    void addWidget(QWidget *widget);
+    FavoritesView *favoritesView;
+    NTagView *tagView;
+    NSearchView *searchView;
+    NNotebookView *notebookView;
+    NTrashTree *trashTree;
+    NAttributeTree *attributeTree;
+    QPoint priorMousePosition;
+    QTimer timer;
+    bool scrollUp;
 
 public:
      QVBoxLayout *vboxLayout;
 
     explicit WidgetPanel(QWidget *parent = 0);
     ~WidgetPanel();
-    void addWidget(QWidget *widget);
     void paintEvent(QPaintEvent *);
     QSize sizeHint();
     QScrollArea *scroll;
+    void dragMoveHandler(QDragMoveEvent *event);
+    void dragEnterHandler(QDragEnterEvent *event);
+    void addFavoritesView(FavoritesView *view);
+    void addNotebookView(NNotebookView *view);
+    void addTagView(NTagView *view);
+    void addSearchView(NSearchView *view);
+    void addAttributeTree(NAttributeTree *view);
+    void addTrashTree(NTrashTree *view);
+    void addSeparator(QLabel *separator);
 
 signals:
 
 public slots:
+    //void dragMoveEvent(QDragMoveEvent *event);
+    void scrollTimer();
 
 };
 
