@@ -46,10 +46,12 @@ sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 rm -rf ${RPM_BUILD_ROOT}
 rm -rf ${RPM_BUILD_DIR}/nixnote2
 
+%define debug_package %{nil}
 
 %prep
 %setup -n nixnote2
 
+%define debug_package %{nil}
 
 %build
 
