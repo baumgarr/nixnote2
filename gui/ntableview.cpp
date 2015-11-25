@@ -310,6 +310,10 @@ NTableView::NTableView(QWidget *parent) :
     // Hide this column because it isn't really used.
     this->setColumnHidden(NOTE_TABLE_REMINDER_ORDER_POSITION, true);
 
+    // Set note list appearance
+    this->setShowGrid(global.showNoteListGrid());
+    this->setAlternatingRowColors(global.alternateNoteListColors());
+
     QLOG_TRACE() << "Exiting NTableView constructor";
 
 }

@@ -68,6 +68,8 @@ public:
     QCheckBox *dynamicTotals;
     QCheckBox *disableEditingOnStartup;
     QCheckBox *newNoteFocusOnTitle;
+    QCheckBox *showNoteListGrid;
+    QCheckBox *alternateNoteListColors;
 
     enum DefaultNotebook {
         UseLastViewedNotebook = 0,
