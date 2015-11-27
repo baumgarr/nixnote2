@@ -110,6 +110,39 @@ void NTabWidget::moveTab(int from, int to) {
 }
 
 
+
+// Show the next tab in the list
+void NTabWidget::nextTab() {
+    if (browserList->size() <= 1)
+        return;
+
+    int i = tabBar->currentIndex()+1;
+    if (i>=stack.count())
+        i=0;
+    tabBar->setCurrentIndex(i);
+    tabBar->raise();
+    stack.setCurrentIndex(i);
+    stack.raise();
+    return;
+}
+
+
+// Show the previous tab in the list
+void NTabWidget::prevTab() {
+    if (browserList->size() <= 1)
+        return;
+
+    int i = tabBar->currentIndex()-1;
+    if (i<0)
+        i=stack.count()-1;
+    tabBar->setCurrentIndex(i);
+    tabBar->raise();
+    stack.setCurrentIndex(i);
+    stack.raise();
+    return;
+}
+
+
 NBrowserWindow* NTabWidget::currentBrowser() {
     // If the current tab has focus, then we return it.
     if (this->browserList->at(tabBar->currentIndex())->hasFocus())

@@ -118,6 +118,8 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     Focus_Note = new QString("Ctrl+E");
     Focus_Author = new QString();
     Focus_Url = new QString();
+    Prev_Tab = new QString("Ctrl+PgUp");
+    Next_Tab = new QString("Ctrl+PgDown");
 
     // Setup value Array
     shortcutMap = new QHash<QString, QString>();

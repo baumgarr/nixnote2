@@ -80,6 +80,9 @@ View_Show_Search				// Show/hide the search box
 View_Show_Quota					// Show/hide the user quota
 View_Show_Zoom					// Show/hide the zoom spinner
 
+Prev_Tab                       Ctrl+PgDown      // Previous tab 
+Next_Tab                       Ctrl+PgUp        // Next Tab
+
 Format_Bold			Ctrl+B		// Bold (duh)
 Format_Underline		Ctrl+U		// Underline
 Format_Italic			Ctrl+I		// Italic

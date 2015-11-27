@@ -108,6 +108,8 @@ public slots:
     void showHtmlEntities();
     void htmlEntitiesClicked(QString entity);
 
+    void nextTab();
+    void prevTab();
 };
 
 #endif // NTABWIDGET_H

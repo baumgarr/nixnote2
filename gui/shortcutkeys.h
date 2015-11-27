@@ -125,6 +125,9 @@ public:
     QString *Focus_Author;					// Switch focus to the author
     QString *Focus_Url;					// Switch focus to the URL
 
+    QString *Prev_Tab;                  // Previous Tab Shortcut
+    QString *Next_Tab;                  // Next Tab Shortcut
+
     QString *Insert_DateTime;				// Insert the current date/time
 
     QHash<QString, QString> *actionMap;

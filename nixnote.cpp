@@ -762,6 +762,16 @@ void NixNote::setupGui() {
     this->setupShortcut(focusAuthorShortcut, "Focus_Author");
     connect(focusAuthorShortcut, SIGNAL(activated()), tabWindow->currentBrowser(), SLOT(authorFocusShortcut()));
 
+    nextTabShortcut = new QShortcut(this);
+    nextTabShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(nextTabShortcut, "Next_Tab");
+    connect(nextTabShortcut, SIGNAL(activated()), tabWindow, SLOT(nextTab()));
+
+    prevTabShortcut = new QShortcut(this);
+    prevTabShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(prevTabShortcut, "Prev_Tab");
+    connect(prevTabShortcut, SIGNAL(activated()), tabWindow, SLOT(prevTab()));
+
 }
 
 
