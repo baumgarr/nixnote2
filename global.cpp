@@ -86,7 +86,7 @@ void Global::setup(StartupConfig startupConfig) {
 
     QString key = "1b73cc55-9a2f-441b-877a-ca1d0131cd2"+
             QString::number(accountId);
-    sharedMemory = new QSharedMemory(key);
+    sharedMemory = new CrossMemoryMapper(key);
 
 
     settingsFile = fileManager.getHomeDirPath("") + "nixnote-"+QString::number(accountId)+".conf";
@@ -104,6 +104,8 @@ void Global::setup(StartupConfig startupConfig) {
     startupConfig.accountId = accountId;
     accountsManager = new AccountsManager(startupConfig.accountId);
     enableIndexing = startupConfig.enableIndexing;
+
+    this->purgeTemporaryFilesOnShutdown=true;
 
     cryptCounter = 0;
     attachmentNameDelimeter = "------";

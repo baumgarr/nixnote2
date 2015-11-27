@@ -18,33 +18,23 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#ifndef BATCHIMPORT_H
-#define BATCHIMPORT_H
+
+#ifndef CMDLINETOOL_H
+#define CMDLINETOOL_H
 
 #include <QObject>
-#include <QXmlStreamReader>
+#include <QSharedMemory>
 
-class BatchImport : public QObject
+#include "settings/startupconfig.h"
+
+class CmdLineTool : public QObject
 {
     Q_OBJECT
-private:
-    QString fileName;
-    int lastError;
-    QString errorMessage;
-    QXmlStreamReader *reader;
-    QString textValue();
-    bool booleanValue();
-    long longValue();
-    qlonglong longlongValue();
-    double doubleValue();
-    short shortValue();
-    int intValue();
-
-
 public:
-    explicit BatchImport(QObject *parent = 0);
-    void import(QString file);
-    qint32 addNoteNode();
+    explicit CmdLineTool(QObject *parent = 0);
+    int run(StartupConfig config);
+    int addNote(StartupConfig config);
+    int queryNotes(StartupConfig config);
 
 signals:
 
@@ -52,4 +42,4 @@ public slots:
 
 };
 
-#endif // BATCHIMPORT_H
+#endif // CMDLINETOOL_H

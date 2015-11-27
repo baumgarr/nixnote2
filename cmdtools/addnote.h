@@ -18,33 +18,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#ifndef BATCHIMPORT_H
-#define BATCHIMPORT_H
+
+#ifndef ADDNOTE_H
+#define ADDNOTE_H
 
 #include <QObject>
-#include <QXmlStreamReader>
+#include <QStringList>
 
-class BatchImport : public QObject
+class AddNote : public QObject
 {
     Q_OBJECT
-private:
-    QString fileName;
-    int lastError;
-    QString errorMessage;
-    QXmlStreamReader *reader;
-    QString textValue();
-    bool booleanValue();
-    long longValue();
-    qlonglong longlongValue();
-    double doubleValue();
-    short shortValue();
-    int intValue();
-
-
 public:
-    explicit BatchImport(QObject *parent = 0);
-    void import(QString file);
-    qint32 addNoteNode();
+    explicit AddNote(QObject *parent = 0);
+    QString title;
+    QString created;
+    QString updated;
+    QString content;
+    QString notebook;
+    QStringList tags;
+    int account;
+
+    void write(QString uuid);
 
 signals:
 
@@ -52,4 +46,4 @@ public slots:
 
 };
 
-#endif // BATCHIMPORT_H
+#endif // ADDNOTE_H

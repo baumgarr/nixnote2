@@ -18,33 +18,34 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#ifndef BATCHIMPORT_H
-#define BATCHIMPORT_H
+#ifndef CMDLINEQUERY_H
+#define CMDLINEQUERY_H
 
 #include <QObject>
-#include <QXmlStreamReader>
+#include <QTextStream>
 
-class BatchImport : public QObject
+class CmdLineQuery : public QObject
 {
     Q_OBJECT
 private:
-    QString fileName;
-    int lastError;
-    QString errorMessage;
-    QXmlStreamReader *reader;
-    QString textValue();
-    bool booleanValue();
-    long longValue();
-    qlonglong longlongValue();
-    double doubleValue();
-    short shortValue();
-    int intValue();
-
+    QTextStream *out;
+    bool stdout;
+    void writeLine(QString line);
+    QString lineBuilder(QString value, QString format, int defaultPadding=0, QChar padChar=' ');
 
 public:
-    explicit BatchImport(QObject *parent = 0);
-    void import(QString file);
-    qint32 addNoteNode();
+    explicit CmdLineQuery(QObject *parent = 0);
+    int account;
+    QString query;
+    QString delimiter;
+    QString outputFormat;
+    bool printHeaders;
+    void write(QList<qint32> lids, QString filename);
+    QString wrap();
+    void unwrap(QString data);
+    int lastError;
+    QString errorMessage;
+    QString returnUuid;
 
 signals:
 
@@ -52,4 +53,4 @@ public slots:
 
 };
 
-#endif // BATCHIMPORT_H
+#endif // CMDLINEQUERY_H

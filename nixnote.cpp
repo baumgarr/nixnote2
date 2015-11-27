@@ -71,7 +71,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "communication/communicationmanager.h"
 #include "utilities/encrypt.h"
 #include <boost/shared_ptr.hpp>
-
+#include "cmdtools/cmdlinequery.h"
 
 
 #include "gui/nmainmenubar.h"
@@ -235,12 +235,14 @@ NixNote::~NixNote()
     while(!counterThread.isFinished());
 
     // Cleanup any temporary files
-    QDir myDir(global.fileManager.getTmpDirPath());
-    QStringList list = myDir.entryList();
-    for (int i=0; i<list.size(); i++) {
-        if (list[i] != "." && list[i] != "..") {
-            QString file = global.fileManager.getTmpDirPath()+ list[i];
-            myDir.remove(file);
+    if (global.purgeTemporaryFilesOnShutdown) {
+        QDir myDir(global.fileManager.getTmpDirPath());
+        QStringList list = myDir.entryList();
+        for (int i=0; i<list.size(); i++) {
+            if (list[i] != "." && list[i] != "..") {
+                QString file = global.fileManager.getTmpDirPath()+ list[i];
+                myDir.remove(file);
+            }
         }
     }
 //    delete db;  // Free up memory used by the database connection
@@ -2360,14 +2362,7 @@ void NixNote::findReplaceAllInNotePressed() {
 //* intervals.  This is useful for cross-program communication.
 //**************************************************************
 void NixNote::heartbeatTimerTriggered() {
-    char *buffer = (char*)malloc(global.sharedMemory->size()); //Why not new?
-    global.sharedMemory->lock();
-    memcpy(buffer, global.sharedMemory->data(), global.sharedMemory->size());
-    memset(global.sharedMemory->data(), 0, global.sharedMemory->size());
-    global.sharedMemory->unlock();
-
-    QByteArray data = QByteArray::fromRawData(buffer, global.sharedMemory->size());
-    //QLOG_ERROR() << "Shared memory data: " << data;
+    QByteArray data = global.sharedMemory->read();
     if (data.startsWith("SYNCHRONIZE")) {
         QLOG_DEBUG() << "Sync requested by shared memory segment.";
         this->synchronize();
@@ -2391,7 +2386,6 @@ void NixNote::heartbeatTimerTriggered() {
         filter.setSearchString(query);
         FilterEngine engine;
         engine.filter(&filter, &results);
-        QString response = "RESPONSE:";
         QString xmlString;
         QXmlStreamWriter dom(&xmlString);
         dom.setAutoFormatting(true);
@@ -2422,17 +2416,10 @@ void NixNote::heartbeatTimerTriggered() {
         dom.writeEndElement();
         dom.writeEndDocument();
 
-        global.sharedMemory->lock();
-        void *memptr = global.sharedMemory->data();
-        response.append(xmlString);
-        memcpy(memptr, response.toStdString().c_str(), response.size());
-        global.sharedMemory->unlock();
-
+        global.sharedMemory->write(xmlString);
     }
     if (data.startsWith("OPEN_NOTE:")) {
-        QLOG_DEBUG() << data;
         QString number = data.mid(10);
-        QLOG_DEBUG() << "opennote " << number;
         qint32 note = number.toInt();
         NoteTable noteTable(global.db);
         if (noteTable.exists(note))
@@ -2441,8 +2428,19 @@ void NixNote::heartbeatTimerTriggered() {
     if (data.startsWith("NEW_NOTE")) {
         this->newExternalNote();
     }
-
-    free(buffer); // Fixes memory leak
+    if (data.startsWith("CMDLINE_QUERY:")) {
+        QString xml = data.mid(14);
+        CmdLineQuery query;
+        query.unwrap(xml.trimmed());
+        QString tmpFile = global.fileManager.getTmpDirPath()+query.returnUuid+".txt";
+        FilterCriteria *filter = new FilterCriteria();
+        FilterEngine engine;
+        filter->setSearchString(query.query);
+        QList<qint32> lids;
+        engine.filter(filter, &lids);
+        query.write(lids, tmpFile);
+    }
+    //free(buffer); // Fixes memory leak
 }
 
 

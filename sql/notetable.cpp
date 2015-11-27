@@ -614,7 +614,6 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
         } else {
             query.bindValue(":reminderDoneTime", 0);
         }
-
     }
 
     qlonglong created = 0;

@@ -18,33 +18,36 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#ifndef BATCHIMPORT_H
-#define BATCHIMPORT_H
+
+#ifndef CROSSMEMORYMAPPER_H
+#define CROSSMEMORYMAPPER_H
 
 #include <QObject>
-#include <QXmlStreamReader>
+#include <QSharedMemory>
 
-class BatchImport : public QObject
+class CrossMemoryMapper : public QObject
 {
     Q_OBJECT
 private:
-    QString fileName;
-    int lastError;
-    QString errorMessage;
-    QXmlStreamReader *reader;
-    QString textValue();
-    bool booleanValue();
-    long longValue();
-    qlonglong longlongValue();
-    double doubleValue();
-    short shortValue();
-    int intValue();
-
+    QString key;
+    QSharedMemory *sharedMemory;
+    char *buffer;
 
 public:
-    explicit BatchImport(QObject *parent = 0);
-    void import(QString file);
-    qint32 addNoteNode();
+    explicit CrossMemoryMapper(QObject *parent = 0);
+    explicit CrossMemoryMapper(QString key, QObject *parent = 0);
+    ~CrossMemoryMapper();
+    void setKey(QString key);
+    bool allocate(int size);
+    bool detach();
+    bool attach();
+    void clearMemory();
+    bool unlock();
+    bool lock();
+    bool isAttached();
+    QByteArray read();
+    void write(QByteArray data);
+    void write(QString data);
 
 signals:
 
@@ -52,4 +55,4 @@ public slots:
 
 };
 
-#endif // BATCHIMPORT_H
+#endif // CROSSMEMORYMAPPER_H

@@ -1,3 +1,23 @@
+/*********************************************************************************
+NixNote - An open-source client for the Evernote service.
+Copyright (C) 2015 Randy Baumgarte
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+***********************************************************************************/
+
+
 #include "batchimport.h"
 
 #include <QStringList>
@@ -8,6 +28,7 @@
 #include "sql/tagtable.h"
 #include "sql/searchtable.h"
 #include "sql/usertable.h"
+#include "utilities/crossmemorymapper.h"
 #include "global.h"
 
 #include <QProgressDialog>
@@ -38,6 +59,7 @@ BatchImport::BatchImport(QObject *parent) : QObject(parent)
 //***********************************************************
 void BatchImport::import(QString file) {
     fileName = file;
+    qint32 newLid = -1;
     errorMessage = "";
 
     lastError = 0;
@@ -52,25 +74,40 @@ void BatchImport::import(QString file) {
     reader = new QXmlStreamReader(&xmlFile);
     while (!reader->atEnd()) {
         reader->readNext();
-        QLOG_DEBUG() << reader->name().toString();
         if (reader->hasError()) {
             errorMessage = reader->errorString();
-            QLOG_ERROR() << "************************* ERROR READING BACKUP " << errorMessage;
+            QLOG_ERROR() << "************************* ERROR READING IMPORT " << errorMessage;
             lastError = 16;
             return;
         }
         if (reader->name().toString().toLower() == "noteadd" && reader->isStartElement()) {
-            addNoteNode();
+            newLid = addNoteNode();
         }
     }
     xmlFile.close();
+
+    QString id = file;
+    int pos = id.lastIndexOf(".");
+    if (pos>0)
+        id = id.mid(0,pos);
+    pos = id.lastIndexOf(QDir::separator());
+    if (pos>0)
+        id = id.mid(pos+1);
+    CrossMemoryMapper sharedMemory(id);
+    if (!sharedMemory.attach())
+        return;
+
+    QString response = QString::number(newLid);
+    sharedMemory.write(response.toAscii());
+    sharedMemory.detach();
 }
 
 
 //***********************************************************
 //* Process a <note> tag
 //***********************************************************
-void BatchImport::addNoteNode() {
+qint32 BatchImport::addNoteNode() {
+    qint32 newLid = -1;
     Note note;
     note.title = QString(tr("Untitled Note"));
     QUuid uuid;
@@ -160,10 +197,10 @@ void BatchImport::addNoteNode() {
                 note.notebookGuid = book;
             }
 
-            ntable.add(0, note, true);
+            newLid = ntable.add(0, note, true);
         }
     }
-    return;
+    return newLid;
 }
 
 

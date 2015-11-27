@@ -1,6 +1,6 @@
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2015 Randy Baumgarte
+Copyright (C) 2014 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -18,33 +18,19 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-#ifndef BATCHIMPORT_H
-#define BATCHIMPORT_H
 
+#ifndef NUUID_H
+#define NUUID_H
+
+#include <QUuid>
 #include <QObject>
-#include <QXmlStreamReader>
 
-class BatchImport : public QObject
+class NUuid : public QObject
 {
     Q_OBJECT
-private:
-    QString fileName;
-    int lastError;
-    QString errorMessage;
-    QXmlStreamReader *reader;
-    QString textValue();
-    bool booleanValue();
-    long longValue();
-    qlonglong longlongValue();
-    double doubleValue();
-    short shortValue();
-    int intValue();
-
-
 public:
-    explicit BatchImport(QObject *parent = 0);
-    void import(QString file);
-    qint32 addNoteNode();
+    explicit NUuid(QObject *parent = 0);
+    QString create();
 
 signals:
 
@@ -52,4 +38,4 @@ public slots:
 
 };
 
-#endif // BATCHIMPORT_H
+#endif // NUUID_H

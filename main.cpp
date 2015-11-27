@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "nixnote.h"
 #include "global.h"
 #include "settings/startupconfig.h"
+#include "cmdtools/cmdlinetool.h"
 
 #include "logger/qslog.h"
 #include <QCoreApplication>
@@ -91,60 +92,25 @@ int main(int argc, char *argv[])
     global.argc = argc;
     global.argv = argv;
 
-    startupConfig.accountId = -1;
-
-    for (int i=1; i<=argc; i++) {
-        QString parm(argv[i]);
-        if (parm == "--help" || parm == "-?") {
-            printf("\n\n");
-            printf("NixNote command line options:\n");
-            printf("  --help or -?                  Show this message\n");
-            printf("  --accountId=<id>              Start with specified user account\n");
-            printf("  --dontStartMinimized          Override option to start minimized\n");
-            printf("  --disableEditing              Disable note editing\n");
-            printf("  --enableIndexing              Enable background Indexing (can cause problems)\n");
-            printf("  --openNote=<lid>              Open a specific note on startup\n");
-            printf("  --forceSystemTrayAvailable    Force the program to accept that\n");
-            printf("                                the desktop supports tray icons.\n");
-            printf("  --startMinimized              Force a startup with NixNote minimized\n");
-            printf("  --syncAndExit                 Synchronize and exit the program.\n");
-            printf("\n\n");
-            return 0;
-        }
-        if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-            parm = parm.mid(12);
-            startupConfig.accountId = parm.toInt();
-        }
-        if (parm.startsWith("--openNote=", Qt::CaseSensitive)) {
-            parm = parm.mid(11);
-            startupConfig.startupNoteLid = parm.toInt();
-        }
-        if (parm == "--disableEditing") {
-            startupConfig.disableEditing = true;
-        }
-        if (parm == "--dontStartMinimized") {
-            startupConfig.forceNoStartMinimized = true;
-        }
-        if (parm == "--startMinimized") {
-            startupConfig.forceStartMinimized = true;
-        }
-        if (parm == "--newNote") {
-            startupConfig.startupNewNote = true;
-        }
-        if (parm == "--syncAndExit") {
-            startupConfig.syncAndExit = true;
-        }
-        if (parm == "--enableIndexing") {
-            startupConfig.enableIndexing = true;
-        }
-        if (parm == "--forceSystemTrayAvailable") {
-            startupConfig.forceSystemTrayAvailable = true;
-        }
-    }
+    int retval = startupConfig.init(argc,argv);
+    if (retval != 0)
+        return retval;
 
     startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
     startupConfig.name = "NixNote";
     global.setup(startupConfig);
+
+
+    // If we want something other than the GUI, try let the CmdLineTool deal with it.
+    if (!startupConfig.gui()) {
+        global.purgeTemporaryFilesOnShutdown=startupConfig.purgeTemporaryFiles;
+        CmdLineTool cmdline;
+        startupConfig.purgeTemporaryFiles=false;
+        int retval = cmdline.run(startupConfig);
+        if (global.sharedMemory->isAttached())
+            global.sharedMemory->detach();
+        return retval;
+    }
 
     QString logPath = global.fileManager.getLogsDirPath("")+"messages.log";
     QsLogging::DestinationPtr fileDestination(
@@ -154,42 +120,33 @@ int main(int argc, char *argv[])
 
     // Show Qt version.  This is useful for debugging
     QLOG_DEBUG() << "Program Home: " << global.fileManager.getProgramDirPath("");
-    QLOG_INFO() << "Built on " << __DATE__ << " at " << __TIME__;
-    QLOG_INFO() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
-    //QLOG_INFO() << "Thrift version: " << PACKAGE_VERSION;
+    QLOG_DEBUG() << "Built on " << __DATE__ << " at " << __TIME__;
+    QLOG_DEBUG() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
 
 
 
     // Create a shared memory region.  We use this to communicate
     // with any other instance that may be running.  If another instance
     // is found we need to either show that one or kill this one.
-    bool memInitNeeded = true;
     QLOG_DEBUG() << "Creating shared segment";
-    QLOG_DEBUG() << global.sharedMemory;
-    if( !global.sharedMemory->create( 512*1024, QSharedMemory::ReadWrite) ) {
+    bool memInitNeeded = true;
+    if( !global.sharedMemory->allocate(512*1024) ) {
         // Attach to it and detach.  This is done in case it crashed.
-        QLOG_DEBUG() << "Attaching to shared segment";
         global.sharedMemory->attach();
-        QLOG_DEBUG() << "Detaching segment";
         global.sharedMemory->detach();
         QLOG_DEBUG() << "Creating segment";
-        if( !global.sharedMemory->create( 512*1024, QSharedMemory::ReadWrite) ) {
+        if( !global.sharedMemory->allocate(512*1024) ) {
             QLOG_DEBUG() << "segment created";
             if (startupConfig.startupNewNote) {
                 global.sharedMemory->attach();
-                global.sharedMemory->lock();
-                void *dataptr = global.sharedMemory->data();
-                memcpy(dataptr, "NEW_NOTE", 8);  // Tell the other guy create a new note
-                QLOG_INFO() << "Another NixNote was found.  Requesting it to start another note";
+                global.sharedMemory->write(QString("NEW_NOTE"));
+//                global.sharedMemory->detach();
                 exit(0);  // Exit this one
             }
             if (startupConfig.startupNoteLid > 0) {
                 global.sharedMemory->attach();
-                global.sharedMemory->lock();
-                void *dataptr = global.sharedMemory->data();
-                QString msg = "OPEN_NOTE:" +QString::number(startupConfig.startupNoteLid) + " ";
-                memcpy(dataptr, msg.toStdString().c_str(), msg.length());  // Tell the other guy to open a note
-                QLOG_INFO() << "Another NixNote was found.  Requesting it to open a note";
+                global.sharedMemory->write("OPEN_NOTE"+QString::number(startupConfig.startupNoteLid) + " ");
+//               global.sharedMemory->detach();
                 exit(0);  // Exit this one
             }
             // If we've gotten this far, we need to either stop this instance or stop the other
@@ -198,30 +155,22 @@ int main(int argc, char *argv[])
             QString startup = global.settings->value("onMultipleInstances", "SHOW_OTHER").toString();
             global.settings->endGroup();
             global.sharedMemory->attach();
-            global.sharedMemory->lock();
-            void *dataptr = global.sharedMemory->data();
-            QLOG_DEBUG() << "Multiple instance found: startup option " << startup;
             if (startup == "SHOW_OTHER") {
-                memcpy(dataptr, "SHOW_WINDOW", 11);  // Tell the other guy to show himself
-                QLOG_INFO() << "Another NixNote was found.  Stopping this instance";
+                global.sharedMemory->write(QString("SHOW_WINDOW"));
+                global.sharedMemory->detach();
                 exit(0);  // Exit this one
             }
             if (startup == "STOP_OTHER") {
-                memcpy(dataptr, "IMMEDIATE_SHUTDOWN", 18);  // Tell the other guy to shut down
+                global.sharedMemory->write(QString("IMMEDIATE_SHUTDOWN"));
                 memInitNeeded = false;
             }
-            global.sharedMemory->unlock();
         }
     }
+
     if (memInitNeeded) {
-        QLOG_DEBUG() << "Initializing shared memory segment";
-        global.sharedMemory->lock();
-        QLOG_DEBUG() << "Overriting segment";
-        memset(global.sharedMemory->data(), 0, global.sharedMemory->size());
-        QLOG_DEBUG() << "unlocking segment";
-        global.sharedMemory->unlock();
+        global.sharedMemory->clearMemory();
     }
-    QLOG_DEBUG() << "Shared memory segment initialized.";
+
 
     // Save the clipboard
     global.clipboard = QApplication::clipboard();
@@ -262,8 +211,8 @@ int main(int argc, char *argv[])
     }
 
     int rc = a->exec();
-    QLOG_DEBUG() << "Unlocking memory";
-    global.sharedMemory->unlock();
+    if (global.sharedMemory->isAttached())
+        global.sharedMemory->detach();
     QLOG_DEBUG() << "Deleting NixNote instance";
     delete w;
     QLOG_DEBUG() << "Quitting application instance";

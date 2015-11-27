@@ -86,7 +86,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
     // Remove any selected notes that are not in the filter.
     NSqlQuery query(global.db);
     QList<qint32> goodLids;
-
+    query.exec("select lid from filter;");
     while (query.next()) {
         goodLids.append(query.value(0).toInt());
     }
