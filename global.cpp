@@ -277,7 +277,23 @@ void Global::setCloseToTray(bool value) {
     settings->endGroup();
 }
 
+// Should we whow the note list grid?
+bool Global::showNoteListGrid() {
+    bool showNoteListGrid;
+    settings->beginGroup("Appearance");
+    showNoteListGrid = settings->value("showNoteListGrid", false).toBool();
+    settings->endGroup();
+    return showNoteListGrid;
+}
 
+// Should we alternate the note list colors?
+bool Global::alternateNoteListColors() {
+    bool alternateNoteListColors;
+    settings->beginGroup("Appearance");
+    alternateNoteListColors = settings->value("alternateNoteListColors", true).toBool();
+    settings->endGroup();
+    return alternateNoteListColors;
+}
 
 // Save the position of a column in the note list.
 void Global::setColumnPosition(QString col, int position) {
