@@ -3267,6 +3267,7 @@ void NixNote::reloadIcons() {
     trayIcon->setIcon(global.getIconResource(":trayIconIcon"));
     screenCaptureButton->setIcon(global.getIconResource(":screenCaptureIcon"));
     trunkButton->setIcon(global.getIconResource(":trunkIcon"));
+    emailButton->setIcon(global.getIconResource(":emailIcon"));
     notebookTreeView->reloadIcons();
     tagTreeView->reloadIcons();
     attributeTree->reloadIcons();
