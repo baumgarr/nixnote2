@@ -2509,6 +2509,7 @@ void NixNote::toggleVisible() {
         if (isMinimized()) {
             setHidden(false);
             this->showNormal();
+	    this->activateWindow();
             this->setFocus();
             return;
         } else {
