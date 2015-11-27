@@ -149,6 +149,7 @@ void WidgetPanel::dragEnterHandler(QDragEnterEvent *event) {
 void WidgetPanel::dragMoveHandler(QDragMoveEvent *event) {
 
    //QPoint pos = event->source()->mapToGlobal(event->pos());
+    QWidget *source = qobject_cast<QWidget *>(event->source());
     QPoint pos = QCursor::pos();
     pos = this->mapFromGlobal(pos);
     int mouse = QCursor::pos().y();
@@ -170,11 +171,11 @@ void WidgetPanel::dragMoveHandler(QDragMoveEvent *event) {
     if (pos.y()>priorMousePosition.y()) {
         timer.stop();
         scrollUp=false;
-        if (event->source()->objectName()=="Tags") {
-            int bottom = event->source()->mapToGlobal(event->source()->visibleRegion().boundingRect().bottomLeft()).y();
-            int actualBottom = event->source()->mapToGlobal(event->source()->geometry().bottomLeft()).y();
-            bool bottomVisible = this->visibleRegion().contains(event->source()->geometry().bottomLeft());
-            if (bottom-mouse < 50 && bottom < actualBottom && !bottomVisible) {
+        if (source->objectName()=="Tags") {
+           int bottom = source->mapToGlobal(source->visibleRegion().boundingRect().bottomLeft()).y();
+           int actualBottom = source->mapToGlobal(source->geometry().bottomLeft()).y();
+           bool bottomVisible = this->visibleRegion().contains(source->geometry().bottomLeft());
+           if (bottom-mouse < 50 && bottom < actualBottom && !bottomVisible) {
                 timer.start(5);
             }
         }
