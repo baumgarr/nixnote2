@@ -50,6 +50,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     newNoteFocusOnTitle = new QCheckBox(tr("Focus on Note Title on New Note"), this);
     forceWebFonts = new QCheckBox(tr("Limit Editor to Web Fonts*"), this);
     forceWebFonts->setChecked(global.forceWebFonts);
+    showNoteListGrid = new QCheckBox(tr("Show note list grid*"), this);
+    alternateNoteListColors = new QCheckBox(tr("Alternate note list colors*"), this);
 
     traySingleClickAction = new QComboBox();
     traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
@@ -117,6 +119,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(newNoteFocusOnTitle, row++, 1);
     mainLayout->addWidget(confirmDeletes, row, 0);
     mainLayout->addWidget(forceWebFonts, row++, 1);
+    mainLayout->addWidget(showNoteListGrid,row,0);
+    mainLayout->addWidget(alternateNoteListColors,row++,1);
 
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
@@ -170,6 +174,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     autoStart->setChecked(global.settings->value("autoStart", false).toBool());
     int defaultNotebook = global.settings->value("startupNotebook", UseLastViewedNotebook).toInt();
     defaultNotebookOnStartup->setCurrentIndex(defaultNotebook);
+    showNoteListGrid->setChecked(global.settings->value("showNoteListGrid", false).toBool());
+    alternateNoteListColors->setChecked(global.settings->value("alternateNoteListColors", true).toBool());
     global.settings->endGroup();
 
     connect(showTrayIcon, SIGNAL(clicked(bool)), this, SLOT(showTrayIconChanged(bool)));
@@ -222,6 +228,8 @@ void AppearancePreferences::saveValues() {
     global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
     global.settings->setValue("systemNotifier", sysnotifier);
     global.settings->remove("trayDoubleClickAction");
+    global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
+    global.settings->setValue("alternateNoteListColors", alternateNoteListColors->isChecked());
     global.pdfPreview = showPDFs->isChecked();
     if (minimizeToTray!= NULL)
         global.settings->setValue("minimizeToTray", minimizeToTray->isChecked());
