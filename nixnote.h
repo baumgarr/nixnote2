@@ -278,6 +278,7 @@ public slots:
     void showDesktopUrl(const QUrl &url);
     void reloadIcons();
     void showMessage(QString title, QString msg, int timeout=10000);
+    void toolbarVisibilityChanged();
 
 signals:
     void syncRequested();

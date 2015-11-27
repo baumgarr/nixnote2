@@ -269,6 +269,7 @@ void NixNote::setupGui() {
 
     QLOG_TRACE() << "Setting up tool bar";
     toolBar = addToolBar(tr("ToolBar"));
+    connect(toolBar, SIGNAL(visibilityChanged(bool)), this, SLOT(toolbarVisibilityChanged()));
     //menuBar = new NMainMenuBar(this);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     toolBar->setObjectName("toolBar");
@@ -3427,4 +3428,13 @@ void NixNote::setupShortcut(QShortcut *action, QString text) {
         return;
     QKeySequence key(global.shortcutKeys->getShortcut(&text));
     action->setKey(key);
+}
+
+
+
+// Make sure the toolbar checkbox & the menu match.
+void NixNote::toolbarVisibilityChanged() {
+    menuBar->viewToolbar->blockSignals(true);
+    menuBar->viewToolbar->setChecked(toolBar->isVisible());
+    menuBar->viewToolbar->blockSignals(false);
 }
