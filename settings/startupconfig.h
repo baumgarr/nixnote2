@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include "cmdtools/addnote.h"
 #include "cmdtools/cmdlinequery.h"
+#include "cmdtools/deletenote.h"
 
 #define STARTUP_GUI 0
 #define STARTUP_SYNC 1
@@ -35,8 +36,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define STARTUP_SHOW 3
 #define STARTUP_ADDNOTE 4
 #define STARTUP_QUERY 5
-#define STARTUP_DELETE 6
-#define STARTUP_EMAIL 7
+#define STARTUP_DELETENOTE 6
+#define STARTUP_EMAILNOTE 7
 #define STARTUP_MOVE_TO_NOTEBOOK 8
 #define STARTUP_ASSIGN_TAG 9
 #define STARTUP_REMOVE_TAG 10
@@ -69,6 +70,7 @@ public:
     bool disableEditing;
     bool purgeTemporaryFiles;
     AddNote *newNote;
+    DeleteNote *delNote;
     CmdLineQuery *queryNotes;
     bool gui();
     bool sync();
@@ -76,6 +78,7 @@ public:
     bool show();
     bool shutdown();
     bool query();
+    bool deleteNote();
 
     int init(int argc, char *argv[]);
     void printHelp();

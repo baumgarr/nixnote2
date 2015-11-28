@@ -19,28 +19,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 
-#ifndef CMDLINETOOL_H
-#define CMDLINETOOL_H
+#include "deletenote.h"
 
-#include <QObject>
-#include <QSharedMemory>
-
-#include "settings/startupconfig.h"
-
-class CmdLineTool : public QObject
+DeleteNote::DeleteNote(QObject *parent) :
+    QObject(parent)
 {
-    Q_OBJECT
-public:
-    explicit CmdLineTool(QObject *parent = 0);
-    int run(StartupConfig config);
-    int addNote(StartupConfig config);
-    int queryNotes(StartupConfig config);
-    int deleteNote(StartupConfig config);
-
-signals:
-
-public slots:
-
-};
-
-#endif // CMDLINETOOL_H
+    verifyDelete=true;
+}

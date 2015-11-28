@@ -42,6 +42,7 @@ StartupConfig::StartupConfig()
     newNote = NULL;
     queryNotes = NULL;
     purgeTemporaryFiles=true;
+    delNote = NULL;
 }
 
 
@@ -88,9 +89,7 @@ void StartupConfig::printHelp() {
                    +QString("                %v                     Show the time the reminder was completed.\n")
                    +QString("                <padding>              Pad the field to this number of spaces on the display.\n")
                    +QString("                <:>                    Truncate the field if longer than the padding.\n")
-                   +QString("  addNote <options>                    Add a new note via the command line.  If NixNote is\n")
-                   +QString("                                       not running, the note will be imported the next time the GUI\n")
-                   +QString("                                       is started.\n")
+                   +QString("  addNote <options>                    Add a new note via the command line.\n")
                    +QString("     addNote options:\n")
                    +QString("          --title=\"<title>\"            Title of the new note.\n")
                    +QString("          --notebook=\"<notebook>\"      Notebook for the new note.\n")
@@ -100,6 +99,11 @@ void StartupConfig::printHelp() {
                    +QString("          --updated=\"<date_updated>\"   Date created\n")
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  deleteNote <options>                 Move a note to the trash via the command line.\n")
+                   +QString("     deleteNote options:\n")
+                   +QString("          --id=\"<note_id>\"           Title of the new note.\n")
+                   +QString("          --noVerify                   Do not prompt for verification.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
                    +QString("  Examples:\n\n")
                    +QString("     To Start NixNote, do a sync, and then exit.\n")
@@ -134,8 +138,13 @@ int StartupConfig::init(int argc, char *argv[]) {
         }
         if (parm.startsWith("query")) {
             command->setBit(STARTUP_QUERY);
-            if (newNote == NULL)
+            if (queryNotes == NULL)
                 queryNotes = new CmdLineQuery();
+        }
+        if (parm.startsWith("deleteNote")) {
+            command->setBit(STARTUP_DELETENOTE);
+            if (delNote == NULL)
+                delNote = new DeleteNote();
         }
         if (parm.startsWith("sync")) {
             command->setBit(STARTUP_SYNC,true);
@@ -234,6 +243,19 @@ int StartupConfig::init(int argc, char *argv[]) {
                 forceSystemTrayAvailable = true;
             }
         }
+        if (command->at(STARTUP_DELETENOTE)) {
+            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
+                parm = parm.mid(12);
+                accountId = parm.toInt();
+            }
+            if (parm == "--noVerify") {
+                delNote->verifyDelete = false;
+            }
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                delNote->lid = parm.toInt();
+            }
+        }
     }
 
     if (command->count(true) == 0)
@@ -269,4 +291,8 @@ bool StartupConfig::show() {
 
 bool StartupConfig::shutdown() {
     return command->at(STARTUP_SHUTDOWN);
+}
+
+bool StartupConfig::deleteNote() {
+    return command->at(STARTUP_DELETENOTE);
 }

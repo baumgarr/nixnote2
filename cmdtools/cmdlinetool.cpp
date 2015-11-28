@@ -82,10 +82,44 @@ int CmdLineTool::run(StartupConfig config) {
     if (config.query()) {
         return queryNotes(config);
     }
+    if (config.deleteNote()) {
+        return deleteNote(config);
+    }
     return 0;
 }
 
 
+
+
+int CmdLineTool::deleteNote(StartupConfig config) {
+    bool useCrossMemory = true;
+
+    if (config.delNote->verifyDelete) {
+        std::string verify;
+        std::cout << QString(tr("Type DELETE to very: ")).toStdString();
+        std::cin >> verify;
+        QString qVerify = QString::fromStdString(verify);
+        if (qVerify.toLower() != "delete")
+            return 16;
+    }
+
+    // Look to see if another NixNote is running.  If so, then we
+    // expect a response if the note was delete.  Otherwise, we
+    // do it ourself.
+    global.sharedMemory->unlock();
+    global.sharedMemory->detach();
+    if (!global.sharedMemory->attach()) {
+        useCrossMemory = false;
+    }
+    if (useCrossMemory) {
+        global.sharedMemory->write("DELETE_NOTE:" + QString::number(config.delNote->lid));
+    } else {
+        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        NoteTable noteTable(global.db);
+        noteTable.deleteNote(config.delNote->lid,true);
+    }
+    return 0;
+}
 
 
 

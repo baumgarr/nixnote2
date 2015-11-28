@@ -2451,6 +2451,12 @@ void NixNote::heartbeatTimerTriggered() {
         engine.filter(filter, &lids);
         query.write(lids, tmpFile);
     }
+    if (data.startsWith("DELETE_NOTE:")) {
+        qint32 lid = data.mid(12).toInt();
+        NoteTable noteTable(global.db);
+        noteTable.deleteNote(lid, true);
+        updateSelectionCriteria();
+    }
     //free(buffer); // Fixes memory leak
 }
 
