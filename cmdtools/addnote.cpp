@@ -28,7 +28,6 @@ extern Global global;
 AddNote::AddNote(QObject *parent) :
     QObject(parent)
 {
-    account = 1;
     title = tr("Untitled Note");
     created = QDateTime::currentDateTime().toString("yyyy-MM-ddTHH:mm:ss.zzzZ");
     updated = QDateTime::currentDateTime().toString("yyyy-MM-ddTHH:mm:ss.zzzZ");

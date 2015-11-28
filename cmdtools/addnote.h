@@ -36,7 +36,6 @@ public:
     QString content;
     QString notebook;
     QStringList tags;
-    int account;
 
     void write(QString uuid);
 

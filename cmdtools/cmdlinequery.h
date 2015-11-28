@@ -35,7 +35,6 @@ private:
 
 public:
     explicit CmdLineQuery(QObject *parent = 0);
-    int account;
     QString query;
     QString delimiter;
     QString outputFormat;

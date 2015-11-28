@@ -149,7 +149,7 @@ int StartupConfig::init(int argc, char *argv[]) {
         if (command->at(STARTUP_ADDNOTE)) {
             if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
                 parm = parm.mid(12);
-                newNote->account = parm.toInt();
+                accountId = parm.toInt();
             }
             if (parm.startsWith("--title=", Qt::CaseSensitive)) {
                 parm = parm.mid(8);
@@ -179,7 +179,7 @@ int StartupConfig::init(int argc, char *argv[]) {
         if (command->at(STARTUP_QUERY)) {
             if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
                 parm = parm.mid(12);
-                queryNotes->account = parm.toInt();
+                this->accountId=parm.toInt();
             }
             if (parm.startsWith("--search=", Qt::CaseSensitive)) {
                 parm = parm.mid(9);

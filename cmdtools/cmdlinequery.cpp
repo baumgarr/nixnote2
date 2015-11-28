@@ -35,7 +35,6 @@ extern Global global;
 CmdLineQuery::CmdLineQuery(QObject *parent) :
     QObject(parent)
 {
-    account = -1;
     stdout=true;
     printHeaders=true;
 }
