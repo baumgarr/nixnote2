@@ -18,25 +18,37 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-
-#ifndef CMDLINETOOL_H
-#define CMDLINETOOL_H
+#ifndef EMAILNOTE_H
+#define EMAILNOTE_H
 
 #include <QObject>
-#include <QSharedMemory>
+#include "email/smtpclient.h"
+#include "email/mimemessage.h"
 
-#include "settings/startupconfig.h"
-
-class CmdLineTool : public QObject
+class EmailNote : public QObject
 {
     Q_OBJECT
+private:
+
 public:
-    explicit CmdLineTool(QObject *parent = 0);
-    int run(StartupConfig config);
-    int addNote(StartupConfig config);
-    int queryNotes(StartupConfig config);
-    int deleteNote(StartupConfig config);
-    int emailNote(StartupConfig config);
+    explicit EmailNote(QObject *parent = 0);
+    QString to;
+    QString cc;
+    QString bcc;
+    QString comments;
+    QString subject;
+    QString note;
+    bool ccSelf;
+    int lastError;
+    qint32 lid;
+    QString errorMessage;
+    QString contents;
+    void unwrap(QString data);
+    QString wrap();
+    QStringList tokenizeString(QString value);
+    void prepareEmailMessage(MimeMessage *message, QString note, QString body);
+    QString stripContentsForPrint(QString contents);
+    int sendEmail();
 
 signals:
 
@@ -44,4 +56,4 @@ public slots:
 
 };
 
-#endif // CMDLINETOOL_H
+#endif // EMAILNOTE_H

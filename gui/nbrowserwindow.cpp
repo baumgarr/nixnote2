@@ -2475,7 +2475,7 @@ void NBrowserWindow::emailNote() {
     emailDialog.exec();
     if (emailDialog.cancelPressed)
         return;
-    emit(setMessage("Sending Email. Please be patient."));
+    emit(setMessage(tr("Sending Email. Please be patient.")));
 
     QStringList toAddresses = emailDialog.getToAddresses();
     QStringList ccAddresses = emailDialog.getCcAddresses();

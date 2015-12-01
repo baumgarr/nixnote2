@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "cmdtools/addnote.h"
 #include "cmdtools/cmdlinequery.h"
 #include "cmdtools/deletenote.h"
+#include "cmdtools/emailnote.h"
 
 #define STARTUP_GUI 0
 #define STARTUP_SYNC 1
@@ -71,6 +72,7 @@ public:
     bool purgeTemporaryFiles;
     AddNote *newNote;
     DeleteNote *delNote;
+    EmailNote *email;
     CmdLineQuery *queryNotes;
     bool gui();
     bool sync();
@@ -79,6 +81,7 @@ public:
     bool shutdown();
     bool query();
     bool deleteNote();
+    bool emailNote();
 
     int init(int argc, char *argv[]);
     void printHelp();

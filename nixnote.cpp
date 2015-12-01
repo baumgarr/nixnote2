@@ -2457,6 +2457,12 @@ void NixNote::heartbeatTimerTriggered() {
         noteTable.deleteNote(lid, true);
         updateSelectionCriteria();
     }
+    if (data.startsWith("EMAIL_NOTE:")) {
+        QString xml = data.mid(11);
+        EmailNote email;
+        email.unwrap(xml);
+        email.sendEmail();
+    }
     //free(buffer); // Fixes memory leak
 }
 

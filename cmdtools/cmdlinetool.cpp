@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/tagtable.h"
 #include "sql/notetable.h"
 #include "utilities/nuuid.h"
+#include "email/smtpclient.h"
 
 extern Global global;
 
@@ -85,9 +86,33 @@ int CmdLineTool::run(StartupConfig config) {
     if (config.deleteNote()) {
         return deleteNote(config);
     }
+    if (config.emailNote()) {
+        return emailNote(config);
+    }
     return 0;
 }
 
+
+
+
+int CmdLineTool::emailNote(StartupConfig config) {
+    // Look to see if another NixNote is running.  If so, then we
+    // expect a response if the note was delete.  Otherwise, we
+    // do it ourself.
+    bool useCrossMemory = true;
+    global.sharedMemory->unlock();
+    global.sharedMemory->detach();
+    if (!global.sharedMemory->attach()) {
+        useCrossMemory = false;
+    }
+    if (useCrossMemory) {
+        global.sharedMemory->write("EMAIL_NOTE:" + config.email->wrap());
+    } else {
+        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        return config.email->sendEmail();
+    }
+    return 0;
+}
 
 
 
