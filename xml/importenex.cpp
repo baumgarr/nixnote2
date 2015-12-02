@@ -160,7 +160,7 @@ void ImportEnex::processNoteNode() {
     note.guid = newGuid;
     note.active = true;
     QList<Resource> resources;
-    QList<QString> tagNames;
+    //QList<QString> tagNames;
 
     bool atEnd = false;
     while(!atEnd) {
@@ -196,7 +196,9 @@ void ImportEnex::processNoteNode() {
             resources.append(newRes);
         }
         if (name == "tag" && !reader->isEndElement()) {
-           tagNames.append(textValue());
+            if (!note.tagNames.isSet())
+                note.tagNames = QStringList();
+           note.tagNames->append(textValue());
         }
         reader->readNext();
         QString endName = reader->name().toString().toLower();
@@ -214,32 +216,32 @@ void ImportEnex::processNoteNode() {
 
     // Loop through the tag names & find any matching tags.
     if (note.tagNames.isSet()) {
-        QList<QString> tagGuids;
-        for (int i=0; i<tagNames.size(); i++) {
-            QString tagGuid = tagList[tagNames[i]];
+        note.tagGuids = QList< Guid >();
+        for (int i=0; i<note.tagNames->size(); i++) {
+            QString tagGuid = tagList[note.tagNames->at(i)];
             if (tagGuid != "") {
-                tagGuids.append(tagGuid);
+                note.tagGuids->append(tagGuid);
             } else {
                 QUuid uuid;
                 QString g =  uuid.createUuid().toString().replace("{","").replace("}","");
                 Tag newTag;
-                newTag.name = tagNames[i];
+                newTag.name = note.tagNames->at(i);
                 newTag.guid = g;
                 TagTable tt(global.db);
                 tt.add(0, newTag, true, 0);
-                tagList.insert(tagNames[i], g);
+                tagList.insert(note.tagNames->at(i), g);
+                note.tagGuids->append(g);
             }
         }
-        note.tagGuids = tagGuids;
     }
     note.resources = resources;
-    note.tagNames = tagNames;
+//    note.tagNames = tagNames;
 
     NoteTable noteTable(global.db);
     note.updateSequenceNum = 0;
     note.notebookGuid = notebookGuid;
 
-    if (!note.created.isSet() == false) {
+    if (note.created.isSet() == false) {
         note.created = QDateTime::currentDateTime().toMSecsSinceEpoch();
     }
     if (note.updated.isSet() == false) {
