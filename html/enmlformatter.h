@@ -56,6 +56,7 @@ private:
     void fixNode(const QDomNode &node);
     void postXmlFix();
     void fixSpanNode(QWebElement &e);
+    QByteArray removeInvalidUnicode(QByteArray content);
     QByteArray fixEncryptionTags(QByteArray newContent);
 
 public:

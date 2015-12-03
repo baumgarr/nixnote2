@@ -157,11 +157,13 @@ bool CommunicationManager::getUserInfo(User &user) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.type = CommunicationError::EDAMUserException;
         error.code = e.errorCode;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -208,11 +210,13 @@ bool CommunicationManager::getSyncState(QString token, SyncState &syncState) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.type = CommunicationError::EDAMUserException;
         error.code = e.errorCode;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -278,11 +282,13 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -313,6 +319,7 @@ qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         DebugTool d;
         d.dumpSavedSearch(search);
         return 0;
@@ -320,6 +327,7 @@ qint32 CommunicationManager::uploadSavedSearch(SavedSearch &search) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         DebugTool d;
         d.dumpSavedSearch(search);
         return 0;
@@ -349,11 +357,13 @@ qint32 CommunicationManager::expungeSavedSearch(Guid guid) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -383,12 +393,14 @@ qint32 CommunicationManager::uploadTag(Tag &tag) {
         DebugTool d;
         d.dumpTag(tag);
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         QLOG_ERROR().maybeSpace() << "Tag name: " << tag.name << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         DebugTool d;
         d.dumpTag(tag);
         return 0;
@@ -419,11 +431,13 @@ qint32 CommunicationManager::expungeTag(Guid guid) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -450,6 +464,7 @@ qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         DebugTool d;
         d.dumpNotebook(notebook);
         return 0;
@@ -457,6 +472,7 @@ qint32 CommunicationManager::uploadNotebook(Notebook &notebook) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         DebugTool d;
         d.dumpNotebook(notebook);
         return 0;
@@ -485,6 +501,7 @@ qint32 CommunicationManager::expungeNotebook(Guid guid) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return 0;
     }  catch (EDAMNotFoundException) {
         return 1;
@@ -492,6 +509,7 @@ qint32 CommunicationManager::expungeNotebook(Guid guid) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         return 0;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -523,6 +541,7 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
         QLOG_ERROR().maybeSpace() << "Exception Msg:" << e.what() << endl;
         DebugTool d;
         d.dumpNote(note);
+        error.message = errorWhat(e.what());
         error.type = CommunicationError::ThriftException;
         return 0;
     } catch (EDAMUserException e) {
@@ -530,6 +549,7 @@ qint32 CommunicationManager::uploadNote(Note &note, QString token) {
         DebugTool d;
         d.dumpNote(note);
         error.code = e.errorCode;
+        error.message = errorWhat(e.what());
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMSystemException e) {
@@ -566,11 +586,13 @@ qint32 CommunicationManager::deleteNote(Guid note, QString token) {
         QLOG_ERROR() << "ThriftException:";
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.message = errorWhat(e.what());
         error.type = CommunicationError::ThriftException;
         return 0;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
+        error.message = errorWhat(e.what());
         error.type = CommunicationError::EDAMUserException;
         return 0;
     } catch (EDAMNotFoundException) {
@@ -616,10 +638,12 @@ bool CommunicationManager::getSharedNotebookByAuth(SharedNotebook &sharedNoteboo
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
+        error.message = errorWhat(e.what());
         error.type = CommunicationError::EDAMUserException;
         return false;
     } catch (EDAMSystemException e) {
@@ -665,12 +689,14 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &boo
         QLOG_ERROR() << "ThriftException:";
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.message = errorWhat(e.what());
         error.type = CommunicationError::ThriftException;
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -695,11 +721,13 @@ bool CommunicationManager::getLinkedNotebookSyncState(SyncState &syncState, Link
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -724,12 +752,14 @@ bool CommunicationManager::getLinkedNotebookSyncChunk(SyncChunk &chunk, LinkedNo
         QLOG_ERROR() << "ThriftException:";
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.message = errorWhat(e.what());
         error.type = CommunicationError::ThriftException;
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -768,11 +798,13 @@ bool CommunicationManager::listNoteVersions(QList<NoteVersionId> &list, QString 
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -798,10 +830,12 @@ bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, 
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
+        error.message = errorWhat(e.what());
         error.type = CommunicationError::EDAMUserException;
         return false;
     } catch (EDAMSystemException e) {
@@ -842,10 +876,12 @@ bool CommunicationManager::getNotebookList(QList<Notebook> &list) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         error.code = e.errorCode;
         return false;
     } catch (EDAMSystemException e) {
@@ -875,11 +911,13 @@ bool CommunicationManager::getTagList(QList<Tag> &list) {
         QLOG_ERROR() << "Exception Type:" << e.type();
         QLOG_ERROR() << "Exception Msg:" << e.what();
         error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMUserException e) {
         QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
         error.code = e.errorCode;
         error.type = CommunicationError::EDAMUserException;
+        error.message = errorWhat(e.what());
         return false;
     } catch (EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException";
@@ -1120,9 +1158,9 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
         return;
     }
     if (e.message.isSet())
-        error.message = tr("EDAMSystemException ") + e.message;
+        error.message = tr("EDAMSystemException ") + e.message + errorWhat(e.what());
     else
-        error.message = tr("EDAMSystemException: Unknown error");
+        error.message = tr("EDAMSystemException: Unknown error") + errorWhat(e.what());
     error.type = CommunicationError::EDAMSystemException;
     error.code = e.errorCode;
 }
@@ -1143,7 +1181,7 @@ void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) 
 
     QLOG_ERROR() << "EDAMNotFoundException:" << endl;
 
-    error.message = tr("EDAMNotFoundException: Note not found");
+    error.message = tr("EDAMNotFoundException: Note not found") + errorWhat(e.what());
     error.type = CommunicationError::EDAMNotFoundException;
     error.code = 16;
 }
@@ -1162,5 +1200,12 @@ void CommunicationManager::loadTagGuidMap() {
     tagTable.getGuidMap(*this->tagGuidMap);
 }
 
+
+QString CommunicationManager::errorWhat(QString what) {
+    if (what.trimmed() != "") {
+        return ":" + what;
+    }
+    return "";
+}
 
 

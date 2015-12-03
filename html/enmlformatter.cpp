@@ -60,7 +60,9 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     QByteArray b;
     qint32 index;
 
+    // Remove invalid stuff
     content.replace("</input>","");
+    content = this->removeInvalidUnicode(content);
 
     // Strip off HTML header
     index = content.indexOf("<body");
@@ -537,4 +539,13 @@ QByteArray EnmlFormatter::fixEncryptionTags(QByteArray newContent) {
         newContent.append(end);
     }
     return newContent;
+}
+
+
+
+// Remove any invalid unicode characters to allow it to sync properly.
+QByteArray EnmlFormatter::removeInvalidUnicode(QByteArray content) {
+    QString c(content);
+    c = c.remove(QChar( 0x1b ), Qt::CaseInsensitive);
+    return c.toUtf8();
 }

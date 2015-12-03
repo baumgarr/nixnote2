@@ -143,6 +143,7 @@ public:
     bool listNoteVersions(QList<NoteVersionId> &list, QString guid);    // Get a list of note revisions
     bool getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData=true, bool withResourceRecognition=true, bool withResourceAlternateData=true);  // Download a past version of a note from a linked account
     void loadTagGuidMap();                                     // Load the tag hashmap.
+    QString  errorWhat(QString what);                           // help build error string
 
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);   // An inknote has been downloaded.
