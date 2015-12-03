@@ -141,7 +141,7 @@ void DebugTool::dumpResource(Resource r) {
         dumpData(r.data);
     } else
         QLOG_DEBUG() << "resource recognition data not found.";
-    if (r.data.isSet()) {
+    if (r.alternateData.isSet()) {
         QLOG_DEBUG() << "resource alternate data found:";
         dumpData(r.alternateData);
     } else
