@@ -1313,14 +1313,12 @@ void NBrowserWindow::insertLinkButtonPressed() {
 
     // Take care of inserting new links
     if (insertHyperlink) {
-        QString selectedText = editor->selectedText();
+        QString selectedText = editor->selectedText().replace("'","\\'");
         if (dialog.getUrl().trimmed() == "")
             return;
-        QString dUrl = dialog.getUrl().trimmed().replace("'", "\\'");
-        QString url = QString("<a href=\"") +dUrl
-                +QString("\" title=\"") +dUrl
-                +QString("\" >") +selectedText +QString("</a>");
-        QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+        QString durl = dialog.getUrl().trimmed().replace("'","\\'");
+        QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(durl,durl,selectedText);
+        QString script = QString("document.execCommand('insertHtml', false, '%1')").arg(url);
         editor->page()->mainFrame()->evaluateJavaScript(script);
         return;
     }
