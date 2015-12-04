@@ -37,7 +37,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     int middleClickIndex = global.getMiddleClickAction();
 
     showTrayIcon = new QCheckBox(tr("Show tray icon"), this);
-    showPDFs = new QCheckBox(tr("Display PDFs inline"), this);
+    showPDFs = new QCheckBox(tr("Display PDFs inline**"), this);
     showSplashScreen = new QCheckBox(tr("Show splash screen on startup"), this);
     autoStart = new QCheckBox(tr("Start automatically at login"), this);
     confirmDeletes = new QCheckBox(tr("Confirm Deletes"), this);
@@ -151,6 +151,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
     mainLayout->addWidget(new QLabel(""), row++, 0);
     mainLayout->addWidget(new QLabel(tr("* May require restart on some systems.")), row++, 0);
+    mainLayout->addWidget(new QLabel(tr("** Can crash on Gnome systems.")), row++, 0);
 
     global.settings->beginGroup("Appearance");
 

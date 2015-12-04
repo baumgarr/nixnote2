@@ -1916,7 +1916,6 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
          QString fullName = url.toString().mid(6).replace(global.fileManager.getDbaDirPath(),"");
          int index = fullName.lastIndexOf(".");
          QString guid = "";
-         QString type = "";
          if (index != -1) {
              guid = fullName.mid(0,index);
          } else

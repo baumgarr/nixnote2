@@ -138,7 +138,7 @@ void Global::setup(StartupConfig startupConfig) {
         countBehavior = CountAll;
     if (countbehavior==2)
         countBehavior = CountNone;
-    pdfPreview = settings->value("showPDFs", true).toBool();
+    pdfPreview = settings->value("showPDFs", false).toBool();
     defaultFont = settings->value("defaultFont","").toString();
     defaultFontSize = settings->value("defaultFontSize",0).toInt();
     defaultGuiFontSize = settings->value("defaultGuiFontSize", 0).toInt();

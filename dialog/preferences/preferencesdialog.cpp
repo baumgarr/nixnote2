@@ -32,6 +32,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     setLayout(mainLayout);
 
     tabs = new QTabWidget(this);
+
     mainLayout->addWidget(tabs);
     this->setFont(global.getGuiFont(font()));
 
