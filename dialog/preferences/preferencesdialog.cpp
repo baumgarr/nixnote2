@@ -31,9 +31,11 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     mainLayout = new QVBoxLayout();
     setLayout(mainLayout);
 
+    QScrollArea *scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(true);
     tabs = new QTabWidget(this);
-
-    mainLayout->addWidget(tabs);
+    scrollArea->setWidget(tabs);
+    mainLayout->addWidget(scrollArea);
     this->setFont(global.getGuiFont(font()));
 
     this->setupAppearancePanel();
