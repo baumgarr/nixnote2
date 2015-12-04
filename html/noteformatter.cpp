@@ -335,6 +335,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     QPixmap overlayPix(originalFile.size());
     overlayPix.fill(Qt::transparent);
     QPainter p2(&overlayPix);
+    p2.save();
     p2.setBackgroundMode(Qt::TransparentMode);
     p2.setRenderHint(QPainter::Antialiasing,true);
     QColor yellow(Qt::yellow);
@@ -346,6 +347,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     doc.setContent(xml);
 
     // Go through the "item" nodes
+    bool found=false;
     QDomNodeList anchors = doc.elementsByTagName("item");
     for (unsigned int i=0; i<anchors.length(); i++) {
         QDomElement element = anchors.at(i).toElement();
@@ -369,6 +371,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
                         if (searchWord.endsWith("*"))
                             searchWord.chop(1);
                         if (text.toLower().contains(searchWord)) {
+                            found = true;
                             p2.drawRect(x,y,w,h);
                         }
                     }
@@ -377,26 +380,34 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
         }
     }
 
+    // If nothing was found, we exit
+    if (!found)
+        return "";
+
+
     // Paint the highlight onto the background & save over the original
     p2.setOpacity(0.4);
     p2.drawPixmap(0,0,overlayPix);
-    p2.end();
+    p2.restore();
+    //p2.end();
 
     // Create the actual overlay.  We do this in two steps to avoid
     // constantly painting the same area
     QPixmap finalPix(originalFile.size());
     finalPix.fill(Qt::transparent);
     QPainter p3(&finalPix);
+    p3.save();
     p3.setBackgroundMode(Qt::TransparentMode);
     p3.setRenderHint(QPainter::Antialiasing,true);
     p3.drawPixmap(0,0,originalFile);
     p3.setOpacity(0.4);
     p3.drawPixmap(0,0,overlayPix);
-    p3.end();
+    p3.restore();
     finalPix.save(filename);
 
     QLOG_TRACE_OUT();
-    return "this.src='file://"+filename+"';";
+    return "file://"+filename;
+//    return "this.src='file://"+filename+"';";
 }
 
 
@@ -447,9 +458,17 @@ void NoteFormatter::modifyImageTags(QWebElement &enMedia, QString &hash) {
             enMedia.setAttribute("onContextMenu", "window.browserWindow.imageContextMenu('"
                                  +QString::number(resLid) +"', '"
                                  +QString::number(resLid) +type  +"');");
-            highlightString = addImageHighlight(resLid, imgfile);
-            if (highlightString != "")
-                enMedia.setAttribute("onload", highlightString);
+
+            if (!global.disableImageHighlight()) {
+                highlightString = addImageHighlight(resLid, imgfile);
+
+                if (highlightString != "")
+                    enMedia.setAttribute("src", highlightString);
+
+                //if (highlightString != "")
+                //    enMedia.setAttribute("onload", highlightString);
+            }
+
 
         }
     } else {

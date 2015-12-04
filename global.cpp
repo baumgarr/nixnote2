@@ -841,6 +841,15 @@ void Global::setNewNoteFocusToTitle(bool focus) {
 
 
 
+
+bool Global::disableImageHighlight() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("disableImageHighlight", false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
 // What version of the database are we using?
 int Global::getDatabaseVersion() {
     settings->beginGroup("SaveState");

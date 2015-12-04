@@ -223,6 +223,7 @@ public:
     bool getClearTagsOnSearch();
     bool getTagSelectionOr();
     void setDebugLevel();
+    bool disableImageHighlight();
 
 
     // Middle click settings
