@@ -1456,6 +1456,8 @@ void NixNote::openExternalNote(qint32 lid) {
 void NixNote::updateSelectionCriteria(bool afterSync) {
     QLOG_DEBUG() << "starting NixNote.updateSelectionCriteria()";
 
+    tabWindow->currentBrowser()->saveNoteContent();
+
     // Invalidate the cache
     QDir dir(global.fileManager.getTmpDirPath());
     QFileInfoList files = dir.entryInfoList();

@@ -1698,6 +1698,60 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":key", NOTE_CONTENT_LENGTH);
     query.exec();
 
+    // Make sure we don't have a todo
+    NSqlQuery query2(db);
+    query2.prepare("Update NoteTable set hasTodo=0 where lid=:lid");
+    query2.bindValue(":lid", lid);
+    query2.exec();
+    query2.prepare("delete from datastore where lid=:lid and (key=:key1 or key=:key2)");
+    query2.bindValue(":lid", lid);
+    query2.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
+    query2.bindValue(":key2", NOTE_HAS_TODO_UNCOMPLETED);
+    query2.exec();
+
+    query2.prepare("Update NoteTable set hasEncryption=0 where lid=:lid");
+    query2.bindValue(":lid", lid);
+    query2.exec();
+    query2.prepare("delete from datastore where lid=:lid and key=:key");
+    query2.bindValue(":lid", lid);
+    query2.bindValue(":key", NOTE_HAS_ENCRYPT);
+    query2.exec();
+
+
+    if (content.contains("<en-todo")) {
+        query.prepare("insert into datastore (lid, key, data) values (:lid, :key, 1)");
+        if (content.contains("<en-todo checked=\"true\"")) {
+            query.bindValue(":lid", lid);
+            query.bindValue(":key", NOTE_HAS_TODO_COMPLETED);
+            query.exec();
+        } else {
+            query.bindValue(":lid", lid);
+            query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
+            query.exec();
+        }
+        NSqlQuery query2(db);
+        query2.prepare("Update NoteTable set hasTodo=:value where lid=:lid");
+        query2.bindValue(":lid", lid);
+        query2.bindValue(":value", 1);
+        query2.exec();
+    }
+
+    if (content.contains("<en-crypt")) {
+        query.prepare("insert into datastore (lid, key, data) values (:lid, :key, 1)");
+        if (content.contains("<en-todo checked=\"true\"")) {
+            query.bindValue(":lid", lid);
+            query.bindValue(":key", NOTE_HAS_TODO_COMPLETED);
+            query.exec();
+        }
+        NSqlQuery query2(db);
+        query2.prepare("Update NoteTable set hasEncryption=:value where lid=:lid");
+        query2.bindValue(":lid", lid);
+        query2.bindValue(":value", 1);
+        query2.exec();
+    }
+
+    db->unlock();
+
     query.prepare("update datastore set data=1 where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
@@ -1706,10 +1760,7 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     NoteIndexer indexer(db);
     indexer.indexNote(lid);
 
-    db->unlock();
-
     setDirty(lid, isDirty);
-
 }
 
 
