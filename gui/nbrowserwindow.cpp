@@ -1913,16 +1913,25 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
              QMessageBox::information(this, tr("Unable Open"), QString(tr("This is an ink note.\nInk notes are not supported since Evernote has not\n published any specifications on them\nand I'm too lazy to figure them out by myself.")));
              return;
          }
-         QString fullName = url.toString().mid(6);
+         QString fullName = url.toString().mid(6).replace(global.fileManager.getDbaDirPath(),"");
          int index = fullName.lastIndexOf(".");
          QString guid = "";
          QString type = "";
          if (index != -1) {
-             type = fullName.mid(index);
-             guid = fullName.mid(0,index).replace(global.fileManager.getDbaDirPath(),"");
+             guid = fullName.mid(0,index);
          } else
+             guid = fullName;
+         QDirIterator dirIt(global.fileManager.getDbaDirPath());
+         QString fileUrl = "";
+         while (dirIt.hasNext()) {
+             if (QFileInfo(dirIt.filePath()).isFile() && QFileInfo(dirIt.filePath()).baseName() == guid) {
+                 fileUrl = dirIt.fileName();
+             }
+             dirIt.next();
+         }
+         if (fileUrl == "")
              return;
-         QString fileUrl = global.fileManager.getDbaDirPath()+guid +type;
+         fileUrl = global.fileManager.getDbaDirPath()+fileUrl;
          global.resourceWatcher.addPath(fileUrl);
          QDesktopServices::openUrl(fileUrl);
          return;
