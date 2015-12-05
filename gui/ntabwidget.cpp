@@ -744,3 +744,13 @@ void NTabWidget::reloadIcons() {
         this->externalList->at(i)->browser->notebookMenu.reloadIcons();
     }
 }
+
+
+void NTabWidget::changeEditorStyle() {
+    for (int i=0; i<browserList->size(); i++) {
+        browserList->at(i)->editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(true));
+    }
+    for (int i=0; i<externalList->size(); i++) {
+        externalList->at(i)->browser->editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(true));
+    }
+}

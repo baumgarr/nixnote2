@@ -3277,7 +3277,7 @@ void NixNote::reloadIcons() {
         else
             global.settings->remove("themeName");
         global.settings->endGroup();
-        global.loadTheme(global.resourceList,newThemeName);
+        global.loadTheme(global.resourceList,global.colorList,newThemeName);
     }
 
     setWindowIcon(QIcon(global.getIconResource(":windowIcon")));
@@ -3302,6 +3302,8 @@ void NixNote::reloadIcons() {
     searchText->reloadIcons();
     favoritesTreeView->reloadIcons();
     tabWindow->reloadIcons();
+
+    tabWindow->changeEditorStyle();
 
     QString themeInformation = global.getResourceFileName(global.resourceList, ":themeInformation");
     menuBar->themeInformationAction->setVisible(true);

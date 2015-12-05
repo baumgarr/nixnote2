@@ -129,7 +129,7 @@ QByteArray NoteFormatter::rebuildNoteHTML() {
     QString html = "<body></body>";
     if (note.content.isSet())
         html = preHtmlFormat(note.content);
-    html.replace("<en-note", "<body");
+    html.replace("<en-note", "<body" +global.getEditorStyle());
     html.replace("</en-note>", "</body>");
     QByteArray htmlPage;
     htmlPage.append(html);

@@ -161,7 +161,7 @@ void Global::setup(StartupConfig startupConfig) {
 
     settings->beginGroup("Appearance");
     QString theme = settings->value("themeName", "").toString();
-    loadTheme(resourceList,theme);
+    loadTheme(resourceList,colorList,theme);
     autoHideEditorToolbar = settings->value("autoHideEditorToolbar", true).toBool();
     settings->endGroup();
 
@@ -593,6 +593,37 @@ QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key)
 }
 
 
+QString Global::getEditorStyle(bool reload) {
+    QString returnValue = "";
+    QString fgColor = "";
+    QString bgColor = "";
+
+    //html.replace("<en-note", "<body style=\"background-color:lightgrey; color:green\"");
+    if (colorList.contains("editorFontColor"))
+        fgColor = colorList["editorFontColor"].trimmed();
+    if (colorList.contains("editorBackgroundColor"))
+        bgColor = colorList["editorBackgroundColor"].trimmed();
+
+    if (!reload) {
+        if (bgColor != "")
+            returnValue = "background-color:" +bgColor + "; ";
+        if (fgColor != "")
+            returnValue = returnValue + "color:" +fgColor + ";";
+        if (returnValue != "")
+            returnValue = " style=\""+returnValue.trimmed()+"\"";
+    } else {
+        if (bgColor != "")
+            returnValue = "document.body.style.background='"+bgColor+"';";
+        else
+            returnValue = "document.body.style.background='white';";
+        if (fgColor != "")
+            returnValue = returnValue+"document.body.style.color='"+fgColor+"';";
+        else
+            returnValue = returnValue+"document.body.style.color='black';";
+    }
+    return returnValue;
+}
+
 
 // Get a QIcon in an icon theme
 QIcon Global::getIconResource(QString key) {
@@ -618,28 +649,29 @@ QPixmap Global::getPixmapResource(QHash<QString,QString> &resourceList, QString 
 
 
 // Load a theme into a resourceList.
-void Global::loadTheme(QHash<QString, QString> &resourceList, QString theme) {
+void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString,QString> &colorList, QString theme) {
     resourceList.clear();
+    colorList.clear();
     if (theme.trimmed() == "")
         return;
     QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
-    this->loadThemeFile(resourceList,systemTheme, theme);
+    this->loadThemeFile(resourceList,colorList, systemTheme, theme);
 
     QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
-    this->loadThemeFile(resourceList, userTheme, theme);
+    this->loadThemeFile(resourceList, colorList, userTheme, theme);
 }
 
 
 
 // Load a theme from a given file
 void Global::loadThemeFile(QFile &file, QString themeName) {
-    this->loadThemeFile(resourceList, file, themeName);
+    this->loadThemeFile(resourceList, colorList, file, themeName);
 }
 
 
 
 // Load a theme from a given file
-void Global::loadThemeFile(QHash<QString,QString> &resourceList, QFile &file, QString themeName) {
+void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,QString> &colorList, QFile &file, QString themeName) {
     if (!file.exists())
         return;
     if(!file.open(QIODevice::ReadOnly))
@@ -664,6 +696,9 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QFile &file, QS
                     if (f.exists()) {
                         resourceList.remove(":"+key);
                         resourceList.insert(":"+key,value);
+                    } else {
+                        colorList.remove("key");
+                        colorList.insert(key,value);
                     }
                 }
             }

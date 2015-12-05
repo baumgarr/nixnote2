@@ -234,7 +234,6 @@ NWebView::NWebView(NBrowserWindow *parent) :
     this->pasteSequence = QKeySequence(this->pasteAction->shortcut()).toString().toLower();
     if (pasteSequence.trimmed() == "")
         pasteSequence = "ctrl+v";
-
 }
 
 

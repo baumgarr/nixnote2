@@ -65,6 +65,7 @@ public:
         ExternalWindow = 2
     };
     void reloadIcons();
+    void changeEditorStyle();
 
 
 signals:
