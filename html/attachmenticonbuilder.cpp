@@ -62,7 +62,7 @@ QString AttachmentIconBuilder::buildIcon(qint32 lid, QString fileName) {
     QPoint textPoint(40,15);
     QPoint sizePoint(40,29);
     QPixmap pixmap(width,37);
-    pixmap.fill();
+    pixmap.fill(QColor(global.getEditorBackgroundColor()));
 
     p.begin(&pixmap);
     p.setFont(font);
@@ -81,6 +81,8 @@ QString AttachmentIconBuilder::buildIcon(qint32 lid, QString fileName) {
         size = size/1024;
         unit= QString("MB");
     }
+    QPen pen;
+    pen.setColor(global.getEditorFontColor());
     p.drawText(sizePoint, QString::number(size).trimmed() +" " +unit);
     p.drawRect(0,0,width-1,37-1);   // Draw a rectangle around the image.
     p.end();

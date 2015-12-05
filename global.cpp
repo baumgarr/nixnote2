@@ -595,26 +595,28 @@ QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key)
 
 QString Global::getEditorStyle(bool colorOnly) {
     QString returnValue = "";
-    QString fgColor = "";
-    QString bgColor = "";
-
-    //html.replace("<en-note", "<body style=\"background-color:lightgrey; color:green\"");
-    if (colorList.contains("editorFontColor"))
-        fgColor = colorList["editorFontColor"].trimmed();
-    if (colorList.contains("editorBackgroundColor"))
-        bgColor = colorList["editorBackgroundColor"].trimmed();
-
     if (!colorOnly) {
-        if (bgColor != "" && !colorOnly)
-            returnValue = "document.body.style.background='"+bgColor+"';";
-        else
-            returnValue = "document.body.style.background='white';";
+        returnValue = "document.body.style.background='"+this->getEditorBackgroundColor()+"';";
     }
-    if (fgColor != "")
-        returnValue = returnValue+"document.body.style.color='"+fgColor+"';";
-    else
-        returnValue = returnValue+"document.body.style.color='black';";
+    returnValue = returnValue+"document.body.style.color='"+this->getEditorFontColor()+"';";
     return returnValue;
+}
+
+
+
+QString Global::getEditorFontColor() {
+    if (colorList.contains("editorFontColor"))
+        return colorList["editorFontColor"].trimmed();
+    else
+        return "black";
+}
+
+
+QString Global::getEditorBackgroundColor() {
+    if (colorList.contains("editorBackgroundColor"))
+        return colorList["editorBackgroundColor"].trimmed();
+    else
+        return "white";
 }
 
 

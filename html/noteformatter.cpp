@@ -630,6 +630,8 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     // Setup the font
     QFont font; // =p.font() ;
     global.getGuiFont(font);
+    QPen fontPen;
+    fontPen.setColor(QColor(global.getEditorFontColor()));
 //    font.setFamily("Arial");
     QFontMetrics fm(font);
     int width =  fm.width(displayName);
@@ -644,9 +646,10 @@ QString NoteFormatter::findIcon(qint32 lid, Resource r, QString appl) {
     if (resourceHighlight) {
         pixmap.fill(Qt::yellow);
     } else
-        pixmap.fill();
+        pixmap.fill(QColor(global.getEditorBackgroundColor()));
 
     p.begin(&pixmap);
+    p.setPen(fontPen);
     p.setFont(font);
     p.drawPixmap(QPoint(3,3), icon.pixmap(QSize(30,40)));
 
