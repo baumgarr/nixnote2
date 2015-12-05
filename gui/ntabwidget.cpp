@@ -327,6 +327,8 @@ void NTabWidget::setupConnections(NBrowserWindow *newBrowser) {
     connect(newBrowser, SIGNAL(noteNotebookEditedSignal(QString,qint32,qint32,QString)), this,  SLOT(noteNotebookEdited(QString,qint32,qint32,QString)));
     connect(newBrowser, SIGNAL(noteDateEditedSignal(QString,qint32,int,QDateTime)), this,  SLOT(noteDateEdited(QString,qint32,int,QDateTime)));
     connect(newBrowser, SIGNAL(evernoteLinkClicked(qint32,bool,bool)), this, SLOT(evernoteLinkClicked(qint32, bool,bool)));
+
+    connect(newBrowser->editor, SIGNAL(escapeKeyPressed()), this, SLOT(escapeKeyListener()));
 }
 
 
@@ -753,4 +755,9 @@ void NTabWidget::changeEditorStyle() {
     for (int i=0; i<externalList->size(); i++) {
         externalList->at(i)->browser->setEditorStyle();
     }
+}
+
+
+void NTabWidget::escapeKeyListener() {
+    emit escapeKeyPressed();
 }

@@ -281,6 +281,8 @@ public slots:
     void reloadIcons();
     void showMessage(QString title, QString msg, int timeout=10000);
     void toolbarVisibilityChanged();
+    void presentationModeOn();
+    void presentationModeOff();
 
 signals:
     void syncRequested();

@@ -74,6 +74,7 @@ signals:
     void tagCreated(qint32);
     void updateNoteList(qint32, int, QVariant); // A note was edited so we update the note list
     void updateNoteTitle(QString uuid, qint32 lid, QString content);
+    void escapeKeyPressed();
 
 public slots:
     void closeTab(int index);
@@ -83,7 +84,7 @@ public slots:
     void noteSyncSignaled(qint32 lid);
     void noteUpdateSignaled(qint32);
     void evernoteLinkClicked(qint32 openLid, bool newTab, bool newWindow);
-
+    void escapeKeyListener();
     void saveAllNotes();
     void undoButtonPressed();
     void redoButtonPressed();

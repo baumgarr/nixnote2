@@ -227,7 +227,8 @@ SOURCES += main.cpp\
     cmdtools/cmdlinequery.cpp \
     utilities/nuuid.cpp \
     cmdtools/deletenote.cpp \
-    cmdtools/emailnote.cpp
+    cmdtools/emailnote.cpp \
+    dialog/faderdialog.cpp
 
 
 
@@ -418,7 +419,8 @@ HEADERS  += nixnote.h \
     cmdtools/cmdlinequery.h \
     utilities/nuuid.h \
     cmdtools/deletenote.h \
-    cmdtools/emailnote.h
+    cmdtools/emailnote.h \
+    dialog/faderdialog.h
 
 
 

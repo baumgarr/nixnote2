@@ -286,6 +286,10 @@ void NMainMenuBar::setupViewMenu() {
 
     viewMenu->addSeparator();
 
+    viewPresentationModeAction = new QAction(tr("&Presentation Mode"), this);
+    setupShortcut(viewPresentationModeAction, "View_Presentation_Mode");
+    viewMenu->addAction(viewPresentationModeAction);
+
     viewLeftPanel = new QAction(tr("Show &Left Panel"), this);
     setupShortcut(viewLeftPanel, "View_Show_Left_Side");
     viewLeftPanel->setCheckable(true);

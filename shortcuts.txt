@@ -79,6 +79,7 @@ View_Toolbar					// Show/hide the toolbar
 View_Show_Search				// Show/hide the search box
 View_Show_Quota					// Show/hide the user quota
 View_Show_Zoom					// Show/hide the zoom spinner
+View_Presentation_Mode                          // Turn on presentation mode
 
 Prev_Tab                       Ctrl+PgDown      // Previous tab 
 Next_Tab                       Ctrl+PgUp        // Next Tab

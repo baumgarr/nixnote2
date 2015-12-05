@@ -379,6 +379,11 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
         page()->mainFrame()->scroll(0,scrollValue);
     }
 
+    // Exit presentation mode
+    if (e->key() == Qt::Key_Escape) {
+        emit escapeKeyPressed();
+    }
+
     // Hard override of paste because I can't seem to get it any other way.
 //    if (e->key() == Qt::Key_V && e->modifiers().testFlag(Qt::ControlModifier)) {
     QKeySequence ks(e->modifiers()|e->key());
@@ -387,7 +392,6 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
         e->accept();
         return;
     }
-
 
     QWebView::keyPressEvent(e);
 }

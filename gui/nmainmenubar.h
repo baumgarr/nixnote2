@@ -92,6 +92,7 @@ public:
 
     QAction *viewSourceAction;
     QAction *viewHistoryAction;
+    QAction *viewPresentationModeAction;
     QAction *viewExtendedInformation;
     QAction *viewNoteListWide;
     QAction *viewNoteListNarrow;

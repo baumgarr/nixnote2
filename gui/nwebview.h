@@ -93,6 +93,7 @@ signals:
     void noteChanged();
     void downloadAttachmentRequested(QNetworkRequest*);
     void htmlEditAlert();
+    void escapeKeyPressed();
 
 public slots:
     void editAlert();
