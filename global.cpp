@@ -596,10 +596,11 @@ QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key)
 QString Global::getEditorStyle(bool colorOnly) {
     QString returnValue = "";
     if (!colorOnly) {
-        returnValue = "document.body.style.background='"+this->getEditorBackgroundColor()+"';";
+        returnValue = "document.body.style.background='"+this->getEditorBackgroundColor()+"'; ";
     }
     returnValue = returnValue+"document.body.style.color='"+this->getEditorFontColor()+"';";
-    return returnValue;
+
+    return "function setColor() { "+returnValue +" }; setColor();";
 }
 
 

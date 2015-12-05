@@ -3448,8 +3448,9 @@ void NBrowserWindow::setEditorStyle() {
     int end = html.length();
     end = html.indexOf(">");
     html = html.mid(0,end);
-
-    if (html.contains("background-color:"))
+    bool hasBackground = html.contains("background-color:", Qt::CaseInsensitive);
+    bool hasDefaultBackground = html.contains("background-color: "+global.getEditorBackgroundColor(), Qt::CaseInsensitive);
+    if (hasBackground && !hasDefaultBackground)
         editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(true));
     else
         editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(false));
