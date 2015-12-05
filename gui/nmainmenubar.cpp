@@ -501,8 +501,8 @@ void NMainMenuBar::setupHelpMenu() {
             this, SLOT(openManual()));
     helpMenu->addAction(openManualAction);
 
-    themeInformationAction = new QAction(tr("&Icon Theme Information"), this);
-    themeInformationAction->setToolTip(tr("View information about the current icon theme."));
+    themeInformationAction = new QAction(tr("Theme &Information"), this);
+    themeInformationAction->setToolTip(tr("View information about the current theme."));
     connect(themeInformationAction, SIGNAL(triggered()), this, SLOT(openThemeInformation()));
     helpMenu->addAction(themeInformationAction);
     QString url = global.getResourceFileName(global.resourceList, ":themeInformation");
@@ -586,7 +586,7 @@ void NMainMenuBar::openEvernoteAccountPage() {
 
 
 void NMainMenuBar::setupThemeMenu() {
-    themeMenu = editMenu->addMenu(tr("Icon Theme"));
+    themeMenu = editMenu->addMenu(tr("Theme"));
     QStringList list = global.getThemeNames();
     QFont f;
     global.getGuiFont(f);

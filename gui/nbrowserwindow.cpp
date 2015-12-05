@@ -547,6 +547,8 @@ void NBrowserWindow::setContent(qint32 lid) {
     } /*else
         hammer->timer.start(1000);*/
 
+    this->setEditorStyle();
+
     if (hasFocus)
         this->editor->setFocus();
     QLOG_DEBUG() << "Exiting setContent";
@@ -3435,4 +3437,20 @@ void NBrowserWindow::superscriptButtonPressed() {
 // User pressed the subscript editor button
 void NBrowserWindow::subscriptButtonPressed() {
     editor->page()->mainFrame()->evaluateJavaScript("document.execCommand('subscript');");
+}
+
+// Set the editor background & font color
+void NBrowserWindow::setEditorStyle() {
+    QString html = editor->page()->mainFrame()->toHtml();
+    int start = 0;
+    start = html.indexOf("<body");
+    html = html.mid(start);
+    int end = html.length();
+    end = html.indexOf(">");
+    html = html.mid(0,end);
+
+    if (html.contains("background-color:"))
+        editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(true));
+    else
+        editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(false));
 }

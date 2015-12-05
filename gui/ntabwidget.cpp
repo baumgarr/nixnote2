@@ -748,9 +748,9 @@ void NTabWidget::reloadIcons() {
 
 void NTabWidget::changeEditorStyle() {
     for (int i=0; i<browserList->size(); i++) {
-        browserList->at(i)->editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(true));
+        browserList->at(i)->setEditorStyle();
     }
     for (int i=0; i<externalList->size(); i++) {
-        externalList->at(i)->browser->editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(true));
+        externalList->at(i)->browser->setEditorStyle();
     }
 }

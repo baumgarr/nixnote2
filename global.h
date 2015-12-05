@@ -235,7 +235,7 @@ public:
     // These functions deal with the icon themes
     QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme
     QHash<QString,QString> colorList;                         // List of colors used in the current theme
-    QString getEditorStyle(bool reload=false);                // Get note editor style overrides
+    QString getEditorStyle(bool colorOnly);                // Get note editor style overrides
     QPixmap getPixmapResource(QHash<QString, QString> &resourceList, QString key);   // Get a pixmap from the user's (or default) theme
     QPixmap getPixmapResource(QString key);                   // Get a pixmap from the user's (or default) theme
     QIcon getIconResource(QHash<QString, QString> &resourceList, QString key);       // Get an icon from the user's (or default) theme

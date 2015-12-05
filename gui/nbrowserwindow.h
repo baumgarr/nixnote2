@@ -125,6 +125,7 @@ public:
     //NMainMenuBar *mainMenuBarHook;
     bool isReadOnly;
     QString buildPasteUrl(QString url);
+    void setEditorStyle();
 
     EditorButtonBar *buttonBar;
     QShortcut *focusNoteShortcut;

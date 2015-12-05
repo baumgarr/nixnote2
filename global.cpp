@@ -593,7 +593,7 @@ QIcon Global::getIconResource(QHash<QString,QString> &resourceList, QString key)
 }
 
 
-QString Global::getEditorStyle(bool reload) {
+QString Global::getEditorStyle(bool colorOnly) {
     QString returnValue = "";
     QString fgColor = "";
     QString bgColor = "";
@@ -604,23 +604,16 @@ QString Global::getEditorStyle(bool reload) {
     if (colorList.contains("editorBackgroundColor"))
         bgColor = colorList["editorBackgroundColor"].trimmed();
 
-    if (!reload) {
-        if (bgColor != "")
-            returnValue = "background-color:" +bgColor + "; ";
-        if (fgColor != "")
-            returnValue = returnValue + "color:" +fgColor + ";";
-        if (returnValue != "")
-            returnValue = " style=\""+returnValue.trimmed()+"\"";
-    } else {
-        if (bgColor != "")
+    if (!colorOnly) {
+        if (bgColor != "" && !colorOnly)
             returnValue = "document.body.style.background='"+bgColor+"';";
         else
             returnValue = "document.body.style.background='white';";
-        if (fgColor != "")
-            returnValue = returnValue+"document.body.style.color='"+fgColor+"';";
-        else
-            returnValue = returnValue+"document.body.style.color='black';";
     }
+    if (fgColor != "")
+        returnValue = returnValue+"document.body.style.color='"+fgColor+"';";
+    else
+        returnValue = returnValue+"document.body.style.color='black';";
     return returnValue;
 }
 
