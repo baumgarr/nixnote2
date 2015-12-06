@@ -3374,6 +3374,8 @@ void NBrowserWindow::focusCheck() {
         buttonBarVisible = true;
     if (!global.autoHideEditorToolbar)
         buttonBarVisible = true;
+    if (global.isFullscreen)
+        buttonBarVisible = false;
 
     if (!editor->page()->isContentEditable())
         buttonBarVisible = false;

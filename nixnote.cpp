@@ -3479,6 +3479,8 @@ void NixNote::presentationModeOn() {
     this->toolBar->setVisible(false);
     this->statusBar()->setVisible(false);
     this->showFullScreen();
+    global.isFullscreen=true;
+    tabWindow->currentBrowser()->buttonBar->hide();
 
     FaderDialog *d = new FaderDialog();
     d->setText(tr("Press ESC to exit."));
@@ -3497,6 +3499,9 @@ void NixNote::presentationModeOff() {
         statusBar()->show();
     menuBar->show();
     toolBar->show();
+    global.isFullscreen=false;
+    if (!global.autoHideEditorToolbar)
+        tabWindow->currentBrowser()->buttonBar->show();
     this->showMaximized();
 }
 

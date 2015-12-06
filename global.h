@@ -231,7 +231,7 @@ public:
     void setMiddleClickAction(int value);
 
     bool disableEditing;                                    // Disable all editing of notes
-
+    bool isFullscreen;                                      // Are we in fullscreen mode?
     // These functions deal with the icon themes
     QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme
     QHash<QString,QString> colorList;                         // List of colors used in the current theme

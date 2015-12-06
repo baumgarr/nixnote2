@@ -169,6 +169,7 @@ void Global::setup(StartupConfig startupConfig) {
     maxIndexInterval = 120000;
     indexResourceCountPause=2;
     indexNoteCountPause=100;
+    isFullscreen=false;
 }
 
 

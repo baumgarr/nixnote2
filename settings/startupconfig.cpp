@@ -99,6 +99,7 @@ void StartupConfig::printHelp() {
                    +QString("          --attachment=\"<file_path>\"   File to attach to the note.\n")
                    +QString("                                       For multiple files, use multiple --attachment statements.\n")
                    +QString("          --delimiter=\"<delmiiter>\"    Character string identifying attachment points.\n")
+                   +QString("                                       Defaults to %%.\n")
                    +QString("          --created=\"<date_created>\"   Date created\n")
                    +QString("          --updated=\"<date_updated>\"   Date created\n")
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
