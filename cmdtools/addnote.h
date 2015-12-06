@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QObject>
 #include <QStringList>
 
+#include "qevercloud/include/QEverCloud.h"
+using namespace qevercloud;
+
 class AddNote : public QObject
 {
     Q_OBJECT
@@ -36,6 +39,9 @@ public:
     QString content;
     QString notebook;
     QStringList tags;
+    QStringList attachments;
+    QString attachmentDelimiter;
+    qint32 createResource(Resource &r, int sequence, QByteArray data,  QString mime, bool attachment, QString filename, qint32 noteLid);
 
     void write(QString uuid);
 

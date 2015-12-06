@@ -95,7 +95,10 @@ void StartupConfig::printHelp() {
                    +QString("          --title=\"<title>\"            Title of the new note.\n")
                    +QString("          --notebook=\"<notebook>\"      Notebook for the new note.\n")
                    +QString("          --tag=\"<tag>\"                Assign a tag.\n")
-                   +QString("                                       For multiple tags use multiple --tag statements\n")
+                   +QString("                                       For multiple tags use multiple --tag statements.\n")
+                   +QString("          --attachment=\"<file_path>\"   File to attach to the note.\n")
+                   +QString("                                       For multiple files, use multiple --attachment statements.\n")
+                   +QString("          --delimiter=\"<delmiiter>\"    Character string identifying attachment points.\n")
                    +QString("          --created=\"<date_created>\"   Date created\n")
                    +QString("          --updated=\"<date_updated>\"   Date created\n")
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
@@ -187,6 +190,10 @@ int StartupConfig::init(int argc, char *argv[]) {
             if (parm.startsWith("--tag=", Qt::CaseSensitive)) {
                 parm = parm.mid(6);
                 newNote->tags.append(parm);
+            }
+            if (parm.startsWith("--attachment=", Qt::CaseSensitive)) {
+                parm = parm.mid(13);
+                newNote->attachments.append(parm);
             }
             if (parm.startsWith("--created=", Qt::CaseSensitive)) {
                 parm = parm.mid(10);

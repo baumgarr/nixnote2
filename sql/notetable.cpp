@@ -546,87 +546,87 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
         title = t.title;
     query.bindValue(":title", title);
 
-    if (t.attributes.isSet()) {
-        NoteAttributes na = t.attributes;
-        if (na.author.isSet()) {
-            QString author = na.author;
-            query.bindValue(":author",author);
-        } else {
-            query.bindValue(":author", "");
-        }
-        if (na.subjectDate.isSet()) {
-            double sd = na.subjectDate;
-            query.bindValue(":dateSubject", sd);
-        } else {
-            query.bindValue(":dateSubject", 0);
-        }
-        if (na.source.isSet()) {
-            QString source = na.source;
-            query.bindValue(":source", source);
-        } else {
-            query.bindValue(":source", "");
-        }
-        if (na.sourceURL.isSet()) {
-            QString url = na.sourceURL;
-            query.bindValue(":sourceUrl", url);
-        } else {
-            query.bindValue(":sourceUrl", "");
-        }
-        if (na.sourceApplication.isSet()) {
-            QString sa = na.sourceApplication;
-            query.bindValue(":sourceApplication", sa);
-        } else {
-            query.bindValue(":sourceApplication", "");
-        }
-        if (na.latitude.isSet()) {
-            double lat = na.latitude;
-            query.bindValue(":latitude", lat);
-        } else {
-            query.bindValue(":latitude", 0);
-        }
-        if (na.longitude.isSet()) {
-            double lon = na.longitude;
-            query.bindValue(":longitude",lon);
-        } else {
-            query.bindValue(":longitude", 0);
-        }
-        if (na.altitude.isSet()) {
-            double alt = na.altitude;
-            query.bindValue(":altitude", alt);
-        } else {
-            query.bindValue(":altitude", 0);
-        }
-        if (na.reminderOrder.isSet()) {
-            qint64 order = na.reminderOrder;
-            query.bindValue(":reminderOrder", order);
-        } else {
-            query.bindValue(":reminderOrder", 0);
-        }
-        if (na.reminderTime.isSet()) {
-            qlonglong rt = na.reminderTime;
-            query.bindValue(":reminderTime", rt);
-        } else {
-            query.bindValue(":reminderTime", 0);
-        }
-        if (na.reminderDoneTime.isSet()) {
-            qlonglong rt = na.reminderDoneTime;
-            query.bindValue(":reminderDoneTime", rt);
-        } else {
-            query.bindValue(":reminderDoneTime", 0);
-        }
+    NoteAttributes na;
+    if (t.attributes.isSet())
+        na = t.attributes;
+    if (na.author.isSet()) {
+        QString author = na.author;
+        query.bindValue(":author",author);
+    } else {
+        query.bindValue(":author", "");
+    }
+    if (na.subjectDate.isSet()) {
+        double sd = na.subjectDate;
+        query.bindValue(":dateSubject", sd);
+    } else {
+        query.bindValue(":dateSubject", 0);
+    }
+    if (na.source.isSet()) {
+        QString source = na.source;
+        query.bindValue(":source", source);
+    } else {
+        query.bindValue(":source", "");
+    }
+    if (na.sourceURL.isSet()) {
+        QString url = na.sourceURL;
+        query.bindValue(":sourceUrl", url);
+    } else {
+        query.bindValue(":sourceUrl", "");
+    }
+    if (na.sourceApplication.isSet()) {
+        QString sa = na.sourceApplication;
+        query.bindValue(":sourceApplication", sa);
+    } else {
+        query.bindValue(":sourceApplication", "");
+    }
+    if (na.latitude.isSet()) {
+        double lat = na.latitude;
+        query.bindValue(":latitude", lat);
+    } else {
+        query.bindValue(":latitude", 0);
+    }
+    if (na.longitude.isSet()) {
+        double lon = na.longitude;
+        query.bindValue(":longitude",lon);
+    } else {
+        query.bindValue(":longitude", 0);
+    }
+    if (na.altitude.isSet()) {
+        double alt = na.altitude;
+        query.bindValue(":altitude", alt);
+    } else {
+        query.bindValue(":altitude", 0);
+    }
+    if (na.reminderOrder.isSet()) {
+        qint64 order = na.reminderOrder;
+        query.bindValue(":reminderOrder", order);
+    } else {
+        query.bindValue(":reminderOrder", 0);
+    }
+    if (na.reminderTime.isSet()) {
+        qlonglong rt = na.reminderTime;
+        query.bindValue(":reminderTime", rt);
+    } else {
+        query.bindValue(":reminderTime", 0);
+    }
+    if (na.reminderDoneTime.isSet()) {
+        qlonglong rt = na.reminderDoneTime;
+        query.bindValue(":reminderDoneTime", rt);
+    } else {
+        query.bindValue(":reminderDoneTime", 0);
     }
 
     qlonglong created = 0;
-    qlonglong updated = 0;
-    qlonglong deleted = 0;
     if (t.created.isSet())
         created = t.created;
     query.bindValue(":dateCreated", created);
 
+    qlonglong updated = created;
     if (t.updated.isSet())
         updated = t.updated;
     query.bindValue(":dateUpdated", updated);
 
+    qlonglong deleted = 0;
     if (t.deleted.isSet())
         deleted = t.deleted;
     query.bindValue(":dateDeleted", deleted);
@@ -709,6 +709,7 @@ bool NoteTable::updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 n
 
     if (!query.exec()) {
         QLOG_ERROR() << "Error inserting into NoteTable: " << query.lastError();
+        QLOG_ERROR() << "Error inserting into NoteTable: " << query.lastQuery();
         query.finish();
         db->unlock();
         return false;

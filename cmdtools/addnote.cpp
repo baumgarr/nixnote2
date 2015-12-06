@@ -22,6 +22,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtXml>
 #include <QDebug>
 #include "global.h"
+#include "sql/notetable.h"
+#include "sql/resourcetable.h"
 
 extern Global global;
 
@@ -31,6 +33,7 @@ AddNote::AddNote(QObject *parent) :
     title = tr("Untitled Note");
     created = QDateTime::currentDateTime().toString("yyyy-MM-ddTHH:mm:ss.zzzZ");
     updated = QDateTime::currentDateTime().toString("yyyy-MM-ddTHH:mm:ss.zzzZ");
+    attachmentDelimiter = "%%";
 }
 
 
@@ -80,9 +83,57 @@ void AddNote::write(QString uuid) {
     for (int i=0; i<tags.size(); i++) {
         writer->writeTextElement("Tag", tags[i]);
     }
+    for (int i=0; i<attachments.size(); i++) {
+        writer->writeTextElement("Attachment", attachments[i]);
+    }
+    writer->writeTextElement("AttachmentDelimiter", attachmentDelimiter);
     writer->writeEndElement();
     writer->writeEndElement();
     writer->writeEndDocument();
     xmlFile.close();
     QFile::rename(global.fileManager.getTmpDirPath()+filename,global.fileManager.getDbiDirPath()+filename);
+}
+
+
+
+// Create  a new resource and add it to the database
+qint32 AddNote::createResource(Resource &r, int sequence, QByteArray data,  QString mime, bool attachment, QString filename, qint32 noteLid) {
+    qint32 lid = noteLid;
+    ConfigStore cs(global.db);
+    qint32 rlid = cs.incrementLidCounter();
+
+    QByteArray hash = QCryptographicHash::hash(data, QCryptographicHash::Md5);
+
+    QString guid =  QString::number(rlid);
+    NoteTable noteTable(global.db);
+    r.guid = guid;
+    r.noteGuid = noteTable.getGuid(lid);
+    QString noteguid = r.noteGuid;
+    if (noteguid == "")
+        return 0;
+    r.mime = mime;
+    r.active = true;
+    r.updateSequenceNum = sequence;
+    r.width = 0;
+    r.height = 0;
+    r.duration = 0;
+    ResourceAttributes a;
+    if (r.attributes.isSet())
+        a = r.attributes;
+    a.attachment = attachment;
+    if (filename != "") {
+        a.fileName = filename;
+    }
+
+    Data d;
+    d.body = data;
+    d.bodyHash = hash;
+    d.size = data.size();
+
+    r.data = d;
+    r.attributes = a;
+    ResourceTable resourceTable(global.db);
+    resourceTable.add(rlid, r, true, lid);
+
+    return rlid;
 }

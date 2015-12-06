@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include "utilities/nuuid.h"
 #include "email/smtpclient.h"
+#include "utilities/mimereference.h"
 
 extern Global global;
 
@@ -283,20 +284,20 @@ int CmdLineTool::addNote(StartupConfig config) {
     } else {
        // Another NN isn't found, so we do this ourself
         global.db = new DatabaseConnection("nixnote");  // Startup the database
+        NUuid uuid;
         Note newNote;
         newNote.content = config.newNote->content;
         newNote.active = true;
         newNote.created = QDateTime::currentMSecsSinceEpoch();
-        newNote.updated = QDateTime::currentMSecsSinceEpoch();
-        NUuid uuid;
         newNote.guid = uuid.create();
-
         if (config.newNote->title != "")
             newNote.title = config.newNote->title;
         else
-            newNote.title = tr("New Note");
+            newNote.title = tr("Untitled Note");
 
         // Process tags
+        newNote.tagGuids = QList<Guid>();
+        newNote.tagNames=QStringList();
         for (int i=0; i<config.newNote->tags.size(); i++) {
             QString tagName = config.newNote->tags[i];
             TagTable tagTable(global.db);
@@ -356,7 +357,50 @@ int CmdLineTool::addNote(StartupConfig config) {
         }
 
         NoteTable noteTable(global.db);
-        qint32 newLid = noteTable.add(0,newNote,true);
+        qint32 newLid = noteTable.addStub(newNote.guid);
+        // Do the attachments
+        for (int i=0; i<config.newNote->attachments.size(); i++) {
+            QString filename = config.newNote->attachments[i];
+            QFile file(filename);
+            if (file.exists()) {
+
+                file.open(QIODevice::ReadOnly);
+                QByteArray ba = file.readAll();
+                file.close();
+
+                MimeReference mimeRef;
+                QString extension = filename;
+                int endPos = filename.lastIndexOf(".");
+                if (endPos != -1)
+                    extension = extension.mid(endPos);
+                QString mime =  mimeRef.getMimeFromExtension(extension);
+                Resource newRes;
+                bool attachment = true;
+                if (mime == "application/pdf" || mime.startsWith("image/"))
+                    attachment = false;
+                config.newNote->createResource(newRes, 0, ba, mime, attachment, QFileInfo(filename).fileName(), newLid);
+                QByteArray hash;
+                if (newRes.data.isSet()) {
+                    Data d = newRes.data;
+                    if (d.bodyHash.isSet())
+                        hash = d.bodyHash;
+                }
+                if (!newNote.resources.isSet()) {
+                    newNote.resources = QList<Resource>();
+                }
+                QString mediaString = "<en-media hash=\""+hash.toHex()+"\"; type=\""+mime+"\"/>";
+                if (newNote.content->contains(config.newNote->attachmentDelimiter)) {
+                     //newNote.content = newNote.content->replace(config.newNote->attachmentDelimiter,mediaString);
+                     newNote.content = newNote.content->replace(newNote.content->indexOf(config.newNote->attachmentDelimiter),
+                                                         config.newNote->attachmentDelimiter.size(), mediaString);
+                } else {
+                    newNote.content = newNote.content->replace("</en-note>","<br>"+mediaString+"</en-note>");
+                }
+                newNote.resources->append(newRes);
+            }
+        }
+        noteTable.expunge(newLid);
+        noteTable.add(newLid,newNote,true);
         std::cout << newLid << QString(tr(" has been created.\n")).toStdString();
         return newLid;
     }
