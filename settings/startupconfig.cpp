@@ -108,12 +108,12 @@ void StartupConfig::printHelp() {
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
                    +QString("  readNote <options>                   Read the text contents of a note.\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to read.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
                    +QString("  deleteNote <options>                 Move a note to the trash via the command line.\n")
                    +QString("     deleteNote options:\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to delete.\n")
                    +QString("          --noVerify                   Do not prompt for verification.\n")
-                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
                    +QString("  emailNote <options>                  Move a note to the trash via the command line.\n")
                    +QString("     emailNote options:\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to email.\n")
@@ -344,6 +344,11 @@ int StartupConfig::init(int argc, char *argv[]) {
     return 0;
 }
 
+void StartupConfig::setSyncAndExit() {
+    syncAndExit=true;
+    command->clear();
+    command->setBit(STARTUP_GUI);
+}
 
 bool StartupConfig::query() {
     return command->at(STARTUP_QUERY);

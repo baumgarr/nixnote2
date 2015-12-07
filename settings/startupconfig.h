@@ -86,6 +86,7 @@ public:
     bool deleteNote();
     bool emailNote();
     bool readNote();
+    void setSyncAndExit();
 
     int init(int argc, char *argv[]);
     void printHelp();

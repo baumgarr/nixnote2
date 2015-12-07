@@ -32,7 +32,7 @@ class CmdLineTool : public QObject
     Q_OBJECT
 public:
     explicit CmdLineTool(QObject *parent = 0);
-    int run(StartupConfig config);
+    int run(StartupConfig &config);
     int readNote(StartupConfig config);
     int addNote(StartupConfig config);
     int queryNotes(StartupConfig config);

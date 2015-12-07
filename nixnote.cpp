@@ -2473,8 +2473,10 @@ void NixNote::heartbeatTimerTriggered() {
         data.unwrap(xml);
         NoteTable ntable(global.db);
         Note n;
-        ntable.get(n, data.lid,false,false);
-        data.text = data.stripTags(n.content);
+        if (ntable.get(n, data.lid,false,false))
+            data.text = data.stripTags(n.content);
+        else
+            data.text=tr("Note not found.");
         QString reply = data.wrap();
         CrossMemoryMapper responseMapper(data.returnUuid);
         if (!responseMapper.attach())
