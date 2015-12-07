@@ -2467,6 +2467,21 @@ void NixNote::heartbeatTimerTriggered() {
         email.unwrap(xml);
         email.sendEmail();
     }
+    if (data.startsWith("READ_NOTE:")) {
+        QString xml = data.mid(10);
+        ExtractNoteText data;
+        data.unwrap(xml);
+        NoteTable ntable(global.db);
+        Note n;
+        ntable.get(n, data.lid,false,false);
+        data.text = data.stripTags(n.content);
+        QString reply = data.wrap();
+        CrossMemoryMapper responseMapper(data.returnUuid);
+        if (!responseMapper.attach())
+            return;
+        responseMapper.write(reply);
+        responseMapper.detach();
+    }
     //free(buffer); // Fixes memory leak
 }
 

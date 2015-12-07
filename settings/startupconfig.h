@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "cmdtools/cmdlinequery.h"
 #include "cmdtools/deletenote.h"
 #include "cmdtools/emailnote.h"
+#include "cmdtools/extractnotetext.h"
 
 #define STARTUP_GUI 0
 #define STARTUP_SYNC 1
@@ -45,7 +46,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define STARTUP_EXPORT 11
 #define STARTUP_IMPORT 12
 #define STARTUP_BACKUP 13
-#define STARTUP_OPTION_COUNT 14
+#define STARTUP_READNOTE 14
+#define STARTUP_OPTION_COUNT 15
 
 class StartupConfig
 {
@@ -74,6 +76,7 @@ public:
     DeleteNote *delNote;
     EmailNote *email;
     CmdLineQuery *queryNotes;
+    ExtractNoteText *extractText;
     bool gui();
     bool sync();
     bool addNote();
@@ -82,6 +85,7 @@ public:
     bool query();
     bool deleteNote();
     bool emailNote();
+    bool readNote();
 
     int init(int argc, char *argv[]);
     void printHelp();

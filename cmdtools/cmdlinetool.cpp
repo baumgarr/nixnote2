@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "email/smtpclient.h"
 #include "utilities/mimereference.h"
 
+
 extern Global global;
 
 CmdLineTool::CmdLineTool(QObject *parent) :
@@ -89,6 +90,9 @@ int CmdLineTool::run(StartupConfig config) {
     }
     if (config.emailNote()) {
         return emailNote(config);
+    }
+    if (config.readNote()) {
+        return readNote(config);
     }
     return 0;
 }
@@ -406,3 +410,55 @@ int CmdLineTool::addNote(StartupConfig config) {
     }
     return 0;
 }
+
+
+
+
+
+
+int CmdLineTool::readNote(StartupConfig config) {
+    bool useCrossMemory = true;
+
+    // Look to see if another NixNote is running.  If so, then we
+    // expect a response.  Otherwise, we do it ourself.
+    global.sharedMemory->unlock();
+    global.sharedMemory->detach();
+    if (!global.sharedMemory->attach()) {
+        useCrossMemory = false;
+    }
+    if (useCrossMemory) {
+        NUuid uuid;
+        config.extractText->returnUuid = uuid.create();
+        CrossMemoryMapper sharedMemory(config.extractText->returnUuid);
+        if (!sharedMemory.allocate(500*1024))
+            return 16;
+        sharedMemory.clearMemory();
+        global.sharedMemory->write("READ_NOTE:" + config.extractText->wrap());
+        int maxWait = 5;
+        bool expectResponse = true;
+        int cnt = 0;
+        while (expectResponse && cnt<maxWait) {
+            QByteArray data = sharedMemory.read();
+            if (!data.startsWith('\0')) {
+                expectResponse = false;
+                config.extractText->unwrap(data);
+            } else {
+                sleep(1);
+            }
+            cnt++;
+        }
+        if (!expectResponse)
+            std::cout << config.extractText->text.toStdString() << endl;
+        else
+            std::cout << tr("No response received from NixNote.").toStdString();
+    } else {
+        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        NoteTable noteTable(global.db);
+        Note n;
+        noteTable.get(n,config.extractText->lid,false,false);
+        QString text = config.extractText->stripTags(n.content);
+        std::cout << text.toStdString() << endl;
+    }
+    return 0;
+}
+

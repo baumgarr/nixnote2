@@ -44,6 +44,7 @@ StartupConfig::StartupConfig()
     purgeTemporaryFiles=true;
     delNote = NULL;
     email = NULL;
+    extractText = NULL;
 }
 
 
@@ -105,6 +106,9 @@ void StartupConfig::printHelp() {
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  readNote <options>                   Read the text contents of a note.\n")
+                   +QString("          --id=\"<note_id>\"             ID of the note to read.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
                    +QString("  deleteNote <options>                 Move a note to the trash via the command line.\n")
                    +QString("     deleteNote options:\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to delete.\n")
@@ -160,6 +164,11 @@ int StartupConfig::init(int argc, char *argv[]) {
             command->setBit(STARTUP_QUERY);
             if (queryNotes == NULL)
                 queryNotes = new CmdLineQuery();
+        }
+        if (parm.startsWith("readNote")) {
+            command->setBit(STARTUP_READNOTE);
+            if (extractText == NULL)
+                extractText = new ExtractNoteText();
         }
         if (parm.startsWith("deleteNote")) {
             command->setBit(STARTUP_DELETENOTE);
@@ -280,6 +289,16 @@ int StartupConfig::init(int argc, char *argv[]) {
                 delNote->lid = parm.toInt();
             }
         }
+        if (command->at(STARTUP_READNOTE)) {
+            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
+                parm = parm.mid(12);
+                accountId = parm.toInt();
+            }
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                extractText->lid = parm.toInt();
+            }
+        }
         if (command->at(STARTUP_EMAILNOTE)) {
             if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
                 parm = parm.mid(12);
@@ -354,6 +373,10 @@ bool StartupConfig::deleteNote() {
     return command->at(STARTUP_DELETENOTE);
 }
 
+
+bool StartupConfig::readNote() {
+    return command->at(STARTUP_READNOTE);
+}
 
 bool StartupConfig::emailNote() {
     return command->at(STARTUP_EMAILNOTE);

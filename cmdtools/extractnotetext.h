@@ -19,25 +19,24 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 
-#ifndef CMDLINETOOL_H
-#define CMDLINETOOL_H
+#ifndef EXTRACTNOTETEXT_H
+#define EXTRACTNOTETEXT_H
 
 #include <QObject>
-#include <QSharedMemory>
 
-#include "settings/startupconfig.h"
-
-class CmdLineTool : public QObject
+class ExtractNoteText : public QObject
 {
     Q_OBJECT
 public:
-    explicit CmdLineTool(QObject *parent = 0);
-    int run(StartupConfig config);
-    int readNote(StartupConfig config);
-    int addNote(StartupConfig config);
-    int queryNotes(StartupConfig config);
-    int deleteNote(StartupConfig config);
-    int emailNote(StartupConfig config);
+    explicit ExtractNoteText(QObject *parent = 0);
+    qint32 lid;
+    QString text;
+    QString wrap();
+    int lastError;
+    QString errorMessage;
+    QString returnUuid;
+    void unwrap(QString data);
+    QString stripTags(QString content);
 
 signals:
 
@@ -45,4 +44,4 @@ public slots:
 
 };
 
-#endif // CMDLINETOOL_H
+#endif // EXTRACTNOTETEXT_H
