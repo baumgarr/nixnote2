@@ -66,7 +66,7 @@ void StartupConfig::printHelp() {
                    +QString("                                       the desktop supports tray icons.\n")
                    +QString("          --startMinimized             Force a startup with NixNote minimized\n")
                    +QString("          --syncAndExit                Synchronize and exit the program.\n")
-                   +QString("  sync                                 If running, ask NixNote to synchronize with Evernote\n")
+                   +QString("  sync                                 Synchronize with Evernote without showing GUI.\n")
                    +QString("  shutdown                             If running, ask NixNote to shutdown\n")
                    +QString("  show_window                          If running, ask NixNote to show the main window.\n")
                    +QString("  query <options>                      If running, search NixNote and display the results.\n")
@@ -346,8 +346,8 @@ int StartupConfig::init(int argc, char *argv[]) {
 
 void StartupConfig::setSyncAndExit() {
     syncAndExit=true;
-    command->clear();
-    command->setBit(STARTUP_GUI);
+    //command->clear();
+    command->setBit(STARTUP_GUI,true);
 }
 
 bool StartupConfig::query() {

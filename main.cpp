@@ -111,6 +111,8 @@ int main(int argc, char *argv[])
             global.sharedMemory->detach();
         if (!startupConfig.gui())
             return retval;
+        if (!startupConfig.syncAndExit)
+            global.syncAndExit=true;
     }
 
     QString logPath = global.fileManager.getLogsDirPath("")+"messages.log";
