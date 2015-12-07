@@ -2,29 +2,218 @@
 .SH NAME
 NixNote \- An open source Evernote client.
 .SH SYNOPSIS
+.IP nixnote2 [command] [options]
+.SH DESCRIPTION
 NixNote is an open source clone of Evernote. Evernote is a collection of software and services that allows users to collect, sort, tag and annotate notes and other miscellaneous information. Data may be stored locally and/or synchronized with Evernote servers so they can be accessed by other clients.
-.SH OPTIONS
-.IP "--accountID=<id>"
-The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. 
+.SH COMMANDS
+.IP "start <options>
+Start NixNote normally.  If not specified, this is the default option."
+.RS 7
+.IP "start options:
+.RS 7
+.HP 2 2 
+.IP "--accountId=<id>"
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+.LP
+.HP 2 2 
 .IP "--enableIndexing"
 Enable  background indexing thread.  This can be useful in doing a total database reindex, but can also cause performance issues.
+.LP
+.HP 2 2
 .IP "--disableEditing"
 Place notes in a read-only mode by default.
+.LP
+.HP 2 2 
 .IP "--dontStartMinimized"
 Ignore user settings and do not start minimized.
+.LP
+.HP 2 2
 .IP "--forceSystemTrayAvailable"
 NixNote will only show a system tray if it can ensure the window manager can handle it.  This option forces NixNote to try and show a tray icon.
-.IP "--help or -?"
+.LP 
+.HP 2 2
+.IP "--help or -? or --? or help"
 Display command line options.
+.LP
+.HP 2 2
 .IP "--openNote=<lid>"
 Start NixNote and show this specific note on startup.
+.LP 
+.HP 2 2
 .IP "--startMinimized"
 Start NixNote in a minimized state by default.
-.IP "--syncAndExit"
+.LP
+.HP 2 2
+.IP --syncAndExit
 Do a sync with Evernote and exit NixNote.
-
+.LP
+.RE
+.RE
+.HP 
+.IP "sync" 
+Synchronize with Evernote.  If not running, NixNote will do a sync and exit without showing the GUI.
+.IP "shutdown"
+If running, ask NixNote to stop.
+.IP "show_window"
+If NixNote is running nad minimized, raise the window.
+.IP "query <options>
+Query the NixNote database.
+.RS 7
+.HP 2 2
+.IP "query options:"
+.RS 7
+.HP 2 2
+.IP "--accountId=<id>"
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+.IP "--search=<search_string>
+Search string. The search syntax is the same as the graphical interface uses to search.
+.IP "--delimiter=<delimiter_string>
+Report column separation string.  If not specified | is used as the separator.
+.IP "--noHeaders"
+Do not display column headers with the results.
+.IP "--display=<display_string>"
+Output format for the results.  This can be customized by using <field><padding><:>
+.RS 7
+.HP 2 2
+.IP Display String Fields:
+.br 
+%i : Display note identifier. 
+.br 
+%t : Display note title.\n
+.br 
+%n : Display notebook name.\n
+.br 
+%g : Display the note's tags.\n
+.br 
+%c : Display the creation date.\n
+.br 
+%u : Display the date the note was last updated.\n
+.br
+%e : Show if the note is synchronized with Evernote.\n
+.br
+%s : Show the source URL.\n
+.br
+%a : Show the author.\n
+.br
+%x : Show if the note has a todo item.\n
+.br
+%r : Show the note's reminder time.
+.br
+%v : Show the time the reminder was completed.
+.IP <padding>
+Any numeric number specifying the minimum number of characters for a result.
+.IP <padding>:
+Any numeric number specifying the minimum number of characters for a result.  Anything longer than this value is truncated.
+.RE
+.RE
+.RE
+.IP "readNote <options>"
+Read the text contents of a note."
+.RS 7
+.HP 2 2
+readNote options:
+.RS 7
+.HP 2 2
+.IP "--accountId=<id>
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+.LP
+.HP 2 2
+.IP "--id=<id> : The ID of the note to be read.
+.LP
+.RE
+.LP
+.RE
+.IP "deleteNote <options>" 
+Delete a specic note.
+.RS 7
+deleteNote options
+.RS 7
+.HP 2 2
+.IP --id=<note_id>
+Note ID to delete.
+.IP --noVerify
+Do not perform a verification prior to deleting the note.
+.IP "--accountId=<id>"
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+.LP
+.RE
+.RE
+.IP "emailNote <options>"
+Email a note.  Any attachments will also be sent.  In order to use this feature, the SMTP settings must be specified under Edit/Preferences.
+.RS 7
+.HP 2 2
+emailNote Options:
+.RS 7
+.HP 2 2
+.IP --to:<email_address>
+The recipient of the email.  For multiple recipients, use this parameter multiple times."
+.LP
+.HP 2 2
+.IP --cc:<email_address>
+The carbon copy recipient of the email.  For multiple recipients, use this parameter multiple times."
+.LP 
+.HP 2 2
+.IP --bcc:<email_address>
+The blind carbon copy recipient of the email.  For multiple recipients, use this parameter multiple times.
+.LP
+.HP 2 2
+.IP --subject=<subject>
+Subject of the email.  If not specified the note title is used.
+.LP
+.HP 2 2
+.IP --note=<text>
+Additional comments to be added to the beginning of the note
+.LP
+.HP 2 2
+.IP --ccSelf
+Send a copy to yourself.
+.IP "--accountId=<id>
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+.RE
+.RE
+.IP "addNote <options>"
+Add a note via the command line.
+.RS 7
+.HP 2 2
+addNote options:
+.RS 7
+.IP --title=<text>
+The title of the note to be created.
+.IP --notebook=<notebook_name>
+The notebook to place the note into.  If no notebook is given, the default notebook is used.
+.IP --tag=<tag_name>
+Assign this particular tag to this note.  For multiple tags, use multiple --tag statements.  If  a tag does not exist it will be created.
+.IP --created=<creation_date>
+The date the note was created.  It should be in the format of YYYMMDDTHHMMSSZ where YYYY is the year, MM is the month, DD is the day, HH is the hour, MM is the minute, and SS is the second.  For example, 20151201T1302Z would be December 1, 2015 at 1:02pm.  All times are GMT time.  If ommitted, the current date is used.
+.IP --updated=<creation_date>
+The date the note was last updated.  It should be in the format of YYYMMDDTHHMMSSZ where YYYY is the year, MM is the month, DD is the day, HH is the hour, MM is the minute, and SS is the second.  For example, 20151201T1302Z would be December 1, 2015 at 1:02pm.  All times are GMT time.  If ommitted, the current date is used.
+.IP --updated=<creation_date>
+The date the note was last updated.  It should be in the format of YYYMMDDTHHMMSSZ where YYYY is the year, MM is the month, DD is the day, HH is the hour, MM is the minute, and SS is the second.  For example, 20151201T1302Z would be December 1, 2015 at 1:02pm.  All times are GMT time.  If ommitted, the current date is used.
+.IP "--accountId=<id>
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+.IP "--delimiter=<delimiter>"
+This is a special string to use within a note.  When specified, and a --attachment parameter is specified, this string is where the attachment will appear in the note.  If not specified, the default is %%.
+.IP "--attachment=<file-path>"
+The location of a file to attach in the note.  For multiple attachments use the --attachment parameter multiple times.  If the character string specified by the --delimiter parameter appears in the note, the delimiter string will be replaced with the attachment.  If there is no delimiter, the attachment will be appended to the end of the note.
+.IP --noteText=<note_text>
+The actual text of the note.  If not specified the note will be read from stdin.  Some limited HTML is supported but not all HTML tags are supported by Evernote.
+.RE
+.RE
+.SH EXAMPLES
+.IP "nixnote2 start --dontStartMinimized"
+Start NixNote but do not start minimized.  
+.IP "nixnote2 sync"
+Start NixNote and do a sync with Evernote.  When complete the program will end.
+.IP "nixnote2 query --search=""Classwork"" --noHeaders --delimiter=""<>"" --display=""%i%n5%t20:%a"" 
+Query the NixNote database.  The results of the search will be displayed without column headings.  The individual fields will be separated by a ""<>"".  The fields returned are the note ID, the notebook (padded to a minimum of 5 characters), the note title (padded to 20 characters but truncated if longer) and the note's author.
+.IP "nixnote2 deleteNote id=22"
+Delete note 22 from NixNote.
+.IP "nixnote2 emailNote id=13 --to=foo@bar.com --subject=""My email""
+Email note 13 to foo@bar.com.  The subject will be ""My email"".
+.IP "nixnote2 addNote --title=""My New Note"" --notebook=""My Notebook"" --tag=""Important Stuff"" --delimiter=""##"" --attachment=/home/foo/file1.pdf --attachment=/home/foo/file2.pdf --noteText=""This is my note.  The first attachment will appear ## <hr><br>The second attachment will appear at the end, because there is no delimiter tag for it.""
+Create a new note.  There will be two files attached (one in the middle and one at the end).  It will be put in ""My Notebook" and will be tagged as "Important Stuff".
 .SH AUTHORS
-NixNote is developed by Randy Baumgarte <randy@fbn.cx>.
+NixNote2 is developed by Randy Baumgarte <randy@fbn.cx>.
 .PP
 This manual page was written by Vincent Cheng <Vincentc1208@gmail.com> and Randy Baumgarte for the Debian project (and may be used by others).
 
