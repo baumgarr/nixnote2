@@ -1827,8 +1827,6 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
         query2.exec();
     }
 
-    db->unlock();
-
     query.prepare("update datastore set data=1 where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
@@ -1837,6 +1835,15 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     NoteIndexer indexer(db);
     indexer.indexNote(lid);
 
+    qlonglong totalsize = this->getSize(lid);
+    NSqlQuery query3(db);
+    query3.prepare("Update notetable set size=:size where lid=:lid");
+    query3.bindValue(":size", totalsize);
+    query3.bindValue(":lid", lid);
+    query3.exec();
+    QLOG_DEBUG() << query3.lastError();
+
+    db->unlock();
     setDirty(lid, isDirty);
 }
 
@@ -2521,4 +2528,27 @@ void NoteTable::setTitleColor(qint32 lid, QString color) {
     query.exec();
     query.finish();
     db->unlock();
+}
+
+
+qlonglong NoteTable::getSize(qint32 lid) {
+    NSqlQuery query(db);
+    db->lockForRead();
+    query.prepare("select data from datastore where key=:key and lid=:lid");
+    query.bindValue(":key", NOTE_CONTENT_LENGTH);
+    query.bindValue(":lid", lid);
+    query.exec();
+    qlonglong returnValue = 0;
+    if (query.next()) {
+        returnValue = query.value(0).toLongLong();
+    }
+    query.prepare("Select sum(data) from DataStore where key=:key and lid in (select lid from datastore where key=:key2 and data=:lid)");
+    query.bindValue(":key", RESOURCE_DATA_SIZE);
+    query.bindValue(":key2", RESOURCE_NOTE_LID);
+    query.bindValue(":data", lid);
+    query.exec();
+    while (query.next()) {
+        returnValue = returnValue+query.value(0).toLongLong();
+    }
+    return returnValue;
 }

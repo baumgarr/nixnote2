@@ -191,6 +191,7 @@ public:
     void getAllDeleteQueue(QStringList &guids, QString notebookGuid="");   // Get the list of notes we need to let Evernote to delete
     void expungeFromDeleteQueue(qint32 lid);                              // Expunge from the delete pending queue
     void expungeFromDeleteQueue(QString guid);                            // Expunge from the delete pending queue
+    qlonglong getSize(qint32 lid);                                          // get the total size of the note
 };
 
 
