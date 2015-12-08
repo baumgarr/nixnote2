@@ -88,6 +88,8 @@ qint32 LinkedNotebookTable::sync(qint32 lid, LinkedNotebook &notebook) {
         query.exec();
         query.finish();
         db->unlock();
+        SharedNotebookTable stable(db);
+        stable.expunge(lid);
     }
 
     if (lid == 0) {

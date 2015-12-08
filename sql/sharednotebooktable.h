@@ -69,7 +69,7 @@ public:
     qint32 findByNotebookGuid(string key);     // Find by the notebook Guid
     qint32 findByNotebookGuid(QString key);    // Find by the notebook Guid
     qint32 getShareUsers(QStringList &users, qint32 lid);
-
+    void expunge(qint32 lid);                          // Remove this
 
     // DB Write Functions
     qint32 sync(SharedNotebook &sharedNotebook);                   // Sync a notebook with a new record

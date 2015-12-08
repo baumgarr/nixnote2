@@ -344,7 +344,7 @@ void NNotebookView::rebuildTree() {
     QHashIterator<qint32, NNotebookViewItem *> h(dataStore);
     while (h.hasNext()) {
         h.next();
-        if (h.value()->parent() != NULL && !h.value()->isHidden())
+        if (h.value() != NULL && h.value()->parent() != NULL && !h.value()->isHidden())
             h.value()->parent()->setHidden(false);
     }
 

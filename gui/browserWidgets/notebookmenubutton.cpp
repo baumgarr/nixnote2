@@ -250,21 +250,22 @@ void NotebookMenuButton::reloadData() {
         Note n;
         NoteTable noteTable(global.db);
         NotebookTable notebookTable(global.db);
-        noteTable.get(n, currentNoteLid, false, false);
-        QString notebookGuid = n.notebookGuid;
-        QList<qint32> bookList;
-        notebookTable.getAll(bookList);
-        QString bookName;
+        if (noteTable.get(n, currentNoteLid, false, false)) {
+            QString notebookGuid = n.notebookGuid;
+            QList<qint32> bookList;
+            notebookTable.getAll(bookList);
+            QString bookName;
 
-        for (int i=0; i<bookList.size(); i++) {
-            Notebook book;
-            notebookTable.get(book, bookList[i]);
-            if (notebookGuid == book.guid) {
-                bookName = book.name;
-                i=bookList.size();
+            for (int i=0; i<bookList.size(); i++) {
+                Notebook book;
+                notebookTable.get(book, bookList[i]);
+                if (notebookGuid == book.guid) {
+                    bookName = book.name;
+                    i=bookList.size();
+                }
             }
+            setCurrentNotebook(currentNoteLid, n);
         }
-        setCurrentNotebook(currentNoteLid, n);
     }
     return;
 }

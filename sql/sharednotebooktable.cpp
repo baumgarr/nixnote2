@@ -84,6 +84,8 @@ qint32 SharedNotebookTable::sync(qint32 l, SharedNotebook sharedNotebook){
 // Add a new shared notebook
 qint32 SharedNotebookTable::add(qint32 l, const SharedNotebook &t, bool isDirty){
     Q_UNUSED(isDirty);  //suppress unused
+    if (l>0)
+        expunge(l);
     ConfigStore cs(db);
     qint32 lid = l;
     if (lid == 0)
@@ -464,5 +466,15 @@ qint32 SharedNotebookTable::getShareUsers(QStringList &users, qint32 lid) {
     query.finish();
     db->unlock();
     return retval;
+}
 
+
+// Remove a shared notebook
+void SharedNotebookTable::expunge(qint32 lid) {
+    db->lockForWrite();
+    NSqlQuery query(db);
+    query.prepare("Delete from DataStore where lid=:lid and key>=3300 and key<3400");
+    query.bindValue(":lid", lid);
+    query.exec();
+    db->unlock();
 }
