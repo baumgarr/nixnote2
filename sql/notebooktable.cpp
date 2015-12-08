@@ -637,9 +637,10 @@ void NotebookTable::deleteNotebook(qint32 lid) {
     NoteTable noteTable(db);
     QString guid;
     getGuid(guid, lid);
+    qint32 defaultNotebookLid = getDefaultNotebookLid();
     noteTable.findNotesByNotebook(notes, guid);
     for (qint32 i=0; i<notes.size(); i++) {
-        noteTable.updateNotebook(notes[i], lid, true);
+        noteTable.updateNotebook(notes[i], defaultNotebookLid, true);
         noteTable.deleteNote(notes[i], true);
     }
 
