@@ -1656,8 +1656,85 @@ void NoteTable::expunge(QString guid) {
 
 
 
+// Add to the deletion queue
+void NoteTable::addToDeleteQueue(qint32 lid, Note n) {
+    get(n,lid,true,true);
+    NSqlQuery query(db);
+    db->lockForWrite();
+
+    query.prepare("insert into datastore (lid,key,data) values (:lid, :key, :data)");
+
+    QString guid = n.guid;
+    QString notebookGuid = n.notebookGuid;
+
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_DELETE_PENDING_GUID);
+    query.bindValue(":data" , guid);
+    query.exec();
+
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_DELETE_PENDING_NOTEBOOK);
+    query.bindValue(":data" , notebookGuid);
+    query.exec();
+
+    db->unlock();
+}
 
 
+
+// Get every pending delete
+void NoteTable::getAllDeleteQueue(QStringList &guids, QString notebookGuid) {
+    NSqlQuery query(db);
+
+    guids.clear();
+    db->lockForRead();
+    if (notebookGuid == "") {
+        query.prepare("Select data from datastore where key=:key");
+        query.bindValue(":key", NOTE_DELETE_PENDING_GUID);
+    } else {
+        query.prepare("Select data from datastore where key=:key and data=:notebookGuid");
+        query.bindValue(":key", NOTE_DELETE_PENDING_GUID);
+        query.bindValue(":data", notebookGuid);
+    }
+    query.exec();
+    while(query.next()) {
+        guids.append(query.value(0).toString());
+    }
+    db->unlock();
+}
+
+
+
+// Expunge from the deletion queue
+void NoteTable::expungeFromDeleteQueue(qint32 lid) {
+    NSqlQuery query(db);
+
+    db->lockForWrite();
+    query.prepare("delete from datastore where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+    db->unlock();
+}
+
+
+// Expunge from the deletion queue
+void NoteTable::expungeFromDeleteQueue(QString guid) {
+    NSqlQuery query(db);
+    db->lockForRead();
+    query.prepare("Select lid from datastore where key=:key and data=:data");
+    query.bindValue(":key", NOTE_DELETE_PENDING_GUID);
+    query.bindValue(":data", guid);
+    query.exec();
+    db->unlock();
+    while(query.next()) {
+        expungeFromDeleteQueue(query.value(0).toInt());
+    }
+}
+
+
+
+
+// Find all notes belonging to a particular notebook.
 qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, QString guid) {
     NSqlQuery query(db);
     qint32 notebookLid;
@@ -1665,7 +1742,6 @@ qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, QString guid) {
     notebookLid = notebookTable.getLid(guid);
     db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:notebookLid");
-    query.bindValue(":key", NOTE_NOTEBOOK_LID);
     query.bindValue(":notebookLid", notebookLid);
     query.exec();
     while (query.next()) {

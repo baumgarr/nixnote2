@@ -763,6 +763,43 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
             validLids.append(lids[i]);
     }
 
+    // Start deleting notes
+    for (int i=0; i<deletedLids.size(); i++) {
+        QString guid = noteTable.getGuid(deletedLids[i]);
+        noteTable.setDirty(lids[i], false);
+        usn = comm->deleteLinkedNote(guid);
+        if (usn > maxUsn) {
+            maxUsn = usn;
+            noteTable.setUpdateSequenceNumber(deletedLids[i], usn);
+            noteTable.setDirty(deletedLids[i], false);
+            if (!finalSync)
+                emit(noteSynchronized(deletedLids[i], false));
+        }
+    }
+
+
+    // Start deleting notes that were in the trash, but the trash was
+    // emptied.
+    NotebookTable bookTable(db);
+    QString notebookGuid = "";
+    bookTable.getGuid(notebookGuid, notebookLid);
+
+    // Get all of the notes
+    QStringList deleteQueueGuids;
+    noteTable.getAllDeleteQueue(deleteQueueGuids, notebookGuid);
+
+
+    // Do the actual deletes
+    for (int i=0; i<deleteQueueGuids.size(); i++) {
+        QString guid = deleteQueueGuids[i];
+        usn = comm->deleteLinkedNote(guid);
+        if (usn > maxUsn) {
+            maxUsn = usn;
+        }
+        noteTable.expungeFromDeleteQueue(guid);
+    }
+
+
     // Start uploading notes
     for (int i=0; i<validLids.size(); i++) {
         Note note;
@@ -787,19 +824,6 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
         }
     }
 
-    // Start deleting notes
-    for (int i=0; i<deletedLids.size(); i++) {
-        QString guid = noteTable.getGuid(deletedLids[i]);
-        noteTable.setDirty(lids[i], false);
-        usn = comm->deleteLinkedNote(guid);
-        if (usn > maxUsn) {
-            maxUsn = usn;
-            noteTable.setUpdateSequenceNumber(deletedLids[i], usn);
-            noteTable.setDirty(deletedLids[i], false);
-            if (!finalSync)
-                emit(noteSynchronized(deletedLids[i], false));
-        }
-    }
     return maxUsn;
 }
 
@@ -991,7 +1015,12 @@ qint32 SyncRunner::uploadPersonalNotes() {
     LinkedNotebookTable linkedNotebookTable(db);
     NoteTable noteTable(db);
     QList<qint32> lids, validLids, deletedLids, movedLids;
+    QStringList deleteQueueGuids;
     noteTable.getAllDirty(lids);
+
+    // Get all of the notes that were deleted, and then removed from the trash
+    noteTable.getAllDeleteQueue(deleteQueueGuids);
+
 
     // Get a list of all notes that are both dirty and in an account we own and isn't deleted
     for (int i=0; i<lids.size(); i++) {
@@ -1046,6 +1075,17 @@ qint32 SyncRunner::uploadPersonalNotes() {
         }
         if (!finalSync)
             emit(noteSynchronized(movedLids[i], false));
+    }
+
+
+    // Delete any notes that were deleted, but emptied from the trash
+    for (int i=0; i<deleteQueueGuids.size(); i++) {
+        QString guid = deleteQueueGuids[i];
+        usn = comm->deleteNote(guid);
+        if (usn > maxUsn) {
+            maxUsn = usn;
+        }
+        noteTable.expungeFromDeleteQueue(guid);
     }
 
 

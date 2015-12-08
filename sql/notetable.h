@@ -78,6 +78,9 @@ using namespace qevercloud;
 #define NOTE_ATTRIBUTE_REMINDER_TIME           5033
 #define NOTE_ATTRIBUTE_REMINDER_DONE_TIME      5034
 
+#define NOTE_DELETE_PENDING_GUID               5500
+#define NOTE_DELETE_PENDING_NOTEBOOK           5501
+
 #define NOTE_TITLE_COLOR                       5995
 #define NOTE_ISPINNED                          5996
 #define NOTE_THUMBNAIL_NEEDED                  5997
@@ -184,6 +187,10 @@ public:
     void setIndexNeeded(qint32 lid, bool indexNeeded);                   // flag if a note needs reindexing
     void updateNoteListTags(qint32 noteLid, QString tags);               // Update the tag names in the note list
     void updateNoteListNotebooks(QString guid, QString name);            // Update the notebook name in the note list
+    void addToDeleteQueue(qint32 lid, Note n);   // Add to the notes that need to be deleted from Evernote
+    void getAllDeleteQueue(QStringList &guids, QString notebookGuid="");   // Get the list of notes we need to let Evernote to delete
+    void expungeFromDeleteQueue(qint32 lid);                              // Expunge from the delete pending queue
+    void expungeFromDeleteQueue(QString guid);                            // Expunge from the delete pending queue
 };
 
 

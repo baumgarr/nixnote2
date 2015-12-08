@@ -248,9 +248,18 @@ void NTrashTree::expungeAll() {
     QList<qint32> lids;
     ntable.getAllDeleted(lids);
     for (int i=0; i<lids.size(); i++) {
+
+        Note n;
+        ntable.get(n,lids[i],false,false);
         ntable.expunge(lids[i]);
         delete global.cache[lids[i]];
         global.cache.remove(lids[i]);
+
+        // Check to see if the note is synchronized.  If so, we
+        // need to keep it to let Evernote to delete it.
+        if (n.updateSequenceNum.isSet() && n.updateSequenceNum>0) {
+            ntable.addToDeleteQueue(lids[i],n);
+        }
     }
     emit(updateSelectionRequested());
 }
