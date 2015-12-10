@@ -382,6 +382,9 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
     // Exit presentation mode
     if (e->key() == Qt::Key_Escape) {
         emit escapeKeyPressed();
+
+        // Return without going forward or the current selected text is removed
+        return;
     }
 
     // Hard override of paste because I can't seem to get it any other way.
