@@ -61,15 +61,6 @@ mv -f usr ${RPM_BUILD_ROOT}
 %post
 
 %postun
-if [ -d /usr/share/nixnote2 ]; then
-    rm -rf /usr/share/nixnote2
-fi
-if [ -f /usr/share/applications/nixnote2.desktop ]; then
-    rm -f /usr/share/applications/nixnote2.desktop
-fi
-if [ -f /usr/bin/nixnote2 ]; then
-	rm -f /usr/bin/nixnote2
-fi
 
 %files
 %attr(755,root,root) /usr/share/nixnote2
