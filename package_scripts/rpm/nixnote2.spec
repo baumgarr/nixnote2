@@ -14,7 +14,7 @@ Requires: tidy, bash, qt >= 4.8.5, qt-x11 >= 4.8.5, qtwebkit >= 2.3, glibc >= 2.
 %description
 NixNote:: Evernote client clone for Linux
 
-Copyright 2009-2014, Randy Baumgarte 
+Copyright 2009-2015, Randy Baumgarte 
 Licensed under GNU General Public Lisence version 2
 
 This is an incomplete clone of Evernote designed to run on Linux. 
@@ -26,16 +26,14 @@ See release.txt for details of what works and what doesn't work.
 
 Documents:
 
-release.txt:    Includes new features, known bugs and limitations.
-
-changelog.txt:  ChangeLog and development history
-install.txt:    Build and install instructions
-credit.txt:     Credit of nixnote developers
+changelog.txt:  ChangeLog and development history.
+install.txt:    Build and install instructions.
+credit.txt:     Credit of nixnote developers.
 gpl.txt:        License description of GPL v2.
-license.txt:    Legal notices for licenses and trademarks
-
-shortcut_howto.txt:  How-to document to setup shortcut keys.
-shurtcut_sample.txt: Its configuration sample
+license.html:   Legal notices for licenses and trademarks.
+colors.txt:     Sample config file to the color menu for note & title backgrounds.
+theme.ini:      Theme configuration file.
+shortcuts.txt   Shortcut configuration file.
 
 
 %configure
@@ -81,6 +79,6 @@ fi
 %attr(755,root,root) /usr/share/man/man1/nixnote2.1.gz
 
 %changelog
-* Sun Nov 22 2015 Randy Baumgarte <randy@fbn.cx> - __VERSION__
+* Thu Dec 10 2015 Randy Baumgarte <randy@fbn.cx> - __VERSION__
 - See changelog.txt for all changes
 

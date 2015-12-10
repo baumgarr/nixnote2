@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="2.0-alpha5"
+version="2.0-beta6"
 arch="amd64"
 
 package_dir=$(cd `dirname $0` && pwd)

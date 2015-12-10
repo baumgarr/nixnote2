@@ -1,3 +1,26 @@
+NixNote (2.0-beta-6) stable; urgency=low
+  * Added a "Presentation Mode" that hides almost 
+    everything except the editor, the attributes bar, 
+    and the tabs of open notes.
+  * Added the ability to customize the editor's 
+    default font & background color via the theme.ini.  
+    This is for people who were experiencing problems 
+    with darker themes.  A "Dark Editor" theme has 
+    also been included as an example.
+  * The default for viewing PDFs intline has been 
+    changed to "no" due to a weird error with Gnome.  
+    This is just a safety measure so people don't 
+    keep crashing and only impacts new setups.
+  * A lot of different command line options have been   
+    added. This also makes nixnot2-cmd obsolete.  
+  * Added the option to disable PDF local indexing.  
+    This only impacts new/modified PDFs.  Data received 
+    from Evernote is still searched.
+  * Better mesasges when a note sync fails.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Thu, 10 Dec 2015 20:00:00 -0400
+
+
 NixNote (2.0-beta-5) stable; urgency=low
   * Added the ability to email notes.
   * Searching will now highlight PDF results.

@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="2.0-alpha5"
+version="2.0-beta6"
 
 # Determine which platform we are on
 arch="i386"

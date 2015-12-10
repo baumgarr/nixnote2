@@ -1,5 +1,4 @@
 #!/bin/sh
-#version="2.0-alpha5"
 
 ####################################################
 # Make sure we are running as root
