@@ -167,6 +167,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                 fixImgNode(element);
             } else if (element.tagName().toLower() == "span"){
                 fixSpanNode(element);
+            } else if (element.tagName().toLower() == "div") {
+                fixDivNode(element);
+            } else if (element.tagName().toLower() == "pre") {
+                fixPreNode(element);
             } else if (!isElementValid(element.tagName()))
                 element.removeFromDocument();
         }
@@ -452,6 +456,21 @@ void EnmlFormatter::removeInvalidAttributes(QWebElement &node) {
         }
     }
 }
+
+
+
+void EnmlFormatter::fixDivNode(QWebElement &node) {
+    // Remove any invalid attributes
+    node.removeAttribute("class");
+}
+
+
+
+void EnmlFormatter::fixPreNode(QWebElement &node) {
+    // Remove any invalid attributes
+    node.removeAttribute("wrap");
+}
+
 
 
 
