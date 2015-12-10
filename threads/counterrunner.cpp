@@ -33,6 +33,8 @@ CounterRunner::CounterRunner(QObject *parent) :
 
 
 void CounterRunner::initialize() {
+    if (global.countBehavior == Global::CountNone)
+        return;
     init = true;
     QLOG_DEBUG() << "Starting CounterRunner";
     db = new DatabaseConnection("counterrunner");
@@ -43,25 +45,34 @@ void CounterRunner::initialize() {
 void CounterRunner::countAll() {
     if (global.countBehavior == Global::CountNone)
         return;
+    QLOG_TRACE_IN();
     if (!init)
         initialize();
     this->countNotebooks();
     this->countTags();
     this->countTrash();
+    QLOG_TRACE_OUT();
 }
 
 
 void CounterRunner::countTrash() {
+    if (global.countBehavior == Global::CountNone)
+        return;
+    QLOG_TRACE_IN();
     if (!init)
         initialize();
     NoteTable ntable(db);
     QList<qint32> lids;
     emit trashTotals(ntable.getAllDeleted(lids));
+    QLOG_TRACE_OUT();
 }
 
 
 void CounterRunner::countNotebooks() {
+    if (global.countBehavior == Global::CountNone)
+        return;
 
+    QLOG_TRACE_IN();
     if (!init)
         initialize();
 
@@ -97,10 +108,14 @@ void CounterRunner::countNotebooks() {
         emit(notebookTotals(lids[i], 0, allNotebooks[lids[i]]));
 
     emit(notebookTotals(-1, -1, -1));
+    QLOG_TRACE_OUT();
 }
 
 
 void CounterRunner::countTags() {
+    if (global.countBehavior == Global::CountNone)
+        return;
+    QLOG_TRACE_IN();
     if (!init)
         initialize();
     // First get every possible tag
@@ -138,4 +153,5 @@ void CounterRunner::countTags() {
 
     // Finally, emit that we are done so unassigned tags can be hidden
     emit(tagCountComplete());
+    QLOG_TRACE_OUT();
 }
