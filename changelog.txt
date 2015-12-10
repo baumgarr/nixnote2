@@ -9,8 +9,6 @@ NixNote (2.0-beta-6) stable; urgency=low
     also been included as an example.
   * The default for viewing PDFs intline has been 
     changed to "no" due to a weird error with Gnome.  
-    This is just a safety measure so people don't 
-    keep crashing and only impacts new setups.
   * A lot of different command line options have been   
     added. This also makes nixnot2-cmd obsolete.  
   * Added the option to disable PDF local indexing.  
@@ -18,7 +16,7 @@ NixNote (2.0-beta-6) stable; urgency=low
     from Evernote is still searched.
   * Better mesasges when a note sync fails.
   * Bug fixes.
- -- Randy Baumgarte <randy@fbn.cx>  Thu, 10 Dec 2015 20:00:00 -0400
+ -- Randy Baumgarte <randy@fbn.cx>  Wed, 09 Dec 2015 20:00:00 -0400
 
 
 NixNote (2.0-beta-5) stable; urgency=low
