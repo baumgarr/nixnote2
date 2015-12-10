@@ -225,6 +225,8 @@ void NoteIndexer::indexRecognition(qint32 reslid, Resource &r) {
 void NoteIndexer::indexPdf(qint32 reslid) {
 
     QLOG_TRACE_IN();
+    if (!global.indexPDFLocally)
+        return;
 
     NSqlQuery sql(db);
     if (reslid <= 0)

@@ -170,6 +170,7 @@ void Global::setup(StartupConfig startupConfig) {
     indexResourceCountPause=2;
     indexNoteCountPause=100;
     isFullscreen=false;
+    indexPDFLocally=getIndexPDFLocally();
 }
 
 
@@ -407,6 +408,25 @@ bool Global::getTagSelectionOr() {
     settings->beginGroup("Search");
     bool value = settings->value("tagSelectionOr",false).toBool();
     settings->endGroup();
+    return value;
+}
+
+
+
+
+void Global::setIndexPDFLocally(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("indexPDFLocally",value);
+    settings->endGroup();
+    indexPDFLocally=value;
+}
+
+
+bool Global::getIndexPDFLocally() {
+    settings->beginGroup("Search");
+    bool value = settings->value("indexPDFLocally",true).toBool();
+    settings->endGroup();
+    indexPDFLocally = value;
     return value;
 }
 

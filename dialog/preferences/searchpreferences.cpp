@@ -55,7 +55,11 @@ SearchPreferences::SearchPreferences(QWidget *parent) :
 
     tagSelectionOr = new QCheckBox(tr("Show Any Matching Tags When Selecting Multiple Tags"));
     mainLayout->addWidget(tagSelectionOr,row++,0);
-    tagSelectionOr->setChecked(global.getTagSelectionOr());
+    tagSelectionOr->setChecked(global.indexPDFLocally);
+
+    indexPDF = new QCheckBox(tr("Index PDFs locally"));
+    mainLayout->addWidget(indexPDF,row++,0);
+    indexPDF->setChecked(global.indexPDFLocally);
 
     weight = new QSpinBox(this);
     mainLayout->addWidget(new QLabel(tr("Minimum Image Recognition Weight")), row,0);
@@ -79,4 +83,5 @@ void SearchPreferences::saveValues() {
     global.setClearTagsOnSearch(clearNotebookOnSearch->isChecked());
     global.setClearSearchOnNotebook(clearSearchOnNotebook->isChecked());
     global.setTagSelectionOr(tagSelectionOr->isChecked());
+    global.setIndexPDFLocally(indexPDF->isChecked());
 }

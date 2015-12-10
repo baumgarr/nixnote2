@@ -235,6 +235,9 @@ public:
     // These functions deal with the icon themes
     QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme
     QHash<QString,QString> colorList;                         // List of colors used in the current theme
+    bool indexPDFLocally;                                   // Should we index PDFs locally?
+    bool getIndexPDFLocally();                              // Should we index PDFs locally (read from settings)
+    void setIndexPDFLocally(bool value);                    // save local index of PDFs option
     QString getEditorStyle(bool colorOnly);                // Get note editor style overrides
     QString getEditorFontColor();                           // Get the editor font color from the theme
     QString getEditorBackgroundColor();                     // Get the editor background color from the theme

@@ -313,6 +313,8 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 // Index any PDFs that are attached.  Basically it turns the PDF into text and adds it the same
 // way as a note's body
 void IndexRunner::indexPdf(qint32 lid, Resource &r) {
+    if (!global.indexPDFLocally)
+        return;
     if (!keepRunning || pauseIndexing) {
         indexTimer->start();
         return;

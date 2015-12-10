@@ -32,6 +32,7 @@ class SearchPreferences : public QWidget
 private:
     QSpinBox *weight;
     QCheckBox *syncAttachments;  // Disabled for performance reasons
+    QCheckBox *indexPDF;         // Index PDFs locally?
     QCheckBox *clearSearchOnNotebook;   // Clear search text when notebook changes?
     QCheckBox *clearNotebookOnSearch;   // Clear notebook on search text changes
     QCheckBox *clearTagsOnSearch;      // Clear tag selection on search text changes
