@@ -519,7 +519,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
         if (mimetype == "application/pdf") {
             QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) +".pdf";
             Poppler::Document *doc = Poppler::Document::load(file);
-            if (doc->isLocked())
+            if (doc != NULL && doc->isLocked())
                 pdfPreview = false;
         }
 

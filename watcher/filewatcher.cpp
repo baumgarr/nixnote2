@@ -132,7 +132,7 @@ void FileWatcher::saveFile(QString file) {
     newRes.data = d;
     newRes.mime = mime;
     ResourceAttributes ra;
-    ra.fileName = file;
+    ra.fileName = QFileInfo(f).fileName();
     if (mime.startsWith("image", Qt::CaseInsensitive) || mime.endsWith("pdf", Qt::CaseInsensitive))
         ra.attachment = false;
     else
@@ -141,6 +141,7 @@ void FileWatcher::saveFile(QString file) {
     newRes.guid = QString::number(lid);
     newRes.noteGuid = noteGuid;
     newRes.updateSequenceNum = 0;
+    newRes.attributes = ra;
     ResourceTable restable(global.db);
     restable.add(lid, newRes, true, noteLid);
 
