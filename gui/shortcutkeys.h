@@ -127,6 +127,8 @@ public:
 
     QString *Prev_Tab;                  // Previous Tab Shortcut
     QString *Next_Tab;                  // Next Tab Shortcut
+    QString *Down_Note;                 // Move down one note in the list
+    QString *Up_Note;                   // Move up one note in the list
 
     QString *Insert_DateTime;				// Insert the current date/time
 

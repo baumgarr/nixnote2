@@ -120,6 +120,8 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     Focus_Url = new QString();
     Prev_Tab = new QString("Ctrl+PgUp");
     Next_Tab = new QString("Ctrl+PgDown");
+    Up_Note = new QString();
+    Down_Note = new QString();
 
     // Setup value Array
     shortcutMap = new QHash<QString, QString>();

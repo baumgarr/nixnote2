@@ -1482,3 +1482,14 @@ void NTableView::setTitleColor(QString color) {
     }
 }
 
+
+void NTableView::downNote() {
+    QKeyEvent *event = new QKeyEvent ( QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+    QCoreApplication::postEvent(this, event);
+}
+
+void NTableView::upNote() {
+    QKeyEvent *event = new QKeyEvent ( QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
+    QCoreApplication::postEvent(this, event);
+}
+

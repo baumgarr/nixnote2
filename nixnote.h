@@ -176,6 +176,8 @@ private:
     QShortcut *copyNoteUrlShortcut;
     QShortcut *nextTabShortcut;
     QShortcut *prevTabShortcut;
+    QShortcut *downNoteShortcut;
+    QShortcut *upNoteShortcut;
     void setupShortcut(QShortcut *shortcut, QString keySequence);
 
 public:
