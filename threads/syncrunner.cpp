@@ -1101,7 +1101,7 @@ qint32 SyncRunner::uploadPersonalNotes() {
         if (usn == 0) {
             this->communicationErrorHandler();
             error = true;
-            return maxUsn;
+            //return maxUsn;
         }
         if (usn > maxUsn) {
             maxUsn = usn;
