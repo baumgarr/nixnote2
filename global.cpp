@@ -171,6 +171,7 @@ void Global::setup(StartupConfig startupConfig) {
     indexNoteCountPause=100;
     isFullscreen=false;
     indexPDFLocally=getIndexPDFLocally();
+    strictDTD = getStrictDTD();
 }
 
 
@@ -427,6 +428,24 @@ bool Global::getIndexPDFLocally() {
     bool value = settings->value("indexPDFLocally",true).toBool();
     settings->endGroup();
     indexPDFLocally = value;
+    return value;
+}
+
+
+
+void Global::setStrictDTD(bool value) {
+    settings->beginGroup("Debugging");
+    settings->setValue("strictDTD",value);
+    settings->endGroup();
+    strictDTD=value;
+}
+
+
+bool Global::getStrictDTD() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("strictDTD",true).toBool();
+    settings->endGroup();
+    strictDTD = value;
     return value;
 }
 

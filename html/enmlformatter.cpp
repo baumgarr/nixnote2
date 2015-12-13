@@ -40,6 +40,137 @@ EnmlFormatter::EnmlFormatter(QObject *parent) :
 {
     //doc = new QDomDocument();
     formattingError = false;
+
+    coreattrs.append("style");
+    coreattrs.append("title");
+
+    i18n.append("lang");
+    i18n.append("xml:lang");
+    i18n.append("dir");
+
+    focus.append("accesskey");
+    focus.append("tabindex");
+
+    attrs.append(coreattrs);
+    attrs.append(i18n);
+
+    textAlign.append("align");
+
+    cellHalign.append("align");
+    cellHalign.append("char");
+    cellHalign.append("charoff");
+
+    cellValign.append("valign");
+
+    a.append("charset");
+    a.append("type");
+    a.append("name");
+    a.append("href");
+    a.append("hreflang");
+    a.append("rel");
+    a.append("rev");
+    a.append("shape");
+    a.append("coords");
+    a.append("target");
+
+    area.append("shape");
+    area.append("coords");
+    area.append("href");
+    area.append("nohref");
+    area.append("alt");
+    area.append("target");
+
+    bdo.append("lang");
+    bdo.append("xml:lang");
+    bdo.append("dir");
+
+    blockQuote.append("cite");
+
+
+    br.append("clear");
+
+    caption.append("align");
+
+    col.append("span");
+    col.append("width");
+
+    colGroup.append("span");
+    colGroup.append("width");
+
+    del.append("cite");
+    del.append("datetime");
+
+    dl.append("compact");
+
+    font.append("size");
+    font.append("color");
+    font.append("face");
+
+    hr.append("align");
+    hr.append("noshade");
+    hr.append("size");
+    hr.append("width");
+
+    img.append("src");
+    img.append("alt");
+    img.append("name");
+    img.append("longdesc");
+    img.append("height");
+    img.append("width");
+    img.append("usemap");
+    img.append("ismap");
+    img.append("align");
+    img.append("border");
+    img.append("hspace");
+    img.append("vspace");
+
+    ins.append("cite");
+    ins.append("datetime");
+
+    li.append("type");
+    li.append("value");
+
+    map.append("title");
+    map.append("name");
+
+    ol.append("type");
+    ol.append("compact");
+    ol.append("start");
+
+    pre.append("width");
+    pre.append("xml:space");
+
+    table.append("summary");
+    table.append("width");
+    table.append("border");
+    table.append("cellspacing");
+    table.append("cellpadding");
+    table.append("align");
+    table.append("bgcolor");
+
+    td.append("abbr");
+    td.append("rowspan");
+    td.append("colspan");
+    td.append("nowrap");
+    td.append("bgcolor");
+    td.append("width");
+    td.append("height");
+
+    th.append("abbr");
+    th.append("rowspan");
+    th.append("colspan");
+    th.append("nowrap");
+    th.append("bgcolor");
+    th.append("width");
+    th.append("height");
+
+    tr_.append("bgcolor");
+
+    ul.append("type");
+    ul.append("compact");
+
+
+
 }
 
 /* Return the formatted content */
@@ -171,7 +302,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                 fixDivNode(element);
             } else if (element.tagName().toLower() == "pre") {
                 fixPreNode(element);
-            } else if (!isElementValid(element.tagName()))
+            } else if (!isElementValid(element))
                 element.removeFromDocument();
         }
     }
@@ -315,6 +446,7 @@ void EnmlFormatter::fixImgNode(QWebElement &e) {
     resources.append(lid);
     removeInvalidAttributes(e);
     e.setOuterXml(e.toOuterXml().replace("<img", "<en-media").replace("</img", "</en-media"));
+    checkAttributes(e, attrs+img);
 }
 
 
@@ -341,6 +473,7 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
         //e.setOuterXml(e.toInnerXml());
     }
     removeInvalidAttributes(e);
+    checkAttributes(e, attrs+focus+a);
 }
 
 
@@ -368,76 +501,254 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
 }
 
 
-bool EnmlFormatter::isElementValid(QString element) {
-    element = element.trimmed().toLower();
+bool EnmlFormatter::isElementValid(QWebElement e) {
+    QString element = e.tagName().toLower();
     //QLOG_DEBUG() << "Checking tag " << element;
-    if (element == "a") return true;
-    if (element == "abbr") return true;
-    if (element == "acronym") return true;
-    if (element == "address") return true;
-    if (element == "area") return true;
-    if (element == "b") return true;
-    if (element == "bdo") return true;
-    if (element == "big") return true;
-    if (element == "blockquote") return true;
-    if (element == "br") return true;
-    if (element == "caption") return true;
-    if (element == "center") return true;
-    if (element == "cite") return true;
-    if (element == "code") return true;
-    if (element == "col") return true;
-    if (element == "colgroup") return true;
-    if (element == "dd") return true;
-    if (element == "del") return true;
-    if (element == "dfn") return true;
-    if (element == "div") return true;
-    if (element == "dl") return true;
-    if (element == "dt") return true;
-    if (element == "em") return true;
+    if (element == "a") {
+        checkAttributes(e, attrs+focus+a);
+        return true;
+    }
+    if (element == "abbr") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "acronym") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "address") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "area") {
+        checkAttributes(e,attrs+focus+area);
+        return true;
+    }
+    if (element == "b") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "bdo") {
+        checkAttributes(e,coreattrs+bdo);
+        return true;
+    }
+    if (element == "big") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "blockquote") {
+        checkAttributes(e,attrs+blockQuote);
+        return true;
+    }
+    if (element == "br") {
+        checkAttributes(e,coreattrs+br);
+        return true;
+    }
+    if (element == "caption") {
+        checkAttributes(e,attrs+caption);
+        return true;
+    }
+    if (element == "center") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "cite") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "code") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "col") {
+        checkAttributes(e,attrs+cellHalign+cellValign+col);
+        return true;
+    }
+    if (element == "colgroup") {
+        checkAttributes(e,attrs+cellHalign+cellValign+colGroup);
+        return true;
+    }
+    if (element == "dd") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "del") {
+        checkAttributes(e,attrs+del);
+        return true;
+    }
+    if (element == "dfn") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "div")  {
+        checkAttributes(e,attrs+textAlign);
+        return true;
+    }
+    if (element == "dl")  {
+        checkAttributes(e,attrs+dl);
+        return true;
+    }
+    if (element == "dt")  {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "em")  {
+        checkAttributes(e,attrs);
+        return true;
+    }
     if (element == "en-media") return true;
     if (element == "en-crypt") return true;
     if (element == "en-todo") return true;
     if (element == "en-note") return true;
-    if (element == "font") return true;
-    if (element == "h1") return true;
-    if (element == "h1") return true;
-    if (element == "h1") return true;
-    if (element == "h2") return true;
-    if (element == "h3") return true;
-    if (element == "h4") return true;
-    if (element == "h5") return true;
-    if (element == "h6") return true;
-    if (element == "hr") return true;
-    if (element == "i") return true;
-    if (element == "img") return true;
-    if (element == "ins") return true;
-    if (element == "kbd") return true;
-    if (element == "li") return true;
-    if (element == "map") return true;
-    if (element == "ol") return true;
-    if (element == "p") return true;
-    if (element == "pre") return true;
-    if (element == "q") return true;
-    if (element == "s") return true;
-    if (element == "samp") return true;
-    if (element == "small") return true;
-    if (element == "span") return true;
-    if (element == "strike") return true;
-    if (element == "strong") return true;
-    if (element == "sub") return true;
-    if (element == "sup") return true;
-    if (element == "table") return true;
-    if (element == "tbody") return true;
-    if (element == "td") return true;
-    if (element == "tfoot") return true;
-    if (element == "th") return true;
-    if (element == "thread") return true;
+    if (element == "font")  {
+        checkAttributes(e,coreattrs+i18n);
+        return true;
+    }
+    if (element == "h1")  {
+        checkAttributes(e,attrs+textAlign);
+        return true;
+    }
+    if (element == "h2") {
+        checkAttributes(e,attrs+textAlign);
+        return true;
+    }
+    if (element == "h3") {
+        checkAttributes(e,attrs+textAlign);
+        return true;
+    }
+    if (element == "h4") {
+        checkAttributes(e,attrs+textAlign);
+        return true;
+    }
+    if (element == "h5") {
+        checkAttributes(e,attrs+textAlign);
+        return true;
+    }
+    if (element == "h6") {
+        checkAttributes(e,attrs+textAlign);
+        return true;
+    }
+    if (element == "hr") {
+        checkAttributes(e,attrs+hr);
+        return true;
+    }
+    if (element == "i") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "img") {
+        checkAttributes(e,attrs+img);
+        return true;
+    }
+    if (element == "ins") {
+        checkAttributes(e,attrs+ins);
+        return true;
+    }
+    if (element == "kbd") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "li") {
+        checkAttributes(e,attrs+li);
+        return true;
+    }
+    if (element == "map") {
+        checkAttributes(e,i18n+map);
+        return true;
+    }
+    if (element == "ol") {
+        checkAttributes(e,attrs+ol);
+        return true;
+    }
+    if (element == "p") {
+        checkAttributes(e,attrs+textAlign);
+        return true;
+    }
+    if (element == "pre") {
+        checkAttributes(e,attrs+pre);
+        return true;
+    }
+    if (element == "q") {
+        checkAttributes(e,attrs+q);
+        return true;
+    }
+    if (element == "s") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "samp") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "small") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "span") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "strike") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "strong") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "sub") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "sup") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "table") {
+        checkAttributes(e,attrs+table);
+        return true;
+    }
+    if (element == "tbody") {
+        checkAttributes(e,attrs+cellHalign+cellValign);
+        return true;
+    }
+    if (element == "td") {
+        checkAttributes(e,attrs+cellValign+cellHalign+td);
+        return true;
+    }
+    if (element == "tfoot") {
+        checkAttributes(e,attrs+cellHalign+cellValign);
+        return true;
+    }
+    if (element == "th") {
+        checkAttributes(e,attrs+cellHalign+cellValign+th);
+        return true;
+    }
+    if (element == "thread") {
+        checkAttributes(e,attrs+cellHalign+cellValign);
+        return true;
+    }
     if (element == "title") return true;
-    if (element == "tr") return true;
-    if (element == "tt") return true;
-    if (element == "u") return true;
-    if (element == "ul") return true;
-    if (element == "var") return true;
+    if (element == "tr") {
+        checkAttributes(e,attrs+cellHalign+cellValign+tr_);
+        return true;
+    }
+    if (element == "tt") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "u") {
+        checkAttributes(e,attrs);
+        return true;
+    }
+    if (element == "ul") {
+        checkAttributes(e,attrs+ul);
+        return true;
+    }
+    if (element == "var") {
+        checkAttributes(e,attrs);
+        return true;
+    }
     if (element == "xmp") return true;
 
     QLOG_DEBUG() << "WARNING: " << element << " is invalid";
@@ -585,4 +896,19 @@ QByteArray EnmlFormatter::removeInvalidUnicode(QByteArray content) {
     QString c(content);
     c = c.remove(QChar( 0x1b ), Qt::CaseInsensitive);
     return c.toUtf8();
+}
+
+
+
+void EnmlFormatter::checkAttributes(QWebElement &e, QStringList valid) {
+    if (!global.strictDTD)
+        return;
+
+    QStringList attrs = e.attributeNames();
+    for (int i=0; i<attrs.size(); i++) {
+        if (!valid.contains(attrs[i])) {
+            QLOG_DEBUG() << "Removing invalid attibute: " << attrs[i];
+            e.removeAttribute(attrs[i]);
+        }
+    }
 }

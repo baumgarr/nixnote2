@@ -238,6 +238,9 @@ public:
     bool indexPDFLocally;                                   // Should we index PDFs locally?
     bool getIndexPDFLocally();                              // Should we index PDFs locally (read from settings)
     void setIndexPDFLocally(bool value);                    // save local index of PDFs option
+    bool strictDTD;                                        // Should we do strict enml checking?
+    bool getStrictDTD();                                   // Should we do strict enml checking? (read from settings)
+    void setStrictDTD(bool value);                         // save strict enml checking
     QString getEditorStyle(bool colorOnly);                // Get note editor style overrides
     QString getEditorFontColor();                           // Get the editor font color from the theme
     QString getEditorBackgroundColor();                     // Get the editor background color from the theme

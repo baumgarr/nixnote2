@@ -32,10 +32,12 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     setLayout(mainLayout);
 
-    disableUploads = new QCheckBox(tr("Disable uploads to server"),this);
+    strictDTD = new QCheckBox(tr("Strict note checking."),this);
+    strictDTD->setChecked(global.strictDTD);
+    disableUploads = new QCheckBox(tr("Disable uploads to server."),this);
     disableImageHighlight = new QCheckBox(tr("Disable image search highlighting."), this);
-    showLidColumn = new QCheckBox(tr("Show LID column (requires restart)"));
-    nonAsciiSortBug = new QCheckBox(tr("Disable Tag Sorting (usefull for non-ASCII sort bug)"));
+    showLidColumn = new QCheckBox(tr("Show LID column (requires restart)."));
+    nonAsciiSortBug = new QCheckBox(tr("Disable Tag Sorting (usefull for non-ASCII sort bug)."));
     nonAsciiSortBug->setChecked(global.nonAsciiSortBug);
     global.settings->beginGroup("Debugging");
     disableUploads->setChecked(global.disableUploads);
@@ -47,6 +49,7 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     mainLayout->addWidget(showLidColumn, 1,1);
     mainLayout->addWidget(nonAsciiSortBug,2,1);
     mainLayout->addWidget(disableImageHighlight,3,1);
+    mainLayout->addWidget(strictDTD,4,1);
 
     debugLevelLabel = new QLabel(tr("Message Level"), this);
     debugLevelLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
@@ -63,8 +66,8 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     global.settings->endGroup();
     int index = debugLevel->findData(value);
     debugLevel->setCurrentIndex(index);
-    mainLayout->addWidget(debugLevelLabel,4,0);
-    mainLayout->addWidget(debugLevel,4,1);
+    mainLayout->addWidget(debugLevelLabel,5,0);
+    mainLayout->addWidget(debugLevel,5,1);
     this->setFont(global.getGuiFont(font()));
 
 }
@@ -99,4 +102,5 @@ void DebugPreferences::saveValues() {
 
     global.settings->endGroup();
     global.disableUploads = disableUploads->isChecked();
+    global.setStrictDTD(strictDTD->isChecked());
 }

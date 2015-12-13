@@ -43,7 +43,7 @@ private:
     QByteArray content;
     QDomDocument doc;
     bool isAttributeValid(QString attribute);
-    bool isElementValid(QString element);
+    bool isElementValid(QWebElement e);
     void scanTags(QWebElement &element);
     void fixImgNode(QWebElement &element);
     void fixEnCryptNode(QWebElement &element);
@@ -60,6 +60,42 @@ private:
     void fixPreNode(QWebElement &e);
     QByteArray removeInvalidUnicode(QByteArray content);
     QByteArray fixEncryptionTags(QByteArray newContent);
+
+    QStringList coreattrs;
+    QStringList i18n;
+    QStringList focus;
+    QStringList attrs;
+    QStringList textAlign;
+    QStringList cellHalign;
+    QStringList cellValign;
+    QStringList a;
+    QStringList area;
+    QStringList bdo;
+    QStringList blockQuote;
+    QStringList br;
+    QStringList caption;
+    QStringList colHAlign;
+    QStringList colVAlign;
+    QStringList col;
+    QStringList colGroup;
+    QStringList del;
+    QStringList dl;
+    QStringList font;
+    QStringList hr;
+    QStringList img;
+    QStringList ins;
+    QStringList li;
+    QStringList map;
+    QStringList ol;
+    QStringList pre;
+    QStringList q;
+    QStringList table;
+    QStringList td;
+    QStringList th;
+    QStringList tr_;
+    QStringList ul;
+
+    void checkAttributes(QWebElement &e, QStringList valid);
 
 public:
     bool formattingError;
