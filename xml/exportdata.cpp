@@ -34,12 +34,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 extern Global global;
 
 
-ExportData::ExportData(bool backup, QObject *parent) :
+ExportData::ExportData(bool backup, bool cmdLine, QObject *parent) :
     QObject(parent)
 {
     this->backup = backup;
     lastError = 0;
     errorMessage = "";
+    this->cmdLine = cmdLine;
     lids.empty();
 }
 
@@ -53,11 +54,13 @@ void ExportData::backupData(QString filename) {
         errorMessage = tr("Cannot open file.");
         return;
     }
-    progress = new QProgressDialog();
-    progress->setAutoClose(false);
-    progress->setWindowModality(Qt::ApplicationModal);
-    connect(progress, SIGNAL(canceled()), this, SLOT(abortBackup()));
-    progress->setWindowTitle(tr("Export"));
+    if (!cmdLine) {
+        progress = new QProgressDialog();
+        progress->setAutoClose(false);
+        progress->setWindowModality(Qt::ApplicationModal);
+        connect(progress, SIGNAL(canceled()), this, SLOT(abortBackup()));
+        progress->setWindowTitle(tr("Export"));
+    }
     writer = new QXmlStreamWriter(&xmlFile);
     writer->setAutoFormatting(true);
     writer->setCodec("UTF-8");
@@ -74,7 +77,8 @@ void ExportData::backupData(QString filename) {
     if (backup) {
         NoteTable noteTable(global.db);
         noteTable.getAll(this->lids);
-        progress->setWindowTitle(tr("Backup"));
+        if (!cmdLine)
+            progress->setWindowTitle(tr("Backup"));
         writer->writeStartElement("Synchronization");
         UserTable userTable(global.db);
         qlonglong lastSyncDate = userTable.getLastSyncDate();
@@ -92,7 +96,8 @@ void ExportData::backupData(QString filename) {
     writeNotes();
     writer->writeEndElement();
     writer->writeEndDocument();
-    progress->hide();
+    if (!cmdLine)
+        progress->hide();
     xmlFile.close();
 }
 
@@ -105,11 +110,14 @@ void ExportData::writeTags() {
     ttable.getAllDirty(dirtyTags);
     ttable.getAll(tags);
 
-    progress->setLabelText(tr("Tags"));
-    progress->setMaximum(lids.size());
-    progress->show();
+    if (!cmdLine) {
+        progress->setLabelText(tr("Tags"));
+        progress->setMaximum(lids.size());
+        progress->show();
+    }
     for (int i=0; i<tags.size() && !quitNow; i++) {
-        progress->setValue(i+1);
+        if (!cmdLine)
+            progress->setValue(i+1);
         QCoreApplication::processEvents();
         Tag tag;
         if (ttable.get(tag, tags[i])) {
@@ -138,14 +146,17 @@ void ExportData::writeNotebooks() {
     table.getAllDirty(dirtyLids);
     table.getAll(lids);
 
-    progress->setMaximum(lids.size());
-    progress->setLabelText(tr("Notebooks"));
-    progress->setValue(0);
-    progress->show();
+    if (!cmdLine) {
+        progress->setMaximum(lids.size());
+        progress->setLabelText(tr("Notebooks"));
+        progress->setValue(0);
+        progress->show();
+    }
 
     for (int i=0; i<lids.size() && !quitNow; i++) {
         Notebook book;
-        progress->setValue(i+1);
+        if (!cmdLine)
+            progress->setValue(i+1);
         QCoreApplication::processEvents();
 
         if (table.get(book, lids[i])) {
@@ -344,15 +355,18 @@ void ExportData::writeSavedSearches() {
     QList<qint32> dirtyLids;
     table.getAllDirty(dirtyLids);
     table.getAll(lids);
-    progress->setMaximum(lids.size());
-    progress->setLabelText(tr("Searches"));
-    progress->setValue(0);
-    progress->show();
+    if (!cmdLine) {
+        progress->setMaximum(lids.size());
+        progress->setLabelText(tr("Searches"));
+        progress->setValue(0);
+        progress->show();
+    }
 
 
     for (int i=0; i<lids.size() && !quitNow; i++) {
         SavedSearch s;
-        progress->setValue(i+1);
+        if (!cmdLine)
+            progress->setValue(i+1);
         QCoreApplication::processEvents();
         table.get(s,lids[i]);
         writer->writeStartElement("SavedSearch");
@@ -386,13 +400,16 @@ void ExportData::writeLinkedNotebooks() {
     LinkedNotebookTable table(global.db);
     table.getAll(lids);
 
-    progress->setMaximum(lids.size());
-    progress->setLabelText(tr("Linked Notebooks"));
-    progress->setValue(0);
-    progress->show();
+    if (!cmdLine) {
+        progress->setMaximum(lids.size());
+        progress->setLabelText(tr("Linked Notebooks"));
+        progress->setValue(0);
+        progress->show();
+    }
 
     for (int i=0; i<lids.size() && !quitNow; i++) {
-        progress->setValue(i+1);
+        if (!cmdLine)
+            progress->setValue(i+1);
         QCoreApplication::processEvents();
         LinkedNotebook s;
         table.get(s,lids[i]);
@@ -426,13 +443,16 @@ void ExportData::writeSharedNotebooks() {
     SharedNotebookTable table(global.db);
     table.getAll(lids);
 
-    progress->setMaximum(lids.size());
-    progress->setLabelText(tr("Shared Notebooks"));
-    progress->setValue(0);
-    progress->show();
+    if (!cmdLine) {
+        progress->setMaximum(lids.size());
+        progress->setLabelText(tr("Shared Notebooks"));
+        progress->setValue(0);
+        progress->show();
+    }
 
     for (int i=0; i<lids.size() && !quitNow; i++) {
-        progress->setValue(i+1);
+        if (!cmdLine)
+            progress->setValue(i+1);
         QCoreApplication::processEvents();
         SharedNotebook s;
         QStringList users;
@@ -483,13 +503,16 @@ void ExportData::writeNotes() {
     NoteTable table(global.db);
     QList<qint32> dirtyLids;
     table.getAllDirty(dirtyLids);
-    progress->setMaximum(lids.size());
-    progress->setLabelText(tr("Notes"));
-    progress->setValue(0);
+    if (!cmdLine) {
+        progress->setMaximum(lids.size());
+        progress->setLabelText(tr("Notes"));
+        progress->setValue(0);
+    }
     QCoreApplication::processEvents();
 
     for (int i=0; i<lids.size() && !quitNow; i++) {
-        progress->setValue(i+1);
+        if (!cmdLine)
+            progress->setValue(i+1);
         QCoreApplication::processEvents();
         Note n;
         table.get(n,lids[i], true,true);

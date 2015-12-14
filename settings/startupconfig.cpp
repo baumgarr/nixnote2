@@ -45,6 +45,7 @@ StartupConfig::StartupConfig()
     delNote = NULL;
     email = NULL;
     extractText = NULL;
+    exportNotes = NULL;
 }
 
 
@@ -121,8 +122,19 @@ void StartupConfig::printHelp() {
                    +QString("          --to=\"<address list>\"        List of recipients for the email.\n")
                    +QString("          --cc=\"<address list>\"        List of recipients to carbon copy.\n")
                    +QString("          --bcc=\"<address list>\"       List of recipients to blind carbon copy.\n")
-                   +QString("          --note=\"<note>.\"             Additional comments.\n")
+                   +QString("          --note=\"<note>\"              Additional comments.\n")
                    +QString("          --ccSelf                     Send a copy to yourself.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  backup <options>                     Backup the NixNote database.\n")
+                   +QString("     backup options:\n")
+                   +QString("          --output=<filename>          Output filename.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  export <options>                     Export notes from NixNote.\n")
+                   +QString("     export options:\n")
+                   +QString("          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
+                   +QString("          --search=\"search string\"     Export notes matching search string.\n")
+                   +QString("          --deleteAfterExtract         Delete notes after the extract completes.\n")
+                   +QString("          --noVerifyDelete             Don't verify deletions.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
                    +QString("  Examples:\n\n")
                    +QString("     To Start NixNote, do a sync, and then exit.\n")
@@ -132,7 +144,9 @@ void StartupConfig::printHelp() {
                    +QString("     To add a note to the notebook \"My Notebook\"\n")
                    +QString("     nixnote2 addNote --notebook=\"My Stuff\" --title=\"My New Note\" --tag=\"Tag1\" --tag=\"Tag2\" --noteText=\"My Note Text\"\n\n")
                    +QString("     Query notes for the search text. Results show the ID, note title (padded to 10 characters but truncated longer) and the notebook\n")
-                   +QString("     nixnote2 query --search=\"Famous Authors\" --delimiter=\" * \" --display=\"\%i%t10:%n\"\n")
+                   +QString("     nixnote2 query --search=\"Famous Authors\" --delimiter=\" * \" --display=\"\%i%t10:%n\"\n\n")
+                   +QString("     To extract all notes in the \"Notes\" notebook.\n")
+                   +QString("     nixnote2 export --search=\"notebook:notes\" --output=/home/joe/exports.nnex\n\n")
                    +QString("\n\n")
                    );
 
@@ -159,6 +173,18 @@ int StartupConfig::init(int argc, char *argv[]) {
             command->setBit(STARTUP_EMAILNOTE,true);
             if (email == NULL)
                 email = new EmailNote();
+        }
+        if (parm.startsWith("export")) {
+            command->setBit(STARTUP_EXPORT,true);
+            if (exportNotes == NULL)
+                exportNotes = new ExtractNotes();
+            exportNotes->backup=false;
+        }
+        if (parm.startsWith("backup")) {
+            command->setBit(STARTUP_BACKUP,true);
+            if (exportNotes == NULL)
+                exportNotes = new ExtractNotes();
+            exportNotes->backup=true;
         }
         if (parm.startsWith("query")) {
             command->setBit(STARTUP_QUERY);
@@ -289,6 +315,45 @@ int StartupConfig::init(int argc, char *argv[]) {
                 delNote->lid = parm.toInt();
             }
         }
+        if (command->at(STARTUP_EXPORT)) {
+            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
+                parm = parm.mid(12);
+                accountId = parm.toInt();
+            }
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                QRegExp regExp("[ ,;]");
+                QStringList tokens = parm.split(regExp);
+                for (int i=0; i<tokens.size(); i++) {
+                    if (tokens[i].trimmed() != "")
+                        exportNotes->lids.append(tokens[i].toInt());
+                }
+            }
+            if (parm.startsWith("--deleteAfterExport", Qt::CaseSensitive)) {
+                exportNotes->deleteAfterExtract=true;
+            }
+            if (parm.startsWith("--noVerifyDelete", Qt::CaseSensitive)) {
+                exportNotes->verifyDelete=false;
+            }
+            if (parm.startsWith("--search=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                exportNotes->query = parm;
+            }
+            if (parm.startsWith("--output=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                exportNotes->outputFile = parm;
+            }
+        }
+        if (command->at(STARTUP_BACKUP)) {
+            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
+                parm = parm.mid(12);
+                accountId = parm.toInt();
+            }
+            if (parm.startsWith("--output=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                exportNotes->outputFile = parm;
+            }
+        }
         if (command->at(STARTUP_READNOTE)) {
             if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
                 parm = parm.mid(12);
@@ -385,4 +450,13 @@ bool StartupConfig::readNote() {
 
 bool StartupConfig::emailNote() {
     return command->at(STARTUP_EMAILNOTE);
+}
+
+
+bool StartupConfig::exports() {
+    return command->at(STARTUP_EXPORT);
+}
+
+bool StartupConfig::backup() {
+    return command->at(STARTUP_BACKUP);
 }

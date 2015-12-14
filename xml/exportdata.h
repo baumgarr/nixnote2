@@ -64,12 +64,13 @@ private:
 
 public:
     bool backup;
-    explicit ExportData(bool backup, QObject *parent = 0);
+    explicit ExportData(bool backup, bool cmdLine=false, QObject *parent = 0);
     void backupData(QString filename);
     int lastError;
     QString errorMessage;
     QXmlStreamWriter *writer;
     QList<qint32> lids;
+    bool cmdLine;
 
 signals:
 

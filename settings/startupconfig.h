@@ -31,6 +31,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "cmdtools/deletenote.h"
 #include "cmdtools/emailnote.h"
 #include "cmdtools/extractnotetext.h"
+#include "cmdtools/extractnotes.h"
 
 #define STARTUP_GUI 0
 #define STARTUP_SYNC 1
@@ -77,6 +78,7 @@ public:
     EmailNote *email;
     CmdLineQuery *queryNotes;
     ExtractNoteText *extractText;
+    ExtractNotes *exportNotes;
     bool gui();
     bool sync();
     bool addNote();
@@ -86,6 +88,8 @@ public:
     bool deleteNote();
     bool emailNote();
     bool readNote();
+    bool exports();
+    bool backup();
     void setSyncAndExit();
 
     int init(int argc, char *argv[]);

@@ -99,6 +99,10 @@ int CmdLineTool::run(StartupConfig &config) {
     if (config.readNote()) {
         return readNote(config);
     }
+    if (config.exports() || config.backup()) {
+        return exportNotes(config);
+    }
+
     return 0;
 }
 
@@ -470,3 +474,17 @@ int CmdLineTool::readNote(StartupConfig config) {
     return 0;
 }
 
+
+
+int CmdLineTool::exportNotes(StartupConfig config) {
+    if (global.sharedMemory->attach()) {
+        std::cout << tr("This cannot be done with NixNote running.").toStdString() << endl;
+        return 16;
+    }
+    global.db = new DatabaseConnection("nixnote");  // Startup the database
+    if (config.exportNotes->backup)
+        config.exportNotes->backupDB();
+    else
+        config.exportNotes->extract();
+    return 0;
+}
