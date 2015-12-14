@@ -601,7 +601,7 @@ bool EnmlFormatter::isElementValid(QWebElement e) {
     if (element == "en-todo") return true;
     if (element == "en-note") return true;
     if (element == "font")  {
-        checkAttributes(e,coreattrs+i18n);
+        checkAttributes(e,coreattrs+i18n+font);
         return true;
     }
     if (element == "h1")  {
