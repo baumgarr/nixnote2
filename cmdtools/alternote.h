@@ -18,28 +18,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-
-#ifndef CMDLINETOOL_H
-#define CMDLINETOOL_H
+#ifndef ALTERNOTE_H
+#define ALTERNOTE_H
 
 #include <QObject>
-#include <QSharedMemory>
+#include <QStringList>
+#include <QList>
 
-#include "settings/startupconfig.h"
-
-class CmdLineTool : public QObject
+class AlterNote : public QObject
 {
     Q_OBJECT
 public:
-    explicit CmdLineTool(QObject *parent = 0);
-    int run(StartupConfig &config);
-    int readNote(StartupConfig config);
-    int addNote(StartupConfig config);
-    int queryNotes(StartupConfig config);
-    int deleteNote(StartupConfig config);
-    int emailNote(StartupConfig config);
-    int exportNotes(StartupConfig config);
-    int alterNote(StartupConfig config);
+    explicit AlterNote(QObject *parent = 0);
+    QStringList     addTagNames;
+    QStringList     delTagNames;
+    QString         notebook;
+    QList<qint32>   lids;
+    QString         query;
+    int             lastError;
+    QString         errorMessage;
+
+    QString wrap();
+    void unwrap(QString data);
+    int alterNote();
 
 signals:
 
@@ -47,4 +48,4 @@ public slots:
 
 };
 
-#endif // CMDLINETOOL_H
+#endif // ALTERNOTE_H

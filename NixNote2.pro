@@ -230,7 +230,8 @@ SOURCES += main.cpp\
     cmdtools/emailnote.cpp \
     dialog/faderdialog.cpp \
     cmdtools/extractnotetext.cpp \
-    cmdtools/extractnotes.cpp
+    cmdtools/extractnotes.cpp \
+    cmdtools/alternote.cpp
 
 
 
@@ -424,7 +425,8 @@ HEADERS  += nixnote.h \
     cmdtools/emailnote.h \
     dialog/faderdialog.h \
     cmdtools/extractnotetext.h \
-    cmdtools/extractnotes.h
+    cmdtools/extractnotes.h \
+    cmdtools/alternote.h
 
 
 

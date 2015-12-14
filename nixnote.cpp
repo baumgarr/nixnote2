@@ -73,6 +73,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/encrypt.h"
 #include <boost/shared_ptr.hpp>
 #include "cmdtools/cmdlinequery.h"
+#include "cmdtools/alternote.h"
 
 
 #include "gui/nmainmenubar.h"
@@ -2477,6 +2478,13 @@ void NixNote::heartbeatTimerTriggered() {
         EmailNote email;
         email.unwrap(xml);
         email.sendEmail();
+    }
+    if (data.startsWith("ALTER_NOTE:")) {
+        QString xml = data.mid(11);
+        AlterNote alter;
+        alter.unwrap(xml);
+        alter.alterNote();
+        updateSelectionCriteria();
     }
     if (data.startsWith("READ_NOTE:")) {
         QString xml = data.mid(10);

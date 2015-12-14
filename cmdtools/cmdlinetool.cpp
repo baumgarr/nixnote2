@@ -102,6 +102,9 @@ int CmdLineTool::run(StartupConfig &config) {
     if (config.exports() || config.backup()) {
         return exportNotes(config);
     }
+    if (config.alterNote()) {
+        return alterNote(config);
+    }
 
     return 0;
 }
@@ -486,5 +489,26 @@ int CmdLineTool::exportNotes(StartupConfig config) {
         config.exportNotes->backupDB();
     else
         config.exportNotes->extract();
+    return 0;
+}
+
+
+
+
+int CmdLineTool::alterNote(StartupConfig config) {
+    // Look to see if another NixNote is running.  If so, then we
+    // expect a response, otherwise we do it ourself.
+    bool useCrossMemory = true;
+    global.sharedMemory->unlock();
+    global.sharedMemory->detach();
+    if (!global.sharedMemory->attach()) {
+        useCrossMemory = false;
+    }
+    if (useCrossMemory) {
+        global.sharedMemory->write("ALTER_NOTE:" + config.alter->wrap());
+    } else {
+        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        return config.alter->alterNote();
+    }
     return 0;
 }

@@ -74,7 +74,6 @@ QString EmailNote::wrap() {
 void EmailNote::unwrap(QString data) {
     lastError = 0;
     QXmlStreamReader reader(data);
-    QLOG_DEBUG() << data;
     while (!reader.atEnd()) {
         reader.readNext();
         if (reader.hasError()) {

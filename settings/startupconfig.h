@@ -32,6 +32,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "cmdtools/emailnote.h"
 #include "cmdtools/extractnotetext.h"
 #include "cmdtools/extractnotes.h"
+#include "cmdtools/alternote.h"
 
 #define STARTUP_GUI 0
 #define STARTUP_SYNC 1
@@ -41,14 +42,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define STARTUP_QUERY 5
 #define STARTUP_DELETENOTE 6
 #define STARTUP_EMAILNOTE 7
-#define STARTUP_MOVE_TO_NOTEBOOK 8
-#define STARTUP_ASSIGN_TAG 9
-#define STARTUP_REMOVE_TAG 10
-#define STARTUP_EXPORT 11
-#define STARTUP_IMPORT 12
-#define STARTUP_BACKUP 13
-#define STARTUP_READNOTE 14
-#define STARTUP_OPTION_COUNT 15
+#define STARTUP_ALTERNOTE 8
+#define STARTUP_EXPORT 9
+#define STARTUP_IMPORT 10
+#define STARTUP_BACKUP 11
+#define STARTUP_READNOTE 12
+#define STARTUP_OPTION_COUNT 13
 
 class StartupConfig
 {
@@ -79,6 +78,7 @@ public:
     CmdLineQuery *queryNotes;
     ExtractNoteText *extractText;
     ExtractNotes *exportNotes;
+    AlterNote *alter;
     bool gui();
     bool sync();
     bool addNote();
@@ -90,6 +90,7 @@ public:
     bool readNote();
     bool exports();
     bool backup();
+    bool alterNote();
     void setSyncAndExit();
 
     int init(int argc, char *argv[]);

@@ -46,6 +46,7 @@ StartupConfig::StartupConfig()
     email = NULL;
     extractText = NULL;
     exportNotes = NULL;
+    alter = NULL;
 }
 
 
@@ -210,6 +211,11 @@ int StartupConfig::init(int argc, char *argv[]) {
         if (parm.startsWith("shutdown")) {
             command->setBit(STARTUP_SHUTDOWN,true);
         }
+        if (parm.startsWith("alterNote")) {
+            command->setBit(STARTUP_ALTERNOTE,true);
+            if (alter == NULL)
+                alter = new AlterNote();
+        }
         if (command->at(STARTUP_ADDNOTE)) {
             if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
                 parm = parm.mid(12);
@@ -364,6 +370,32 @@ int StartupConfig::init(int argc, char *argv[]) {
                 extractText->lid = parm.toInt();
             }
         }
+        if (command->at(STARTUP_ALTERNOTE)) {
+            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
+                parm = parm.mid(12);
+                accountId = parm.toInt();
+            }
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                alter->lids.append(parm.toInt());
+            }
+            if (parm.startsWith("--search=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                alter->query = parm;
+            }
+            if (parm.startsWith("--notebook=", Qt::CaseSensitive)) {
+                parm = parm.mid(11);
+                alter->notebook = parm;
+            }
+            if (parm.startsWith("--addTag=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                alter->addTagNames.append(parm);
+            }
+            if (parm.startsWith("--delTag=", Qt::CaseSensitive)) {
+                parm = parm.mid(9);
+                alter->delTagNames.append(parm);
+            }
+        }
         if (command->at(STARTUP_EMAILNOTE)) {
             if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
                 parm = parm.mid(12);
@@ -459,4 +491,9 @@ bool StartupConfig::exports() {
 
 bool StartupConfig::backup() {
     return command->at(STARTUP_BACKUP);
+}
+
+
+bool StartupConfig::alterNote() {
+    return command->at(STARTUP_ALTERNOTE);
 }
