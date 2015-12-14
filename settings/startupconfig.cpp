@@ -108,6 +108,14 @@ void StartupConfig::printHelp() {
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  alterNote <options>                  Change a notes't notebook or tags.\n")
+                   +QString("     alterNote options:\n")
+                   +QString("          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
+                   +QString("          --search=\"search string\"     Alter notes matching search string.\n")
+                   +QString("          --notebook=\"<notebook>\"      Move matching notes to this notebook.\n")
+                   +QString("          --addTag=\"<tag_name>\"        Add this tag to matching notes.\n")
+                   +QString("          --delTag=\"<tag_name>\"        Remove this tag from matching notes.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
                    +QString("  readNote <options>                   Read the text contents of a note.\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to read.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
@@ -144,6 +152,8 @@ void StartupConfig::printHelp() {
                    +QString("     nixnote2 --accountId=2\n\n")
                    +QString("     To add a note to the notebook \"My Notebook\"\n")
                    +QString("     nixnote2 addNote --notebook=\"My Stuff\" --title=\"My New Note\" --tag=\"Tag1\" --tag=\"Tag2\" --noteText=\"My Note Text\"\n\n")
+                   +QString("     To add a tag to notes in the notebook \"Stuff\".\n")
+                   +QString("     nixnote2 alterNote --search=\"notebook:Stuff\" --addTag=\"NewTag\"\n\n")
                    +QString("     Query notes for the search text. Results show the ID, note title (padded to 10 characters but truncated longer) and the notebook\n")
                    +QString("     nixnote2 query --search=\"Famous Authors\" --delimiter=\" * \" --display=\"\%i%t10:%n\"\n\n")
                    +QString("     To extract all notes in the \"Notes\" notebook.\n")
@@ -377,7 +387,12 @@ int StartupConfig::init(int argc, char *argv[]) {
             }
             if (parm.startsWith("--id=", Qt::CaseSensitive)) {
                 parm = parm.mid(5);
-                alter->lids.append(parm.toInt());
+                QRegExp regExp("[ ,;]");
+                QStringList tokens = parm.split(regExp);
+                for (int i=0; i<tokens.size(); i++) {
+                    if (tokens[i].trimmed() != "")
+                        alter->lids.append(tokens[i].toInt());
+                }
             }
             if (parm.startsWith("--search=", Qt::CaseSensitive)) {
                 parm = parm.mid(9);
