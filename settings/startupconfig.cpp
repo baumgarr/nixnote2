@@ -175,6 +175,10 @@ int StartupConfig::init(int argc, char *argv[]) {
             printHelp();
             return 1;
         }
+        if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
+            parm = parm.mid(12);
+            accountId = parm.toInt();
+        }
         if (parm.startsWith("addNote")) {
             command->setBit(STARTUP_ADDNOTE,true);
             if (newNote == NULL)
@@ -227,10 +231,6 @@ int StartupConfig::init(int argc, char *argv[]) {
                 alter = new AlterNote();
         }
         if (command->at(STARTUP_ADDNOTE)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm.startsWith("--title=", Qt::CaseSensitive)) {
                 parm = parm.mid(8);
                 newNote->title = parm;
@@ -261,10 +261,6 @@ int StartupConfig::init(int argc, char *argv[]) {
             }
         }
         if (command->at(STARTUP_QUERY)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                this->accountId=parm.toInt();
-            }
             if (parm.startsWith("--search=", Qt::CaseSensitive)) {
                 parm = parm.mid(9);
                 queryNotes->query = parm;
@@ -288,10 +284,6 @@ int StartupConfig::init(int argc, char *argv[]) {
         }
         if (command->at(STARTUP_GUI) || command->count(true) == 0) {
             command->setBit(STARTUP_GUI,true);
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm.startsWith("--openNote=", Qt::CaseSensitive)) {
                 parm = parm.mid(11);
                 startupNoteLid = parm.toInt();
@@ -319,10 +311,6 @@ int StartupConfig::init(int argc, char *argv[]) {
             }
         }
         if (command->at(STARTUP_DELETENOTE)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm == "--noVerify") {
                 delNote->verifyDelete = false;
             }
@@ -332,10 +320,6 @@ int StartupConfig::init(int argc, char *argv[]) {
             }
         }
         if (command->at(STARTUP_EXPORT)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm.startsWith("--id=", Qt::CaseSensitive)) {
                 parm = parm.mid(5);
                 QRegExp regExp("[ ,;]");
@@ -361,30 +345,18 @@ int StartupConfig::init(int argc, char *argv[]) {
             }
         }
         if (command->at(STARTUP_BACKUP)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm.startsWith("--output=", Qt::CaseSensitive)) {
                 parm = parm.mid(9);
                 exportNotes->outputFile = parm;
             }
         }
         if (command->at(STARTUP_READNOTE)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm.startsWith("--id=", Qt::CaseSensitive)) {
                 parm = parm.mid(5);
                 extractText->lid = parm.toInt();
             }
         }
         if (command->at(STARTUP_ALTERNOTE)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm.startsWith("--id=", Qt::CaseSensitive)) {
                 parm = parm.mid(5);
                 QRegExp regExp("[ ,;]");
@@ -412,10 +384,6 @@ int StartupConfig::init(int argc, char *argv[]) {
             }
         }
         if (command->at(STARTUP_EMAILNOTE)) {
-            if (parm.startsWith("--accountId=", Qt::CaseSensitive)) {
-                parm = parm.mid(12);
-                accountId = parm.toInt();
-            }
             if (parm == "--ccSelf") {
                 email->ccSelf = true;
             }
