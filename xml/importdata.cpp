@@ -44,13 +44,14 @@ extern Global global;
 //* where an import will keep the guid and will obey the
 //* <dirty> tag in the note.
 //***********************************************************
-ImportData::ImportData(bool full, QObject *parent) : QObject(parent)
+ImportData::ImportData(bool full, bool cmdline, QObject *parent) : QObject(parent)
 {
     importTags = false;
     importNotebooks = false;
     backup = full;
     createTags = false;
     stopNow = false;
+    this->cmdline = cmdline;
 
     // get the
     if (!full) {
@@ -70,8 +71,10 @@ ImportData::ImportData(bool full, QObject *parent) : QObject(parent)
             t.getGuid(notebookGuid, lid);
         }
     }
-    progress = new QProgressDialog();
-    progress->setVisible(false);
+    if (!this->cmdline) {
+        progress = new QProgressDialog();
+        progress->setVisible(false);
+    }
 }
 
 
@@ -98,37 +101,43 @@ void ImportData::import(QString file) {
 
     int recCnt = 0;
     QMessageBox mb;
-    mb.setWindowTitle(tr("Scanning File"));
-    mb.setText(QString::number(recCnt) + tr(" notes found."));
-    QPushButton *cancelButton = mb.addButton(QMessageBox::Cancel);
-    connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
-    mb.show();
-    QCoreApplication::processEvents();
+    if (!cmdline) {
+        mb.setWindowTitle(tr("Scanning File"));
+        mb.setText(QString::number(recCnt) + tr(" notes found."));
+        QPushButton *cancelButton = mb.addButton(QMessageBox::Cancel);
+        connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
+        mb.show();
+        QCoreApplication::processEvents();
+    }
 
     while (!countReader->atEnd() && !stopNow) {
         QString line = countReader->readLine();
         if (line.contains("<note>", Qt::CaseInsensitive)) {
             recCnt++;
-            mb.setText(QString::number(recCnt) + tr(" notes found."));
-            QCoreApplication::processEvents();
+            if (!cmdline) {
+                mb.setText(QString::number(recCnt) + tr(" notes found."));
+                QCoreApplication::processEvents();
+            }
         }
     }
 
     notebookData.clear();
-    progress->setMaximum(recCnt);
-    progress->setMinimum(0);
-    if (backup) {
-        progress->setWindowTitle(tr("Importing"));
-        progress->setLabelText(tr("Importing Notes"));
-    } else {
-        progress->setWindowTitle(tr("Restore"));
-        progress->setLabelText(tr("Restoring Notes"));
+    if (!cmdline) {
+        progress->setMaximum(recCnt);
+        progress->setMinimum(0);
+        if (backup) {
+            progress->setWindowTitle(tr("Importing"));
+            progress->setLabelText(tr("Importing Notes"));
+        } else {
+            progress->setWindowTitle(tr("Restore"));
+            progress->setLabelText(tr("Restoring Notes"));
+        }
+        progress->setWindowModality(Qt::ApplicationModal);
+        connect(progress, SIGNAL(canceled()), this, SLOT(cancel()));
+        progress->setVisible(true);
+        mb.close();
+        progress->show();
     }
-    progress->setWindowModality(Qt::ApplicationModal);
-    connect(progress, SIGNAL(canceled()), this, SLOT(cancel()));
-    progress->setVisible(true);
-    mb.close();
-    progress->show();
     recCnt = 0;
 
     reader = new QXmlStreamReader(&xmlFile);
@@ -167,7 +176,8 @@ void ImportData::import(QString file) {
             if (type.toLower() == "backup" && !backup) {
                 lastError = 4;
                 errorMessage = "This is backup file, not an export file";
-                progress->hide();
+                if (!cmdline)
+                    progress->hide();
                 return;
             }
             if (type.toLower() == "export" && backup) {
@@ -182,7 +192,8 @@ void ImportData::import(QString file) {
         if (reader->name().toString().toLower() == "note" && reader->isStartElement()) {
             processNoteNode();
             recCnt++;
-            progress->setValue(recCnt);
+            if (!cmdline)
+                progress->setValue(recCnt);
         }
         if (reader->name().toString().toLower() == "notebook" && reader->isStartElement() && (backup || importNotebooks)) {
             processNotebookNode();
@@ -221,7 +232,8 @@ void ImportData::import(QString file) {
         }
     }
     query.exec("commit");
-    progress->hide();
+    if (!this->cmdline)
+        progress->hide();
 }
 
 

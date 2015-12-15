@@ -84,7 +84,8 @@ public:
     bool                    importTags;
     bool                    importNotebooks;
     bool                    createTags;
-    ImportData(bool full, QObject *parent=0);
+    bool                    cmdline;
+    ImportData(bool full, bool cmdline=false, QObject *parent=0);
     void import(QString file);
     void setNotebookGuid(QString g);
     QString getErrorMessage();

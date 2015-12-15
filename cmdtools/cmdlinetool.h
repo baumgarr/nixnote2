@@ -40,6 +40,7 @@ public:
     int emailNote(StartupConfig config);
     int exportNotes(StartupConfig config);
     int alterNote(StartupConfig config);
+    int importNotes(StartupConfig config);
 
 signals:
 

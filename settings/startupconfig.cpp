@@ -46,6 +46,7 @@ StartupConfig::StartupConfig()
     email = NULL;
     extractText = NULL;
     exportNotes = NULL;
+    importNotes = NULL;
     alter = NULL;
 }
 
@@ -142,8 +143,13 @@ void StartupConfig::printHelp() {
                    +QString("     export options:\n")
                    +QString("          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
                    +QString("          --search=\"search string\"     Export notes matching search string.\n")
+                   +QString("          --output=\"filename\"        Output file name.\n")
                    +QString("          --deleteAfterExtract         Delete notes after the extract completes.\n")
                    +QString("          --noVerifyDelete             Don't verify deletions.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
+                   +QString("  import <options>                     Import notes from a NixNote extract (.nnex).\n")
+                   +QString("     import options:\n")
+                   +QString("          --input=\"filename\"         Input file name.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
                    +QString("  Examples:\n\n")
                    +QString("     To Start NixNote, do a sync, and then exit.\n")
@@ -194,6 +200,11 @@ int StartupConfig::init(int argc, char *argv[]) {
             if (exportNotes == NULL)
                 exportNotes = new ExtractNotes();
             exportNotes->backup=false;
+        }
+        if (parm.startsWith("import")) {
+            command->setBit(STARTUP_IMPORT,true);
+            if (importNotes == NULL)
+                importNotes = new ImportNotes();
         }
         if (parm.startsWith("backup")) {
             command->setBit(STARTUP_BACKUP,true);
@@ -344,6 +355,12 @@ int StartupConfig::init(int argc, char *argv[]) {
                 exportNotes->outputFile = parm;
             }
         }
+        if (command->at(STARTUP_IMPORT)) {
+            if (parm.startsWith("--input=", Qt::CaseSensitive)) {
+                parm = parm.mid(8);
+                importNotes->inputFile = parm;
+            }
+        }
         if (command->at(STARTUP_BACKUP)) {
             if (parm.startsWith("--output=", Qt::CaseSensitive)) {
                 parm = parm.mid(9);
@@ -470,6 +487,10 @@ bool StartupConfig::emailNote() {
 
 bool StartupConfig::exports() {
     return command->at(STARTUP_EXPORT);
+}
+
+bool StartupConfig::import() {
+    return command->at(STARTUP_IMPORT);
 }
 
 bool StartupConfig::backup() {

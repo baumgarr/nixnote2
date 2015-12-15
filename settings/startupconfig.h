@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "cmdtools/extractnotetext.h"
 #include "cmdtools/extractnotes.h"
 #include "cmdtools/alternote.h"
+#include "cmdtools/importnotes.h"
 
 #define STARTUP_GUI 0
 #define STARTUP_SYNC 1
@@ -78,6 +79,7 @@ public:
     CmdLineQuery *queryNotes;
     ExtractNoteText *extractText;
     ExtractNotes *exportNotes;
+    ImportNotes *importNotes;
     AlterNote *alter;
     bool gui();
     bool sync();
@@ -91,6 +93,7 @@ public:
     bool exports();
     bool backup();
     bool alterNote();
+    bool import();
     void setSyncAndExit();
 
     int init(int argc, char *argv[]);
