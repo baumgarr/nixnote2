@@ -13,7 +13,7 @@ Start NixNote normally.  If not specified, this is the default option."
 .RS 7
 .HP 2 2 
 .IP "--accountId=<id>"
-The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account. 
 .LP
 .HP 2 2 
 .IP "--enableIndexing"
@@ -46,16 +46,46 @@ Start NixNote in a minimized state by default.
 .HP 2 2
 .IP --syncAndExit
 Do a sync with Evernote and exit NixNote.
+Synchronize with Evernote.  If not running, NixNote will do a sync and exit without showing the GUI.
+.RE
+.RE
+.LP
+.HP 
+.IP "sync <options>"
+.RS 7
+.IP "sync options:
+.RS 7
+.LP
+.HP 2 2
+.IP "--accountId=<id>"
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account. 
 .LP
 .RE
 .RE
-.HP 
-.IP "sync" 
-Synchronize with Evernote.  If not running, NixNote will do a sync and exit without showing the GUI.
 .IP "shutdown"
 If running, ask NixNote to stop.
+.RS 7
+.IP "shutdown options:
+.RS 7
+.LP
+.HP 2 2
+.IP "--accountId=<id>"
+The ID of the account to use.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account. 
+.LP
+.RE
+.RE
 .IP "show_window"
-If NixNote is running nad minimized, raise the window.
+If NixNote is running nad minimized, raise the window.   
+.RS 7
+.IP "show_window options:
+.RS 7
+.LP
+.HP 2 2
+.IP "--accountId=<id>"
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account. 
+.LP
+.RE
+.RE
 .IP "query <options>
 Query the NixNote database.
 .RS 7
@@ -64,7 +94,7 @@ Query the NixNote database.
 .RS 7
 .HP 2 2
 .IP "--accountId=<id>"
-The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account.
 .IP "--search=<search_string>
 Search string. The search syntax is the same as the graphical interface uses to search.
 .IP "--delimiter=<delimiter_string>
@@ -115,7 +145,7 @@ readNote options:
 .RS 7
 .HP 2 2
 .IP "--accountId=<id>
-The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account. 
 .LP
 .HP 2 2
 .IP "--id=<id> : The ID of the note to be read.
@@ -134,7 +164,7 @@ Note ID to delete.
 .IP --noVerify
 Do not perform a verification prior to deleting the note.
 .IP "--accountId=<id>"
-The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account. 
 .LP
 .RE
 .RE
@@ -168,7 +198,7 @@ Additional comments to be added to the beginning of the note
 .IP --ccSelf
 Send a copy to yourself.
 .IP "--accountId=<id>
-The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account. 
 .RE
 .RE
 .IP "addNote <options>"
@@ -190,13 +220,60 @@ The date the note was last updated.  It should be in the format of YYYMMDDTHHMMS
 .IP --updated=<creation_date>
 The date the note was last updated.  It should be in the format of YYYMMDDTHHMMSSZ where YYYY is the year, MM is the month, DD is the day, HH is the hour, MM is the minute, and SS is the second.  For example, 20151201T1302Z would be December 1, 2015 at 1:02pm.  All times are GMT time.  If ommitted, the current date is used.
 .IP "--accountId=<id>
-The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to 1. 
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account. 
 .IP "--delimiter=<delimiter>"
 This is a special string to use within a note.  When specified, and a --attachment parameter is specified, this string is where the attachment will appear in the note.  If not specified, the default is %%.
 .IP "--attachment=<file-path>"
 The location of a file to attach in the note.  For multiple attachments use the --attachment parameter multiple times.  If the character string specified by the --delimiter parameter appears in the note, the delimiter string will be replaced with the attachment.  If there is no delimiter, the attachment will be appended to the end of the note.
 .IP --noteText=<note_text>
 The actual text of the note.  If not specified the note will be read from stdin.  Some limited HTML is supported but not all HTML tags are supported by Evernote.
+.RE
+.RE
+.IP "export <options>"
+.RS 7
+.IP "export options:
+.RS 7
+.LP
+.HP 2 2
+.IP --accountId=<id>
+The ID of the account to use upon startup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account. 
+.IP "--output=<filename>
+The output file for the exported notes.
+.IP --search="search_string"
+Export notes matching the search criteria.
+.IP --id=""<id_list>""" 
+A list of notes ids to export.  The list should be separated by spaces if more than one is desired.
+.IP --deleteOnExport
+If set, the exported notes will be deleted when the export is complete.
+.IP --noVerifyDelete
+If "--deleteOnExport" is set, this will disable the verification of the deletes
+.LP
+.RE
+.RE
+.IP "backup <options>"
+.RS 7
+.IP "backup options"
+.RS 7
+.LP
+.HP 2 2
+.IP --accountId=<id>
+The account to backup.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts.  If not specified, it defaults to the last used account.
+.IP --output=<filename>
+Output file for the backup.
+.LP
+.RE
+.RE
+.IP "import <options>
+.RS 7
+.IP "import options"
+.RS 7
+.LP
+.HP 2 2
+.IP --accountId=<id>
+Account to import into.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts.  If not specified, it defaults to the last used account.
+.IP --input=<filename>
+The file containing the NixNote export (nnex) file.
+.LP
 .RE
 .RE
 .SH EXAMPLES
