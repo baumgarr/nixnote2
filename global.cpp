@@ -708,6 +708,20 @@ QString Global::getEditorBackgroundColor() {
 }
 
 
+QString Global::getEditorCss() {
+    QString css=fileManager.getQssDirPath("")+"editor.css";
+    if (colorList.contains("editorCss")) {
+        css = fileManager.getQssDirPathUser("")+colorList["editorCss"].trimmed();
+        if (QFile(css).exists())
+            return css;
+        css = fileManager.getQssDirPath("")+colorList["editorCss"].trimmed();
+        if (QFile(css).exists())
+            return css;
+    }
+    return css;
+}
+
+
 // Get a QIcon in an icon theme
 QIcon Global::getIconResource(QString key) {
     return this->getIconResource(resourceList, key);

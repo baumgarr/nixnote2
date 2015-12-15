@@ -3443,17 +3443,7 @@ void NBrowserWindow::subscriptButtonPressed() {
 
 // Set the editor background & font color
 void NBrowserWindow::setEditorStyle() {
-    QString html = editor->page()->mainFrame()->toHtml();
-    int start = 0;
-    start = html.indexOf("<body");
-    html = html.mid(start);
-    int end = html.length();
-    end = html.indexOf(">");
-    html = html.mid(0,end);
-    bool hasBackground = html.contains("background-color:", Qt::CaseInsensitive);
-    bool hasDefaultBackground = html.contains("background-color: "+global.getEditorBackgroundColor(), Qt::CaseInsensitive);
-    if (hasBackground && !hasDefaultBackground)
-        editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(true));
-    else
-        editor->page()->mainFrame()->evaluateJavaScript(global.getEditorStyle(false));
+    QString qss = global.getEditorCss();
+    editor->settings()->setUserStyleSheetUrl(QUrl("file://"+qss));
+    return;
 }

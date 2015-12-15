@@ -254,7 +254,7 @@ QString FileManager::getQssDirPath(QString relativePath) {
     return qssDirPath + toPlatformPathSeparator(relativePath);
 }
 QString FileManager::getQssDirPathUser(QString relativePath) {
-    return qssDirPath + toPlatformPathSeparator(relativePath);
+    return qssDirPathUser + toPlatformPathSeparator(relativePath);
 }
 
 QString FileManager::getTmpDirPath() {
