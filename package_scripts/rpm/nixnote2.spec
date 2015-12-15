@@ -35,19 +35,12 @@ colors.txt:     Sample config file to the color menu for note & title background
 theme.ini:      Theme configuration file.
 shortcuts.txt   Shortcut configuration file.
 
-
-%configure
-sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
-sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
+%prep
+%setup -n nixnote2
 
 %clean
 rm -rf ${RPM_BUILD_ROOT}
 rm -rf ${RPM_BUILD_DIR}/nixnote2
-
-%define debug_package %{nil}
-
-%prep
-%setup -n nixnote2
 
 %define debug_package %{nil}
 
