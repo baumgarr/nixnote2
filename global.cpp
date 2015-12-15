@@ -29,6 +29,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 // The following include is needed for demangling names on a backtrace
 #include <cxxabi.h>
 #include <execinfo.h>
+#include <pwd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 
 //******************************************
@@ -172,6 +175,9 @@ void Global::setup(StartupConfig startupConfig) {
     isFullscreen=false;
     indexPDFLocally=getIndexPDFLocally();
     strictDTD = getStrictDTD();
+
+    // Get username
+    full_username = getUsername();
 }
 
 
@@ -606,6 +612,47 @@ void Global::setupDateTimeFormat() {
 }
 
 
+// Get the username from the system
+QString Global::getUsername() {
+    if (!autosetUsername())
+        return "";
+
+    register struct passwd *pw;
+    register uid_t uid;
+    QString username="";
+
+    uid = geteuid();
+    pw = getpwuid(uid);
+    if (pw) {
+        username = pw->pw_gecos;
+        username.remove(QChar(','));
+        if (username != "")
+            return username.trimmed();
+        username = pw->pw_name;
+        return username.trimmed();
+    }
+    return "";
+}
+
+
+// Determine if we should automatically set the username on new notes
+bool Global::autosetUsername() {
+    settings->beginGroup("Appearance");
+    bool value = settings->value("autosetUsername", true).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+// Set the preference of auto-setting the username
+void Global::setAutosetUsername(bool value) {
+    settings->beginGroup("Appearance");
+    settings->setValue("autosetUsername", value);
+    settings->endGroup();
+}
+
+
+
 
 // Utility function for case insensitive sorting
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
@@ -784,7 +831,6 @@ void Global::getThemeNamesFromFile(QFile &file, QStringList &values) {
 
     file.close();
 }
-
 
 
 // Get the full path of a resource in a theme file
@@ -1049,10 +1095,6 @@ void Global::setDebugLevel() {
         QLOG_WARN() << "Invalid message logging level " << level;
     }
 }
-
-
-
-
 
 
 

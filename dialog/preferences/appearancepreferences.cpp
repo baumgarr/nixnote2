@@ -52,6 +52,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     forceWebFonts->setChecked(global.forceWebFonts);
     showNoteListGrid = new QCheckBox(tr("Show note list grid*"), this);
     alternateNoteListColors = new QCheckBox(tr("Alternate note list colors*"), this);
+    autosetUserid = new QCheckBox(tr("Set author on new notes."),this);
+    autosetUserid->setChecked(global.autosetUsername());
 
     traySingleClickAction = new QComboBox();
     traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
@@ -121,6 +123,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(forceWebFonts, row++, 1);
     mainLayout->addWidget(showNoteListGrid,row,0);
     mainLayout->addWidget(alternateNoteListColors,row++,1);
+    mainLayout->addWidget(autosetUserid, row++,0);
 
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
@@ -217,6 +220,9 @@ void AppearancePreferences::saveValues() {
 
     global.setNewNoteFocusToTitle(newNoteFocusOnTitle->isChecked());
     global.setDeleteConfirmation(this->confirmDeletes->isChecked());
+    global.setAutosetUsername(autosetUserid->isChecked());
+    if (!autosetUserid->isChecked())
+        global.full_username="";
     global.settings->beginGroup("Appearance");
     global.settings->setValue("disableEditingOnStartup", disableEditingOnStartup->isChecked());
     global.settings->setValue("forceWebFonts", forceWebFonts->isChecked());

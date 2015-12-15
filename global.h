@@ -188,6 +188,10 @@ public:
     QHash<qint32, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
 
     void setup(StartupConfig config);                         // Setup the global variables
+    QString full_username;                                    // current username
+    bool autosetUsername();                                   // Should the username be set automatically?
+    void setAutosetUsername(bool value);
+    QString getUsername();                                    // pull username from the system.
     QString getProgramDirPath();                              // Get the path the program is executing from
     QList< QPair<QString, QString> > passwordRemember;        // Cache of passwords
     QHash< QString, QPair <QString, QString> > passwordSafe;  // Saved passwords

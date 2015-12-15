@@ -1927,6 +1927,13 @@ void NixNote::newNote() {
         notebookTable.getGuid(notebookGuid, lid);
         n.notebookGuid = notebookGuid;
     }
+    if (global.full_username != "") {
+        NoteAttributes na;
+        if (n.attributes.isSet())
+            na = n.attributes;
+        na.author = global.full_username;
+        n.attributes = na;
+    }
     NoteTable table(global.db);
     qint32 lid = table.add(0,n,true);
 
