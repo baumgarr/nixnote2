@@ -809,7 +809,6 @@ void NixNote::syncThreadStarted() {
     bool syncOnStartup = global.settings->value("syncOnStartup", false).toBool();
     global.showGoodSyncMessagesInTray = global.settings->value("showGoodSyncMessagesInTray", true).toBool();
     global.settings->endGroup();
-    QLOG_DEBUG() << global.syncAndExit;
     if (syncOnStartup || global.syncAndExit)
         synchronize();
 }
