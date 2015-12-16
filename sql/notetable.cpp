@@ -2425,7 +2425,7 @@ void NoteTable::pinNote(qint32 lid, bool value) {
     query.finish();
     db->unlock();
 
-    setDirty(lid, true);
+    //setDirty(lid, true, false);
 }
 
 
