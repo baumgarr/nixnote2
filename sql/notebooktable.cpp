@@ -929,8 +929,6 @@ bool NotebookTable::isReadOnly(qint32 notebookLid) {
     LinkedNotebook linkedNotebook;
     QString linkedusername = "";
     found = ltable.get(linkedNotebook, notebookLid);
-    QLOG_DEBUG() << "Linked Notebook Found: " << found;
-    QLOG_DEBUG() << "Linked Notebook URI set: " << linkedNotebook.uri.isSet();
 
     if (found && linkedNotebook.uri.isSet()) {
         if (linkedNotebook.username.isSet())

@@ -150,7 +150,6 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   removeFormatButtonAction = this->addAction(global.getIconResource(":eraserIcon"), tr("Remove Formatting"));
   removeFormatButtonShortcut = new QShortcut(this);
   this->setupShortcut(removeFormatButtonShortcut, "Edit_Remove_Formatting");
-  QLOG_DEBUG() << removeFormatButtonShortcut->key();
 
   boldButtonWidget = new QToolButton(this);
   boldButtonWidget->setIcon(global.getIconResource(":boldIcon"));

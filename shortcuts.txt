@@ -83,8 +83,9 @@ View_Presentation_Mode                          // Turn on presentation mode
 
 Prev_Tab                       Ctrl+PgDown      // Previous tab 
 Next_Tab                       Ctrl+PgUp        // Next Tab
+Close_Tab		       Ctrl+W           // Close the current tab
 Up_Note                        Ctrl+Shift+PgUp      // Move up one note in the list 
-Down_Note                      Ctrl+Shift+PgDown        // Move down one note in the list
+Down_Note                      Ctrl+Shift+PgDown    // Move down one note in the list
 
 Format_Bold			Ctrl+B		// Bold (duh)
 Format_Underline		Ctrl+U		// Underline

@@ -78,6 +78,7 @@ signals:
 
 public slots:
     void closeTab(int index);
+    void closeTab();
     void moveTab(int to, int from);
     void openNote(qint32 lid, OpenNoteMode mode);
     void tagCreationSignaled(qint32 lid);

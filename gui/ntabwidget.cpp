@@ -102,6 +102,15 @@ void NTabWidget::closeTab(int index) {
 
 
 
+void NTabWidget::closeTab() {
+    if (browserList->size() <=1)
+        return;
+
+    closeTab(tabBar->currentIndex());
+}
+
+
+
 void NTabWidget::moveTab(int from, int to) {
     stack.removeWidget(browserList->at(from));
     stack.insertWidget(to, browserList->at(from));

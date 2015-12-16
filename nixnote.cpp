@@ -773,17 +773,20 @@ void NixNote::setupGui() {
     this->setupShortcut(prevTabShortcut, "Prev_Tab");
     connect(prevTabShortcut, SIGNAL(activated()), tabWindow, SLOT(prevTab()));
 
+    closeTabShortcut = new QShortcut(this);
+    closeTabShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(closeTabShortcut, "Close_Tab");
+    connect(closeTabShortcut, SIGNAL(activated()), tabWindow, SLOT(closeTab()));
+
     downNoteShortcut = new QShortcut(this);
     downNoteShortcut->setContext(Qt::WidgetWithChildrenShortcut);
     this->setupShortcut(downNoteShortcut, "Down_Note");
     connect(downNoteShortcut, SIGNAL(activated()), noteTableView, SLOT(downNote()));
-    QLOG_DEBUG() << downNoteShortcut->key();
 
     upNoteShortcut = new QShortcut(this);
     upNoteShortcut->setContext(Qt::WidgetWithChildrenShortcut);
     this->setupShortcut(upNoteShortcut, "Up_Note");
     connect(upNoteShortcut, SIGNAL(activated()), noteTableView, SLOT(upNote()));
-    QLOG_DEBUG() << upNoteShortcut->key();
 }
 
 

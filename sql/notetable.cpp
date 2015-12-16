@@ -1841,7 +1841,6 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query3.bindValue(":size", totalsize);
     query3.bindValue(":lid", lid);
     query3.exec();
-    QLOG_DEBUG() << query3.lastError();
 
     db->unlock();
     setDirty(lid, isDirty);
