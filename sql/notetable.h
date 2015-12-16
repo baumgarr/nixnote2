@@ -163,7 +163,7 @@ public:
     bool updateNoteList(qint32 lid, const Note &t, bool isDirty, qint32 account);  // Update the user viewing list
     bool updateNotebookName(qint32 lid, QString name);                   // Update a notebook's name in the user listing
     void updateNotebook(qint32 noteLid, qint32 notebookLid);             // Set the current note's notebook
-    void setDirty(qint32 lid, bool dirty);                               // Set if a note needs a sync
+    void setDirty(qint32 lid, bool dirty, bool setDateUpdated=true);     // Set if a note needs a sync
     void updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDirty=false);    // Update the notebook for a note
     void updateUrl(qint32 lid, QString text, bool dirty);                // Update a URL for a note
     void updateTitle(qint32 noteLid, QString title, bool setAsDirty);    // Update a title for a note

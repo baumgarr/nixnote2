@@ -517,9 +517,9 @@ bool NTagView::dropMimeData(QTreeWidgetItem *parent, int index, const QMimeData 
                         noteTable.addTag(noteLid, tagLid, true);
                         QString tagString = noteTable.getNoteListTags(noteLid);
                         emit(updateNoteList(noteLid, NOTE_TABLE_TAGS_POSITION, tagString));
-                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
-                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
-                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+//                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
+//                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
+//                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
                     }
                 }
             }
@@ -721,9 +721,9 @@ void NTagView::mergeRequested() {
                 ntable.addTag(notes[i], lid, true);
                 QString tagString = ntable.getNoteListTags(notes[i]);
                 emit(updateNoteList(notes[i], NOTE_TABLE_TAGS_POSITION, tagString));
-                qint64 dt = QDateTime::currentMSecsSinceEpoch();
-                ntable.updateDate(notes[i],  dt, NOTE_UPDATED_DATE, true);
-                emit(updateNoteList(notes[i], NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+//                qint64 dt = QDateTime::currentMSecsSinceEpoch();
+//                ntable.updateDate(notes[i],  dt, NOTE_UPDATED_DATE, true);
+//                emit(updateNoteList(notes[i], NOTE_TABLE_DATE_UPDATED_POSITION, dt));
             }
         }
     }

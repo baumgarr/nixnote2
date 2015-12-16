@@ -3157,7 +3157,7 @@ void NBrowserWindow::sendNotebookUpdateSignal() {
 //    QString notebook = notebookMenu.d
 //    ntable.updateNotebook(this->lid, this->noteTitle.text().trimmed(), true);
 //    this->editor->isDirty = true;
-    ntable.setDirty(this->lid, true);
+    ntable.setDirty(this->lid, true,false);
     emit(this->noteUpdated(lid));
     qint32 lid = notebookMenu.notebookLid;
     QString name = notebookMenu.notebookName;
@@ -3166,7 +3166,7 @@ void NBrowserWindow::sendNotebookUpdateSignal() {
     emit noteNotebookEditedSignal(uuid, this->lid, lid, name);
 
 
-    sendDateUpdateSignal();
+    //sendDateUpdateSignal();
 }
 
 
@@ -3187,9 +3187,9 @@ void NBrowserWindow::sendDateUpdateSignal(qint64 dt) {
 // Send a signal that the note has been updated
 void NBrowserWindow::sendTagUpdateSignal() {
     NoteTable ntable(global.db);
-    ntable.setDirty(this->lid, true);
+    ntable.setDirty(this->lid, true,false);
     emit(this->noteUpdated(lid));
-    sendDateUpdateSignal();
+    //sendDateUpdateSignal();
     QStringList names;
     tagEditor.getTags(names);
     emit noteTagsEditedSignal(uuid, lid, names);

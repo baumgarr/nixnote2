@@ -1137,7 +1137,7 @@ void NoteTable::updateNotebook(qint32 noteLid, qint32 notebookLid, bool setAsDir
         query.exec();
 
         if (setAsDirty) {
-            setDirty(noteLid, setAsDirty);
+            setDirty(noteLid, setAsDirty,false);
         }
 
         QString bookName = book.name;
@@ -1321,7 +1321,7 @@ void NoteTable::removeTag(qint32 lid, qint32 tag, bool isDirty = false) {
     query.finish();
     db->unlock();
     if (isDirty) {
-        setDirty(lid, isDirty);
+        setDirty(lid, isDirty,false);
     }
     rebuildNoteListTags(lid);
 }
@@ -1348,7 +1348,7 @@ void NoteTable::addTag(qint32 lid, qint32 tag, bool isDirty = false) {
     db->lockForWrite();
 
     if (isDirty) {
-        setDirty(lid, isDirty);
+        setDirty(lid, isDirty,false);
     }
     rebuildNoteListTags(lid);
 }
@@ -1421,7 +1421,7 @@ QString NoteTable::getNoteListTags(qint32 lid) {
 }
 
 
-void NoteTable::setDirty(qint32 lid, bool dirty) {
+void NoteTable::setDirty(qint32 lid, bool dirty, bool setDateUpdated) {
     if (lid <=0)
         return;
     qint64 dt = QDateTime::currentMSecsSinceEpoch();
@@ -1431,7 +1431,7 @@ void NoteTable::setDirty(qint32 lid, bool dirty) {
 
     // If it is setting it as dirty, we need to update the
     // update date &  time.
-    if (dirty) {
+    if (dirty && setDateUpdated) {
         query.prepare("Delete from DataStore where lid=:lid and key=:key");
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_UPDATED_DATE);

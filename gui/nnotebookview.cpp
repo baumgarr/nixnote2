@@ -956,9 +956,9 @@ bool NNotebookView::dropMimeData(QTreeWidgetItem *parent, int index, const QMime
                     if (currentNotebook != bookLid) {
                         noteTable.updateNotebook(noteLid, bookLid, true);
                         emit(updateNoteList(noteLid, NOTE_TABLE_NOTEBOOK_POSITION, notebook.name.value()));
-                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
-                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
-                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
+//                        qint64 dt = QDateTime::currentMSecsSinceEpoch();
+//                        noteTable.updateDate(noteLid,  dt, NOTE_UPDATED_DATE, true);
+//                        emit(updateNoteList(noteLid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
                     }
                 }
             }
