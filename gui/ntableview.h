@@ -73,6 +73,7 @@ public:
     QAction *pinNoteAction;
     QAction *unpinNoteAction;
     QAction *mergeNotesAction;
+    QAction *createTableOfContentsAction;
 
     QAction *noteTitleColorWhiteAction;
     QAction *noteTitleColorRedAction;
@@ -119,6 +120,7 @@ public slots:
     void unpinNote();
     void createNewNote();
     void mergeNotes();
+    void createTableOfContents();
     void refreshCell(qint32 lid, int cell, QVariant data);
     void dragMoveEvent(QDragMoveEvent *event);
     void dragEnterEvent(QDragEnterEvent *event);

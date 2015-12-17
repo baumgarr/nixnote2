@@ -35,6 +35,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/usertable.h"
 #include "sql/notetable.h"
 #include "sql/notebooktable.h"
+#include "utilities/nuuid.h"
 
 //*****************************************************************
 //* This class overrides QTableView and is used to provide a
@@ -263,6 +264,12 @@ NTableView::NTableView(QWidget *parent) :
     contextMenu->addAction(mergeNotesAction);
     mergeNotesAction->setFont(global.getGuiFont(font()));
     connect(mergeNotesAction, SIGNAL(triggered()), this, SLOT(mergeNotes()));
+
+
+    createTableOfContentsAction = new QAction(tr("Create Table of Contents"), this);
+    contextMenu->addAction(createTableOfContentsAction);
+    createTableOfContentsAction->setFont(global.getGuiFont(font()));
+    connect(createTableOfContentsAction, SIGNAL(triggered()), this, SLOT(createTableOfContents()));
 
     contextMenu->addSeparator();
     colorMenu = new QMenu(tr("Title Color"));
@@ -1283,6 +1290,91 @@ void NTableView::resizeColumns() {
     width = global.getColumnWidth("noteTableReminderOrderPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_REMINDER_ORDER_POSITION, width);
 }
+
+
+
+
+
+// Combine multiple notes
+void NTableView::createTableOfContents() {
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    NoteTable nTable(global.db);
+    Note note;
+    NoteAttributes na;
+    NUuid uuid;
+    note.title = tr("Table of Contents");
+    note.guid = uuid.create();
+    note.created = QDateTime::currentMSecsSinceEpoch();
+    note.updated = QDateTime::currentMSecsSinceEpoch();
+    note.updateSequenceNum = 0;
+
+    // Set the author
+    if (global.full_username != "")
+        na.author = global.full_username;
+    QString content = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
+           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
+           QString("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\"><ol>");
+    QStringList tagGuids;
+    QStringList tagNames;
+
+    UserTable utable(global.db);
+    User user;
+    utable.getUser(user);
+
+    QString href = "evernote:///view/" + QString::number(user.id) + QString("/") +
+           user.shardId +QString("/");
+
+    for (int i=0; i<lids.size(); i++) {
+        Note n;
+        nTable.get(n,lids[i], false, false);
+        QString href2 = href+n.guid+"/"+n.guid;
+        if (i==0) {
+            note.notebookGuid = n.notebookGuid;
+        }
+        if (n.tagGuids.isSet()) {
+            for (int j=0; j<n.tagGuids->size(); j++) {
+                if (!tagGuids.contains(n.tagGuids->at(j))) {
+                    tagGuids.append(n.tagGuids->at(j));
+                    tagNames.append(n.tagNames->at(j));
+                }
+            }
+        }
+        QString url = QString("<a href=\"")+href2+QString("\" title=\"")+n.title+
+                QString("\">")+n.title+QString("</a>");
+        content = content+"<li>"+url+"</li>";
+    }
+    content = content+QString("</ol></en-note>");
+    note.content = content;
+    note.attributes = na;
+    note.active = true;
+    note.tagGuids = tagGuids;
+    note.tagNames = tagNames;
+    qint32 lid = nTable.add(0, note, true,0);
+
+    FilterEngine engine;
+    engine.filter();
+    refreshData();
+
+    int sourceRow = proxy->lidMap->value(lid);
+    QModelIndex sourceIndex = model()->index(sourceRow, NOTE_TABLE_LID_POSITION);
+    QModelIndex proxyIndex = proxy->mapFromSource(sourceIndex);
+    selectRow(proxyIndex.row());
+
+    FilterCriteria *criteria = new FilterCriteria();
+    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+    criteria->unsetSearchString();
+    criteria->setLid(lid);
+    global.filterCriteria.append(criteria);
+    global.filterPosition++;
+
+    emit(refreshNoteContent(lid));
+    emit(openNote(false));
+}
+
 
 
 // Combine multiple notes
