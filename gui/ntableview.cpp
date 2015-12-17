@@ -1301,9 +1301,9 @@ void NTableView::createTableOfContents() {
     getSelectedLids(lids);
     if (lids.size() == 0)
         return;
-
     NoteTable nTable(global.db);
     Note note;
+
     NoteAttributes na;
     NUuid uuid;
     note.title = tr("Table of Contents");
@@ -1328,9 +1328,12 @@ void NTableView::createTableOfContents() {
     QString href = "evernote:///view/" + QString::number(user.id) + QString("/") +
            user.shardId +QString("/");
 
+    bool unsyncedNote = false;
     for (int i=0; i<lids.size(); i++) {
         Note n;
         nTable.get(n,lids[i], false, false);
+        if (!n.updateSequenceNum.isSet() || n.updateSequenceNum == 0)
+            unsyncedNote = true;
         QString href2 = href+n.guid+"/"+n.guid;
         if (i==0) {
             note.notebookGuid = n.notebookGuid;
@@ -1353,26 +1356,28 @@ void NTableView::createTableOfContents() {
     note.active = true;
     note.tagGuids = tagGuids;
     note.tagNames = tagNames;
-    qint32 lid = nTable.add(0, note, true,0);
 
-    FilterEngine engine;
-    engine.filter();
-    refreshData();
+    if (!unsyncedNote || QMessageBox::Yes == QMessageBox(QMessageBox::Warning, "Warning", tr("One or more notes are unsynchronized.\nThis can cause issues if they are later synchronized.\nDo you wish to continue?"), QMessageBox::Yes|QMessageBox::No).exec()) {
+        qint32 lid = nTable.add(0, note, true,0);
+        FilterEngine engine;
+        engine.filter();
+        refreshData();
 
-    int sourceRow = proxy->lidMap->value(lid);
-    QModelIndex sourceIndex = model()->index(sourceRow, NOTE_TABLE_LID_POSITION);
-    QModelIndex proxyIndex = proxy->mapFromSource(sourceIndex);
-    selectRow(proxyIndex.row());
+        int sourceRow = proxy->lidMap->value(lid);
+        QModelIndex sourceIndex = model()->index(sourceRow, NOTE_TABLE_LID_POSITION);
+        QModelIndex proxyIndex = proxy->mapFromSource(sourceIndex);
+        selectRow(proxyIndex.row());
 
-    FilterCriteria *criteria = new FilterCriteria();
-    global.filterCriteria[global.filterPosition]->duplicate(*criteria);
-    criteria->unsetSearchString();
-    criteria->setLid(lid);
-    global.filterCriteria.append(criteria);
-    global.filterPosition++;
+        FilterCriteria *criteria = new FilterCriteria();
+        global.filterCriteria[global.filterPosition]->duplicate(*criteria);
+        criteria->unsetSearchString();
+        criteria->setLid(lid);
+        global.filterCriteria.append(criteria);
+        global.filterPosition++;
 
-    emit(refreshNoteContent(lid));
-    emit(openNote(false));
+        emit(refreshNoteContent(lid));
+        emit(openNote(false));
+    }
 }
 
 
