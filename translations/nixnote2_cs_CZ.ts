@@ -214,10 +214,6 @@
         <translation>Zobrazovat ikonu v systémové části panelu</translation>
     </message>
     <message>
-        <source>Display PDFs inline</source>
-        <translation type="obsolete">Zobrazuj PDF jako vložené</translation>
-    </message>
-    <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="40"/>
         <source>Display PDFs inline**</source>
         <translation>Zobrazuj PDF jako vložené**</translation>
@@ -286,135 +282,140 @@
         <translation>Střídat barvy v seznamu poznámek*</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="57"/>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="63"/>
-        <source>Show/Hide NixNote</source>
-        <translation>Zobrazit/Skrýt NixNote</translation>
-    </message>
-    <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="58"/>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="64"/>
-        <source>New Text Note</source>
-        <translation>Nová poznámka</translation>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="55"/>
+        <source>Set author on new notes.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="59"/>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="65"/>
-        <source>New Quick Note</source>
-        <translation>Rychlá poznámka</translation>
+        <source>Show/Hide NixNote</source>
+        <translation>Zobrazit/Skrýt NixNote</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="60"/>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="66"/>
+        <source>New Text Note</source>
+        <translation>Nová poznámka</translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="61"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="67"/>
+        <source>New Quick Note</source>
+        <translation>Rychlá poznámka</translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="62"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="68"/>
         <source>Screen Capture</source>
         <translation>Snímat obrazovku</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="69"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="71"/>
         <source>Open New Tab</source>
         <translation>Otevřít nový panel</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="70"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="72"/>
         <source>Open New Window</source>
         <translation>Otevřít nové okno</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="85"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="87"/>
         <source>Qt Default</source>
         <translation>Výchozí Qt</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="86"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="88"/>
         <source>notify-send</source>
         <translation>Upozornění na odeslání</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="93"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="95"/>
         <source>Startup Behavior</source>
         <translation>Chování při spuštění</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="95"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="97"/>
         <source>Restore Selection Criteria</source>
         <translation>Obnovit kritéria výběru</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="96"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="98"/>
         <source>Select Default Notebook</source>
         <translation>Vyberte výchozí poznámkový blok</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="97"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="99"/>
         <source>View All Notebooks</source>
         <translation>Zobrazit všechny poznámkové bloky</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="107"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="109"/>
         <source>Minimize to tray</source>
         <translation>Minimalizovat do systémové části</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="108"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="110"/>
         <source>Close to tray</source>
         <translation>Zavřít do systémové části</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="128"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="131"/>
         <source>Notification Service</source>
         <translatorcomment>TODO: Ověřit v GUI</translatorcomment>
         <translation>Služba ohlášení</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="131"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="134"/>
         <source>Middle Click Open Behavior</source>
         <translation>Chování prostředního tlačítka při otevírání</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="134"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="137"/>
         <source>Tray Icon Click Action</source>
         <translation>Kliknutí na ikonu v systémové části panelu</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="137"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="140"/>
         <source>Tray Icon Middle Click Action</source>
         <translation>Kliknutí prostředním tlačítkem na ikonu v systémové části panelu</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="140"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="143"/>
         <source>Default GUI Font*</source>
         <translation>Výchozí písmo v GUI</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="143"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="146"/>
         <source>Default GUI Font Size*</source>
         <translation>Výchozí velikost písma v GUI</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="146"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="149"/>
         <source>Default Editor Font*</source>
         <translation>Výchozí písmo editoru</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="149"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="152"/>
         <source>Default Editor Font Size*</source>
         <translation>Výchozí velikost písma v editoru</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="153"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="156"/>
         <source>* May require restart on some systems.</source>
         <translation>* Může vyžadovat restart na některých systémech.</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="154"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="157"/>
         <source>** Can crash on Gnome systems.</source>
         <translation>** Může způsobit pád aplikace v prostředí Gnome.</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="89"/>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="376"/>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="394"/>
-        <location filename="../dialog/preferences/appearancepreferences.cpp" line="413"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="91"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="382"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="400"/>
+        <location filename="../dialog/preferences/appearancepreferences.cpp" line="419"/>
         <source>System Default</source>
         <translation>Výchozí systémové</translation>
     </message>
@@ -571,46 +572,48 @@
         <translation>Nemohu se připojit ke sdílené paměti.  Není spuštěný další NixNote?</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="134"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="144"/>
         <source>Type DELETE to very: </source>
         <translation>Napište &quot;DELETE&quot; pro potvrzení smazání:</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="199"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="209"/>
         <source>No resospnse received from NixNote.</source>
         <translation>Neobdržena žádná odezva z NixNote.</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="288"/>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="413"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="300"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="425"/>
         <source> has been created.
 </source>
         <translation> byla vytvořena.</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="291"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="303"/>
         <source>No response from NixNote.  Please verify that the note was created.
 </source>
         <translation>Neobdržena odezva z NixNote. Prosím ověřte, že poznámka byla vytvořena.</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="305"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="317"/>
         <source>Untitled Note</source>
         <translation>Nová poznámka</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="458"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="471"/>
         <source>No response received from NixNote.</source>
         <translation>Neobdržena žádná odezva z NixNote.</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="467"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="480"/>
         <source>Note not found.</source>
         <translation>Poznámka nenalezena.</translation>
     </message>
     <message>
-        <source>New Note</source>
-        <translation type="obsolete">Nová poznámka</translation>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="491"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="507"/>
+        <source>This cannot be done with NixNote running.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -780,21 +783,9 @@
 <context>
     <name>DebugPreferences</name>
     <message>
-        <source>Disable uploads to server</source>
-        <translation type="obsolete">Vypnout nahrávání na server</translation>
-    </message>
-    <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="38"/>
         <source>Disable image search highlighting.</source>
         <translation>Vypnout zvýraznění obrázků při hledání.</translation>
-    </message>
-    <message>
-        <source>Show LID column (requires restart)</source>
-        <translation type="obsolete">Zobrazovat sloupec LID (vyžaduje restart)</translation>
-    </message>
-    <message>
-        <source>Disable Tag Sorting (usefull for non-ASCII sort bug)</source>
-        <translation type="obsolete">Vypnout řazení štítků (užitečné při problémech se řazením ne-ASCII znaků)</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="35"/>
@@ -892,39 +883,39 @@
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="43"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="157"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="156"/>
         <source>Bold</source>
         <translation>Tučně</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="44"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="163"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="164"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="165"/>
         <source>Italics</source>
         <translation>Kurzíva</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="45"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="182"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="181"/>
         <source>Superscript</source>
         <translation>Horní index</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="46"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="186"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="185"/>
         <source>Subscript</source>
         <translation>Spodní index</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="47"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="171"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="172"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="173"/>
         <source>Underline</source>
         <translation>Podtržené</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="48"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="178"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="177"/>
         <source>Strikethrough</source>
         <translation>Přeškrtnuté</translation>
     </message>
@@ -945,7 +936,7 @@
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="52"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="202"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="201"/>
         <source>Horizontal Line</source>
         <translation>Vodorovná linka</translation>
     </message>
@@ -956,25 +947,25 @@
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="54"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="214"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="213"/>
         <source>Shift Right</source>
         <translation>Odsadit vpravo</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="55"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="218"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="217"/>
         <source>Shift Left</source>
         <translation>Odsadit vlevo (zrušit odsazení)</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="56"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="222"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="221"/>
         <source>Bullet List</source>
         <translation>Nečíslovaný seznam (body)</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="57"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="226"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="225"/>
         <source>Number List</source>
         <translation>Číslovaný seznam</translation>
     </message>
@@ -990,13 +981,13 @@
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="60"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="242"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="241"/>
         <source>Font Color</source>
         <translation>Barva písma</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="61"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="251"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="250"/>
         <source>Highlight</source>
         <translation>Zvýraznění</translation>
     </message>
@@ -1006,25 +997,25 @@
         <translation>TODO (úkol)</translation>
     </message>
     <message>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="207"/>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="208"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="209"/>
         <source>Insert Date &amp; Time</source>
         <translation>Vložit Datum a Čas</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="256"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="255"/>
         <source>Todo</source>
         <translation>TODO (úkol)</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="63"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="260"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="259"/>
         <source>Spell Check</source>
         <translation>Kontrola pravopisu</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="64"/>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="264"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="263"/>
         <source>Insert Table</source>
         <translation>Vložit tabulku</translation>
     </message>
@@ -1034,27 +1025,27 @@
         <translation>HTML speciální znaky</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="198"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="197"/>
         <source>Left Justify</source>
         <translation>Zarovnat vlevo</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="190"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="189"/>
         <source>Center</source>
         <translation>Zarovnat na střed</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="194"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="193"/>
         <source>Right Justify</source>
         <translation>Zarovnat vpravo</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="268"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="267"/>
         <source>Insert HTML Entities</source>
         <translation>Vložit speciální HTML znaky</translation>
     </message>
     <message>
-        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="644"/>
+        <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="643"/>
         <source>Times</source>
         <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
         <translation>Časy</translation>
@@ -1111,29 +1102,29 @@
 <context>
     <name>EmailNote</name>
     <message>
-        <location filename="../cmdtools/emailnote.cpp" line="262"/>
+        <location filename="../cmdtools/emailnote.cpp" line="261"/>
         <source>SMTP Server has not been setup.
 Please specify server settings in the Preferences menu.</source>
         <translation>SMTP server není nastaven.
 Prosím upřesněte nastavení v nabídce &quot;Předvolby&quot;.</translation>
     </message>
     <message>
-        <location filename="../cmdtools/emailnote.cpp" line="328"/>
+        <location filename="../cmdtools/emailnote.cpp" line="327"/>
         <source>Connection Error: Unable to connect to host.</source>
         <translation>Chyba spojení: Nepodařilo se připojit k serveru.</translation>
     </message>
     <message>
-        <location filename="../cmdtools/emailnote.cpp" line="334"/>
+        <location filename="../cmdtools/emailnote.cpp" line="333"/>
         <source>Login Error : Unable to login.</source>
         <translation>Chyba přihlášení: Přihlášení se nezdařilo.</translation>
     </message>
     <message>
-        <location filename="../cmdtools/emailnote.cpp" line="339"/>
+        <location filename="../cmdtools/emailnote.cpp" line="338"/>
         <source>Send Error : Unable to send email.</source>
         <translation>Chyba odesílání: Odeslání se nezdařilo.</translation>
     </message>
     <message>
-        <location filename="../cmdtools/emailnote.cpp" line="345"/>
+        <location filename="../cmdtools/emailnote.cpp" line="344"/>
         <source>Message Sent</source>
         <translation>Zpráva byla odeslána</translation>
     </message>
@@ -1285,52 +1276,52 @@ Prosím upřesněte nastavení v nabídce &quot;Předvolby&quot;.</translation>
 <context>
     <name>ExportData</name>
     <message>
-        <location filename="../xml/exportdata.cpp" line="53"/>
+        <location filename="../xml/exportdata.cpp" line="54"/>
         <source>Cannot open file.</source>
         <translation>Soubor nelze otevřít.</translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="60"/>
+        <location filename="../xml/exportdata.cpp" line="62"/>
         <source>Export</source>
         <translation>Export</translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="77"/>
+        <location filename="../xml/exportdata.cpp" line="81"/>
         <source>Backup</source>
         <translation>Záloha</translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="108"/>
+        <location filename="../xml/exportdata.cpp" line="114"/>
         <source>Tags</source>
         <translation>Štítky</translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="142"/>
+        <location filename="../xml/exportdata.cpp" line="151"/>
         <source>Notebooks</source>
         <translation>Poznámkové bloky</translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="348"/>
+        <location filename="../xml/exportdata.cpp" line="360"/>
         <source>Searches</source>
         <translation>Hledání</translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="390"/>
+        <location filename="../xml/exportdata.cpp" line="405"/>
         <source>Linked Notebooks</source>
         <translation>Přilinkované poznámkové bloky</translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="430"/>
+        <location filename="../xml/exportdata.cpp" line="448"/>
         <source>Shared Notebooks</source>
         <translation>Sdílené poznámkové bloky</translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="487"/>
+        <location filename="../xml/exportdata.cpp" line="508"/>
         <source>Notes</source>
         <translation>Poznámky</translation>
     </message>
     <message>
-        <location filename="../xml/exportdata.cpp" line="702"/>
+        <location filename="../xml/exportdata.cpp" line="725"/>
         <source>Backup Canceled</source>
         <translation>Zálohování zrušeno</translation>
     </message>
@@ -1346,6 +1337,25 @@ Prosím upřesněte nastavení v nabídce &quot;Předvolby&quot;.</translation>
         <location filename="../gui/externalbrowse.cpp" line="85"/>
         <source>NixNote - </source>
         <translation>NixNote - </translation>
+    </message>
+</context>
+<context>
+    <name>ExtractNotes</name>
+    <message>
+        <location filename="../cmdtools/extractnotes.cpp" line="41"/>
+        <location filename="../cmdtools/extractnotes.cpp" line="82"/>
+        <source>Output file not specified.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/extractnotes.cpp" line="64"/>
+        <source>Deleting notes:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/extractnotes.cpp" line="65"/>
+        <source>Type DELETE to very: </source>
+        <translation type="unfinished">Napište &quot;DELETE&quot; pro potvrzení smazání:</translation>
     </message>
 </context>
 <context>
@@ -1437,38 +1447,38 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
 <context>
     <name>ImportData</name>
     <message>
-        <location filename="../xml/importdata.cpp" line="58"/>
+        <location filename="../xml/importdata.cpp" line="59"/>
         <source>Imported Notes</source>
         <translation>Naimportované poznámky</translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="101"/>
+        <location filename="../xml/importdata.cpp" line="105"/>
         <source>Scanning File</source>
         <translation>Načítám importní soubor</translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="102"/>
-        <location filename="../xml/importdata.cpp" line="112"/>
+        <location filename="../xml/importdata.cpp" line="106"/>
+        <location filename="../xml/importdata.cpp" line="118"/>
         <source> notes found.</source>
         <translation> poznámek nalezeno.</translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="121"/>
+        <location filename="../xml/importdata.cpp" line="129"/>
         <source>Importing</source>
         <translation>Importuji</translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="122"/>
+        <location filename="../xml/importdata.cpp" line="130"/>
         <source>Importing Notes</source>
         <translation>Import poznámek</translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="124"/>
+        <location filename="../xml/importdata.cpp" line="132"/>
         <source>Restore</source>
         <translation>Obnovit</translation>
     </message>
     <message>
-        <location filename="../xml/importdata.cpp" line="125"/>
+        <location filename="../xml/importdata.cpp" line="133"/>
         <source>Restoring Notes</source>
         <translation>Obnovení poznámek</translation>
     </message>
@@ -1496,6 +1506,19 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
         <location filename="../xml/importenex.cpp" line="102"/>
         <source>Importing Notes</source>
         <translation>Import poznámek</translation>
+    </message>
+</context>
+<context>
+    <name>ImportNotes</name>
+    <message>
+        <location filename="../cmdtools/importnotes.cpp" line="19"/>
+        <source>Input file not specified.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/importnotes.cpp" line="24"/>
+        <source>Input file not found.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2533,10 +2556,6 @@ Dešifrování selhalo.</translation>
         <translation>Otevřít uživatelskou příručku.</translation>
     </message>
     <message>
-        <source>View information about the current icon theme.</source>
-        <translation type="obsolete">Zobrazit informace o současném motivu ikon.</translation>
-    </message>
-    <message>
         <location filename="../gui/nmainmenubar.cpp" line="526"/>
         <source>Message &amp;Log</source>
         <translation>&amp;Log</translation>
@@ -2565,10 +2584,6 @@ Dešifrování selhalo.</translation>
         <location filename="../gui/nmainmenubar.cpp" line="559"/>
         <source>&amp;About</source>
         <translation>O &amp;aplikaci</translation>
-    </message>
-    <message>
-        <source>Icon Theme</source>
-        <translation type="obsolete">Motiv ikon</translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="602"/>
@@ -2735,13 +2750,13 @@ Dešifrování selhalo.</translation>
 <context>
     <name>NTabWidget</name>
     <message>
-        <location filename="../gui/ntabwidget.cpp" line="216"/>
+        <location filename="../gui/ntabwidget.cpp" line="225"/>
         <source>Untitled Note</source>
         <translation>Nová poznámka</translation>
     </message>
     <message>
-        <location filename="../gui/ntabwidget.cpp" line="221"/>
-        <location filename="../gui/ntabwidget.cpp" line="287"/>
+        <location filename="../gui/ntabwidget.cpp" line="230"/>
+        <location filename="../gui/ntabwidget.cpp" line="296"/>
         <source>NixNote - </source>
         <translation>NixNote - </translation>
     </message>
@@ -2749,141 +2764,158 @@ Dešifrování selhalo.</translation>
 <context>
     <name>NTableView</name>
     <message>
-        <location filename="../gui/ntableview.cpp" line="201"/>
+        <location filename="../gui/ntableview.cpp" line="202"/>
         <source>Open Note</source>
         <translation>Otevřít poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="207"/>
+        <location filename="../gui/ntableview.cpp" line="208"/>
         <source>Open Note In New Tab</source>
         <translation>Otevřít poznámku v novém panelu</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="213"/>
+        <location filename="../gui/ntableview.cpp" line="214"/>
         <source>Open Note In New Window</source>
         <translation>Otevřít poznámku v novém okně</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="220"/>
+        <location filename="../gui/ntableview.cpp" line="221"/>
         <source>Add Note</source>
         <translation>Přidat poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="225"/>
+        <location filename="../gui/ntableview.cpp" line="226"/>
         <source>Delete Note</source>
         <translation>Smazat poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="236"/>
+        <location filename="../gui/ntableview.cpp" line="237"/>
         <source>Restore Note</source>
         <translation>Obnovit poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="242"/>
+        <location filename="../gui/ntableview.cpp" line="243"/>
         <source>Copy Note Link</source>
         <translation>Kopírovat odkaz na poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="247"/>
+        <location filename="../gui/ntableview.cpp" line="248"/>
         <source>Duplicate Note</source>
         <translation>Duplikovat poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="252"/>
+        <location filename="../gui/ntableview.cpp" line="253"/>
         <source>Pin Note</source>
         <translation>Připnout poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="257"/>
+        <location filename="../gui/ntableview.cpp" line="258"/>
         <source>Unpin Note</source>
         <translation>Odepnout poznámku</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="262"/>
+        <location filename="../gui/ntableview.cpp" line="263"/>
         <source>Merge Notes</source>
         <translation>Sloučit poznámky</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="268"/>
+        <location filename="../gui/ntableview.cpp" line="269"/>
+        <source>Create Table of Contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="275"/>
         <source>Title Color</source>
         <translation>Barva názvu</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="272"/>
+        <location filename="../gui/ntableview.cpp" line="279"/>
         <source>White</source>
         <translation>Bílá</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="275"/>
+        <location filename="../gui/ntableview.cpp" line="282"/>
         <source>Red</source>
         <translation>Červená</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="278"/>
+        <location filename="../gui/ntableview.cpp" line="285"/>
         <source>Blue</source>
         <translation>Modrá</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="281"/>
+        <location filename="../gui/ntableview.cpp" line="288"/>
         <source>Green</source>
         <translation>Zelená</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="284"/>
+        <location filename="../gui/ntableview.cpp" line="291"/>
         <source>Yellow</source>
         <translation>Žlutá</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="287"/>
+        <location filename="../gui/ntableview.cpp" line="294"/>
         <source>Black</source>
         <translation>Černá</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="290"/>
+        <location filename="../gui/ntableview.cpp" line="297"/>
         <source>Gray</source>
         <translation>Šedá</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="293"/>
+        <location filename="../gui/ntableview.cpp" line="300"/>
         <source>Cyan</source>
         <translation>Azurová</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="296"/>
+        <location filename="../gui/ntableview.cpp" line="303"/>
         <source>Magenta</source>
         <translation>Purpurová</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="646"/>
+        <location filename="../gui/ntableview.cpp" line="653"/>
         <source>Delete </source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="649"/>
+        <location filename="../gui/ntableview.cpp" line="656"/>
         <source>Permanently delete </source>
         <translation>Trvale smazat </translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="655"/>
+        <location filename="../gui/ntableview.cpp" line="662"/>
         <source>selected note?</source>
         <translation>označenou poznámku?</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="660"/>
+        <location filename="../gui/ntableview.cpp" line="667"/>
         <source>Verify Delete</source>
         <translation>Potvrzení smazání</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="925"/>
+        <location filename="../gui/ntableview.cpp" line="932"/>
         <source>Unsynchronized Note</source>
         <translation>Nesynchronizovaná poznámka</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="926"/>
+        <location filename="../gui/ntableview.cpp" line="933"/>
         <source>This note has never been synchronized.
 Using this in a note link can cause problems unless you synchronize it first.</source>
         <translation>Poznámka nebyla nikdy synchronizována.
 Použití odkazu na tuto poznámku může způsobit problémy pokud poznámku předtím nesynchronizujete.</translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="1309"/>
+        <source>Table of Contents</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/ntableview.cpp" line="1360"/>
+        <source>One or more notes are unsynchronized.
+This can cause issues if they are later synchronized.
+Do you wish to continue?</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3263,205 +3295,205 @@ Použití odkazu na tuto poznámku může způsobit problémy pokud poznámku p�
 <context>
     <name>NixNote</name>
     <message>
-        <location filename="../nixnote.cpp" line="196"/>
+        <location filename="../nixnote.cpp" line="197"/>
         <source>Tidy Not Found</source>
         <translation>Tidy nenalezeno</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="196"/>
+        <location filename="../nixnote.cpp" line="197"/>
         <source>Tidy is not found on this system.
 Until tidy is installed you cannot save any notes.</source>
         <translation>Program tidy nebyl nalezen v tomto počítači.
 Dokud nebude tidy nainstalován, nebude možné ukládat žádné poznámky.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="271"/>
+        <location filename="../nixnote.cpp" line="272"/>
         <source>ToolBar</source>
         <translation>Nástrojová lišta</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="283"/>
+        <location filename="../nixnote.cpp" line="284"/>
         <source>Back</source>
         <translation>Zpět</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="284"/>
+        <location filename="../nixnote.cpp" line="285"/>
         <source>Next</source>
         <translation>Vpřed</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="294"/>
+        <location filename="../nixnote.cpp" line="295"/>
         <source>All Notes</source>
         <translation>Všechny poznámky</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="296"/>
+        <location filename="../nixnote.cpp" line="297"/>
         <source>Sync</source>
         <translation>Synchronizace</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="299"/>
+        <location filename="../nixnote.cpp" line="300"/>
         <source>Print</source>
         <translation>Tisk</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="309"/>
+        <location filename="../nixnote.cpp" line="310"/>
         <source>New Text Note</source>
         <translation>Nová poznámka</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="312"/>
+        <location filename="../nixnote.cpp" line="313"/>
         <source>New Webcam Note</source>
         <translation>Nová poznámka z Webkamery</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="324"/>
+        <location filename="../nixnote.cpp" line="325"/>
         <source>Delete</source>
         <translation>Smazat</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="327"/>
+        <location filename="../nixnote.cpp" line="328"/>
         <source>Trunk</source>
         <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
         <translation>Trunk TODO</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="329"/>
+        <location filename="../nixnote.cpp" line="330"/>
         <source>Usage</source>
         <translation>Kvóta</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="511"/>
-        <location filename="../nixnote.cpp" line="2905"/>
+        <location filename="../nixnote.cpp" line="512"/>
+        <location filename="../nixnote.cpp" line="2923"/>
         <source>Screen Capture</source>
         <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
         <translation>Snímat obrazovku</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="527"/>
+        <location filename="../nixnote.cpp" line="528"/>
         <source>Show/Hide</source>
         <translation>Zobrazit/Skrýt</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="539"/>
+        <location filename="../nixnote.cpp" line="540"/>
         <source>Close</source>
         <translation>Zavřít</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1685"/>
+        <location filename="../nixnote.cpp" line="1689"/>
         <source>Confirm Restore</source>
         <translation>Potvrzení obnovení</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1701"/>
+        <location filename="../nixnote.cpp" line="1705"/>
         <source>Restore Database</source>
         <translation>Obnovení databáze</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1704"/>
+        <location filename="../nixnote.cpp" line="1708"/>
         <source>Import Notes</source>
         <translation>Import poznámek</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1616"/>
-        <location filename="../nixnote.cpp" line="1702"/>
+        <location filename="../nixnote.cpp" line="1620"/>
+        <location filename="../nixnote.cpp" line="1706"/>
         <source>NixNote Export (*.nnex);;All Files (*.*)</source>
         <translation>NixNote Export (*.nnex);;Všechny soubory (*.*)</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="300"/>
+        <location filename="../nixnote.cpp" line="301"/>
         <source>Print the current note</source>
         <translatorcomment>TODO: ověřit v GUI</translatorcomment>
         <translation>Tisknout tuto poznámku</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="302"/>
+        <location filename="../nixnote.cpp" line="303"/>
         <source>Email</source>
         <translation>Email</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="303"/>
+        <location filename="../nixnote.cpp" line="304"/>
         <source>Email the current note</source>
         <translation>Odeslat tuto poznámku emailem</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="508"/>
+        <location filename="../nixnote.cpp" line="509"/>
         <source>Quick Note</source>
         <translation>Rychlá poznámka</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="518"/>
+        <location filename="../nixnote.cpp" line="519"/>
         <source>Shortcut Notes</source>
         <translatorcomment>TODO: ověřit v GUI</translatorcomment>
         <translation>Zkratky na poznámky</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="520"/>
+        <location filename="../nixnote.cpp" line="521"/>
         <source>Pinned Notes</source>
         <translation>Připnuté poznámky</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="522"/>
+        <location filename="../nixnote.cpp" line="523"/>
         <source>Recently Updated Notes</source>
         <translation>Nedávno upravované poznámky</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1339"/>
-        <location filename="../nixnote.cpp" line="2179"/>
+        <location filename="../nixnote.cpp" line="1343"/>
+        <location filename="../nixnote.cpp" line="2190"/>
         <source>Log in to Evernote</source>
         <translation>Přihlásit se k Evernote</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1341"/>
-        <location filename="../nixnote.cpp" line="2181"/>
+        <location filename="../nixnote.cpp" line="1345"/>
+        <location filename="../nixnote.cpp" line="2192"/>
         <source>NixNote</source>
         <translation>NixNote</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1601"/>
-        <location filename="../nixnote.cpp" line="1647"/>
-        <location filename="../nixnote.cpp" line="1744"/>
+        <location filename="../nixnote.cpp" line="1605"/>
+        <location filename="../nixnote.cpp" line="1651"/>
+        <location filename="../nixnote.cpp" line="1748"/>
         <source>Error</source>
         <translation>Chyba</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1601"/>
+        <location filename="../nixnote.cpp" line="1605"/>
         <source>No notes selected.</source>
         <translation>Žádné poznámky nebyly vybrány.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1608"/>
+        <location filename="../nixnote.cpp" line="1612"/>
         <source>Backup Database</source>
         <translation>Záloha databáze</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1610"/>
+        <location filename="../nixnote.cpp" line="1614"/>
         <source>Export Notes</source>
         <translation>Export poznámek</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1635"/>
+        <location filename="../nixnote.cpp" line="1639"/>
         <source>Performing backup</source>
         <translation>Probíhá zálohování</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1637"/>
+        <location filename="../nixnote.cpp" line="1641"/>
         <source>Performing export</source>
         <translation>Probíhá export</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1654"/>
+        <location filename="../nixnote.cpp" line="1658"/>
         <source>Database backup complete.</source>
         <translation>Záloha databáze dokončena.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1656"/>
+        <location filename="../nixnote.cpp" line="1660"/>
         <source>Note extract complete.</source>
         <translatorcomment>TODO - OVĚŘIT V GUI</translatorcomment>
         <translation>Export poznámky dokončen.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1682"/>
+        <location filename="../nixnote.cpp" line="1686"/>
         <source>This is used to restore a database from backups.
 It is HIGHLY recommended that this only be used to populate
 an empty database.  Restoring into a database that
@@ -3476,147 +3508,147 @@ data může způsobit problémy.
 Jste si jisti, že chcete pokračovat?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1705"/>
+        <location filename="../nixnote.cpp" line="1709"/>
         <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
         <translation>NixNote Export (*.nnex);;Evernote Export (*.enex);;Všechny soubory (*.*)</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1732"/>
+        <location filename="../nixnote.cpp" line="1736"/>
         <source>Restoring database</source>
         <translation>Obnovuji databázi</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1734"/>
+        <location filename="../nixnote.cpp" line="1738"/>
         <source>Importing Notes</source>
         <translation>Import poznámek</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1766"/>
+        <location filename="../nixnote.cpp" line="1770"/>
         <source>Database has been restored.</source>
         <translation>Databáze byla obnovena.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1768"/>
+        <location filename="../nixnote.cpp" line="1772"/>
         <source>Notes have been imported.</source>
         <translation>Poznámky byly naimportovány.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1801"/>
+        <location filename="../nixnote.cpp" line="1805"/>
         <source>Sync Error</source>
         <translation>Chyba synchronizace</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1801"/>
+        <location filename="../nixnote.cpp" line="1805"/>
         <source>Sync completed with errors.</source>
         <translation>Synchronizace dokončena s chybami.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1804"/>
+        <location filename="../nixnote.cpp" line="1808"/>
         <source>Sync Complete</source>
         <translation>Synchronizace dokončena</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1804"/>
+        <location filename="../nixnote.cpp" line="1808"/>
         <source>Sync completed successfully.</source>
         <translation>Synchronizace úspěšně dokončena.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1886"/>
+        <location filename="../nixnote.cpp" line="1890"/>
         <source>Untitled note</source>
         <translation>Nová poznámka</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2199"/>
+        <location filename="../nixnote.cpp" line="2210"/>
         <source>This feature is only available to premium users.</source>
         <translation>Tato funkce je dostupná pouze pro prémiové uživatele.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2200"/>
+        <location filename="../nixnote.cpp" line="2211"/>
         <source>Premium Feature</source>
         <translation>Prémiová funkce</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2219"/>
+        <location filename="../nixnote.cpp" line="2230"/>
         <source>Error retrieving note.</source>
         <translation>Chyba při stahování poznámky.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2220"/>
+        <location filename="../nixnote.cpp" line="2231"/>
         <source>Error retrieving note</source>
         <translation>Chyba při stahování poznámky</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2242"/>
+        <location filename="../nixnote.cpp" line="2253"/>
         <source>Note restored</source>
         <translation>Poznámka obnovena</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2246"/>
+        <location filename="../nixnote.cpp" line="2257"/>
         <source>No versions of this note can be found.</source>
         <translation>Nenalezeny žádné verze této poznámky.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2247"/>
+        <location filename="../nixnote.cpp" line="2258"/>
         <source>Note Not Found</source>
         <translation>Poznámka nenalezena</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2490"/>
+        <location filename="../nixnote.cpp" line="2508"/>
         <source>Note not found.</source>
         <translation>Poznámka nenalezena.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2787"/>
+        <location filename="../nixnote.cpp" line="2805"/>
         <source>Switch to </source>
         <translation>Přepnout na </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2960"/>
+        <location filename="../nixnote.cpp" line="2978"/>
         <source>Reindex Database</source>
         <translation>Zindexovat databázi</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2960"/>
+        <location filename="../nixnote.cpp" line="2978"/>
         <source>Reindex the entire database?</source>
         <translation>Zindexovat celou databázi?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2969"/>
+        <location filename="../nixnote.cpp" line="2987"/>
         <source>Notes will be reindexed.</source>
         <translation>Poznámky budou zindexovány.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2997"/>
+        <location filename="../nixnote.cpp" line="3015"/>
         <source>Unable to find webcam or capture image.</source>
         <translation>Nemohu nalézt webkameru nebo se nepovedlo získat obraz.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2998"/>
+        <location filename="../nixnote.cpp" line="3016"/>
         <source>Webcam Error</source>
         <translation>Chyba webkamery</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3142"/>
+        <location filename="../nixnote.cpp" line="3160"/>
         <source>Delete </source>
         <translation>Smazat </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3145"/>
+        <location filename="../nixnote.cpp" line="3163"/>
         <source>Permanently delete </source>
         <translation>Trvale smazat </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3149"/>
+        <location filename="../nixnote.cpp" line="3167"/>
         <source>this note?</source>
         <translation> tuto poznámku?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3153"/>
+        <location filename="../nixnote.cpp" line="3171"/>
         <source>Verify Delete</source>
         <translation>Potvrzení smazání</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3514"/>
+        <location filename="../nixnote.cpp" line="3532"/>
         <source>Press ESC to exit.</source>
         <translation>Stiskněte ESC pro ukončení.</translation>
     </message>
@@ -3809,117 +3841,117 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../gui/ntableview.cpp" line="173"/>
+        <location filename="../gui/ntableview.cpp" line="174"/>
         <source>Title</source>
         <translation>Název</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="174"/>
+        <location filename="../gui/ntableview.cpp" line="175"/>
         <source>Author</source>
         <translation>Autor</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="175"/>
+        <location filename="../gui/ntableview.cpp" line="176"/>
         <source>Notebook</source>
         <translation>Poznámkový blok</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="176"/>
+        <location filename="../gui/ntableview.cpp" line="177"/>
         <source>Tags</source>
         <translation>Štítky</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="177"/>
+        <location filename="../gui/ntableview.cpp" line="178"/>
         <source>Date Created</source>
         <translation>Datum vytvoření</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="178"/>
+        <location filename="../gui/ntableview.cpp" line="179"/>
         <source>Date Updated</source>
         <translation>Datum změny</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="179"/>
+        <location filename="../gui/ntableview.cpp" line="180"/>
         <source>Subject Date</source>
         <translation>Datum předmětu</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="180"/>
+        <location filename="../gui/ntableview.cpp" line="181"/>
         <source>Deletion Date</source>
         <translation>Datum smazání</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="181"/>
+        <location filename="../gui/ntableview.cpp" line="182"/>
         <source>Reminder</source>
         <translation>Upomínka</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="182"/>
+        <location filename="../gui/ntableview.cpp" line="183"/>
         <source>Reminder Due</source>
         <translation>Termín upomínky</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="183"/>
+        <location filename="../gui/ntableview.cpp" line="184"/>
         <source>Reminder Completed</source>
         <translation>Upomínka splněna</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="184"/>
+        <location filename="../gui/ntableview.cpp" line="185"/>
         <source>Source</source>
         <translation>Zdroj poznámky</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="185"/>
+        <location filename="../gui/ntableview.cpp" line="186"/>
         <source>Source URL</source>
         <translation>Zdrojová URL</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="186"/>
+        <location filename="../gui/ntableview.cpp" line="187"/>
         <source>Source Application</source>
         <translation>Zdrojová aplikace</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="187"/>
+        <location filename="../gui/ntableview.cpp" line="188"/>
         <source>Longitude</source>
         <translation>Zeměpisná délka</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="188"/>
+        <location filename="../gui/ntableview.cpp" line="189"/>
         <source>Latitude</source>
         <translation>Zeměpisná šířka</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="189"/>
+        <location filename="../gui/ntableview.cpp" line="190"/>
         <source>Altitude</source>
         <translation>Nadmořská výška</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="190"/>
+        <location filename="../gui/ntableview.cpp" line="191"/>
         <source>Has Encryption</source>
         <translation>Obsahuje zašifrovaný text</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="191"/>
+        <location filename="../gui/ntableview.cpp" line="192"/>
         <source>Has To-do</source>
         <translation>Obsahuje úkoly (TODO)</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="192"/>
+        <location filename="../gui/ntableview.cpp" line="193"/>
         <source>Sync</source>
         <translation>Synchronizováno</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="193"/>
+        <location filename="../gui/ntableview.cpp" line="194"/>
         <source>Size</source>
         <translation>Velikost</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="194"/>
+        <location filename="../gui/ntableview.cpp" line="195"/>
         <source>Thumbnail</source>
         <translation>Náhled</translation>
     </message>
     <message>
-        <location filename="../gui/ntableview.cpp" line="195"/>
+        <location filename="../gui/ntableview.cpp" line="196"/>
         <source>Pinned</source>
         <translation>Připnuto</translation>
     </message>

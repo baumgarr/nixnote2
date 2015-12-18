@@ -1,3 +1,18 @@
+NixNote (2.0-beta-7) stable; urgency=low
+  * Added the ability to create a Table of Contents from 
+    selected notes.
+  * More aggressive cleanup of notes to remove invalid
+    attributes.
+  * Note synchronization no longer stops after the first
+    failure.
+  * Added more command line options.
+  * Added the option to automatically add a username to 
+    new notes.
+  * Updated Czech translation.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Fri, 18 Dec 2015 18:00:00 -0400
+
+
 NixNote (2.0-beta-6) stable; urgency=low
   * Added a "Presentation Mode" that hides almost 
     everything except the editor, the attributes bar, 
