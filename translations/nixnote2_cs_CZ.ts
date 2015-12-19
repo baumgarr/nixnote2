@@ -11,7 +11,9 @@
     <message>
         <location filename="../dialog/aboutdialog.cpp" line="53"/>
         <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;span align=&quot;center&quot;&gt;&lt;p&gt;Český překlad Miloš Kožina, 2015.&lt;br&gt;
+Chybějící překlady, chyby a náměty na vylepšení &lt;br&gt;
+posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/span&gt;</translation>
     </message>
 </context>
 <context>
