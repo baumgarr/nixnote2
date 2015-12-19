@@ -284,7 +284,7 @@
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="55"/>
         <source>Set author on new notes.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nastavit autora na nových poznámkách.</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="59"/>
@@ -613,7 +613,7 @@
         <location filename="../cmdtools/cmdlinetool.cpp" line="491"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="507"/>
         <source>This cannot be done with NixNote running.</source>
-        <translation type="unfinished"></translation>
+        <translation>Nelze provést pokud NixNote běží.</translation>
     </message>
 </context>
 <context>
@@ -1345,17 +1345,18 @@ Prosím upřesněte nastavení v nabídce &quot;Předvolby&quot;.</translation>
         <location filename="../cmdtools/extractnotes.cpp" line="41"/>
         <location filename="../cmdtools/extractnotes.cpp" line="82"/>
         <source>Output file not specified.</source>
-        <translation type="unfinished"></translation>
+        <translation>Výstupní soubor nebyl specifikován.</translation>
     </message>
     <message>
         <location filename="../cmdtools/extractnotes.cpp" line="64"/>
         <source>Deleting notes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Smazání poznámek:</translation>
     </message>
     <message>
         <location filename="../cmdtools/extractnotes.cpp" line="65"/>
         <source>Type DELETE to very: </source>
-        <translation type="unfinished">Napište &quot;DELETE&quot; pro potvrzení smazání:</translation>
+        <translatorcomment>TODO: ověřit v GUI</translatorcomment>
+        <translation>Napište &quot;DELETE&quot; pro potvrzení smazání:</translation>
     </message>
 </context>
 <context>
@@ -1513,12 +1514,12 @@ Seznam např. na http://www.w3schools.com/charsets/ .</translation>
     <message>
         <location filename="../cmdtools/importnotes.cpp" line="19"/>
         <source>Input file not specified.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vstupní soubor nebyl specifikován.</translation>
     </message>
     <message>
         <location filename="../cmdtools/importnotes.cpp" line="24"/>
         <source>Input file not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Vstupní soubor nenalezen.</translation>
     </message>
 </context>
 <context>
@@ -2821,7 +2822,8 @@ Dešifrování selhalo.</translation>
     <message>
         <location filename="../gui/ntableview.cpp" line="269"/>
         <source>Create Table of Contents</source>
-        <translation type="unfinished"></translation>
+        <translatorcomment>TODO: ověřit v GUI</translatorcomment>
+        <translation>Vytvořit obsah</translation>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="275"/>
@@ -2908,14 +2910,16 @@ Použití odkazu na tuto poznámku může způsobit problémy pokud poznámku p�
     <message>
         <location filename="../gui/ntableview.cpp" line="1309"/>
         <source>Table of Contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Obsah</translation>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="1360"/>
         <source>One or more notes are unsynchronized.
 This can cause issues if they are later synchronized.
 Do you wish to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>Jedna či více poznámek není synchronizována.
+Může to způsobit problémy, pokud jsou synchronizovány později.
+Přejete si pokračovat?</translation>
     </message>
 </context>
 <context>

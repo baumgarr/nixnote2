@@ -43,8 +43,24 @@ AboutDialog::AboutDialog(QDialog *parent) :
     buttonLayout->addSpacerItem(spacer2);
     mainLayout->addLayout(buttonLayout);
     this->setLayout(mainLayout);
-    QString file = "file://" + global.fileManager.getProgramDirPath("") + "/help/about.html";
-    page->load(file);
+    QString file = global.fileManager.getProgramDirPath("") + "/help/about.html";
+    QFile f(file);
+    if(!f.open(QFile::ReadOnly))
+        return;
+    QTextStream is(&f);
+    QString data = is.readAll();
+    QString translationInformation =
+            tr("Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.");
+    QString translationStaticInformation =
+            "Note to translators: For translation credit, change this message to your name & contact information and it will appear in the About dialog box. HTML Formatting is available.";
+    if (translationInformation == translationStaticInformation) {
+        data.replace("__TRANSLATION__", "");
+    } else {
+        data = data.replace("__TRANSLATION__", translationInformation);
+    }
+    QLOG_DEBUG() << global.fileManager.getImageDirPath(".")+"splash_logo.png";
+    data = data.replace("__LOGO__", "file://"+global.fileManager.getImageDirPath("")+"splash_logo.png");
+    page->setHtml(data);
     connect(okButton, SIGNAL(clicked()), this, SLOT(close()));
     this->resize(600,500);
     this->setFont(global.getGuiFont(font()));
