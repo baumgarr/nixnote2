@@ -8,6 +8,11 @@
         <source>OK</source>
         <translation>OK</translation>
     </message>
+    <message>
+        <location filename="../dialog/aboutdialog.cpp" line="53"/>
+        <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>AccountDialog</name>
