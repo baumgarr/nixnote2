@@ -1,0 +1,7 @@
+Puppy Linux users can find more informaion regarding NixNote
+at http://murga-linux.com/puppy/viewtopic.php?t=101997.
+
+Thanks to Christopher Havel for his work in bringing this 
+to Puppy Linux!
+
+
