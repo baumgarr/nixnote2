@@ -74,6 +74,12 @@ DatabaseConnection::DatabaseConnection(QString connection)
             dbu.fixSql();
         }
         global.setDatabaseVersion(2);
+
+        // Get username to use for default notes.  This needs to be done after
+        // the database is started because we set it by default to the usertable
+        // username.
+        global.full_username = global.getUsername();
+
     }
 
     QLOG_TRACE() << "Creating filter table";

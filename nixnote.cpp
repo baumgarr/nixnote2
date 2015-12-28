@@ -135,6 +135,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 
     db = new DatabaseConnection("nixnote");  // Startup the database
 
+
     // Setup the sync thread
     QLOG_TRACE() << "Setting up counter thread";
     connect(this, SIGNAL(updateCounts()), &counterRunner, SLOT(countAll()));

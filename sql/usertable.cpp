@@ -453,13 +453,10 @@ void UserTable::getUser(User &user) {
             user.email = QVariant(query.value(1)).toString();
         }
         if (query.value(0) == USER_NAME) {
-            user.username = QVariant(query.value(1)).toString();
+            user.name = QVariant(query.value(1)).toString();
         }
         if (query.value(0) == USER_TIMEZONE) {
             user.timezone = QVariant(query.value(1)).toString();
-        }
-        if (query.value(0) == USER_NAME) {
-            user.username = QVariant(query.value(1)).toString();
         }
         if (query.value(0) == USER_PRIVILEGE) {
             int priv = QVariant(query.value(1)).toInt();
