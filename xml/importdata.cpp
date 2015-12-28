@@ -252,6 +252,7 @@ void ImportData::processNoteNode() {
     bool atEnd = false;
     while(!atEnd) {
         QString name = reader->name().toString().toLower();
+        QLOG_TRACE() << name;
         if (name == "guid" && !reader->isEndElement() && backup) {
             note.guid = textValue();
             noteList.append(note.guid);
@@ -299,6 +300,10 @@ void ImportData::processNoteNode() {
             note.tagGuids = tagGuids;
         }
         if (name == "noteattributes" && !reader->isEndElement()) {
+            NoteAttributes na;
+            if (!note.attributes.isSet()) {
+                note.attributes = na;
+            }
             processNoteAttributes(note.attributes);
         }
         if (name == "noteresource" && !reader->isEndElement()) {
@@ -400,6 +405,10 @@ void ImportData::processResource(Resource &resource) {
                 processData("RecognitionData", resource.recognition);
             }
             if (name == "noteresourceattributes") {
+                ResourceAttributes ra;
+                if (!resource.attributes.isSet()) {
+                   resource.attributes = ra;
+                }
                 processResourceAttributes(resource.attributes);
             }
         }
