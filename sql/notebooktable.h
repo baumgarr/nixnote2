@@ -103,6 +103,7 @@ public:
     qint32 add(qint32 lid, Notebook &t, bool isDirty, bool isLocal = false);    // Add a new notebook
     void openAllNotebooks();                    // Open all notebooks
     void closeNotebook(qint32 lid);             // Close a notebook
+    void openNotebook(qint32 lid);              // Open a notebook
     void merge(qint32 source, qint32 target);   // Merge two notebooks
     qint32 addStub(QString guid);               // Add a stub for later insertion
     void setUpdateSequenceNumber(qint32 lid, qint32 usn);   // set the update sequence number

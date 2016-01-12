@@ -108,7 +108,12 @@ int CmdLineTool::run(StartupConfig &config) {
     if (config.alterNote()) {
         return alterNote(config);
     }
-
+    if (config.openNotebook()) {
+        return openNotebook(config);
+    }
+    if (config.closeNotebook()) {
+        return closeNotebook(config);
+    }
     return 0;
 }
 
@@ -528,6 +533,46 @@ int CmdLineTool::alterNote(StartupConfig config) {
     } else {
         global.db = new DatabaseConnection("nixnote");  // Startup the database
         return config.alter->alterNote();
+    }
+    return 0;
+}
+
+
+// Open a notebook
+int CmdLineTool::openNotebook(StartupConfig config) {
+    if (global.sharedMemory->attach()) {
+        std::cout << tr("This cannot be done with NixNote running.").toStdString() << endl;
+        return 16;
+    }
+    global.db = new DatabaseConnection("nixnote");  // Startup the database
+    NotebookTable bookTable(global.db);
+    for (int i=0; i<config.notebookList.size(); i++) {
+        qint32 lid = bookTable.findByName(config.notebookList[i]);
+        if (lid >0) {
+            bookTable.openNotebook(lid);
+        } else {
+            std::cout << tr("Notebook not found: ").toStdString() << config.notebookList[i].toStdString() << endl;
+        }
+    }
+    return 0;
+}
+
+
+// Close a notebook
+int CmdLineTool::closeNotebook(StartupConfig config) {
+    if (global.sharedMemory->attach()) {
+        std::cout << tr("This cannot be done with NixNote running.").toStdString() << endl;
+        return 16;
+    }
+    global.db = new DatabaseConnection("nixnote");  // Startup the database
+    NotebookTable bookTable(global.db);
+    for (int i=0; i<config.notebookList.size(); i++) {
+        qint32 lid = bookTable.findByName(config.notebookList[i]);
+        if (lid >0) {
+            bookTable.closeNotebook(lid);
+        } else {
+            std::cout << tr("Notebook not found: ").toStdString() << config.notebookList[i].toStdString() << endl;
+        }
     }
     return 0;
 }

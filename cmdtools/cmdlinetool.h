@@ -41,6 +41,8 @@ public:
     int exportNotes(StartupConfig config);
     int alterNote(StartupConfig config);
     int importNotes(StartupConfig config);
+    int openNotebook(StartupConfig config);
+    int closeNotebook(StartupConfig config);
 
 signals:
 

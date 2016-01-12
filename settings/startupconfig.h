@@ -48,7 +48,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define STARTUP_IMPORT 10
 #define STARTUP_BACKUP 11
 #define STARTUP_READNOTE 12
-#define STARTUP_OPTION_COUNT 13
+#define STARTUP_CLOSENOTEBOOK 13
+#define STARTUP_OPENNOTEBOOK 14
+#define STARTUP_OPTION_COUNT 15
 
 class StartupConfig
 {
@@ -93,8 +95,11 @@ public:
     bool exports();
     bool backup();
     bool alterNote();
+    bool openNotebook();
+    bool closeNotebook();
     bool import();
     void setSyncAndExit();
+    QStringList notebookList;
 
     int init(int argc, char *argv[]);
     void printHelp();

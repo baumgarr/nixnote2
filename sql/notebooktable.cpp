@@ -1136,6 +1136,21 @@ void NotebookTable::closeNotebook(qint32 lid) {
 
 
 
+
+// Open a specific notebook
+void NotebookTable::openNotebook(qint32 lid) {
+    NSqlQuery query(db);
+    db->lockForWrite();
+    query.prepare("delete from DataStore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTEBOOK_IS_CLOSED);
+    query.exec();
+    db->unlock();
+}
+
+
+
+
 // Merge two notebooks
 void NotebookTable::merge(qint32 source, qint32 target) {
     this->expunge(source);

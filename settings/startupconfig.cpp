@@ -151,11 +151,21 @@ void StartupConfig::printHelp() {
                    +QString("     import options:\n")
                    +QString("          --input=\"filename\"         Input file name.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
+                   +QString("  closeNotebook <options>              Close a notebook.\n")
+                   +QString("     closeNotebook options:\n")
+                   +QString("          --notebook=\"notebook\"        Notebook name.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
+                   +QString("  openNotebook <options>               Open a closed a notebook.\n")
+                   +QString("     openNotebook options:\n")
+                   +QString("          --notebook=\"notebook\"        Notebook name.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
                    +QString("  Examples:\n\n")
                    +QString("     To Start NixNote, do a sync, and then exit.\n")
                    +QString("     nixnote2 start --syncAndExit\n\n")
                    +QString("     To start NixNote using a secondary account.\n")
                    +QString("     nixnote2 --accountId=2\n\n")
+                   +QString("     To close an open notebook.\n")
+                   +QString("     nixnote2 --closeNotebook notebook=\"My Notebook\"\n\n")
                    +QString("     To add a note to the notebook \"My Notebook\"\n")
                    +QString("     nixnote2 addNote --notebook=\"My Stuff\" --title=\"My New Note\" --tag=\"Tag1\" --tag=\"Tag2\" --noteText=\"My Note Text\"\n\n")
                    +QString("     To add a tag to notes in the notebook \"Stuff\".\n")
@@ -240,6 +250,14 @@ int StartupConfig::init(int argc, char *argv[]) {
             command->setBit(STARTUP_ALTERNOTE,true);
             if (alter == NULL)
                 alter = new AlterNote();
+        }
+        if (parm.startsWith("openNotebook")) {
+            command->setBit(STARTUP_OPENNOTEBOOK);
+            notebookList.clear();
+        }
+        if (parm.startsWith("closeNotebook")) {
+            command->setBit(STARTUP_CLOSENOTEBOOK);
+            notebookList.clear();
         }
         if (command->at(STARTUP_ADDNOTE)) {
             if (parm.startsWith("--title=", Qt::CaseSensitive)) {
@@ -429,6 +447,18 @@ int StartupConfig::init(int argc, char *argv[]) {
                 email->lid = parm.toInt();
             }
         }
+        if (command->at(STARTUP_OPENNOTEBOOK)) {
+            if (parm.startsWith("--notebook=", Qt::CaseSensitive)) {
+                parm = parm.mid(11);
+                notebookList.append(parm);
+            }
+        }
+        if (command->at(STARTUP_CLOSENOTEBOOK)) {
+            if (parm.startsWith("--notebook=", Qt::CaseSensitive)) {
+                parm = parm.mid(11);
+                notebookList.append(parm);
+            }
+        }
     }
 
     if (command->count(true) == 0)
@@ -500,4 +530,12 @@ bool StartupConfig::backup() {
 
 bool StartupConfig::alterNote() {
     return command->at(STARTUP_ALTERNOTE);
+}
+
+bool StartupConfig::openNotebook() {
+    return command->at(STARTUP_OPENNOTEBOOK);
+}
+
+bool StartupConfig::closeNotebook() {
+    return command->at(STARTUP_CLOSENOTEBOOK);
 }
