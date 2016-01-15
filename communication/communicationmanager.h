@@ -59,7 +59,7 @@ using namespace std;
 #define SYNC_CHUNK_NOTEBOOKS            0x0001
 #define SYNC_CHUNK_TAGS                 0x0002
 #define SYNC_CHUNK_LINKED_NOTEBOOKS     0x0004
-#define SYNC_CHKUNK_EXPUNGED            0x0008
+#define SYNC_CHUNK_EXPUNGED            0x0008
 #define SYNC_CHUNK_SEARCHES             0x0010
 #define SYNC_CHUNK_NOTES                0x0020
 #define SYNC_CHUNK_RESOURCES            0x0040

@@ -122,6 +122,7 @@ public:
     qint32 getIndexNeeded(QList<qint32> &lids);              // Get a list of all notes needing indexing
     qint32 findNotesByNotebook(QList<qint32> &notes, QString guid);    // Find all notes for a given notebook
     qint32 findNotesByNotebook(QList<qint32> &notes, string guid);     // Find all notes for a given notebook
+    qint32 findNotesByNotebook(QList<qint32> &notes, qint32 lid);      // Find all notes for a given notebook
     qint32 getCount();                                       // count of all notes
     qint32 getUnindexedCount();                              // count of unindexed notes
     qint32 getAllDeleted(QList<qint32> &lids);               // Get all deleted notes

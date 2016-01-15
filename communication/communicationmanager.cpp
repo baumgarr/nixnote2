@@ -253,7 +253,7 @@ bool CommunicationManager::getSyncChunk(SyncChunk &chunk, int start, int chunkSi
     tags = ((type & SYNC_CHUNK_TAGS)>0);
     linkedNotebooks = ((type & SYNC_CHUNK_LINKED_NOTEBOOKS)>0);
     notes = ((type & SYNC_CHUNK_NOTES)>0);
-    expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync)>0);
+    expunged = ((type & SYNC_CHUNK_NOTES) && (!fullSync)>0) | (SYNC_CHUNK_EXPUNGED && (!fullSync));
     resources = ((type & SYNC_CHUNK_RESOURCES) && (!fullSync)>0);
 
     // Try to get the chunk
@@ -704,7 +704,9 @@ bool CommunicationManager::authenticateToLinkedNotebookShard(LinkedNotebook &boo
         return false;
     } catch (EDAMNotFoundException e) {
         QLOG_ERROR() << "EDAMNotFoundException";
-        handleEDAMNotFoundException(e);
+        // If it is a linked noteboook & it isn't found, then we can just expunge it
+        return false;
+        //handleEDAMNotFoundException(e);
         return false;
     }
     return true;

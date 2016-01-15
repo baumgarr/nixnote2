@@ -222,7 +222,7 @@ bool SyncRunner::syncRemoteToLocal(qint32 updateCount) {
         SyncChunk chunk;
         rc = comm->getSyncChunk(chunk, updateSequenceNumber, chunkSize,
                                 SYNC_CHUNK_LINKED_NOTEBOOKS | SYNC_CHUNK_NOTEBOOKS |
-                                SYNC_CHUNK_TAGS | SYNC_CHUNK_SEARCHES,
+                                SYNC_CHUNK_TAGS | SYNC_CHUNK_SEARCHES | SYNC_CHUNK_EXPUNGED,
                                 fullSync);
         if (!rc) {
             QLOG_ERROR() << "Error retrieving chunk";
@@ -645,9 +645,19 @@ bool SyncRunner::syncRemoteLinkedNotebooksActual() {
 
         // If the share key is set, we need to authenticate
         if (!comm->authenticateToLinkedNotebookShard(book)) {
-            this->communicationErrorHandler();
-            error = true;
-            return false;
+
+            // If we can't authenticate, we just gid of the notebook
+            // because the user probably stopped sharing.
+            qint32 linkedLid=0;
+            LinkedNotebookTable ntable(db);
+            linkedLid = ntable.getLid(book.guid);
+            ntable.expunge(book.guid);
+            emit notebookExpunged(linkedLid);
+            return true;
+
+            //this->communicationErrorHandler();
+            //error = true;
+            //return false;
         }
         bool more = true;
         SyncState syncState;
@@ -834,8 +844,12 @@ qint32 SyncRunner::uploadLinkedNotes(qint32 notebookLid) {
 // Synchronize remote expunged linked notebooks
 void SyncRunner::syncRemoteExpungedLinkedNotebooks(QList<Guid> guids) {
     LinkedNotebookTable btable(db);
-    for (int i=0; i<guids.size(); i++)
-        btable.expunge(guids[0]);
+    for (int i=0; i<guids.size(); i++) {
+        LinkedNotebookTable ntable(db);
+        qint32 lid = ntable.getLid(guids[i]);
+        btable.expunge(guids[i]);
+        emit notebookExpunged(lid);
+    }
 }
 
 

@@ -462,6 +462,16 @@ void LinkedNotebookTable::expunge(string guid) {
 
 void LinkedNotebookTable::expunge(QString guid) {
     int lid = this->getLid(guid);
+    NoteTable ntable(db);
+
+    // Remove any notes
+    QList<qint32> notes;
+    ntable.findNotesByNotebook(notes, lid);
+    for (int i=0; i<notes.size(); i++) {
+        ntable.expunge(notes[i]);
+    }
+
+    // Expunge the actual notebook
     this->expunge(lid);
 }
 

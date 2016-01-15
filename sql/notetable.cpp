@@ -1740,9 +1740,19 @@ qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, QString guid) {
     qint32 notebookLid;
     NotebookTable notebookTable(db);
     notebookLid = notebookTable.getLid(guid);
+    return findNotesByNotebook(notes, notebookLid);
+}
+
+
+
+
+// Find all notes belonging to a particular notebook.
+qint32 NoteTable::findNotesByNotebook(QList<qint32> &notes, qint32 lid) {
+    NSqlQuery query(db);
     db->lockForRead();
     query.prepare("Select lid from DataStore where key=:key and data=:notebookLid");
-    query.bindValue(":notebookLid", notebookLid);
+    query.bindValue(":notebookLid", lid);
+    query.bindValue(":key", NOTE_NOTEBOOK_LID);
     query.exec();
     while (query.next()) {
         notes.append(query.value(0).toInt());
