@@ -11,7 +11,9 @@
     <message>
         <location filename="../dialog/aboutdialog.cpp" line="53"/>
         <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;span align=&quot;center&quot;&gt;&lt;p&gt;简体中文翻译：Aten Zhang, 2016。&lt;br&gt;
+有任何翻译缺失、BUG和改进意见&lt;br&gt;
+请发邮件到&lt;i&gt;atenzd@gmail.com&lt;/i&gt;。&lt;/p&gt;&lt;/span&gt;</translation>
     </message>
 </context>
 <context>
@@ -283,7 +285,7 @@
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="55"/>
         <source>Set author on new notes.</source>
-        <translation type="unfinished"></translation>
+        <translation>新建笔记时自动设置作者</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="59"/>
@@ -600,18 +602,18 @@
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="471"/>
         <source>No response received from NixNote.</source>
-        <translation type="unfinished"></translation>
+        <translation>未收到NixNote的响应。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="480"/>
         <source>Note not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到笔记。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="491"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="507"/>
         <source>This cannot be done with NixNote running.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">无法在NixNote正在运行时完成操作。</translation>
     </message>
 </context>
 <context>
@@ -786,22 +788,22 @@
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="35"/>
         <source>Strict note checking.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">精确的笔记检查。</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="37"/>
         <source>Disable uploads to server.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">禁用上传到服务器。</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="39"/>
         <source>Show LID column (requires restart).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">显示LID行(需要重启)。</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="40"/>
         <source>Disable Tag Sorting (usefull for non-ASCII sort bug).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">禁用标签排序(对非ASCII字符排序bug有效)。</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="54"/>
@@ -1346,17 +1348,17 @@ Please specify server settings in the Preferences menu.</source>
         <location filename="../cmdtools/extractnotes.cpp" line="41"/>
         <location filename="../cmdtools/extractnotes.cpp" line="82"/>
         <source>Output file not specified.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">未指定输出文件。</translation>
     </message>
     <message>
         <location filename="../cmdtools/extractnotes.cpp" line="64"/>
         <source>Deleting notes:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">正在删除笔记：</translation>
     </message>
     <message>
         <location filename="../cmdtools/extractnotes.cpp" line="65"/>
         <source>Type DELETE to very: </source>
-        <translation type="unfinished">确认删除类型：</translation>
+        <translation type="unfinished">输入DELETE以确认：</translation>
     </message>
 </context>
 <context>
@@ -1514,12 +1516,12 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../cmdtools/importnotes.cpp" line="19"/>
         <source>Input file not specified.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">未指定输入文件。</translation>
     </message>
     <message>
         <location filename="../cmdtools/importnotes.cpp" line="24"/>
         <source>Input file not found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">未找到输入文件。</translation>
     </message>
 </context>
 <context>
@@ -2353,7 +2355,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="289"/>
         <source>&amp;Presentation Mode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">演示模式(&amp;P)</translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="293"/>
@@ -2821,7 +2823,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../gui/ntableview.cpp" line="269"/>
         <source>Create Table of Contents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">创建目录</translation>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="275"/>
@@ -2908,14 +2910,16 @@ Using this in a note link can cause problems unless you synchronize it first.</s
     <message>
         <location filename="../gui/ntableview.cpp" line="1309"/>
         <source>Table of Contents</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">目录</translation>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="1360"/>
         <source>One or more notes are unsynchronized.
 This can cause issues if they are later synchronized.
 Do you wish to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">一个或多个笔记未完成同步。
+如果之后再进行同步，可以会导致一些问题。
+确定要继续吗？</translation>
     </message>
 </context>
 <context>
@@ -3587,7 +3591,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../nixnote.cpp" line="2508"/>
         <source>Note not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到笔记。</translation>
     </message>
     <message>
         <location filename="../nixnote.cpp" line="2805"/>
@@ -3642,7 +3646,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../nixnote.cpp" line="3532"/>
         <source>Press ESC to exit.</source>
-        <translation type="unfinished"></translation>
+        <translation>按ESC退出。</translation>
     </message>
 </context>
 <context>
@@ -4058,7 +4062,7 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../dialog/preferences/searchpreferences.cpp" line="60"/>
         <source>Index PDFs locally</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">在本地索引PDF</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/searchpreferences.cpp" line="65"/>
