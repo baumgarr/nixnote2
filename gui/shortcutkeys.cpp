@@ -118,6 +118,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     Focus_Note = new QString("Ctrl+E");
     Focus_Author = new QString();
     Focus_Url = new QString();
+    Focus_Notebook = new QString();
     Prev_Tab = new QString("Ctrl+PgUp");
     Next_Tab = new QString("Ctrl+PgDown");
     Close_Tab = new QString("Ctrl+W");
@@ -190,6 +191,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     loadkey(QString("Focus_Tag"), Focus_Tag);
     loadkey(QString("Focus_Note"), Focus_Note);
     loadkey(QString("Focus_Author"), Focus_Author);
+    loadkey(QString("Focus_Notebook"), Focus_Notebook);
     loadkey(QString("Focus_Url"), Focus_Url);
 
     loadkey(QString("Insert_DateTime"), Insert_DateTime);

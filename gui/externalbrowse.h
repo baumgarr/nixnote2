@@ -34,6 +34,7 @@ private:
     QShortcut *focusNoteShortcut;
     QShortcut *focusUrlShortcut;
     QShortcut *focusAuthorShortcut;
+    QShortcut *focusNotebookShortcut;
     void setupShortcut(QShortcut *shortcut, QString keySequence);
 
 public:

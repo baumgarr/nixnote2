@@ -3385,6 +3385,14 @@ void NBrowserWindow::focusCheck() {
 
 
 
+
+void NBrowserWindow::notebookFocusShortcut() {
+    this->notebookMenu.setFocus();
+    this->notebookMenu.click();
+}
+
+
+
 void NBrowserWindow::authorFocusShortcut() {
     if (!this->dateEditor.authorEditor.isVisible()) {
         this->changeExpandState(EXPANDBUTTON_3);
