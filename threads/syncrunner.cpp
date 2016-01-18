@@ -926,6 +926,10 @@ qint32 SyncRunner::uploadTags() {
     // Update any lids
     int i=0;
     while(updatedLids.size() > 0) {
+        // Get existing tags in case there is a duplicate name
+        QList<Tag> existingTags;
+        comm->getTagList(existingTags);
+
         Tag tag;
         table.get(tag, updatedLids[i]);
         qint32 parentLid = 0;
@@ -934,27 +938,50 @@ qint32 SyncRunner::uploadTags() {
             parentGuid = tag.parentGuid;
         if (parentGuid != "")
             parentLid = table.getLid(tag.parentGuid);
-
         // If the parent is either not dirty, or there is no parent we can update this lid.
         if (parentLid <= 0 || !table.isDirty(parentLid)) {
-            qint32 oldUsn = tag.updateSequenceNum;
-            usn = comm->uploadTag(tag);
-            if (usn == 0) {
-                this->communicationErrorHandler();
-                error = true;
-                return maxUsn;
+
+            // Check if a tag with this name already exists.
+            // In reality this should never happen, but there was a bug
+            // where a tag was uploaded but the USN & GUID wasn't
+            // updated.  This is a workaround for people who
+            // have that bug.
+            Tag foundTag;
+            bool matchFound = false;
+            for (int j=0; j<existingTags.size(); j++) {
+                QString tempTagName = existingTags[j].name;
+                if (tempTagName == tag.name) {
+                    matchFound = true;
+                    foundTag = existingTags[j];
+                    j = existingTags.size();
+                }
             }
-            if (usn > 0) {
-                maxUsn = usn;
-                if (oldUsn == 0)
-                    table.updateGuid(lids[i], tag.guid);
-                table.setUpdateSequenceNumber(lids[i], usn);
-                table.setDirty(tag.guid, false);
+
+            if (!matchFound) {
+                qint32 oldUsn = tag.updateSequenceNum;
+                usn = comm->uploadTag(tag);
+                if (usn == 0) {
+                    this->communicationErrorHandler();
+                    error = true;
+                    return maxUsn;
+                }
+                if (usn > 0) {
+                    maxUsn = usn;
+                    if (oldUsn == 0)
+                        table.updateGuid(updatedLids[i], tag.guid);
+                    table.setUpdateSequenceNumber(updatedLids[i], usn);
+                    table.setDirty(tag.guid, false);
+                    updatedLids.removeAt(i);
+                    i=-1;  // Reset for the next time through the loop
+                } else {
+                    error = true;
+                    updatedLids.clear();
+                }
+            } else {
+                table.updateGuid(updatedLids[i], foundTag.guid);
+                table.setUpdateSequenceNumber(updatedLids[i], foundTag.updateSequenceNum);
                 updatedLids.removeAt(i);
                 i=-1;  // Reset for the next time through the loop
-            } else {
-                error = true;
-                updatedLids.clear();
             }
         }
         i++;
