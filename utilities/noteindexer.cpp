@@ -99,7 +99,10 @@ void NoteIndexer::addTextIndex(int lid, QString content) {
     sql.bindValue(":lid", lid);
     sql.bindValue(":weight", 100);
     sql.bindValue(":source", "text");
-    sql.bindValue(":content", content);
+    if (!global.forceSearchLowerCase)
+        sql.bindValue(":content", content);
+    else
+        sql.bindValue(":content", content.toLower());
     sql.exec();
 
     sql.prepare("Delete from DataStore where lid=:lid and key=:key");
@@ -209,7 +212,11 @@ void NoteIndexer::indexRecognition(qint32 reslid, Resource &r) {
             sql.bindValue(":lid", reslid);
             sql.bindValue(":weight", weight);
             sql.bindValue(":source", "recognition");
-            sql.bindValue(":content", text);
+            //sql.bindValue(":content", text);
+            if (!global.forceSearchLowerCase)
+                sql.bindValue(":content", text);
+            else
+                sql.bindValue(":content", text.toLower());
             sql.exec();
         }
     }
@@ -250,7 +257,10 @@ void NoteIndexer::indexPdf(qint32 reslid) {
     sql.bindValue(":lid", reslid);
     sql.bindValue(":weight", 100);
     sql.bindValue(":source", "recognition");
-    sql.bindValue(":content", text);
+    if (!global.forceSearchLowerCase)
+        sql.bindValue(":content", text);
+    else
+        sql.bindValue(":content", text.toLower());
     sql.exec();
     QLOG_TRACE_OUT();
 }

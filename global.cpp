@@ -175,6 +175,7 @@ void Global::setup(StartupConfig startupConfig) {
     indexNoteCountPause=100;
     isFullscreen=false;
     indexPDFLocally=getIndexPDFLocally();
+    forceSearchLowerCase=getForceSearchLowerCase();
     strictDTD = getStrictDTD();
 
     // reset username
@@ -438,6 +439,27 @@ bool Global::getIndexPDFLocally() {
     indexPDFLocally = value;
     return value;
 }
+
+
+
+
+void Global::setForceSearchLowerCase(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("forceLowerCase",value);
+    settings->endGroup();
+    indexPDFLocally=value;
+}
+
+
+bool Global::getForceSearchLowerCase() {
+    settings->beginGroup("Search");
+    bool value = settings->value("forceLowerCase",false).toBool();
+    settings->endGroup();
+    indexPDFLocally = value;
+    return value;
+}
+
+
 
 
 

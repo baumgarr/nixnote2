@@ -1316,6 +1316,10 @@ void FilterEngine::filterSearchStringNotebookAll(QString string) {
 // filter and not the "any".
 void FilterEngine::filterSearchStringTodoAll(QString string) {
     QLOG_TRACE_IN();
+
+    if (!global.forceSearchLowerCase)
+        string = string.toLower();
+
     if (!string.startsWith("-")) {
         string.remove(0,5);
         if (string == "")

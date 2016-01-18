@@ -240,6 +240,7 @@ public:
     QHash<QString,QString> resourceList;                      // Hashmap of icons used in the current theme
     QHash<QString,QString> colorList;                         // List of colors used in the current theme
     bool indexPDFLocally;                                   // Should we index PDFs locally?
+    bool forceSearchLowerCase;                              // force storing of notes to lower case
     bool getIndexPDFLocally();                              // Should we index PDFs locally (read from settings)
     void setIndexPDFLocally(bool value);                    // save local index of PDFs option
     bool strictDTD;                                        // Should we do strict enml checking?
@@ -261,7 +262,8 @@ public:
     QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme
     void getThemeNamesFromFile(QFile &file, QStringList &values);  // Get all themes available in a given file
     void stackDump(int max=0);                                 // Utility to dump the running stack
-
+    bool getForceSearchLowerCase();                            // Get value to force seach db in lower case from settings
+    void setForceSearchLowerCase(bool value);                  // save forceSearchLowerCase
     IndexRunner *indexRunner;                                    // Pointer to index thread
 };
 

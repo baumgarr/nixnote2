@@ -61,6 +61,10 @@ SearchPreferences::SearchPreferences(QWidget *parent) :
     mainLayout->addWidget(indexPDF,row++,0);
     indexPDF->setChecked(global.indexPDFLocally);
 
+    forceLowerCase = new QCheckBox(tr("Experimental: Force search to lower case"));
+    mainLayout->addWidget(forceLowerCase,row++,0);
+    forceLowerCase->setChecked(global.forceSearchLowerCase);
+
     weight = new QSpinBox(this);
     mainLayout->addWidget(new QLabel(tr("Minimum Image Recognition Weight")), row,0);
     mainLayout->addWidget(weight,row++,1);
@@ -84,4 +88,6 @@ void SearchPreferences::saveValues() {
     global.setClearSearchOnNotebook(clearSearchOnNotebook->isChecked());
     global.setTagSelectionOr(tagSelectionOr->isChecked());
     global.setIndexPDFLocally(indexPDF->isChecked());
+    global.setForceSearchLowerCase(forceLowerCase->isChecked());
+    global.forceSearchLowerCase=forceLowerCase->isChecked();
 }
