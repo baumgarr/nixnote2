@@ -2275,10 +2275,17 @@ void NixNote::viewNoteHistory() {
 //* Search for text within a note
 //****************************************
 void NixNote::findInNote() {
-    if (!findReplaceWindow->isVisible())
+    if (!findReplaceWindow->isVisible()) {
         findReplaceWindow->showFind();
-    else
-        findReplaceWindow->hide();
+    } else {
+        if (findReplaceWindow->findLine->hasFocus())
+            findReplaceWindow->hide();
+        else {
+            findReplaceWindow->showFind();
+            findReplaceWindow->findLine->setFocus();
+            findReplaceWindow->findLine->selectAll();
+        }
+    }
 }
 
 
