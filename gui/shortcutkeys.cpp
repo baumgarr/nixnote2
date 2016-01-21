@@ -119,6 +119,8 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     Focus_Author = new QString();
     Focus_Url = new QString();
     Focus_Notebook = new QString();
+    Focus_Font = new QString();
+    Focus_Font_Size = new QString();
     Prev_Tab = new QString("Ctrl+PgUp");
     Next_Tab = new QString("Ctrl+PgDown");
     Close_Tab = new QString("Ctrl+W");

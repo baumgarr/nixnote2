@@ -125,6 +125,8 @@ public:
     QString *Focus_Author;					// Switch focus to the author
     QString *Focus_Url;					// Switch focus to the URL
     QString *Focus_Notebook;            // Switch focus to the notebook button
+    QString *Focus_Font;                // Switch focus to the font name drop down
+    QString *Focus_Font_Size;           // Switch focus to the font size drop down
 
     QString *Prev_Tab;                  // Previous Tab Shortcut
     QString *Next_Tab;                  // Next Tab Shortcut

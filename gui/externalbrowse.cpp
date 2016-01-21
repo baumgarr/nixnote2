@@ -66,6 +66,16 @@ ExternalBrowse::ExternalBrowse(qint32 lid, QWidget *parent) :
     this->setupShortcut(focusNotebookShortcut, "Focus_Notebook");
     connect(focusNotebookShortcut, SIGNAL(activated()), browser, SLOT(notebookFocusShortcut()));
 
+    focusFontShortcut = new QShortcut(this);
+    focusFontShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusFontShortcut, "Focus_Font");
+    connect(focusFontShortcut, SIGNAL(activated()), browser, SLOT(fontFocusShortcut()));
+
+    focusFontSizeShortcut = new QShortcut(this);
+    focusFontSizeShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusFontSizeShortcut, "Focus_Font_Size");
+    connect(focusFontSizeShortcut, SIGNAL(activated()), browser, SLOT(fontSizeFocusShortcut()));
+
 
     // Load actual note
     browser->setContent(lid);

@@ -125,3 +125,5 @@ Focus_Author		        		// Focus on the author field
 Focus_Url					// Focus on the source URL field
 Focus_Search					// Focus on the search field
 Focus_Notebook				        // Focus on the notebook
+Focus_Font				        // Focus on the font drop down
+Focus_Font_Size					// Focus on the font size drop down

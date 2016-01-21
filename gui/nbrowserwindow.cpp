@@ -3393,6 +3393,24 @@ void NBrowserWindow::notebookFocusShortcut() {
 
 
 
+void NBrowserWindow::fontFocusShortcut() {
+    if (this->buttonBar->fontNames->isVisible()) {
+        this->buttonBar->fontNames->setFocus();
+        this->buttonBar->fontNames->showPopup();
+    }
+}
+
+
+
+void NBrowserWindow::fontSizeFocusShortcut() {
+    if (this->buttonBar->fontSizes->isVisible()) {
+        this->buttonBar->fontSizes->setFocus();
+        this->buttonBar->fontSizes->showPopup();
+    }
+}
+
+
+
 void NBrowserWindow::authorFocusShortcut() {
     if (!this->dateEditor.authorEditor.isVisible()) {
         this->changeExpandState(EXPANDBUTTON_3);
