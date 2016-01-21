@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define URLEDITOR_H
 
 #include <QLineEdit>
+#include <QMouseEvent>
 
 class UrlEditor : public QLineEdit
 {
@@ -41,6 +42,7 @@ public slots:
     void setActiveColor();
     void textModified(QString text);
     void setUrl(qint32 lid, QString text);
+    void mouseReleaseEvent(QMouseEvent *e);
 
 signals:
   void focussed(bool hasFocus);

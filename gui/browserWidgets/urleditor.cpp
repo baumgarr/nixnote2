@@ -21,6 +21,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include "sql/notetable.h"
 
+#include <QDesktopServices>
+
 extern Global global;
 
 UrlEditor::UrlEditor(QWidget *parent) :
@@ -106,4 +108,24 @@ void UrlEditor::textModified(QString text) {
 
 QString UrlEditor::getText() {
         return text();
+}
+
+
+
+// Listen for mouse press events.  This tells us if
+// we need to open based on a middle click.
+void UrlEditor::mouseReleaseEvent(QMouseEvent *e) {
+    if ( e->button() == Qt::MidButton) {
+        if (text().trimmed() != "") {
+            QString url = text().trimmed();
+            if (!url.toLower().startsWith("http://") &&
+                !url.toLower().startsWith("https://") &&
+                !url.toLower().startsWith("mailto://") &&
+                !url.toLower().startsWith("ftp://") &&
+                !url.toLower().startsWith("file://"))
+                   url = "http://"+url;
+            QDesktopServices::openUrl(QUrl(url));
+        }
+    } else
+        QLineEdit::mouseReleaseEvent(e);
 }
