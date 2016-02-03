@@ -152,6 +152,35 @@ void NTabWidget::prevTab() {
 }
 
 
+// Function to find a window matching the current lid.  Retval
+// is set to the NBrowserWindow of matching window.
+// If a match is found true is returned.
+// If a match is not found, false is returned and retval is set
+// to the current browser.
+bool NTabWidget::findBrowser(NBrowserWindow *retval, qint32 lid) {
+    Q_UNUSED(retval);   // stop unused warning
+    // Look through any tab for the matching lid
+    for (int i=0; i<browserList->size(); i++) {
+        NBrowserWindow *window = browserList->at(i);
+        if (window->lid  == lid) {
+            retval = window;
+            return true;
+        }
+    }
+
+    // Look through any external list
+    for (int i=0; i<externalList->size(); i++) {
+        NBrowserWindow *window = externalList->at(i)->browser;
+        if (window->lid == lid) {
+            retval = window;
+            return true;
+        }
+    }
+
+    retval = currentBrowser();
+    return false;
+}
+
 NBrowserWindow* NTabWidget::currentBrowser() {
     // If the current tab has focus, then we return it.
     if (this->browserList->at(tabBar->currentIndex())->hasFocus())

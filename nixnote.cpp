@@ -559,7 +559,7 @@ void NixNote::setupGui() {
 
     QLOG_TRACE() << "Setting up more connections for tab windows & threads";
     // Setup so we refresh whenever the sync is done.
-    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria()));
+//    connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(updateSelectionCriteria(bool)));
     connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(notifySyncComplete()));
 
     // connect so we refresh the note list and counts whenever a note has changed
@@ -1506,7 +1506,6 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
         global.cache.remove(keys[i]);
     }
 
-
     FilterEngine filterEngine;
     filterEngine.filter();
 
@@ -1536,8 +1535,13 @@ void NixNote::updateSelectionCriteria(bool afterSync) {
         tabWindow->currentBrowser()->setReadOnly(true);
     }
     if (selectedNotes.size() > 0 && !afterSync) {
-        tabWindow->currentBrowser()->setContent(selectedNotes.at(0));
-        openNote(false);
+        //tabWindow->currentBrowser()->setContent(selectedNotes.at(0));  // <<<<<< This causes problems with multiple tabs after sync
+        NBrowserWindow *window = NULL;
+        tabWindow->findBrowser(window, selectedNotes.at(0));
+        if (window!= NULL)
+            window->setContent(selectedNotes.at(0));
+        if (!afterSync)
+            openNote(false);
     }
 
     if (global.filterCriteria[global.filterPosition]->isDeletedOnlySet() && global.filterCriteria[global.filterPosition]->getDeletedOnly())
@@ -1811,6 +1815,7 @@ void NixNote::setMessage(QString text, int timeout) {
 
 // Notification slot that the sync has completed.
 void NixNote::notifySyncComplete() {
+    updateSelectionCriteria(true);
     bool show;
     global.settings->beginGroup("Sync");
     show = global.settings->value("enableNotification", false).toBool();

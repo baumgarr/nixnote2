@@ -66,6 +66,7 @@ public:
     };
     void reloadIcons();
     void changeEditorStyle();
+    bool findBrowser(NBrowserWindow *retval, qint32 lid);
 
 
 signals:
