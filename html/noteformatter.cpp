@@ -503,6 +503,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
 
     ResourceTable resTable(global.db);
     QString contextFileName;
+    QLOG_DEBUG() << "Fetching for note: " << note.guid << " hash: " << hash;
     qint32 resLid = resTable.getLidByHashHex(note.guid, hash);
     Resource r;
     resTable.get(r, resLid, false);

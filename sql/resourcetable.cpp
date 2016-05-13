@@ -754,7 +754,7 @@ qint32 ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
         qint32 lid = query.value(0).toInt();
         QByteArray b;
         b.append(hash);
-        query2.prepare("Select lid from DataStore where data like :hash and key=:key and lid=:lid");
+        query2.prepare("Select lid from DataStore where upper(data) like upper(:hash) and key=:key and lid=:lid");
         query2.bindValue(":hash", hash);
         query2.bindValue(":key", RESOURCE_DATA_HASH);
         query2.bindValue(":lid", lid);
@@ -762,6 +762,9 @@ qint32 ResourceTable::getLidByHashHex(QString noteGuid, QString hash) {
         if (query2.next()) {
             db->unlock();
             return query2.value(0).toInt();
+        } else {
+            QLOG_ERROR() << "Resource not found for lid:" << lid << " key:" << RESOURCE_DATA_HASH << " hash:" << hash;
+            QLOG_DEBUG() << query2.lastError();
         }
     }
     db->unlock();
