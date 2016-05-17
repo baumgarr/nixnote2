@@ -16,8 +16,8 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 equals(QT_MAJOR_VERSION, 4) {
     QT       += core gui webkit sql network xml
     INCLUDEPATH += /usr/include/poppler/qt4
-    LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
-               -lhunspell -lcurl \
+#    LIBS +=    -lopencv_core -lopencv_highgui -lopencv_imgproc \
+    LIBS +=    -lhunspell -lcurl \
                -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
 }
 
@@ -172,8 +172,8 @@ SOURCES += main.cpp\
     reminders/remindermanager.cpp \
     dialog/notehistoryselect.cpp \
     dialog/closenotebookdialog.cpp \
-    webcam/cvimagewidget.cpp \
-    dialog/webcamcapturedialog.cpp \
+#    webcam/cvimagewidget.cpp \
+#    dialog/webcamcapturedialog.cpp \
     utilities/spellchecker.cpp \
     dialog/spellcheckdialog.cpp \
     gui/externalbrowse.cpp \
@@ -356,8 +356,8 @@ HEADERS  += nixnote.h \
     reminders/remindermanager.h \
     dialog/notehistoryselect.h \
     dialog/closenotebookdialog.h \
-    webcam/cvimagewidget.h \
-    dialog/webcamcapturedialog.h \
+#    webcam/cvimagewidget.h \
+#    dialog/webcamcapturedialog.h \
     utilities/spellchecker.h \
     dialog/spellcheckdialog.h \
     gui/externalbrowse.h \
@@ -428,7 +428,8 @@ HEADERS  += nixnote.h \
     cmdtools/extractnotetext.h \
     cmdtools/extractnotes.h \
     cmdtools/alternote.h \
-    cmdtools/importnotes.h
+    cmdtools/importnotes.h \
+    plugins/webcaminterface.h
 
 
 

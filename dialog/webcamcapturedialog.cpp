@@ -20,30 +20,33 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 #include "webcamcapturedialog.h"
-#include "dialog/webcamcapturedialog.h"
+#include "webcamcapturedialog.h"
 #include "opencv2/core/core.hpp"
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv/cv.h"
-#include "global.h"
+//#include "../global.h"
 
 #include <QHBoxLayout>
 #include <QSpacerItem>
 
-extern Global global;
+//extern Global global;
 
 // Default constructor
 WebcamCaptureDialog::WebcamCaptureDialog(QWidget *parent) :
     QDialog(parent)
 {
-    this->setFont(global.getGuiFont(font()));
+//    this->setFont(global.getGuiFont(font()));
     webcamReady = true;
     this->setWindowTitle(tr("Webcam Capture"));
-    this->setWindowIcon(global.getIconResource(":webcamIcon"));
+//    this->setWindowIcon(global.getIconResource(":webcamIcon"));
     mainLayout = new QVBoxLayout();
     webcamImage = new CVImageWidget();
     mainLayout->addWidget(webcamImage);
+
     this->setLayout(mainLayout);
+
     cap = new cv::VideoCapture(0); // open the video camera no. 0
+
     if (!cap->isOpened())
         webcamReady = false;
     else {
@@ -55,10 +58,10 @@ WebcamCaptureDialog::WebcamCaptureDialog(QWidget *parent) :
     }
     okPressed = false;
 
-    QHBoxLayout *buttonLayout = new QHBoxLayout(this);
+    QHBoxLayout *buttonLayout = new QHBoxLayout();
     mainLayout->addLayout(buttonLayout);
-    cancelButton = new QPushButton(this);
-    okButton = new QPushButton(this);
+    cancelButton = new QPushButton();
+    okButton = new QPushButton();
     cancelButton->setText(tr("Cancel"));
     okButton->setText(tr("OK"));
     buttonLayout->addSpacerItem(new QSpacerItem(20,0,QSizePolicy::Maximum, QSizePolicy::Minimum));

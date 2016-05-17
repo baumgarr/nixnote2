@@ -23,7 +23,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "watcher/filewatcher.h"
 #include "dialog/accountdialog.h"
 #include "dialog/preferences/preferencesdialog.h"
-#include "dialog/webcamcapturedialog.h"
 #include "sql/resourcetable.h"
 #include "sql/nsqlquery.h"
 #include "dialog/logviewer.h"
@@ -109,6 +108,9 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 #endif
     global.setDebugLevel();
+
+    // Load any plugins
+    this->loadPlugins();
 
     QTranslator *nixnoteTranslator = new QTranslator();
     QLOG_DEBUG() << "Looking for transaltions: " << global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm");
@@ -803,6 +805,14 @@ void NixNote::setupGui() {
     upNoteShortcut->setContext(Qt::WidgetWithChildrenShortcut);
     this->setupShortcut(upNoteShortcut, "Up_Note");
     connect(upNoteShortcut, SIGNAL(activated()), noteTableView, SLOT(upNote()));
+
+
+    // Disable menu items when plugins are not available
+    if (!webcamPluginAvailable) {
+        newWebcamNoteButton->setVisible(false);
+        this->menuBar->newWebcamNoteAction->setVisible(false);
+        this->menuBar->newWebcamNoteAction->setEnabled(false);
+    }
 }
 
 
@@ -3038,26 +3048,28 @@ void NixNote::newWebcamNote() {
         noteButton->setProperty("currentNoteButton", NewWebcamNote);
     }
 
-    WebcamCaptureDialog dialog;
+    //WebcamCaptureDialog dialog;
     QMessageBox msgBox;
     msgBox.setText(tr("Unable to find webcam or capture image."));
     msgBox.setWindowTitle(tr("Webcam Error"));
 
+    webcamInterface->initialize();
     // Check for error reading camera
-    if (!dialog.webcamReady) {
+    if (!webcamInterface->isWebcamReady()) {
         msgBox.exec();
         return;
     }
 
-    dialog.exec();
+    webcamInterface->exec();
 
-    if (!dialog.okPressed) {
+    if (!webcamInterface->okPressed()) {
         return;
     }
 
     QImage img;
     // Check for webcam error
-    if (!dialog.webcamReady || !dialog.webcamImage->getImage(img)) {
+    if (!webcamInterface->isWebcamReady() ||
+            !webcamInterface->getImage(img)) {
         msgBox.exec();
         return;
     }
@@ -3579,3 +3591,29 @@ void NixNote::presentationModeOff() {
     this->showMaximized();
 }
 
+
+
+
+
+
+
+void NixNote::loadPlugins() {
+    webcamPluginAvailable = false;
+
+    // Start loading plugins
+    QDir pluginsDir(qApp->applicationDirPath());
+    pluginsDir.cd("plugins");
+    QStringList filter;
+    filter.append("libwebcamplugin.so");
+    foreach (QString fileName, pluginsDir.entryList(filter)) {
+        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+        QObject *plugin = pluginLoader.instance();
+        if (plugin && fileName == "libwebcamplugin.so") {
+            webcamInterface = qobject_cast<WebCamInterface *>(plugin);
+            if (webcamInterface) {
+                webcamPluginAvailable = true;
+                webcamInterface->initialize();
+            }
+        }
+    }
+}

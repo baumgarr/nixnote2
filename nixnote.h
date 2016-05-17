@@ -53,6 +53,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //#include "oauth/oauthwindow.h"
 #include "html/thumbnailer.h"
 #include "reminders/remindermanager.h"
+#include "plugins/webcaminterface.h"
 
 //****************************************
 //* This is the main NixNote class that
@@ -183,6 +184,12 @@ private:
     QShortcut *downNoteShortcut;
     QShortcut *upNoteShortcut;
     void setupShortcut(QShortcut *shortcut, QString keySequence);
+
+
+    // Plugins
+    void loadPlugins();
+    bool webcamPluginAvailable;
+    WebCamInterface *webcamInterface;
 
 public:
     NixNote(QWidget *parent = 0);  // Constructor
