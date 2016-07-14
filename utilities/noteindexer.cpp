@@ -220,7 +220,7 @@ void NoteIndexer::indexRecognition(qint32 reslid, Resource &r) {
             sql.exec();
         }
     }
-    QLOG_TRACE() << "Commiting";
+    QLOG_TRACE() << "Committing";
     sql.exec("commit");
     QLOG_TRACE_OUT();
 }

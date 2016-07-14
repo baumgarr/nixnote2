@@ -911,7 +911,7 @@ void EnmlFormatter::checkAttributes(QWebElement &e, QStringList valid) {
     QStringList attrs = e.attributeNames();
     for (int i=0; i<attrs.size(); i++) {
         if (!valid.contains(attrs[i])) {
-            QLOG_DEBUG() << "Removing invalid attibute: " << attrs[i];
+            QLOG_DEBUG() << "Removing invalid attribute: " << attrs[i];
             e.removeAttribute(attrs[i]);
         }
     }

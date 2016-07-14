@@ -811,7 +811,7 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="40"/>
-        <source>Disable Tag Sorting (usefull for non-ASCII sort bug).</source>
+        <source>Disable Tag Sorting (useful for non-ASCII sort bug).</source>
         <translation>Vypnout řazení štítků (užitečné při problémech se řazením ne-ASCII znaků).</translation>
     </message>
     <message>

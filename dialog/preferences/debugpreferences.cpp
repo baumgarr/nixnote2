@@ -37,7 +37,7 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     disableUploads = new QCheckBox(tr("Disable uploads to server."),this);
     disableImageHighlight = new QCheckBox(tr("Disable image search highlighting."), this);
     showLidColumn = new QCheckBox(tr("Show LID column (requires restart)."));
-    nonAsciiSortBug = new QCheckBox(tr("Disable Tag Sorting (usefull for non-ASCII sort bug)."));
+    nonAsciiSortBug = new QCheckBox(tr("Disable Tag Sorting (useful for non-ASCII sort bug)."));
     nonAsciiSortBug->setChecked(global.nonAsciiSortBug);
     global.settings->beginGroup("Debugging");
     disableUploads->setChecked(global.disableUploads);

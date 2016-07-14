@@ -802,7 +802,7 @@
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="40"/>
-        <source>Disable Tag Sorting (usefull for non-ASCII sort bug).</source>
+        <source>Disable Tag Sorting (useful for non-ASCII sort bug).</source>
         <translation type="unfinished">禁用标签排序(对非ASCII字符排序bug有效)。</translation>
     </message>
     <message>
