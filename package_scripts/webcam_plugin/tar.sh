@@ -1,11 +1,11 @@
 #!/bin/sh
 
-version="2.0-beta7"
+version="1.0-1"
 
 
 package_dir=$(cd `dirname $0` && pwd)
 
-source_dir="$package_dir/.."
+source_dir="$package_dir/../.."
 
 
 ####################################################
@@ -45,17 +45,17 @@ echo "**************************************************"
 
 # Cleanup any old stuff
 
-if [ -e "$package_dir/nixnote2-libwebcam-${version}_${arch}.tar.gz" ] 
+if [ -e "$package_dir/nixnote2-webcam_plugin_${version}_${arch}.tar.gz" ] 
 then
-   rm $package_dir/nixnote2-libwebcam-${version}_${arch}.tar.gz
+   rm $package_dir/nixnote2-webcam_plugin_${version}_${arch}.tar.gz
 fi
 
 cd $package_dir
 echo "Building tar"
-cp $source_dir/install.sh $package_dir/nixnote2-libwebcam/
-cp $source_dir/uninstall.sh $package_dir/nixnote2-libwebcam/
-tar -czf $package_dir/nixnote2-libwebcam-${version}_${arch}.tar.gz ./nixnote2-libwebcam
-rm $package_dir/nixnote2-libwebcam/install.sh
-rm $package_dir/nixnote2-libwebcam/uninstall.sh
+cp $package_dir/install.sh $package_dir/nixnote2/
+cp $package_dir/uninstall.sh $package_dir/nixnote2/
+tar -czf $package_dir/nixnote2_webcam_plugin_${version}_${arch}.tar.gz ./nixnote2
+rm $package_dir/nixnote2/install.sh
+rm $package_dir/nixnote2/uninstall.sh
 cd -
 

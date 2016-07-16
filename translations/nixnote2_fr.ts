@@ -568,47 +568,55 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="144"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="149"/>
         <source>Type DELETE to very: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="209"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="214"/>
         <source>No resospnse received from NixNote.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="300"/>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="425"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="305"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="430"/>
         <source> has been created.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="303"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="308"/>
         <source>No response from NixNote.  Please verify that the note was created.
 </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="317"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="322"/>
         <source>Untitled Note</source>
         <translation type="unfinished">Note sans titre</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="471"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="476"/>
         <source>No response received from NixNote.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="480"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="485"/>
         <source>Note not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="491"/>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="507"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="496"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="512"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="544"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="564"/>
         <source>This cannot be done with NixNote running.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="554"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="574"/>
+        <source>Notebook not found: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -678,33 +686,33 @@
         <translation>URL notestore du cahier de notes lié manquante.</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1155"/>
         <location filename="../communication/communicationmanager.cpp" line="1157"/>
+        <location filename="../communication/communicationmanager.cpp" line="1159"/>
         <source>API rate limit exceeded.  Please try again in </source>
         <translation>Ratio limite de l&apos;API dépassé.  Réessayer dans </translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1155"/>
+        <location filename="../communication/communicationmanager.cpp" line="1157"/>
         <source> minutes.</source>
         <translation> minutes.</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1157"/>
+        <location filename="../communication/communicationmanager.cpp" line="1159"/>
         <source> minute.</source>
         <translation> minute.</translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1161"/>
+        <location filename="../communication/communicationmanager.cpp" line="1163"/>
         <source>EDAMSystemException </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1163"/>
+        <location filename="../communication/communicationmanager.cpp" line="1165"/>
         <source>EDAMSystemException: Unknown error</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../communication/communicationmanager.cpp" line="1184"/>
+        <location filename="../communication/communicationmanager.cpp" line="1186"/>
         <source>EDAMNotFoundException: Note not found</source>
         <translation></translation>
     </message>
@@ -1325,7 +1333,7 @@ Please specify server settings in the Preferences menu.</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../gui/externalbrowse.cpp" line="85"/>
+        <location filename="../gui/externalbrowse.cpp" line="100"/>
         <source>NixNote - </source>
         <translation></translation>
     </message>
@@ -1974,19 +1982,19 @@ Voir http://www.w3schools.com/charsets/ pour la liste.</translation>
     <name>NBrowserWindow</name>
     <message>
         <location filename="../gui/nbrowserwindow.cpp" line="484"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2940"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2941"/>
         <source>Today</source>
         <translation>Aujourd&apos;hui</translation>
     </message>
     <message>
         <location filename="../gui/nbrowserwindow.cpp" line="486"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2942"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2943"/>
         <source>Tomorrow</source>
         <translation>Demain</translation>
     </message>
     <message>
         <location filename="../gui/nbrowserwindow.cpp" line="488"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2944"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2945"/>
         <source>Yesterday</source>
         <translation>Hier</translation>
     </message>
@@ -2025,22 +2033,22 @@ Ces notes ne sont pas supportées car Evernote n&apos;en a pas publié de spéci
         <translation>Éditer un lien</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2150"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2151"/>
         <source>Unable to create LaTeX image</source>
         <translation>Impossible créer l&apos;image LaTeX</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2151"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2152"/>
         <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
         <translation>Impossible créer l&apos;image LaTeX.  Est-ce que mimetex est bien installé ?</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2476"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2477"/>
         <source>Setup Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2477"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2478"/>
         <source>SMTP Server has not been setup.
 
 Please specify server settings
@@ -2048,69 +2056,69 @@ in the Preferences menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2486"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2487"/>
         <source>Sending Email. Please be patient.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2545"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2546"/>
         <source>Connection Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2545"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2546"/>
         <source>Unable to connect to host.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2551"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2552"/>
         <source>Login Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2551"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2552"/>
         <source>Unable to login.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2556"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2557"/>
         <source>Send Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2556"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2557"/>
         <source>Unable to send email.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2987"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2988"/>
         <source>Decryption Error</source>
         <translation>Erreur de déchiffrement</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2988"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2989"/>
         <source>Unknown encryption method.
 Unable to decrypt.</source>
         <translation>Méthode de chiffrement inconnue.
 Impossible de déchiffrer.</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="3091"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="3092"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="3092"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="3093"/>
         <source>Error Encrypting String.  Please verify you have Java installed.</source>
         <translation>Erreur pendant le chiffrement.  Vérifiez que Java est bien installé.</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="3258"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="3259"/>
         <source>Spell Check Complete</source>
         <translation>Vérification orthographique terminée</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="3258"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="3259"/>
         <source>Spell Check Complete.</source>
         <translation>Vérification orthographique terminée.</translation>
     </message>
@@ -2737,13 +2745,13 @@ Impossible de déchiffrer.</translation>
 <context>
     <name>NTabWidget</name>
     <message>
-        <location filename="../gui/ntabwidget.cpp" line="225"/>
+        <location filename="../gui/ntabwidget.cpp" line="254"/>
         <source>Untitled Note</source>
         <translation>Note sans titre</translation>
     </message>
     <message>
-        <location filename="../gui/ntabwidget.cpp" line="230"/>
-        <location filename="../gui/ntabwidget.cpp" line="296"/>
+        <location filename="../gui/ntabwidget.cpp" line="259"/>
+        <location filename="../gui/ntabwidget.cpp" line="325"/>
         <source>NixNote - </source>
         <translation>NixNote - </translation>
     </message>
@@ -3281,200 +3289,200 @@ Do you wish to continue?</source>
 <context>
     <name>NixNote</name>
     <message>
-        <location filename="../nixnote.cpp" line="197"/>
+        <location filename="../nixnote.cpp" line="200"/>
         <source>Tidy Not Found</source>
         <translation>Tiny non trouvé</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="197"/>
+        <location filename="../nixnote.cpp" line="200"/>
         <source>Tidy is not found on this system.
 Until tidy is installed you cannot save any notes.</source>
         <translation>Tidy n&apos;a pas été trouvé sur ce système.
 Tant que tidy n&apos;est pas installé, vous ne pourrez pas sauvegarder des notes.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="272"/>
+        <location filename="../nixnote.cpp" line="275"/>
         <source>ToolBar</source>
         <translation>Bar d&apos;outils</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="284"/>
+        <location filename="../nixnote.cpp" line="287"/>
         <source>Back</source>
         <translation>Précédent</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="285"/>
+        <location filename="../nixnote.cpp" line="288"/>
         <source>Next</source>
         <translation>Suivant</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="295"/>
+        <location filename="../nixnote.cpp" line="298"/>
         <source>All Notes</source>
         <translation>Toutes les notes</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="297"/>
+        <location filename="../nixnote.cpp" line="300"/>
         <source>Sync</source>
         <translation>Sync</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="300"/>
+        <location filename="../nixnote.cpp" line="303"/>
         <source>Print</source>
         <translation>Imprimer</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="310"/>
+        <location filename="../nixnote.cpp" line="313"/>
         <source>New Text Note</source>
         <translation>Nouvelle note texte</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="313"/>
+        <location filename="../nixnote.cpp" line="316"/>
         <source>New Webcam Note</source>
         <translation>Nouvelle note filmée</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="325"/>
+        <location filename="../nixnote.cpp" line="328"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="328"/>
+        <location filename="../nixnote.cpp" line="331"/>
         <source>Trunk</source>
         <translation>Trunk</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="330"/>
+        <location filename="../nixnote.cpp" line="333"/>
         <source>Usage</source>
         <translation>Utilisation</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="512"/>
-        <location filename="../nixnote.cpp" line="2923"/>
+        <location filename="../nixnote.cpp" line="515"/>
+        <location filename="../nixnote.cpp" line="2961"/>
         <source>Screen Capture</source>
         <translation>Enregistrement de l&apos;écran</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="528"/>
+        <location filename="../nixnote.cpp" line="531"/>
         <source>Show/Hide</source>
         <translation>Montrer/Cacher</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="540"/>
+        <location filename="../nixnote.cpp" line="543"/>
         <source>Close</source>
         <translation>Fermer</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1689"/>
+        <location filename="../nixnote.cpp" line="1719"/>
         <source>Confirm Restore</source>
         <translation>Confirmer la restauration</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1705"/>
+        <location filename="../nixnote.cpp" line="1735"/>
         <source>Restore Database</source>
         <translation>Restaurer la base de données</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1708"/>
+        <location filename="../nixnote.cpp" line="1738"/>
         <source>Import Notes</source>
         <translation>Importer des notes</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1620"/>
-        <location filename="../nixnote.cpp" line="1706"/>
+        <location filename="../nixnote.cpp" line="1650"/>
+        <location filename="../nixnote.cpp" line="1736"/>
         <source>NixNote Export (*.nnex);;All Files (*.*)</source>
         <translation>Exportation NixNote (*.nnex);;Tous les fichiers (*.*)</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="301"/>
+        <location filename="../nixnote.cpp" line="304"/>
         <source>Print the current note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="303"/>
+        <location filename="../nixnote.cpp" line="306"/>
         <source>Email</source>
         <translation type="unfinished">Courriel</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="304"/>
+        <location filename="../nixnote.cpp" line="307"/>
         <source>Email the current note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="509"/>
+        <location filename="../nixnote.cpp" line="512"/>
         <source>Quick Note</source>
         <translation>Note rapide</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="519"/>
+        <location filename="../nixnote.cpp" line="522"/>
         <source>Shortcut Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="521"/>
+        <location filename="../nixnote.cpp" line="524"/>
         <source>Pinned Notes</source>
         <translation>Notes épinglées</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="523"/>
+        <location filename="../nixnote.cpp" line="526"/>
         <source>Recently Updated Notes</source>
         <translation>Notes récemment modifiées</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1343"/>
-        <location filename="../nixnote.cpp" line="2190"/>
+        <location filename="../nixnote.cpp" line="1369"/>
+        <location filename="../nixnote.cpp" line="2221"/>
         <source>Log in to Evernote</source>
         <translation>Ouvrir une session Evernote</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1345"/>
-        <location filename="../nixnote.cpp" line="2192"/>
+        <location filename="../nixnote.cpp" line="1371"/>
+        <location filename="../nixnote.cpp" line="2223"/>
         <source>NixNote</source>
         <translation>NixNote</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1605"/>
-        <location filename="../nixnote.cpp" line="1651"/>
-        <location filename="../nixnote.cpp" line="1748"/>
+        <location filename="../nixnote.cpp" line="1635"/>
+        <location filename="../nixnote.cpp" line="1681"/>
+        <location filename="../nixnote.cpp" line="1778"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1605"/>
+        <location filename="../nixnote.cpp" line="1635"/>
         <source>No notes selected.</source>
         <translation>Aucune note sélectionnée.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1612"/>
+        <location filename="../nixnote.cpp" line="1642"/>
         <source>Backup Database</source>
         <translation>Sauvegarde de la base de données</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1614"/>
+        <location filename="../nixnote.cpp" line="1644"/>
         <source>Export Notes</source>
         <translation>Exporter les notes</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1639"/>
+        <location filename="../nixnote.cpp" line="1669"/>
         <source>Performing backup</source>
         <translation>Sauvegarde en cours</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1641"/>
+        <location filename="../nixnote.cpp" line="1671"/>
         <source>Performing export</source>
         <translation>Exportation en cours</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1658"/>
+        <location filename="../nixnote.cpp" line="1688"/>
         <source>Database backup complete.</source>
         <translation>Sauvegarde de la base de données terminée.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1660"/>
+        <location filename="../nixnote.cpp" line="1690"/>
         <source>Note extract complete.</source>
         <translation>Extraction des notes complète.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1686"/>
+        <location filename="../nixnote.cpp" line="1716"/>
         <source>This is used to restore a database from backups.
 It is HIGHLY recommended that this only be used to populate
 an empty database.  Restoring into a database that
@@ -3484,147 +3492,147 @@ Are you sure you want to continue?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1709"/>
+        <location filename="../nixnote.cpp" line="1739"/>
         <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
         <translation>Exportation NixNote (*.nnex);;Exportation Evernote (*.enex);;Tous les fichiers (*.*)</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1736"/>
+        <location filename="../nixnote.cpp" line="1766"/>
         <source>Restoring database</source>
         <translation>Restauration de la base de données</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1738"/>
+        <location filename="../nixnote.cpp" line="1768"/>
         <source>Importing Notes</source>
         <translation>Importation de notes en cours</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1770"/>
+        <location filename="../nixnote.cpp" line="1800"/>
         <source>Database has been restored.</source>
         <translation>La base de données à été restaurée.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1772"/>
+        <location filename="../nixnote.cpp" line="1802"/>
         <source>Notes have been imported.</source>
         <translation>Les notes ont été importées.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1805"/>
+        <location filename="../nixnote.cpp" line="1836"/>
         <source>Sync Error</source>
         <translation>Erreur de synchronisation</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1805"/>
+        <location filename="../nixnote.cpp" line="1836"/>
         <source>Sync completed with errors.</source>
         <translation>Synchronisation complétée sans erreur.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1808"/>
+        <location filename="../nixnote.cpp" line="1839"/>
         <source>Sync Complete</source>
         <translation>Synchronisation terminée</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1808"/>
+        <location filename="../nixnote.cpp" line="1839"/>
         <source>Sync completed successfully.</source>
         <translation>Synchronisation complétée avec succès.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1890"/>
+        <location filename="../nixnote.cpp" line="1921"/>
         <source>Untitled note</source>
         <translation type="unfinished">Note sans titre</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2210"/>
+        <location filename="../nixnote.cpp" line="2241"/>
         <source>This feature is only available to premium users.</source>
         <translation>Cette fonctionnalité n&apos;est disponible qu&apos;aux utilisateurs premium.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2211"/>
+        <location filename="../nixnote.cpp" line="2242"/>
         <source>Premium Feature</source>
         <translation>Fonctionnalité premium</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2230"/>
+        <location filename="../nixnote.cpp" line="2261"/>
         <source>Error retrieving note.</source>
         <translation>Erreur dans la récupération des notes.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2231"/>
+        <location filename="../nixnote.cpp" line="2262"/>
         <source>Error retrieving note</source>
         <translation>Erreur dans la récupération des notes</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2253"/>
+        <location filename="../nixnote.cpp" line="2284"/>
         <source>Note restored</source>
         <translation>Note restaurée</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2257"/>
+        <location filename="../nixnote.cpp" line="2288"/>
         <source>No versions of this note can be found.</source>
         <translation>Aucune version de cette note ne peut être trouvée.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2258"/>
+        <location filename="../nixnote.cpp" line="2289"/>
         <source>Note Not Found</source>
         <translation>La note n&apos;a pas pu être trouvée</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2508"/>
+        <location filename="../nixnote.cpp" line="2546"/>
         <source>Note not found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2805"/>
+        <location filename="../nixnote.cpp" line="2843"/>
         <source>Switch to </source>
         <translation>Changer pour </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2978"/>
+        <location filename="../nixnote.cpp" line="3016"/>
         <source>Reindex Database</source>
         <translation>Réindexer la base de données</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2978"/>
+        <location filename="../nixnote.cpp" line="3016"/>
         <source>Reindex the entire database?</source>
         <translation>Entièrement réindexer la base de données ?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2987"/>
+        <location filename="../nixnote.cpp" line="3025"/>
         <source>Notes will be reindexed.</source>
         <translation>Les notes vont être réindexées.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3015"/>
+        <location filename="../nixnote.cpp" line="3053"/>
         <source>Unable to find webcam or capture image.</source>
         <translation>Impossible de trouver la webcam ou d&apos;enregistrer une image.</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3016"/>
+        <location filename="../nixnote.cpp" line="3054"/>
         <source>Webcam Error</source>
         <translation>Erreur de la webcam</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3160"/>
+        <location filename="../nixnote.cpp" line="3200"/>
         <source>Delete </source>
         <translation>Supprimer</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3163"/>
+        <location filename="../nixnote.cpp" line="3203"/>
         <source>Permanently delete </source>
         <translation>Supprimer de façon permanente</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3167"/>
+        <location filename="../nixnote.cpp" line="3207"/>
         <source>this note?</source>
         <translation>cette note ?</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3171"/>
+        <location filename="../nixnote.cpp" line="3211"/>
         <source>Verify Delete</source>
         <translation>Vérifier la suppression</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3532"/>
+        <location filename="../nixnote.cpp" line="3572"/>
         <source>Press ESC to exit.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3632,17 +3640,17 @@ Are you sure you want to continue?</source>
 <context>
     <name>NoteFormatter</name>
     <message>
-        <location filename="../html/noteformatter.cpp" line="625"/>
+        <location filename="../html/noteformatter.cpp" line="626"/>
         <source>File</source>
         <translation>Fichier</translation>
     </message>
     <message>
-        <location filename="../html/noteformatter.cpp" line="659"/>
+        <location filename="../html/noteformatter.cpp" line="660"/>
         <source>Bytes</source>
         <translation>Octets</translation>
     </message>
     <message>
-        <location filename="../html/noteformatter.cpp" line="663"/>
+        <location filename="../html/noteformatter.cpp" line="664"/>
         <source>KB</source>
         <translation>ko</translation>
     </message>
@@ -4046,7 +4054,12 @@ en appuyant sur n&apos;importe quelle touche.</translation>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/searchpreferences.cpp" line="65"/>
+        <location filename="../dialog/preferences/searchpreferences.cpp" line="64"/>
+        <source>Experimental: Force search to lower case</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialog/preferences/searchpreferences.cpp" line="69"/>
         <source>Minimum Image Recognition Weight</source>
         <translation>Poids minimal de reconnaisance de l&apos;image</translation>
     </message>
@@ -4219,30 +4232,30 @@ en appuyant sur n&apos;importe quelle touche.</translation>
         <translation>Téléchargement terminé.</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="690"/>
-        <location filename="../threads/syncrunner.cpp" line="730"/>
+        <location filename="../threads/syncrunner.cpp" line="700"/>
+        <location filename="../threads/syncrunner.cpp" line="740"/>
         <source>Downloading </source>
         <translation>Téléchargement </translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="690"/>
+        <location filename="../threads/syncrunner.cpp" line="700"/>
         <source>% complete for tags in shared notebook </source>
         <translation>% complétés pour les étiquettes dans les cahiers partagés </translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="708"/>
+        <location filename="../threads/syncrunner.cpp" line="718"/>
         <source>Downloading notes for shared notebook </source>
         <translation>Téléchargement des notes des cahiers partagés </translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="730"/>
+        <location filename="../threads/syncrunner.cpp" line="740"/>
         <source>% complete for shared notebook </source>
         <translation>% complété pour les cahiers partagés </translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="690"/>
-        <location filename="../threads/syncrunner.cpp" line="708"/>
-        <location filename="../threads/syncrunner.cpp" line="730"/>
+        <location filename="../threads/syncrunner.cpp" line="700"/>
+        <location filename="../threads/syncrunner.cpp" line="718"/>
+        <location filename="../threads/syncrunner.cpp" line="740"/>
         <source>.</source>
         <translation>.</translation>
     </message>
@@ -4334,7 +4347,7 @@ en appuyant sur n&apos;importe quelle touche.</translation>
 <context>
     <name>UrlEditor</name>
     <message>
-        <location filename="../gui/browserWidgets/urleditor.cpp" line="43"/>
+        <location filename="../gui/browserWidgets/urleditor.cpp" line="45"/>
         <source>Click to set source URL...</source>
         <translation>Indiquer l&apos;URL source...</translation>
     </message>
@@ -4450,24 +4463,6 @@ en appuyant sur n&apos;importe quelle touche.</translation>
         <location filename="../dialog/watchfolderdialog.cpp" line="172"/>
         <source>No</source>
         <translation>Non</translation>
-    </message>
-</context>
-<context>
-    <name>WebcamCaptureDialog</name>
-    <message>
-        <location filename="../dialog/webcamcapturedialog.cpp" line="40"/>
-        <source>Webcam Capture</source>
-        <translation>Enregistrement de la webcam</translation>
-    </message>
-    <message>
-        <location filename="../dialog/webcamcapturedialog.cpp" line="62"/>
-        <source>Cancel</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="../dialog/webcamcapturedialog.cpp" line="63"/>
-        <source>OK</source>
-        <translation>OK</translation>
     </message>
 </context>
 </TS>

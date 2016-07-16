@@ -1,7 +1,7 @@
 #!/bin/sh
 export DEB_BUILD_HARDENING=0
 
-version="2.0-beta7"
+version="1.0-1"
 package_dir=$(cd `dirname $0` && pwd)
 
 
@@ -50,9 +50,9 @@ echo "**************************************************"
 
 # Cleanup any old stuff
 
-if [ -e "$package_dir/nixnote2-libwebcam-${version}_${arch}.rpm" ] 
+if [ -e "$package_dir/nixnote2_webcam_plugin_${version}_${arch}.rpm" ] 
 then
-   rm $package_dir/nixnote2-libwebcam-${version}_${arch}.rpm
+   rm $package_dir/nixnote2_webcam_plugin_${version}_${arch}.rpm
 fi
 
 # Copy control file for the package
@@ -62,15 +62,16 @@ mkdir $package_dir/rpmbuild/SOURCES
 
 #start creating the  source tar.  Note, we don't include the /usr/lib directory
 # since there is a Thrift RPM package.
-cp $package_dir/rpm/nixnote2-libwebcam.spec $package_dir/rpmbuild/SPECS/nixnote2-libwebcam.spec
-tar -czf $package_dir/rpmbuild/SOURCES/nixnote2_libwebcam_${version}_${arch}.tar.gz ./nixnote2-libwebcam
+cp $package_dir/rpm/nixnote2_webcam_plugin.spec $package_dir/rpmbuild/SPECS/nixnote2_webcam_plugin.spec
+tar -czf $package_dir/rpmbuild/SOURCES/nixnote2_webcam_plugin_${version}_${arch}.tar.gz ./nixnote2
+
 
 #edit the spec file to update the version & architecture
-sed -i "s/__VERSION__/$version/" $package_dir/rpmbuild/SPECS/nixnote2-libwebcam.spec
-sed -i "s/__ARCH__/$arch/" $package_dir/rpmbuild/SPECS/nixnote2-libwebcam.spec
+sed -i "s/__VERSION__/$version/" $package_dir/rpmbuild/SPECS/nixnote2_webcam_plugin.spec
+sed -i "s/__ARCH__/$arch/" $package_dir/rpmbuild/SPECS/nixnote2_webcam_plugin.spec
 
 #do the actual build
-rpmbuild --quiet --define "_topdir $package_dir/rpmbuild" -ba $package_dir/rpmbuild/SPECS/nixnote2-libwebcam.spec
+rpmbuild --quiet --define "_topdir $package_dir/rpmbuild" -ba $package_dir/rpmbuild/SPECS/nixnote2_webcam_plugin.spec
 
 #copy the rpm out
 cp $package_dir/rpmbuild/RPMS/$rpmdir/*.rpm $package_dir/

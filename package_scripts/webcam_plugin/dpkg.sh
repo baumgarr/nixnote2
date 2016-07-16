@@ -1,12 +1,12 @@
 #!/bin/sh
 export DEB_BUILD_HARDENING=0
 
-version="2.0-beta7"
+version="1.0-1"
 
 
 package_dir=$(cd `dirname $0` && pwd)
 
-source_dir="$package_dir/.."
+source_dir="$package_dir/../.."
 
 
 ####################################################
@@ -46,32 +46,32 @@ echo "**************************************************"
 
 # Cleanup any old stuff
 
-if [ -e "$package_dir/nixnote2-libwebcam-${version}_${arch}.deb" ] 
+if [ -e "$package_dir/nixnote2-webcam-webcam-plugin-${version}_${arch}.deb" ] 
 then
-   rm $package_dir/nixnote2-libwebcam-${version}_${arch}.deb
+   rm $package_dir/nixnote2-webcam-plugin-${version}_${arch}.deb
 fi
 
 cd $package_dir
 
 # Copy control file for the package
-mkdir $package_dir/nixnote2-libwebcam/DEBIAN
-cp $package_dir/deb/control $package_dir/nixnote2-libwebcam/DEBIAN/control
+mkdir $package_dir/nixnote2/DEBIAN
+cp $package_dir/deb/control $package_dir/nixnote2/DEBIAN/
 
 # remove the gpl.txt to avoid a lintian warning
-rm $package_dir/nixnote2-libwebcam/usr/share/nixnote2/gpl.txt
+#rm $package_dir/nixnote2/usr/share/nixnote2/gpl.txt
 
 # edit the version & architecture
-sed -i "s/__ARCH__/$arch/" $package_dir/nixnote2-libwebcam/DEBIAN/control
-sed -i "s/__VERSION__/$version/" $package_dir/nixnote2-libwebcam/DEBIAN/control
+sed -i "s/__ARCH__/$arch/" $package_dir/nixnote2/DEBIAN/control
+sed -i "s/__VERSION__/$version/" $package_dir/nixnote2/DEBIAN/control
 
 # build the deb
-dpkg -b $package_dir/nixnote2-libwebcam $package_dir/nixnote2-libwebcam-${version}_${arch}.deb
+dpkg -b $package_dir/nixnote2 $package_dir/nixnote2-webcam-plugin-${version}_${arch}.deb
 
 # remove the temporary directory
-rm -rf $package_dir/nixnote2-libwebcam/DEBIAN
+rm -rf $package_dir/nixnote2/DEBIAN
 
 # copy the gpl.txt back in 
-cp $source_dir/gpl.txt $package_dir/nixnote2-libwebcam/usr/share/nixnote2/gpl.txt
+cp $source_dir/gpl.txt $package_dir/nixnote2/usr/share/nixnote2/gpl.txt
 
 # Exit
 cd -

@@ -13,3 +13,6 @@ HEADERS += webcamplugin.h \
            ../webcam/cvimagewidget.h \
            ../dialog/webcamcapturedialog.h
 
+
+QMAKE_LFLAGS += -Wl,-soname,libwebcamplugin.so.1
+

@@ -52,6 +52,7 @@ Synchronize with Evernote.  If not running, NixNote will do a sync and exit with
 .LP
 .HP 
 .IP "sync <options>"
+Synchronize NixNote with Evernote.
 .RS 7
 .IP "sync options:
 .RS 7
@@ -276,6 +277,34 @@ The file containing the NixNote export (nnex) file.
 .LP
 .RE
 .RE
+.IP "openNotebook <options>"
+If a notebook is closed, open it. This will allow a notebook to be searched or viewed.
+.RS 7
+.IP "openNotebook options"
+.RS 7
+.LP
+.HP 2.2
+.IP --accountId=<id>
+Account owning the notebook you wish to open. Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts.  If not specified, it defaults to the last used account.
+.IP --notebook=<notebook_name>
+The notebook to open.
+.LP
+.RE
+.RE 
+.IP "closeNotebook <options>"
+If a notebook is open, close it. This will prevent it from being searched or viewed, but not from being synchronized.
+.RS 7
+.IP "closeNotebook options"
+.RS 7
+.LP
+.HP 2.2
+.IP --accountId=<id>
+Account owning the notebook you wish to close. Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts.  If not specified, it defaults to the last used account.
+.IP --notebook=<notebook_name>
+The notebook to close.
+.LP
+.RE
+.RE 
 .SH EXAMPLES
 .IP "nixnote2 start --dontStartMinimized"
 Start NixNote but do not start minimized.  

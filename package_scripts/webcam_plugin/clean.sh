@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="2.0-beta7"
+version="1.0-1"
 
 # Determine which platform we are on
 arch="i386"
@@ -21,6 +21,8 @@ do
 done
 
 package_dir=$(cd `dirname $0` && pwd)
+destination="$package_dir/nixnote/share/nixnote"
+
 
 # Check that we are runinng as root
 if [ "$(id -u)" != "0" ]; then
@@ -30,26 +32,26 @@ fi
 
 
 # Delete the tar.gz file if it exists
-if [ -e "$package_dir/nixnote2-libwebcam-${version}_${arch}.tar.gz" ]
+if [ -e "$package_dir/nixnote2_webcam_plugin_${version}_${arch}.tar.gz" ]
 then
-   rm $package_dir/nixnote2-libwebcam-${version}_${arch}.tar.gz
+   rm $package_dir/nixnote2_webcam_plugin_${version}_${arch}.tar.gz
 fi
 
 #delete the debif it exists
-if [ -e "$package_dir/nixnote2-libwebcam-${version}_${arch}.deb" ]
+if [ -e "$package_dir/nixnote2-webcam-plugin-${version}_${arch}.deb" ]
 then
-   rm $package_dir/nixnote2-libwebcam-${version}_${arch}.deb
+   rm $package_dir/nixnote2-webcam-plugin-${version}_${arch}.deb
 fi
 
 #delete the rpm if it exists
 rpmversion=`echo $version | sed -e 's/[-]/_/g'`
-if [ -e "$package_dir/nixnote2-libwebcam-${rpmversion}-0.${pkgarch}.rpm" ]
+if [ -e "$package_dir/nixnote2_webcam_plugin-${rpmversion}-0.${pkgarch}.rpm" ]
 then
-   rm $package_dir/nixnote2-libwebcam-${rpmversion}-0.${pkgarch}.rpm
+   rm $package_dir/nixnote2_webcam_plugin-${rpmversion}-0.${pkgarch}.rpm
 fi
 
 # Cleanup any directory info
-if [ -d "$package_dir/nixnote2-libwebcam" ]
+if [ -d "$package_dir/nixnote2" ]
 then
    rm -rf $package_dir/nixnote2
 fi
