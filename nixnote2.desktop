@@ -2,16 +2,16 @@
 Name=NixNote2
 Comment=Use with Evernote to remember everything
 GenericName=Evernote-clone
-Exec=/usr/bin/nixnote2
+Exec=nixnote2
 Icon=/usr/share/nixnote2/images/windowIcon.png
 StartupNotify=true
 Terminal=false
 Type=Application
-Categories=Network;
-MimeType=x-scheme-handler/evernote;
+Categories=Qt;Utility;Network;
+Keywords=NixNote2;Text;Evernote;note;
 
 Actions=NewNote;
 [Desktop Action NewNote]
 Name=New Note
-Exec=/usr/bin/nixnote2 --newNote
+Exec=nixnote2 --newNote
 OnlyShowIn=Unity;
