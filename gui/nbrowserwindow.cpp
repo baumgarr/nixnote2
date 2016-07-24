@@ -2883,6 +2883,7 @@ void NBrowserWindow::attachFileSelected(QString filename) {
     buffer.append(tmpFile);
     buffer.append("\" />");
     buffer.append("</a>");
+    buffer.replace("\'", "&quot;");
 
     // Insert the actual attachment
     editor->page()->mainFrame()->evaluateJavaScript(
