@@ -435,3 +435,29 @@ HEADERS  += nixnote.h \
 
 QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
 QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
+
+binary.path = /usr/bin/
+binary.files = nixnote2
+
+desktop.path = /usr/share/applications/
+desktop.files = nixnote2.desktop
+
+images.path = /usr/share/nixnote2/images
+images.files = images/*
+
+java.path = /usr/share/nixnote2/java
+java.files = java/*
+
+translations.path = /usr/share/nixnote2/translations
+translations.files = translations/*
+
+qss.path = /usr/share/nixnote2/qss
+qss.files = qss/*
+
+help.path = /usr/share/nixnote2/help
+help.files = help/*
+
+certs.path = /usr/share/nixnote2/certs
+certs.files = certs/*
+
+INSTALLS = binary desktop images java translations qss help certs
