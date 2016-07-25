@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="zh_CN">
+<TS version="2.1" language="zh_CN">
 <context>
     <name>AboutDialog</name>
     <message>
@@ -270,7 +270,7 @@
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="51"/>
         <source>Limit Editor to Web Fonts*</source>
-        <translation type="unfinished">编辑器只使用Web字体*</translation>
+        <translation>编辑器只使用Web字体*</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="53"/>
@@ -330,7 +330,7 @@
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="88"/>
         <source>notify-send</source>
-        <translation type="unfinished">notify-send</translation>
+        <translation>notify-send</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="95"/>
@@ -410,7 +410,7 @@
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="157"/>
         <source>** Can crash on Gnome systems.</source>
-        <translation type="unfinished">** 在Gnome中可能会造成崩溃。</translation>
+        <translation>** 在Gnome中可能会造成崩溃。</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="91"/>
@@ -523,7 +523,7 @@
     <message>
         <location filename="../cmdtools/cmdlinequery.cpp" line="84"/>
         <source>Sync</source>
-        <translation type="unfinished">同步</translation>
+        <translation>同步</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinequery.cpp" line="87"/>
@@ -548,7 +548,7 @@
     <message>
         <location filename="../cmdtools/cmdlinequery.cpp" line="99"/>
         <source>Reminder Done</source>
-        <translation type="unfinished">提醒完成</translation>
+        <translation>提醒完成</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinequery.cpp" line="181"/>
@@ -569,12 +569,12 @@
         <location filename="../cmdtools/cmdlinetool.cpp" line="55"/>
         <source>Unable to attach to shared memory segment.  Is the other NixNote running?
 </source>
-        <translation type="unfinished">无法连接到共享内存段。请确保NixNote正在运行！</translation>
+        <translation>无法连接到共享内存段。是否有其它的 NixNote 实例在同时运行？</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="149"/>
         <source>Type DELETE to very: </source>
-        <translation type="unfinished">确认删除类型：</translation>
+        <translation>输入 DELETE 以确认：</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="214"/>
@@ -592,12 +592,12 @@
         <location filename="../cmdtools/cmdlinetool.cpp" line="308"/>
         <source>No response from NixNote.  Please verify that the note was created.
 </source>
-        <translation type="unfinished">NixNote未响应，请确认笔记是否创建。</translation>
+        <translation>NixNote未响应，请检查笔记是否创建。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="322"/>
         <source>Untitled Note</source>
-        <translation type="unfinished">未命名笔记</translation>
+        <translation>未命名笔记</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="476"/>
@@ -615,13 +615,13 @@
         <location filename="../cmdtools/cmdlinetool.cpp" line="544"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="564"/>
         <source>This cannot be done with NixNote running.</source>
-        <translation type="unfinished">无法在NixNote正在运行时完成操作。</translation>
+        <translation>无法在NixNote正在运行时完成该操作。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="554"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="574"/>
         <source>Notebook not found: </source>
-        <translation type="unfinished"></translation>
+        <translation>未找到笔记本：</translation>
     </message>
 </context>
 <context>
@@ -693,17 +693,17 @@
         <location filename="../communication/communicationmanager.cpp" line="1157"/>
         <location filename="../communication/communicationmanager.cpp" line="1159"/>
         <source>API rate limit exceeded.  Please try again in </source>
-        <translation type="unfinished">API比例超出限制。请在以下时间内重试：</translation>
+        <translation>API 调用频率超出限制。请在以下时间后重试：</translation>
     </message>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1157"/>
         <source> minutes.</source>
-        <translation type="unfinished"> 分钟。</translation>
+        <translation> 分钟。</translation>
     </message>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1159"/>
         <source> minute.</source>
-        <translation type="unfinished"> 分钟。</translation>
+        <translation> 分钟。</translation>
     </message>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1163"/>
@@ -737,7 +737,7 @@
         <location filename="../dialog/databasestatus.cpp" line="49"/>
         <source>Total Resources:</source>
         <translatorcomment>What is the &quot;resources&quot; really mean?</translatorcomment>
-        <translation type="unfinished">总资源数：</translation>
+        <translation>总资源数：</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="51"/>
@@ -747,12 +747,12 @@
     <message>
         <location filename="../dialog/databasestatus.cpp" line="53"/>
         <source>Unindexed Resources:</source>
-        <translation type="unfinished">未索引资源：</translation>
+        <translation>未索引资源：</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="55"/>
         <source>Thumbnails Needed:</source>
-        <translation type="unfinished">缩略图数：</translation>
+        <translation>所需缩略图数：</translation>
     </message>
     <message>
         <location filename="../dialog/databasestatus.cpp" line="60"/>
@@ -791,17 +791,17 @@
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="38"/>
         <source>Disable image search highlighting.</source>
-        <translation type="unfinished">禁用图像搜索高亮。</translation>
+        <translation>禁用图像搜索高亮。</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="35"/>
         <source>Strict note checking.</source>
-        <translation type="unfinished">精确的笔记检查。</translation>
+        <translation>严格的笔记检查。</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="37"/>
         <source>Disable uploads to server.</source>
-        <translation type="unfinished">禁用上传到服务器。</translation>
+        <translation>禁用上传到服务器。</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="39"/>
@@ -811,7 +811,7 @@
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="40"/>
         <source>Disable Tag Sorting (useful for non-ASCII sort bug).</source>
-        <translation type="unfinished">禁用标签排序(对非ASCII字符排序bug有效)。</translation>
+        <translation>禁用标签排序（对解决非 ASCII 字符排序问题有帮助）。</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="54"/>
@@ -1107,7 +1107,7 @@
     <message>
         <location filename="../dialog/emaildialog.cpp" line="77"/>
         <source>CC me on this email</source>
-        <translation type="unfinished">抄送给自己</translation>
+        <translation>抄送给自己</translation>
     </message>
 </context>
 <context>
@@ -1116,7 +1116,7 @@
         <location filename="../cmdtools/emailnote.cpp" line="261"/>
         <source>SMTP Server has not been setup.
 Please specify server settings in the Preferences menu.</source>
-        <translation type="unfinished">SMTP服务器未配置。
+        <translation>SMTP服务器未配置。
 请在选项菜单里指定服务器。</translation>
     </message>
     <message>
@@ -1127,7 +1127,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../cmdtools/emailnote.cpp" line="333"/>
         <source>Login Error : Unable to login.</source>
-        <translation type="unfinished">登录错误：无法登录。</translation>
+        <translation>登录错误：无法登录。</translation>
     </message>
     <message>
         <location filename="../cmdtools/emailnote.cpp" line="338"/>
@@ -1137,7 +1137,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../cmdtools/emailnote.cpp" line="344"/>
         <source>Message Sent</source>
-        <translation type="unfinished">消息已发送</translation>
+        <translation>信息已发送</translation>
     </message>
 </context>
 <context>
@@ -1356,7 +1356,7 @@ Please specify server settings in the Preferences menu.</source>
         <location filename="../cmdtools/extractnotes.cpp" line="41"/>
         <location filename="../cmdtools/extractnotes.cpp" line="82"/>
         <source>Output file not specified.</source>
-        <translation type="unfinished">未指定输出文件。</translation>
+        <translation>未指定输出文件。</translation>
     </message>
     <message>
         <location filename="../cmdtools/extractnotes.cpp" line="64"/>
@@ -1366,7 +1366,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../cmdtools/extractnotes.cpp" line="65"/>
         <source>Type DELETE to very: </source>
-        <translation type="unfinished">输入DELETE以确认：</translation>
+        <translation>输入 DELETE 以确认：</translation>
     </message>
 </context>
 <context>
@@ -1524,12 +1524,12 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../cmdtools/importnotes.cpp" line="19"/>
         <source>Input file not specified.</source>
-        <translation type="unfinished">未指定输入文件。</translation>
+        <translation>未指定输入文件。</translation>
     </message>
     <message>
         <location filename="../cmdtools/importnotes.cpp" line="24"/>
         <source>Input file not found.</source>
-        <translation type="unfinished">未找到输入文件。</translation>
+        <translation>未找到输入文件。</translation>
     </message>
 </context>
 <context>
@@ -2053,7 +2053,7 @@ and I&apos;m too lazy to figure them out by myself.</source>
     <message>
         <location filename="../gui/nbrowserwindow.cpp" line="2152"/>
         <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
-        <translation>无法创建LaTeX图像。请确定mimetex已安装。</translation>
+        <translation>无法创建 LaTeX 图像。您是否安装了 mimetex？</translation>
     </message>
     <message>
         <location filename="../gui/nbrowserwindow.cpp" line="2477"/>
@@ -2363,7 +2363,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="289"/>
         <source>&amp;Presentation Mode</source>
-        <translation type="unfinished">演示模式(&amp;P)</translation>
+        <translation>演示模式(&amp;P)</translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="293"/>
@@ -2831,7 +2831,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../gui/ntableview.cpp" line="269"/>
         <source>Create Table of Contents</source>
-        <translation type="unfinished">创建目录</translation>
+        <translation>创建目录</translation>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="275"/>
@@ -2918,14 +2918,14 @@ Using this in a note link can cause problems unless you synchronize it first.</s
     <message>
         <location filename="../gui/ntableview.cpp" line="1309"/>
         <source>Table of Contents</source>
-        <translation type="unfinished">目录</translation>
+        <translation>目录</translation>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="1360"/>
         <source>One or more notes are unsynchronized.
 This can cause issues if they are later synchronized.
 Do you wish to continue?</source>
-        <translation type="unfinished">一个或多个笔记未完成同步。
+        <translation>一个或多个笔记未完成同步。
 如果之后再进行同步，可以会导致一些问题。
 确定要继续吗？</translation>
     </message>
@@ -3422,12 +3422,12 @@ Until tidy is installed you cannot save any notes.</source>
     <message>
         <location filename="../nixnote.cpp" line="307"/>
         <source>Email the current note</source>
-        <translation type="unfinished">发送当前笔记</translation>
+        <translation>电子邮件发送当前笔记</translation>
     </message>
     <message>
         <location filename="../nixnote.cpp" line="512"/>
         <source>Quick Note</source>
-        <translation type="unfinished">快速笔记</translation>
+        <translation>快速笔记</translation>
     </message>
     <message>
         <location filename="../nixnote.cpp" line="522"/>
@@ -4037,7 +4037,7 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../dialog/savedsearchproperties.cpp" line="106"/>
         <source>Add Saved Search</source>
-        <translation type="unfinished">添加保存搜索项</translation>
+        <translation>添加已保存的搜索项</translation>
     </message>
 </context>
 <context>
@@ -4060,7 +4060,7 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../dialog/preferences/searchpreferences.cpp" line="52"/>
         <source>Clear Search Text on Notebook Changes</source>
-        <translation type="unfinished">笔记本改变时清除搜索文字</translation>
+        <translation>笔记本改变时清除搜索文字</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/searchpreferences.cpp" line="56"/>
@@ -4070,12 +4070,12 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../dialog/preferences/searchpreferences.cpp" line="60"/>
         <source>Index PDFs locally</source>
-        <translation type="unfinished">在本地索引PDF</translation>
+        <translation>在本地索引 PDF</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/searchpreferences.cpp" line="64"/>
         <source>Experimental: Force search to lower case</source>
-        <translation type="unfinished"></translation>
+        <translation>实验特性：强制使用小写字母搜索</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/searchpreferences.cpp" line="69"/>
@@ -4289,7 +4289,7 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../dialog/tabledialog.cpp" line="34"/>
         <source>Percent</source>
-        <translation type="unfinished">百分比</translation>
+        <translation>百分比</translation>
     </message>
     <message>
         <location filename="../dialog/tabledialog.cpp" line="35"/>
