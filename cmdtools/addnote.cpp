@@ -34,6 +34,7 @@ AddNote::AddNote(QObject *parent) :
     created = QDateTime::currentDateTime().toString("yyyy-MM-ddTHH:mm:ss.zzzZ");
     updated = QDateTime::currentDateTime().toString("yyyy-MM-ddTHH:mm:ss.zzzZ");
     attachmentDelimiter = "%%";
+    lid = 0;
 }
 
 
@@ -68,6 +69,8 @@ void AddNote::write(QString uuid) {
     writer->writeAttribute("applicationVersion", "2.x");
     writer->writeStartElement("NoteAdd");
 
+
+    writer->writeTextElement("Lid", QString::number(lid));
     writer->writeTextElement("Title", title);
 
     writer->writeStartElement("Content");

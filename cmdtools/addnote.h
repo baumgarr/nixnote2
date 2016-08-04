@@ -33,6 +33,7 @@ class AddNote : public QObject
     Q_OBJECT
 public:
     explicit AddNote(QObject *parent = 0);
+    qint32 lid;
     QString title;
     QString created;
     QString updated;

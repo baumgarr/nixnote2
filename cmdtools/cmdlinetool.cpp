@@ -87,6 +87,10 @@ int CmdLineTool::run(StartupConfig &config) {
         return addNote(config);
     }
 
+    if (config.appendNote()) {
+        return appendNote(config);
+    }
+
     if (config.query()) {
         return queryNotes(config);
     }
@@ -433,6 +437,159 @@ int CmdLineTool::addNote(StartupConfig config) {
     return 0;
 }
 
+
+
+// Append text to a note via the command line.
+int CmdLineTool::appendNote(StartupConfig config) {
+
+#ifdef Q_OS_WIN32
+    _setmode(_fileno(stdin), _O_BINARY);
+#endif
+
+    // If we are reding stdin
+    if (config.newNote->content == "")  {
+        QByteArray content;
+
+        while(!std::cin.eof()) {
+            char arr[1024];
+            std::cin.read(arr,sizeof(arr));
+            int s = std::cin.gcount();
+            content.append(arr,s);
+            content.append("<br>");
+            content.replace("\n","<br>");
+        }
+        config.newNote->content = QString::fromAscii(content);
+    }
+
+    if (!config.newNote->content.contains("<body")) {
+        config.newNote->content.prepend("<body>");
+    }
+    if (!config.newNote->content.contains("</body")) {
+        config.newNote->content.append("</body>");
+    }
+
+
+    EnmlFormatter formatter;
+    formatter.setHtml(config.newNote->content);
+    config.newNote->content = formatter.rebuildNoteEnml();
+
+    bool expectResponse = true;
+
+    // Look to see if another NixNote is running.  If so, then we
+    // expect a response of the LID created.  First we detach it so
+    // we are not talking to ourselves.
+    global.sharedMemory->unlock();
+    global.sharedMemory->detach();
+    if (!global.sharedMemory->attach()) {
+        expectResponse = false;
+    } else {
+        global.sharedMemory->detach();
+    }
+    if (expectResponse) {
+        NUuid uuid;
+        QString id = uuid.create();
+
+        // Setup cross memory for response
+        CrossMemoryMapper crossMemory(id);
+        if (!crossMemory.allocate(512))
+            expectResponse = false;
+
+        // Write out the segment
+        config.newNote->write(id);
+        // Start checking for the response
+        int cnt = 0;
+        qint32 newLid = -1;
+        int maxWait = 5;
+        while (expectResponse && cnt<maxWait) {
+            QByteArray data = crossMemory.read();
+            if (!data.startsWith('\0')) {
+                expectResponse = false;
+                newLid = data.toInt();
+            } else {
+                sleep(1);
+            }
+            cnt++;
+        }
+        if (newLid == -1) {
+            std::cout << newLid << QString(tr(" was not found.")).toStdString();
+        } else {
+            if (newLid > 0) {
+                std::cout << newLid << QString(tr(" has been appended.\n")).toStdString();
+                return newLid;
+            } else {
+                std::cout << QString(tr("No response from NixNote.  Please verify that the note was appended.\n")).toStdString();
+            }
+        }
+    } else {
+       // Another NN isn't found, so we do this ourself
+        global.db = new DatabaseConnection("nixnote");  // Startup the database
+        Note newNote;
+
+        // Fetch the existing note
+        NoteTable noteTable(global.db);
+        if (!noteTable.get(newNote, config.newNote->lid, true, true)) {
+            std::cerr << config.newNote->lid << QString(tr(" was not found.\n")).toStdString();
+            return -1;
+        }
+
+        // Append the text to the existing note
+        newNote.content->replace("</en-note>", "<br/>");
+
+        // Chop off the beginning of the new text to remove the <en-note stuff
+        int startOfNote = config.newNote->content.indexOf("<en-note");
+        config.newNote->content = config.newNote->content.mid(startOfNote+9);
+
+        // Append the two notes
+        newNote.content = newNote.content + config.newNote->content;
+
+        // Do the attachments
+        for (int i=0; i<config.newNote->attachments.size(); i++) {
+            QString filename = config.newNote->attachments[i];
+            QFile file(filename);
+            if (file.exists()) {
+
+                file.open(QIODevice::ReadOnly);
+                QByteArray ba = file.readAll();
+                file.close();
+
+                MimeReference mimeRef;
+                QString extension = filename;
+                int endPos = filename.lastIndexOf(".");
+                if (endPos != -1)
+                    extension = extension.mid(endPos);
+                QString mime =  mimeRef.getMimeFromExtension(extension);
+                Resource newRes;
+                bool attachment = true;
+                if (mime == "application/pdf" || mime.startsWith("image/"))
+                    attachment = false;
+                config.newNote->createResource(newRes, 0, ba, mime, attachment, QFileInfo(filename).fileName(), config.newNote->lid);
+                QByteArray hash;
+                if (newRes.data.isSet()) {
+                    Data d = newRes.data;
+                    if (d.bodyHash.isSet())
+                        hash = d.bodyHash;
+                }
+                if (!newNote.resources.isSet()) {
+                    newNote.resources = QList<Resource>();
+                }
+                QString mediaString = "<en-media hash=\""+hash.toHex()+"\"; type=\""+mime+"\"/>";
+                if (newNote.content->contains(config.newNote->attachmentDelimiter)) {
+                     //newNote.content = newNote.content->replace(config.newNote->attachmentDelimiter,mediaString);
+                     newNote.content = newNote.content->replace(newNote.content->indexOf(config.newNote->attachmentDelimiter),
+                                                         config.newNote->attachmentDelimiter.size(), mediaString);
+                } else {
+                    newNote.content = newNote.content->replace("</en-note>","<br>"+mediaString+"</en-note>");
+                }
+                newNote.resources->append(newRes);
+            }
+        }
+        noteTable.expunge(config.newNote->lid);
+        noteTable.add(config.newNote->lid,newNote,true);
+        std::cout << config.newNote->lid << QString(tr(" has been appended.\n")).toStdString();
+        return config.newNote->lid;
+    }
+    return 0;
+}
 
 
 

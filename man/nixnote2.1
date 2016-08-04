@@ -230,6 +230,20 @@ The location of a file to attach in the note.  For multiple attachments use the 
 The actual text of the note.  If not specified the note will be read from stdin.  Some limited HTML is supported but not all HTML tags are supported by Evernote.
 .RE
 .RE
+.IP "appendNote <options>"
+Append to an existing note.
+.RS 7
+.HP 2 2
+appendNote Options:
+.RS 7
+.IP --id=<note_id>
+The ID of the existing note to append.
+.IP --noteText="<note_text>"
+The text to add to the existing note. If not specified, input is read from stdin.
+.IP --accountId
+The ID of the account to use.  Each account has an ID number assigned to it.  Look under File/Accounts for a list of accounts. If not specified, it defaults to the last used account. 
+.RE
+.RE
 .IP "export <options>"
 .RS 7
 .IP "export options:

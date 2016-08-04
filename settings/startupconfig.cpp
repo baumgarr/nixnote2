@@ -109,6 +109,16 @@ void StartupConfig::printHelp() {
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
+                   +QString("  appendNote <options>                 Append to an existing note.\n")
+                   +QString("     appendNote options:\n")
+                   +QString("          --id=\"<title>\"               ID of note to append.\n")
+                   +QString("          --attachment=\"<file_path>\"   File to attach to the note.\n")
+                   +QString("                                       For multiple files, use multiple --attachment statements.\n")
+                   +QString("          --delimiter=\"<delmiiter>\"    Character string identifying attachment points.\n")
+                   +QString("                                       Defaults to %%.\n")
+                   +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
+                   +QString("                                       is read from stdin.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
                    +QString("  alterNote <options>                  Change a notes't notebook or tags.\n")
                    +QString("     alterNote options:\n")
                    +QString("          --id=\"<note_ids>\"            Space separated list of note IDs to extract.\n")
@@ -168,6 +178,8 @@ void StartupConfig::printHelp() {
                    +QString("     nixnote2 --closeNotebook notebook=\"My Notebook\"\n\n")
                    +QString("     To add a note to the notebook \"My Notebook\"\n")
                    +QString("     nixnote2 addNote --notebook=\"My Stuff\" --title=\"My New Note\" --tag=\"Tag1\" --tag=\"Tag2\" --noteText=\"My Note Text\"\n\n")
+                   +QString("     To append to an existing note.\n")
+                   +QString("     nixnote2 appendNote --id=3 --noteText=\"My Note Text\"\n\n")
                    +QString("     To add a tag to notes in the notebook \"Stuff\".\n")
                    +QString("     nixnote2 alterNote --search=\"notebook:Stuff\" --addTag=\"NewTag\"\n\n")
                    +QString("     Query notes for the search text. Results show the ID, note title (padded to 10 characters but truncated longer) and the notebook\n")
@@ -197,6 +209,11 @@ int StartupConfig::init(int argc, char *argv[]) {
         }
         if (parm.startsWith("addNote")) {
             command->setBit(STARTUP_ADDNOTE,true);
+            if (newNote == NULL)
+                newNote = new AddNote();
+        }
+        if (parm.startsWith("appendNote")) {
+            command->setBit(STARTUP_APPENDNOTE,true);
             if (newNote == NULL)
                 newNote = new AddNote();
         }
@@ -283,6 +300,16 @@ int StartupConfig::init(int argc, char *argv[]) {
             if (parm.startsWith("--updated=", Qt::CaseSensitive)) {
                 parm = parm.mid(10);
                 newNote->updated = parm;
+            }
+            if (parm.startsWith("--noteText=", Qt::CaseSensitive)) {
+                parm = parm.mid(11);
+                newNote->content = parm;
+            }
+        }
+        if (command->at(STARTUP_APPENDNOTE)) {
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                newNote->lid = parm.toInt();
             }
             if (parm.startsWith("--noteText=", Qt::CaseSensitive)) {
                 parm = parm.mid(11);
@@ -491,6 +518,10 @@ bool StartupConfig::sync() {
 
 bool StartupConfig::addNote() {
     return command->at(STARTUP_ADDNOTE);
+}
+
+bool StartupConfig::appendNote() {
+    return command->at(STARTUP_APPENDNOTE);
 }
 
 bool StartupConfig::show() {

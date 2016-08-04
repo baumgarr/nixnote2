@@ -111,6 +111,7 @@ qint32 BatchImport::addNoteNode() {
     Note note;
     note.title = QString(tr("Untitled Note"));
     QUuid uuid;
+    qint32 tempLid = 0;
     QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
     note.guid = newGuid;
     QStringList tagNames;
@@ -128,6 +129,9 @@ qint32 BatchImport::addNoteNode() {
     bool atEnd = false;
     while(!atEnd) {
         QString name = reader->name().toString().toLower();
+        if (name == "lid" && !reader->isEndElement()) {
+            tempLid = intValue();
+        }
         if (name == "title" && !reader->isEndElement()) {
             note.title = textValue();
         }
@@ -193,7 +197,73 @@ qint32 BatchImport::addNoteNode() {
         }
         reader->readNext();
         QString endName = reader->name().toString().toLower();
-        if (endName == "noteadd" && reader->isEndElement()) {
+        if (endName == "noteadd" && reader->isEndElement() && tempLid > 0) {
+//            global.db = new DatabaseConnection("nixnote");  // Startup the database
+            Note newNote;
+
+            // Fetch the existing note
+            NoteTable noteTable(global.db);
+            if (!noteTable.get(newNote, tempLid, true, true)) {
+                return -1;
+            }
+
+
+            // Append the text to the existing note
+            newNote.content->replace("</en-note>", "<br/>");
+
+            // Chop off the beginning of the new text to remove the <en-note stuff
+            int startOfNote = note.content->indexOf("<en-note");
+            note.content = note.content->mid(startOfNote+9);
+
+            // Append the two notes
+            newNote.content = newNote.content + note.content;
+
+            // Start adding the resources
+            qint32 noteLid = tempLid;
+            if (resourceList.size() > 0) {
+                note.resources = QList<Resource>();
+                for (int i=0; i<resourceList.size(); i++) {
+                    QString filename = resourceList[i];
+                    QFile file(filename);
+                    if (file.exists()) {
+                        file.open(QIODevice::ReadOnly);
+                        QByteArray ba = file.readAll();
+                        file.close();
+                        MimeReference mimeRef;
+                        QString extension = filename;
+                        int endPos = filename.lastIndexOf(".");
+                        if (endPos != -1)
+                            extension = extension.mid(endPos);
+                        QString mime =  mimeRef.getMimeFromExtension(extension);
+                        Resource newRes;
+                        bool attachment = true;
+                        if (mime == "application/pdf" || mime.startsWith("image/"))
+                            attachment = false;
+                        AddNote newNote;
+                        newNote.createResource(newRes, 0, ba, mime, attachment, QFileInfo(filename).fileName(), noteLid);
+                        QByteArray hash;
+                        if (newRes.data.isSet()) {
+                            Data d = newRes.data;
+                            if (d.bodyHash.isSet())
+                                hash = d.bodyHash;
+                        }
+                        QString mediaString = "<en-media hash=\""+hash.toHex()+"\"; type=\""+mime+"\"/>";
+                        if (note.content->contains(resourceDelimiter)) {
+                            note.content = note.content->replace(note.content->indexOf(resourceDelimiter),
+                                                                resourceDelimiter.size(), mediaString);
+                        } else {
+                            note.content = note.content->replace("</en-note>","<br>"+mediaString+"</en-note>");
+                        }
+                        note.resources->append(newRes);
+                    }
+                }
+            }
+
+            noteTable.updateNoteContent(tempLid, newNote.content, true);
+            noteTable.add(tempLid,newNote,true);
+            return tempLid;
+        }
+        if (endName == "noteadd" && reader->isEndElement() && tempLid == 0) {
             atEnd = true;
             note.tagGuids = tagGuids;
             note.tagNames = tagNames;

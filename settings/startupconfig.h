@@ -50,7 +50,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define STARTUP_READNOTE 12
 #define STARTUP_CLOSENOTEBOOK 13
 #define STARTUP_OPENNOTEBOOK 14
-#define STARTUP_OPTION_COUNT 15
+#define STARTUP_APPENDNOTE 15
+#define STARTUP_OPTION_COUNT 16
 
 class StartupConfig
 {
@@ -86,6 +87,7 @@ public:
     bool gui();
     bool sync();
     bool addNote();
+    bool appendNote();
     bool show();
     bool shutdown();
     bool query();
