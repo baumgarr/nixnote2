@@ -3601,7 +3601,7 @@ void NixNote::loadPlugins() {
     webcamPluginAvailable = false;
 
     // Start loading plugins
-    QDir pluginsDir(qApp->applicationDirPath());
+    QDir pluginsDir(global.fileManager.getProgramDirPath(""));
     pluginsDir.cd("plugins");
     QStringList filter;
     filter.append("libwebcamplugin.so");
