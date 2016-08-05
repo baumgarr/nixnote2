@@ -209,6 +209,7 @@ public:
 
 public slots:
     void closeNixNote();
+    void closeShortcut();
     void synchronize();
     void syncTimerExpired();
     void disconnect();

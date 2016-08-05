@@ -1070,9 +1070,22 @@ void NixNote::setupTabWindow() {
 //*****************************************************************************
 void NixNote::closeNixNote() {
     closeFlag = true;
+    closeToTray = false;
     close();
 }
 
+
+//*****************************************************************************
+//* Close nixnote via the shortcut. If we have it set to close to the tray,
+//* we just hide things.
+//*****************************************************************************
+void NixNote::closeShortcut() {
+    if (closeToTray && isVisible())
+        toggleVisible();
+    else
+        closeNixNote();
+
+}
 
 
 //*****************************************************************************
@@ -2614,8 +2627,8 @@ void NixNote::fastPrintNote() {
 //* the tray.
 //************************************************************
 void NixNote::toggleVisible() {
-    if (minimizeToTray) {
-        if (isMinimized()) {
+    if (minimizeToTray || closeToTray) {
+        if (isMinimized() || !isVisible()) {
             setHidden(false);
             this->showNormal();
 	    this->activateWindow();
@@ -2712,7 +2725,7 @@ bool NixNote::event(QEvent *event) {
     }
 
     if (event->type() == QEvent::Close) {
-        if (global.closeToTray() && isVisible())  {
+        if (closeToTray && isVisible())  {
             QLOG_DEBUG() << "overriding close event";
             this->toggleVisible();
             event->ignore();

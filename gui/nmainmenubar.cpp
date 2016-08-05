@@ -151,7 +151,7 @@ void NMainMenuBar::setupFileMenu() {
 
     exitAction = new QAction(tr("E&xit"), this);
     exitAction->setToolTip(tr("Close the program"));
-    connect(exitAction, SIGNAL(triggered()), parent, SLOT(closeNixNote()));
+    connect(exitAction, SIGNAL(triggered()), parent, SLOT(closeShortcut()));
     exitAction->setShortcut(QKeySequence::Close);
     exitAction->setIcon(QIcon::fromTheme("exit"));
     setupShortcut(exitAction, QString("File_Exit"));
