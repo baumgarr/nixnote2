@@ -368,6 +368,7 @@ void EnmlFormatter::processTodo(QWebElement &node) {
 
 void EnmlFormatter::fixSpanNode(QWebElement &e) {
     e.removeAttribute("id");
+    e.removeAttribute("class");
 }
 
 
@@ -458,6 +459,7 @@ void EnmlFormatter::fixLinkNode(QWebElement e) {
         e.removeAttribute("style");
         e.removeAttribute("href");
         e.removeAttribute("title");
+        e.removeAttribute("data-saferedirecturl");
         removeInvalidAttributes(e);
         e.removeAllChildren();
         QString newXml = e.toOuterXml();
