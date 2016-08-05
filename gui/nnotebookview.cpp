@@ -113,7 +113,7 @@ NNotebookView::NNotebookView(QWidget *parent) :
     if (stacks.size() > 0) {
         stackMenu->addSeparator();
     }
-    newStackAction = stackMenu->addAction(tr("New stack"));
+    newStackAction = stackMenu->addAction(tr("Create New stack"));
     connect(newStackAction, SIGNAL(triggered()), this, SLOT(moveToNewStackRequested()));
 
     removeFromStackAction = context.addAction(tr("Remove from stack"));
@@ -653,6 +653,10 @@ void NNotebookView::deleteRequested() {
     emit(notebookDeleted(lid, items[0]->data(NAME_POSITION, Qt::UserRole).toString()));
 }
 
+
+//*********************************************************
+//* A rename of the notebook / stack was requested.
+//*********************************************************
 void NNotebookView::renameRequested() {
     editor = new TreeWidgetEditor(this);
     connect(editor, SIGNAL(editComplete()), this, SLOT(editComplete()));
@@ -688,9 +692,9 @@ void NNotebookView::editComplete() {
             oldName = notebook.name;
 
         // Check that this notebook doesn't already exist
-        // if it exists, we go back to the original name
+        // if it exists or the length == 0, we go back to the original name
         qint32 check = table.findByName(text);
-        if (check != 0) {
+        if (check != 0 || text.trimmed() == "") {
             NNotebookViewItem *item = dataStore[lid];
             item->setData(NAME_POSITION, Qt::DisplayRole, oldName);
         } else {
@@ -706,11 +710,20 @@ void NNotebookView::editComplete() {
     } else {
         // This is if we are renaming a stack
         QString oldName = editor->stackName;
+        NNotebookViewItem *item = stackStore[oldName];
+
+        // If this is null, then we are on our second time here.
+        if (item == NULL)
+            return;
+
+        if (text.trimmed() == "" || stackStore[text.trimmed()] != NULL) {
+            item->setData(NAME_POSITION, Qt::DisplayRole, oldName);
+            return;
+        }
         NotebookTable table(global.db);
         table.renameStack(oldName, text);
 
         // Rename it in the stackStore
-        NNotebookViewItem *item = stackStore[oldName];
         stackStore.remove(oldName);
         stackStore.insert(text, item);
 
