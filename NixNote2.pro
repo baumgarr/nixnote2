@@ -457,7 +457,4 @@ qss.files = qss/*
 help.path = /usr/share/nixnote2/help
 help.files = help/*
 
-certs.path = /usr/share/nixnote2/certs
-certs.files = certs/*
-
-INSTALLS = binary desktop images java translations qss help certs
+INSTALLS = binary desktop images java translations qss help
