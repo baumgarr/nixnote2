@@ -65,9 +65,9 @@ strip --strip-all $source_dir/plugins/libwebcamplugin.so -o $package_dir/nixnote
 #strip --strip-all $source_dir/plugins/libwebcamplugin.so -o $package_dir/nixnote2/usr/lib/libnixnotewebcamplugin.so.1.0
 #ln -s /usr/lib/libnixnotewebcamplugin.so.1.0 ./nixnote2/usr/share/nixnote2/plugins/libwebcamplugin.so
 #ln -s /usr/lib/libnixnotewebcamplugin.so.1.0 ./nixnote2/usr/share/nixnote2/plugins/libwebcamplugin.so
-#gzip -c -9 $source_dir/man/nixnote2.1 > $package_dir/nixnote2/usr/share/man/man1/nixnote2.1.gz
+#gzip -c -n -9 $source_dir/man/nixnote2.1 > $package_dir/nixnote2/usr/share/man/man1/nixnote2.1.gz
 cp $source_dir/changelog.txt $package_dir/nixnote2/usr/share/doc/nixnote2-webcam-plugin/changelog.Debian
-gzip -c -9 $package_dir/nixnote2/usr/share/doc/nixnote2-webcam-plugin/changelog.Debian > $package_dir/nixnote2/usr/share/doc/nixnote2-webcam-plugin/changelog.Debian.gz
+gzip -c -n -9 $package_dir/nixnote2/usr/share/doc/nixnote2-webcam-plugin/changelog.Debian > $package_dir/nixnote2/usr/share/doc/nixnote2-webcam-plugin/changelog.Debian.gz
 rm $package_dir/nixnote2/usr/share/doc/nixnote2-webcam-plugin/changelog.Debian
  
 
