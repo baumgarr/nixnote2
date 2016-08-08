@@ -1,6 +1,6 @@
 #!/bin/sh
 
-version="2.0-beta8"
+version="2.0-beta9"
 
 
 package_dir=$(cd `dirname $0` && pwd)
