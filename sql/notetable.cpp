@@ -2125,6 +2125,10 @@ void NoteTable::setThumbnail(qint32 lid, QString filename) {
     query.bindValue(":thumbnail", filename);
     query.bindValue(":lid", lid);
     query.exec();
+    query.prepare("Delete from datastore where lid=:lid and key=:key");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
+    query.exec();
     query.finish();
     db->unlock();
 }
