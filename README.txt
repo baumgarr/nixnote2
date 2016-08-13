@@ -9,15 +9,11 @@ See release.txt for details of what works and what doesn't work.
 
 Documents:
 
-release.txt:    Includes new features, known bugs and limitations.
-
 changelog.txt:  ChangeLog and development history
 install.txt:    Build and install instructions
-credit.txt:     Credit of nixnote developers
 gpl.txt:        License description of GPL v2.
 license.txt:    Legal notices for licenses and trademarks
 
 theme.ini: A file containing theme configuration options.
 shortcut_howto.txt: How-to document to setup shortcut keys.
-shortcut_sample.txt: Its configuration sample
 colors.txt: A sample coniguration file to customize note bockground color options.
