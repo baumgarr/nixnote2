@@ -2792,7 +2792,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../gui/ntableview.cpp" line="248"/>
         <source>Duplicate Note</source>
-        <translatio>復制記事</translation>
+        <translation>復制記事</translation>
     </message>
     <message>
         <location filename="../gui/ntableview.cpp" line="253"/>
