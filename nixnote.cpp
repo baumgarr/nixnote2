@@ -161,7 +161,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
     hammer = new Thumbnailer(global.db);
-    hammer->startTimer(2,120);
+    hammer->startTimer();
     finalSync = false;
 
 

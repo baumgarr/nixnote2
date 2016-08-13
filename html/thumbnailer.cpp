@@ -36,8 +36,6 @@ Thumbnailer::Thumbnailer(DatabaseConnection *db)
     connect(page, SIGNAL(loadFinished(bool)), this, SLOT(pageReady(bool)));
     idle = true;
     connect(&timer, SIGNAL(timeout()), this, SLOT(generateNextThumbnail()));
-    minTime = 5;
-    maxTime = 60;
 }
 
 Thumbnailer::~Thumbnailer() {
@@ -60,11 +58,9 @@ void Thumbnailer::render(qint32 lid) {
 
 
 
-void Thumbnailer::startTimer(int minSeconds, int maxSeconds) {
+void Thumbnailer::startTimer() {
     timer.stop();
-    minTime = minSeconds*1000;
-    maxTime = maxSeconds*1000;
-    timer.start(minTime);
+    timer.start(global.minimumThumbnailInterval*1000);
 }
 
 
@@ -76,7 +72,6 @@ void Thumbnailer::pageReady(bool ok) {
     NoteTable ntable(db);
     ntable.setThumbnailNeeded(lid, false);
     idle = true;
-
 }
 
 
@@ -98,19 +93,39 @@ void Thumbnailer::capturePage(QWebPage *page) {
 
 
 void Thumbnailer::generateNextThumbnail() {
-    // If we are connected we are downloading or uploading, so
+    // If we are connected we are downloading or uploading or
+    // if we have thumbnails disabled, so
     // we don't want to do this now.
-    if (global.connected) {
-        timer.start(maxTime);
+    if (global.connected || global.disableThumbnails) {
+        timer.start(global.maximumThumbnailInterval*1000);
         return;
     }
 
     timer.stop();
     NoteTable noteTable(db);
-    qint32 lid = noteTable.getNextThumbnailNeeded();
-    if (lid>0) {
-        render(lid);
-        timer.start(minTime);
-    } else
-        timer.start(maxTime);
+    int i=0;
+    for (; i<global.batchThumbnailCount; i++) {
+        QDateTime current;
+        QDateTime deadlineTime;
+        deadlineTime.addSecs(20);
+
+        // Make sure we haven't been looping too long.
+        if (current > deadlineTime) {
+            QLOG_DEBUG() << "Thumbnail timer exceeded. Going to seep";
+            timer.start(global.maximumThumbnailInterval*1000);
+            return;
+        }
+
+        if (this->idle) {
+            i++;
+            qint32 lid = noteTable.getNextThumbnailNeeded();
+            if (lid>0) {
+                render(lid);
+            } else {
+                timer.start(global.maximumThumbnailInterval*1000);
+                return;
+            }
+        }
+    }
+    timer.start(global.minimumThumbnailInterval*1000);
 }

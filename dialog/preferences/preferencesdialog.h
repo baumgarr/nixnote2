@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/preferences/searchpreferences.h"
 #include "dialog/preferences/localepreferences.h"
 #include "dialog/preferences/emailpreferences.h"
+#include "dialog/preferences/thumbnailpreferences.h"
 
 class PreferencesDialog : public QDialog
 {
@@ -48,11 +49,14 @@ private:
     void setupLocalePanel();
     void setupSearchPanel();
     void setupEmailPanel();
+    void setupThumbnailPanel();
+
     DebugPreferences *debugPanel;
     EmailPreferences *emailPanel;
     SyncPreferences *syncPanel;
     SearchPreferences *searchPanel;
     LocalePreferences *localePanel;
+    ThumbnailPreferences *thumbnailPanel;
     AppearancePreferences *appearancePanel;
     QPushButton *okButton;
     QPushButton *cancelButton;

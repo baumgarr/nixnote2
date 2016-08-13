@@ -54,7 +54,7 @@ public:
     qint32 lid;
     bool idle;
     void capturePage(QWebPage *page);
-    void startTimer(int minSeconds, int maxSeconds);
+    void startTimer();
 
 
 signals:

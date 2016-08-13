@@ -178,6 +178,14 @@ void Global::setup(StartupConfig startupConfig) {
     forceSearchLowerCase=getForceSearchLowerCase();
     strictDTD = getStrictDTD();
 
+
+    settings->beginGroup("Thumbnail");
+    minimumThumbnailInterval = settings->value("minTime", 5).toInt();
+    maximumThumbnailInterval = settings->value("maxTime", 60).toInt();
+    batchThumbnailCount = settings->value("count", 1).toInt();
+    disableThumbnails = settings->value("disabled", false).toBool();
+    settings->endGroup();
+
     // reset username
     full_username = "";
 

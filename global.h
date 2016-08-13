@@ -265,6 +265,11 @@ public:
     bool getForceSearchLowerCase();                            // Get value to force seach db in lower case from settings
     void setForceSearchLowerCase(bool value);                  // save forceSearchLowerCase
     IndexRunner *indexRunner;                                    // Pointer to index thread
+
+    int minimumThumbnailInterval;                               // Minimum time to scan for thumbnails
+    int maximumThumbnailInterval;                               // Maximum time to scan for thumbnails
+    bool disableThumbnails;                                     // Disable thumbnail generation
+    int batchThumbnailCount;                                    // Maximum number of thumbails to generate per batch
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

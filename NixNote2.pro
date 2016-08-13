@@ -230,7 +230,8 @@ SOURCES += main.cpp\
     cmdtools/extractnotetext.cpp \
     cmdtools/extractnotes.cpp \
     cmdtools/alternote.cpp \
-    cmdtools/importnotes.cpp
+    cmdtools/importnotes.cpp \
+    dialog/preferences/thumbnailpreferences.cpp
 
 
 
@@ -427,7 +428,8 @@ HEADERS  += nixnote.h \
     cmdtools/extractnotes.h \
     cmdtools/alternote.h \
     cmdtools/importnotes.h \
-    plugins/webcaminterface.h
+    plugins/webcaminterface.h \
+    dialog/preferences/thumbnailpreferences.h
 
 
 
