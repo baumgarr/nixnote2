@@ -38,7 +38,7 @@ File_Note_Add              // Remove that shortcut
 If you want to change a shortcut, then put the shortcut sequece.  For example, 
 this line would change the note add shortcut to Ctrl+W
 
-File_Note_Add    Ctrl+W    // Odd shortcut
+File_Note_Add    Ctrl+W    // Add shortcut
 
 If you choose a shortcut key sequence that already exists in the it will 
 remove that default shortcut and assign it to your custom shortcut.  If
