@@ -37,7 +37,7 @@ Thumbnailer::Thumbnailer(DatabaseConnection *db)
     idle = true;
     connect(&timer, SIGNAL(timeout()), this, SLOT(generateNextThumbnail()));
     minTime = 5;
-    maxTime = 20;
+    maxTime = 60;
 }
 
 Thumbnailer::~Thumbnailer() {
@@ -100,8 +100,10 @@ void Thumbnailer::capturePage(QWebPage *page) {
 void Thumbnailer::generateNextThumbnail() {
     // If we are connected we are downloading or uploading, so
     // we don't want to do this now.
-    if (global.connected)
+    if (global.connected) {
+        timer.start(maxTime);
         return;
+    }
 
     timer.stop();
     NoteTable noteTable(db);

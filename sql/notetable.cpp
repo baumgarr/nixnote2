@@ -171,6 +171,11 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     query.bindValue(":data", true);
     query.exec();
 
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_THUMBNAIL_NEEDED);
+    query.bindValue(":data", true);
+    query.exec();
+
     if (t.title.isSet()) {
         query.bindValue(":lid", lid);
         QString title = t.title;
@@ -1620,6 +1625,14 @@ qint32 NoteTable::getAllDeleted(QList<qint32> &lids) {
 
 
 void NoteTable::expunge(qint32 lid) {
+    // Expunge the thumbnail
+    QString thumbnail = global.fileManager.getThumbnailDirPath() + QString::number(lid) + ".png";
+    QFile f(thumbnail);
+    if (f.exists()) {
+        QDir d;
+        d.remove(thumbnail);
+    }
+
     Note note;
     this->get(note, lid, true, false);
     ResourceTable resTable(db);
@@ -1779,10 +1792,15 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":key", NOTE_CONTENT);
     query.exec();
 
-    query.prepare("update datastore set data=:content where lid=:lid and key=:key");
-    query.bindValue(":content", content.length());
+    // Update the note size
+    query.prepare("Delete from datastore where lid=:lid and key=:key");
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_CONTENT_LENGTH);
+    query.exec();
+    query.prepare("Insert into datastore (lid, key, data) values (:lid, :key, :content)");
+    query.bindValue(":lid", lid);
+    query.bindValue(":key", NOTE_CONTENT_LENGTH);
+    query.bindValue(":content", content.length());
     query.exec();
 
     // Make sure we don't have a todo
