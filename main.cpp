@@ -100,6 +100,27 @@ int main(int argc, char *argv[])
     startupConfig.name = "NixNote";
     global.setup(startupConfig);
 
+    if (startupConfig.sqlExec) {
+        DatabaseConnection *db = new DatabaseConnection("nixnote");  // Startup the database
+        QSqlQuery query(db->conn);
+        if (!query.exec(startupConfig.sqlString)) {
+            QLOG_FATAL() << query.lastError();
+            delete db;
+            exit(16);
+        }
+        while (query.next()) {
+            QString result = "";
+            for (int i=0; i<query.record().count(); i++) {
+                result = result + query.value(i).toString() + " | ";
+            }
+            QLOG_INFO() << result;
+        }
+        delete db;
+        QLOG_INFO() << "Ok" << endl;
+        exit(0);
+    }
+
+
 
     // If we want something other than the GUI, try let the CmdLineTool deal with it.
     if (!startupConfig.gui()) {

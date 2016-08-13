@@ -69,6 +69,7 @@ public:
     bool forceNoStartMinimized;
     bool startupNewNote;
     bool syncAndExit;
+    bool sqlExec;
     int accountId;
     qint32 startupNoteLid;
     bool forceStartMinimized;
@@ -100,6 +101,7 @@ public:
     bool openNotebook();
     bool closeNotebook();
     bool import();
+    QString sqlString;
     void setSyncAndExit();
     QStringList notebookList;
 

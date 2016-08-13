@@ -31,6 +31,8 @@ StartupConfig::StartupConfig()
     this->forceNoStartMinimized = false;
     this->syncAndExit = false;
     this->startupNewNote = false;
+    this->sqlExec = false;
+    this->sqlString = "";
     this->forceStartMinimized = false;
     this->enableIndexing = false;
     this->startupNoteLid = 0;
@@ -199,6 +201,16 @@ int StartupConfig::init(int argc, char *argv[]) {
 
     for (int i=1; i<argc; i++) {
         QString parm(argv[i]);
+        if (parm == "sqlExec", Qt::CaseSensitive) {
+            sqlExec = true;
+            if (i+1 >= argc) {
+                std::cout << "Invalid SQL parameters" << std::endl;
+                exit(16);
+            }
+            this->sqlExec=true;
+            sqlString = QString(argv[i+1]);
+            return 0;
+        }
         if (parm == "--help" || parm == "-?" || parm == "help" || parm == "--?") {
             printHelp();
             return 1;
