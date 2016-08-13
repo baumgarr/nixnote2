@@ -65,6 +65,7 @@ PreferencesDialog::PreferencesDialog(QWidget *parent) :
     buttonLayout->setStretch(3,100);
 
     mainLayout->addLayout(buttonLayout);
+    this->resize(this->size().width()*1.2, this->size().height()*1.2);
 
     connect(appearancePanel->showTrayIcon, SIGNAL(clicked(bool)),
             syncPanel->enableSyncNotifications, SLOT(setEnabled(bool)));
