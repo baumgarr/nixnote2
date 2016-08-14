@@ -3,7 +3,7 @@ NixNote (2.0-beta-9) stable; urgency=low
     command line.
   * Added the ability to disable or customize thumnail intervals.
   * Bug fixes.
- -- Randy Baumgarte <randy@fbn.cx>  Sun, 7 Aug 2016 12:00:00 -0400
+ -- Randy Baumgarte <randy@fbn.cx>  Sun, 14 Aug 2016 12:00:00 -0400
 
 
 NixNote (2.0-beta-8) stable; urgency=low
