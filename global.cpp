@@ -162,6 +162,10 @@ void Global::setup(StartupConfig startupConfig) {
             defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0)
             );
     }
+    if (defaultFont != "" && defaultFontSize <= 0) {
+        QWebSettings *settings = QWebSettings::globalSettings();
+        settings->setFontFamily(QWebSettings::StandardFont, defaultFont);
+    }
 
     settings->beginGroup("Appearance");
     QString theme = settings->value("themeName", "").toString();
