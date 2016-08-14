@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "nnotebookviewitem.h"
 #include "nnotebookview.h"
 #include "global.h"
+#include <QToolTip>
 
 extern Global global;
 
@@ -35,8 +36,6 @@ NNotebookViewDelegate::NNotebookViewDelegate(QObject *parent) :
 void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
     QStyleOptionViewItemV4 options = option;
     initStyleOption(&options, index);
-
-
 
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);
 
@@ -81,7 +80,6 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
     painter->setFont(f);
     painter->setPen(Qt::darkGray);
     painter->drawText(10+fm.width(index.data().toString()+QString(" ")),fm.ascent(),countString);
-//    painter->drawText(6+fm.width(index.data().toString()+QString("   ")),fm.ascent(),countString);
 
     painter->restore();
 }
@@ -89,6 +87,7 @@ void NNotebookViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem 
 
 
 QSize NNotebookViewDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
+
 //    int theWidth=-1;
 
 //    // handle other types of view here if needed
@@ -103,4 +102,28 @@ QSize NNotebookViewDelegate::sizeHint(const QStyleOptionViewItem &option, const 
 //        sz.setWidth(theWidth);
 
     return sz;
+}
+
+
+bool NNotebookViewDelegate::helpEvent(QHelpEvent *e, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index) {
+    if ( !e || !view )
+        return false;
+
+    if ( e->type() == QEvent::ToolTip ) {
+        QRect rect = view->visualRect( index );
+        QSize size = sizeHint( option, index );
+        if ( rect.width() < size.width() ) {
+            QVariant tooltip = index.data( Qt::DisplayRole );
+            if ( tooltip.canConvert<QString>() ) {
+                QToolTip::showText( e->globalPos(), QString( "<div>%1</div>" )
+                    .arg( Qt::escape( tooltip.toString() ) ), view );
+                return true;
+            }
+        }
+        if ( !QStyledItemDelegate::helpEvent( e, view, option, index ) )
+            QToolTip::hideText();
+        return true;
+    }
+
+    return QStyledItemDelegate::helpEvent( e, view, option, index );
 }

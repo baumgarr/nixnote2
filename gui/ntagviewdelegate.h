@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NTAGVIEWDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include <QHelpEvent>
 
 class NTagViewDelegate : public QStyledItemDelegate
 {
@@ -32,6 +33,7 @@ public:
 signals:
     
 public slots:
+    bool helpEvent(QHelpEvent *event, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index);
     
 };
 

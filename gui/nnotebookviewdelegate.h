@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NNOTEBOOKVIEWDELEGATE_H
 
 #include <QStyledItemDelegate>
+#include <QHelpEvent>
 
 class NNotebookViewDelegate : public QStyledItemDelegate
 {
@@ -32,7 +33,7 @@ public:
 signals:
     
 public slots:
-    
+    bool helpEvent(QHelpEvent *e, QAbstractItemView *view, const QStyleOptionViewItem &option, const QModelIndex &index);
 };
 
 //Q_DECLARE_METATYPE(NNotebookViewDelegate)

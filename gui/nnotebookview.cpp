@@ -1025,7 +1025,8 @@ void NNotebookView::dragMoveEvent(QDragMoveEvent *event) {
 
 
 QSize NNotebookView::sizeHint() {
-    return QTreeView::sizeHint();
+    return parentWidget()->size();
+    //return QTreeView::sizeHint();
 }
 
 

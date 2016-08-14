@@ -27,7 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QApplication>
 #include <QDesktopWidget>
 #include <QScrollBar>
-
+#include <QStandardItem>
 
 extern Global global;
 
@@ -57,6 +57,7 @@ TagEditorNewTag::TagEditorNewTag(QWidget *parent) :
 
 //    connect(this, SIGNAL(focussed(bool)), this, SLOT(gainedFocus(bool)));
     completer = new QCompleter(this);
+    //completer->popup()->setItemDelegate(new TagEditorNewTagCompleterPopupDelegate());
     connect(completer, SIGNAL(activated(QString)), this, SLOT(mouseCompleterSelection(QString)));
     loadCompleter();
     connect(this, SIGNAL(returnPressed()), this, SLOT(enterPressed()));
@@ -97,7 +98,7 @@ void TagEditorNewTag::loadCompleter() {
         QString name = t.name;
         qint32 tagAccount = tagTable.owningAccount(tagList[i]);
         if (!currentTags.contains(name) && tagAccount == account)
-            tagNames << name;
+            tagNames << name;        
     }
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
     completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
@@ -111,6 +112,7 @@ void TagEditorNewTag::loadCompleter() {
 
     model->setStringList(tagNames);
     completer->setModel(model);
+    //completer->popup()->setItemDelegate(new Tag)
     QLOG_TRACE_OUT() << typeid(*this).name();
 }
 
