@@ -602,26 +602,26 @@
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="514"/>
         <source> was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>未找到。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="517"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="588"/>
         <source> has been appended.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>已被附加。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="520"/>
         <source>No response from NixNote.  Please verify that the note was appended.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>NixNote未响应，请检查笔记是否已附加。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="531"/>
         <source> was not found.
 </source>
-        <translation type="unfinished"></translation>
+        <translation>未找到。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="633"/>
@@ -732,17 +732,17 @@
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1163"/>
         <source>EDAMSystemException </source>
-        <translation type="unfinished">EDAM系统异常 </translation>
+        <translation>EDAMSystemException </translation>
     </message>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1165"/>
         <source>EDAMSystemException: Unknown error</source>
-        <translation type="unfinished">EDAM系统异常：未知错误</translation>
+        <translation>EDAMSystemException：未知错误</translation>
     </message>
     <message>
         <location filename="../communication/communicationmanager.cpp" line="1186"/>
         <source>EDAMNotFoundException: Note not found</source>
-        <translation type="unfinished">EDAMNotFound异常：未找到笔记</translation>
+        <translation>EDAMNotFoundException：未找到笔记</translation>
     </message>
 </context>
 <context>
@@ -807,7 +807,7 @@
     <message>
         <location filename="../gui/browserWidgets/dateeditor.cpp" line="46"/>
         <source>Subject:</source>
-        <translation type="unfinished">主题时间：</translation>
+        <translation type="unfinished">主题：</translation>
     </message>
 </context>
 <context>
@@ -1179,7 +1179,7 @@ Please specify server settings in the Preferences menu.</source>
     <message>
         <location filename="../dialog/preferences/emailpreferences.cpp" line="12"/>
         <source>Userid</source>
-        <translation type="unfinished">用户id</translation>
+        <translation>用户身份</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/emailpreferences.cpp" line="13"/>
@@ -3852,7 +3852,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="../dialog/preferences/preferencesdialog.cpp" line="120"/>
         <source>Thumbnail</source>
-        <translation type="unfinished">缩略图</translation>
+        <translation>缩略图</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/preferencesdialog.cpp" line="126"/>
@@ -4401,22 +4401,22 @@ any key or using the right or middle mouse buttons.</source>
     <message>
         <location filename="../dialog/preferences/thumbnailpreferences.cpp" line="14"/>
         <source>Disable thumbnail generation</source>
-        <translation type="unfinished"></translation>
+        <translation>禁用缩略图自动生成</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/thumbnailpreferences.cpp" line="15"/>
         <source>Images to generate per interval</source>
-        <translation type="unfinished"></translation>
+        <translation>每次生成图像数量</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/thumbnailpreferences.cpp" line="16"/>
         <source>Minimum scan interval (in seconds)</source>
-        <translation type="unfinished"></translation>
+        <translation>最小扫描周期（秒）</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/thumbnailpreferences.cpp" line="17"/>
         <source>Maximum scan interval (in seconds)</source>
-        <translation type="unfinished"></translation>
+        <translation>最大扫描周期（秒）</translation>
     </message>
 </context>
 <context>
