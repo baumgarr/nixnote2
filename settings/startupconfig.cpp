@@ -201,16 +201,6 @@ int StartupConfig::init(int argc, char *argv[]) {
 
     for (int i=1; i<argc; i++) {
         QString parm(argv[i]);
-        if (parm == "sqlExec", Qt::CaseSensitive) {
-            sqlExec = true;
-            if (i+1 >= argc) {
-                std::cout << "Invalid SQL parameters" << std::endl;
-                exit(16);
-            }
-            this->sqlExec=true;
-            sqlString = QString(argv[i+1]);
-            return 0;
-        }
         if (parm == "--help" || parm == "-?" || parm == "help" || parm == "--?") {
             printHelp();
             return 1;
@@ -288,6 +278,15 @@ int StartupConfig::init(int argc, char *argv[]) {
             command->setBit(STARTUP_CLOSENOTEBOOK);
             notebookList.clear();
         }
+        if (parm.startsWith("sqlExec", Qt::CaseSensitive)) {
+            command->setBit(STARTUP_SQLEXEC);
+        }
+
+        // This should be last because it is the default
+        if (parm.startsWith("start")) {
+            command->setBit(STARTUP_GUI,true);
+        }
+
         if (command->at(STARTUP_ADDNOTE)) {
             if (parm.startsWith("--title=", Qt::CaseSensitive)) {
                 parm = parm.mid(8);
@@ -344,11 +343,6 @@ int StartupConfig::init(int argc, char *argv[]) {
             if (parm.startsWith("--noHeaders", Qt::CaseSensitive)) {
                 queryNotes->printHeaders=false;
             }
-        }
-
-        // This should be last because it is the default
-        if (parm.startsWith("start")) {
-            command->setBit(STARTUP_GUI,true);
         }
         if (command->at(STARTUP_GUI) || command->count(true) == 0) {
             command->setBit(STARTUP_GUI,true);
@@ -498,7 +492,15 @@ int StartupConfig::init(int argc, char *argv[]) {
                 notebookList.append(parm);
             }
         }
+        if (command->at(STARTUP_SQLEXEC)) {
+            if (parm.startsWith("--query", Qt::CaseSensitive)) {
+                this->sqlExec=true;
+                parm = parm.mid(8);
+                sqlString = parm;
+            }
+        }
     }
+
 
     if (command->count(true) == 0)
         command->setBit(STARTUP_GUI,true);
