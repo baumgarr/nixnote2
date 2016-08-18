@@ -35,7 +35,7 @@ then
    echo "**********************************"
    echo "* Checking deb for errors"
    echo "**********************************"
-   lintian $package_dir/nixnote2-webcam-plugin-${version}_${arch}.deb 
+   lintian $package_dir/nixnote2-hunspell-plugin-${version}_${arch}.deb 
 fi
 read -p "Build rpm (y/n): " yn
 if [ "$yn" = "y" ] 
