@@ -22,16 +22,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "spellchecker.h"
 #include <QFile>
 #include <QLocale>
-#include "global.h"
+#include <QTextStream>
 
-extern Global global;
 
 SpellChecker::SpellChecker(QObject *parent) :
     QObject(parent)
 {
-    dictionaryPath.append(global.fileManager.getSpellDirPathUser());
-    //dictionaryPath.append(global.fileManager.getSpellDirPath());
-    dictionaryPath.append(global.fileManager.getProgramDirPath(""));
     dictionaryPath.append("/usr/share/hunspell/");
     dictionaryPath.append("/usr/share/myspell/");
     dictionaryPath.append("/usr/share/myspell/dicts/");
@@ -65,11 +61,13 @@ QString SpellChecker::findDictionary(QString file) {
 
 
 
-void SpellChecker::setup() {
+void SpellChecker::setup(QString programDictionary, QString customDictionary) {
     QString locale = QLocale::system().name();
+    dictionaryPath.prepend(programDictionary);
+    dictionaryPath.prepend(customDictionary);
+
     QString aff = findDictionary(locale+".aff");
     QString dic = findDictionary(locale+".dic");
-    QString custom = global.fileManager.getSpellDirPathUser() +"user.lst";
     if (dic=="" || aff == "") {
         error = true;
         errorMsg = tr("Unable to find dictionaries.  Is Huntspell installed?");
@@ -78,7 +76,7 @@ void SpellChecker::setup() {
     hunspell = new Hunspell(aff.toStdString().c_str(), dic.toStdString().c_str());
 
     //Start adding custom words
-    QFile f(custom);
+    QFile f(customDictionary+"user.lst");
     if (f.exists()) {
         f.open(QIODevice::ReadOnly);
         QTextStream in(&f);
@@ -106,13 +104,12 @@ bool SpellChecker::spellCheck(QString word, QStringList &suggestions) {
 }
 
 
-void SpellChecker::addWord(QString word) {
+void SpellChecker::addWord(QString dictionary, QString word) {
     hunspell->add(word.toStdString().c_str());
 
     // Append to the end of the user dictionary
     //Start adding custom words
-    QString custom = global.fileManager.getSpellDirPathUser() +"user.lst";
-    QFile f(custom);
+    QFile f(dictionary);
     f.open(QIODevice::Append);
     QTextStream out(&f);
     out << word;

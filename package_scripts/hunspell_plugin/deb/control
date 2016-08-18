@@ -1,0 +1,11 @@
+Package: nixnote2-hunspell-plugin
+Version: __VERSION__
+Section: x11 
+Priority: optional
+Architecture: __ARCH__ 
+Installed-Size: 60000
+Depends: libc6, libhunspell-1.3-0  
+Recommends:  
+Maintainer: Randy Baumgarte <randy@fbn.cx>
+Description: Webcam plugin for NixNote2.
+ A plugin for NixNote2 to allow for spell checking.

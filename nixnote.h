@@ -53,7 +53,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 //#include "oauth/oauthwindow.h"
 #include "html/thumbnailer.h"
 #include "reminders/remindermanager.h"
-#include "plugins/webcaminterface.h"
+#include "plugins/webcam/webcaminterface.h"
+#include "plugins/hunspell/hunspellinterface.h"
 
 //****************************************
 //* This is the main NixNote class that
@@ -185,7 +186,6 @@ private:
     QShortcut *upNoteShortcut;
     void setupShortcut(QShortcut *shortcut, QString keySequence);
 
-
     // Plugins
     void loadPlugins();
     bool webcamPluginAvailable;
@@ -205,7 +205,7 @@ public:
     bool event(QEvent *event);
     LineEdit *searchText;
     NTabWidget *tabWindow;
-
+    bool hunspellPluginAvailable;
 
 public slots:
     void closeNixNote();

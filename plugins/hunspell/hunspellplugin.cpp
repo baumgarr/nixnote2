@@ -1,6 +1,6 @@
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2014 Randy Baumgarte
+Copyright (C) 2016 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -18,34 +18,30 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
+#include <iostream>
 
-#ifndef SPELLCHECKER_H
-#define SPELLCHECKER_H
+#include "hunspellplugin.h"
+HunspellPlugin::HunspellPlugin() {
 
-#include <QObject>
-#include <QStringList>
-#include <hunspell/hunspell.hxx>
+}
 
-class SpellChecker : public QObject
-{
-    Q_OBJECT
-private:
-    QStringList dictionaryPath;
-    QString findDictionary(QString file);
-    Hunspell *hunspell;
-    bool error;
-    QString errorMsg;
+// Initialize for use. I don't do it in the constructor because I don't 
+// want to take the time unless the user REALLY wants to use the spell checker.
+void HunspellPlugin::initialize(QString programDictionary, QString userDictionary)  {
+    checker = new SpellChecker();
+    std::cout << "**************" << checker << std::endl;
+    checker->setup(programDictionary, userDictionary);
+    return;
+}
 
-public:
-    explicit SpellChecker(QObject *parent = 0);
-    void setup(QString programDictionary, QString customDictionary);
-    bool spellCheck(QString word, QStringList &suggestions);
-    void addWord(QString dictionary, QString word);
-    
-signals:
-    
-public slots:
-    
-};
+bool HunspellPlugin::spellCheck(QString word, QStringList &suggestions) {
+    return checker->spellCheck(word, suggestions);
+}
 
-#endif // SPELLCHECKER_H
+
+void HunspellPlugin::addWord(QString dictionary, QString word) {
+    return checker->addWord(dictionary, word);
+}
+
+
+Q_EXPORT_PLUGIN2(hunspellplugin, HunspellPlugin)

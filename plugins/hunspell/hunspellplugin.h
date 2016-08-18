@@ -18,30 +18,25 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
-// This overrides the virtual plugin WebCamInterface.
+// This overrides the virtual plugin HunspellInterface.
 
-#ifndef WEBCAMPLUGIN_H
-#define WEBCAMPLUGIN_H
-#include "webcaminterface.h"
-#include "../dialog/webcamcapturedialog.h"
+#ifndef HUNSPELLPLUGIN_H
+#define HUNSPELLPLUGIN_H
+#include "hunspellinterface.h"
 
-class WebCamPlugin : public QObject, WebCamInterface
+class HunspellPlugin : public QObject, HunspellInterface
 {
     Q_OBJECT
-    Q_INTERFACES(WebCamInterface)
+    Q_INTERFACES(HunspellInterface)
 
 private:
-    WebcamCaptureDialog *dialog;
-    bool initialized;
+    SpellChecker *checker;
 
 public:
-    WebCamPlugin();
-    void initialize();
-    bool getImage(QImage &image);
-    bool isWebcamReady();
-    void exec();
-    bool okPressed();
-    void pictureRefresh();
+    HunspellPlugin();
+    void initialize(QString programDictionary, QString userDictionary);
+    bool spellCheck(QString word, QStringList &suggestions);
+    void addWord(QString dictionary, QString word);
 };
 
-#endif // WEBCAMPLUGIN_H
+#endif // HUNSPELLPLUGIN_H

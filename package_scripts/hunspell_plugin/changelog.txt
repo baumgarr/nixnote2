@@ -1,0 +1,4 @@
+nixnote2-hunspell-plugin (1.0-1) stable; urgency=low
+  * Initial release.                                         
+ -- Randy Baumgarte <randy@fbn.cx>  Mon, 16 Aug 2016 12:00:00 -0400
+

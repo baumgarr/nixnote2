@@ -1,6 +1,6 @@
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2014 Randy Baumgarte
+Copyright (C) 2016 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -18,34 +18,27 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
+// This class is used as a virtual .
 
-#ifndef SPELLCHECKER_H
-#define SPELLCHECKER_H
 
-#include <QObject>
-#include <QStringList>
-#include <hunspell/hunspell.hxx>
+#ifndef HUNSPELLINTERFACE_H
+#define HUNSPELLINTERFACE_H
 
-class SpellChecker : public QObject
+#include <QtPlugin>
+#include "../../utilities/spellchecker.h"
+
+
+class HunspellInterface
 {
-    Q_OBJECT
-private:
-    QStringList dictionaryPath;
-    QString findDictionary(QString file);
-    Hunspell *hunspell;
-    bool error;
-    QString errorMsg;
-
 public:
-    explicit SpellChecker(QObject *parent = 0);
-    void setup(QString programDictionary, QString customDictionary);
-    bool spellCheck(QString word, QStringList &suggestions);
-    void addWord(QString dictionary, QString word);
-    
-signals:
-    
-public slots:
-    
+    virtual ~HunspellInterface() {}
+
+    virtual void initialize(QString programDictionary, QString userDictionary) = 0;
+    virtual bool spellCheck(QString word, QStringList &suggestions) = 0;
+    virtual void addWord(QString dictionary, QString word) = 0;
+
 };
 
-#endif // SPELLCHECKER_H
+Q_DECLARE_INTERFACE(HunspellInterface, "org.nixnote.NixNote2.HunspellInterface/1.0")
+
+#endif // HUNSPELLINTERFACE_H

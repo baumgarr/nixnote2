@@ -1,6 +1,6 @@
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2014 Randy Baumgarte
+Copyright (C) 2016 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -18,34 +18,30 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 
+// This overrides the virtual plugin WebCamInterface.
 
-#ifndef SPELLCHECKER_H
-#define SPELLCHECKER_H
+#ifndef WEBCAMPLUGIN_H
+#define WEBCAMPLUGIN_H
+#include "webcaminterface.h"
+#include "../../dialog/webcamcapturedialog.h"
 
-#include <QObject>
-#include <QStringList>
-#include <hunspell/hunspell.hxx>
-
-class SpellChecker : public QObject
+class WebCamPlugin : public QObject, WebCamInterface
 {
     Q_OBJECT
+    Q_INTERFACES(WebCamInterface)
+
 private:
-    QStringList dictionaryPath;
-    QString findDictionary(QString file);
-    Hunspell *hunspell;
-    bool error;
-    QString errorMsg;
+    WebcamCaptureDialog *dialog;
+    bool initialized;
 
 public:
-    explicit SpellChecker(QObject *parent = 0);
-    void setup(QString programDictionary, QString customDictionary);
-    bool spellCheck(QString word, QStringList &suggestions);
-    void addWord(QString dictionary, QString word);
-    
-signals:
-    
-public slots:
-    
+    WebCamPlugin();
+    void initialize();
+    bool getImage(QImage &image);
+    bool isWebcamReady();
+    void exec();
+    bool okPressed();
+    void pictureRefresh();
 };
 
-#endif // SPELLCHECKER_H
+#endif // WEBCAMPLUGIN_H

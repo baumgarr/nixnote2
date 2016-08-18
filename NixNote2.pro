@@ -15,7 +15,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 equals(QT_MAJOR_VERSION, 4) {
     QT       += core gui webkit sql network xml
     INCLUDEPATH += /usr/include/poppler/qt4
-    LIBS +=    -lhunspell -lcurl \
+    LIBS +=    -lcurl \
                -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
 }
 
@@ -170,9 +170,6 @@ SOURCES += main.cpp\
     reminders/remindermanager.cpp \
     dialog/notehistoryselect.cpp \
     dialog/closenotebookdialog.cpp \
-#    webcam/cvimagewidget.cpp \
-#    dialog/webcamcapturedialog.cpp \
-    utilities/spellchecker.cpp \
     dialog/spellcheckdialog.cpp \
     gui/externalbrowse.cpp \
     sql/nsqlquery.cpp \
@@ -355,9 +352,6 @@ HEADERS  += nixnote.h \
     reminders/remindermanager.h \
     dialog/notehistoryselect.h \
     dialog/closenotebookdialog.h \
-#    webcam/cvimagewidget.h \
-#    dialog/webcamcapturedialog.h \
-    utilities/spellchecker.h \
     dialog/spellcheckdialog.h \
     gui/externalbrowse.h \
     sql/nsqlquery.h \
@@ -428,7 +422,8 @@ HEADERS  += nixnote.h \
     cmdtools/extractnotes.h \
     cmdtools/alternote.h \
     cmdtools/importnotes.h \
-    plugins/webcaminterface.h \
+    plugins/webcam/webcaminterface.h \
+    plugins/hunspell/hunspellinterface.h \
     dialog/preferences/thumbnailpreferences.h
 
 
