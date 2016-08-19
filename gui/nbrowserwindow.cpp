@@ -3235,6 +3235,7 @@ void NBrowserWindow::spellCheckPressed() {
     for (int i=0; i<words.size() && !finished; i++) {
         QString currentWord = words[i];
         page->findText(currentWord);
+        rwords.clear();
         if (!hunspellInterface->spellCheck(currentWord, rwords) && !ignoreWords.contains(currentWord)) {
             SpellCheckDialog dialog(currentWord, rwords, this);
             dialog.move(0,0);
