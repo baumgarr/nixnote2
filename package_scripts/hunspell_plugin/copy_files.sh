@@ -45,6 +45,8 @@ mkdir $package_dir/nixnote2
 mkdir $package_dir/nixnote2/usr
 #mkdir $package_dir/nixnote2/usr/lib
 mkdir $package_dir/nixnote2/usr/share
+mkdir $package_dir/nixnote2/usr/share/lintian
+mkdir $package_dir/nixnote2/usr/share/lintian/overrides
 #mkdir $package_dir/nixnote2/usr/share/applications
 mkdir $package_dir/nixnote2/usr/share/nixnote2
 mkdir $package_dir/nixnote2/usr/share/nixnote2/plugins
@@ -60,6 +62,7 @@ echo "Copying files"
 #cp $source_dir/*.txt $package_dir/nixnote2/usr/share/nixnote2/
 #cp $source_dir/*.html $package_dir/nixnote2/usr/share/nixnote2/
 #cp $source_dir/nixnote2.desktop $package_dir/nixnote2/usr/share/applications/
+cp $package_dir/deb/nixnote* $package_dir/nixnote2/usr/share/lintian/overrides/
 cp $source_dir/copyright $package_dir/nixnote2/usr/share/doc/nixnote2-hunspell-plugin/
 strip --strip-all $source_dir/plugins/libhunspellplugin.so -o $package_dir/nixnote2/usr/share/nixnote2/plugins/libhunspellplugin.so
 cp $source_dir/changelog.txt $package_dir/nixnote2/usr/share/doc/nixnote2-hunspell-plugin/changelog.Debian

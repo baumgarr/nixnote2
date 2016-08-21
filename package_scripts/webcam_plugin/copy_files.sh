@@ -45,7 +45,8 @@ mkdir $package_dir/nixnote2
 mkdir $package_dir/nixnote2/usr
 #mkdir $package_dir/nixnote2/usr/lib
 mkdir $package_dir/nixnote2/usr/share
-#mkdir $package_dir/nixnote2/usr/share/applications
+mkdir $package_dir/nixnote2/usr/share/lintian
+mkdir $package_dir/nixnote2/usr/share/lintian/overrides
 mkdir $package_dir/nixnote2/usr/share/nixnote2
 mkdir $package_dir/nixnote2/usr/share/nixnote2/plugins
 #mkdir $package_dir/nixnote2/usr/share/man 
@@ -69,7 +70,7 @@ strip --strip-all $source_dir/plugins/libwebcamplugin.so -o $package_dir/nixnote
 cp $source_dir/changelog.txt $package_dir/nixnote2/usr/share/doc/nixnote2-webcam-plugin/changelog.Debian
 gzip -c -n -9 $package_dir/nixnote2/usr/share/doc/nixnote2-webcam-plugin/changelog.Debian > $package_dir/nixnote2/usr/share/doc/nixnote2-webcam-plugin/changelog.Debian.gz
 rm $package_dir/nixnote2/usr/share/doc/nixnote2-webcam-plugin/changelog.Debian
- 
+cp $source_dir/package_scripts/webcam_plugin/deb/nixnote* $package_dir/nixnote2/usr/share/lintian/overrides/
 
 if [ ! -d $source_dir/spell ] 
 then
