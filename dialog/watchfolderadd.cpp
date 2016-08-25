@@ -78,6 +78,8 @@ WatchFolderAdd::WatchFolderAdd(qint32 lid, QWidget *parent) :
         Notebook n;
         ntable.get(n, lids[i]);
         books->addItem(n.name, lids[i]);
+        if (lids[i] == notebookLid)
+            books->setCurrentIndex(i);
     }
     books->model()->sort(0);
 
