@@ -166,7 +166,7 @@ public:
     int defaultGuiFontSize;                               // Default GUI font size
     QString defaultGuiFont;                               // Default GUI font name
     bool startupNewNote;                                  // Were we started with the command to begin a new note?
-    bool forceNoStartMimized;                             // Force the system to not start minimized, dispite the user's settings
+    bool forceNoStartMimized;                             // Force the system to not start minimized, despite the user's settings
     bool forceSystemTrayAvailable;                        // Override QSystemTrayIcon::isSystemTrayAvailable()
     bool forceStartMinimized;                             // Force it to start minimized, despiet the user's settings
     bool startMinimized;                                  // Do user prefernces say to start minimized?
@@ -262,7 +262,7 @@ public:
     QString getResourcefileName(QString key);                  // Get the actual file path for a given icon theme
     void getThemeNamesFromFile(QFile &file, QStringList &values);  // Get all themes available in a given file
     void stackDump(int max=0);                                 // Utility to dump the running stack
-    bool getForceSearchLowerCase();                            // Get value to force seach db in lower case from settings
+    bool getForceSearchLowerCase();                            // Get value to force search db in lower case from settings
     void setForceSearchLowerCase(bool value);                  // save forceSearchLowerCase
     IndexRunner *indexRunner;                                    // Pointer to index thread
 

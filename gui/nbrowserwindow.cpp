@@ -1101,7 +1101,7 @@ void NBrowserWindow::alignCenterButtonPressed() {
 
 
 
-// The left allign button was pressed
+// The left align button was pressed
 void NBrowserWindow::alignLeftButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('JustifyLeft', false, '');");
@@ -1111,7 +1111,7 @@ void NBrowserWindow::alignLeftButtonPressed() {
 
 
 
-// The allign right button was pressed
+// The align right button was pressed
 void NBrowserWindow::alignRightButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
             "document.execCommand('JustifyRight', false, '');");
