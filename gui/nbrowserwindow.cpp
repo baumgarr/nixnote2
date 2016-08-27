@@ -1850,7 +1850,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 
 
 
-// Set the backgroud color of a note
+// Set the background color of a note
  void NBrowserWindow::setBackgroundColor(QString value) {
      QString js = QString("function changeBackground(color) {")
          +QString("document.body.style.background = color;")
@@ -2502,7 +2502,7 @@ void NBrowserWindow::emailNote() {
     smtp.setResponseTimeout(-1);
 
     // We need to set the username (your email address) and password
-    // for smtp authentification.
+    // for smtp authentication.
     smtp.setUser(userid);
     smtp.setPassword(password);
 
