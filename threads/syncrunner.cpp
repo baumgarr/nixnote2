@@ -64,7 +64,8 @@ void SyncRunner::synchronize() {
          defaultMsgTimeout = 150000;
          db = new DatabaseConnection("syncrunner");
          comm = new CommunicationManager(db);
-         connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
+         if (global.guiAvailable)
+             connect(global.application, SIGNAL(stdException(QString)), this, SLOT(applicationException(QString)));
     }
 
 

@@ -23,9 +23,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "global.h"
 #include "settings/startupconfig.h"
 #include "cmdtools/cmdlinetool.h"
+//#include "cmdtools/cmdlineapp.h"
 
 #include "logger/qslog.h"
-#include <QCoreApplication>
 #include <QDir>
 #include <iostream>
 #include <QMessageBox>
@@ -72,37 +72,49 @@ void fault_handler(int sig) {
 //*********************************************************************
 int main(int argc, char *argv[])
 {
+
+    bool guiAvailable = true;
     signal(SIGSEGV, fault_handler);   // install our handler
-
-    // Setup the QApplication so we can begin
-    Application *a = new Application(argc, argv);
-    global.application = a;
-
-    // Setup the QLOG functions for debugging & messages
-    QsLogging::Logger& logger = QsLogging::Logger::instance();
-    logger.setLoggingLevel(QsLogging::TraceLevel);
-//    const QString sLogPath(a->applicationDirPath());
-
-    QsLogging::DestinationPtr debugDestination(
-                QsLogging::DestinationFactory::MakeDebugOutputDestination() );
-    logger.addDestination(debugDestination.get());
 
     // Begin setting up the environment
     StartupConfig startupConfig;
     global.argc = argc;
     global.argv = argv;
 
-    int retval = startupConfig.init(argc,argv);
+    int retval = startupConfig.init(argc,argv, guiAvailable);
     if (retval != 0)
         return retval;
 
+    // Setup the application. If we have a GUI, then we use Application.
+    // If we don't, then we just use a derivitive of QCoreApplication
+    QCoreApplication *a = NULL;
+    if (guiAvailable) {
+        Application *app = new Application(argc, argv);
+        a = app;
+    } else {
+        a = new QCoreApplication(argc, argv);
+    }
+    global.application = a;
+
+    // Setup the QLOG functions for debugging & messages
+    QsLogging::Logger& logger = QsLogging::Logger::instance();
+    logger.setLoggingLevel(QsLogging::TraceLevel);
+
+    QsLogging::DestinationPtr debugDestination(
+                QsLogging::DestinationFactory::MakeDebugOutputDestination() );
+    logger.addDestination(debugDestination.get());
+
     startupConfig.programDirPath = global.getProgramDirPath() + QDir().separator();
     startupConfig.name = "NixNote";
-    global.setup(startupConfig);
+    global.setup(startupConfig, guiAvailable);
+//    global.syncAndExit=startupConfig.syncAndExit;
 
+    // We were passed a SQL command
     if (startupConfig.sqlExec) {
         DatabaseConnection *db = new DatabaseConnection("nixnote");  // Startup the database
+        QLOG_DEBUG() << "Starting DB";
         QSqlQuery query(db->conn);
+        QLOG_DEBUG() << "After DB Start";
         if (!query.exec(startupConfig.sqlString)) {
             QLOG_FATAL() << query.lastError();
             delete db;
@@ -121,7 +133,6 @@ int main(int argc, char *argv[])
     }
 
 
-
     // If we want something other than the GUI, try let the CmdLineTool deal with it.
     if (!startupConfig.gui()) {
         global.purgeTemporaryFilesOnShutdown=startupConfig.purgeTemporaryFiles;
@@ -130,9 +141,9 @@ int main(int argc, char *argv[])
         int retval = cmdline.run(startupConfig);
         if (global.sharedMemory->isAttached())
             global.sharedMemory->detach();
-        if (!startupConfig.gui())
-            return retval;
-        global.syncAndExit=startupConfig.syncAndExit;
+        QLOG_DEBUG() << "Exiting: RC=" << retval;
+        delete a;
+        exit(retval);
     }
 
     QString logPath = global.fileManager.getLogsDirPath("")+"messages.log";
@@ -151,13 +162,11 @@ int main(int argc, char *argv[])
     // Create a shared memory region.  We use this to communicate
     // with any other instance that may be running.  If another instance
     // is found we need to either show that one or kill this one.
-    QLOG_DEBUG() << "Creating shared segment";
     bool memInitNeeded = true;
     if( !global.sharedMemory->allocate(512*1024) ) {
         // Attach to it and detach.  This is done in case it crashed.
         global.sharedMemory->attach();
         global.sharedMemory->detach();
-        QLOG_DEBUG() << "Creating segment";
         if( !global.sharedMemory->allocate(512*1024) ) {
             QLOG_DEBUG() << "segment created";
             if (startupConfig.startupNewNote) {
@@ -198,11 +207,10 @@ int main(int argc, char *argv[])
     // Save the clipboard
     global.clipboard = QApplication::clipboard();
 
+    QLOG_DEBUG() << "Setting up NN";
     NixNote *w = new NixNote();
     w->setAttribute(Qt::WA_QuitOnClose);
     bool show = true;
-    if (global.syncAndExit)
-        show = false;
     if (global.minimizeToTray() && global.startMinimized)
         show = false;
     if (show)
@@ -233,6 +241,7 @@ int main(int argc, char *argv[])
         QNetworkProxy::setApplicationProxy(proxy);
     }
 
+    QLOG_DEBUG() << "Launching";
     int rc = a->exec();
     if (global.sharedMemory->isAttached())
         global.sharedMemory->detach();

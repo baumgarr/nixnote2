@@ -98,7 +98,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
     splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImoge"));
     global.settings->beginGroup("Appearance");
-    if(global.settings->value("showSplashScreen", false).toBool() && !global.syncAndExit) {
+    if(global.settings->value("showSplashScreen", false).toBool()) {
         splashScreen->show();
         QTimer::singleShot(2500, splashScreen, SLOT(close()));
     }
@@ -837,7 +837,7 @@ void NixNote::syncThreadStarted() {
     bool syncOnStartup = global.settings->value("syncOnStartup", false).toBool();
     global.showGoodSyncMessagesInTray = global.settings->value("showGoodSyncMessagesInTray", true).toBool();
     global.settings->endGroup();
-    if (syncOnStartup || global.syncAndExit)
+    if (syncOnStartup)
         synchronize();
 }
 
@@ -1849,8 +1849,6 @@ void NixNote::notifySyncComplete() {
     } else
         if (global.showGoodSyncMessagesInTray)
             showMessage(tr("Sync Complete"), tr("Sync completed successfully."));
-    if (global.syncAndExit)
-        this->closeNixNote();
 }
 
 

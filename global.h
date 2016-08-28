@@ -117,7 +117,7 @@ public:
     char** argv;               // List of arguments from the program start
     FileManager fileManager;   // Manage file paths
     AccountsManager *accountsManager;      // Manage user account
-    Application *application;              // pointer to this current application
+    QCoreApplication *application;              // pointer to this current application
     unsigned int cryptCounter;             // Count of crytpographic entries.  This is incremented each time we encrypt some text.
     QString attachmentNameDelimeter;       // Delimeter between attachment ID & name
     string username;                       // This is probably obsolete
@@ -170,7 +170,6 @@ public:
     bool forceSystemTrayAvailable;                        // Override QSystemTrayIcon::isSystemTrayAvailable()
     bool forceStartMinimized;                             // Force it to start minimized, despiet the user's settings
     bool startMinimized;                                  // Do user prefernces say to start minimized?
-    bool syncAndExit;                                     // Should we just start, do a sync, and then quit?
     bool forceWebFonts;
     qint32 startupNote;                                   // Initial note to startup with.
 
@@ -187,7 +186,8 @@ public:
 
     QHash<qint32, NoteCache*> cache;                         // Note cache  used to keep from needing to re-format the same note for a display
 
-    void setup(StartupConfig config);                         // Setup the global variables
+    void setup(StartupConfig config, bool guiAvailable);                         // Setup the global variables
+    bool guiAvailable;                                        // Is there a GUI available?
     QString full_username;                                    // current username
     bool autosetUsername();                                   // Should the username be set automatically?
     void setAutosetUsername(bool value);

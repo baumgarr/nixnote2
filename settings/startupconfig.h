@@ -69,7 +69,6 @@ public:
     QString queryString;
     bool forceNoStartMinimized;
     bool startupNewNote;
-    bool syncAndExit;
     bool sqlExec;
     int accountId;
     qint32 startupNoteLid;
@@ -103,10 +102,9 @@ public:
     bool closeNotebook();
     bool import();
     QString sqlString;
-    void setSyncAndExit();
     QStringList notebookList;
 
-    int init(int argc, char *argv[]);
+    int init(int argc, char *argv[], bool &guiAvailable);
     void printHelp();
 };
 

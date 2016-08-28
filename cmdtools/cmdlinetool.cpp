@@ -33,6 +33,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/nuuid.h"
 #include "email/smtpclient.h"
 #include "utilities/mimereference.h"
+#include "threads/syncrunner.h"
 
 
 extern Global global;
@@ -56,8 +57,7 @@ int CmdLineTool::run(StartupConfig &config) {
     if (config.sync()) {
         // If the shared memory segment doesn't exist, we just do a sync & exit
         if (!global.sharedMemory->attach()) {
-            config.setSyncAndExit();
-            return 16;
+            return this->sync(config);
         }
         global.sharedMemory->write(QString("SNCHRONIZE"));
         global.sharedMemory->detach();
@@ -731,5 +731,37 @@ int CmdLineTool::closeNotebook(StartupConfig config) {
             std::cout << tr("Notebook not found: ").toStdString() << config.notebookList[i].toStdString() << endl;
         }
     }
+    return 0;
+}
+
+
+#include "models/notemodel.h"
+#include "sql/nsqlquery.h"
+
+// Do a sync
+int CmdLineTool::sync(StartupConfig config) {
+    if (!global.accountsManager->oauthTokenFound()) {
+        std::cout << "OAuth token not found." << endl;
+        return 16;
+    }
+
+    global.db = new DatabaseConnection("nixnote");  // Startup the database
+
+    // Check if the table exists.  If not, create it.
+    NSqlQuery sql(global.db);
+    sql.exec("Select *  from sqlite_master where type='table' and name='NoteTable';");
+    if (!sql.next()) {
+        NoteModel model(this);
+        model.createTable();
+    }
+    sql.finish();
+
+    SyncRunner runner;
+    runner.synchronize();
+    if (runner.error) {
+        std::cout << "Erorr synchronizing with Evernote." << endl;
+        return 16;
+    }
+    std::cout << "Sync completed." << std::endl;
     return 0;
 }

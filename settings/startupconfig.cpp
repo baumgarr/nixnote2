@@ -21,6 +21,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDir>
 #include <QString>
 #include <iostream>
+#include "threads/syncrunner.h"
+
+#include <QProcessEnvironment>
 
 //extern Global global;
 
@@ -29,7 +32,6 @@ StartupConfig::StartupConfig()
 {
     homeDirPath = QDir().homePath() + QString("/.nixnote/");
     this->forceNoStartMinimized = false;
-    this->syncAndExit = false;
     this->startupNewNote = false;
     this->sqlExec = false;
     this->sqlString = "";
@@ -197,7 +199,19 @@ void StartupConfig::printHelp() {
 
 
 
-int StartupConfig::init(int argc, char *argv[]) {
+int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
+
+    guiAvailable = true;
+
+    // Check if we have a GUI available. This is ugly, but it works.
+    // We check for a DISPLAY value, if one is found then we assume
+    // that the GUI is available. We can override this with the --forceNoGui
+    // as any parameter.
+
+    QString display = QProcessEnvironment::systemEnvironment().value("DISPLAY", "");
+    if (display.trimmed() == "")
+        guiAvailable = false;
+
 
     for (int i=1; i<argc; i++) {
         QString parm(argv[i]);
@@ -213,51 +227,61 @@ int StartupConfig::init(int argc, char *argv[]) {
             command->setBit(STARTUP_ADDNOTE,true);
             if (newNote == NULL)
                 newNote = new AddNote();
+            guiAvailable = false;
         }
         if (parm.startsWith("appendNote")) {
             command->setBit(STARTUP_APPENDNOTE,true);
             if (newNote == NULL)
                 newNote = new AddNote();
+            guiAvailable = false;
         }
         if (parm.startsWith("emailNote")) {
             command->setBit(STARTUP_EMAILNOTE,true);
             if (email == NULL)
                 email = new EmailNote();
+            guiAvailable = false;
         }
         if (parm.startsWith("export")) {
             command->setBit(STARTUP_EXPORT,true);
             if (exportNotes == NULL)
                 exportNotes = new ExtractNotes();
+            guiAvailable = false;
             exportNotes->backup=false;
         }
         if (parm.startsWith("import")) {
             command->setBit(STARTUP_IMPORT,true);
             if (importNotes == NULL)
                 importNotes = new ImportNotes();
+            guiAvailable = false;
         }
         if (parm.startsWith("backup")) {
             command->setBit(STARTUP_BACKUP,true);
             if (exportNotes == NULL)
                 exportNotes = new ExtractNotes();
             exportNotes->backup=true;
+            guiAvailable = false;
         }
         if (parm.startsWith("query")) {
             command->setBit(STARTUP_QUERY);
             if (queryNotes == NULL)
                 queryNotes = new CmdLineQuery();
+            guiAvailable = false;
         }
         if (parm.startsWith("readNote")) {
             command->setBit(STARTUP_READNOTE);
             if (extractText == NULL)
                 extractText = new ExtractNoteText();
+            guiAvailable = false;
         }
         if (parm.startsWith("deleteNote")) {
             command->setBit(STARTUP_DELETENOTE);
             if (delNote == NULL)
                 delNote = new DeleteNote();
+            guiAvailable = false;
         }
         if (parm.startsWith("sync")) {
             command->setBit(STARTUP_SYNC,true);
+            guiAvailable = false;
         }
         if (parm.startsWith("show_window")) {
             command->setBit(STARTUP_SHOW,true);
@@ -280,12 +304,17 @@ int StartupConfig::init(int argc, char *argv[]) {
         }
         if (parm.startsWith("sqlExec", Qt::CaseSensitive)) {
             command->setBit(STARTUP_SQLEXEC);
+            guiAvailable = false;
         }
 
         // This should be last because it is the default
         if (parm.startsWith("start")) {
             command->setBit(STARTUP_GUI,true);
+            guiAvailable = true;
         }
+
+
+
 
         if (command->at(STARTUP_ADDNOTE)) {
             if (parm.startsWith("--title=", Qt::CaseSensitive)) {
@@ -363,7 +392,8 @@ int StartupConfig::init(int argc, char *argv[]) {
                 startupNewNote = true;
             }
             if (parm == "--syncAndExit") {
-                syncAndExit = true;
+                command->clear();
+                command->setBit(STARTUP_SYNC, true);
             }
             if (parm == "--enableIndexing") {
                 enableIndexing = true;
@@ -493,10 +523,12 @@ int StartupConfig::init(int argc, char *argv[]) {
             }
         }
         if (command->at(STARTUP_SQLEXEC)) {
+            this->sqlExec=true;
             if (parm.startsWith("--query", Qt::CaseSensitive)) {
-                this->sqlExec=true;
                 parm = parm.mid(8);
-                sqlString = parm;
+            }
+            if (!parm.startsWith("sqlExec", Qt::CaseInsensitive)) {
+                sqlString = sqlString + " " + parm;
             }
         }
     }
@@ -509,13 +541,23 @@ int StartupConfig::init(int argc, char *argv[]) {
         std::cout << "\nInvalid options specified.  Only one command may be specified at a time.\n";
         return 16;
     }
-    return 0;
-}
 
-void StartupConfig::setSyncAndExit() {
-    syncAndExit=true;
-    //command->clear();
-    command->setBit(STARTUP_GUI,true);
+    // Check for GUI overrides
+    for (int i=0; i<argc; i++) {
+        QString value = QString(argv[i]);
+        if (value == "--forceNoGui") {
+            guiAvailable = false;
+            command->clearBit(STARTUP_GUI);
+            i = argc;
+        }
+        if (value == "--forceGui") {
+            guiAvailable = true;
+            command->setBit(STARTUP_GUI);
+            i = argc;
+        }
+    }
+
+    return 0;
 }
 
 bool StartupConfig::query() {
@@ -523,7 +565,7 @@ bool StartupConfig::query() {
 }
 
 bool StartupConfig::gui() {
-    return command->at(STARTUP_GUI);
+     return command->at(STARTUP_GUI);
 }
 
 bool StartupConfig::sync() {
