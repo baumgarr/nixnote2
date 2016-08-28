@@ -68,7 +68,9 @@ void FileWatcher::saveFile(QString file) {
         importer.import(file);
         emit(nnexImported());
         QFile f(file);
-        f.remove();
+        if (!f.remove()) {
+            QLOG_ERROR() << tr("Error removing file: ") << f.errorString();
+        }
         return;
     }
 

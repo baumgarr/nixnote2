@@ -741,7 +741,7 @@ int CmdLineTool::closeNotebook(StartupConfig config) {
 // Do a sync
 int CmdLineTool::sync(StartupConfig config) {
     if (!global.accountsManager->oauthTokenFound()) {
-        std::cout << "OAuth token not found." << endl;
+        std::cout << tr("OAuth token not found.").toStdString() << endl;
         return 16;
     }
 
@@ -759,9 +759,9 @@ int CmdLineTool::sync(StartupConfig config) {
     SyncRunner runner;
     runner.synchronize();
     if (runner.error) {
-        std::cout << "Erorr synchronizing with Evernote." << endl;
+        std::cout << tr("Error synchronizing with Evernote.").toStdString() << std::endl;
         return 16;
     }
-    std::cout << "Sync completed." << std::endl;
+    std::cout << tr("Sync completed.").toStdString() << std::endl;
     return 0;
 }
