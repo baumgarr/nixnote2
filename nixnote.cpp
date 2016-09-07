@@ -3619,7 +3619,6 @@ void NixNote::loadPlugins() {
     foreach (QString fileName, pluginsDir.entryList(filter)) {
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
         QObject *plugin = pluginLoader.instance();
-        QLOG_DEBUG() << fileName << " " << pluginLoader.errorString();
         if (fileName == "libwebcamplugin.so") {
             if (plugin) {
                 webcamInterface = qobject_cast<WebCamInterface *>(plugin);

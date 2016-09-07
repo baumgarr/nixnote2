@@ -90,6 +90,9 @@ void NTabWidget::addBrowser(NBrowserWindow *v, QString title) {
 }
 
 void NTabWidget::closeTab(int index) {
+    if (browserList->at(index)->editor->isDirty) {
+        browserList->at(index)->saveNoteContent();
+    }
     tabBar->removeTab(index);
     stack.removeWidget(browserList->at(index));
     delete browserList->at(index);
@@ -243,7 +246,10 @@ void NTabWidget::openNote(qint32 lid, OpenNoteMode mode) {
     // if we want a new window AND it isn't already open, create a new tab
     if (mode == NewTab && !found) {
         view = new NBrowserWindow();
-        addBrowser(view, n.title);
+        if (n.title.isSet())
+            addBrowser(view, n.title);
+        else
+            addBrowser(view, tr("Untitled Note"));
         setupConnections(view);
     } else {
         if (mode == CurrentTab) {
