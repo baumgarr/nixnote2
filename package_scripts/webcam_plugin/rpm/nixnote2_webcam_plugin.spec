@@ -1,4 +1,4 @@
-Summary: An Evernote client clone for Linux
+Summary: A webcam plugin for NixNote
 Name: nixnote2_webcam_plugin
 Version: __VERSION__
 Release: 0

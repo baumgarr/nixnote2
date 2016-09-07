@@ -1,5 +1,5 @@
-Summary: An Evernote client clone for Linux
-Name: nixnote2_webcam_plugin
+Summary: A spell check plugin for NixNote
+Name: nixnote2_hunspell_plugin
 Version: __VERSION__
 Release: 0
 License: GPLv2
@@ -7,17 +7,17 @@ Group: Applications/Internet
 Vendor: Randy Baumgarte
 URL: http://nevernote.sourceforge.net/
 Packager: Randy Baumgarte <randy@fbn.cx>
-Source: /home/randy/nn2/package_scripts/webcam_plugin/nixnote2_webcam_plugin___VERSION_____ARCH__.tar.gz
+Source: /home/randy/nn2/package_scripts/webcam_plugin/nixnote2_hunspell_plugin___VERSION_____ARCH__.tar.gz
 AutoReqProv: no
 Requires: nixnote2, opencv >= 2.4.7
 
 %description
-NixNote-Webcam-Plugin:: Plugin allowing for a webcam to be used in NixNote2.
+NixNote-Hunspell-Plugin:: Plugin allowing for a hunspell to be used in NixNote2.
 
 Copyright 2009-2015, Randy Baumgarte 
 Licensed under GNU General Public Lisence version 2
 
-This is a plugin for NixNote2. It allows for the creation of notes by using a webcam as input.
+This is a plugin for NixNote2. It allows for spell checking of notes via Hunspell.
 
 See release.txt for details of what works and what doesn't work.
 
@@ -31,8 +31,8 @@ license.html:   Legal notices for licenses and trademarks.
 %setup -n nixnote2
 
 %clean
-rm -rf /usr/share/doc/nixnote2-webcam-plugin
-rm -rf /usr/share/nixnote2/plugins/libwebcamplugin.so
+rm -rf /usr/share/doc/nixnote2-hunspell-plugin
+rm -rf /usr/share/nixnote2/plugins/libhunspellplugin.so
 
 %define debug_package %{nil}
 
@@ -40,7 +40,7 @@ rm -rf /usr/share/nixnote2/plugins/libwebcamplugin.so
 
 %install
 mkdir -p /usr/share/nixnote2/plugins
-mkdir -p /usr/share/doc/nixnote2-webcam-plugin
+mkdir -p /usr/share/doc/nixnote2-hunspell-plugin
 
 %post
 
@@ -49,6 +49,6 @@ mkdir -p /usr/share/doc/nixnote2-webcam-plugin
 %files
 
 %changelog
-* Thu Dec 10 2015 Randy Baumgarte <randy@fbn.cx> - __VERSION__
+* Thu Sep 4 2016 Randy Baumgarte <randy@fbn.cx> - __VERSION__
 - See changelog.txt for all changes
 
