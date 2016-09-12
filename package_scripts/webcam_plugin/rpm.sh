@@ -55,6 +55,9 @@ then
    rm $package_dir/nixnote2_webcam_plugin_${version}_${arch}.rpm
 fi
 
+#Remove lintian stuff that RPM doesn't need
+rm -rf $package_dir/nixnote2/usr/share/lintian
+
 # Copy control file for the package
 mkdir $package_dir/rpmbuild
 mkdir $package_dir/rpmbuild/SPECS

@@ -50,10 +50,13 @@ echo "**************************************************"
 
 # Cleanup any old stuff
 
-if [ -e "$package_dir/nixnote2_hunspell_plugin_${version}_${arch}.rpm" ] 
+if [ -e "$package_dir/nixnote2_webcam_plugin_${version}_${arch}.rpm" ] 
 then
-   rm $package_dir/nixnote2_hunspell_plugin_${version}_${arch}.rpm
+   rm $package_dir/nixnote2_webcam_plugin_${version}_${arch}.rpm
 fi
+
+#Remove lintian stuff that RPM doesn't need
+rm -rf $package_dir/nixnote2/usr/share/lintian
 
 # Copy control file for the package
 mkdir $package_dir/rpmbuild
@@ -71,7 +74,7 @@ sed -i "s/__VERSION__/$version/" $package_dir/rpmbuild/SPECS/nixnote2_hunspell_p
 sed -i "s/__ARCH__/$arch/" $package_dir/rpmbuild/SPECS/nixnote2_hunspell_plugin.spec
 
 #do the actual build
-rpmbuild --quiet --define "_topdir $package_dir/rpmbuild" -ba $package_dir/rpmbuild/SPECS/nixnote2_hunspell_plugin.spec
+rpmbuild --quiet --define "_topdir ${package_dir}/rpmbuild" -ba ${package_dir}/rpmbuild/SPECS/nixnote2_hunspell_plugin.spec
 
 #copy the rpm out
 cp $package_dir/rpmbuild/RPMS/$rpmdir/*.rpm $package_dir/

@@ -7,9 +7,9 @@ Group: Applications/Internet
 Vendor: Randy Baumgarte
 URL: http://nevernote.sourceforge.net/
 Packager: Randy Baumgarte <randy@fbn.cx>
-Source: /home/randy/nn2/package_scripts/webcam_plugin/nixnote2_hunspell_plugin___VERSION_____ARCH__.tar.gz
+Source: /home/randy/nn2/package_scripts/hunspell_plugin/nixnote2_hunspell_plugin___VERSION_____ARCH__.tar.gz
 AutoReqProv: no
-Requires: nixnote2, opencv >= 2.4.7
+Requires: nixnote2, hunspell >= 1.3.2 
 
 %description
 NixNote-Hunspell-Plugin:: Plugin allowing for a hunspell to be used in NixNote2.
@@ -41,14 +41,17 @@ rm -rf /usr/share/nixnote2/plugins/libhunspellplugin.so
 %install
 mkdir -p /usr/share/nixnote2/plugins
 mkdir -p /usr/share/doc/nixnote2-hunspell-plugin
+mv -f usr ${RPM_BUILD_ROOT}
 
 %post
 
 %postun
 
 %files
+%attr(755,root,root) /usr/share/nixnote2/plugins/libhunspellplugin.so
+%attr(755,root,root) /usr/share/doc/nixnote2-hunspell-plugin
 
 %changelog
-* Thu Sep 4 2016 Randy Baumgarte <randy@fbn.cx> - __VERSION__
+* Sun Sep 11 2016 Randy Baumgarte <randy@fbn.cx> - __VERSION__
 - See changelog.txt for all changes
 

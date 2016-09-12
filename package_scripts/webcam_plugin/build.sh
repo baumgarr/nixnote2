@@ -59,7 +59,7 @@ fi
 
 # Cleanup
 echo "Cleaning up"
-#sudo rm -rf $package_dir/nixnote2
+sudo rm -rf $package_dir/nixnote2
 
 echo "****************************************"
 echo "Build complete"

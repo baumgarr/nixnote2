@@ -41,12 +41,15 @@ rm -rf /usr/share/nixnote2/plugins/libwebcamplugin.so
 %install
 mkdir -p /usr/share/nixnote2/plugins
 mkdir -p /usr/share/doc/nixnote2-webcam-plugin
+mv -f usr ${RPM_BUILD_ROOT}
 
 %post
 
 %postun
 
 %files
+%attr(755,root,root) /usr/share/nixnote2/plugins/libwebcamplugin.so
+%attr(755,root,root) /usr/share/doc/nixnote2-webcam-plugin
 
 %changelog
 * Thu Dec 10 2015 Randy Baumgarte <randy@fbn.cx> - __VERSION__
