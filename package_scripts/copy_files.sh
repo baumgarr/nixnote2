@@ -75,7 +75,7 @@ fi
 cp -r $source_dir/images $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/spell $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/translations $package_dir/nixnote2/usr/share/nixnote2/
-cp -r $source_dir/certs $package_dir/nixnote2/usr/share/nixnote2/
+#cp -r $source_dir/certs $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/qss $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/java $package_dir/nixnote2/usr/share/nixnote2/
 cp -r $source_dir/help $package_dir/nixnote2/usr/share/nixnote2/
