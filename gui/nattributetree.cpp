@@ -494,7 +494,7 @@ void NAttributeTree::updateSelection() {
 }
 
 
-// This alows for the tree item to be toggled.  If the prior item is selected again
+// This allows for the tree item to be toggled.  If the prior item is selected again
 // it is deselected.  If it is the root item, we don't permit the selection.
 void NAttributeTree::mousePressEvent(QMouseEvent *event)
 {
