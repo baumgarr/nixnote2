@@ -2139,7 +2139,7 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAny(QString string) 
 
 
 // Check if a resource contains a specific search string.  Used in highlighting PDFs & attachments
-// This funciton is used in two different ways.  If the *returnHits pointer is NULL, it searches
+// This function is used in two different ways.  If the *returnHits pointer is NULL, it searches
 // for the first match in a PDF and exits with true/false if a match is found.  If the pointer is
 // not null, it will return a list of all of the searchString terms that are found.  This is useful
 // in knowing what to highlight in a PDF.

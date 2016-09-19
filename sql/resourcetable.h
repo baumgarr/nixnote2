@@ -116,7 +116,7 @@ public:
     qint32 addStub(qint32 resLid, qint32 noteLid);               // Add a basic "stub" record.  Useful when duplicating notes
     void reindexAllResources();                                  // Reindex all relources
     void updateNoteLid(qint32 resourceLid, qint32 newNoteLid);   // Update the owning note
-    void expungeByNote(qint32 notebookLid);                      // Given a note's LID, erase teh resource
+    void expungeByNote(qint32 notebookLid);                      // Given a note's LID, erase the resource
     void mapResource(NSqlQuery &query, Resource &resource);      // Save a resource map data
 };
 

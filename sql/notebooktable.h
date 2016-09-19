@@ -86,7 +86,7 @@ public:
     void getStacks(QStringList &stacks);        // Get a list of all stacks
     bool isStacked(qint32 lid);                 // Is this notebook in a stack?
     qint32 getDefaultNotebookLid();             // Get the default notebook LID
-    QString getDefaultNotebookGuid();           // Get teh default notebok GUID
+    QString getDefaultNotebookGuid();           // Get the default notebok GUID
     bool isReadOnly(qint32 notebookLid);        // Is this DB read only?
     qint32 getConflictNotebook();               // get the LID of the conflict notebook
     qint32 getAllDirty(QList<qint32> &lids);    // get all dirty notebooks
