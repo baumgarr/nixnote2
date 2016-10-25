@@ -39,6 +39,8 @@ TagEditor::TagEditor(QWidget *parent) :
     layout = new FlowLayout(this);
     layout->addWidget(&tagIcon);
     setLayout(layout);
+    currentLid = 0;
+    newEditorHasFocus = false;
 
     QPixmap pix = global.getPixmapResource(":tagIcon");
     tagIcon.setPixmap(pix);

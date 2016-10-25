@@ -47,6 +47,8 @@ Global::Global()
     filterCriteria.push_back(criteria);
     filterPosition = 0;
 
+    this->argv = NULL;
+    this->argc = 0;
     criteria->resetNotebook = true;
     criteria->resetTags = true;
     criteria->resetSavedSearch = true;
@@ -55,10 +57,54 @@ Global::Global()
     criteria->resetDeletedOnly = true;
     criteria->setDeletedOnly(false);
     criteria->resetLid = true;
+    this->accountsManager = NULL;
     criteria->resetSearchString = true;
+    this->application = NULL;
+    this->autoHideEditorToolbar  = false;
+    this->showGoodSyncMessagesInTray = false;
+    this->batchThumbnailCount = 4;
     username = "";
+    this->clipboard = NULL;
+    this->defaultFontSize = 8;
+    this->countBehavior =  Global::CountAll;
     password = "";
     javaFound = false;
+    reminderManager = NULL;
+    settings = NULL;
+    startupNewNote = false;
+    this->sharedMemory = NULL;
+    this->forceSystemTrayAvailable = false;
+    this->guiAvailable = true;
+    strictDTD = true;
+    startupNote = 0;
+    db = NULL;
+    this->forceWebFonts = false;
+    this->indexPDFLocally = true;
+    this->indexRunner = NULL;
+    this->isFullscreen = false;
+    this->indexNoteCountPause = -1;
+    this->maxIndexInterval = 500;
+    this->forceNoStartMimized = false;
+    this->forceSearchLowerCase = false;
+    this->forceStartMinimized = false;
+    this->globalSettings = NULL;
+    this->disableUploads = false;
+    this->enableIndexing = true;
+    this->disableThumbnails = false;
+    this->defaultGuiFont = "";
+    this->defaultGuiFontSize = 8;
+    this->minIndexInterval = 500;
+    this->minimumThumbnailInterval = 500;
+    this->purgeTemporaryFilesOnShutdown = true;
+    this->indexResourceCountPause = 500;
+    this->maximumThumbnailInterval = 500;
+    this->disableEditing = false;
+    this->nonAsciiSortBug = false;
+    this->startMinimized = false;
+    this->pdfPreview = true;
+    this->shortcutKeys = NULL;
+    this->cryptCounter = 0;
+    this->connected = false;
 }
 
 

@@ -2080,18 +2080,15 @@ void NixNote::newExternalNote() {
 }
 
 
-
 // Slot for when notes have been deleted from the notes list.
-void NixNote::notesDeleted(QList<qint32> lids) {
-    lids=lids;
+void NixNote::notesDeleted(QList<qint32>) {
     updateSelectionCriteria();
 }
 
 
 
 // Slot for when notes have been deleted from the notes list.
-void NixNote::notesRestored(QList<qint32> lids) {
-    lids=lids;
+void NixNote::notesRestored(QList<qint32>) {
     updateSelectionCriteria();
 }
 
@@ -3625,9 +3622,9 @@ void NixNote::loadPlugins() {
                 if (webcamInterface) {
                     webcamPluginAvailable = true;
                     webcamInterface->initialize();
-                } else {
-                    QLOG_ERROR() << tr("Error loading plugin: ") << pluginLoader.errorString();
                 }
+            } else {
+                QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
             }
         }
 
@@ -3639,10 +3636,10 @@ void NixNote::loadPlugins() {
                 hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
                 if (hunspellInterface) {
                     hunspellPluginAvailable = true;
-                } else {
-                    QLOG_ERROR() << tr("Error loading plugin: ") << pluginLoader.errorString();
                 }
                 delete hunspellInterface;
+            } else {
+                QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
             }
         }
     }

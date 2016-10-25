@@ -50,6 +50,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/pixelconverter.h"
 
 
+#include <QPlainTextEdit>
 #include <QVBoxLayout>
 #include <QAction>
 #include <QMenu>
@@ -68,6 +69,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QPaintEngine>
 #include <iostream>
 #include <istream>
+#include <qcalendarwidget.h>
+#include <qplaintextedit.h>
 
 extern Global global;
 
@@ -126,8 +129,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     global.getGuiFont(font);
 //    font.setPointSize(global.defaultGuiFontSize);
     sourceEdit->setFont(global.getGuiFont(font));
-    XmlHighlighter *highlighter = new XmlHighlighter(sourceEdit->document());
-    highlighter = highlighter;  // Prevents the unused warning
+    //XmlHighlighter *highlighter = new XmlHighlighter(sourceEdit->document());
     sourceEditorTimer = new QTimer();
     connect(sourceEditorTimer, SIGNAL(timeout()), this, SLOT(setSource()));
 
@@ -248,6 +250,8 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(&focusTimer, SIGNAL(timeout()), this, SLOT(focusCheck()));
     focusTimer.setInterval(100);
     focusTimer.start();
+
+    hunspellInterface = NULL;
 }
 
 
@@ -2537,7 +2541,8 @@ void NBrowserWindow::emailNote() {
     message.setSubject(emailDialog.subject->text().trimmed());
 
     // Build the note content
-    prepareEmailMessage(&message, emailDialog.note->toPlainText());
+    QString text =  emailDialog.note->toPlainText();
+    prepareEmailMessage(&message, text);
 
     // Send the actual message.
     if (!smtp.connectToHost()) {

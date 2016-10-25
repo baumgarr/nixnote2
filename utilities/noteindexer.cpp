@@ -200,7 +200,7 @@ void NoteIndexer::indexRecognition(qint32 reslid, Resource &r) {
     QLOG_TRACE() << "Beginning insertion of recognition:";
     QLOG_TRACE() << "Anchors found: " << anchors.length();
     sql.exec("begin;");
-    for (unsigned int i=0;  i<anchors.length(); i++) {
+    for (int i=0;  i<anchors.length(); i++) {
         QLOG_TRACE() << "Anchor: " << i;
         QApplication::processEvents();
         QDomElement enmedia = anchors.at(i).toElement();

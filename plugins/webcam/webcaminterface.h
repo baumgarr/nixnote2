@@ -40,6 +40,6 @@ public:
     virtual void pictureRefresh() = 0;
 };
 
-Q_DECLARE_INTERFACE(WebCamInterface, "org.nixnote.NixNote2.WebCamInterface/1.0")
+Q_DECLARE_INTERFACE(WebCamInterface, "org.nixnote.NixNote2.WebCamInterface/2.0")
 
 #endif // WEBCAMINTERFACE_H
