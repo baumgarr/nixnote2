@@ -1580,6 +1580,19 @@ void NTableView::setTitleColor(QString color) {
 }
 
 
+void NTableView::noteTagsUpdated(QString uuid, qint32 lid, QStringList names) {
+	QString value="";
+	for (int i=0; i<names.size(); i++) {
+		value = value + names[i];
+		if (names.size() > i+1)
+			value = value + ",";
+	}
+	this->refreshCell(lid, NOTE_TABLE_TAGS_POSITION, QVariant(value));
+
+}
+
+
+
 void NTableView::downNote() {
     QKeyEvent *event = new QKeyEvent ( QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
     QCoreApplication::postEvent(this, event);
