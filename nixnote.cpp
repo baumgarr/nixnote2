@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filterengine.h"
 #include "dialog/faderdialog.h"
 
+#include <QApplication>
 #include <QThread>
 #include <QLabel>
 #include <QMessageBox>
@@ -2130,6 +2131,15 @@ void NixNote::openAccount() {
 void NixNote::openAbout() {
     AboutDialog about;
     about.exec();
+}
+
+
+
+//*******************************
+//* Open About Qt dialog box.
+//*******************************
+void NixNote::openQtAbout() {
+    QApplication::aboutQt();
 }
 
 
