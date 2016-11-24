@@ -72,6 +72,7 @@ public:
     QAction *disableEditingAction;
     QAction *userMaintenanceAction;
     QAction *aboutAction;
+    QAction *aboutQtAction;
 
     QAction *undoAction;
     QAction *redoAction;

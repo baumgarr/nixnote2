@@ -564,7 +564,7 @@
 <context>
     <name>CmdLineTool</name>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="55"/>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="56"/>
         <source>Unable to attach to shared memory segment.  Is the other NixNote running?
 </source>
         <translation>無法連接到共享記憶體。請確保 NixNote 正在運行！</translation>
@@ -644,6 +644,21 @@
         <location filename="../cmdtools/cmdlinetool.cpp" line="731"/>
         <source>Notebook not found: </source>
         <translation>未找到記事：</translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="744"/>
+        <source>OAuth token not found.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="762"/>
+        <source>Error synchronizing with Evernote.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="765"/>
+        <source>Sync completed.</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1408,6 +1423,14 @@ Please specify server settings in the Preferences menu.</source>
     </message>
 </context>
 <context>
+    <name>FileWatcher</name>
+    <message>
+        <location filename="../watcher/filewatcher.cpp" line="72"/>
+        <source>Error removing file: </source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FindReplace</name>
     <message>
         <location filename="../gui/findreplace.cpp" line="46"/>
@@ -2007,45 +2030,45 @@ See http://www.w3schools.com/charsets/ for list.</source>
 <context>
     <name>NBrowserWindow</name>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="484"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2942"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="483"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2941"/>
         <source>Today</source>
         <translation>今日</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="486"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2944"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="485"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2943"/>
         <source>Tomorrow</source>
         <translation>明日</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="488"/>
-        <location filename="../gui/nbrowserwindow.cpp" line="2946"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="487"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2945"/>
         <source>Yesterday</source>
         <translation>昨日</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="753"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="752"/>
         <source>Unable to Save</source>
         <translation>無法存檔</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="753"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="752"/>
         <source>Unable to save this note.  Either tidy isn&apos;t installed or the note is too complex to save.</source>
         <translation>記事無法存檔。未安裝 tidy 或記事過於複雜。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1671"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1670"/>
         <source>Insert Link</source>
         <translation>插入超鏈接</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1915"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1914"/>
         <source>Unable Open</source>
         <translation>無法開啟</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="1915"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="1914"/>
         <source>This is an ink note.
 Ink notes are not supported since Evernote has not
  published any specifications on them
@@ -2053,27 +2076,27 @@ and I&apos;m too lazy to figure them out by myself.</source>
         <translation>這是一條手寫記事。Evernote 沒有發佈相關的規範，因此本軟件不支援手寫記事。我太懒了，也不想自己去做這件事。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2087"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2086"/>
         <source>Edit Link</source>
         <translation>編輯超鏈接</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2151"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2150"/>
         <source>Unable to create LaTeX image</source>
         <translation>無法創建 LaTeX 圖片</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2152"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2151"/>
         <source>Unable to create LaTeX image.  Are you sure mimetex is installed?</source>
         <translation>無法創建 LaTeX 圖片。你確定 mimetex 已安裝？</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2477"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2476"/>
         <source>Setup Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2478"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2477"/>
         <source>SMTP Server has not been setup.
 
 Please specify server settings
@@ -2081,68 +2104,68 @@ in the Preferences menu.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2487"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2486"/>
         <source>Sending Email. Please be patient.</source>
         <translation>正在發送郵件，請稍等。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2546"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2545"/>
         <source>Connection Error</source>
         <translation>連接錯誤</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2546"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2545"/>
         <source>Unable to connect to host.</source>
         <translation>無法連接到主機</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2552"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2551"/>
         <source>Login Error</source>
         <translation>登錄錯誤</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2552"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2551"/>
         <source>Unable to login.</source>
         <translation>無法登錄</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2557"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2556"/>
         <source>Send Error</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2557"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2556"/>
         <source>Unable to send email.</source>
         <translation>無法發送電郵。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2989"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2988"/>
         <source>Decryption Error</source>
         <translation>解密錯誤</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="2990"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="2989"/>
         <source>Unknown encryption method.
 Unable to decrypt.</source>
         <translation>未知加密手段。無法解密。</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="3093"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="3092"/>
         <source>Error</source>
         <translation>錯誤</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="3094"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="3093"/>
         <source>Error Encrypting String.  Please verify you have Java installed.</source>
         <translation>加密出錯，請確定是否安裝 Java.</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="3260"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="3262"/>
         <source>Spell Check Complete</source>
         <translation>完成拼字檢查</translation>
     </message>
     <message>
-        <location filename="../gui/nbrowserwindow.cpp" line="3260"/>
+        <location filename="../gui/nbrowserwindow.cpp" line="3262"/>
         <source>Spell Check Complete.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2450,72 +2473,77 @@ Unable to decrypt.</source>
         <translation>刪除</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="407"/>
+        <location filename="../gui/nmainmenubar.cpp" line="408"/>
         <source>&amp;Spell Check</source>
         <translation>拼字檢查</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="415"/>
+        <location filename="../gui/nmainmenubar.cpp" line="417"/>
         <source>&amp;Pin Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="420"/>
+        <location filename="../gui/nmainmenubar.cpp" line="422"/>
         <source>&amp;UnPin Note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="434"/>
+        <location filename="../gui/nmainmenubar.cpp" line="436"/>
         <source>&amp;Synchronize</source>
         <translation>同步</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="435"/>
+        <location filename="../gui/nmainmenubar.cpp" line="437"/>
         <source>Synchronize with Evernote</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="440"/>
+        <location filename="../gui/nmainmenubar.cpp" line="442"/>
         <source>&amp;Disconnect</source>
         <translation>斷開連接</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="448"/>
+        <location filename="../gui/nmainmenubar.cpp" line="450"/>
         <source>Pause &amp;Indexing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="449"/>
+        <location filename="../gui/nmainmenubar.cpp" line="451"/>
         <source>Temporarily pause indexing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="456"/>
+        <location filename="../gui/nmainmenubar.cpp" line="458"/>
         <source>Disable &amp;Editing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="457"/>
+        <location filename="../gui/nmainmenubar.cpp" line="459"/>
         <source>Temporarily disable note editing</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="464"/>
+        <location filename="../gui/nmainmenubar.cpp" line="466"/>
         <source>A&amp;ccount</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="478"/>
+        <location filename="../gui/nmainmenubar.cpp" line="480"/>
         <source>&amp;Reindex Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="502"/>
+        <location filename="../gui/nmainmenubar.cpp" line="504"/>
         <source>&amp;User&apos;s Guide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="593"/>
+        <location filename="../gui/nmainmenubar.cpp" line="566"/>
+        <source>About &amp;Qt</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../gui/nmainmenubar.cpp" line="600"/>
         <source>Theme</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2525,92 +2553,92 @@ Unable to decrypt.</source>
         <translation>&amp;記事</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="429"/>
+        <location filename="../gui/nmainmenubar.cpp" line="431"/>
         <source>&amp;Tools</source>
         <translation>&amp;工具</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="441"/>
+        <location filename="../gui/nmainmenubar.cpp" line="443"/>
         <source>Disconnect from Evernote</source>
         <translation>自 Evernote 斷線</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="465"/>
+        <location filename="../gui/nmainmenubar.cpp" line="467"/>
         <source>Account information</source>
         <translation>帳戶資訊</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="472"/>
+        <location filename="../gui/nmainmenubar.cpp" line="474"/>
         <source>&amp;Database Status</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="473"/>
+        <location filename="../gui/nmainmenubar.cpp" line="475"/>
         <source>Database Status</source>
         <translation>資料庫狀態</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="479"/>
+        <location filename="../gui/nmainmenubar.cpp" line="481"/>
         <source>Reindex all notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="487"/>
+        <location filename="../gui/nmainmenubar.cpp" line="489"/>
         <source>&amp;Import Folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="488"/>
+        <location filename="../gui/nmainmenubar.cpp" line="490"/>
         <source>Import Folders</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="497"/>
+        <location filename="../gui/nmainmenubar.cpp" line="499"/>
         <source>&amp;Help</source>
         <translation>&amp;說明</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="503"/>
+        <location filename="../gui/nmainmenubar.cpp" line="505"/>
         <source>Open the user manual.</source>
         <translation>開啓用戶手冊</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="526"/>
+        <location filename="../gui/nmainmenubar.cpp" line="528"/>
         <source>Message &amp;Log</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="533"/>
+        <location filename="../gui/nmainmenubar.cpp" line="535"/>
         <source>&amp;Evernote Account Page</source>
         <translation>Evernote 帳戶頁</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="538"/>
+        <location filename="../gui/nmainmenubar.cpp" line="540"/>
         <source>Evernote &amp;Support</source>
         <translation>Evernote 支援</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="547"/>
+        <location filename="../gui/nmainmenubar.cpp" line="549"/>
         <source>Evernote &amp;Trunk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="552"/>
+        <location filename="../gui/nmainmenubar.cpp" line="554"/>
         <source>Evernote User &amp;Forum</source>
         <translation>Evernote 用戶論壇</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="559"/>
+        <location filename="../gui/nmainmenubar.cpp" line="561"/>
         <source>&amp;About</source>
         <translation>關於</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="602"/>
+        <location filename="../gui/nmainmenubar.cpp" line="609"/>
         <source>System Default</source>
         <translation type="unfinished">系統缺省</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="527"/>
+        <location filename="../gui/nmainmenubar.cpp" line="529"/>
         <source>View current program messages</source>
         <translation type="unfinished"></translation>
     </message>
@@ -2620,47 +2648,48 @@ Unable to decrypt.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="508"/>
+        <location filename="../gui/nmainmenubar.cpp" line="510"/>
         <source>Theme &amp;Information</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="509"/>
+        <location filename="../gui/nmainmenubar.cpp" line="511"/>
         <source>View information about the current theme.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="534"/>
+        <location filename="../gui/nmainmenubar.cpp" line="536"/>
         <source>Go to your Evernote account page.</source>
         <translation>前往我的帳戶頁</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="539"/>
+        <location filename="../gui/nmainmenubar.cpp" line="541"/>
         <source>Go to Evernote&apos;s support page</source>
         <translation>支援 學習中心</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="541"/>
+        <location filename="../gui/nmainmenubar.cpp" line="543"/>
         <source>Yinxiang Biji Support</source>
         <translation>印象筆記支援</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="542"/>
+        <location filename="../gui/nmainmenubar.cpp" line="544"/>
         <source>Go to Yinxiang Biji&apos;s support page</source>
         <translation>前往印象筆記支援頁</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="548"/>
+        <location filename="../gui/nmainmenubar.cpp" line="550"/>
         <source>Go to Evernote Trunk</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="553"/>
+        <location filename="../gui/nmainmenubar.cpp" line="555"/>
         <source>Go to the Evernote user support forum.</source>
         <translation>前往用戶支援論壇</translation>
     </message>
     <message>
-        <location filename="../gui/nmainmenubar.cpp" line="560"/>
+        <location filename="../gui/nmainmenubar.cpp" line="562"/>
+        <location filename="../gui/nmainmenubar.cpp" line="567"/>
         <source>About</source>
         <translation>關於</translation>
     </message>
@@ -2773,13 +2802,14 @@ Unable to decrypt.</source>
 <context>
     <name>NTabWidget</name>
     <message>
-        <location filename="../gui/ntabwidget.cpp" line="254"/>
+        <location filename="../gui/ntabwidget.cpp" line="252"/>
+        <location filename="../gui/ntabwidget.cpp" line="260"/>
         <source>Untitled Note</source>
         <translation>未命名記事</translation>
     </message>
     <message>
-        <location filename="../gui/ntabwidget.cpp" line="259"/>
-        <location filename="../gui/ntabwidget.cpp" line="325"/>
+        <location filename="../gui/ntabwidget.cpp" line="265"/>
+        <location filename="../gui/ntabwidget.cpp" line="331"/>
         <source>NixNote - </source>
         <translation type="unfinished"></translation>
     </message>
@@ -3316,199 +3346,199 @@ Do you wish to continue?</source>
 <context>
     <name>NixNote</name>
     <message>
-        <location filename="../nixnote.cpp" line="199"/>
+        <location filename="../nixnote.cpp" line="200"/>
         <source>Tidy Not Found</source>
         <translation>未找到 Tidy</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="199"/>
+        <location filename="../nixnote.cpp" line="200"/>
         <source>Tidy is not found on this system.
 Until tidy is installed you cannot save any notes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="274"/>
+        <location filename="../nixnote.cpp" line="275"/>
         <source>ToolBar</source>
         <translation>工具列</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="286"/>
+        <location filename="../nixnote.cpp" line="287"/>
         <source>Back</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="287"/>
+        <location filename="../nixnote.cpp" line="288"/>
         <source>Next</source>
         <translation>下一個</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="297"/>
+        <location filename="../nixnote.cpp" line="298"/>
         <source>All Notes</source>
         <translation>所有記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="299"/>
+        <location filename="../nixnote.cpp" line="300"/>
         <source>Sync</source>
         <translation>同步</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="302"/>
+        <location filename="../nixnote.cpp" line="303"/>
         <source>Print</source>
         <translation>列印</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="312"/>
+        <location filename="../nixnote.cpp" line="313"/>
         <source>New Text Note</source>
         <translation>新文本記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="315"/>
+        <location filename="../nixnote.cpp" line="316"/>
         <source>New Webcam Note</source>
         <translation>新網路相機記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="327"/>
+        <location filename="../nixnote.cpp" line="328"/>
         <source>Delete</source>
         <translation type="unfinished">刪除</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="330"/>
+        <location filename="../nixnote.cpp" line="331"/>
         <source>Trunk</source>
         <translation>堆壘</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="332"/>
+        <location filename="../nixnote.cpp" line="333"/>
         <source>Usage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="514"/>
-        <location filename="../nixnote.cpp" line="2973"/>
+        <location filename="../nixnote.cpp" line="515"/>
+        <location filename="../nixnote.cpp" line="2981"/>
         <source>Screen Capture</source>
         <translation>擷取螢幕截圖</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="530"/>
+        <location filename="../nixnote.cpp" line="531"/>
         <source>Show/Hide</source>
         <translation>顯示/隱藏</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="542"/>
+        <location filename="../nixnote.cpp" line="543"/>
         <source>Close</source>
         <translation>關閉</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1731"/>
+        <location filename="../nixnote.cpp" line="1732"/>
         <source>Confirm Restore</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1747"/>
+        <location filename="../nixnote.cpp" line="1748"/>
         <source>Restore Database</source>
         <translation type="unfinished">回存資料庫</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1750"/>
+        <location filename="../nixnote.cpp" line="1751"/>
         <source>Import Notes</source>
         <translation type="unfinished">匯入記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1662"/>
-        <location filename="../nixnote.cpp" line="1748"/>
+        <location filename="../nixnote.cpp" line="1663"/>
+        <location filename="../nixnote.cpp" line="1749"/>
         <source>NixNote Export (*.nnex);;All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="303"/>
+        <location filename="../nixnote.cpp" line="304"/>
         <source>Print the current note</source>
         <translation>列印當前記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="305"/>
+        <location filename="../nixnote.cpp" line="306"/>
         <source>Email</source>
         <translation>傳送電子郵件</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="306"/>
+        <location filename="../nixnote.cpp" line="307"/>
         <source>Email the current note</source>
         <translation>用電子郵件傳送當前記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="511"/>
+        <location filename="../nixnote.cpp" line="512"/>
         <source>Quick Note</source>
         <translation>快捷記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="521"/>
+        <location filename="../nixnote.cpp" line="522"/>
         <source>Shortcut Notes</source>
         <translation>捷徑記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="523"/>
+        <location filename="../nixnote.cpp" line="524"/>
         <source>Pinned Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="525"/>
+        <location filename="../nixnote.cpp" line="526"/>
         <source>Recently Updated Notes</source>
         <translation>最近更新的記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1381"/>
-        <location filename="../nixnote.cpp" line="2233"/>
+        <location filename="../nixnote.cpp" line="1382"/>
+        <location filename="../nixnote.cpp" line="2241"/>
         <source>Log in to Evernote</source>
         <translation>登錄 Evernote</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1383"/>
-        <location filename="../nixnote.cpp" line="2235"/>
+        <location filename="../nixnote.cpp" line="1384"/>
+        <location filename="../nixnote.cpp" line="2243"/>
         <source>NixNote</source>
         <translation>NixNote</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1647"/>
-        <location filename="../nixnote.cpp" line="1693"/>
-        <location filename="../nixnote.cpp" line="1790"/>
+        <location filename="../nixnote.cpp" line="1648"/>
+        <location filename="../nixnote.cpp" line="1694"/>
+        <location filename="../nixnote.cpp" line="1791"/>
         <source>Error</source>
         <translation>錯誤</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1647"/>
+        <location filename="../nixnote.cpp" line="1648"/>
         <source>No notes selected.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1654"/>
+        <location filename="../nixnote.cpp" line="1655"/>
         <source>Backup Database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1656"/>
+        <location filename="../nixnote.cpp" line="1657"/>
         <source>Export Notes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1681"/>
+        <location filename="../nixnote.cpp" line="1682"/>
         <source>Performing backup</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1683"/>
+        <location filename="../nixnote.cpp" line="1684"/>
         <source>Performing export</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1700"/>
+        <location filename="../nixnote.cpp" line="1701"/>
         <source>Database backup complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1702"/>
+        <location filename="../nixnote.cpp" line="1703"/>
         <source>Note extract complete.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1728"/>
+        <location filename="../nixnote.cpp" line="1729"/>
         <source>This is used to restore a database from backups.
 It is HIGHLY recommended that this only be used to populate
 an empty database.  Restoring into a database that
@@ -3521,149 +3551,155 @@ Are you sure you want to continue?</source>
 你確定要繼續操作嗎？</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1751"/>
+        <location filename="../nixnote.cpp" line="1752"/>
         <source>NixNote Export (*.nnex);;Evernote Export (*.enex);;All Files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1778"/>
+        <location filename="../nixnote.cpp" line="1779"/>
         <source>Restoring database</source>
         <translation type="unfinished">資料庫回存中</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1780"/>
+        <location filename="../nixnote.cpp" line="1781"/>
         <source>Importing Notes</source>
         <translation type="unfinished">正在匯入記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1812"/>
+        <location filename="../nixnote.cpp" line="1813"/>
         <source>Database has been restored.</source>
         <translation type="unfinished">資料庫回存完畢</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1814"/>
+        <location filename="../nixnote.cpp" line="1815"/>
         <source>Notes have been imported.</source>
         <translation type="unfinished">記事已匯入</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1848"/>
+        <location filename="../nixnote.cpp" line="1849"/>
         <source>Sync Error</source>
         <translation>同步錯誤</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1848"/>
+        <location filename="../nixnote.cpp" line="1849"/>
         <source>Sync completed with errors.</source>
         <translation>同步完成，但有錯誤。</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1851"/>
+        <location filename="../nixnote.cpp" line="1852"/>
         <source>Sync Complete</source>
         <translation>同步完成</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1851"/>
+        <location filename="../nixnote.cpp" line="1852"/>
         <source>Sync completed successfully.</source>
         <translation>同步成功完成</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="1933"/>
+        <location filename="../nixnote.cpp" line="1932"/>
         <source>Untitled note</source>
         <translation>未命名記事</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2253"/>
+        <location filename="../nixnote.cpp" line="2261"/>
         <source>This feature is only available to premium users.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2254"/>
+        <location filename="../nixnote.cpp" line="2262"/>
         <source>Premium Feature</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2273"/>
+        <location filename="../nixnote.cpp" line="2281"/>
         <source>Error retrieving note.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2274"/>
+        <location filename="../nixnote.cpp" line="2282"/>
         <source>Error retrieving note</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2296"/>
+        <location filename="../nixnote.cpp" line="2304"/>
         <source>Note restored</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2300"/>
+        <location filename="../nixnote.cpp" line="2308"/>
         <source>No versions of this note can be found.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2301"/>
+        <location filename="../nixnote.cpp" line="2309"/>
         <source>Note Not Found</source>
         <translation>記事未找到</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2558"/>
+        <location filename="../nixnote.cpp" line="2566"/>
         <source>Note not found.</source>
         <translation>記事未找到</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="2855"/>
+        <location filename="../nixnote.cpp" line="2863"/>
         <source>Switch to </source>
         <translation>切換到</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3028"/>
+        <location filename="../nixnote.cpp" line="3036"/>
         <source>Reindex Database</source>
         <translation>重建資料庫索引</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3028"/>
+        <location filename="../nixnote.cpp" line="3036"/>
         <source>Reindex the entire database?</source>
         <translation>重建全部資料庫索引？</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3037"/>
+        <location filename="../nixnote.cpp" line="3045"/>
         <source>Notes will be reindexed.</source>
         <translation>將重建記事本索引</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3065"/>
+        <location filename="../nixnote.cpp" line="3073"/>
         <source>Unable to find webcam or capture image.</source>
         <translation>未找到網路相機或無法截圖</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3066"/>
+        <location filename="../nixnote.cpp" line="3074"/>
         <source>Webcam Error</source>
         <translation>網路相機錯誤</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3212"/>
+        <location filename="../nixnote.cpp" line="3220"/>
         <source>Delete </source>
         <translation>刪除</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3215"/>
+        <location filename="../nixnote.cpp" line="3223"/>
         <source>Permanently delete </source>
         <translation>永久刪除 </translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3219"/>
+        <location filename="../nixnote.cpp" line="3227"/>
         <source>this note?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3223"/>
+        <location filename="../nixnote.cpp" line="3231"/>
         <source>Verify Delete</source>
         <translation>確定刪除</translation>
     </message>
     <message>
-        <location filename="../nixnote.cpp" line="3584"/>
+        <location filename="../nixnote.cpp" line="3592"/>
         <source>Press ESC to exit.</source>
         <translation>按 ESC 退出。</translation>
+    </message>
+    <message>
+        <location filename="../nixnote.cpp" line="3639"/>
+        <location filename="../nixnote.cpp" line="3653"/>
+        <source>Error loading plugin: </source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -3806,37 +3842,37 @@ Are you sure you want to continue?</source>
         <translation>確定</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="91"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="92"/>
         <source>Appearance</source>
         <translation>外觀設定</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="97"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="98"/>
         <source>Locale</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="103"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="104"/>
         <source>Search</source>
         <translation>尋找</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="109"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="110"/>
         <source>Sync</source>
         <translation>同步</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="115"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="116"/>
         <source>Email</source>
         <translation>傳送電子郵件</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="120"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="121"/>
         <source>Thumbnail</source>
         <translation type="unfinished">縮略圖</translation>
     </message>
     <message>
-        <location filename="../dialog/preferences/preferencesdialog.cpp" line="126"/>
+        <location filename="../dialog/preferences/preferencesdialog.cpp" line="127"/>
         <source>Debugging</source>
         <translation>除錯</translation>
     </message>
@@ -4138,9 +4174,8 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>SpellChecker</name>
     <message>
-        <location filename="../utilities/spellchecker.cpp" line="75"/>
         <source>Unable to find dictionaries.  Is Huntspell installed?</source>
-        <translation>辭典未找到。是否已安裝 Huntspell?</translation>
+        <translation type="vanished">辭典未找到。是否已安裝 Huntspell?</translation>
     </message>
 </context>
 <context>
@@ -4224,71 +4259,71 @@ any key or using the right or middle mouse buttons.</source>
 <context>
     <name>SyncRunner</name>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="131"/>
+        <location filename="../threads/syncrunner.cpp" line="132"/>
         <source>Beginning Sync</source>
         <translation>開始同步</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="139"/>
+        <location filename="../threads/syncrunner.cpp" line="140"/>
         <source>Downloading changes</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="189"/>
+        <location filename="../threads/syncrunner.cpp" line="190"/>
         <source>Sync Complete Successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="235"/>
-        <location filename="../threads/syncrunner.cpp" line="264"/>
+        <location filename="../threads/syncrunner.cpp" line="236"/>
+        <location filename="../threads/syncrunner.cpp" line="265"/>
         <source>Download </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="235"/>
+        <location filename="../threads/syncrunner.cpp" line="236"/>
         <source>% complete for notebooks, tags, &amp; searches.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="244"/>
+        <location filename="../threads/syncrunner.cpp" line="245"/>
         <source>Download complete for notebooks, tags, &amp; searches.  Downloading notes.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="264"/>
+        <location filename="../threads/syncrunner.cpp" line="265"/>
         <source>% complete.</source>
         <translation type="unfinished">   %已完成</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="277"/>
+        <location filename="../threads/syncrunner.cpp" line="278"/>
         <source>Download complete.</source>
         <translation>下載完成</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="700"/>
-        <location filename="../threads/syncrunner.cpp" line="740"/>
+        <location filename="../threads/syncrunner.cpp" line="701"/>
+        <location filename="../threads/syncrunner.cpp" line="741"/>
         <source>Downloading </source>
         <translation>下載中</translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="700"/>
+        <location filename="../threads/syncrunner.cpp" line="701"/>
         <source>% complete for tags in shared notebook </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="718"/>
+        <location filename="../threads/syncrunner.cpp" line="719"/>
         <source>Downloading notes for shared notebook </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="740"/>
+        <location filename="../threads/syncrunner.cpp" line="741"/>
         <source>% complete for shared notebook </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../threads/syncrunner.cpp" line="700"/>
-        <location filename="../threads/syncrunner.cpp" line="718"/>
-        <location filename="../threads/syncrunner.cpp" line="740"/>
+        <location filename="../threads/syncrunner.cpp" line="701"/>
+        <location filename="../threads/syncrunner.cpp" line="719"/>
+        <location filename="../threads/syncrunner.cpp" line="741"/>
         <source>.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -4436,22 +4471,22 @@ any key or using the right or middle mouse buttons.</source>
         <translation>刪除</translation>
     </message>
     <message>
-        <location filename="../dialog/watchfolderadd.cpp" line="88"/>
+        <location filename="../dialog/watchfolderadd.cpp" line="90"/>
         <source>Notebook</source>
         <translation>記事本</translation>
     </message>
     <message>
-        <location filename="../dialog/watchfolderadd.cpp" line="90"/>
+        <location filename="../dialog/watchfolderadd.cpp" line="92"/>
         <source>After import</source>
         <translation>匯入後</translation>
     </message>
     <message>
-        <location filename="../dialog/watchfolderadd.cpp" line="92"/>
+        <location filename="../dialog/watchfolderadd.cpp" line="94"/>
         <source>Include subdirectories</source>
         <translation>包含子目錄</translation>
     </message>
     <message>
-        <location filename="../dialog/watchfolderadd.cpp" line="99"/>
+        <location filename="../dialog/watchfolderadd.cpp" line="101"/>
         <source>Add Import Folder</source>
         <translation type="unfinished">建立匯入資料夾</translation>
     </message>
