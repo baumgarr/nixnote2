@@ -562,6 +562,11 @@ void NMainMenuBar::setupHelpMenu() {
     aboutAction->setToolTip(tr("About"));
     connect(aboutAction, SIGNAL(triggered()), parent, SLOT(openAbout()));
     helpMenu->addAction(aboutAction);
+
+    aboutQtAction = new QAction(tr("About &Qt"), this);
+    aboutQtAction->setToolTip(tr("About"));
+    connect(aboutQtAction, SIGNAL(triggered()), parent, SLOT(openQtAbout()));
+    helpMenu->addAction(aboutQtAction);
 }
 
 void NMainMenuBar::setupShortcut(QAction *action, QString text) {
