@@ -453,6 +453,10 @@ void NWebView::downloadRequested(QNetworkRequest req) {
             urlString = urlString.mid(0,pos);
         }
         urlString = urlString.mid(6);
+        if (urlString.lastIndexOf("/") > 0)
+        	urlString = urlString.mid(urlString.lastIndexOf("/")+1);
+        if (urlString.indexOf(".")>0)
+        	urlString = urlString.mid(0,urlString.indexOf("."));
 
         qint32 lid = urlString.toInt();
         ResourceTable resTable(global.db);
