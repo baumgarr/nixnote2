@@ -86,7 +86,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     mainLayout->addWidget(userId,8,1);
     mainLayout->addWidget(passwordLabel,9,0);
     mainLayout->addWidget(password,9,1);
-    mainLayout->addWidget(restartLabel,4,1);
+    mainLayout->addWidget(restartLabel,4,2);
     mainLayout->setAlignment(Qt::AlignTop);
 
     global.settings->beginGroup("Sync");
