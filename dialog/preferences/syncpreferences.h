@@ -38,6 +38,7 @@ private:
     QCheckBox *syncOnShutdown;
 
     QCheckBox *enableProxy;
+    QCheckBox *enableSocks5;
     QLineEdit *userId;
     QLineEdit *password;
     QLineEdit *port;
