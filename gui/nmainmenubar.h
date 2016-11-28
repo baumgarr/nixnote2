@@ -123,6 +123,7 @@ public:
     QAction *openUserForumAction;
     QAction *openEvernoteAccountPageAction;
     QAction *themeInformationAction;
+    QAction *openShortcutsDialogAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 

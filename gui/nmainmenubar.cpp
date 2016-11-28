@@ -524,6 +524,10 @@ void NMainMenuBar::setupHelpMenu() {
     if (themeName == "")
         themeInformationAction->setVisible(true);
 
+    openShortcutsDialogAction = new QAction(tr("Shortcuts"), this);
+    openShortcutsDialogAction->setToolTip(tr("View currentt shortcuts"));
+    connect(openShortcutsDialogAction, SIGNAL(triggered(bool)), parent, SLOT(openShortcutsDialog()));
+    helpMenu->addAction(openShortcutsDialogAction);
 
     openMessageLogAction = new QAction(tr("Message &Log"), this);
     openMessageLogAction->setToolTip(tr("View current program messages"));

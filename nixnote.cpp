@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
 #include "dialog/faderdialog.h"
+#include "dialog/shortcutdialog.h"
 
 #include <QApplication>
 #include <QThread>
@@ -2140,6 +2141,16 @@ void NixNote::openQtAbout() {
     QApplication::aboutQt();
 }
 
+
+
+//*********************************
+//* Open Shortcut Keys Dialog
+//*********************************
+void NixNote::openShortcutsDialog() {
+    ShortcutDialog *dialog = new ShortcutDialog();
+    dialog->exec();
+    delete dialog;
+}
 
 
 //**********************************************
