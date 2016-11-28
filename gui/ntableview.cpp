@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/notetable.h"
 #include "sql/notebooktable.h"
 #include "utilities/nuuid.h"
+#include "dialog/noteproperties.h"
 
 //*****************************************************************
 //* This class overrides QTableView and is used to provide a
@@ -275,6 +276,12 @@ NTableView::NTableView(QWidget *parent) :
     colorMenu = new QMenu(tr("Title Color"));
     colorMenu->setFont(global.getGuiFont(font()));
     contextMenu->addMenu(colorMenu);
+
+    contextMenu->addSeparator();
+    propertiesAction = new QAction(tr("Properties"), this);
+    contextMenu->addAction(propertiesAction);
+    propertiesAction->setFont(global.getGuiFont(font()));
+    connect(propertiesAction, SIGNAL(triggered()), this, SLOT(showPropertiesDialog()));
 
     noteTitleColorWhiteAction = new QAction(tr("White"), colorMenu);
     colorMenu->addAction(noteTitleColorWhiteAction);
@@ -1601,5 +1608,156 @@ void NTableView::downNote() {
 void NTableView::upNote() {
     QKeyEvent *event = new QKeyEvent ( QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier);
     QCoreApplication::postEvent(this, event);
+}
+
+
+void NTableView::showPropertiesDialog() {
+    NoteProperties prop;
+    QModelIndexList l = selectedIndexes();
+    if (l.size() > 0) {
+       QString currentLid =  l.at(0).sibling(l.at(0).row(),NOTE_TABLE_LID_POSITION).data().toString();
+       QString title =  l.at(0).sibling(l.at(0).row(),NOTE_TABLE_TITLE_POSITION).data().toString();
+       QString notebook = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_NOTEBOOK_POSITION).data().toString();
+       QString tags = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_TAGS_POSITION).data().toString();
+       QString author = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_AUTHOR_POSITION).data().toString();
+       bool synchronized = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_IS_DIRTY_POSITION).data().toBool();
+       bool encryption = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_HAS_ENCRYPTION_POSITION).data().toBool();
+       bool todo = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_HAS_TODO_POSITION).data().toBool();
+       double altitude = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_ALTITUDE_POSITION).data().toDouble();
+       double longitude = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_LONGITUDE_POSITION).data().toDouble();
+       double latitude = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_LATITUDE_POSITION).data().toDouble();
+       QString sourceAppl = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_SOURCE_APPLICATION_POSITION).data().toString();
+       QString source = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_SOURCE_POSITION).data().toString();
+       QString sourceURL = l.at(0).sibling(l.at(0).row(),NOTE_TABLE_SOURCE_URL_POSITION).data().toString();
+
+
+       QDateTime dateCreated;
+       dateCreated.setTime_t(l.at(0).sibling(l.at(0).row(),NOTE_TABLE_DATE_CREATED_POSITION).data().toLongLong()/1000);
+       QDateTime dateDeleted;
+       dateDeleted.setTime_t(l.at(0).sibling(l.at(0).row(),NOTE_TABLE_DATE_DELETED_POSITION).data().toLongLong()/1000);
+       QDateTime dateUpdated;
+       dateUpdated.setTime_t(l.at(0).sibling(l.at(0).row(),NOTE_TABLE_DATE_UPDATED_POSITION).data().toLongLong()/1000);
+       QDateTime dateSubject;
+       dateSubject.setTime_t(l.at(0).sibling(l.at(0).row(),NOTE_TABLE_DATE_SUBJECT_POSITION).data().toLongLong()/1000);
+       QDateTime reminderDue;
+       dateSubject.setTime_t(l.at(0).sibling(l.at(0).row(),NOTE_TABLE_REMINDER_TIME_POSITION).data().toLongLong()/1000);
+       QDateTime reminderCompleted;
+       dateSubject.setTime_t(l.at(0).sibling(l.at(0).row(),NOTE_TABLE_REMINDER_TIME_DONE_POSITION).data().toLongLong()/1000);
+
+       int row = 0;
+       int col = 0;
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Note LID")));
+       prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(currentLid));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Title")));
+       prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(title));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Notebook")));
+       prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(notebook));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Tags")));
+       prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(tags));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Synchronized")));
+       if (synchronized)
+           prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(tr("No")));
+       else
+           prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(tr("Yes")));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Has Encryption")));
+       if (encryption)
+           prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(tr("Yes")));
+       else
+           prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(tr("No")));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Has To-Do")));
+       if (todo)
+           prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(tr("Yes")));
+       else
+           prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(tr("No")));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Date Created")));
+       prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(dateCreated.toString(global.dateFormat + QString(" ") +global.timeFormat)));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Date Updated")));
+       prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(dateUpdated.toString(global.dateFormat + QString(" ") +global.timeFormat)));
+
+      prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Date Deleted")));
+      if (dateDeleted.toMSecsSinceEpoch() > 0) {
+           prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(dateDeleted.toString(global.dateFormat + QString(" ") +global.timeFormat)));
+       } else {
+          col--;
+          row++;
+       }
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Subject Date")));
+       if (dateSubject.toMSecsSinceEpoch() > 0) {
+           prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(dateSubject.toString(global.dateFormat + QString(" ") +global.timeFormat)));
+        } else {
+           col--;
+           row++;
+        }
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Author")));
+       prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(author));
+
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Longitude")));
+       if (longitude > 0) {
+            prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(longitude));
+        } else {
+           col--;
+           row++;
+        }
+
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Latitude")));
+       if (latitude > 0) {
+            prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(latitude));
+        } else {
+           col--;
+           row++;
+        }
+
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Altitude")));
+       if (altitude > 0) {
+            prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(altitude));
+        } else {
+           col--;
+           row++;
+        }
+
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Source")));
+       prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(source));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Source Application")));
+       prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(sourceAppl));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Source URL")));
+       prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(sourceURL));
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Reminder Due")));
+       if (reminderDue.toMSecsSinceEpoch() > 0) {
+           prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(reminderDue.toString(global.dateFormat + QString(" ") +global.timeFormat)));
+        } else {
+           col--;
+           row++;
+        }
+
+       prop.tableWidget->setItem(row,col++, new QTableWidgetItem(tr("Reminder Completed")));
+       if (reminderCompleted.toMSecsSinceEpoch() > 0) {
+           prop.tableWidget->setItem(row++,col--, new QTableWidgetItem(reminderCompleted.toString(global.dateFormat + QString(" ") +global.timeFormat)));
+        } else {
+           col--;
+           row++;
+        }
+
+        prop.tableWidget->resizeColumnsToContents();
+
+       prop.exec();
+    }
 }
 

@@ -228,7 +228,8 @@ SOURCES += main.cpp\
     cmdtools/extractnotes.cpp \
     cmdtools/alternote.cpp \
     cmdtools/importnotes.cpp \
-    dialog/preferences/thumbnailpreferences.cpp
+    dialog/preferences/thumbnailpreferences.cpp \
+    dialog/noteproperties.cpp
 
 
 
@@ -424,7 +425,8 @@ HEADERS  += nixnote.h \
     cmdtools/importnotes.h \
     plugins/webcam/webcaminterface.h \
     plugins/hunspell/hunspellinterface.h \
-    dialog/preferences/thumbnailpreferences.h
+    dialog/preferences/thumbnailpreferences.h \
+    dialog/noteproperties.h
 
 
 
