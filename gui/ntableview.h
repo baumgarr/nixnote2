@@ -140,6 +140,8 @@ public slots:
     void setTitleColorMagenta();
     void setTitleColor(QString color);
 
+    void noteTagsUpdated(QString uuid, qint32 lid, QStringList names);
+
     void downNote();
     void upNote();
 

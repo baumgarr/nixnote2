@@ -39,6 +39,6 @@ public:
 
 };
 
-Q_DECLARE_INTERFACE(HunspellInterface, "org.nixnote.NixNote2.HunspellInterface/1.0")
+Q_DECLARE_INTERFACE(HunspellInterface, "org.nixnote.NixNote2.HunspellInterface/2.0")
 
 #endif // HUNSPELLINTERFACE_H

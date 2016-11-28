@@ -29,6 +29,7 @@ class WebCamPlugin : public QObject, WebCamInterface
 {
     Q_OBJECT
     Q_INTERFACES(WebCamInterface)
+    Q_PLUGIN_METADATA(IID "org.nixnote.NixNote2.WebCamInterface/2.0")
 
 private:
     WebcamCaptureDialog *dialog;
@@ -43,5 +44,7 @@ public:
     bool okPressed();
     void pictureRefresh();
 };
+
+
 
 #endif // WEBCAMPLUGIN_H

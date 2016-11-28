@@ -28,6 +28,7 @@ class HunspellPlugin : public QObject, HunspellInterface
 {
     Q_OBJECT
     Q_INTERFACES(HunspellInterface)
+    Q_PLUGIN_METADATA(IID "org.nixnote.NixNote2.HunspellInterface/2.0");
 
 private:
     SpellChecker *checker;

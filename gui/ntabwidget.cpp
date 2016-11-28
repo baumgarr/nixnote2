@@ -728,6 +728,7 @@ void NTabWidget::noteTagsEdited(QString uuid, qint32 lid, QStringList names) {
             externalList->at(i)->browser->tagEditor.blockSignals(false);
         }
     }
+    emit(noteTagsUpdated(uuid, lid, names));
 }
 
 

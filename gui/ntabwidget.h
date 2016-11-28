@@ -76,6 +76,8 @@ signals:
     void updateNoteList(qint32, int, QVariant); // A note was edited so we update the note list
     void updateNoteTitle(QString uuid, qint32 lid, QString content);
     void escapeKeyPressed();
+    void noteTagsUpdated(QString uuid, qint32 lid, QStringList names);
+
 
 public slots:
     void closeTab(int index);

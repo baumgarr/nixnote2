@@ -50,6 +50,13 @@ NoteFormatter::NoteFormatter(QObject *parent) :
 {
     thumbnail = false;
     this->setNoteHistory(false);
+    this->noteHistory = false;
+    this->pdfPreview = true;
+    this->readOnly = false;
+    this->formatError = false;
+    this->inkNote = false;
+    this->resourceError = false;
+    this->resourceHighlight = false;
 }
 
 
@@ -349,7 +356,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     // Go through the "item" nodes
     bool found=false;
     QDomNodeList anchors = doc.elementsByTagName("item");
-    for (unsigned int i=0; i<anchors.length(); i++) {
+    for (int i=0; i<anchors.length(); i++) {
         QDomElement element = anchors.at(i).toElement();
         int x = element.attribute("x").toInt();
         int y = element.attribute("y").toInt();
@@ -358,7 +365,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
 
         // Get all children ("t" nodes)
         QDomNodeList children = element.childNodes();
-        for (unsigned int j=0; j<children.length(); j++) {
+        for (int j=0; j<children.length(); j++) {
             QDomElement child = children.at(j).toElement();
             if (child.nodeName().toLower() == "t") {
                 QString text = child.text();

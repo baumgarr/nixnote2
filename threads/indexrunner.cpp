@@ -41,6 +41,13 @@ IndexRunner::IndexRunner()
 {
     init = false;
     officeFound = false;  // temporarily disabled to test performance impact
+    this->pauseIndexing = false;
+    this->textDocument = NULL;
+    this->enableIndexing = true;
+    this->indexHash = NULL;
+    this->keepRunning = true;
+    this->db = NULL;
+    this->indexTimer = NULL;
 }
 
 
@@ -289,7 +296,7 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
     // look for text tags
     QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
 
-    for (unsigned int i=0; keepRunning && !pauseIndexing && i<anchors.length(); i++) {
+    for (int i=0; keepRunning && !pauseIndexing && i<anchors.length(); i++) {
         QApplication::processEvents();
         QDomElement enmedia = anchors.at(i).toElement();
         QString weight = enmedia.attribute("w");

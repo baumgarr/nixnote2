@@ -1344,13 +1344,13 @@ void NoteTable::addTag(qint32 lid, qint32 tag, bool isDirty = false) {
     query.bindValue(":tag:", tag);
     query.exec();
 
-    query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :tag)");
+    query.prepare("insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     query.bindValue(":lid", lid);
     query.bindValue(":key",NOTE_TAG_LID);
-    query.bindValue(":tag:", tag);
+    query.bindValue(":data", tag);
     query.exec();
     query.finish();
-    db->lockForWrite();
+    db->unlock();
 
     if (isDirty) {
         setDirty(lid, isDirty,false);

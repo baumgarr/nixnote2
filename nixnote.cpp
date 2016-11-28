@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filterengine.h"
 #include "dialog/faderdialog.h"
 
+#include <QApplication>
 #include <QThread>
 #include <QLabel>
 #include <QMessageBox>
@@ -567,6 +568,7 @@ void NixNote::setupGui() {
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), noteTableView, SLOT(refreshData()));
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countNotebooks()));
     connect(tabWindow, SIGNAL(noteUpdated(qint32)), &counterRunner, SLOT(countTags()));
+    connect(tabWindow, SIGNAL(noteTagsUpdated(QString, qint32, QStringList)), noteTableView, SLOT(noteTagsUpdated(QString, qint32, QStringList)));
     connect(tabWindow, SIGNAL(updateNoteList(qint32, int, QVariant)), noteTableView, SLOT(refreshCell(qint32, int, QVariant)));
     connect(noteTableView, SIGNAL(refreshNoteContent(qint32)), tabWindow, SLOT(refreshNoteContent(qint32)));
     connect(noteTableView, SIGNAL(saveAllNotes()), tabWindow, SLOT(saveAllNotes()));
@@ -2080,18 +2082,15 @@ void NixNote::newExternalNote() {
 }
 
 
-
 // Slot for when notes have been deleted from the notes list.
-void NixNote::notesDeleted(QList<qint32> lids) {
-    lids=lids;
+void NixNote::notesDeleted(QList<qint32>) {
     updateSelectionCriteria();
 }
 
 
 
 // Slot for when notes have been deleted from the notes list.
-void NixNote::notesRestored(QList<qint32> lids) {
-    lids=lids;
+void NixNote::notesRestored(QList<qint32>) {
     updateSelectionCriteria();
 }
 
@@ -2130,6 +2129,15 @@ void NixNote::openAccount() {
 void NixNote::openAbout() {
     AboutDialog about;
     about.exec();
+}
+
+
+
+//*******************************
+//* Open About Qt dialog box.
+//*******************************
+void NixNote::openQtAbout() {
+    QApplication::aboutQt();
 }
 
 
@@ -3625,9 +3633,9 @@ void NixNote::loadPlugins() {
                 if (webcamInterface) {
                     webcamPluginAvailable = true;
                     webcamInterface->initialize();
-                } else {
-                    QLOG_ERROR() << tr("Error loading plugin: ") << pluginLoader.errorString();
                 }
+            } else {
+                QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
             }
         }
 
@@ -3639,10 +3647,10 @@ void NixNote::loadPlugins() {
                 hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
                 if (hunspellInterface) {
                     hunspellPluginAvailable = true;
-                } else {
-                    QLOG_ERROR() << tr("Error loading plugin: ") << pluginLoader.errorString();
                 }
                 delete hunspellInterface;
+            } else {
+                QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
             }
         }
     }

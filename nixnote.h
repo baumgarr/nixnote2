@@ -235,6 +235,7 @@ public slots:
     void openDatabaseStatus();
     void openAbout();
     void openImportFolders();
+    void openQtAbout();
     void setMessage(QString msg, int timeout=15000);
     void toggleLeftPanel();
     void toggleFavoritesTree();
