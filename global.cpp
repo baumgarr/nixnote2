@@ -109,14 +109,14 @@ Global::Global()
 
 
 // Destructor
-Global::~Global() {
-    FilterCriteria *criteria;
-    for (int i=0; i<filterCriteria.size(); i++) {
-        criteria = filterCriteria[i];
-        if (criteria != NULL)
-            delete criteria;
-    }
-}
+//Global::~Global() {
+//    FilterCriteria *criteria;
+//    for (int i=0; i<filterCriteria.size(); i++) {
+//        criteria = filterCriteria[i];
+//        if (criteria != NULL)
+//            delete criteria;
+//    }
+//}
 
 
 

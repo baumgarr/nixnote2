@@ -94,7 +94,7 @@ class Global
 {
 public:
     Global();           // Generic constructor
-    ~Global();          // destructor
+    //~Global();          // destructor
 
     // Possible ways tags & notebook counts may be displayed to the user
     enum CountBehavior {
