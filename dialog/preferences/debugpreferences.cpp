@@ -38,7 +38,9 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     disableImageHighlight = new QCheckBox(tr("Disable image search highlighting."), this);
     showLidColumn = new QCheckBox(tr("Show LID column (requires restart)."));
     nonAsciiSortBug = new QCheckBox(tr("Disable Tag Sorting (useful for non-ASCII sort bug)."));
+    forceUTF8 = new QCheckBox(tr("Force UTF8 Encoding."));
     nonAsciiSortBug->setChecked(global.nonAsciiSortBug);
+    forceUTF8->setChecked(global.getForceUTF8());
     global.settings->beginGroup("Debugging");
     disableUploads->setChecked(global.disableUploads);
     showLidColumn->setChecked(global.settings->value("showLids", false).toBool());
@@ -50,6 +52,7 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     mainLayout->addWidget(nonAsciiSortBug,2,1);
     mainLayout->addWidget(disableImageHighlight,3,1);
     mainLayout->addWidget(strictDTD,4,1);
+    mainLayout->addWidget(forceUTF8, 5, 1);
 
     debugLevelLabel = new QLabel(tr("Message Level"), this);
     debugLevelLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
@@ -66,8 +69,8 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     global.settings->endGroup();
     int index = debugLevel->findData(value);
     debugLevel->setCurrentIndex(index);
-    mainLayout->addWidget(debugLevelLabel,5,0);
-    mainLayout->addWidget(debugLevel,5,1);
+    mainLayout->addWidget(debugLevelLabel,6,0);
+    mainLayout->addWidget(debugLevel,6,1);
     this->setFont(global.getGuiFont(font()));
 
 }
@@ -89,6 +92,7 @@ int DebugPreferences::getMessageLevel() {
 void DebugPreferences::saveValues() {
     int value = getMessageLevel();
 
+    global.setForceUTF8(forceUTF8->isChecked());
     global.settings->beginGroup("Debugging");
     global.settings->setValue("messageLevel", value);
     global.settings->setValue("showLids", showLidColumn->isChecked());
