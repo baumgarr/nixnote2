@@ -186,6 +186,7 @@ int main(int argc, char *argv[])
                     delete a;
                 exit(0);  // Exit this one
             }
+
             // If we've gotten this far, we need to either stop this instance or stop the other
             QLOG_DEBUG() << "Multiple instance found";
             global.settings->beginGroup("Debugging");

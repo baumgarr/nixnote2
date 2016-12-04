@@ -173,6 +173,17 @@ void StartupConfig::printHelp() {
                    +QString("     openNotebook options:\n")
                    +QString("          --notebook=\"notebook\"        Notebook name.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
+                   +QString("  signalGui <options>                  Send command to a running NixNote.\n")
+                   +QString("     openNotebook options:\n")
+                   +QString("          --synchronize                Synchronize with Evernote.\n")
+                   +QString("          --shutdown                   Shutdown NixNote.\n")
+                   +QString("          --screenshot                 Start a screen capture.\n")
+                   +QString("          --openNoteNewTab             Open a note in a new tab.\n")
+                   +QString("          --openExternalNote           Open a note in an external window.\n")
+                   +QString("          --id=<id>                    Note Id to open.\n")
+                   +QString("          --newNote                    Create a new note.\n")
+                   +QString("          --newExternalNote            Create a new note in an external window.\n")
+                   +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
                    +QString("  Examples:\n\n")
                    +QString("     To Start NixNote, do a sync, and then exit.\n")
                    +QString("     nixnote2 start --syncAndExit\n\n")
@@ -190,6 +201,8 @@ void StartupConfig::printHelp() {
                    +QString("     nixnote2 query --search=\"Famous Authors\" --delimiter=\" * \" --display=\"\%i%t10:%n\"\n\n")
                    +QString("     To extract all notes in the \"Notes\" notebook.\n")
                    +QString("     nixnote2 export --search=\"notebook:notes\" --output=/home/joe/exports.nnex\n\n")
+                   +QString("     To signal NixNote to do a screenshot from the command line (NixNote must already be running).\n")
+                   +QString("     nixnote2 signalGui --screenshot\n\n")
                    +QString("\n\n")
                    );
 
@@ -304,6 +317,12 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
         }
         if (parm.startsWith("sqlExec", Qt::CaseSensitive)) {
             command->setBit(STARTUP_SQLEXEC);
+            guiAvailable = false;
+        }
+        if (parm.startsWith("signalGui")) {
+            command->setBit(STARTUP_SIGNALGUI,true);
+            if (signalGui == NULL)
+                signalGui = new SignalGui();
             guiAvailable = false;
         }
 
@@ -453,6 +472,28 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
                 parm = parm.mid(5);
                 extractText->lid = parm.toInt();
             }
+        }
+        if (command->at(STARTUP_SIGNALGUI)) {
+            if (parm.startsWith("--id=", Qt::CaseSensitive)) {
+                parm = parm.mid(5);
+                signalGui->lid = parm.toInt();
+            }
+            if (parm.startsWith("--synchronize", Qt::CaseSensitive))
+                signalGui->synchronize=true;
+            if (parm.startsWith("--screenshot", Qt::CaseSensitive))
+                signalGui->takeScreenshot=true;
+            if (parm.startsWith("--openNote", Qt::CaseSensitive))
+                signalGui->openNote=true;
+            if (parm.startsWith("--openExternalNote", Qt::CaseSensitive))
+                signalGui->openExternalNote=true;
+            if (parm.startsWith("--openNoteNewTab", Qt::CaseSensitive))
+                signalGui->openNoteNewTab=true;
+            if (parm.startsWith("--newNote", Qt::CaseSensitive))
+                signalGui->newNote=true;
+            if (parm.startsWith("--newExternalNote", Qt::CaseSensitive))
+                signalGui->newExternalNote=true;
+            if (parm.startsWith("--shutdown", Qt::CaseSensitive))
+                signalGui->shutdown=true;
         }
         if (command->at(STARTUP_ALTERNOTE)) {
             if (parm.startsWith("--id=", Qt::CaseSensitive)) {
@@ -625,4 +666,8 @@ bool StartupConfig::openNotebook() {
 
 bool StartupConfig::closeNotebook() {
     return command->at(STARTUP_CLOSENOTEBOOK);
+}
+
+bool StartupConfig::signalOtherGui() {
+    return command->at(STARTUP_SIGNALGUI);
 }

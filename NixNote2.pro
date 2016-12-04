@@ -230,7 +230,8 @@ SOURCES += main.cpp\
     cmdtools/importnotes.cpp \
     dialog/preferences/thumbnailpreferences.cpp \
     dialog/noteproperties.cpp \
-    dialog/shortcutdialog.cpp
+    dialog/shortcutdialog.cpp \
+    cmdtools/signalgui.cpp
 
 
 
@@ -428,7 +429,8 @@ HEADERS  += nixnote.h \
     plugins/hunspell/hunspellinterface.h \
     dialog/preferences/thumbnailpreferences.h \
     dialog/noteproperties.h \
-    dialog/shortcutdialog.h
+    dialog/shortcutdialog.h \
+    cmdtools/signalgui.h
 
 
 

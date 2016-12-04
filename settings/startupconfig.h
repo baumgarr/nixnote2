@@ -34,6 +34,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "cmdtools/extractnotes.h"
 #include "cmdtools/alternote.h"
 #include "cmdtools/importnotes.h"
+#include "cmdtools/signalgui.h"
 
 #define STARTUP_GUI 0
 #define STARTUP_SYNC 1
@@ -52,7 +53,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define STARTUP_OPENNOTEBOOK 14
 #define STARTUP_APPENDNOTE 15
 #define STARTUP_SQLEXEC 16
-#define STARTUP_OPTION_COUNT 17
+#define STARTUP_SIGNALGUI 17
+#define STARTUP_OPTION_COUNT 18
 
 class StartupConfig
 {
@@ -78,6 +80,7 @@ public:
     bool disableEditing;
     bool purgeTemporaryFiles;
     AddNote *newNote;
+    SignalGui *signalGui;
     DeleteNote *delNote;
     EmailNote *email;
     CmdLineQuery *queryNotes;
@@ -101,6 +104,7 @@ public:
     bool openNotebook();
     bool closeNotebook();
     bool import();
+    bool signalOtherGui();
     QString sqlString;
     QStringList notebookList;
 
