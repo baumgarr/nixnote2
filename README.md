@@ -41,3 +41,15 @@ The obsolete nixnote 1.x version can also be found on AUR: [nixnote](https://aur
 
 All three packages are available in [[archlinuxcn]](https://www.archlinuxcn.org/archlinux-cn-repo-and-mirror/)
 unofficial repository.
+
+### Gentoo Linux
+
+NixNote is acailable via gentoo-zh overlay, you can install by:
+
+```bash
+# run with root privileges
+layman -a gentoo-zh
+emerge nixnote:1 # to install nixnote-1.6
+# or
+emerge nixnote:2 # to install nixnote-2.0
+```
