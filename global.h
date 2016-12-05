@@ -217,7 +217,9 @@ public:
     QString getProxyPassword();
     QString getProxyUserid();
     bool isProxyEnabled();
+    bool isSocks5Enabled();
     void setProxyEnabled(bool value);
+    void setSocks5Enabled(bool value);
     QString systemNotifier();
 
     // Search Behavior

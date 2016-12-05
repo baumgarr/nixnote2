@@ -230,7 +230,10 @@ int main(int argc, char *argv[])
 
     // Setup the proxy
     QNetworkProxy proxy;
-    proxy.setType(QNetworkProxy::HttpProxy);
+    if (global.isSocks5Enabled())
+	proxy.setType(QNetworkProxy::Socks5Proxy);
+    else
+    	proxy.setType(QNetworkProxy::HttpProxy);
     if (global.isProxyEnabled()) {
         QString host = global.getProxyHost();
         int port = global.getProxyPort();

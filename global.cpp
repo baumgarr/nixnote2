@@ -1051,6 +1051,20 @@ bool Global::isProxyEnabled() {
     return value;
 }
 
+// Set the Sock5 proxy
+void Global::setSocks5Enabled(bool value) {
+    settings->beginGroup("Proxy");
+    settings->setValue("enabled", value);
+    settings->endGroup();
+}
+
+// Get the Socks5 proxy
+bool Global::isSocks5Enabled() {
+    settings->beginGroup("Proxy");
+    bool value = settings->value("enabled", false).toBool();
+    settings->endGroup();
+    return value;
+}
 
 
 // Mouse middle click actions

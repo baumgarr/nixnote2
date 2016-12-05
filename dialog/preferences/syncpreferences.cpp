@@ -48,6 +48,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     showGoodSyncMessagesInTray = new QCheckBox(tr("Show successful syncs"), this);
 
     enableProxy = new QCheckBox(tr("Enable Proxy*"), this);
+    enableSocks5 = new QCheckBox(tr("Enable Socks5"),this);
     QLabel *hostLabel = new QLabel(tr("Proxy Hostname"), this);
     QLabel *portLabel = new QLabel(tr("Proxy Port"), this);
     QLabel *userLabel = new QLabel(tr("Proxy Username"), this);
@@ -60,6 +61,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     password = new QLineEdit(this);
 
     enableProxy->setChecked(global.isProxyEnabled());
+    enableSocks5->setChecked(global.isSocks5Enabled());
     host->setText(global.getProxyHost());
     port->setText(QString::number(global.getProxyPort()));
     port->setInputMask("00000");
@@ -75,6 +77,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     mainLayout->addWidget(syncInterval, 3,1);
 
     mainLayout->addWidget(enableProxy,4,0);
+    mainLayout->addWidget(enableSocks5,4,1);
     mainLayout->addWidget(hostLabel,6,0);
     mainLayout->addWidget(host, 6,1);
     mainLayout->addWidget(portLabel,7,0);
@@ -83,7 +86,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     mainLayout->addWidget(userId,8,1);
     mainLayout->addWidget(passwordLabel,9,0);
     mainLayout->addWidget(password,9,1);
-    mainLayout->addWidget(restartLabel,4,1);
+    mainLayout->addWidget(restartLabel,4,2);
     mainLayout->setAlignment(Qt::AlignTop);
 
     global.settings->beginGroup("Sync");
@@ -152,6 +155,7 @@ void SyncPreferences::saveValues() {
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
 
     global.setProxyEnabled(enableProxy->isChecked());
+    global.setSocks5Enabled(enableSocks5->isChecked());
     global.setProxyHost(host->text().trimmed());
     global.setProxyPort(port->text().toInt());
     global.setProxyUserid(userId->text().trimmed());
@@ -164,6 +168,7 @@ void SyncPreferences::proxyCheckboxAltered(int state) {
     bool value = false;
     if (state == Qt::Checked)
         value = true;
+    enableSocks5->setEnabled(value);
     host->setEnabled(value);
     port->setEnabled(value);
     userId->setEnabled(value);
