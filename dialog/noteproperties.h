@@ -1,6 +1,6 @@
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2015 Randy Baumgarte
+Copyright (C) 2016 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,38 +19,21 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 
-#ifndef CMDLINETOOL_H
-#define CMDLINETOOL_H
+#ifndef NOTEPROPERTIES_H
+#define NOTEPROPERTIES_H
 
-#include <QObject>
-#include <QSharedMemory>
+#include <QDialog>
+#include <QTableWidget>
+#include <QPushButton>
 
-#include "settings/startupconfig.h"
-
-class CmdLineTool : public QObject
+class NoteProperties : public QDialog
 {
-    Q_OBJECT
+private:
 public:
-    explicit CmdLineTool(QObject *parent = 0);
-    int run(StartupConfig &config);
-    int readNote(StartupConfig config);
-    int addNote(StartupConfig config);
-    int appendNote(StartupConfig config);
-    int queryNotes(StartupConfig config);
-    int deleteNote(StartupConfig config);
-    int emailNote(StartupConfig config);
-    int exportNotes(StartupConfig config);
-    int alterNote(StartupConfig config);
-    int importNotes(StartupConfig config);
-    int openNotebook(StartupConfig config);
-    int closeNotebook(StartupConfig config);
-    int sync(StartupConfig config);
-    int signalGui(StartupConfig config);
-
-signals:
-
-public slots:
+    NoteProperties();
+    QPushButton *okButton;
+    QTableWidget* tableWidget;
 
 };
 
-#endif // CMDLINETOOL_H
+#endif // NOTEPROPERTIES_H

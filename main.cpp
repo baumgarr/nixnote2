@@ -142,7 +142,8 @@ int main(int argc, char *argv[])
         if (global.sharedMemory->isAttached())
             global.sharedMemory->detach();
         QLOG_DEBUG() << "Exiting: RC=" << retval;
-        delete a;
+        if (a!=NULL)
+            delete a;
         exit(retval);
     }
 
@@ -172,15 +173,20 @@ int main(int argc, char *argv[])
             if (startupConfig.startupNewNote) {
                 global.sharedMemory->attach();
                 global.sharedMemory->write(QString("NEW_NOTE"));
-//                global.sharedMemory->detach();
+                global.sharedMemory->detach();
+                if (a!=NULL)
+                    delete a;
                 exit(0);  // Exit this one
             }
             if (startupConfig.startupNoteLid > 0) {
                 global.sharedMemory->attach();
                 global.sharedMemory->write("OPEN_NOTE"+QString::number(startupConfig.startupNoteLid) + " ");
-//               global.sharedMemory->detach();
+                global.sharedMemory->detach();
+                if (a!=NULL)
+                    delete a;
                 exit(0);  // Exit this one
             }
+
             // If we've gotten this far, we need to either stop this instance or stop the other
             QLOG_DEBUG() << "Multiple instance found";
             global.settings->beginGroup("Debugging");
@@ -190,7 +196,9 @@ int main(int argc, char *argv[])
             if (startup == "SHOW_OTHER") {
                 global.sharedMemory->write(QString("SHOW_WINDOW"));
                 global.sharedMemory->detach();
-                exit(0);  // Exit this one
+                if (a!=NULL)
+                    delete a;
+                 return 0;  // Exit this one
             }
             if (startup == "STOP_OTHER") {
                 global.sharedMemory->write(QString("IMMEDIATE_SHUTDOWN"));

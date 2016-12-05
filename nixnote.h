@@ -234,6 +234,7 @@ public slots:
     void openAccount();
     void openDatabaseStatus();
     void openAbout();
+    void openShortcutsDialog();
     void openImportFolders();
     void openQtAbout();
     void setMessage(QString msg, int timeout=15000);

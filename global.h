@@ -94,7 +94,7 @@ class Global
 {
 public:
     Global();           // Generic constructor
-    ~Global();          // destructor
+    //~Global();          // destructor
 
     // Possible ways tags & notebook counts may be displayed to the user
     enum CountBehavior {
@@ -147,6 +147,8 @@ public:
     void setCloseToTray(bool value);       // Set if we should close it to the tray
     bool showNoteListGrid();               // Should we whow the table grid?
     bool alternateNoteListColors();        // Should we alternate the table colors?
+    bool getForceUTF8();                    // force UTF8 encoding if not given by Evernote
+    void setForceUTF8(bool value);         // force UTF8 encoding if not given by Evernote
     void setColumnPosition(QString col, int position);    // Save the order of a  note list's column.
     void setColumnWidth(QString col, int width);          // Save the width of a note list column
     int getColumnPosition(QString col);                   // Get the desired position of a note column
@@ -161,6 +163,7 @@ public:
     QString timeFormat;                                   // Desired display time format
     DatabaseConnection *db;                               // "default" DB connection for the main thread.
     bool javaFound;                                       // Have we found Java?
+    bool forceUTF8;                                       // force UTF8 encoding
     QString defaultFont;                                  // Default editor font name
     int defaultFontSize;                                  // Default editor font size
     int defaultGuiFontSize;                               // Default GUI font size

@@ -76,6 +76,7 @@ Global::Global()
     this->forceSystemTrayAvailable = false;
     this->guiAvailable = true;
     strictDTD = true;
+    forceUTF8 = false;
     startupNote = 0;
     db = NULL;
     this->forceWebFonts = false;
@@ -109,14 +110,14 @@ Global::Global()
 
 
 // Destructor
-Global::~Global() {
-    FilterCriteria *criteria;
-    for (int i=0; i<filterCriteria.size(); i++) {
-        criteria = filterCriteria[i];
-        if (criteria != NULL)
-            delete criteria;
-    }
-}
+//Global::~Global() {
+//    FilterCriteria *criteria;
+//    for (int i=0; i<filterCriteria.size(); i++) {
+//        criteria = filterCriteria[i];
+//        if (criteria != NULL)
+//            delete criteria;
+//    }
+//}
 
 
 
@@ -228,6 +229,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     indexPDFLocally=getIndexPDFLocally();
     forceSearchLowerCase=getForceSearchLowerCase();
     strictDTD = getStrictDTD();
+    forceUTF8 = getForceUTF8();
 
 
     settings->beginGroup("Thumbnail");
@@ -536,6 +538,26 @@ bool Global::getStrictDTD() {
     settings->endGroup();
     strictDTD = value;
     return value;
+}
+
+
+
+
+bool Global::getForceUTF8() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("forceUTF8",false).toBool();
+    settings->endGroup();
+    forceUTF8 = value;
+    return value;
+}
+
+
+
+void Global::setForceUTF8(bool value) {
+    settings->beginGroup("Debugging");
+    settings->setValue("forceUTF8",value);
+    settings->endGroup();
+    forceUTF8=value;
 }
 
 

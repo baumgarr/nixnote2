@@ -29,6 +29,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filtercriteria.h"
 #include "filters/filterengine.h"
 #include "dialog/faderdialog.h"
+#include "dialog/shortcutdialog.h"
 
 #include <QApplication>
 #include <QThread>
@@ -2142,6 +2143,16 @@ void NixNote::openQtAbout() {
 
 
 
+//*********************************
+//* Open Shortcut Keys Dialog
+//*********************************
+void NixNote::openShortcutsDialog() {
+    ShortcutDialog *dialog = new ShortcutDialog();
+    dialog->exec();
+    delete dialog;
+}
+
+
 //**********************************************
 //* Show/Hide the left display panel.
 //**********************************************
@@ -2569,6 +2580,65 @@ void NixNote::heartbeatTimerTriggered() {
         responseMapper.write(reply);
         responseMapper.detach();
     }
+    if (data.startsWith("SIGNAL_GUI:")) {
+        QString cmd = data.mid(12);
+        QLOG_DEBUG() << "COMMAND REQUESTED: " << cmd;
+        if (cmd.startsWith("SYNCHRONIZE")) {
+            this->synchronize();
+        }
+        if (cmd.startsWith("SCREENSHOT")) {
+            this->screenCapture();
+        }
+        if (cmd.startsWith("SHUTDOWN")) {
+            this->close();
+        }
+        if (cmd.startsWith("NEW_NOTE")) {
+            this->newNote();
+            this->setHidden(false);
+            this->show();
+        }
+        if (cmd.startsWith("NEW_EXTERNAL_NOTE")) {
+            this->newExternalNote();
+            this->setHidden(false);
+            this->show();
+        }
+        if (cmd.startsWith("OPEN_EXTERNAL_NOTE")) {
+            cmd = cmd.mid(18);
+            qint32 lid = cmd.toInt();
+            this->openExternalNote(lid);
+            return;
+        }
+        if (cmd.startsWith("OPEN_NOTE")) {
+            bool newTab = false;
+
+            if (cmd.startsWith("OPEN_NOTE_NEW_TAB")) {
+                newTab = true;
+                cmd = cmd.mid(18);
+            } else {
+                cmd = cmd.mid(10);
+            }
+            qint32 lid = cmd.toInt();
+            QList<qint32> lids;
+            lids.append(lid);
+
+            // First, find out if we're already viewing history.  If we are we
+            // chop off the end of the history & start a new one
+            if (global.filterPosition+1 < global.filterCriteria.size()) {
+                while (global.filterPosition+1 < global.filterCriteria.size())
+                    delete global.filterCriteria.takeAt(global.filterCriteria.size()-1);
+            }
+
+            FilterCriteria *newFilter = new FilterCriteria();
+            global.filterCriteria.at(global.filterPosition)->duplicate(*newFilter);
+
+            newFilter->setSelectedNotes(lids);
+            newFilter->setLid(lid);
+            global.filterCriteria.push_back(newFilter);
+            global.filterPosition++;
+            this->openNote(newTab);
+        }
+    }
+
     //free(buffer); // Fixes memory leak
 }
 

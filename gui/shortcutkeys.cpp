@@ -200,7 +200,9 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
 
     QString userFileName = global.fileManager.getHomeDirPath("") + QString("shortcuts.txt");
     QString systemFileName = global.fileManager.getProgramDirPath("") + QString("shortcuts.txt");
+    QLOG_DEBUG() << "Loading system shortcuts from " << systemFileName;
     loadCustomKeys(systemFileName);
+    QLOG_DEBUG() << "Loadng user shortcuts from " << userFileName;
     loadCustomKeys(userFileName);
 
 }
@@ -230,6 +232,8 @@ void ShortcutKeys::loadCustomKeys(QString fileName) {
                 loadkey(keyvalue[0], &keyvalue[1]);
         }
         file.close();
+    } else {
+        QLOG_DEBUG() << "Unable to open file for reading or file does not exist.";
     }
 }
 

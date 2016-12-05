@@ -37,6 +37,7 @@ private:
     QCheckBox *nonAsciiSortBug;
     QCheckBox *disableImageHighlight;
     QCheckBox *strictDTD;
+    QCheckBox *forceUTF8;
     QLabel *debugLevelLabel;
     int getMessageLevel();
 

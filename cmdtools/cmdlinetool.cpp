@@ -118,6 +118,9 @@ int CmdLineTool::run(StartupConfig &config) {
     if (config.closeNotebook()) {
         return closeNotebook(config);
     }
+    if (config.signalOtherGui()) {
+        return signalGui(config);
+    }
     return 0;
 }
 
@@ -763,5 +766,34 @@ int CmdLineTool::sync(StartupConfig config) {
         return 16;
     }
     std::cout << tr("Sync completed.").toStdString() << std::endl;
+    return 0;
+}
+
+
+
+
+int CmdLineTool::signalGui(StartupConfig config) {
+
+    // Make sure another one is actually running. If not, we exit out.
+    if (!global.sharedMemory->attach()) {
+        return 16;
+    }
+    if (config.signalGui->takeScreenshot)
+        global.sharedMemory->write(QString("SIGNAL_GUI: SCREENSHOT"));
+    if (config.signalGui->shutdown)
+        global.sharedMemory->write(QString("SIGNAL_GUI: SHUTDOWN"));
+    if (config.signalGui->newNote)
+        global.sharedMemory->write(QString("SIGNAL_GUI: NEW_NOTE"));
+    if (config.signalGui->newExternalNote)
+        global.sharedMemory->write(QString("SIGNAL_GUI: NEW_EXTERNAL_NOTE"));
+    if (config.signalGui->openNote)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->openExternalNote)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_EXTERNAL_NOTE " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->openNoteNewTab)
+        global.sharedMemory->write("SIGNAL_GUI: OPEN_NOTE_NEW_TAB " + QVariant(config.signalGui->lid).toString());
+    if (config.signalGui->synchronize)
+        global.sharedMemory->write(QString("SIGNAL_GUI: SYNCHRONIZE"));
+
     return 0;
 }

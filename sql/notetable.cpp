@@ -819,6 +819,10 @@ bool NoteTable::get(Note &note, qint32 lid,bool loadResources, bool loadBinary) 
             break;
         case (NOTE_CONTENT):
             note.content = query.value(1).toByteArray().data();
+
+            // Sometimes Evernote doesn't send the XML tag with UTF8 encoding. Ths forces it.
+            if (global.forceUTF8 && !note.content->startsWith("<?xml"))
+                note.content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + note.content;
             break;
         case (NOTE_CONTENT_HASH):
             note.contentHash = query.value(1).toByteArray();
