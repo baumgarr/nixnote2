@@ -147,13 +147,18 @@ void EmailPreferences::sendTestEmail() {
 
     // Set the note text
     MimeHtml html;
-    html.setHtml(QString(tr("<h1>This is a test email from NixNote.</h1> "))+
-                 QString(tr("If you are reading it then your email preferences are are setup properly.<br><img src='cid:image1'/>")));
-    MimeInlineFile image1(new QFile(global.fileManager.getProgramDirPath("")+"splash_logo.png"));
-    image1.setContentType("image/png");
-    image1.setContentId("image1");
-    message.addPart(&html);
-    message.addPart(&image1);
+//    html.setHtml(QString(tr("<h1>This is a test email from NixNote.</h1> "))+
+//                 QString(tr("If you are reading it then your email preferences are are setup properly.<br><img src='cid:image1'/>")));
+      QString msg = QString(tr("<h1>This is a test email from NixNote.</h1> "));
+      msg = msg + QString(tr("If you are reading it then your email preferences are are setup properly."));
+      html.setHtml(msg);
+//    QFile *logo = new QFile(global.fileManager.getProgramDirPath("")+"splash_logo.png");
+//    MimeInlineFile image1(logo);
+//    image1.setContentType("image/png");
+//    image1.setContentId("image1");
+//    message.addPart(&html);
+//    message.addPart(&image1);
+      message.setContent(&html);
 
 
     // Send the actual message.
@@ -172,9 +177,10 @@ void EmailPreferences::sendTestEmail() {
     if (!smtp.sendMail(message)) {
         QMessageBox::critical(this, tr("Send Error"), tr("Unable to send email."), QMessageBox::Ok);
         QLOG_ERROR() << "Failed to send mail!";
+        QLOG_ERROR() << smtp.getResponseText();
         return;
     }
 
     smtp.quit();
-      QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
+    QMessageBox::information(this, tr("Message Sent"), tr("Message sent."), QMessageBox::Ok);
 }
