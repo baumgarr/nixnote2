@@ -121,6 +121,7 @@ void UrlEditor::mouseReleaseEvent(QMouseEvent *e) {
             if (!url.toLower().startsWith("http://") &&
                 !url.toLower().startsWith("https://") &&
                 !url.toLower().startsWith("mailto://") &&
+                !url.toLower().startsWith("mailto:") &&
                 !url.toLower().startsWith("ftp://") &&
                 !url.toLower().startsWith("file://"))
                    url = "http://"+url;

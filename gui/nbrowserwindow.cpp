@@ -864,6 +864,7 @@ QString NBrowserWindow::buildPasteUrl(QString url) {
     if (url.toLower().startsWith("http://") ||
         url.toLower().startsWith("https://") ||
         url.toLower().startsWith("mailto://") ||
+        url.toLower().startsWith("mailto:") ||
         url.toLower().startsWith("ftp://")) {
         QString newUrl = QString("<a href=\"") +global.clipboard->text()
                 +QString("\" title=\"") +url
@@ -907,8 +908,8 @@ void NBrowserWindow::pasteButtonPressed() {
             // If inserting a URL
             if (urls[i].toString().toLower().startsWith("https://") ||
                     urls[i].toString().toLower().startsWith("http://") ||
-                    urls[i].toString().toLower().startsWith("ftp://") || \
-                    urls[i].toString().toLower().startsWith("mailto::")) {
+                    urls[i].toString().toLower().startsWith("ftp://") ||
+                    urls[i].toString().toLower().startsWith("mailto:")) {
                 QString url = this->buildPasteUrl(urls[i].toString());
                 QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
                 editor->page()->mainFrame()->evaluateJavaScript(script);
