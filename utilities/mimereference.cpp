@@ -716,34 +716,31 @@ MimeReference::~MimeReference() {
 
 
 QString MimeReference::getExtensionFromMime(QString key, QString filename) {
-        if (!table->contains(key)) {
-            QString ext;
-            if (filename != "")
-                ext = filename;
-            else
-                filename = key;
-            int pos = filename.lastIndexOf(".");
+    if (!table->contains(key)) {
+        if (filename == "")
+            filename = key;
+        int pos = filename.lastIndexOf(".");
+        if (pos != -1) {
+            filename = filename.mid(pos);
+            return filename.toLower();
+        } else {
+            int pos = filename.lastIndexOf("/");
             if (pos != -1) {
+                pos++;
                 filename = filename.mid(pos);
-                return filename;
-            } else {
-                int pos = filename.lastIndexOf("/");
-                if (pos != -1) {
-                    pos++;
-                    filename = filename.mid(pos);
-                    return "."+filename;
-                }
+                return "."+filename;
             }
         }
-        QString extension = table->value(key);
-        if (filename.endsWith(".zip", Qt::CaseInsensitive))
-            extension = ".zip";
-        return extension;
+    }
+    QString extension = table->value(key);
+    if (filename.endsWith(".zip", Qt::CaseInsensitive))
+        extension = ".zip";
+    return extension;
 }
 
 QString MimeReference::getMimeFromExtension(QString fileExtension) {
 
-    QString retVal =  table->key(fileExtension);
+    QString retVal =  table->key(fileExtension.toLower());
     if (retVal == "") {
         return "application/data";
     }
