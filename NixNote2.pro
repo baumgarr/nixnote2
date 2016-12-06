@@ -8,7 +8,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
     INCLUDEPATH += /usr/include/poppler/qt5
-    LIBS +=    -lhunspell -lcurl \
+    LIBS +=    -lcurl \
                -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
 }
 
