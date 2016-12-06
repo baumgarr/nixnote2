@@ -522,7 +522,6 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
         if (r.mime.isSet())
             mimetype = r.mime;
 
-
         // Check that we don't have a locked PDF.  If we do, then disable PDF previews.
         if (mimetype == "application/pdf") {
             QString file = global.fileManager.getDbaDirPath() + QString::number(resLid) +".pdf";
@@ -535,6 +534,7 @@ void NoteFormatter::modifyApplicationTags(QWebElement &enmedia, QString &hash, Q
            modifyPdfTags(resLid, enmedia);
            return;
         }
+
 
         // If we are running the formatter so we can generate a thumbnail and it is a PDF
         if (mimetype == "application/pdf" && pdfPreview && thumbnail) {

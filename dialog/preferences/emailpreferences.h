@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QComboBox>
 #include <QGridLayout>
+#include <QPushButton>
 
 class EmailPreferences : public QWidget
 {
@@ -26,6 +27,7 @@ private:
     QLineEdit password;
     QLineEdit senderEmail;
     QLineEdit senderName;
+    QPushButton *testEmail;
 
 public:
     explicit EmailPreferences(QWidget *parent = 0);
@@ -33,6 +35,7 @@ public:
 signals:
 
 public slots:
+    void sendTestEmail();
 
 };
 
