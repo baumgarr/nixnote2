@@ -3130,6 +3130,12 @@ void NixNote::openCloseNotebooks() {
 
 // Capture an image from the webcam and create a new note
 void NixNote::newWebcamNote() {
+    if (!webcamPluginAvailable) {
+        QMessageBox::critical(this, tr("Plugin Error"), tr("Webcam plugin not found or could not be loaded"));
+        return;
+    }
+    webcamInterface->initialize();
+
     if (noteButton->property("currentNoteButton") != NewWebcamNote) {
         noteButton->setText(newWebcamNoteButton->text());
         noteButton->setIcon(newWebcamNoteButton->icon());
@@ -3702,7 +3708,6 @@ void NixNote::loadPlugins() {
                 webcamInterface = qobject_cast<WebCamInterface *>(plugin);
                 if (webcamInterface) {
                     webcamPluginAvailable = true;
-                    webcamInterface->initialize();
                 }
             } else {
                 QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();

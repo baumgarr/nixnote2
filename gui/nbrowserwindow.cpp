@@ -3219,6 +3219,18 @@ void NBrowserWindow::sendUrlUpdateSignal() {
 
 
 void NBrowserWindow::spellCheckPressed() {
+    // Check if we have a plugin for Hunspell loaded. This could have been done at startup, but if this is
+    // an external window we could need to load it again.
+    if (!hunspellInterface) {
+        this->loadPlugins();
+    }
+
+    // If we STILL don't have a plugin then it can't be loaded. Quit out
+    if (!hunspellPluginAvailable) {
+        QMessageBox::critical(this, tr("Plugin Error"), tr("Hunspell plugin not found or could not be loaded."), QMessageBox::Ok);
+        return;
+    }
+
     QWebPage *page = editor->page();
     page->action(QWebPage::MoveToStartOfDocument);
     page->mainFrame()->setFocus();
@@ -3235,9 +3247,6 @@ void NBrowserWindow::spellCheckPressed() {
     //SpellChecker checker;
     bool finished = false;
 
-    if (!hunspellInterface) {
-        this->loadPlugins();
-    }
     for (int i=0; i<words.size() && !finished; i++) {
         QString currentWord = words[i];
         page->findText(currentWord);
@@ -3266,8 +3275,6 @@ void NBrowserWindow::spellCheckPressed() {
     editor->keyPressEvent(&key2);
 
     QMessageBox::information(this, tr("Spell Check Complete"), tr("Spell Check Complete."), QMessageBox::Ok);
-
-
 }
 
 

@@ -69,6 +69,6 @@ bool WebCamPlugin::getImage(QImage &image) {
     return dialog->webcamImage->getImage(image);
 }
 
-//#if QT_VERSION < 0x050000
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(webcamplugin, WebCamPlugin)
-//#endif
+#endif
