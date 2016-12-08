@@ -920,17 +920,18 @@ void NBrowserWindow::pasteButtonPressed() {
         microFocusChanged();
         return;
     }
-    //QLOG_DEBUG() << "HTML:" << mime->hasHtml() << " " << mime->html();
-    //QLOG_DEBUG() << "Color:" << mime->hasColor();
-    //QLOG_DEBUG() << "Url:" << mime->hasUrls();
+    QLOG_DEBUG() << "Has HTML:" << mime->hasHtml() << " " << mime->html();
+    QLOG_DEBUG() << "Has Color:" << mime->hasColor();
+    QLOG_DEBUG() << "Has Url:" << mime->hasUrls();
 
     if (mime->hasText()) {
         QString urltext = mime->text();
+        QLOG_DEBUG() << "Url:" << urltext;
 
         if (urltext.toLower().startsWith("https://") ||
             urltext.toLower().startsWith("http://") ||
             urltext.toLower().startsWith("ftp://") || \
-            urltext.toLower().startsWith("mailto::")) {
+            urltext.toLower().startsWith("mailto:")) {
             QString url = this->buildPasteUrl(urltext);
             QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
             editor->page()->mainFrame()->evaluateJavaScript(script);
