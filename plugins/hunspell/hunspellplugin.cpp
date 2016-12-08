@@ -43,6 +43,6 @@ void HunspellPlugin::addWord(QString dictionary, QString word) {
     return checker->addWord(dictionary, word);
 }
 
-//#if QT_VERSION < 0x050000
+#if QT_VERSION < 0x050000
 Q_EXPORT_PLUGIN2(hunspellplugin, HunspellPlugin)
-//#endif
+#endif
