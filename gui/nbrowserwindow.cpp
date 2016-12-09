@@ -933,7 +933,7 @@ void NBrowserWindow::pasteButtonPressed() {
             urltext.toLower().startsWith("ftp://") || \
             urltext.toLower().startsWith("mailto:")) {
             QString url = this->buildPasteUrl(urltext);
-            QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+            QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
             editor->page()->mainFrame()->evaluateJavaScript(script);
             return;
         }
@@ -942,20 +942,20 @@ void NBrowserWindow::pasteButtonPressed() {
         if (urltext.toLower().mid(0,17) == "evernote:///view/") {
             urltext = urltext.mid(17);
             int pos = urltext.indexOf("/");
-            QString userid = urltext.mid(0,pos-1);
+//            QString userid = urltext.mid(0,pos-1);
             urltext = urltext.mid(pos+1);
             pos = urltext.indexOf("/");
-            QString shard = urltext.mid(0,pos);
+//            QString shard = urltext.mid(0,pos);
             urltext = urltext.mid(pos+1);
             pos = urltext.indexOf("/");
-            QString uid = urltext.mid(0,pos);
+//            QString uid = urltext.mid(0,pos);
             urltext = urltext.mid(pos+1);
             pos = urltext.indexOf("/");
             QString guid = urltext.mid(0,pos);
             urltext = urltext.mid(pos);
             pos = urltext.indexOf("/");
             QString locguid = urltext.mid(pos);
-            QString linkedNotebookGuid = urltext.mid(pos);
+//            QString linkedNotebookGuid = urltext.mid(pos);
 
             Note n;
             bool goodrc = false;
@@ -967,12 +967,13 @@ void NBrowserWindow::pasteButtonPressed() {
             // If we have a good return, then we can paste the link, otherwise we fall out
             // to a normal paste.
             if (goodrc) {
-                QString url = QString("<a href=\"") +global.clipboard->text()
-                        +QString("\" title=\"") +n.title
-                        +QString("\" >") +n.title +QString("</a>");
-                QString script = QString("document.execCommand('insertHtml', false, '")+url+QString("');");
+                QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(global.clipboard->text(), n.title, n.title);
+                QLOG_DEBUG() << "HTML to insert:" << url;
+                QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
                 editor->page()->mainFrame()->evaluateJavaScript(script);
                 return;
+            } else {
+                QLOG_ERROR() << "Error retrieving note";
             }
         }
     }
