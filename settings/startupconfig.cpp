@@ -108,8 +108,9 @@ void StartupConfig::printHelp() {
                    +QString("                                       For multiple files, use multiple --attachment statements.\n")
                    +QString("          --delimiter=\"<delmiiter>\"    Character string identifying attachment points.\n")
                    +QString("                                       Defaults to %%.\n")
-                   +QString("          --created=\"<date_created>\"   Date created\n")
-                   +QString("          --updated=\"<date_updated>\"   Date created\n")
+                   +QString("          --created=\"<datetime>\"   Date & time created in yyyy-MM-ddTHH:mm:ss.zzzZ format.\n")
+                   +QString("          --updated=\"<datetime>\"   Date & time updated in yyyy-MM-ddTHH:mm:ss.zzzZ format.\n")
+                   +QString("          --reminder=\"<datetime>\"  Reminder date & time in yyyy-MM-ddTHH:mm:ss.zzzZ format.\n")
                    +QString("          --noteText=\"<text>\"          Text of the note.  If not provided input\n")
                    +QString("                                       is read from stdin.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
@@ -130,6 +131,11 @@ void StartupConfig::printHelp() {
                    +QString("          --notebook=\"<notebook>\"      Move matching notes to this notebook.\n")
                    +QString("          --addTag=\"<tag_name>\"        Add this tag to matching notes.\n")
                    +QString("          --delTag=\"<tag_name>\"        Remove this tag from matching notes.\n")
+                   +QString("          --reminder=\"<datetime>\"      Set a reminder in yyyy-MM-ddTHH:mm:ss.zzzZ format")
+                   +QString("          --reminderClear              Clear the note's reminder.\n")
+                   +QString("          --reminderComplete           Set the reminder as complete.\n")
+                   +QString("                                       yyyy-MM-ddTHH:mm:ss.zzzZ format or the literal 'now' to default\n")
+                   +QString("                                       to the current date & time.")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n")
                    +QString("  readNote <options>                   Read the text contents of a note.\n")
                    +QString("          --id=\"<note_id>\"             ID of the note to read.\n")
@@ -361,6 +367,10 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
                 parm = parm.mid(10);
                 newNote->updated = parm;
             }
+            if (parm.startsWith("--reminder=", Qt::CaseSensitive)) {
+                parm = parm.mid(11);
+                newNote->reminder = parm;
+            }
             if (parm.startsWith("--noteText=", Qt::CaseSensitive)) {
                 parm = parm.mid(11);
                 newNote->content = parm;
@@ -521,6 +531,12 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
             if (parm.startsWith("--delTag=", Qt::CaseSensitive)) {
                 parm = parm.mid(9);
                 alter->delTagNames.append(parm);
+            }
+            if (parm == "--clearReminder") {
+                alter->clearReminder=true;
+            }
+            if (parm == "--reminderComplete") {
+                alter->reminderCompleted=true;
             }
         }
         if (command->at(STARTUP_EMAILNOTE)) {

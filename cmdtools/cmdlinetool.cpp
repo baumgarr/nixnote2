@@ -380,7 +380,7 @@ int CmdLineTool::addNote(StartupConfig config) {
         // Do the dates
         if (config.newNote->created != "") {
             QString dateString = config.newNote->created;
-            QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
+            QDateTime date = QDateTime::fromString(dateString.trimmed(), "yyyy-MM-ddTHH:mm:ss.zzzZ");
             newNote.created = date.toMSecsSinceEpoch();
         }
         if (config.newNote->updated != "") {
@@ -388,6 +388,18 @@ int CmdLineTool::addNote(StartupConfig config) {
             QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
             newNote.updated = date.toMSecsSinceEpoch();
         }
+        if (config.newNote->reminder != "") {
+            QString dateString = config.newNote->reminder;
+            QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
+            if (date > QDateTime::currentDateTime()) {
+                if (!newNote.attributes.isSet()) {
+                    NoteAttributes na;
+                    newNote.attributes = na;
+                }
+                newNote.attributes->reminderTime = date.toMSecsSinceEpoch();
+            }
+        }
+
 
         NoteTable noteTable(global.db);
         qint32 newLid = noteTable.addStub(newNote.guid);

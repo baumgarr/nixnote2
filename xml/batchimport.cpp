@@ -146,6 +146,17 @@ qint32 BatchImport::addNoteNode() {
             QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
             note.updated = date.toMSecsSinceEpoch();
         }
+        if (name == "reminder" && !reader->isEndElement()) {
+            QString dateString = textValue();
+            QDateTime date = QDateTime::fromString(dateString, "yyyy-MM-ddTHH:mm:ss.zzzZ");
+            if (date >= QDateTime::currentDateTime()) {
+                if (!note.attributes.isSet()) {
+                    NoteAttributes na;
+                    note.attributes = na;
+                }
+                note.attributes->reminderTime = date.toMSecsSinceEpoch();
+            }
+        }
         if (name == "notebook" && !reader->isEndElement()) {
             QString notebookName = textValue();
             NotebookTable notebookTable(global.db);

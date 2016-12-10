@@ -37,6 +37,9 @@ public:
     QString         query;
     int             lastError;
     QString         errorMessage;
+    QString         reminder;
+    bool            clearReminder;
+    bool            reminderCompleted;
 
     QString wrap();
     void unwrap(QString data);

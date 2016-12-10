@@ -37,6 +37,7 @@ public:
     QString title;
     QString created;
     QString updated;
+    QString reminder;
     QString content;
     QString notebook;
     QStringList tags;

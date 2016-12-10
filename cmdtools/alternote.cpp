@@ -41,6 +41,9 @@ AlterNote::AlterNote(QObject *parent) :
     notebook.clear();
     lids.clear();
     query="";
+    clearReminder=false;
+    reminderCompleted=false;
+    reminder="";
 }
 
 
@@ -105,6 +108,14 @@ int AlterNote::alterNote() {
                 noteTable.removeTag(lid, tagLid, true);
             }
         }
+
+        if (reminderCompleted) {
+            noteTable.setReminderCompleted(lid, true);
+        }
+
+        if (clearReminder) {
+            noteTable.removeReminder(lid);
+        }
     }
 
     return 0;
@@ -133,6 +144,10 @@ QString AlterNote::wrap() {
         writer->writeTextElement("AddTag", addTagNames[i]);
     for (int i=0; i<delTagNames.size(); i++)
         writer->writeTextElement("DelTag", delTagNames[i]);
+    if (clearReminder)
+        writer->writeTextElement("ClearReminder", "true");
+    if (reminderCompleted)
+        writer->writeTextElement("ReminderComplete", "true");
     writer->writeEndElement();
     writer->writeEndElement();
     writer->writeEndDocument();
@@ -165,6 +180,16 @@ void AlterNote::unwrap(QString data) {
                 } else if (reader.name().toString().toLower() == "addtag" && reader.isStartElement()) {
                     reader.readNext();
                     addTagNames.append(reader.text().toString());
+                } else if (reader.name().toString().toLower() == "reminder" && reader.isStartElement()) {
+                    reader.readNext();
+                    reminder = reader.text().toString();
+                }  else if (reader.name().toString().toLower() == "clearreminder" && reader.isStartElement()) {
+                    reader.readNext();
+                    if (reader.text().toString().toLower() == "true")
+                        clearReminder=true;
+                } else if (reader.name().toString().toLower() == "remindercomplete" && reader.isStartElement()) {
+                    if (reader.text().toString().toLower() == "true")
+                        reminderCompleted=true;
                 } else if (reader.name().toString().toLower() == "deltag" && reader.isStartElement()) {
                     reader.readNext();
                     delTagNames.append(reader.text().toString());

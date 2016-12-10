@@ -33,6 +33,7 @@ AddNote::AddNote(QObject *parent) :
     title = tr("Untitled Note");
     created = QDateTime::currentDateTime().toString("yyyy-MM-ddTHH:mm:ss.zzzZ");
     updated = QDateTime::currentDateTime().toString("yyyy-MM-ddTHH:mm:ss.zzzZ");
+    reminder = "";
     attachmentDelimiter = "%%";
     lid = 0;
 }
@@ -83,6 +84,8 @@ void AddNote::write(QString uuid) {
         writer->writeTextElement("Created", created);
     if (updated != "")
         writer->writeTextElement("Updated", updated);
+    if (reminder != "")
+        writer->writeTextElement("Reminder", reminder);
     for (int i=0; i<tags.size(); i++) {
         writer->writeTextElement("Tag", tags[i]);
     }
