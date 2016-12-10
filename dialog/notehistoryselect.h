@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QVBoxLayout>
 #include <QFormLayout>
 #include <QListWidget>
+#include <QCheckBox>
 
 #include "qevercloud/include/QEverCloud.h"
 using namespace qevercloud;
@@ -40,6 +41,7 @@ private:
     QPushButton cancelButton;
     QPushButton importButton;
     QList<NoteVersionId> *versions;
+    QCheckBox *replace;
     QListWidget list;
 
 public:
@@ -47,6 +49,7 @@ public:
     bool importPressed;
     qint32 usn;
     void loadData(QList<NoteVersionId> &versions);
+    bool replaceCurrentNote();
 
 signals:
     

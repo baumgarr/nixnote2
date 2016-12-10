@@ -853,6 +853,34 @@ bool CommunicationManager::getNoteVersion(Note &note, QString guid, qint32 usn, 
 
 
 
+// Get a prior version of a notebook
+bool CommunicationManager::getNote(Note &note, QString guid, bool withResource, bool withResourceRecognition, bool withResourceAlternateData) {
+    try {
+        note = noteStore->getNote(guid,true,withResource,withResourceRecognition,withResourceAlternateData,authToken);
+        return true;
+    } catch (ThriftException e) {
+        QLOG_ERROR() << "ThriftException:";
+        QLOG_ERROR() << "Exception Type:" << e.type();
+        QLOG_ERROR() << "Exception Msg:" << e.what();
+        error.type = CommunicationError::ThriftException;
+        error.message = errorWhat(e.what());
+        return false;
+    } catch (EDAMUserException e) {
+        QLOG_ERROR() << "EDAMUserException:" << e.errorCode << endl;
+        error.code = e.errorCode;
+        error.message = errorWhat(e.what());
+        error.type = CommunicationError::EDAMUserException;
+        return false;
+    } catch (EDAMSystemException e) {
+        QLOG_ERROR() << "EDAMSystemException";
+        handleEDAMSystemException(e);
+        return false;
+    } catch (EDAMNotFoundException e) {
+        QLOG_ERROR() << "EDAMNotFoundException";
+        handleEDAMNotFoundException(e);
+        return false;
+    }
+}
 
 
 

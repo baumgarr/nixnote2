@@ -2243,6 +2243,16 @@ void NixNote::toggleStatusbar() {
 void NixNote::viewNoteHistory() {
     this->saveContents();
     statusBar()->clearMessage();
+
+    qint32 lid = this->tabWindow->currentBrowser()->lid;
+    NoteTable ntable(global.db);
+    Note n;
+    ntable.get(n,lid,false,false);
+    if (n.updateSequenceNum.isSet() && n.updateSequenceNum == 0) {
+        QMessageBox::information(0,tr("Unsynchronized Note"), tr("This note has never been synchronized with Evernote"));
+        return;
+    }
+
     if (!global.accountsManager->oauthTokenFound()) {
         QString consumerKey = "baumgarr-3523";
         QString consumerSecret = "8d5ee175f8a5d3ec";
@@ -2265,61 +2275,73 @@ void NixNote::viewNoteHistory() {
     UserTable userTable(global.db);
     User user;
     userTable.getUser(user);
-    if (user.privilege == PrivilegeLevel::NORMAL) {
-        QMessageBox mbox;
-        mbox.setText(tr("This feature is only available to premium users."));
-        mbox.setWindowTitle(tr("Premium Feature"));
-        mbox.exec();
-        return;
-    }
+    bool normalUser = false;
+    if (user.privilege == PrivilegeLevel::NORMAL)
+        normalUser = true;
+
     NoteHistorySelect dialog;
+    QString guid = ntable.getGuid(tabWindow->currentBrowser()->lid);
+    QList<NoteVersionId> versions;
+
     CommunicationManager comm(global.db);
     if (comm.enConnect()) {
         QList<NoteVersionId> versions;
         NoteTable ntable(global.db);
         QString guid = ntable.getGuid(tabWindow->currentBrowser()->lid);
-        comm.listNoteVersions(versions, guid);
-        if (versions.size() > 0) {
-            dialog.loadData(versions);
-            dialog.exec();
-            if (!dialog.importPressed)
-                return;
-            Note note;
-            if (!comm.getNoteVersion(note, guid, dialog.usn)) {
-                QMessageBox mbox;
-                mbox.setText(tr("Error retrieving note."));
-                mbox.setWindowTitle(tr("Error retrieving note"));
-                mbox.exec();
-                return;
-            }
-            note.updateSequenceNum = 0;
-            note.active = true;
-            QUuid uuid;
-            QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
-            note.guid = newGuid;
-            QList<Resource> resources;
-            if (note.resources.isSet())
-                resources = note.resources;
-            for (int i=0;i<resources.size(); i++) {
-                Resource r = resources[i];
-                r.updateSequenceNum = 0;
-                newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
-                r.guid = newGuid;
-                resources[i] = r;
-            }
-            note.resources = resources;
-            ntable.add(0,note,true);
-            updateSelectionCriteria();
-            setMessage(tr("Note restored"));
-
-        } else {
-            QMessageBox mbox;
-            mbox.setText(tr("No versions of this note can be found."));
-            mbox.setWindowTitle(tr("Note Not Found"));
-            mbox.exec();
-            return;
-        }
+        if (!normalUser)
+            comm.listNoteVersions(versions, guid);
     }
+    dialog.loadData(versions);
+    dialog.exec();
+    if (!dialog.importPressed)
+        return;
+    Note note;
+    if (dialog.usn > 0 && !comm.getNoteVersion(note, guid, dialog.usn)) {
+        QMessageBox mbox;
+        mbox.setText(tr("Error retrieving note."));
+        mbox.setWindowTitle(tr("Error retrieving note"));
+        mbox.exec();
+        return;
+    }
+    if (dialog.usn <= 0 && !comm.getNote(note, guid,true,true,true)) {
+        QMessageBox mbox;
+        mbox.setText(tr("Error retrieving note."));
+        mbox.setWindowTitle(tr("Error retrieving note"));
+        mbox.exec();
+        return;
+    }
+    if (!dialog.replaceCurrentNote()) {
+        note.updateSequenceNum = 0;
+        note.active = true;
+        QUuid uuid;
+        QString newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
+        note.guid = newGuid;
+        QList<Resource> resources;
+        if (note.resources.isSet())
+            resources = note.resources;
+        for (int i=0;i<resources.size(); i++) {
+            Resource r = resources[i];
+            r.updateSequenceNum = 0;
+            newGuid = uuid.createUuid().toString().replace("{", "").replace("}", "");
+            r.guid = newGuid;
+            resources[i] = r;
+        }
+        note.resources = resources;
+        qint32 newLid = ntable.add(0,note,true);
+        tabWindow->currentBrowser()->setContent(newLid);
+        QMessageBox::information(0,tr("Note Restored"), tr("A new copy has been restored."));
+    } else {
+        ntable.expunge(lid);
+        bool dirty = true;
+        if (dialog.usn <=0)
+            dirty=false;
+        ntable.add(lid,note,dirty);
+        tabWindow->currentBrowser()->setContent(0);
+        tabWindow->currentBrowser()->setContent(lid);
+        QMessageBox::information(0,tr("Note Restored"), tr("Note successfully restored."));
+    }
+    updateSelectionCriteria();
+    setMessage(tr("Note restored"));
 }
 
 

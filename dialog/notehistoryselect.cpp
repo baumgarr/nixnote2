@@ -33,6 +33,10 @@ NoteHistorySelect::NoteHistorySelect(QWidget *parent) :
     cancelButton.setText(tr("Cancel"));
     importButton.setText(tr("Import"));
     importButton.setEnabled(false);
+    replace = new QCheckBox();
+    replace->setCheckable(true);
+    replace->setChecked(false);
+    replace->setText(tr("Replace current note?"));
 
     connect(&importButton, SIGNAL(clicked()), this, SLOT(importButtonPressed()));
     connect(&cancelButton, SIGNAL(clicked()), this, SLOT(cancelButtonPressed()));
@@ -44,6 +48,7 @@ NoteHistorySelect::NoteHistorySelect(QWidget *parent) :
     entryLayout->addWidget(&importButton);
 
     mainLayout->addLayout(entryLayout);
+    mainLayout->addWidget(replace);
     this->setLayout(mainLayout);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout(this);
@@ -69,6 +74,13 @@ void NoteHistorySelect::cancelButtonPressed() {
 
 void NoteHistorySelect::loadData(QList<NoteVersionId> &versions) {
 
+    // Add the current generation
+    QListWidgetItem *item = new QListWidgetItem(&list);
+    item->setData(Qt::UserRole, 0);
+    QString text = tr("Current copy on Evernote");
+    item->setText(text);
+    list.addItem(item);
+
     this->versions = &versions;
     for (int i=0; i<versions.size(); i++) {
         QListWidgetItem *item = new QListWidgetItem(&list);
@@ -93,4 +105,9 @@ void NoteHistorySelect::loadData(QList<NoteVersionId> &versions) {
 void NoteHistorySelect::enableImport() {
     importButton.setEnabled(true);
     usn = this->list.selectedItems().at(0)->data(Qt::UserRole).toInt();
+}
+
+
+bool NoteHistorySelect::replaceCurrentNote() {
+    return this->replace->isChecked();
 }
