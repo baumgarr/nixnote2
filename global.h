@@ -221,6 +221,8 @@ public:
     void setProxyEnabled(bool value);
     void setSocks5Enabled(bool value);
     QString systemNotifier();
+    bool previewFontsInDialog();
+    void setPreviewFontsInDialog(bool value);
 
     // Search Behavior
     void setClearNotebookOnSearch(bool value);

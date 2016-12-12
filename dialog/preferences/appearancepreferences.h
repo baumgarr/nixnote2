@@ -46,6 +46,7 @@ private:
     QComboBox *mouseMiddleClickAction;
     QComboBox *systemNotifier;
     QCheckBox *autosetUserid;
+    QCheckBox *fontPreviewInDialog;
     QLabel *defaultNotebookOnStartupLabel;
     QPushButton *previewButton;
     bool webSettingsChanged;

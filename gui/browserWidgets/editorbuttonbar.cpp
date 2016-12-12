@@ -649,7 +649,8 @@ void EditorButtonBar::loadFontNames() {
         QFont f;
         global.getGuiFont(f);
         f.setFamily(fontFamilies[i]);
-        fontNames->setItemData(i, QVariant(f), Qt::FontRole);
+        if (global.previewFontsInDialog())
+           fontNames->setItemData(i, QVariant(f), Qt::FontRole);
         if (first) {
             loadFontSizeComboBox(fontFamilies[i]);
             first=false;

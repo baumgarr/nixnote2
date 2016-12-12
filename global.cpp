@@ -1239,3 +1239,21 @@ void Global::setDebugLevel() {
 
 
 Global global;
+
+
+
+// Should we preview fonts in the editor window?
+bool Global::previewFontsInDialog() {
+    settings->beginGroup("Appearance");
+    bool value = settings->value("previewFonts", false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+// Set the previewing of fonts in the editor window.
+void Global::setPreviewFontsInDialog(bool value) {
+    settings->beginGroup("Appearance");
+    settings->setValue("previewFonts", value);
+    settings->endGroup();
+}

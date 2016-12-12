@@ -54,6 +54,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     alternateNoteListColors = new QCheckBox(tr("Alternate note list colors*"), this);
     autosetUserid = new QCheckBox(tr("Set author on new notes."),this);
     autosetUserid->setChecked(global.autosetUsername());
+    fontPreviewInDialog  = new QCheckBox(tr("Preview fonts in editor diolag*"));
+    fontPreviewInDialog->setChecked(global.previewFontsInDialog());
 
     traySingleClickAction = new QComboBox();
     traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
@@ -123,7 +125,8 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(forceWebFonts, row++, 1);
     mainLayout->addWidget(showNoteListGrid,row,0);
     mainLayout->addWidget(alternateNoteListColors,row++,1);
-    mainLayout->addWidget(autosetUserid, row++,0);
+    mainLayout->addWidget(autosetUserid, row,0);
+    mainLayout->addWidget(fontPreviewInDialog, row++, 1);
 
     mainLayout->addWidget(defaultNotebookOnStartupLabel,row,0);
     mainLayout->addWidget(defaultNotebookOnStartup, row++,1);
@@ -368,6 +371,8 @@ void AppearancePreferences::saveValues() {
 
 
     global.settings->endGroup();
+
+    global.setPreviewFontsInDialog(fontPreviewInDialog->isChecked());
 
 }
 
