@@ -538,7 +538,7 @@ void NMainMenuBar::setupHelpMenu() {
     connect(openMessageLogAction, SIGNAL(triggered()), parent, SLOT(openMessageLog()));
     helpMenu->addAction(openMessageLogAction);
 
-    openGithubAction = new QAction(tr("NixNote2 Github Project"), this);
+    openGithubAction = new QAction(tr("Github Page"), this);
     openGithubAction->setToolTip(tr("Goto the NixNote2 Github project page."));
     connect(openGithubAction, SIGNAL(triggered(bool)), parent, SLOT(openGithub()));
     helpMenu->addAction(openGithubAction);
