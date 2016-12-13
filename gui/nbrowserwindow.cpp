@@ -49,7 +49,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/spellcheckdialog.h"
 #include "utilities/pixelconverter.h"
 
-
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
 #include <QAction>
@@ -122,7 +121,8 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     sourceEdit = new QTextEdit(this);
     sourceEdit->setVisible(false);
     sourceEdit->setTabChangesFocus(true);
-    //sourceEdit->setLineWrapMode(QTextEdit::LineWrapMode);
+
+
     QFont font;
     font.setFamily("Courier");
     font.setFixedPitch(true);
@@ -140,6 +140,19 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     layout->addWidget(editorSplitter);
     setLayout(layout);
     layout->setMargin(0);
+
+    findReplace = new FindReplace();
+    layout->addWidget(findReplace);
+    findReplace->setVisible(false);
+
+    connect(findReplace->nextButton, SIGNAL(clicked()), this, SLOT(findNextInNote()));
+    connect(findReplace->findLine, SIGNAL(returnPressed()), this, SLOT(findNextInNote()));
+    connect(findReplace->prevButton, SIGNAL(clicked()), this, SLOT(findPrevInNote()));
+    connect(findReplace->replaceButton, SIGNAL(clicked()), this, SLOT(findReplaceInNotePressed()));
+    connect(findReplace->replaceAllButton, SIGNAL(clicked()), this, SLOT(findReplaceAllInNotePressed()));
+    connect(findReplace->closeButton, SIGNAL(clicked()), this, SLOT(findReplaceWindowHidden()));
+
+
 
     // Setup shortcuts
     focusNoteShortcut = new QShortcut(this);
@@ -3514,3 +3527,145 @@ void NBrowserWindow::loadPlugins() {
         }
     }
 }
+
+
+// Find shortcut activated
+void NBrowserWindow::findShortcut() {
+    if (!findReplace->isVisible()) {
+        findReplace->showFind();
+    } else {
+        if (findReplace->findLine->hasFocus())
+            findReplace->hide();
+        else {
+            findReplace->showFind();
+            findReplace->findLine->setFocus();
+            findReplace->findLine->selectAll();
+        }
+    }
+
+}
+
+
+//*******************************************
+//* Search for the next occurrence of text
+//* in a note.
+//*******************************************
+void NBrowserWindow::findNextShortcut() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+}
+
+
+
+//*******************************************
+//* Search for the previous occurrence of
+//* text in a note.
+//*******************************************
+void NBrowserWindow::findPrevShortcut() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindBackward | QWebPage::FindWrapsAroundDocument);
+}
+
+
+
+// Find shortcut activated
+void NBrowserWindow::findReplaceShortcut() {
+    this->findReplace->showFindReplace();
+}
+
+
+
+//***************************************
+//* Find/replace button pressed, so we
+//* need to highlight all the occurrences
+//* in a note.
+//***************************************
+void NBrowserWindow::findReplaceInNotePressed() {
+    QString find = findReplace->findLine->text();
+    QString replace = findReplace->replaceLine->text();
+    if (find == "")
+        return;
+    bool found = false;
+    found = editor->page()->findText(find,
+        findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    if (!found)
+        return;
+
+    QClipboard *clip = global.clipboard;
+    clip->setText(replace);
+    editor->pasteAction->trigger();
+}
+
+
+
+
+//*************************************************
+//* Replace All button pressed.
+//*************************************************
+void NBrowserWindow::findReplaceAllInNotePressed() {
+    QString find = findReplace->findLine->text();
+    QString replace = findReplace->replaceLine->text();
+    if (find == "")
+        return;
+    bool found = false;
+    while (true) {
+        found = editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+        if (!found)
+            return;
+        QClipboard *clip = global.clipboard;
+        clip->setText(replace);
+        editor->pasteAction->trigger();
+    }
+}
+
+
+
+
+//*******************************************
+//* Search for the next occurrence of text
+//* in a note.
+//*******************************************
+void NBrowserWindow::findNextInNote() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+}
+
+
+
+//*******************************************
+//* Search for the previous occurrence of
+//* text in a note.
+//*******************************************
+void NBrowserWindow::findPrevInNote() {
+    findReplace->showFind();
+    QString find = findReplace->findLine->text();
+    if (find != "")
+        editor->page()->findText(find,
+            findReplace->getCaseSensitive() | QWebPage::FindBackward | QWebPage::FindWrapsAroundDocument);
+
+}
+
+
+
+
+//*******************************************
+//* This just does a null find to reset the
+//* text in a note so nothing is highlighted.
+//* This is triggered when the find dialog
+//* box is hidden.
+//*******************************************
+void NBrowserWindow::findReplaceWindowHidden() {
+   editor->page()->findText("");
+}
+
+

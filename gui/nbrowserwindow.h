@@ -59,6 +59,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "email/mimemessage.h"
 #include "plugins/hunspell/hunspellinterface.h"
 #include "plugins/hunspell/hunspellplugin.h"
+#include "gui/findreplace.h"
 
 class ToolbarWidgetAction;
 
@@ -110,6 +111,8 @@ private:
     QShortcut *removeHyperlinkShortcut;
     QShortcut *insertLatexShortcut;
     QShortcut *copyNoteUrlShortcut;
+
+    FindReplace *findReplace;
 
     QString stripContentsForPrint();
 
@@ -283,6 +286,16 @@ public slots:
     void fontSizeFocusShortcut();
     void urlFocusShortcut();
     void copyNoteUrl();
+    void findShortcut();
+    void findReplaceShortcut();
+    void findNextShortcut();
+    void findPrevShortcut();
+    void findReplaceAllInNotePressed();
+    void findNextInNote();
+    void findPrevInNote();
+    void findReplaceWindowHidden();
+    void findReplaceInNotePressed();
+
 
 private slots:
     void sendTitleUpdateSignal();

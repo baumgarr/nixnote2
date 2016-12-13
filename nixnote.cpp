@@ -1044,11 +1044,9 @@ void NixNote::setupSynchronizedNotebookTree() {
 void NixNote::setupTabWindow() {
     QLOG_TRACE() << "Starting NixNote.setupTabWindow()";
     tabWindow = new NTabWidget(this, &syncRunner, notebookTreeView, tagTreeView);
-    findReplaceWindow = new FindReplace(this);
     QWidget *tabPanel = new QWidget(this);
     tabPanel->setLayout(new QVBoxLayout());
     tabPanel->layout()->addWidget(tabWindow);
-    tabPanel->layout()->addWidget(findReplaceWindow);
     rightPanelSplitter->addWidget(tabPanel);
 
     NBrowserWindow *newBrowser = new NBrowserWindow(this);
@@ -1073,13 +1071,6 @@ void NixNote::setupTabWindow() {
     connect(menuBar->pasteAsTextAction, SIGNAL(triggered()), tabWindow, SLOT(pasteAsTextButtonPressed()));
     connect(menuBar->selectAllAction, SIGNAL(triggered()), tabWindow, SLOT(selectAllButtonPressed()));
     connect(menuBar->viewExtendedInformation, SIGNAL(triggered()), tabWindow, SLOT(viewExtendedInformation()));
-
-    connect(findReplaceWindow->nextButton, SIGNAL(clicked()), this, SLOT(findNextInNote()));
-    connect(findReplaceWindow->findLine, SIGNAL(returnPressed()), this, SLOT(findNextInNote()));
-    connect(findReplaceWindow->prevButton, SIGNAL(clicked()), this, SLOT(findPrevInNote()));
-    connect(findReplaceWindow->replaceButton, SIGNAL(clicked()), this, SLOT(findReplaceInNotePressed()));
-    connect(findReplaceWindow->replaceAllButton, SIGNAL(clicked()), this, SLOT(findReplaceAllInNotePressed()));
-    connect(findReplaceWindow->closeButton, SIGNAL(clicked()), this, SLOT(findReplaceWindowHidden()));
 
 
     QLOG_TRACE() << "Exiting NixNote.setupTabWindow()";
@@ -2378,17 +2369,18 @@ void NixNote::viewNoteHistory() {
 //* Search for text within a note
 //****************************************
 void NixNote::findInNote() {
-    if (!findReplaceWindow->isVisible()) {
-        findReplaceWindow->showFind();
-    } else {
-        if (findReplaceWindow->findLine->hasFocus())
-            findReplaceWindow->hide();
-        else {
-            findReplaceWindow->showFind();
-            findReplaceWindow->findLine->setFocus();
-            findReplaceWindow->findLine->selectAll();
-        }
-    }
+    tabWindow->currentBrowser()->findShortcut();
+//    if (!findReplaceWindow->isVisible()) {
+//        findReplaceWindow->showFind();
+//    } else {
+//        if (findReplaceWindow->findLine->hasFocus())
+//            findReplaceWindow->hide();
+//        else {
+//            findReplaceWindow->showFind();
+//            findReplaceWindow->findLine->setFocus();
+//            findReplaceWindow->findLine->selectAll();
+//        }
+//    }
 }
 
 
@@ -2398,11 +2390,7 @@ void NixNote::findInNote() {
 //* in a note.
 //*******************************************
 void NixNote::findNextInNote() {
-    findReplaceWindow->showFind();
-    QString find = findReplaceWindow->findLine->text();
-    if (find != "")
-        tabWindow->currentBrowser()->editor->page()->findText(find,
-            findReplaceWindow->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
+    tabWindow->currentBrowser()->findNextInNote();
 }
 
 
@@ -2412,12 +2400,7 @@ void NixNote::findNextInNote() {
 //* text in a note.
 //*******************************************
 void NixNote::findPrevInNote() {
-    findReplaceWindow->showFind();
-    QString find = findReplaceWindow->findLine->text();
-    if (find != "")
-        tabWindow->currentBrowser()->editor->page()->findText(find,
-            findReplaceWindow->getCaseSensitive() | QWebPage::FindBackward | QWebPage::FindWrapsAroundDocument);
-
+    tabWindow->currentBrowser()->findPrevInNote();
 }
 
 
@@ -2430,11 +2413,7 @@ void NixNote::findPrevInNote() {
 //* box is hidden.
 //*******************************************
 void NixNote::findReplaceWindowHidden() {
-    for (int i=0; i<tabWindow->browserList->size(); i++) {
-        NBrowserWindow *b;
-        b = tabWindow->browserList->at(i);
-        b->editor->page()->findText("");
-    }
+    tabWindow->currentBrowser()->findReplaceWindowHidden();
 }
 
 
@@ -2443,7 +2422,7 @@ void NixNote::findReplaceWindowHidden() {
 //* Show find & replace dialog box.
 //**************************************
 void NixNote::findReplaceInNote() {
-    findReplaceWindow->showFindReplace();
+    tabWindow->currentBrowser()->findReplaceShortcut();
 }
 
 
@@ -2454,19 +2433,7 @@ void NixNote::findReplaceInNote() {
 //* in a note.
 //***************************************
 void NixNote::findReplaceInNotePressed() {
-    QString find = findReplaceWindow->findLine->text();
-    QString replace = findReplaceWindow->replaceLine->text();
-    if (find == "")
-        return;
-    bool found = false;
-    found = tabWindow->currentBrowser()->editor->page()->findText(find,
-        findReplaceWindow->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
-    if (!found)
-        return;
-
-    QClipboard *clip = global.clipboard;
-    clip->setText(replace);
-    tabWindow->currentBrowser()->editor->pasteAction->trigger();
+   tabWindow->currentBrowser()->findReplaceInNotePressed();
 }
 
 
@@ -2492,20 +2459,7 @@ void NixNote::disableEditing() {
 //* Replace All button pressed.
 //*************************************************
 void NixNote::findReplaceAllInNotePressed() {
-    QString find = findReplaceWindow->findLine->text();
-    QString replace = findReplaceWindow->replaceLine->text();
-    if (find == "")
-        return;
-    bool found = false;
-    while (true) {
-        found = tabWindow->currentBrowser()->editor->page()->findText(find,
-            findReplaceWindow->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
-        if (!found)
-            return;
-        QClipboard *clip = global.clipboard;
-        clip->setText(replace);
-        tabWindow->currentBrowser()->editor->pasteAction->trigger();
-    }
+    tabWindow->currentBrowser()->findReplaceAllInNotePressed();
 }
 
 

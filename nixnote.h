@@ -48,7 +48,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "gui/nattributetree.h"
 #include "gui/ntrashtree.h"
 #include "dialog/accountdialog.h"
-#include "gui/findreplace.h"
 #include "threads/counterrunner.h"
 //#include "oauth/oauthwindow.h"
 #include "html/thumbnailer.h"
@@ -108,7 +107,6 @@ private:
     QWidget *topRightWidget;
     QVBoxLayout *topRightLayout;
     NAttributeTree *attributeTree;
-    FindReplace *findReplaceWindow;
     bool finalSync;
     QSystemTrayIcon *trayIcon;
     QString saveLastPath;   // Last path viewed in the restore dialog
