@@ -54,7 +54,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     alternateNoteListColors = new QCheckBox(tr("Alternate note list colors*"), this);
     autosetUserid = new QCheckBox(tr("Set author on new notes."),this);
     autosetUserid->setChecked(global.autosetUsername());
-    fontPreviewInDialog  = new QCheckBox(tr("Preview fonts in editor diolag*"));
+    fontPreviewInDialog  = new QCheckBox(tr("Preview fonts in editor dialag*"));
     fontPreviewInDialog->setChecked(global.previewFontsInDialog());
 
     traySingleClickAction = new QComboBox();
