@@ -516,7 +516,7 @@ bool Global::getForceSearchLowerCase() {
     settings->beginGroup("Search");
     bool value = settings->value("forceLowerCase",false).toBool();
     settings->endGroup();
-    indexPDFLocally = value;
+    forceSearchLowerCase = value;
     return value;
 }
 

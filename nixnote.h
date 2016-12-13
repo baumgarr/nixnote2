@@ -115,6 +115,7 @@ private:
     FileWatcherManager *importManager;
 //    OAuthWindow *oauthWindow;
     Thumbnailer *hammer;
+    QTimer indexTimer;
 
     // Tool & menu bar
     NMainMenuBar *menuBar;
@@ -230,6 +231,7 @@ public slots:
     void disableEditing();
     void setSyncTimer();
     void notesDeleted(QList<qint32> lid);
+    void reindexCurrentNote();
     void openTrunk();
     void openAccount();
     void openDatabaseStatus();
@@ -299,6 +301,7 @@ public slots:
     void toolbarVisibilityChanged();
     void presentationModeOn();
     void presentationModeOff();
+    void indexFinished(bool finished);
 
 signals:
     void syncRequested();

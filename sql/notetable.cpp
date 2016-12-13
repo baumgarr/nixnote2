@@ -1088,6 +1088,7 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
+    QLOG_DEBUG() << query.lastError();
 
     // We don't really need to do anything after deleting the flag
     if (!indexNeeded)

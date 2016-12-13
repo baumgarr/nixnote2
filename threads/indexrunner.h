@@ -60,7 +60,7 @@ class IndexRunner : public QObject
 {
     Q_OBJECT
 private:
-    QTimer *indexTimer;
+//    QTimer *indexTimer;
     QHash<qint32, IndexRecord*> *indexHash;
     bool init;
     void indexRecognition(qint32 lid, Resource &r);
@@ -70,6 +70,8 @@ private:
     QTextDocument *textDocument;
     DatabaseConnection *db;
     void flushCache();
+    void busy(bool value, bool finished);
+    bool iAmBusy;
 
 public:
     bool enableIndexing;
@@ -82,6 +84,7 @@ public:
 
 signals:
     void thumbnailNeeded(qint32);
+    void indexDone(bool finished);
 
  public slots:
     void index();

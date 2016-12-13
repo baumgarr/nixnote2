@@ -156,7 +156,7 @@ void NoteIndexer::indexResource(qint32 lid) {
     QString mime = "";
     if (r.mime.isSet())
         mime = r.mime;
-    if (mime == "application/pdf")
+    if (mime.toLower() == "application/pdf")
         this->indexPdf(lid);
 //    else {
 //        if (mime.startsWith("application", Qt::CaseInsensitive))

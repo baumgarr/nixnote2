@@ -402,6 +402,10 @@ void NMainMenuBar::setupNoteMenu() {
     noteMenu->addAction(deleteNoteAction);
     connect(deleteNoteAction, SIGNAL(triggered()), parent, SLOT(deleteCurrentNote()));
 
+    reindexNoteAction = new QAction(tr("Reindex Note"), noteMenu);
+    setupShortcut(reindexNoteAction, QString("File_Note_Reindex"));
+    noteMenu->addAction(reindexNoteAction);
+    connect(reindexNoteAction, SIGNAL(triggered()), parent, SLOT(reindexCurrentNote()));
 
     if (parent->hunspellPluginAvailable) {
         noteMenu->addSeparator();

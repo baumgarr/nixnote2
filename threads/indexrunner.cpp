@@ -47,7 +47,8 @@ IndexRunner::IndexRunner()
     this->indexHash = NULL;
     this->keepRunning = true;
     this->db = NULL;
-    this->indexTimer = NULL;
+    //this->indexTimer = NULL;
+    this->iAmBusy = false;
 }
 
 
@@ -66,12 +67,13 @@ void IndexRunner::initialize() {
     pauseIndexing = false;
     enableIndexing = global.enableIndexing;
     init = true;
+    iAmBusy = false;
     QLOG_DEBUG() << "Starting IndexRunner";
     db = new DatabaseConnection("indexrunner");
-    indexTimer = new QTimer();
-    indexTimer->setInterval(global.minIndexInterval);
-    connect(indexTimer, SIGNAL(timeout()), this, SLOT(index()));
-    indexTimer->start();
+    //indexTimer = new QTimer();
+    //indexTimer->setInterval(global.minIndexInterval);
+    //connect(indexTimer, SIGNAL(timeout()), this, SLOT(index()));
+    //indexTimer->start();
     textDocument = new QTextDocument();
     indexHash = new QHash<qint32, IndexRecord*>();
     QLOG_DEBUG() << "Indexrunner initialized.";
@@ -90,10 +92,13 @@ void IndexRunner::index() {
 
     if (!init)
         initialize();
+    if (iAmBusy)
+        return;
 
-    indexTimer->stop();   // Stop the timer because we are already working
-    indexTimer->setInterval(global.minIndexInterval);
+    //indexTimer->stop();   // Stop the timer because we are already working
+    //indexTimer->setInterval(global.minIndexInterval);
 
+    busy(true,false);
     QList<qint32> lids;
 
     NoteTable noteTable(db);
@@ -120,7 +125,8 @@ void IndexRunner::index() {
                 flushCache();
                 for (int j=0; j<finishedLids.size(); j++)
                     noteTable.setIndexNeeded(finishedLids[j], false);
-                indexTimer->start();
+                //indexTimer->start();
+                busy(false,false);
                 return;
             }
             countPause--;
@@ -135,7 +141,8 @@ void IndexRunner::index() {
     lids.clear();  // Clear out the list so we can start on resources
 
     if (!keepRunning || pauseIndexing) {
-        indexTimer->start();
+        //indexTimer->start();
+        busy(false,false);
         return;
     }
 
@@ -167,14 +174,16 @@ void IndexRunner::index() {
                 for (int j=0; keepRunning && !pauseIndexing && j<finishedLids.size(); j++) {
                     resourceTable.setIndexNeeded(finishedLids[j], false);
                 }
-                indexTimer->start();
+                busy(false,false);
+                //indexTimer->start();
                 return;
             }
             countPause--;
         }
     }
     if (!keepRunning || pauseIndexing) {
-        indexTimer->start();
+        busy(false,false);
+        //indexTimer->start();
         return;
     }
     if (keepRunning && !pauseIndexing)
@@ -186,9 +195,9 @@ void IndexRunner::index() {
     if (endMsgNeeded) {
         QLOG_DEBUG() << "Indexing completed";
     }
-
-    indexTimer->setInterval(global.maxIndexInterval);
-    indexTimer->start();
+    busy(false,true);
+    //indexTimer->setInterval(global.maxIndexInterval);
+    //indexTimer->start();
 }
 
 
@@ -224,7 +233,7 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
     };
 
     if (!keepRunning || pauseIndexing) {
-        indexTimer->start();
+        //indexTimer->start();
         return;
     }
 
@@ -255,7 +264,7 @@ void IndexRunner::indexNote(qint32 lid, Note &n) {
 void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 
     if (!keepRunning || pauseIndexing) {
-        indexTimer->start();
+        //indexTimer->start();
         return;
     }
 
@@ -323,13 +332,13 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     if (!global.indexPDFLocally)
         return;
     if (!keepRunning || pauseIndexing) {
-        indexTimer->start();
+        //indexTimer->start();
         return;
     }
     ResourceTable rtable(db);
     qint32 reslid = rtable.getLid(r.guid);
     if (lid <= 0) {
-        indexTimer->start();
+        //indexTimer->start();
         return;
     }
     QString file = global.fileManager.getDbaDirPath() + QString::number(reslid) +".pdf";
@@ -337,7 +346,7 @@ void IndexRunner::indexPdf(qint32 lid, Resource &r) {
     QString text = "";
     Poppler::Document *doc = Poppler::Document::load(file);
     if (doc == NULL || doc->isEncrypted() || doc->isLocked()) {
-        indexTimer->start();
+        //indexTimer->start();
         return;
     }
     for (int i=0; keepRunning && !pauseIndexing && i<doc->numPages(); i++) {
@@ -365,13 +374,13 @@ void IndexRunner::indexAttachment(qint32 lid, Resource &r) {
         return;
     QLOG_DEBUG() << "indexing attachment to note " << lid;
     if (!keepRunning || pauseIndexing) {
-        indexTimer->start();
+        //indexTimer->start();
         return;
     }
     ResourceTable rtable(db);
     qint32 reslid = rtable.getLid(r.guid);
     if (lid <= 0) {
-        indexTimer->start();
+        //indexTimer->start();
         return;
     }
     QLOG_DEBUG() << "Resource " << reslid;
@@ -506,4 +515,11 @@ void IndexRunner::flushCache() {
     QLOG_DEBUG() << "Index Cache Flush Complete: " <<
                     finish.toMSecsSinceEpoch() - start.toMSecsSinceEpoch()
                     << " milliseconds.";
+}
+
+
+
+void IndexRunner::busy(bool value, bool finished) {
+    iAmBusy=value;
+    emit(this->indexDone(finished));
 }

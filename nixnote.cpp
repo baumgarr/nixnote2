@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "filters/filterengine.h"
 #include "dialog/faderdialog.h"
 #include "dialog/shortcutdialog.h"
+#include "utilities/noteindexer.h"
 
 #include <QApplication>
 #include <QThread>
@@ -815,7 +816,26 @@ void NixNote::setupGui() {
         this->menuBar->newWebcamNoteAction->setVisible(false);
         this->menuBar->newWebcamNoteAction->setEnabled(false);
     }
+
+    // startup the index timer (if needed)
+    if (global.enableIndexing) {
+        indexTimer.setInterval(global.minimumThumbnailInterval);
+        connect(&indexTimer, SIGNAL(timeout()), &indexRunner, SLOT(index()));
+        connect(&indexRunner, SIGNAL(indexDone(bool)), this, SLOT(indexFinished(bool)));
+        indexTimer.start();
+    }
 }
+
+
+void NixNote::indexFinished(bool finished) {
+    indexTimer.stop();
+    if (!finished)
+        indexTimer.setInterval(global.minIndexInterval);
+    else
+        indexTimer.setInterval(global.maxIndexInterval);
+    indexTimer.start();
+}
+
 
 
 
@@ -3303,6 +3323,22 @@ void NixNote::newWebcamNote() {
 }
 
 
+
+// Reindex the current note
+void NixNote::reindexCurrentNote() {
+    tabWindow->currentBrowser()->saveNoteContent();
+
+    NoteIndexer indexer(global.db);
+    indexer.indexNote(tabWindow->currentBrowser()->lid);
+
+    ResourceTable rtable(global.db);
+    QList<qint32> rlids;
+    rtable.getResourceList(rlids, tabWindow->currentBrowser()->lid);
+    for (int i=0; i<rlids.size(); i++) {
+        indexer.indexResource(rlids[i]);
+    }
+    QMessageBox::information(0,tr("Note Reindexed"),"Reindex Complete");
+}
 
 
 // Delete the note we are currently viewing

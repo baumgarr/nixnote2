@@ -111,6 +111,7 @@ public:
 
     QAction *deleteNoteAction;
     QAction *newNoteAction;
+    QAction *reindexNoteAction;
     QAction *newWebcamNoteAction;
     QAction *duplicateNoteAction;
     QAction *pinNoteAction;
