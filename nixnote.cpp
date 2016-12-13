@@ -2162,6 +2162,14 @@ void NixNote::openQtAbout() {
 }
 
 
+//*******************************
+//* Open the NixNote GitHub page.
+//*******************************
+void NixNote::openGithub() {
+    QString server = "http://www.github.com/baumgarr/nixnote2";
+    QDesktopServices::openUrl(QUrl(server));
+}
+
 
 //*********************************
 //* Open Shortcut Keys Dialog

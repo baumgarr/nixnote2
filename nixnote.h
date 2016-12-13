@@ -294,6 +294,7 @@ public slots:
     void openExternalNote(qint32 lid);
     void pauseIndexing(bool value=true);
     void openEvernoteSupport();
+    void openGithub();
     void openMessageLog();
     void showDesktopUrl(const QUrl &url);
     void reloadIcons();

@@ -125,6 +125,7 @@ public:
     QAction *openEvernoteAccountPageAction;
     QAction *themeInformationAction;
     QAction *openShortcutsDialogAction;
+    QAction *openGithubAction;
 
     explicit NMainMenuBar(QWidget *parent = 0);
 

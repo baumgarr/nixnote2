@@ -1,3 +1,24 @@
+NixNote (2.0-beta-11) stable; urgency=low
+  * Added the ability to paste multiple attachments at a time.
+  * Added the ability to force a reindexing of a specific note.
+  * Added the ability to disable font preview in the editor 
+    dialog.
+  * Added the ability to enable/disable note reminders from
+    the command line.
+  * Added the ability to re-download a specific note from 
+    Evernote.
+  * Added a "test" button on the email preferences dialog.
+  * Added socks5 proxy support.
+  * Added the experimental option to force UTF8 encoding if 
+    not specified by Evernote.
+  * Added a dialog box to show which the currently defined
+    shortcuts.
+  * Added "About Qt" dialog box.
+  * Added a command to open the Github page.
+  * Better support for Qt5.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Mon, 12 Dec 2016 12:00:00 -0400
+
 NixNote (2.0-beta-10) stable; urgency=low
   * Splt Hunspell into a plugin.
   * Bug fixes.
