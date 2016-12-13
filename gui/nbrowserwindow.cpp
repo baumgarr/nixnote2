@@ -3298,19 +3298,20 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
         QString file  = urlList[i].toString();
         if (file.toLower().startsWith("file://") && !ctrlModifier) {
             attachFileSelected(file.mid(7));
-            return;
-        }
-        if (file.toLower().startsWith("file://") && ctrlModifier) {
+            if (i<urlList.size()-1)
+                insertHtml("<div><br/></div>");
+        } else if (file.toLower().startsWith("file://") && ctrlModifier) {
             QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(file).arg(file).arg(file);
             QLOG_DEBUG() << url;
             insertHtml(url);
-            return;
+            if (i<urlList.size()-1)
+                insertHtml("<div><br/></div>");
+        } else {
+            editor->setFocus();
+            global.clipboard->clear();
+            global.clipboard->setText(file, QClipboard::Clipboard);
+            this->editor->triggerPageAction(QWebPage::Paste);
         }
-
-        editor->setFocus();
-        global.clipboard->clear();
-        global.clipboard->setText(file, QClipboard::Clipboard);
-        this->editor->triggerPageAction(QWebPage::Paste);
     }
 }
 
