@@ -24,6 +24,15 @@ echo "**************************************************"
 echo "Building Gentoo ebuild for NixNote $version "
 echo "**************************************************"
 
+
+#Do any parameter overrides
+while [ -n "$*" ]
+do
+   eval $1
+   shift
+done
+eversion=$version
+
 # Cleanup any old stuff
 
 if [ -e "$package_dir/nixnote2-${eversion}.ebuild" ] 
