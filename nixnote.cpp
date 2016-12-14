@@ -2793,17 +2793,9 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
 //* Event triggered when the window state is changing.
 //* Useful when hiding & restoring from the tray.
 //*******************************************************
-void NixNote::changeEvent(QEvent *e) {
-    return QMainWindow::changeEvent(e);
-//    if (e->type() == QEvent::WindowStateChange && e->type()) {
-//        if (isMinimized() && minimizeToTray && !unhidingWindow) {
-//            e->accept();
-//            unhidingWindow = false;
-//            QTimer::singleShot(10, this, SLOT(hide()));
-//            return;
-//        }
-//    }
-}
+//void NixNote::changeEvent(QEvent *e) {
+//    return QMainWindow::changeEvent(e);
+//}
 
 bool NixNote::event(QEvent *event) {
 

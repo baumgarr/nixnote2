@@ -267,7 +267,7 @@ public slots:
     void trayActivated(QSystemTrayIcon::ActivationReason reason);
     void toggleVisible();
     //void trayIconBehavior();
-    void changeEvent(QEvent *e);
+//    void changeEvent(QEvent *e);
     void openPreferences();
     void notifySyncComplete();
     void addAnotherUser();
