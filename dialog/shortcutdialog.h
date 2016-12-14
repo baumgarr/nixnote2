@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 class ShortcutDialog : public QDialog
 {
+    Q_OBJECT
 private:
     QPushButton *okButton;
     QTableWidget *tableWidget;
