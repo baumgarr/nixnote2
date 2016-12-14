@@ -41,6 +41,7 @@ SyncRunner::SyncRunner()
 {
     init = false;
     finalSync = false;
+    apiRateLimitExceeded=false;
 }
 
 SyncRunner::~SyncRunner() {
@@ -54,6 +55,7 @@ void SyncRunner::synchronize() {
         init = true;
         consumerKey = "";
         secret = "";
+        apiRateLimitExceeded=false;
 
         // Setup the user agent
         userAgent = "NixNote2/Linux";
@@ -1207,6 +1209,7 @@ void SyncRunner::communicationErrorHandler() {
         else
             emitMsg = "API rate limit exceeded.  Please try again in one hour.";
         emit(setMessage(emitMsg, 0));
+        apiRateLimitExceeded = true;
         return;
     }
 

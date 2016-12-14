@@ -46,6 +46,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     //syncOnShutdown->setEnabled(false);
     enableSyncNotifications = new QCheckBox(tr("Enable sync notifications"), this);
     showGoodSyncMessagesInTray = new QCheckBox(tr("Show successful syncs"), this);
+    apiRateRestart = new QCheckBox(tr("Restart sync on API limit (experimental)"), this);
 
     enableProxy = new QCheckBox(tr("Enable Proxy*"), this);
     enableSocks5 = new QCheckBox(tr("Enable Socks5"),this);
@@ -53,7 +54,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     QLabel *portLabel = new QLabel(tr("Proxy Port"), this);
     QLabel *userLabel = new QLabel(tr("Proxy Username"), this);
     QLabel *passwordLabel = new QLabel(tr("Proxy Password"),this);
-    QLabel *restartLabel = new QLabel(tr("Note: Restart required"),this);
+    QLabel *restartLabel = new QLabel(tr("*Note: Restart required"),this);
 
     host = new QLineEdit(this);
     port = new QLineEdit(this);
@@ -75,9 +76,10 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     mainLayout->addWidget(syncOnShutdown,2,0);
     mainLayout->addWidget(syncAutomatically,3,0);
     mainLayout->addWidget(syncInterval, 3,1);
+    mainLayout->addWidget(apiRateRestart, 4,0);
 
-    mainLayout->addWidget(enableProxy,4,0);
-    mainLayout->addWidget(enableSocks5,4,1);
+    mainLayout->addWidget(enableProxy,5,0);
+    mainLayout->addWidget(enableSocks5,5,1);
     mainLayout->addWidget(hostLabel,6,0);
     mainLayout->addWidget(host, 6,1);
     mainLayout->addWidget(portLabel,7,0);
@@ -86,7 +88,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     mainLayout->addWidget(userId,8,1);
     mainLayout->addWidget(passwordLabel,9,0);
     mainLayout->addWidget(password,9,1);
-    mainLayout->addWidget(restartLabel,4,2);
+    mainLayout->addWidget(restartLabel,10,0);
     mainLayout->setAlignment(Qt::AlignTop);
 
     global.settings->beginGroup("Sync");
@@ -98,6 +100,7 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     syncOnStartup->setChecked(global.settings->value("syncOnStartup", false).toBool());
     enableSyncNotifications->setChecked(global.settings->value("enableNotification", true).toBool());
     showGoodSyncMessagesInTray->setChecked(global.showGoodSyncMessagesInTray);
+    apiRateRestart->setChecked(global.settings->value("apiRateLimitAutoRestart", false).toBool());
     global.settings->endGroup();
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
 
@@ -151,7 +154,9 @@ void SyncPreferences::saveValues() {
     global.settings->setValue("enableNotification", enableSyncNotifications->isChecked());
     global.settings->setValue("syncInterval", getSyncInterval());
     global.settings->setValue("showGoodSyncMessagesInTray", showGoodSyncMessagesInTray ->isChecked());
+    global.settings->setValue("apiRateLimitAutoRestart", apiRateRestart ->isChecked());
     global.settings->endGroup();
+
     global.showGoodSyncMessagesInTray = showGoodSyncMessagesInTray->isChecked();
 
     global.setProxyEnabled(enableProxy->isChecked());

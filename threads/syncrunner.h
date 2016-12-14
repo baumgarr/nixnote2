@@ -107,6 +107,7 @@ public:
     CommunicationError* getError();
     void communicationErrorHandler();
     bool finalSync;
+    bool apiRateLimitExceeded;
 
 signals:
     void syncComplete();

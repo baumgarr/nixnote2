@@ -1440,6 +1440,18 @@ void NixNote::syncButtonReset() {
         return;
     syncButtonTimer.stop();
     syncButton->setIcon(syncIcons[0]);
+
+    // If we had an API rate limit exceeded, restart at the top of the hour.
+    if (syncRunner.apiRateLimitExceeded) {
+           global.settings->beginGroup("Sync");
+           bool restart = global.settings->value("apiRateLimitAutoRestart", false).toBool();
+           global.settings->endGroup();
+           if (restart) {
+               QTime t = QTime::currentTime();
+               int minutes = 60-t.minute()+1; // Time to the top of the hour plus a padding.
+               QTimer::singleShot(60*1000*minutes, this, SLOT(synchronize()));
+           }
+    }
 }
 
 

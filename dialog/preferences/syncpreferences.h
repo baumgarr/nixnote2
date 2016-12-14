@@ -36,6 +36,7 @@ private:
     QCheckBox *syncOnStartup;
     QCheckBox *syncAutomatically;
     QCheckBox *syncOnShutdown;
+    QCheckBox *apiRateRestart;
 
     QCheckBox *enableProxy;
     QCheckBox *enableSocks5;

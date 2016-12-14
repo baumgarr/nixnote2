@@ -17,7 +17,9 @@ NixNote (2.0-beta-11) stable; urgency=low
   * Added a command to open the Github page.
   * Added the ability to use find/replace shortcuts in an
     external window.
-  * Better support for Qt5.
+  * Added the ability to automatically restart after the
+    API rate limit has been exceeded (experimental).
+  * Built under Qt5.
   * Bug fixes.
  -- Randy Baumgarte <randy@fbn.cx>  Mon, 12 Dec 2016 12:00:00 -0400
 
