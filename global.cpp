@@ -64,7 +64,6 @@ Global::Global()
     this->showGoodSyncMessagesInTray = false;
     this->batchThumbnailCount = 4;
     username = "";
-    this->clipboard = NULL;
     this->defaultFontSize = 8;
     this->countBehavior =  Global::CountAll;
     password = "";

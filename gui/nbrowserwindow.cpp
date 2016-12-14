@@ -879,7 +879,7 @@ QString NBrowserWindow::buildPasteUrl(QString url) {
         url.toLower().startsWith("mailto://") ||
         url.toLower().startsWith("mailto:") ||
         url.toLower().startsWith("ftp://")) {
-        QString newUrl = QString("<a href=\"") +global.clipboard->text()
+        QString newUrl = QString("<a href=\"") +QApplication::clipboard()->text()
                 +QString("\" title=\"") +url
                 +QString("\" >") +url +QString("</a>");
         return newUrl;
@@ -895,8 +895,7 @@ void NBrowserWindow::pasteButtonPressed() {
         return;
     }
 
-    QClipboard *clipboard = global.clipboard;
-    const QMimeData *mime = clipboard->mimeData();
+    const QMimeData *mime = QApplication::clipboard()->mimeData();
 
     if (mime->hasImage()) {
         editor->setFocus();
@@ -975,7 +974,7 @@ void NBrowserWindow::pasteButtonPressed() {
             // If we have a good return, then we can paste the link, otherwise we fall out
             // to a normal paste.
             if (goodrc) {
-                QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(global.clipboard->text(), n.title, n.title);
+                QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(QApplication::clipboard()->text(), n.title, n.title);
                 QLOG_DEBUG() << "HTML to insert:" << url;
                 QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
                 editor->page()->mainFrame()->evaluateJavaScript(script);
@@ -1006,12 +1005,12 @@ void NBrowserWindow::selectAllButtonPressed() {
 
 // The paste without mime format was pressed
 void NBrowserWindow::pasteWithoutFormatButtonPressed() {
-    const QMimeData *mime = global.clipboard->mimeData();
+    const QMimeData *mime = QApplication::clipboard()->mimeData();
     if (!mime->hasText())
         return;
     QString text = mime->text();
-    global.clipboard->clear();
-    global.clipboard->setText(text, QClipboard::Clipboard);
+    QApplication::clipboard()->clear();
+    QApplication::clipboard()->setText(text, QClipboard::Clipboard);
     this->editor->triggerPageAction(QWebPage::Paste);
 
     // This is done because pasting into an encryption block
@@ -3270,8 +3269,7 @@ void NBrowserWindow::spellCheckPressed() {
             if (dialog.ignoreAllPressed)
                 ignoreWords.append(currentWord);
             if (dialog.replacePressed)  {
-                QClipboard *clipboard = global.clipboard;
-                clipboard->setText(dialog.replacement);
+                QApplication::clipboard()->setText(dialog.replacement);
                 pasteButtonPressed();
             }
             if (dialog.addToDictionaryPressed) {
@@ -3321,8 +3319,8 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
                 insertHtml("<div><br/></div>");
         } else {
             editor->setFocus();
-            global.clipboard->clear();
-            global.clipboard->setText(file, QClipboard::Clipboard);
+            QApplication::clipboard()->clear();
+            QApplication::clipboard()->setText(file, QClipboard::Clipboard);
             this->editor->triggerPageAction(QWebPage::Paste);
         }
     }
@@ -3469,7 +3467,7 @@ void NBrowserWindow::copyNoteUrl() {
            user.shardId +QString("/") +
             n.guid +QString("/") +
             n.guid + QString("/");
-    global.clipboard->setText(href, QClipboard::Clipboard);
+    QApplication::clipboard()->setText(href, QClipboard::Clipboard);
 }
 
 
@@ -3597,8 +3595,7 @@ void NBrowserWindow::findReplaceInNotePressed() {
     if (!found)
         return;
 
-    QClipboard *clip = global.clipboard;
-    clip->setText(replace);
+    QApplication::clipboard()->setText(replace);
     editor->pasteAction->trigger();
 }
 
@@ -3619,8 +3616,7 @@ void NBrowserWindow::findReplaceAllInNotePressed() {
             findReplace->getCaseSensitive() | QWebPage::FindWrapsAroundDocument);
         if (!found)
             return;
-        QClipboard *clip = global.clipboard;
-        clip->setText(replace);
+        QApplication::clipboard()->setText(replace);
         editor->pasteAction->trigger();
     }
 }

@@ -943,7 +943,7 @@ void NTableView::copyNoteLink() {
         msgBox.setDefaultButton(QMessageBox::Ok);
         msgBox.exec();
     }
-    global.clipboard->setText(lidUrl);
+    QApplication::clipboard()->setText(lidUrl);
 }
 
 

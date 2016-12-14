@@ -136,7 +136,6 @@ public:
     QString server;                        // Evernote server to sync with
     QSettings *settings;                   // Pointer to the nixnote config file.  There is a different one for each account.
     QSettings *globalSettings;             // Pointer to all the config file that is common to all accounts.
-    QClipboard *clipboard;                 // System clipboard pointer
     ShortcutKeys *shortcutKeys;            // Keyboard shortcuts defined by the user
     QList<qint32> expungedResources;       // List of expunged resource LIDs
     QFileSystemWatcher resourceWatcher;    // Watcher for file system directories.  New files here will create anote

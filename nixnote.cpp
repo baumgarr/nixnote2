@@ -39,7 +39,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QFileDialog>
 #include <QStringList>
 #include <QDesktopServices>
-#include <QClipboard>
 #include <QPrintDialog>
 #include <QPrintPreviewDialog>
 #include <QStatusBar>

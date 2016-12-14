@@ -212,9 +212,6 @@ int main(int argc, char *argv[])
     }
 
 
-    // Save the clipboard
-    global.clipboard = QApplication::clipboard();
-
     QLOG_DEBUG() << "Setting up NN";
     NixNote *w = new NixNote();
     w->setAttribute(Qt::WA_QuitOnClose);
