@@ -52,6 +52,7 @@ bool WebCamPlugin::isWebcamReady() {
 void WebCamPlugin::initialize()  {
     if (!initialized)
         dialog = new WebcamCaptureDialog();
+    initialized=true;
     return;
 }
 
