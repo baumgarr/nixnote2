@@ -131,7 +131,7 @@ qint32 NotebookTable::sync(qint32 lid, Notebook &notebook) {
         lid = cs.incrementLidCounter();
     }
 
-    return add(lid, notebook, false);
+    return add(lid, notebook, false, true);
 }
 
 
