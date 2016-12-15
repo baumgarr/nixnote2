@@ -1144,6 +1144,10 @@ qint32 SyncRunner::uploadPersonalNotes() {
         usn = comm->uploadNote(note);
         if (usn == 0) {
             this->communicationErrorHandler();
+            if (note.title.isSet())
+                QLOG_ERROR() << tr("Error uploading note:") +note.title;
+            else
+                QLOG_ERROR() << tr("Error uploading note with a missing title!");
             error = true;
             //return maxUsn;
         }
