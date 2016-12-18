@@ -1871,6 +1871,9 @@ void NixNote::notifySyncComplete() {
         return;
     if (syncRunner.error) {
         showMessage(tr("Sync Error"), tr("Sync completed with errors."));
+        if (global.popupOnSyncError()) {
+            QMessageBox::critical(0, tr("Sync Error"), tr("Sync error. See message log for details"));
+        }
     } else
         if (global.showGoodSyncMessagesInTray)
             showMessage(tr("Sync Complete"), tr("Sync completed successfully."));

@@ -1256,3 +1256,19 @@ void Global::setPreviewFontsInDialog(bool value) {
     settings->setValue("previewFonts", value);
     settings->endGroup();
 }
+
+
+
+
+// Should we show a popup on sync errors?
+void Global::setPopupOnSyncError(bool value) {
+    global.settings->beginGroup("Sync");
+    global.settings->setValue("popupOnSyncError", value);
+    global.settings->endGroup();
+}
+bool Global::popupOnSyncError() {
+    global.settings->beginGroup("Sync");
+    bool value = global.settings->value("popupOnSyncError", true).toBool();
+    global.settings->endGroup();
+    return value;
+}

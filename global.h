@@ -158,6 +158,8 @@ public:
     qlonglong getLastReminderTime();                      // Get the last time we actually showed a user note reminders.
     void setLastReminderTime(qlonglong value);            // Save the date/time we last showed a user note reminders.
     void setMinimumRecognitionWeight(int weight);         // Set the minimum OCR recgnition confidence before including it in search results.
+    bool popupOnSyncError();                 // Should we do a popup on every sync error?
+    void setPopupOnSyncError(bool value);    // Set if we should do a popup on sync errors.
     QString dateFormat;                                   // Desired display date format
     QString timeFormat;                                   // Desired display time format
     DatabaseConnection *db;                               // "default" DB connection for the main thread.

@@ -70,9 +70,13 @@ SyncPreferences::SyncPreferences(QWidget *parent) :
     password->setText(global.getProxyPassword());
     password->setEchoMode(QLineEdit::Password);
 
+    popupOnSyncError = new QCheckBox(tr("Popup message on sync errors."),0);
+    popupOnSyncError->setChecked(global.popupOnSyncError());
+
     mainLayout->addWidget(enableSyncNotifications,0,0);
     mainLayout->addWidget(showGoodSyncMessagesInTray, 0,1);
     mainLayout->addWidget(syncOnStartup,1,0);
+    mainLayout->addWidget(popupOnSyncError, 1,1);
     mainLayout->addWidget(syncOnShutdown,2,0);
     mainLayout->addWidget(syncAutomatically,3,0);
     mainLayout->addWidget(syncInterval, 3,1);
@@ -165,6 +169,7 @@ void SyncPreferences::saveValues() {
     global.setProxyPort(port->text().toInt());
     global.setProxyUserid(userId->text().trimmed());
     global.setProxyPassword(password->text().trimmed());
+    global.setPopupOnSyncError(this->popupOnSyncError->isChecked());
 }
 
 
