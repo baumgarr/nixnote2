@@ -790,6 +790,8 @@ int CmdLineTool::signalGui(StartupConfig config) {
     if (!global.sharedMemory->attach()) {
         return 16;
     }
+    if (config.signalGui->show)
+        global.sharedMemory->write(QString("SIGNAL_GUI: SHOW"));
     if (config.signalGui->takeScreenshot)
         global.sharedMemory->write(QString("SIGNAL_GUI: SCREENSHOT"));
     if (config.signalGui->shutdown)

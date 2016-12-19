@@ -16,6 +16,7 @@ public:
     bool newNote;
     bool shutdown;
     bool synchronize;
+    bool show;
     qint32 lid;
 };
 

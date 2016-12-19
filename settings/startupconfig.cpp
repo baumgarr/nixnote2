@@ -180,7 +180,8 @@ void StartupConfig::printHelp() {
                    +QString("          --notebook=\"notebook\"        Notebook name.\n")
                    +QString("          --accountId=<id>             Account number (defaults to last used account).\n\n")
                    +QString("  signalGui <options>                  Send command to a running NixNote.\n")
-                   +QString("     openNotebook options:\n")
+                   +QString("     signalGui options:\n")
+                   +QString("          --show                       Show NixNote if hidden.\n")
                    +QString("          --synchronize                Synchronize with Evernote.\n")
                    +QString("          --shutdown                   Shutdown NixNote.\n")
                    +QString("          --screenshot                 Start a screen capture.\n")
@@ -489,6 +490,8 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
                 parm = parm.mid(5);
                 signalGui->lid = parm.toInt();
             }
+            if (parm.startsWith("--show", Qt::CaseSensitive))
+                signalGui->show=true;
             if (parm.startsWith("--synchronize", Qt::CaseSensitive))
                 signalGui->synchronize=true;
             if (parm.startsWith("--screenshot", Qt::CaseSensitive))

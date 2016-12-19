@@ -552,7 +552,6 @@ void NixNote::setupGui() {
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(trayActivated(QSystemTrayIcon::ActivationReason)));
 
 
-
     // Setup timers
     QLOG_TRACE() << "Setting up timers";
     setSyncTimer();
@@ -2610,24 +2609,50 @@ void NixNote::heartbeatTimerTriggered() {
         if (cmd.startsWith("SHUTDOWN")) {
             this->close();
         }
+        if (cmd.startsWith("SHOW")) {
+            if (!isVisible())
+                this->toggleVisible();
+            this->raise();
+            this->activateWindow();
+            this->showNormal();
+            this->tabWindow->currentBrowser()->editor->setFocus();
+        }
         if (cmd.startsWith("NEW_NOTE")) {
             this->newNote();
-            this->setHidden(false);
-            this->show();
+            if (!isVisible())
+                this->toggleVisible();
+            this->raise();
+            this->activateWindow();
+            this->showNormal();
+            this->tabWindow->currentBrowser()->editor->setFocus();
         }
         if (cmd.startsWith("NEW_EXTERNAL_NOTE")) {
             this->newExternalNote();
-            this->setHidden(false);
-            this->show();
+            this->raise();
+            this->activateWindow();
+            if (tabWindow->lastExternal != NULL) {
+                tabWindow->lastExternal->activateWindow();
+                tabWindow->lastExternal->showNormal();
+                tabWindow->lastExternal->browser->editor->setFocus();
+            }
         }
         if (cmd.startsWith("OPEN_EXTERNAL_NOTE")) {
             cmd = cmd.mid(18);
             qint32 lid = cmd.toInt();
             this->openExternalNote(lid);
+            if (tabWindow->lastExternal != NULL) {
+                tabWindow->lastExternal->activateWindow();
+                tabWindow->lastExternal->showNormal();
+                tabWindow->lastExternal->browser->editor->setFocus();
+            }
             return;
         }
         if (cmd.startsWith("OPEN_NOTE")) {
             bool newTab = false;
+
+            if (!isVisible()) {
+                this->toggleVisible();
+            }
 
             if (cmd.startsWith("OPEN_NOTE_NEW_TAB")) {
                 newTab = true;
@@ -2654,6 +2679,10 @@ void NixNote::heartbeatTimerTriggered() {
             global.filterCriteria.push_back(newFilter);
             global.filterPosition++;
             this->openNote(newTab);
+            this->raise();
+            this->activateWindow();
+            this->showNormal();
+            this->tabWindow->currentBrowser()->editor->setFocus();
         }
     }
 

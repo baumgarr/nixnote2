@@ -35,6 +35,7 @@ NTabWidget::NTabWidget(NixNote *p, SyncRunner *s, NNotebookView *n, NTagView *t)
     syncThread = s;
     notebookTreeView = n;
     tagTreeView = t;
+    this->lastExternal = NULL;
 
     this->setFont(global.getGuiFont(font()));
 
@@ -239,6 +240,7 @@ void NTabWidget::openNote(qint32 lid, OpenNoteMode mode) {
             external->setVisible(true);
             external->raise();
             external->setFocus();
+            this->lastExternal = external;
             return;
         }
     }
@@ -265,6 +267,7 @@ void NTabWidget::openNote(qint32 lid, OpenNoteMode mode) {
             external->setWindowTitle(tr("NixNote - ") +external->browser->noteTitle.text());
             external->show();
             connect(external->browser->editor->titleEditor, SIGNAL(titleUpdated(QString)), external, SLOT(setTitle(QString)));
+            this->lastExternal= external;
             return;
         }
     }
