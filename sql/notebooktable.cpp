@@ -1173,3 +1173,14 @@ void NotebookTable::merge(qint32 source, qint32 target) {
     db->unlock();
 }
 
+
+
+void NotebookTable::resetDirtyLocalNotebooks() {
+    NSqlQuery query(db);
+    query.prepare("update datastore set data=0 where key=:dirty and data=1 and lid in (select lid from datastore where key=:local and data=1);");
+    query.bindValue(":dirty", NOTEBOOK_ISDIRTY);
+    query.bindValue(":local", NOTEBOOK_IS_LOCAL);
+    query.exec();
+    query.finish();
+    db->unlock();
+}

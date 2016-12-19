@@ -1013,6 +1013,7 @@ qint32 SyncRunner::uploadNotebooks() {
     qint32 maxUsn = 0;
     NotebookTable table(db);
     QList<qint32> lids;
+    table.resetDirtyLocalNotebooks();
     table.resetLinkedNotebooksDirty();
     table.getAllDirty(lids);
     for (int i=0; i<lids.size(); i++) {

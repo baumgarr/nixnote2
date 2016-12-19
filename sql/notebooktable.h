@@ -118,6 +118,7 @@ public:
     void renameStack(QString oldName, QString newName);    // Rename a stack
     void removeFromStack(qint32 lid);           // Remove from a stack
     void resetLinkedNotebooksDirty();           // mark all linked notebooks as not-dirty
+    void resetDirtyLocalNotebooks();            // mark all local notebooks as synchornized
 
 };
 
