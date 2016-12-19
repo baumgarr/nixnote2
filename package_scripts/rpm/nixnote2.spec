@@ -2,7 +2,7 @@ Summary: An Evernote client clone for Linux
 Name: nixnote2
 Version: __VERSION__
 Release: 0
-License: GPLv2
+License: GPLv2+
 Group: Applications/Internet 
 Vendor: Randy Baumgarte
 URL: http://nevernote.sourceforge.net/
@@ -15,7 +15,7 @@ Requires: tidy, bash, qt >= 4.8.5, qt-x11 >= 4.8.5, qtwebkit >= 2.3, glibc >= 2.
 NixNote:: Evernote client clone for Linux
 
 Copyright 2009-2015, Randy Baumgarte 
-Licensed under GNU General Public Lisence version 2
+Licensed under GNU General Public Lisence version 2+
 
 This is an incomplete clone of Evernote designed to run on Linux. 
 While this is designed to work with Evernote, it is in no way
