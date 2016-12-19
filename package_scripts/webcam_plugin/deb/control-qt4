@@ -1,0 +1,11 @@
+Package: nixnote2-webcam-plugin
+Version: __VERSION__
+Section: x11 
+Priority: optional
+Architecture: __ARCH__ 
+Installed-Size: 60000
+Depends: libc6, libqtgui4, libqtcore4, libpng12-0, libtbb2, libopenexr6 | libopenexr22, libavcodec53 | libavcodec54 | libavcodec-ffmpeg56 | libavcodec-extra-53 | libavcodec-extra-54 | libavcodec-extra-56 | libavcodec-ffmpeg-extra56,  libavformat53 | libavformat54 | libavformat-extra-53 | libavformat-extra-54 | libavformat-55 | libavformat55 | libavformat-extra-55 | libavformat56 | libavformat-56 | libavformat-extra-56 | libavformat-ffmpeg56, libswscale2 | libswscale-extra-2 | libswscale3 | libswscale-ffmpeg3, libdc1394-22, libopencv-core2.4 | libopencv-core2.4v5, libopencv-highgui2.4 | libopencv-highgui2.4v5, libcurl3
+Recommends:  
+Maintainer: Randy Baumgarte <randy@fbn.cx>
+Description: Webcam plugin for NixNote2.
+ A plugin for NixNote2 to allow for note creation via a webcam.
