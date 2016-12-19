@@ -100,7 +100,7 @@ public:
     void updateGuid(qint32 lid, Guid &guid);    // Update a notebook's guid
     qint32 sync(Notebook &notebook);            // Sync a notebook with a new record
     qint32 sync(qint32 lid, Notebook &notebook);      // Sync a notebook with a new record
-    qint32 add(qint32 lid, Notebook &t, bool isDirty, bool isLocal);    // Add a new notebook
+    qint32 add(qint32 lid, Notebook &t, bool isDirty, bool isLocal = false);    // Add a new notebook
     void openAllNotebooks();                    // Open all notebooks
     void closeNotebook(qint32 lid);             // Close a notebook
     void openNotebook(qint32 lid);              // Open a notebook

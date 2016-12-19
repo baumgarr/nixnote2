@@ -81,7 +81,7 @@ int AlterNote::alterNote() {
                 book.name = notebook;
                 NUuid uuid;
                 book.guid = uuid.create();
-                notebookLid = bookTable.add(0,book,true,true);
+                notebookLid = bookTable.add(0,book,true);
             }
             if (noteTable.getNotebookLid(lid) != notebookLid)
                 noteTable.updateNotebook(lid, notebookLid, true);

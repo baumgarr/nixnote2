@@ -1007,7 +1007,7 @@ qint32 SyncRunner::uploadTags() {
 
 
 
-// Upload any notebooks
+// Upload any saved searchs
 qint32 SyncRunner::uploadNotebooks() {
     qint32 usn;
     qint32 maxUsn = 0;
@@ -1017,37 +1017,32 @@ qint32 SyncRunner::uploadNotebooks() {
     table.getAllDirty(lids);
     for (int i=0; i<lids.size(); i++) {
         Notebook notebook;
-        if (table.isLocal(lids[i]))
-        {
-            table.get(notebook, lids[i]);
-            if (!table.isDeleted(lids[i])) {
-                qint32 oldUsn = notebook.updateSequenceNum;
-                usn = comm->uploadNotebook(notebook);
-                if (usn == 0) {
-                    this->communicationErrorHandler();
-                    error = true;
-                    return maxUsn;
-                }
-                if (usn > maxUsn) {
-                    maxUsn = usn;
-                    if (oldUsn == 0)
-                        table.updateGuid(lids[i], notebook.guid);
-                    table.setUpdateSequenceNumber(lids[i], usn);
-                } else {
-                    error = true;
-                }
+        table.get(notebook, lids[i]);
+        if (!table.isDeleted(lids[i])) {
+            qint32 oldUsn = notebook.updateSequenceNum;
+            usn = comm->uploadNotebook(notebook);
+            if (usn == 0) {
+                this->communicationErrorHandler();
+                error = true;
+                return maxUsn;
+            }
+            if (usn > maxUsn) {
+                maxUsn = usn;
+                if (oldUsn == 0)
+                    table.updateGuid(lids[i], notebook.guid);
+                table.setUpdateSequenceNumber(lids[i], usn);
             } else {
-                QString guid;
-                table.getGuid(guid, lids[i]);
-                table.expunge(lids[i]);
-                if (notebook.updateSequenceNum > 0) {
-                    usn = comm->expungeNotebook(guid);
-                    if (usn>maxUsn)
-                        maxUsn = usn;
-                }
+                error = true;
             }
         } else {
-            table.setDirty(lids[i],false);
+            QString guid;
+            table.getGuid(guid, lids[i]);
+            table.expunge(lids[i]);
+            if (notebook.updateSequenceNum > 0) {
+                usn = comm->expungeNotebook(guid);
+                if (usn>maxUsn)
+                    maxUsn = usn;
+            }
         }
     }
     return maxUsn;
