@@ -28,11 +28,17 @@ ImageDelegate::ImageDelegate()
 
 
 
+QString ImageDelegate::displayText(const QVariant &value, const QLocale &locale) const {
+    Q_UNUSED(locale); // suppress unused variable
+    Q_UNUSED(value);
+    return "";
+}
+
+
+
 void ImageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QModelIndex ix;  // Dummy model index so we don't put the actual value in the column
-    QStyledItemDelegate::paint(painter,option, ix);
-
+    QStyledItemDelegate::paint(painter,option, index);
     QString filename = index.data().toString();
 
     if(filename != "")

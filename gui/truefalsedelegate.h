@@ -32,6 +32,7 @@ class TrueFalseDelegate : public QStyledItemDelegate
 public:
     TrueFalseDelegate();
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QString displayText(const QVariant &value, const QLocale &locale) const;
 
 };
 

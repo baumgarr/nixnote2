@@ -28,6 +28,7 @@ class ImageDelegate : public QStyledItemDelegate
 public:
     ImageDelegate();
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    QString displayText(const QVariant &value, const QLocale &locale) const;
 };
 
 #endif // IMAGEDELEGATE_H

@@ -29,11 +29,19 @@ TrueFalseDelegate::TrueFalseDelegate()
 }
 
 
+
+QString TrueFalseDelegate::displayText(const QVariant &value, const QLocale &locale) const {
+    Q_UNUSED(locale); // suppress unused variable
+    Q_UNUSED(value);
+    return "";
+}
+
+
+
 void TrueFalseDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     bool value = index.data().toBool();
-    QModelIndex ix;  // Dummy model index so we don't put the actual value in the column
-    QStyledItemDelegate::paint(painter,option, ix);
+    QStyledItemDelegate::paint(painter,option, index);
     if(value)
     {
         painter->save();
