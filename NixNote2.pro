@@ -7,9 +7,14 @@
 greaterThan(QT_MAJOR_VERSION, 4) {
     QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
-    INCLUDEPATH += /usr/include/poppler/qt5
-    LIBS +=    -lcurl \
+    unix:INCLUDEPATH += /usr/include/poppler/qt5
+    win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
+    win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
+    unix:LIBS +=    -lcurl \
                -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
+    win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
+    win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
+    win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
 }
 
 equals(QT_MAJOR_VERSION, 4) {
@@ -434,8 +439,12 @@ HEADERS  += nixnote.h \
 
 
 
-QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
-QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
+unix:QMAKE_CXXFLAGS +=-g -O2 -fstack-protector --param=ssp-buffer-size=4 -Wformat -Werror=format-security
+unix:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions -Wl,-z,relro
+
+win32:QMAKE_CXXFLAGS +=-g -O2 --param=ssp-buffer-size=4 -Wformat -Werror=format-security
+win32:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions
+win32:DEFINES += SMTP_BUILD
 
 binary.path = /usr/bin/
 binary.files = nixnote2

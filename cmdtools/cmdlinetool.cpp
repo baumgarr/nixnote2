@@ -240,9 +240,12 @@ int CmdLineTool::queryNotes(StartupConfig config) {
 // auto-imported.  If it is not running it is created directly.
 int CmdLineTool::addNote(StartupConfig config) {
 
+// Windows Check
+#ifndef _WIN32
 #ifdef Q_OS_WIN32
     _setmode(_fileno(stdin), _O_BINARY);
 #endif
+#endif // End windows check
 
     // If we are reding stdin
     if (config.newNote->content == "")  {
@@ -457,9 +460,12 @@ int CmdLineTool::addNote(StartupConfig config) {
 // Append text to a note via the command line.
 int CmdLineTool::appendNote(StartupConfig config) {
 
+// Windows Check
+#ifndef _WIN32
 #ifdef Q_OS_WIN32
     _setmode(_fileno(stdin), _O_BINARY);
 #endif
+#endif // end windows check
 
     // If we are reding stdin
     if (config.newNote->content == "")  {

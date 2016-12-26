@@ -53,6 +53,17 @@ void Thumbnailer::render(qint32 lid) {
     noteTable.get(n,lid,false, false);
     formatter.setNote(n,false);
     QByteArray formattedContent = formatter.rebuildNoteHTML();
+// Windows check for font bug when viewing Unicode characters
+#ifdef _WIN32
+    for(int i = 0; i < formattedContent.size(); ++i) {
+        char c = formattedContent.at(i);
+        QChar cc(c);
+        if(cc.unicode() > 127) {
+            c  = ' ';
+            formattedContent.replace(c,' ');
+        }
+    }
+#endif
     page->mainFrame()->setContent(formattedContent);
 }
 

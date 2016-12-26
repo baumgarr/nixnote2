@@ -35,7 +35,7 @@ extern Global global;
 CmdLineQuery::CmdLineQuery(QObject *parent) :
     QObject(parent)
 {
-    stdout=true;
+    stdoutReq=true;
     printHeaders=true;
 }
 
@@ -50,7 +50,7 @@ void CmdLineQuery::write(QList<qint32> lids, QString filename) {
     QFile *outputFile = NULL;
     if (filename != "") {
         outputFile = new QFile(filename);
-        stdout=false;
+        stdoutReq=false;
         outputFile->open(QIODevice::WriteOnly);
         if (!outputFile->isOpen()) {
             return;
@@ -243,7 +243,7 @@ void CmdLineQuery::write(QList<qint32> lids, QString filename) {
         }
     }
 
-    if (!stdout && outputFile != NULL && outputFile->isOpen())
+    if (!stdoutReq && outputFile != NULL && outputFile->isOpen())
         outputFile->close();
 }
 
@@ -268,7 +268,7 @@ QString CmdLineQuery::lineBuilder(QString value, QString format, int defaultPadd
 }
 
 void CmdLineQuery::writeLine(QString line) {
-    if (stdout) {
+    if (stdoutReq) {
         std::cout << line.toStdString();
         return;
     }

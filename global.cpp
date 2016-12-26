@@ -27,11 +27,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QApplication>
 
 // The following include is needed for demangling names on a backtrace
+// Windows Check
+#ifndef _WIN32
 #include <cxxabi.h>
 #include <execinfo.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#endif  // End Windows Check
 
 #include "sql/usertable.h"
 
@@ -718,6 +721,7 @@ void Global::setupDateTimeFormat() {
 
 // Get the username from the system
 QString Global::getUsername() {
+
     if (!autosetUsername())
         return "";
 
@@ -727,7 +731,8 @@ QString Global::getUsername() {
     userTable.getUser(user);
     if (user.name.isSet())
         return user.name;
-
+// Windows Check
+#ifndef _WIN32
     register struct passwd *pw;
     register uid_t uid;
     QString username="";
@@ -742,6 +747,8 @@ QString Global::getUsername() {
         username = pw->pw_name;
         return username.trimmed();
     }
+#endif // End Windows Check
+
     return "";
 }
 
@@ -1136,6 +1143,9 @@ QString Global::systemNotifier() {
 
 
 void Global::stackDump(int max) {
+// Windows Check
+#ifndef _WIN32
+
     void *array[30];
     size_t size;
     QLOG_ERROR() << "***** Dumping stack *****";
@@ -1203,6 +1213,8 @@ void Global::stackDump(int max) {
 
     free(messages);
     QLOG_ERROR() << "**** Stack dump complete *****";
+
+#endif // End windows check
 }
 
 

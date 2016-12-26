@@ -20,7 +20,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "application.h"
 #include "global.h"
 #include <QDebug>
+
+// Windows Check
+#ifndef _WIN32
 #include <execinfo.h>
+#endif // End windows check
 
 extern Global global;
 
@@ -47,6 +51,8 @@ bool Application::notify(QObject *receiver_, QEvent *event_)
         QLOG_ERROR() << "**********************************************************";
         QLOG_ERROR() << "std::exception was caught: " << ex.what();
 
+// Windows Check
+#ifndef _WIN32
         void *array[30];
         size_t size;
 
@@ -55,6 +61,7 @@ bool Application::notify(QObject *receiver_, QEvent *event_)
 
         // print out all the frames to stderr
         backtrace_symbols_fd(array, size, 2);
+#endif  // End windows check
 
         emit (stdException(QString::fromStdString(ex.what())));
   }

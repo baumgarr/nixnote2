@@ -911,7 +911,12 @@ void NBrowserWindow::pasteButtonPressed() {
         for (int i=0; i<urls.size(); i++) {
             QLOG_DEBUG() << urls[i].toString();
             if (urls[i].toString().startsWith("file://")) {
+// Windows Check
+#ifndef _WIN32
                 QString fileName = urls[i].toString().mid(7);
+#else
+                QString fileName = urls[i].toString().mid(8);
+#endif  // End windows check
                 attachFileSelected(fileName);
                 this->editor->triggerPageAction(QWebPage::InsertParagraphSeparator);
             }
@@ -1928,7 +1933,14 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
              QMessageBox::information(this, tr("Unable Open"), QString(tr("This is an ink note.\nInk notes are not supported since Evernote has not\n published any specifications on them\nand I'm too lazy to figure them out by myself.")));
              return;
          }
-         QString fullName = url.toString().mid(6).replace(global.fileManager.getDbaDirPath(),"");
+         QString filepath = global.fileManager.getDbaDirPath();
+// Windows check
+#ifdef _WIN32
+         filepath = filepath.replace("\\", "/");
+#endif // End windows check
+         QString fullName = url.toString().mid(6).replace(filepath,"");
+         filepath = filepath.replace("\\", "/");
+         QLOG_DEBUG() << global.fileManager.getDbaDirPath();
          int index = fullName.lastIndexOf(".");
          QString guid = "";
          if (index != -1) {
@@ -1946,6 +1958,11 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
          if (fileUrl == "")
              return;
          fileUrl = global.fileManager.getDbaDirPath()+fileUrl;
+
+// Windows check
+#ifdef _WIN32
+         fileUrl = fileUrl.replace("\\", "/");
+#endif // End windows check
          global.resourceWatcher.addPath(fileUrl);
          QDesktopServices::openUrl(fileUrl);
          return;
@@ -2465,7 +2482,6 @@ void NBrowserWindow::prepareEmailMessage(MimeMessage *message, QString note) {
         file->setContentType(mime);
         message->addPart(file);
     }
-
     return;
 
 }

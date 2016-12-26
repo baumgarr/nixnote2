@@ -172,10 +172,13 @@ void FileManager::createDirOrCheckWriteable(QDir dir) {
 /* Check that an existing directory is readable.  */
 /**************************************************/
 void FileManager::checkExistingReadableDir(QDir dir) {
+// Windows Check
+#ifndef _WIN32
     if (!dir.isReadable()) {
             QLOG_FATAL() << "Directory '" + dir.path() + "' does not have read permission.  Aborting program.";
             exit(16);
     }
+#endif  // end windows check
     if (!dir.exists()) {
          QLOG_FATAL() << "Directory '" + dir.path() + "' does not exist.  Aborting program";
          exit(16);

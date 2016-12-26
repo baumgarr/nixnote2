@@ -24,6 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define HUNSPELLPLUGIN_H
 #include "hunspellinterface.h"
 
+#// Windows Check
+#ifndef _WIN32
+
 class HunspellPlugin : public QObject, HunspellInterface
 {
     Q_OBJECT
@@ -42,5 +45,7 @@ public:
     bool spellCheck(QString word, QStringList &suggestions);
     void addWord(QString dictionary, QString word);
 };
+
+#endif // end of windows check
 
 #endif // HUNSPELLPLUGIN_H

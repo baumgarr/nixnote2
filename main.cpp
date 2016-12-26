@@ -30,7 +30,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <iostream>
 #include <QMessageBox>
 #include <QSharedMemory>
+
+// Windows Check
+#ifndef _WIN32
 #include <execinfo.h>
+#endif
+
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,6 +55,9 @@ extern Global global;
 //*********************************************************************
 //* Segmentation fault.  This is triggered to print a stack trace.
 //*********************************************************************
+// Windows Check
+#ifndef _WIN32
+
 void fault_handler(int sig) {
   void *array[30];
   size_t size;
@@ -63,6 +71,8 @@ void fault_handler(int sig) {
   exit(1);
 }
 
+#endif // End Windows check
+
 
 
 
@@ -74,7 +84,11 @@ int main(int argc, char *argv[])
 {
 
     bool guiAvailable = true;
+
+// Windows Check
+#ifndef _WIN32
     signal(SIGSEGV, fault_handler);   // install our handler
+#endif
 
     // Begin setting up the environment
     StartupConfig startupConfig;
@@ -84,6 +98,8 @@ int main(int argc, char *argv[])
     int retval = startupConfig.init(argc,argv, guiAvailable);
     if (retval != 0)
         return retval;
+
+
 
     // Setup the application. If we have a GUI, then we use Application.
     // If we don't, then we just use a derivitive of QCoreApplication

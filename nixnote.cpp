@@ -47,6 +47,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDesktopWidget>
 #include <QFileIconProvider>
 #include <QSplashScreen>
+#include <unistd.h>
 
 #include "sql/notetable.h"
 #include "dialog/screencapture.h"
@@ -72,7 +73,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/accountmaintenancedialog.h"
 #include "communication/communicationmanager.h"
 #include "utilities/encrypt.h"
+
+// Windows Check
+#ifndef _WIN32
 #include <boost/shared_ptr.hpp>
+#endif
+
 #include "cmdtools/cmdlinequery.h"
 #include "cmdtools/alternote.h"
 
@@ -87,7 +93,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "qevercloud/include/QEverCloudOAuth.h"
 
 using namespace qevercloud;
+
+// Windows Check
+#ifndef _WIN32
 using namespace boost;
+#endif
 
 extern Global global;
 class SyncRunner;
@@ -3066,11 +3076,13 @@ void NixNote::screenCapture() {
         noteButton->setIcon(screenCaptureButton->icon());
         noteButton->setProperty("currentNoteButton", NewScreenNote);
     }
+    this->hide();
     sleep(1);
+
     ScreenCapture sc;
     sc.exec();
     QPixmap pix = sc.getSelection();
-
+    this->show();
     ConfigStore cs(global.db);
     qint32 lid = cs.incrementLidCounter();
 

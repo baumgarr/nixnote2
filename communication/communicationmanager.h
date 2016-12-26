@@ -35,9 +35,13 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <inttypes.h>
 #include <iostream>
-#include <netinet/in.h>
-#include <stdint.h>
 
+// Windows Check
+#ifndef _WIN32
+#include <netinet/in.h>
+#endif
+
+#include <stdint.h>
 #include <QObject>
 #include <QNetworkAccessManager>
 #include <QSqlDatabase>

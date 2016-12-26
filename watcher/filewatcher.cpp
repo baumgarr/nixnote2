@@ -116,7 +116,12 @@ void FileWatcher::saveFile(QString file) {
     newNote.updated = newNote.created;
     newNote.updateSequenceNum = 0;
     NoteAttributes na;
+// Windows Check
+#ifndef _WIN32
     na.sourceURL = "file://" + file;
+#else
+    na.sourceURL = "file:///"+file;
+#endif  // end Windows cehck
     newNote.attributes = na;
 
     qint32 noteLid = lid;

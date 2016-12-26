@@ -24,6 +24,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #include <QObject>
 #include <QStringList>
+
+// Windows Check
+#ifndef _WIN32
 #include <hunspell/hunspell.hxx>
 
 class SpellChecker : public QObject
@@ -47,5 +50,7 @@ signals:
 public slots:
     
 };
+
+#endif // end of windows check
 
 #endif // SPELLCHECKER_H

@@ -29,6 +29,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QtXml>
 #include <QProgressDialog>
 
+// Windows Check
+#ifdef _WIN32
+typedef qint64 int64_t;
+#endif  // End windows check
+
 using namespace std;
 
 #include "qevercloud/include/QEverCloud.h"

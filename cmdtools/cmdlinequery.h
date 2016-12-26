@@ -29,7 +29,7 @@ class CmdLineQuery : public QObject
     Q_OBJECT
 private:
     QTextStream *out;
-    bool stdout;
+    bool stdoutReq;
     void writeLine(QString line);
     QString lineBuilder(QString value, QString format, int defaultPadding=0, QChar padChar=' ');
 

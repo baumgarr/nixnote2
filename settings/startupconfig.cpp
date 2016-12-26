@@ -229,10 +229,12 @@ int StartupConfig::init(int argc, char *argv[], bool &guiAvailable) {
     // that the GUI is available. We can override this with the --forceNoGui
     // as any parameter.
 
+// Windows Check
+#ifndef _WIN32
     QString display = QProcessEnvironment::systemEnvironment().value("DISPLAY", "");
     if (display.trimmed() == "")
         guiAvailable = false;
-
+#endif // End windows check
 
     for (int i=1; i<argc; i++) {
         QString parm(argv[i]);
