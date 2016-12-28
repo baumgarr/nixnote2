@@ -318,7 +318,35 @@ Account owning the notebook you wish to close. Each account has an ID number ass
 The notebook to close.
 .LP
 .RE
-.RE 
+.RE
+.IP "signalGui <options>"
+Signal a running NixNote instance to perform a particular functon. 
+.RS 7
+.LP 
+.HP 2.2
+.IP --show
+Show a hidden or running NixNote.
+.IP --synchronize
+Start a sync with Evernote.
+.IP --shutdown
+Stop NixNote.
+.IP --screenshot
+Take a screenshot. 
+.IP --openNote
+Open an existing note. The --id=<id> option must be specifed.
+.IP --openExternalNote
+Open an existing note in an external window. The --id=<id> option must be specifed.
+.IP --id=<id>
+Id of note to open.
+.IP --newNote
+Create a new note.
+.IP --newExternalNote
+Create a new note in an external window.
+.IP --accountId=<id>
+Account ID containing the note or the account for the new note.
+.LP
+.RE
+.RE
 .SH EXAMPLES
 .IP "nixnote2 start --dontStartMinimized"
 Start NixNote but do not start minimized.  
