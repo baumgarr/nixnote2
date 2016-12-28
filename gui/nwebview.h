@@ -51,6 +51,7 @@ public:
     NBrowserWindow *parent;
     NTitleEditor *titleEditor;
     QString pasteSequence;
+    QString pasteUnformattedSequence;
     QMenu *contextMenu;
     QMenu *tableMenu;
     QMenu *imageMenu;

@@ -234,6 +234,9 @@ NWebView::NWebView(NBrowserWindow *parent) :
     this->pasteSequence = QKeySequence(this->pasteAction->shortcut()).toString().toLower();
     if (pasteSequence.trimmed() == "")
         pasteSequence = "ctrl+v";
+    pasteUnformattedSequence = QKeySequence(pasteWithoutFormatAction->shortcut()).toString().toLower();
+    if (pasteUnformattedSequence.trimmed() == "")
+        pasteUnformattedSequence = "ctrl+shft+v";
 }
 
 
@@ -392,6 +395,11 @@ void NWebView::keyPressEvent(QKeyEvent *e) {
     QKeySequence ks(e->modifiers()|e->key());
     if (ks.toString().toLower() == pasteSequence) {
         parent->pasteButtonPressed();
+        e->accept();
+        return;
+    }
+    if (ks.toString().toLower() == pasteUnformattedSequence) {
+        parent->pasteWithoutFormatButtonPressed();
         e->accept();
         return;
     }
