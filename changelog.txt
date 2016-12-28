@@ -20,9 +20,10 @@ NixNote (2.0-beta-11) stable; urgency=low
   * Added the ability to automatically restart after the
     API rate limit has been exceeded (experimental).
   * Added the option to show a popup on sync errors.
-  * Built under Qt5.
+  * Added better Qt5 support.
+  * Better support for Windows builds.
   * Bug fixes.
- -- Randy Baumgarte <randy@fbn.cx>  Mon, 12 Dec 2016 12:00:00 -0400
+ -- Randy Baumgarte <randy@fbn.cx>  Wed, 28 Dec 2016 12:00:00 -0400
 
 NixNote (2.0-beta-10) stable; urgency=low
   * Splt Hunspell into a plugin.
