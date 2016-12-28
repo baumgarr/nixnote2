@@ -58,8 +58,11 @@ AboutDialog::AboutDialog(QDialog *parent) :
     } else {
         data = data.replace("__TRANSLATION__", translationInformation);
     }
-    QLOG_DEBUG() << global.fileManager.getImageDirPath(".")+"splash_logo.png";
+#ifndef _WIN32
     data = data.replace("__LOGO__", "file://"+global.fileManager.getImageDirPath("")+"splash_logo.png");
+#else
+    data = data.replace("__LOGO__", "file:///"+global.fileManager.getImageDirPath("").replace("\\","/")+"splash_logo.png");
+#endif
     page->setHtml(data);
     connect(okButton, SIGNAL(clicked()), this, SLOT(close()));
     this->resize(600,500);
