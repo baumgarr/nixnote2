@@ -1326,8 +1326,8 @@ void NoteTable::removeTag(qint32 lid, qint32 tag, bool isDirty = false) {
     query.prepare("delete from DataStore where lid=:lid and key=:key and data=:tag");
     query.bindValue(":lid", lid);
     query.bindValue(":key",NOTE_TAG_LID);
-    query.bindValue(":tag:", tag);
-    query.exec();
+    query.bindValue(":tag", tag);
+    query.exec();;
     query.finish();
     db->unlock();
     if (isDirty) {
