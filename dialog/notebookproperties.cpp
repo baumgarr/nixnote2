@@ -29,6 +29,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 extern Global global;
 
+
+// Constructor. Thys happens when the class is declared.
 NotebookProperties::NotebookProperties(QWidget *parent) :
     QDialog(parent)
 {
@@ -41,12 +43,17 @@ NotebookProperties::NotebookProperties(QWidget *parent) :
     syncBox.setChecked(true);
     syncBox.setEnabled(false);
 
+    defaultNotebook.setText(tr("Default"));
+    defaultNotebook.setChecked(false);
+    defaultNotebook.setEnabled(true);
+
     connect(&name, SIGNAL(textChanged(const QString&)), this, SLOT(validateInput()));
 
     nameLabel.setText(tr("Name"));
     queryGrid.addWidget(&nameLabel, 1,1);
     queryGrid.addWidget(&name, 1, 2);
     queryGrid.addWidget(&syncBox, 2,2);
+    queryGrid.addWidget(&defaultNotebook, 3,2);
 //    queryGrid.setContentsMargins(10, 10,  -10, -10);
     grid.addLayout(&queryGrid,1,1);
 
@@ -61,15 +68,17 @@ NotebookProperties::NotebookProperties(QWidget *parent) :
 }
 
 
-
+// This happens when the Ok button is pressed.
 void NotebookProperties::okButtonPressed() {
     okPressed = true;
+    bool isDefault = defaultNotebook.isChecked();
 
     if (this->lid > 0) {
         Notebook book;
         NotebookTable table(global.db);
         table.get(book, lid);
         book.name = name.text().trimmed();
+        book.defaultNotebook = isDefault;
         table.update(book, true);
         close();
         return;
@@ -77,21 +86,32 @@ void NotebookProperties::okButtonPressed() {
 
     // We have a new notebook to add
     Notebook book;
+
     book.name = name.text().trimmed();
     bool isSynchronized = syncBox.isChecked();
     QUuid uuid;
     QString g =  uuid.createUuid().toString().replace("{","").replace("}","");
     book.guid = g;
     NotebookTable t(global.db);
+    book.defaultNotebook = isDefault;
     t.add(0,book,true, !isSynchronized);
     close();
 }
 
+
+
+
+// This happens when the cancel button is pressed.
 void NotebookProperties::cancelButtonPressed() {
     okPressed = false;
     close();
 }
 
+
+// This is usually called after the constructor and will set up
+// the notebook name (if it already exists). If the lid > 0 then
+// we are editing an existing notebook. If it is 0 then this is a
+// new notebook.
 void NotebookProperties::setLid(qint32 lid) {
     if (lid > 0) {
         this->lid = lid;
@@ -103,6 +123,11 @@ void NotebookProperties::setLid(qint32 lid) {
         syncBox.setEnabled(false);
         bool local = table.isLocal(lid);
         syncBox.setChecked(!local);
+        qint32 defaultLid = table.getDefaultNotebookLid();
+        if (defaultLid == lid) {
+            defaultNotebook.setEnabled(false);
+            defaultNotebook.setChecked(true);
+        }
         return;
     }
     this->lid = 0;
@@ -111,6 +136,13 @@ void NotebookProperties::setLid(qint32 lid) {
     originalName = "";
 }
 
+
+
+
+
+// This is called when the notebook name is changed. We check that
+// the name isn't blank and there isn't already a notebook by that
+// name.
 void NotebookProperties::validateInput() {
     ok.setEnabled(true);
     if (name.text()=="") {

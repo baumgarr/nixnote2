@@ -242,11 +242,18 @@ qint32 NotebookTable::add(qint32 l, Notebook &t, bool isDirty, bool isLocal) {
     query.exec();
 
     if (t.defaultNotebook.isSet()) {
+        NSqlQuery dq(db);
+        dq.prepare("delete from datastore where key=:key");
+        dq.bindValue(":key", NOTEBOOK_IS_DEFAULT);
+        dq.exec();
+
         bool defaultNotebook = t.defaultNotebook;
-        query.bindValue(":lid", lid);
-        query.bindValue(":key", NOTEBOOK_IS_DEFAULT);
-        query.bindValue(":data", defaultNotebook);
-        query.exec();
+        if (defaultNotebook) {
+            query.bindValue(":lid", lid);
+            query.bindValue(":key", NOTEBOOK_IS_DEFAULT);
+            query.bindValue(":data", defaultNotebook);
+            query.exec();
+        }
     }
 
     if (t.stack.isSet()) {
@@ -410,6 +417,8 @@ bool NotebookTable::get(Notebook &notebook, qint32 lid) {
     }
     query.finish();
     db->unlock();
+    if (!notebook.defaultNotebook.isSet())
+        notebook.defaultNotebook = false;
     return true;
 }
 

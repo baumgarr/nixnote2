@@ -42,6 +42,7 @@ private:
     QString originalName;
     qint32 lid;
     QCheckBox syncBox;
+    QCheckBox defaultNotebook;
 
 public:
     explicit NotebookProperties(QWidget *parent = 0);
