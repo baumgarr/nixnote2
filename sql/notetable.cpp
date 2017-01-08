@@ -1074,13 +1074,18 @@ qint32 NoteTable::getNotesWithTag(QList<qint32> &retval, QString tag) {
 
 // Set if a note needs to be indexed
 void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
-    if (lid <= 0)
+    QLOG_TRACE_IN();
+    if (lid <= 0) {
+        QLOG_TRACE_OUT();
         return;
+    }
 
     // If it is already set to this value, then we don't need to
     // do anything.
-    if (this->isIndexNeeded(lid) == indexNeeded)
+    if (this->isIndexNeeded(lid) == indexNeeded) {
+        QLOG_TRACE_OUT();
         return;
+    }
 
     NSqlQuery query(db);
     db->lockForWrite();
@@ -1088,11 +1093,12 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     query.bindValue(":lid", lid);
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
-    QLOG_DEBUG() << query.lastError();
 
     // We don't really need to do anything after deleting the flag
-    if (!indexNeeded)
+    if (!indexNeeded) {
+        QLOG_TRACE_OUT();
         return;
+    }
 
     query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :data)");
     query.bindValue(":lid", lid);
@@ -1104,7 +1110,9 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
 
     // Experimental class to index at save
     NoteIndexer indexer(db);
+    QLOG_TRACE() << "Calling indexNote";
     indexer.indexNote(lid);
+    QLOG_TRACE_OUT();
 }
 
 
