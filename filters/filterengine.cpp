@@ -811,6 +811,22 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             prefix.bindValue(":word2", string);
             prefix.exec();
         }
+        else if (string.indexOf("-") >=0) {    // Hyphen search.  FTS doesn't do this.
+            string = string.replace("*", "%");
+            if (!string.endsWith("%"))
+                string = string +QString("%");
+            if (!string.startsWith("%"))
+                string = QString("%") + string;
+            NSqlQuery prefix(global.db);
+            prefix.prepare("Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content like :word) and lid not in (select data from DataStore where key=:key and lid in (select lid from SearchIndex where weight>:weight2 and content like :word2))");
+
+            prefix.bindValue(":weight", global.getMinimumRecognitionWeight());
+            prefix.bindValue(":weight2", global.getMinimumRecognitionWeight());
+            prefix.bindValue(":word", string);
+            prefix.bindValue(":word2", string);
+            prefix.bindValue(":key", RESOURCE_NOTE_LID);
+            prefix.exec();
+        }
         else if (string.startsWith("*")) {    // Postfix search.  FTS doesn't do this.
             string = string.replace("*", "%");
             if (!string.endsWith("%"))
