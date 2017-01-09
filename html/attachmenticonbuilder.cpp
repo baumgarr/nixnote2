@@ -89,6 +89,7 @@ QString AttachmentIconBuilder::buildIcon(qint32 lid, QString fileName) {
 
     // Now that it is drawn, we write it out to a temporary file
     QString tmpFile = global.fileManager.getTmpDirPath(QString::number(lid) + QString("_icon.png"));
+    tmpFile = tmpFile.replace("\\", "/");
     pixmap.save(tmpFile, "png");
     return tmpFile;
 }

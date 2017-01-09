@@ -2229,6 +2229,9 @@ void NBrowserWindow::editLatex(QString guid) {
     buffer.append(QString::number(newlid));
     buffer.append("\">");
     buffer.append("<img src=\"file://");
+#ifdef _WIN32
+    buffer.append("/");
+#endif
     buffer.append(outfile);
     buffer.append("\" type=\"image/gif\" hash=\"");
     buffer.append(hash.toHex());
@@ -2328,6 +2331,9 @@ void NBrowserWindow::insertImage(const QMimeData *mime) {
     if (d.bodyHash.isSet())
          hash = d.bodyHash;
     buffer.append("<img src=\"file://");
+#ifdef _WIN32
+    buffer.append("/");
+#endif
     buffer.append(path);
     buffer.append("\" type=\"image/png\" hash=\"");
     buffer.append(hash.toHex());
@@ -2609,10 +2615,15 @@ QString NBrowserWindow::stripContentsForPrint() {
         int endPos = contents.indexOf(">", pos);
         QString lidString = contents.mid(contents.indexOf("lid=", pos)+5);
         lidString = lidString.mid(0,lidString.indexOf("\" "));
+#ifndef _WIN32
         contents = contents.mid(0,pos) + "<img src=\"file://" +
                 global.fileManager.getTmpDirPath() + lidString +
                 QString("-print.png\" width=\"10%\" height=\"10%\"></img>")+contents.mid(endPos+1);
-
+#else
+        contents = contents.mid(0,pos) + "<img src=\"file:///" +
+                global.fileManager.getTmpDirPath() + lidString +
+                QString("-print.png\" width=\"10%\" height=\"10%\"></img>")+contents.mid(endPos+1);
+#endif
         pos = contents.indexOf("<object", endPos);
     }
     return contents.replace("src=\"file:////", "src=\"/");
@@ -2847,6 +2858,9 @@ void NBrowserWindow::attachFileSelected(QString filename) {
             hash = d.bodyHash;
         }
         buffer.append("<img src=\"file://");
+#ifdef _WIN32
+        buffer.append("/");
+#endif
         buffer.append(path);
         buffer.append("\" type=\"");
         buffer.append(mime);
@@ -2910,6 +2924,9 @@ void NBrowserWindow::attachFileSelected(QString filename) {
 
     buffer.append("<img en-tag=\"temporary\" title=\""+QFileInfo(filename).fileName() +"\" ");
     buffer.append("src=\"file://");
+#ifdef _WIN32
+    buffer.append("/");
+#endif
     buffer.append(tmpFile);
     buffer.append("\" />");
     buffer.append("</a>");
@@ -3129,7 +3146,11 @@ void NBrowserWindow::encryptButtonPressed() {
             + dialog.getHint().replace("'","\\'") + "\" length=\"64\" ");
     buffer.append("contentEditable=\"false\" alt=\"");
     buffer.append(encrypted);
+#ifndef _WIN32
     buffer.append("\" src=\"file://").append(global.fileManager.getImageDirPath("encrypt.png") +"\"");
+#else
+    buffer.append("\" src=\"file:///").append(global.fileManager.getImageDirPath("encrypt.png") +"\"");
+#endif
     global.cryptCounter++;
     buffer.append(" id=\"crypt"+QString::number(global.cryptCounter) +"\"");
     buffer.append(" onMouseOver=\"style.cursor=\\'hand\\'\"");
@@ -3324,7 +3345,11 @@ void NBrowserWindow::handleUrls(const QMimeData *mime) {
     for (int i=0; i<urlList.size(); i++) {
         QString file  = urlList[i].toString();
         if (file.toLower().startsWith("file://") && !ctrlModifier) {
+#ifndef _WIN32
             attachFileSelected(file.mid(7));
+#else
+            attachFileSelected(file.mid(8));
+#endif
             if (i<urlList.size()-1)
                 insertHtml("<div><br/></div>");
         } else if (file.toLower().startsWith("file://") && ctrlModifier) {
@@ -3512,7 +3537,11 @@ void NBrowserWindow::subscriptButtonPressed() {
 // Set the editor background & font color
 void NBrowserWindow::setEditorStyle() {
     QString qss = global.getEditorCss();
+#ifndef _WIN32
     editor->settings()->setUserStyleSheetUrl(QUrl("file://"+qss));
+#else
+    editor->settings()->setUserStyleSheetUrl(QUrl("file:///"+qss));
+#endif
     return;
 }
 
