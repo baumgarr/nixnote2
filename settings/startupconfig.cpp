@@ -52,6 +52,7 @@ StartupConfig::StartupConfig()
     exportNotes = NULL;
     importNotes = NULL;
     alter = NULL;
+    signalGui = NULL;
 }
 
 
