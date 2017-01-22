@@ -2123,7 +2123,7 @@ void NBrowserWindow::setInsideLink(QString link) {
 
 
 
-// Edit a latex formula
+// Edit a LaTeX formula
 void NBrowserWindow::editLatex(QString guid) {
     QString text = editor->selectedText();
     QString oldFormula = "";
@@ -2655,7 +2655,7 @@ void NBrowserWindow::printPreviewReady(QPrinter *printer) {
 
 
 // Print the contents of a note.  Basically it loops through the
-// note and repaces the <object> tags with <img> tags.  The plugin
+// note and replaces the <object> tags with <img> tags.  The plugin
 // object should be creating temporary images for the print.
 void NBrowserWindow::printNote() {
     QString contents = stripContentsForPrint();
@@ -2699,7 +2699,7 @@ void NBrowserWindow::printNote() {
         if (error) {
             fastPrint = false;
 
-            // Re-initialize printer object so we don't have any bugus
+            // Re-initialize printer object so we don't have any bogus
             // values from settings.
             delete printer;
             printer = new QPrinter();

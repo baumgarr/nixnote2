@@ -121,7 +121,7 @@ void FileWatcher::saveFile(QString file) {
     na.sourceURL = "file://" + file;
 #else
     na.sourceURL = "file:///"+file;
-#endif  // end Windows cehck
+#endif  // end Windows check
     newNote.attributes = na;
 
     qint32 noteLid = lid;

@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 
 
     // Setup the application. If we have a GUI, then we use Application.
-    // If we don't, then we just use a derivitive of QCoreApplication
+    // If we don't, then we just use a derivative of QCoreApplication
     QCoreApplication *a = NULL;
     if (guiAvailable) {
         Application *app = new Application(argc, argv);

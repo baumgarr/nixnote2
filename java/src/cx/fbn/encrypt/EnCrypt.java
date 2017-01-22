@@ -2,7 +2,7 @@
  * This file is part of NixNote 
  * Copyright 2014 Randy Baumgarte
  * 
- * This file may be licensed under the terms of of the
+ * This file may be licensed under the terms of the
  * GNU General Public License Version 2 (the ``GPL'').
  *
  * Software distributed under the License is distributed
