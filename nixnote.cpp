@@ -1813,9 +1813,8 @@ void NixNote::databaseRestore(bool fullRestore) {
     else
         setMessage(tr("Importing Notes"));
 
-    ImportEnex enexReader;
-    ImportData noteReader(fullRestore);
     if (fileNames[0].endsWith(".nnex") || fullRestore) {
+        ImportData noteReader(fullRestore);
         noteReader.import(fileNames[0]);
 
         if (noteReader.lastError != 0) {
@@ -1826,6 +1825,7 @@ void NixNote::databaseRestore(bool fullRestore) {
             return;
         }
     } else {
+        ImportEnex enexReader;
         fullRestore = false;
         enexReader.import(fileNames[0]);
         QLOG_DEBUG() << "Back from import";

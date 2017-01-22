@@ -123,7 +123,7 @@ void ImportEnex::import(QString file) {
             QXmlStreamAttributes attributes = reader->attributes();
             QString version = attributes.value("version").toString();
             QString application = attributes.value("application").toString();
-            if (version != "5.x") {
+            if (version != "5.x" && version != "6.x") {
                 lastError = 1;
                 errorMessage = "Unknown export version = " +version;
                 return;
