@@ -228,6 +228,11 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content.clear();
     content = b;
 
+    // Remove <o:p> tags in case pasting from MicroSoft products.
+    content = content.replace("<o:p>", "");
+    content = content.replace("</o:p>", "");
+    content = content.replace("<o:p/>", "");
+
     // Run it through "tidy".  It is a program which will fix any invalid HTML
     // and give us the results back through stdout.  In a perfect world this
     // wouldn't be needed, but WebKit doesn't always give back good HTML.
