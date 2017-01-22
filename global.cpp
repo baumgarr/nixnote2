@@ -747,6 +747,8 @@ QString Global::getUsername() {
         username = pw->pw_name;
         return username.trimmed();
     }
+#else
+    return qgetenv("USERNAME");
 #endif // End Windows Check
 
     return "";
