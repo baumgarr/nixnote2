@@ -255,7 +255,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
             not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
             not errorList[e].contains("<img> lacks \"alt\" attribute")
             ) {
-            QLOG_DEBUG() << errorList[e];
+                QLOG_INFO() << errorList[e];
         }
     }
 
