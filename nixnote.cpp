@@ -1975,9 +1975,7 @@ void NixNote::newNote() {
     n.created = QDateTime::currentMSecsSinceEpoch();
     n.updated = n.created;
     n.updateSequenceNum = 0;
-    if (notebookTreeView->selectedItems().size() == 0) {
-        n.notebookGuid = notebookTable.getDefaultNotebookGuid();
-    } else {
+    if (notebookTreeView->selectedItems().size() > 0) {
         NNotebookViewItem *item = (NNotebookViewItem*)notebookTreeView->selectedItems().at(0);
         qint32 lid = item->lid;
 
@@ -2006,6 +2004,22 @@ void NixNote::newNote() {
         QString notebookGuid;
         notebookTable.getGuid(notebookGuid, lid);
         n.notebookGuid = notebookGuid;
+    } else {
+        QList<QTreeWidgetItem *>items = favoritesTreeView->selectedItems();
+        QString notebookGuid = notebookTable.getDefaultNotebookGuid();
+        for (int i=0; i<items.size(); i++) {
+            FavoritesViewItem *item = (FavoritesViewItem*)items[i];
+            if (item->record.type == FavoritesRecord::LocalNotebook ||
+                    item->record.type == FavoritesRecord::SynchronizedNotebook) {
+                QString guid;
+                notebookTable.getGuid(guid, item->record.target.toInt());
+                if (guid != "") {
+                    notebookGuid = guid;
+                    i=items.size();
+                }
+            }
+        }
+            n.notebookGuid = notebookGuid;
     }
     if (global.full_username != "") {
         NoteAttributes na;
