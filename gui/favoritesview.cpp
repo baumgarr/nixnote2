@@ -629,8 +629,13 @@ void FavoritesView::buildSelection() {
 
     if (selectedItems.size() > 0) {
         qint32 lid = selectedItems[0]->data(NAME_POSITION, Qt::UserRole).toInt();
-        if (lid>0)
+        if (lid>0) {
             newFilter->setFavorite(lid);
+            FavoritesViewItem *item = (FavoritesViewItem*)selectedItems[0];
+            if (item->record.type == FavoritesRecord::Note) {
+                newFilter->setLid(item->record.target.toInt());
+            }
+        }
     }
 
     newFilter->resetAttribute = true;

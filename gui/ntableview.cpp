@@ -485,6 +485,10 @@ void NTableView::refreshData() {
 void NTableView::refreshSelection() {
 
     this->blockSignals(true);
+    bool lidHidden = isColumnHidden(NOTE_TABLE_LID_POSITION);
+    if (lidHidden)
+        setColumnHidden(NOTE_TABLE_LID_POSITION, false);
+
     FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
     QList<qint32> historyList;
     criteria->getSelectedNotes(historyList);
@@ -502,21 +506,10 @@ void NTableView::refreshSelection() {
                 if (rowLocation >= 0) {
                     QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
                     QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
-                    rowLocation = proxyIndex.row();
                     selectRow(proxyIndex.row());
                 }
             }
         }
-    } else {
-//        if (proxy->lidMap->contains(criteria->getLid())) {
-//            for (int j=0; j<proxy->rowCount(); j++) {
-//                QModelIndex idx = proxy->index(j,NOTE_TABLE_LID_POSITION);
-//                qint32 rowLid = idx.data().toInt();
-//                if (rowLid == criteria->getLid()) {
-//                     selectRow(j);
-//                }
-//            }
-//        }
     }
 
     if (criteria->isLidSet() && proxy->lidMap->contains(criteria->getLid())) {
@@ -524,7 +517,6 @@ void NTableView::refreshSelection() {
         if (rowLocation >= 0) {
             QModelIndex modelIndex = model()->index(rowLocation,NOTE_TABLE_LID_POSITION);
             QModelIndex proxyIndex = proxy->mapFromSource(modelIndex);
-            rowLocation = proxyIndex.row();
             selectRow(proxyIndex.row());
         }
     }
@@ -545,15 +537,11 @@ void NTableView::refreshSelection() {
 
     // Save the list of selected notes
     QList<qint32> selectedNotes;
-//    l = selectedIndexes();
-//    for(int i=0; i<l.size(); i++) {
-//        QModelIndex idx = l[i];
-//        qint32 lid = idx.sibling(idx.row(),NOTE_TABLE_LID_POSITION).data().toInt();
-//        if (!selectedNotes.contains(lid))
-//            selectedNotes.append(lid);
-//    }
     this->getSelectedLids(selectedNotes);
     global.filterCriteria[global.filterPosition]->setSelectedNotes(selectedNotes);
+
+    if (lidHidden)
+        setColumnHidden(NOTE_TABLE_LID_POSITION, true);
 
     QLOG_TRACE() << "refleshSelection() complete";
     this->blockSignals(false);
