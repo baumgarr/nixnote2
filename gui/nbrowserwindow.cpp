@@ -127,9 +127,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     font.setFamily("Courier");
     font.setFixedPitch(true);
     global.getGuiFont(font);
-//    font.setPointSize(global.defaultGuiFontSize);
     sourceEdit->setFont(global.getGuiFont(font));
-    //XmlHighlighter *highlighter = new XmlHighlighter(sourceEdit->document());
     sourceEditorTimer = new QTimer();
     connect(sourceEditorTimer, SIGNAL(timeout()), this, SLOT(setSource()));
 
@@ -151,7 +149,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     connect(findReplace->replaceButton, SIGNAL(clicked()), this, SLOT(findReplaceInNotePressed()));
     connect(findReplace->replaceAllButton, SIGNAL(clicked()), this, SLOT(findReplaceAllInNotePressed()));
     connect(findReplace->closeButton, SIGNAL(clicked()), this, SLOT(findReplaceWindowHidden()));
-
 
 
     // Setup shortcuts
@@ -248,9 +245,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     insertLatexShortcut = new QShortcut(this);
     this->setupShortcut(insertLatexShortcut, QString("Edit_Insert_Latex"));
     connect(insertLatexShortcut, SIGNAL(activated()),this, SLOT(insertLatexButtonPressed()));
-    //insertLatexShortcut->setContext(Qt::WidgetWithChildrenShortcut);
-
-
 
 
     // Restore the expand/collapse state
@@ -258,7 +252,6 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     int expandButton = global.settings->value("ExpandButton", EXPANDBUTTON_1).toInt();
     global.settings->endGroup();
     this->expandButton.setState(expandButton);
-//    changeExpandState(expandButton);
 
     connect(&focusTimer, SIGNAL(timeout()), this, SLOT(focusCheck()));
     focusTimer.setInterval(100);
@@ -495,7 +488,6 @@ void NBrowserWindow::setContent(qint32 lid) {
         alarmText.setVisible(true);
         QDateTime atime;
         atime.setMSecsSinceEpoch(t);
-        //alarmText.setText(atime.toString(Qt::SystemLocaleShortDate));
         if (atime.date() == QDate::currentDate())
             alarmText.setText(tr("Today"));
         else if (atime.date() == QDate::currentDate().addDays(+1))
@@ -560,9 +552,7 @@ void NBrowserWindow::setContent(qint32 lid) {
     QLOG_DEBUG() << "Checking thumbanail";
     if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
         hammer->render(this->lid);
-    } /*else
-        hammer->timer.start(1000);*/
-
+    }
     this->setEditorStyle();
 
     if (hasFocus)
@@ -590,8 +580,6 @@ void NBrowserWindow::setReadOnly(bool readOnly) {
     noteTitle.setFocusPolicy(Qt::StrongFocus);
     tagEditor.setEnabled(true);
     tagEditor.setFocusPolicy(Qt::StrongFocus);
-    //authorEditor.setFocusPolicy(Qt::StrongFocus);
-    //locationEditor.setFocusPolicy(Qt::StrongFocus);
     urlEditor.setFocusPolicy(Qt::StrongFocus);
     notebookMenu.setEnabled(true);
     dateEditor.setEnabled(true);
@@ -739,25 +727,12 @@ void NBrowserWindow::noteContentUpdated() {
         emit(noteUpdated(this->lid));
         emit(updateNoteList(this->lid, NOTE_TABLE_DATE_UPDATED_POSITION, dt));
     }
-//    if (sourceEdit->isVisible()) {
-//        sourceEditorTimer->stop();
-//        sourceEditorTimer->setInterval(500);
-//        sourceEditorTimer->setSingleShot(false);
-//        sourceEditorTimer->start();
-//    }
 }
 
 
 // Save the note's content
 void NBrowserWindow::saveNoteContent() {
-    //*** NOTE ***
-    // Focus changing is disabled to try and fix the changing position
-    // when syncing.
-    // Do a little bit of focus changing to make sure things are saved properly
-//    this->editor->setFocus();
     microFocusChanged();
-//    this->editor->titleEditor->setFocus();
-
 
     if (this->editor->isDirty) {
         //QString contents = editor->editorPage->mainFrame()->toHtml();
