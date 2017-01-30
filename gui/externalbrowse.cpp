@@ -46,6 +46,11 @@ ExternalBrowse::ExternalBrowse(qint32 lid, QWidget *parent) :
     this->setupShortcut(focusNoteShortcut, "Focus_Note");
     connect(focusNoteShortcut, SIGNAL(activated()), browser->editor, SLOT(setFocus()));
 
+    fileSaveShortcut = new QShortcut(this);
+    fileSaveShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(focusNoteShortcut, "File_Save_Content");
+    connect(fileSaveShortcut, SIGNAL(activated()), browser, SLOT(saveNoteContent()));
+
     focusTagShortcut = new QShortcut(this);
     focusTagShortcut->setContext(Qt::WidgetWithChildrenShortcut);
     this->setupShortcut(focusTagShortcut, "Focus_Tag");

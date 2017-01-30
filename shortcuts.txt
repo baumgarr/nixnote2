@@ -21,6 +21,7 @@ File_Tag_Icon					// Modify the selected tag(s) icon.
 File_SavedSearch_Add				// Add a notebook
 File_SavedSearch_Edit				// Edit an existing notebook
 File_SavedSearch_Delete				// Delete the existing notebook
+File_Save_Content               Ctrl+S          // Force an immediate save of all notes
 File_Print			Ctrl+P		// Print
 File_Selective_Sync				// Selective sync setup
 File_Empty_Trash				// Purge all delete notes

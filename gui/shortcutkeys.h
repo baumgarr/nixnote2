@@ -50,6 +50,7 @@ public:
     QString *File_Tag_Add;					// Add a notebook
     QString *File_Tag_Edit;				// Edit an existing notebook
     QString *File_Tag_Delete;				// Delete the existing notebook
+    QString *File_Save_Content;				// Do a force save of all notes
     QString *File_SavedSearch_Add;			// Add a notebook
     QString *File_SavedSearch_Edit;		// Edit an existing notebook
     QString *File_SavedSearch_Delete;		// Delete the existing notebook

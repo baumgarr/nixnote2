@@ -33,6 +33,7 @@ private:
     QShortcut *focusTagShortcut;
     QShortcut *focusNoteShortcut;
     QShortcut *focusUrlShortcut;
+    QShortcut *fileSaveShortcut;
     QShortcut *focusAuthorShortcut;
     QShortcut *focusNotebookShortcut;
     QShortcut *focusFontShortcut;

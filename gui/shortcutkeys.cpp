@@ -43,6 +43,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     File_Tag_Edit = new QString();				// Edit an existing notebook
     File_Tag_Delete = new QString();				// Delete the existing notebook
     File_SavedSearch_Add = new QString();		// Add a notebook
+    File_Save_Content = new QString("Ctrl+S");  // Do a force save of the note's content
     File_SavedSearch_Edit = new QString();		// Edit an existing notebook
     File_SavedSearch_Delete = new QString();		// Delete the existing notebook
     File_Email = new QString("Ctrl+Shift+E");	// Email note
@@ -140,6 +141,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     loadkey(QString("File_Backup"), File_Backup);
     loadkey(QString("File_Restore"), File_Restore);
     loadkey(QString("File_Exit"), File_Exit);
+    loadkey(QString("File_Save_Content"), File_Save_Content);
 
     loadkey(QString("File_Note_Delete"), File_Note_Delete);
     loadkey(QString("File_Note_Reindex"), File_Note_Reindex);

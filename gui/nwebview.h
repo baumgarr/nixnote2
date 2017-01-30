@@ -52,6 +52,7 @@ public:
     NTitleEditor *titleEditor;
     QString pasteSequence;
     QString pasteUnformattedSequence;
+    QString fileSaveSequence;
     QMenu *contextMenu;
     QMenu *tableMenu;
     QMenu *imageMenu;

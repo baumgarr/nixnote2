@@ -121,7 +121,6 @@ public:
     QString uuid;
     NWebView *editor;
     void setContent(qint32 lid);
-    void saveNoteContent();
     NTitleEditor noteTitle;
     ReminderButton alarmButton;
     QPushButton alarmText;
@@ -186,6 +185,7 @@ signals:
     void setMessage(QString msg);
 
 public slots:
+    void saveNoteContent();
     void changeExpandState(int value);
     void tagRenamed(qint32 lid, QString oldName, QString newName);
     void notebookRenamed(qint32 lid, QString oldName, QString newName);

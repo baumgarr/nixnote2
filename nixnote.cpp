@@ -747,6 +747,11 @@ void NixNote::setupGui() {
     this->setupShortcut(focusSearchShortcut, "Focus_Search");
     connect(focusSearchShortcut, SIGNAL(activated()), searchText, SLOT(setFocus()));
 
+    fileSaveShortcut = new QShortcut(this);
+    fileSaveShortcut->setContext(Qt::WidgetWithChildrenShortcut);
+    this->setupShortcut(fileSaveShortcut, "File_Save_Content");
+    connect(fileSaveShortcut, SIGNAL(activated()), tabWindow, SLOT(saveAllNotes()));
+
     focusTitleShortcut = new QShortcut(this);
     focusTitleShortcut->setContext(Qt::WidgetShortcut);
     this->setupShortcut(focusTitleShortcut, "Focus_Title");
