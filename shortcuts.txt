@@ -26,6 +26,7 @@ File_Print			Ctrl+P		// Print
 File_Selective_Sync				// Selective sync setup
 File_Empty_Trash				// Purge all delete notes
 File_Exit			Ctrl+Q		// I'm outahere
+File_Note_Export_Pdf                            // Export selected notes as a PDF
 
 Edit_Search_Find		Ctrl+F		// Search only within the current note
 Edit_Search_Find_Next		Ctrl+G		// Find the next occurrence within the current note

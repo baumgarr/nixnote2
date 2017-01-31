@@ -224,6 +224,8 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     //QDesktopServices::setUrlHandler("evernote", this, "showDesktopUrl");
     remoteQuery = new RemoteQuery();
 
+    // Initialize pdfExportWindow to null. We don't fully set this up in case the person requests it.
+    pdfExportWindow = NULL;
 
     // Setup file watcher
     importManager = new FileWatcherManager(this);
@@ -3776,7 +3778,8 @@ void NixNote::presentationModeOff() {
 
 
 
-
+// Check to see if plugins are avaialble and they match
+// the correct version expected. Load them if possible.
 void NixNote::loadPlugins() {
     webcamPluginAvailable = false;
 
@@ -3815,4 +3818,89 @@ void NixNote::loadPlugins() {
             }
         }
     }
+}
+
+
+
+// Export selected notes as PDF files.
+void NixNote::exportAsPdf() {
+
+
+    QList<qint32> lids;
+    noteTableView->getSelectedLids(lids);
+
+    if (pdfExportWindow == NULL) {
+        pdfExportWindow = new QWebView();
+        connect(pdfExportWindow, SIGNAL(loadFinished(bool)), this, SLOT(exportAsPdfReady(bool)));
+    }
+
+
+    if (lids.size() <= 0) {
+        QString file = "/home/randy/test.pdf";
+
+        if (file == "")
+            return;
+        QList<qint32> lids;
+        noteTableView->getSelectedLids(lids);
+
+        QPrinter printer;
+        printer.setOutputFormat(QPrinter::PdfFormat);
+        printer.setResolution(QPrinter::HighResolution);
+        printer.setPaperSize(QPrinter::A4);
+        printer.setOutputFileName(file);
+
+        printer.setDocName(tabWindow->currentBrowser()->noteTitle.text());
+        tabWindow->currentBrowser()->editor->print(&printer);
+        QMessageBox::information(0, tr("NixNote"), tr("Export complete"));
+
+        return;
+    }
+
+    NoteTable noteTable(global.db);
+    QByteArray content;
+    content.clear();
+    NoteFormatter formatter;
+
+    QProgressDialog *progress = new QProgressDialog(0);
+    progress->setMinimum(0);
+    progress->setWindowTitle(tr("Exporting Notes as PDF"));
+    progress->setLabelText(tr("Exporting notes as PDF"));
+    progress->setMaximum(lids.size());
+    progress->setVisible(true);
+    progress->setWindowModality(Qt::ApplicationModal);
+    progress->setCancelButton(0);
+    progress->show();
+    for (int i=0; i<lids.size(); i++) {
+        Note n;
+        noteTable.get(n,lids[i],true,false);
+        formatter.setNote(n,false);
+        if (n.title.isSet())
+            content.append("<h2>"+n.title+"</h2>");
+        content.append(formatter.rebuildNoteHTML());
+        if (i<lids.size()-1)
+            content.append("<p style=\"page-break-after:always;\"></p>");
+        progress->setValue(i);
+    }
+
+    progress->hide();
+    delete progress;
+    pdfExportWindow->setHtml(content);
+    return;
+}
+
+
+// Slot called when notes that were exported as PDF files are ready to be printed
+void NixNote::exportAsPdfReady(bool) {
+    QString file = QFileDialog::getSaveFileName(0,tr("PDF Export"), "","*.pdf");
+
+    if (file == "")
+        return;
+
+    QPrinter printer;
+    printer.setOutputFormat(QPrinter::PdfFormat);
+    printer.setResolution(QPrinter::HighResolution);
+    printer.setPaperSize(QPrinter::A4);
+    printer.setOutputFileName(file);
+    pdfExportWindow->print(&printer);
+    QMessageBox::information(0, tr("NixNote"), tr("Export complete"));
 }

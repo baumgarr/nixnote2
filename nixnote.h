@@ -86,6 +86,7 @@ private:
         NewScreenNote=3
     };
 
+    QWebView *pdfExportWindow;
     DatabaseConnection *db;  // The database connection
     NTableView *noteTableView;
     NSearchView *searchTreeView;
@@ -302,6 +303,8 @@ public slots:
     void presentationModeOn();
     void presentationModeOff();
     void indexFinished(bool finished);
+    void exportAsPdf();
+    void exportAsPdfReady(bool);
 
 signals:
     void syncRequested();

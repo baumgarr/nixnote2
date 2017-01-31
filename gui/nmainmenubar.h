@@ -66,6 +66,7 @@ public:
     QAction *restoreDatabaseAction;
     QAction *backupDatabaseAction;
     QAction *exportNoteAction;
+    QAction *exportAsPdfAction;
     QAction *importNoteAction;
     QAction *accountDialogAction;
     QAction *pauseIndexingAction;
