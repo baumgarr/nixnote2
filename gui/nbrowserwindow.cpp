@@ -3170,10 +3170,11 @@ void NBrowserWindow::sendDateSubjectUpdateSignal() {
 // Send a signal that the note has been updated
 void NBrowserWindow::sendTitleUpdateSignal() {
     NoteTable ntable(global.db);
-    ntable.updateTitle(this->lid, this->noteTitle.text().trimmed(), true);
-    emit noteTitleEditedSignal(uuid, lid, this->noteTitle.text().trimmed());
+    QString text = this->noteTitle.text().replace("\n"," ").trimmed();
+    ntable.updateTitle(this->lid, text, true);
+    emit noteTitleEditedSignal(uuid, lid, text);
     emit(this->noteUpdated(lid));
-    emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, this->noteTitle.text()));
+    emit(this->updateNoteList(lid, NOTE_TABLE_TITLE_POSITION, text));
     sendDateUpdateSignal();
 }
 
