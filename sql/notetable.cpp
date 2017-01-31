@@ -457,8 +457,7 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
             query.bindValue(":data", true);
             query.exec();
         }
-        if (content.contains("<en-todo checked=\"false\"") ||
-	    content.contains("<en-todo>")) {
+        if (content.contains("<en-todo checked=\"false\"") || content.contains("<en-todo/>")) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
             query.bindValue(":data", true);
@@ -1837,12 +1836,18 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
 
 
     if (content.contains("<en-todo")) {
+        QLOG_DEBUG() << content;
         query.prepare("insert into datastore (lid, key, data) values (:lid, :key, 1)");
+        // If we have a todo that is checked, then it is completed.
+
         if (content.contains("<en-todo checked=\"true\"")) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_COMPLETED);
             query.exec();
-        } else {
+        }
+
+        // If we have a todo that is not checked, but still have a todo, then it must be uncoompleted.
+        if (content.contains("<en-todo checked=\"false\"") || content.contains("<en-todo/>")) {
             query.bindValue(":lid", lid);
             query.bindValue(":key", NOTE_HAS_TODO_UNCOMPLETED);
             query.exec();
