@@ -100,7 +100,7 @@ void ImportData::import(QString file) {
     QTextStream *countReader = new QTextStream(&scanFile);
 
     int recCnt = 0;
-    QMessageBox *mb;
+    QMessageBox *mb = NULL;
     if (!cmdline) {
         mb = new QMessageBox();
         mb->setWindowTitle(tr("Scanning File"));
@@ -156,6 +156,8 @@ void ImportData::import(QString file) {
             errorMessage = reader->errorString();
             QLOG_ERROR() << "************************* ERROR READING BACKUP " << errorMessage;
             lastError = 16;
+            if (mb != NULL)
+                delete mb;
             return;
         }
         if (reader->name().toString().toLower() == "nevernote-export" && reader->isStartElement()) {
@@ -167,11 +169,15 @@ void ImportData::import(QString file) {
                     && version != "0.95") {
                 lastError = 1;
                 errorMessage = "Unknown backup version = " +version;
+                if (mb != NULL)
+                    delete mb;
                 return;
             }
             if (application.toLower() != "nevernote") {
                 lastError = 2;
                 errorMessage = "This backup is from an unknown application = " +application;
+                if (mb != NULL)
+                    delete mb;
                 return;
             }
             if (type.toLower() == "backup" && !backup) {
@@ -179,11 +185,15 @@ void ImportData::import(QString file) {
                 errorMessage = "This is backup file, not an export file";
                 if (!cmdline)
                     progress->hide();
+                if (mb != NULL)
+                    delete mb;
                 return;
             }
             if (type.toLower() == "export" && backup) {
                 lastError = 5;
                 errorMessage = "This is an export file, not a backup file";
+                if (mb != NULL)
+                    delete mb;
                 return;
             }
         }
@@ -235,6 +245,8 @@ void ImportData::import(QString file) {
     query.exec("commit");
     if (!this->cmdline)
         progress->hide();
+    if (mb != NULL)
+        delete mb;
 }
 
 
