@@ -1447,16 +1447,23 @@ void NBrowserWindow::insertTableButtonPressed() {
     int rows = dialog.getRows();
     int width = dialog.getWidth();
     bool percent = dialog.isPercent();
+    QString tableStyle = "style=\"-evernote-table:true;border-collapse:collapse;width:%1;table-layout:fixed;margin-left:0px;\"";
+    QString cellStyle = "style=\"border-style:solid;border-width:1px;border-color:rgb(211,211,211);padding:10px;margin:0px;width:33.33%;\"";
 
-    QString newHTML = QString("<table border=\"1\" width=\"") +QString::number(width);
+    QString newHTML = QString("<table border=\"1px\" width=\"") +QString::number(width);
+    QString widthString = QString::number(width);
     if (percent)
-        newHTML = newHTML +"%";
-    newHTML = newHTML + "\"><tbody>";
+        widthString = widthString+"%";
+//    newHTML = tableStyle.arg(width);
+//    if (percent)
+//        newHTML = newHTML +"%";
+//    newHTML = newHTML + "\"><tbody>";
+    newHTML = "<table "+tableStyle.arg(widthString)+"<tbody>";
 
     for (int i=0; i<rows; i++) {
         newHTML = newHTML +"<tr>";
         for (int j=0; j<cols; j++) {
-            newHTML = newHTML +"<td>&nbsp;</td>";
+            newHTML = newHTML +"<td "+cellStyle+">&nbsp;</td>";
         }
         newHTML = newHTML +"</tr>";
     }
@@ -1466,6 +1473,7 @@ void NBrowserWindow::insertTableButtonPressed() {
     editor->page()->mainFrame()->evaluateJavaScript(script);
     contentChanged();
 }
+
 
 void NBrowserWindow::insertTableRowButtonPressed() {
     QString js ="function insertTableRow() {"
@@ -1477,10 +1485,14 @@ void NBrowserWindow::insertTableRowButtonPressed() {
         "      if (workingNode.nodeName.toLowerCase()=='tr') {"
         "           row = document.createElement('TR');"
         "           var nodes = workingNode.getElementsByTagName('td');"
+        "           var style = '';"
         "           for (j=0; j<nodes.length; j=j+1) {"
-        "              cell = document.createElement('TD');"
-        "              cell.innerHTML='&nbsp;';"
-        "              row.appendChild(cell);"
+        "             if (style == '' && nodes[0].hasAttribute('style')) style = nodes[0].attributes['style'].value;"
+        "             window.browserWindow.printNodeName(style);"
+        "             cell = document.createElement('TD');"
+        "             if (style != '') cell.setAttribute('style',style);"
+        "             cell.innerHTML='&nbsp;';"
+        "             row.appendChild(cell);"
         "           }"
         "           workingNode.parentNode.insertBefore(row,workingNode.nextSibling);"
         "           return;"
@@ -1499,9 +1511,11 @@ void NBrowserWindow::insertTableColumnButtonPressed() {
             "   var selRange = selObj.getRangeAt(0);"
             "   var workingNode = window.getSelection().anchorNode.parentNode;"
             "   var current = 0;"
+            "   var style = '';"
             "   while (workingNode.nodeName.toLowerCase() != 'table' && workingNode != null) {"
             "       if (workingNode.nodeName.toLowerCase() == 'td') {"
             "          var td = workingNode;"
+            "          if (style == '' && td.hasAttribute('style')) style = td.attributes['style'].value;"
             "          while (td.previousSibling != null) { "
             "             current = current+1; td = td.previousSibling;"
             "          }"
@@ -1511,6 +1525,8 @@ void NBrowserWindow::insertTableColumnButtonPressed() {
             "   if (workingNode == null) return;"
             "   for (var i=0; i<workingNode.rows.length; i++) { "
             "      var cell = workingNode.rows[i].insertCell(current+1); "
+            "      cell.setAttribute('style',style);"
+//            "          window.browserWindow.printNodeName(cell.style);"
             "      cell.innerHTML = '&nbsp'; "
             "   }"
             "} insertTableColumn();";
