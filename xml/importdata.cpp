@@ -100,13 +100,14 @@ void ImportData::import(QString file) {
     QTextStream *countReader = new QTextStream(&scanFile);
 
     int recCnt = 0;
-    QMessageBox mb;
+    QMessageBox *mb;
     if (!cmdline) {
-        mb.setWindowTitle(tr("Scanning File"));
-        mb.setText(QString::number(recCnt) + tr(" notes found."));
-        QPushButton *cancelButton = mb.addButton(QMessageBox::Cancel);
+        mb = new QMessageBox();
+        mb->setWindowTitle(tr("Scanning File"));
+        mb->setText(QString::number(recCnt) + tr(" notes found."));
+        QPushButton *cancelButton = mb->addButton(QMessageBox::Cancel);
         connect(cancelButton, SIGNAL(clicked()), this, SLOT(cancel()));
-        mb.show();
+        mb->show();
         QCoreApplication::processEvents();
     }
 
@@ -115,7 +116,7 @@ void ImportData::import(QString file) {
         if (line.contains("<note>", Qt::CaseInsensitive)) {
             recCnt++;
             if (!cmdline) {
-                mb.setText(QString::number(recCnt) + tr(" notes found."));
+                mb->setText(QString::number(recCnt) + tr(" notes found."));
                 QCoreApplication::processEvents();
             }
         }
@@ -135,7 +136,7 @@ void ImportData::import(QString file) {
         progress->setWindowModality(Qt::ApplicationModal);
         connect(progress, SIGNAL(canceled()), this, SLOT(cancel()));
         progress->setVisible(true);
-        mb.close();
+        mb->close();
         progress->show();
     }
     recCnt = 0;
