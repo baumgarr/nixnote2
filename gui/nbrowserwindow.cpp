@@ -1954,7 +1954,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 #ifdef _WIN32
          fileUrl = fileUrl.replace("\\", "/");
 #endif // End windows check
-         global.resourceWatcher.addPath(fileUrl);
+         global.resourceWatcher->addPath(fileUrl);
          QDesktopServices::openUrl(fileUrl);
          return;
      }

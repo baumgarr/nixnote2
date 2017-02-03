@@ -138,7 +138,7 @@ public:
     QSettings *globalSettings;             // Pointer to all the config file that is common to all accounts.
     ShortcutKeys *shortcutKeys;            // Keyboard shortcuts defined by the user
     QList<qint32> expungedResources;       // List of expunged resource LIDs
-    QFileSystemWatcher resourceWatcher;    // Watcher for file system directories.  New files here will create anote
+    QFileSystemWatcher *resourceWatcher;    // Watcher for file system directories.  New files here will create anote
     bool showTrayIcon();                   // Should we show the tray icon?
     bool closeToTray();                    // Close it to the tray.  We really just hide it.
     bool minimizeToTray();                 // Minimize it to tray rather than the task list.  We really just hide it.

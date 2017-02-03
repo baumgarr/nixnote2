@@ -162,6 +162,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     global.filterPosition = 0;
     this->setupGui();
 
+    global.resourceWatcher = new QFileSystemWatcher(this);
     QLOG_TRACE() << "Connecting signals";
     connect(favoritesTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(tagTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
@@ -170,7 +171,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(attributeTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(trashTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(searchText, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-    connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
+    connect(global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
     hammer = new Thumbnailer(global.db);
     hammer->startTimer();
@@ -3064,6 +3065,7 @@ void NixNote::viewNoteListNarrow() {
 // has been updated by an external program.  The file name is the
 // resource file which starts with the lid.
 void NixNote::resourceExternallyUpdated(QString resourceFile) {
+    global.resourceWatcher->removePath(resourceFile);
     QString shortName = resourceFile;
     QString dba = global.fileManager.getDbaDirPath();
     shortName.replace(dba, "");
@@ -3085,6 +3087,7 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
         noteTable.updateEnmediaHash(noteLid, oldHash, newHash, true);
         tabWindow->updateResourceHash(noteLid, oldHash, newHash);
     }
+    global.resourceWatcher->addPath(resourceFile);
 }
 
 
