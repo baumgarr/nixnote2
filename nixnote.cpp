@@ -3065,6 +3065,11 @@ void NixNote::viewNoteListNarrow() {
 // has been updated by an external program.  The file name is the
 // resource file which starts with the lid.
 void NixNote::resourceExternallyUpdated(QString resourceFile) {
+    // We do a remove of the watcher at the beginning and a
+    // re-add at the end, because some applications don't actually
+    // update an existing file, but delete & re-add it. The delete
+    // causes NN to stop watching and any later saves are lost.
+    // This re-add at the end hopefully fixes it.
     global.resourceWatcher->removePath(resourceFile);
     QString shortName = resourceFile;
     QString dba = global.fileManager.getDbaDirPath();
