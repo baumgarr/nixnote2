@@ -95,10 +95,10 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     // Setup line #1 of the window.  The text & notebook
     connect(&alarmText, SIGNAL(clicked()), this, SLOT(alarmCompleted()));
     layout->addLayout(line1Layout);
-    line1Layout->addWidget(&noteTitle);
+    line1Layout->addWidget(&noteTitle,20);
     line1Layout->addWidget(&alarmText);
     line1Layout->addWidget(&alarmButton);
-    line1Layout->addWidget(&notebookMenu);
+    line1Layout->addWidget(&notebookMenu,4);
     line1Layout->addWidget(&expandButton);
 
 
