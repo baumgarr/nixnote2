@@ -1852,7 +1852,7 @@ void NBrowserWindow::setTableCursorPositionBackTab(int currentRow, int currentCo
 // If a user presses backtab from within a table
 void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, int tableRows, int tableColumns) {
     if (currentRow  == tableRows && currentCol == tableColumns) {
-        return;
+        this->insertTableRowButtonPressed();
     }
     QKeyEvent *down = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
     QCoreApplication::postEvent(editor->editorPage, down);
