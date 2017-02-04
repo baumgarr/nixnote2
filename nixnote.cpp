@@ -63,6 +63,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/watchfolderdialog.h"
 #include "dialog/notehistoryselect.h"
 #include "gui/ntrashtree.h"
+#include "html/attachmenticonbuilder.h"
 #include "filters/filterengine.h"
 #include "global.h"
 #include "html/enmlformatter.h"
@@ -3092,6 +3093,8 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
         noteTable.updateEnmediaHash(noteLid, oldHash, newHash, true);
         tabWindow->updateResourceHash(noteLid, oldHash, newHash);
     }
+    AttachmentIconBuilder icon;
+    icon.buildIcon(lid,resourceFile);
     global.resourceWatcher->addPath(resourceFile);
 }
 
