@@ -109,7 +109,7 @@ class SyncRunner;
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
-    splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImoge"));
+    splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImage"));
     global.settings->beginGroup("Appearance");
     if(global.settings->value("showSplashScreen", false).toBool()) {
         splashScreen->show();
