@@ -63,6 +63,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/watchfolderdialog.h"
 #include "dialog/notehistoryselect.h"
 #include "gui/ntrashtree.h"
+#include "html/attachmenticonbuilder.h"
 #include "filters/filterengine.h"
 #include "global.h"
 #include "html/enmlformatter.h"
@@ -108,7 +109,7 @@ class SyncRunner;
 //*************************************************
 NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
 {
-    splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImoge"));
+    splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImage"));
     global.settings->beginGroup("Appearance");
     if(global.settings->value("showSplashScreen", false).toBool()) {
         splashScreen->show();
@@ -162,6 +163,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     global.filterPosition = 0;
     this->setupGui();
 
+    global.resourceWatcher = new QFileSystemWatcher(this);
     QLOG_TRACE() << "Connecting signals";
     connect(favoritesTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(tagTreeView, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
@@ -170,7 +172,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     connect(attributeTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(trashTree, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
     connect(searchText, SIGNAL(updateSelectionRequested()), this, SLOT(updateSelectionCriteria()));
-    connect(&global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
+    connect(global.resourceWatcher, SIGNAL(fileChanged(QString)), this, SLOT(resourceExternallyUpdated(QString)));
 
     hammer = new Thumbnailer(global.db);
     hammer->startTimer();
@@ -3064,6 +3066,12 @@ void NixNote::viewNoteListNarrow() {
 // has been updated by an external program.  The file name is the
 // resource file which starts with the lid.
 void NixNote::resourceExternallyUpdated(QString resourceFile) {
+    // We do a remove of the watcher at the beginning and a
+    // re-add at the end, because some applications don't actually
+    // update an existing file, but delete & re-add it. The delete
+    // causes NN to stop watching and any later saves are lost.
+    // This re-add at the end hopefully fixes it.
+    global.resourceWatcher->removePath(resourceFile);
     QString shortName = resourceFile;
     QString dba = global.fileManager.getDbaDirPath();
     shortName.replace(dba, "");
@@ -3085,6 +3093,9 @@ void NixNote::resourceExternallyUpdated(QString resourceFile) {
         noteTable.updateEnmediaHash(noteLid, oldHash, newHash, true);
         tabWindow->updateResourceHash(noteLid, oldHash, newHash);
     }
+    AttachmentIconBuilder icon;
+    icon.buildIcon(lid,resourceFile);
+    global.resourceWatcher->addPath(resourceFile);
 }
 
 

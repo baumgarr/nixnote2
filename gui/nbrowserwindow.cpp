@@ -95,10 +95,10 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     // Setup line #1 of the window.  The text & notebook
     connect(&alarmText, SIGNAL(clicked()), this, SLOT(alarmCompleted()));
     layout->addLayout(line1Layout);
-    line1Layout->addWidget(&noteTitle);
+    line1Layout->addWidget(&noteTitle,20);
     line1Layout->addWidget(&alarmText);
     line1Layout->addWidget(&alarmButton);
-    line1Layout->addWidget(&notebookMenu);
+    line1Layout->addWidget(&notebookMenu,4);
     line1Layout->addWidget(&expandButton);
 
 
@@ -1852,7 +1852,7 @@ void NBrowserWindow::setTableCursorPositionBackTab(int currentRow, int currentCo
 // If a user presses backtab from within a table
 void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, int tableRows, int tableColumns) {
     if (currentRow  == tableRows && currentCol == tableColumns) {
-        return;
+        this->insertTableRowButtonPressed();
     }
     QKeyEvent *down = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
     QCoreApplication::postEvent(editor->editorPage, down);
@@ -1954,7 +1954,7 @@ void NBrowserWindow::setTableCursorPositionTab(int currentRow, int currentCol, i
 #ifdef _WIN32
          fileUrl = fileUrl.replace("\\", "/");
 #endif // End windows check
-         global.resourceWatcher.addPath(fileUrl);
+         global.resourceWatcher->addPath(fileUrl);
          QDesktopServices::openUrl(fileUrl);
          return;
      }
