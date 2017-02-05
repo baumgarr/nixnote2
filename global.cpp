@@ -871,10 +871,18 @@ void Global::loadTheme(QHash<QString, QString> &resourceList, QHash<QString,QStr
     colorList.clear();
     if (theme.trimmed() == "")
         return;
+#ifndef _WIN32
     QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
+#else
+    QFile systemTheme(fileManager.getProgramDirPath("theme.ini").replace("\\","/"));
+#endif
     this->loadThemeFile(resourceList,colorList, systemTheme, theme);
 
+#ifndef _WIN32
     QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
+#else
+    QFile userTheme(fileManager.getHomeDirPath("theme.ini").replace("\\","/"));
+#endif
     this->loadThemeFile(resourceList, colorList, userTheme, theme);
 }
 
@@ -909,6 +917,10 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,Q
                 if (fields.size() >= 2) {
                     QString key = fields[0].simplified();
                     QString value = fields[1].split("#").at(0).simplified();
+#ifdef _WIN32
+                    value = value.replace("/usr/share/nixnote2/images/",fileManager.getImageDirPath("").replace("\\","/"));
+                    QLOG_DEBUG() << value;
+#endif
                     QFile f(value);
                     if (f.exists()) {
                         resourceList.remove(":"+key);
@@ -930,9 +942,17 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,Q
 QStringList Global::getThemeNames() {
     QStringList values;
     values.empty();
+#ifndef _WIN32
     QFile systemTheme(fileManager.getProgramDirPath("theme.ini"));
+#else
+    QFile systemTheme(fileManager.getProgramDirPath("theme.ini").replace("\\","/"));
+#endif
     this->getThemeNamesFromFile(systemTheme, values);
+#ifndef _WIN32
     QFile userTheme(fileManager.getHomeDirPath("theme.ini"));
+#else
+    QFile userTheme(fileManager.getHomeDirPath("theme.ini").replace("\\","/"));
+#endif
         this->getThemeNamesFromFile(userTheme, values);
     if (!nonAsciiSortBug)
         qSort(values.begin(), values.end(), caseInsensitiveLessThan);
