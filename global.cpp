@@ -919,7 +919,6 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,Q
                     QString value = fields[1].split("#").at(0).simplified();
 #ifdef _WIN32
                     value = value.replace("/usr/share/nixnote2/images/",fileManager.getImageDirPath("").replace("\\","/"));
-                    QLOG_DEBUG() << value;
 #endif
                     QFile f(value);
                     if (f.exists()) {
