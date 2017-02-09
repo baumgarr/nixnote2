@@ -1,3 +1,12 @@
+NixNote (2.0) stable; urgency=low
+  * Added the ability to export a note as a PDF.
+  * Added the ability to alter the default notebook.
+  * Added a new material theme.
+  * Ctrl+S will automatically save a note that has been changed.
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Tue, 7 Feb 2017 12:00:00 -0400
+
+
 NixNote (2.0-beta-11) stable; urgency=low
   * Added the ability to paste multiple attachments at a time.
   * Added the ability to force a reindexing of a specific note.
