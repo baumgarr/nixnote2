@@ -3571,7 +3571,7 @@ void NixNote::reloadIcons() {
     newWebcamNoteButton->setIcon(global.getIconResource(":webcamIcon"));
     deleteNoteButton->setIcon(global.getIconResource(":deleteIcon"));
     usageButton->setIcon(global.getIconResource(":usageIcon"));
-    trayIcon->setIcon(global.getIconResource(":trayIconIcon"));
+    trayIcon->setIcon(global.getIconResource(":trayIcon"));
     screenCaptureButton->setIcon(global.getIconResource(":screenCaptureIcon"));
     trunkButton->setIcon(global.getIconResource(":trunkIcon"));
     emailButton->setIcon(global.getIconResource(":emailIcon"));
