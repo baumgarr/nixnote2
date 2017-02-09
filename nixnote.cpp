@@ -112,6 +112,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     splashScreen = new QSplashScreen(this, global.getPixmapResource(":splashLogoImage"));
     global.settings->beginGroup("Appearance");
     if(global.settings->value("showSplashScreen", false).toBool()) {
+        splashScreen->setWindowFlags( Qt::WindowStaysOnTopHint | Qt::SplashScreen | Qt::FramelessWindowHint );
         splashScreen->show();
         QTimer::singleShot(2500, splashScreen, SLOT(close()));
     }
