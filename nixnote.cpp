@@ -2785,9 +2785,11 @@ void NixNote::fastPrintNote() {
 void NixNote::toggleVisible() {
     if (minimizeToTray || closeToTray) {
         if (isMinimized() || !isVisible()) {
-            setHidden(false);
+            setWindowState(Qt::WindowActive) ;
+            this->show();
+            this->raise();
             this->showNormal();
-	    this->activateWindow();
+            this->activateWindow();
             this->setFocus();
             return;
         } else {
@@ -2797,6 +2799,7 @@ void NixNote::toggleVisible() {
         }
     } else {
         if (isMinimized()) {
+            setWindowState(Qt::WindowActive);
             this->showNormal();
             this->setFocus();
             return;
