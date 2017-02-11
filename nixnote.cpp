@@ -1260,6 +1260,10 @@ void NixNote::closeEvent(QCloseEvent *event) {
     saveNoteColumnWidths();
     saveNoteColumnPositions();
     noteTableView->saveColumnsVisible();
+    if (trayIcon->isVisible())
+        trayIcon->hide();
+    if (trayIcon != NULL)
+        delete trayIcon;
     QMainWindow::closeEvent(event);
     QLOG_DEBUG() << "Quitting";
 }
