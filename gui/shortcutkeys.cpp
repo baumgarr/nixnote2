@@ -208,9 +208,9 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     userFileName = userFileName.replace("\\","/");
     systemFileName = systemFileName.replace("\\","/");
 #endif
-    QLOG_DEBUG() << "Loading system shortcuts from " << systemFileName;
+//    QLOG_DEBUG() << "Loading system shortcuts from " << systemFileName;
     loadCustomKeys(systemFileName);
-    QLOG_DEBUG() << "Loadng user shortcuts from " << userFileName;
+//    QLOG_DEBUG() << "Loadng user shortcuts from " << userFileName;
     loadCustomKeys(userFileName);
 
 }
