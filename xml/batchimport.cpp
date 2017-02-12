@@ -258,7 +258,7 @@ qint32 BatchImport::addNoteNode() {
                             if (d.bodyHash.isSet())
                                 hash = d.bodyHash;
                         }
-                        QString mediaString = "<en-media hash=\""+hash.toHex()+"\"; type=\""+mime+"\"/>";
+                        QString mediaString = "<en-media hash=\""+hash.toHex()+"\" type=\""+mime+"\"/>";
                         if (note.content->contains(resourceDelimiter)) {
                             note.content = note.content->replace(note.content->indexOf(resourceDelimiter),
                                                                 resourceDelimiter.size(), mediaString);
@@ -315,7 +315,7 @@ qint32 BatchImport::addNoteNode() {
                             if (d.bodyHash.isSet())
                                 hash = d.bodyHash;
                         }
-                        QString mediaString = "<en-media hash=\""+hash.toHex()+"\"; type=\""+mime+"\"/>";
+                        QString mediaString = "<en-media hash=\""+hash.toHex()+"\" type=\""+mime+"\"/>";
                         if (note.content->contains(resourceDelimiter)) {
                             note.content = note.content->replace(note.content->indexOf(resourceDelimiter),
                                                                 resourceDelimiter.size(), mediaString);

@@ -436,7 +436,7 @@ int CmdLineTool::addNote(StartupConfig config) {
                 if (!newNote.resources.isSet()) {
                     newNote.resources = QList<Resource>();
                 }
-                QString mediaString = "<en-media hash=\""+hash.toHex()+"\"; type=\""+mime+"\"/>";
+                QString mediaString = "<en-media hash=\""+hash.toHex()+"\" type=\""+mime+"\"/>";
                 if (newNote.content->contains(config.newNote->attachmentDelimiter)) {
                      //newNote.content = newNote.content->replace(config.newNote->attachmentDelimiter,mediaString);
                      newNote.content = newNote.content->replace(newNote.content->indexOf(config.newNote->attachmentDelimiter),
@@ -593,7 +593,7 @@ int CmdLineTool::appendNote(StartupConfig config) {
                 if (!newNote.resources.isSet()) {
                     newNote.resources = QList<Resource>();
                 }
-                QString mediaString = "<en-media hash=\""+hash.toHex()+"\"; type=\""+mime+"\"/>";
+                QString mediaString = "<en-media hash=\""+hash.toHex()+"\" type=\""+mime+"\"/>";
                 if (newNote.content->contains(config.newNote->attachmentDelimiter)) {
                      //newNote.content = newNote.content->replace(config.newNote->attachmentDelimiter,mediaString);
                      newNote.content = newNote.content->replace(newNote.content->indexOf(config.newNote->attachmentDelimiter),
