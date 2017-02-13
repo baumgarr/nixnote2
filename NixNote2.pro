@@ -446,29 +446,33 @@ win32:QMAKE_CXXFLAGS +=-g -O2 --param=ssp-buffer-size=4 -Wformat -Werror=format-
 win32:QMAKE_LFLAGS += -Wl,-Bsymbolic-functions
 win32:DEFINES += SMTP_BUILD
 
-binary.path = /usr/bin/
+isEmpty(PREFIX) {
+    PREFIX = /usr/local
+}
+
+binary.path = $$PREFIX/bin/
 binary.files = nixnote2
 
-desktop.path = /usr/share/applications/
+desktop.path = $$PREFIX/share/applications/
 desktop.files = nixnote2.desktop
 
-images.path = /usr/share/nixnote2/images
+images.path = $$PREFIX/share/nixnote2/images
 images.files = images/*
 
-java.path = /usr/share/nixnote2/java
+java.path = $$PREFIX/share/nixnote2/java
 java.files = java/*
 
-translations.path = /usr/share/nixnote2/translations
+translations.path = $$PREFIX/share/nixnote2/translations
 translations.files = translations/*
 
-qss.path = /usr/share/nixnote2/qss
+qss.path = $$PREFIX/share/nixnote2/qss
 qss.files = qss/*
 
-pixmap.path = /usr/share/pixmaps/
+pixmap.path = $$PREFIX/share/pixmaps/
 pixmap.extra = cp images/windowIcon.png images/nixnote2.png
 pixmap.files = images/nixnote2.png
 
-help.path = /usr/share/nixnote2/help
+help.path = $$PREFIX/share/nixnote2/help
 help.files = help/*
 
 INSTALLS = binary desktop images java translations qss pixmap help
