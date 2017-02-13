@@ -464,7 +464,11 @@ translations.files = translations/*
 qss.path = /usr/share/nixnote2/qss
 qss.files = qss/*
 
+pixmap.path = /usr/share/pixmaps/
+pixmap.extra = cp images/windowIcon.png images/nixnote2.png
+pixmap.files = images/nixnote2.png
+
 help.path = /usr/share/nixnote2/help
 help.files = help/*
 
-INSTALLS = binary desktop images java translations qss help
+INSTALLS = binary desktop images java translations qss pixmap help
