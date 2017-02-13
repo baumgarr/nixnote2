@@ -51,6 +51,7 @@ public:
     QAction *insertDatetimeVisible;
     QAction *leftJustifyVisible;
     QAction *centerJustifyVisible;
+    QAction *fullJustifyVisible;
     QAction *rightJustifyVisible;
     QAction *hlineVisible;
     QAction *shiftRightVisible;
@@ -98,6 +99,8 @@ public:
     QShortcut *leftJustifyButtonShortcut;
     QAction *centerJustifyButtonAction;
     QShortcut *centerJustifyButtonShortcut;
+    QAction *fullJustifyButtonAction;
+    QShortcut *fullJustifyButtonShortcut;
     QAction *rightJustifyButtonAction;
     QShortcut *rightJustifyButtonShortcut;
     QAction *hlineButtonAction;
@@ -164,6 +167,7 @@ public slots:
     void toggleInsertDatetimeVisible();
     void toggleLeftJustifyButtonVisible();
     void toggleCenterJustifyButtonVisible();
+    void toggleFullJustifyButtonVisible();
     void toggleRightJustifyButtonVisible();
     void toggleHlineButtonVisible();
     void toggleShiftRightButtonVisible();

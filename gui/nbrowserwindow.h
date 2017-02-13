@@ -218,6 +218,7 @@ public slots:
     void subscriptButtonPressed();
     void alignLeftButtonPressed();
     void alignCenterButtonPressed();
+    void alignFullButtonPressed();
     void alignRightButtonPressed();
     void horizontalLineButtonPressed();
     void shiftLeftButtonPressed();

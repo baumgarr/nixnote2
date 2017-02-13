@@ -48,6 +48,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     strikethroughVisible = contextMenu->addAction(tr("Strikethrough"));
     leftJustifyVisible = contextMenu->addAction(tr("Align Left"));
     centerJustifyVisible = contextMenu->addAction(tr("Align Center"));
+    fullJustifyVisible = contextMenu->addAction(tr("Align Full"));
     rightJustifyVisible = contextMenu->addAction(tr("Align Right"));
     hlineVisible = contextMenu->addAction(tr("Horizontal Line"));
     insertDatetimeVisible = contextMenu->addAction(tr("Insert Date && Time"));
@@ -78,6 +79,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     subscriptVisible->setCheckable(true);
     leftJustifyVisible->setCheckable(true);
     centerJustifyVisible->setCheckable(true);
+    fullJustifyVisible->setCheckable(true);
     rightJustifyVisible->setCheckable(true);
     hlineVisible->setCheckable(true);
     shiftRightVisible->setCheckable(true);
@@ -111,6 +113,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(insertDatetimeVisible, SIGNAL(triggered()), this, SLOT(toggleInsertDatetimeVisible()));
     connect(leftJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleLeftJustifyButtonVisible()));
     connect(centerJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleCenterJustifyButtonVisible()));
+    connect(fullJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleFullJustifyButtonVisible()));
     connect(rightJustifyVisible, SIGNAL(triggered()), this, SLOT(toggleRightJustifyButtonVisible()));
     connect(hlineVisible, SIGNAL(triggered()), this, SLOT(toggleHlineButtonVisible()));
     connect(shiftRightVisible, SIGNAL(triggered()), this, SLOT(toggleShiftRightButtonVisible()));
@@ -186,9 +189,13 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   subscriptButtonShortcut = new QShortcut(this);
   this->setupShortcut(subscriptButtonShortcut, "Format_Subscript");
 
-  centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlignIcon"), tr("Center"));
+  centerJustifyButtonAction = this->addAction(global.getIconResource(":centerAlignIcon"), tr("Center Justify"));
   centerJustifyButtonShortcut = new QShortcut(this);
   this->setupShortcut(centerJustifyButtonShortcut, "Format_Alignment_Center");
+
+  fullJustifyButtonAction = this->addAction(global.getIconResource(":fullAlignIcon"), tr("Fully Justify"));
+  fullJustifyButtonShortcut = new QShortcut(this);
+  this->setupShortcut(fullJustifyButtonShortcut, "Format_Alignment_Full");
 
   rightJustifyButtonAction = this->addAction(global.getIconResource(":rightAlignIcon"), tr("Right Justify"));
   rightJustifyButtonShortcut = new QShortcut(this);
@@ -283,6 +290,7 @@ EditorButtonBar::~EditorButtonBar() {
     delete strikethroughVisible;
     delete leftJustifyVisible;
     delete centerJustifyVisible;
+    delete fullJustifyVisible;
     delete rightJustifyVisible;
     delete hlineVisible;
     delete shiftRightVisible;
@@ -351,6 +359,9 @@ void EditorButtonBar::saveVisibleButtons() {
 
     value = centerJustifyButtonAction->isVisible();
     global.settings->setValue("centerJustifyButtonVisible", value);
+
+    value = fullJustifyButtonAction->isVisible();
+    global.settings->setValue("fullJustifyButtonVisible", value);
 
     value = shiftLeftButtonAction->isVisible();
     global.settings->setValue("shiftLeftButtonVisible", value);
@@ -442,6 +453,9 @@ void EditorButtonBar::setupVisibleButtons() {
 
     centerJustifyButtonAction->setVisible(global.settings->value("centerJustifyButtonVisible", true).toBool());
     centerJustifyVisible->setChecked(centerJustifyButtonAction->isVisible());
+
+    fullJustifyButtonAction->setVisible(global.settings->value("fullJustifyButtonVisible", true).toBool());
+    fullJustifyVisible->setChecked(fullJustifyButtonAction->isVisible());
 
     rightJustifyButtonAction->setVisible(global.settings->value("rightJustifyButtonVisible", true).toBool());
     rightJustifyVisible->setChecked(rightJustifyButtonAction->isVisible());
@@ -548,6 +562,10 @@ void EditorButtonBar::toggleLeftJustifyButtonVisible() {
 }
 void EditorButtonBar::toggleCenterJustifyButtonVisible() {
     centerJustifyButtonAction->setVisible(centerJustifyVisible->isChecked());
+    saveVisibleButtons();
+}
+void EditorButtonBar::toggleFullJustifyButtonVisible() {
+    fullJustifyButtonAction->setVisible(fullJustifyVisible->isChecked());
     saveVisibleButtons();
 }
 void EditorButtonBar::toggleRightJustifyButtonVisible() {
@@ -728,6 +746,7 @@ void EditorButtonBar::reloadIcons() {
     leftJustifyButtonAction->setIcon(global.getIconResource(":leftAlignIcon"));
     rightJustifyButtonAction->setIcon(global.getIconResource(":rightAlignIcon"));
     centerJustifyButtonAction->setIcon(global.getIconResource(":centerAlignIcon"));
+    fullJustifyButtonAction->setIcon(global.getIconResource(":fullAlignIcon"));
     hlineButtonAction->setIcon(global.getIconResource(":hlineIcon"));
     shiftRightButtonAction->setIcon(global.getIconResource(":shiftRightIcon"));
     shiftLeftButtonAction->setIcon(global.getIconResource(":shiftLeftIcon"));

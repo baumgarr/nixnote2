@@ -303,6 +303,9 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->centerJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignCenterButtonPressed()));
     connect(buttonBar->centerJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignCenterButtonPressed()));
 
+    connect(buttonBar->fullJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignFullButtonPressed()));
+    connect(buttonBar->fullJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignFullButtonPressed()));
+
     connect(buttonBar->strikethroughButtonAction, SIGNAL(triggered()), this, SLOT(strikethroughButtonPressed()));
     connect(buttonBar->strikethroughButtonShortcut, SIGNAL(activated()), this, SLOT(strikethroughButtonPressed()));
 
@@ -1093,6 +1096,15 @@ void NBrowserWindow::alignCenterButtonPressed() {
     microFocusChanged();
 }
 
+
+
+// The full align button was pressed
+void NBrowserWindow::alignFullButtonPressed() {
+    this->editor->page()->mainFrame()->evaluateJavaScript(
+            "document.execCommand('JustifyFull', false, '');");
+    editor->setFocus();
+    microFocusChanged();
+}
 
 
 // The left align button was pressed
