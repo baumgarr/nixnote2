@@ -803,38 +803,42 @@ void FavoritesView::reloadIcons() {
     QHash<qint32, FavoritesViewItem*>::iterator i;
     for (i=dataStore.begin(); i!=dataStore.end(); ++i) {
         FavoritesViewItem *record = i.value();
-        FavoritesRecord *r = &record->record;
-        switch (r->type) {
-        case FavoritesRecord::Tag :
-            record->setIcon(NAME_POSITION, global.getIconResource(":tagIcon"));
-            break;
-        case FavoritesRecord::Note :
-            record->setIcon(NAME_POSITION, global.getIconResource(":newNoteIcon"));
-            break;
-        case FavoritesRecord::ConflictNotebook :
-            record->setIcon(NAME_POSITION, global.getIconResource(":notebookConflictIcon"));
-            break;
-        case FavoritesRecord::LinkedNotebook :
-            record->setIcon(NAME_POSITION, global.getIconResource(":notebookLinkedIcon"));
-            break;
-        case FavoritesRecord::LinkedStack :
-            record->setIcon(NAME_POSITION, global.getIconResource(":silhouetteIcon"));
-            break;
-        case FavoritesRecord::LocalNotebook :
-            record->setIcon(NAME_POSITION, global.getIconResource(":notebookLocalIcon"));
-            break;
-        case FavoritesRecord::Search :
-            record->setIcon(NAME_POSITION, global.getIconResource(":searchIcon"));
-            break;
-        case FavoritesRecord::SharedNotebook :
-            record->setIcon(NAME_POSITION, global.getIconResource(":notebookSharedIcon"));
-            break;
-        case FavoritesRecord::SynchronizedNotebook :
-            record->setIcon(NAME_POSITION, global.getIconResource(":notebookSmallIcon"));
-            break;
-        case FavoritesRecord::NotebookStack :
-            record->setIcon(NAME_POSITION, global.getIconResource(":stackIcon"));
-            break;
+        if (record != NULL) {
+            FavoritesRecord *r = &record->record;
+            if (r != NULL) {
+                switch (r->type) {
+                case FavoritesRecord::Tag :
+                    record->setIcon(NAME_POSITION, global.getIconResource(":tagIcon"));
+                    break;
+                case FavoritesRecord::Note :
+                    record->setIcon(NAME_POSITION, global.getIconResource(":newNoteIcon"));
+                    break;
+                case FavoritesRecord::ConflictNotebook :
+                    record->setIcon(NAME_POSITION, global.getIconResource(":notebookConflictIcon"));
+                    break;
+                case FavoritesRecord::LinkedNotebook :
+                    record->setIcon(NAME_POSITION, global.getIconResource(":notebookLinkedIcon"));
+                    break;
+                case FavoritesRecord::LinkedStack :
+                    record->setIcon(NAME_POSITION, global.getIconResource(":silhouetteIcon"));
+                    break;
+                case FavoritesRecord::LocalNotebook :
+                    record->setIcon(NAME_POSITION, global.getIconResource(":notebookLocalIcon"));
+                    break;
+                case FavoritesRecord::Search :
+                    record->setIcon(NAME_POSITION, global.getIconResource(":searchIcon"));
+                    break;
+                case FavoritesRecord::SharedNotebook :
+                    record->setIcon(NAME_POSITION, global.getIconResource(":notebookSharedIcon"));
+                    break;
+                case FavoritesRecord::SynchronizedNotebook :
+                    record->setIcon(NAME_POSITION, global.getIconResource(":notebookSmallIcon"));
+                    break;
+                case FavoritesRecord::NotebookStack :
+                    record->setIcon(NAME_POSITION, global.getIconResource(":stackIcon"));
+                    break;
+                }
+            }
         }
     }
 }
