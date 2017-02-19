@@ -236,7 +236,8 @@ SOURCES += main.cpp\
     dialog/preferences/thumbnailpreferences.cpp \
     dialog/noteproperties.cpp \
     dialog/shortcutdialog.cpp \
-    cmdtools/signalgui.cpp
+    cmdtools/signalgui.cpp \
+    gui/browserWidgets/table/tablepropertiesdialog.cpp
 
 
 
@@ -435,7 +436,8 @@ HEADERS  += nixnote.h \
     dialog/preferences/thumbnailpreferences.h \
     dialog/noteproperties.h \
     dialog/shortcutdialog.h \
-    cmdtools/signalgui.h
+    cmdtools/signalgui.h \
+    gui/browserWidgets/table/tablepropertiesdialog.h
 
 
 

@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/remindersetdialog.h"
 #include "dialog/spellcheckdialog.h"
 #include "utilities/pixelconverter.h"
+#include "gui/browserWidgets/table/tablepropertiesdialog.h"
 
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
@@ -1466,10 +1467,6 @@ void NBrowserWindow::insertTableButtonPressed() {
     QString widthString = QString::number(width);
     if (percent)
         widthString = widthString+"%";
-//    newHTML = tableStyle.arg(width);
-//    if (percent)
-//        newHTML = newHTML +"%";
-//    newHTML = newHTML + "\"><tbody>";
     newHTML = "<table "+tableStyle.arg(widthString)+"<tbody>";
 
     for (int i=0; i<rows; i++) {
@@ -1518,6 +1515,8 @@ void NBrowserWindow::insertTableRowButtonPressed() {
 
 
 void NBrowserWindow::insertTableColumnButtonPressed() {
+    if (!editor->insertTableColumnAction->isEnabled())
+        return;
     QString js = "function insertTableColumn() {"
             "   var selObj = window.getSelection();"
             "   var selRange = selObj.getRangeAt(0);"
@@ -1547,7 +1546,91 @@ void NBrowserWindow::insertTableColumnButtonPressed() {
 }
 
 
+
+
+void NBrowserWindow::tablePropertiesButtonPressed() {
+    if (!editor->tablePropertiesAction->isEnabled())
+        return;
+    tableCellStyle = "";
+    tableStyle = "";
+
+    // First go through the table & find the existing cell & table attributes
+    QString js = "function tableProperties() {"
+            "   var selObj = window.getSelection();"
+            "   var selRange = selObj.getRangeAt(0);"
+            "   var workingNode = window.getSelection().anchorNode.parentNode;"
+            "   var current = 0;"
+            "   var style = '';"
+            "   while (workingNode.nodeName.toLowerCase() != 'table' && workingNode != null) {"
+            "       if (workingNode.nodeName.toLowerCase() == 'td') {"
+            "          var td = workingNode;"
+            "          if (style == '' && td.hasAttribute('style')) style = td.attributes['style'].value;"
+            "          while (td.previousSibling != null) { "
+            "             current = current+1; td = td.previousSibling;"
+            "          }"
+            "       }"
+            "       workingNode = workingNode.parentNode; "
+            "   }"
+            "   if (workingNode == null) return;"
+            "   window.browserWindow.setTableCellStyle(style);"
+            "   window.browserWindow.printNodeName(style);"
+            "   if (workingNode.hasAttribute('style')) {"
+            "       var td = workingNode;"
+            "       style = td.attributes['style'].value;"
+            "       window.browserWindow.setTableStyle(style);"
+            "   }"
+            "} tableProperties();";
+        editor->page()->mainFrame()->evaluateJavaScript(js);
+        QLOG_DEBUG() << this->tableStyle;
+        QLOG_DEBUG() << this->tableCellStyle;
+
+        TablePropertiesDialog dialog(tableStyle, tableCellStyle);
+        dialog.exec();
+
+        if (!dialog.okButtonPressed)
+            return;
+
+        QString newTableStyle = dialog.getTableCss();
+        QString newCellStyle = dialog.getCellCss();
+
+        // Go through the table & change the styles attributes.
+        js = "function setTableProperties() {"
+                "   var selObj = window.getSelection();"
+                "   var selRange = selObj.getRangeAt(0);"
+                "   var workingNode = window.getSelection().anchorNode.parentNode;"
+                "   var style = '';"
+                "   while (workingNode.nodeName.toLowerCase() != 'table' && workingNode != null) {"
+                "       if (workingNode.nodeName.toLowerCase() == 'td') {"
+                "          var td = workingNode;"
+                "          while (td.previousSibling != null) { "
+                "             td = td.previousSibling;"
+                "          }"
+                "       }"
+                "       workingNode = workingNode.parentNode; "
+                "   }"
+                "   if (workingNode == null) return;"
+                "   workingNode.attributes['style'].value = '%1';"
+                "   window.browserWindow.setTableCellStyle(style);"
+                "   var rowCount = workingNode.rows.length;"
+                "   for (var i=0; i<rowCount; i++) {"
+                "      var colCount = workingNode.rows[i].cells.length;"
+                "      for (var j=0; j<colCount; j++) {"
+                "         workingNode.rows[i].cells[j].attributes['style'].value = '%2';"
+                "      }"
+                "   }"
+                "} setTableProperties();";
+        js = js.arg(newTableStyle).arg(newCellStyle);
+        editor->page()->mainFrame()->evaluateJavaScript(js);
+        this->editor->isDirty = true;
+        microFocusChanged();
+}
+
+
+
 void NBrowserWindow::deleteTableRowButtonPressed() {
+    if (!editor->deleteTableRowAction->isEnabled())
+        return;
+
     QString js = "function deleteTableRow() {"
         "   var selObj = window.getSelection();"
         "   var selRange = selObj.getRangeAt(0);"
@@ -1566,7 +1649,11 @@ void NBrowserWindow::deleteTableRowButtonPressed() {
 }
 
 
+
 void NBrowserWindow::deleteTableColumnButtonPressed() {
+    if (!editor->deleteTableColumnAction->isEnabled())
+        return;
+
     QString js = "function deleteTableColumn() {"
             "   var selObj = window.getSelection();"
             "   var selRange = selObj.getRangeAt(0);"
@@ -1589,6 +1676,8 @@ void NBrowserWindow::deleteTableColumnButtonPressed() {
         editor->page()->mainFrame()->evaluateJavaScript(js);
         contentChanged();
 }
+
+
 
 void NBrowserWindow::rotateImageLeftButtonPressed() {
     rotateImage(-90.0);
@@ -1687,6 +1776,7 @@ void NBrowserWindow::attachFile() {
      editor->insertTableAction->setEnabled(true);
      editor->insertTableColumnAction->setEnabled(false);
      editor->insertTableRowAction->setEnabled(false);
+     editor->tablePropertiesAction->setEnabled(false);
      editor->deleteTableRowAction->setEnabled(false);
      editor->deleteTableColumnAction->setEnabled(false);
      editor->insertLinkAction->setText(tr("Insert Link"));
@@ -2106,6 +2196,7 @@ void NBrowserWindow::setInsideList() {
 void NBrowserWindow::setInsideTable() {
     editor->insertTableAction->setEnabled(false);
     editor->insertTableRowAction->setEnabled(true);
+    editor->tablePropertiesAction->setEnabled(true);
     editor->insertTableColumnAction->setEnabled(true);
     editor->deleteTableRowAction->setEnabled(true);
     editor->deleteTableColumnAction->setEnabled(true);
@@ -3714,3 +3805,25 @@ void NBrowserWindow::findReplaceWindowHidden() {
 }
 
 
+
+
+//************************************************
+//* Set the current edited cell style in a table
+//* This is called from a javascript function to
+//* get the current cell style the cursor is in.
+//*************************************************
+void NBrowserWindow::setTableCellStyle(QString value) {
+    this->tableCellStyle = value;
+}
+
+
+
+
+//************************************************
+//* Set the current table style
+//* This is called from a javascript function to
+//* get the currenttablel style the cursor is in.
+//*************************************************
+void NBrowserWindow::setTableStyle(QString value) {
+    this->tableStyle = value;
+}

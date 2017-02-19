@@ -116,6 +116,10 @@ private:
 
     QString stripContentsForPrint();
 
+    QString tableCellStyle;
+    QString tableStyle;
+
+
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
     QString uuid;
@@ -239,6 +243,7 @@ public slots:
     void insertTableButtonPressed();
     void insertTableRowButtonPressed();
     void insertTableColumnButtonPressed();
+    void tablePropertiesButtonPressed();
     void deleteTableRowButtonPressed();
     void deleteTableColumnButtonPressed();
     void rotateImageLeftButtonPressed();
@@ -253,6 +258,9 @@ public slots:
     void insertDatetime();
     void attachFile();
     void attachFileSelected(QString filename);
+
+    void setTableCellStyle(QString value);
+    void setTableStyle(QString value);
 
     void exposeToJavascript();
     void boldActive();
