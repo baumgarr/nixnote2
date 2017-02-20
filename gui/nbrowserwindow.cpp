@@ -3644,23 +3644,32 @@ void NBrowserWindow::setEditorStyle() {
 void NBrowserWindow::loadPlugins() {
     hunspellPluginAvailable = false;
 
-    // Start loading plugins
-    QDir pluginsDir(global.fileManager.getProgramDirPath(""));
-    pluginsDir.cd("plugins");
-    QStringList filter;
-    filter.append("libhunspellplugin.so");
-    foreach (QString fileName, pluginsDir.entryList(filter)) {
-        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = pluginLoader.instance();
-        if (fileName == "libhunspellplugin.so") {
-            if (plugin) {
-                hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                if (hunspellInterface) {
-                    hunspellPluginAvailable = true;
-                    hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser());
+    QStringList dirList;
+    dirList.append(global.fileManager.getProgramDirPath(""));
+    dirList.append(global.fileManager.getProgramDirPath("")+"/plugins");
+    dirList.append("/usr/lib/nixnote2/");
+    dirList.append("/usr/local/lib/nixnote2/");
+    dirList.append("/usr/local/lib");
+    dirList.append("/usr/lib");
+
+    for (int i=0; i<dirList.size(); i++) {
+        // Start loading plugins
+        QDir pluginsDir(dirList[i]);
+        QStringList filter;
+        filter.append("libhunspellplugin.so");
+        foreach (QString fileName, pluginsDir.entryList(filter)) {
+            QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+            QObject *plugin = pluginLoader.instance();
+            if (fileName == "libhunspellplugin.so") {
+                if (plugin) {
+                    hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+                    if (hunspellInterface) {
+                        hunspellPluginAvailable = true;
+                        hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser());
+                    }
+                } else {
+                    QLOG_ERROR() << pluginLoader.errorString();
                 }
-            } else {
-                QLOG_ERROR() << pluginLoader.errorString();
             }
         }
     }

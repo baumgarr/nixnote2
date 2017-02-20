@@ -3818,38 +3818,47 @@ void NixNote::presentationModeOff() {
 void NixNote::loadPlugins() {
     webcamPluginAvailable = false;
 
-    // Start loading plugins
-    QDir pluginsDir(global.fileManager.getProgramDirPath(""));
-    pluginsDir.cd("plugins");
-    QStringList filter;
-    filter.append("libwebcamplugin.so");
-    filter.append("libhunspellplugin.so");
-    foreach (QString fileName, pluginsDir.entryList(filter)) {
-        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = pluginLoader.instance();
-        if (fileName == "libwebcamplugin.so") {
-            if (plugin) {
-                webcamInterface = qobject_cast<WebCamInterface *>(plugin);
-                if (webcamInterface) {
-                    webcamPluginAvailable = true;
-                }
-            } else {
-                QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
-            }
-        }
+    QStringList dirList;
+    dirList.append(global.fileManager.getProgramDirPath(""));
+    dirList.append(global.fileManager.getProgramDirPath("")+"/plugins");
+    dirList.append("/usr/lib/nixnote2/");
+    dirList.append("/usr/local/lib/nixnote2/");
+    dirList.append("/usr/local/lib");
+    dirList.append("/usr/lib");
 
-        // The Hunspell plugin isn't actually used here. We just use this as a
-        // check to be sure that the menu should be available.
-        if (fileName == "libhunspellplugin.so") {
-            if (plugin) {
-                HunspellInterface *hunspellInterface;
-                hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                if (hunspellInterface) {
-                    hunspellPluginAvailable = true;
+    // Start loading plugins
+    for (int i=0; i<dirList.size(); i++) {
+        QDir pluginsDir(dirList[i]);
+        QStringList filter;
+        filter.append("libwebcamplugin.so");
+        filter.append("libhunspellplugin.so");
+        foreach (QString fileName, pluginsDir.entryList(filter)) {
+            QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+            QObject *plugin = pluginLoader.instance();
+            if (fileName == "libwebcamplugin.so") {
+                if (plugin) {
+                    webcamInterface = qobject_cast<WebCamInterface *>(plugin);
+                    if (webcamInterface) {
+                        webcamPluginAvailable = true;
+                    }
+                } else {
+                    QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
                 }
-                delete hunspellInterface;
-            } else {
-                QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
+            }
+
+            // The Hunspell plugin isn't actually used here. We just use this as a
+            // check to be sure that the menu should be available.
+            if (fileName == "libhunspellplugin.so") {
+                if (plugin) {
+                    HunspellInterface *hunspellInterface;
+                    hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+                    if (hunspellInterface) {
+                        hunspellPluginAvailable = true;
+                    }
+                    delete hunspellInterface;
+                } else {
+                    QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
+                }
             }
         }
     }
