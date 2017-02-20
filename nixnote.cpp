@@ -2826,6 +2826,22 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     int newQuickNote = 2;
     int screenCapture = 3;
 
+    if (reason == QSystemTrayIcon::DoubleClick) {
+        global.settings->beginGroup("Appearance");
+        int value = global.settings->value("trayDoubleClickAction", 0).toInt();
+        global.settings->endGroup();
+        if (value == showHide)
+            toggleVisible();
+        if (value == newNote) {
+            if (!isVisible())
+                toggleVisible();
+            this->newNote();
+        }
+        if (value == newQuickNote)
+            this->newExternalNote();
+        if (value == screenCapture)
+            this->screenCapture();
+    }
     if (reason == QSystemTrayIcon::MiddleClick) {
         global.settings->beginGroup("Appearance");
         int value = global.settings->value("trayMiddleClickAction", 0).toInt();
