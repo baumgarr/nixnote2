@@ -253,12 +253,10 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 // allows for users to run it out of a non-path location.
 QString Global::getProgramDirPath() {
     QString path = QCoreApplication::applicationDirPath();
-    if (path == "/usr/bin")
-        return "/usr/share/nixnote2";
-    if (path == "/usr/share/bin")
-        return "/usr/share/nixnote2";
-    if (path == "/usr/local/bin")
-        return "/usr/share/nixnote2";
+    if (path.endsWith("/bin")) {
+        path.chop(3);
+        return path+"share/nixnote2";
+    }
     return path;
 }
 
