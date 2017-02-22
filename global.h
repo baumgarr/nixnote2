@@ -160,6 +160,8 @@ public:
     void setMinimumRecognitionWeight(int weight);         // Set the minimum OCR recgnition confidence before including it in search results.
     bool popupOnSyncError();                 // Should we do a popup on every sync error?
     void setPopupOnSyncError(bool value);    // Set if we should do a popup on sync errors.
+    void setBackgroundIndexing(bool value);                         // Should we do indexing in a separate thread?
+    bool getBackgroundIndexing();                         // Should we do indexing in a separate thread?
     QString dateFormat;                                   // Desired display date format
     QString timeFormat;                                   // Desired display time format
     DatabaseConnection *db;                               // "default" DB connection for the main thread.

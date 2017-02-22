@@ -157,7 +157,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     this->startupNote = startupConfig.startupNoteLid;
     startupConfig.accountId = accountId;
     accountsManager = new AccountsManager(startupConfig.accountId);
-    enableIndexing = startupConfig.enableIndexing;
+    if (startupConfig.enableIndexing || getBackgroundIndexing())
+        enableIndexing = true;
 
     this->purgeTemporaryFilesOnShutdown=true;
 
@@ -474,6 +475,26 @@ bool Global::getClearTagsOnSearch() {
     settings->endGroup();
     return value;
 }
+
+
+bool Global::getBackgroundIndexing() {
+    settings->beginGroup("Search");
+    bool value = settings->value("backgroundIndexing",false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+
+
+void Global::setBackgroundIndexing(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("backgroundIndexing",value);
+    settings->endGroup();
+}
+
+
+
 
 bool Global::getTagSelectionOr() {
     settings->beginGroup("Search");

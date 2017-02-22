@@ -553,7 +553,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         }
     }
 
-    QLOG_DEBUG() << "Checking thumbanail";
+    QLOG_DEBUG() << "Checking thumbnail";
     if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
         hammer->render(this->lid);
     }

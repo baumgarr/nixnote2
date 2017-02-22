@@ -124,7 +124,7 @@ void PreferencesDialog::setupThumbnailPanel() {
 
 void PreferencesDialog::setupDebugPanel() {
     debugPanel = new DebugPreferences(this);
-    tabs->addTab(debugPanel, tr("Debugging"));
+    tabs->addTab(debugPanel, tr("Advanced"));
 }
 
 
