@@ -71,6 +71,21 @@ void fault_handler(int sig) {
   exit(1);
 }
 
+
+
+void shutdown_handler(int sig) {
+  void *array[30];
+  size_t size;
+
+  // get void*'s for all entries on the stack
+  size = backtrace(array, 30);
+
+  // print out all the frames to stderr
+  fprintf(stderr, "Error: signal %d:\n", sig);
+  backtrace_symbols_fd(array, size, 2);
+  return;
+}
+
 #endif // End Windows check
 
 
@@ -264,6 +279,10 @@ int main(int argc, char *argv[])
 
         QNetworkProxy::setApplicationProxy(proxy);
     }
+
+    QLOG_DEBUG() << "Setting up exit signal";
+
+    QObject::connect(a, SIGNAL(aboutToQuit()), w, SLOT(saveOnExit()));
 
     QLOG_DEBUG() << "Launching";
     int rc = a->exec();

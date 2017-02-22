@@ -1119,39 +1119,23 @@ void NixNote::closeShortcut() {
 }
 
 
-//*****************************************************************************
-//* Close the program
-//*****************************************************************************
-void NixNote::closeEvent(QCloseEvent *event) {
-//    if (closeToTray && !closeFlag) {
-//        event->ignore();
-//        hide();
-//        return;
-//    }
 
+//*****************************************************************************
+//* Save program contents on exit
+//******************************************************************************
+void NixNote::saveOnExit() {
+    QLOG_DEBUG() << "saveOnExit called";
+
+    QLOG_DEBUG() << "Saving contents";
     saveContents();
 
+    QLOG_DEBUG() << "Shutting down threads";
     indexRunner.keepRunning = false;
     counterRunner.keepRunning = false;
     indexThread.quit();
     counterThread.quit();
 
-    global.settings->beginGroup("Sync");
-    bool syncOnShutdown = global.settings->value("syncOnShutdown", false).toBool();
-    global.settings->endGroup();
-    if (syncOnShutdown && !finalSync && global.accountsManager->oauthTokenFound()) {
-        finalSync = true;
-        syncRunner.finalSync = true;
-        hide();
-        connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(close()));
-        synchronize();
-        event->ignore();
-        return;
-    }
-
-    syncRunner.keepRunning = false;
-    syncThread.quit();
-
+    QLOG_DEBUG() << "Saving window states";
     ConfigStore config(global.db);
     config.saveSetting(CONFIG_STORE_WINDOW_STATE, saveState());
     config.saveSetting(CONFIG_STORE_WINDOW_GEOMETRY, saveGeometry());
@@ -1260,10 +1244,42 @@ void NixNote::closeEvent(QCloseEvent *event) {
     saveNoteColumnWidths();
     saveNoteColumnPositions();
     noteTableView->saveColumnsVisible();
+    QLOG_DEBUG() << "Exitng saveOnExit()";
+}
+
+//*****************************************************************************
+//* Close the program
+//*****************************************************************************
+void NixNote::closeEvent(QCloseEvent *event) {
+//    if (closeToTray && !closeFlag) {
+//        event->ignore();
+//        hide();
+//        return;
+//    }
+
+    saveOnExit();
+
+    global.settings->beginGroup("Sync");
+    bool syncOnShutdown = global.settings->value("syncOnShutdown", false).toBool();
+    global.settings->endGroup();
+    if (syncOnShutdown && !finalSync && global.accountsManager->oauthTokenFound()) {
+        finalSync = true;
+        syncRunner.finalSync = true;
+        hide();
+        connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(close()));
+        synchronize();
+        event->ignore();
+        return;
+    }
+
+    syncRunner.keepRunning = false;
+    syncThread.quit();
+
     if (trayIcon->isVisible())
         trayIcon->hide();
     if (trayIcon != NULL)
         delete trayIcon;
+
     QMainWindow::closeEvent(event);
     QLOG_DEBUG() << "Quitting";
 }
