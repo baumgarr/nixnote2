@@ -45,6 +45,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "application.h"
 
 
+NixNote *w;
+
 using namespace std;
 
 //*********************************************
@@ -67,24 +69,25 @@ void fault_handler(int sig) {
 
   // print out all the frames to stderr
   fprintf(stderr, "Error: signal %d:\n", sig);
-  backtrace_symbols_fd(array, size, 2);
+  backtrace_symbols_fd(array, size, 2);  
+  if (w!=NULL) {
+      fprintf(stderr, "Forcing save\n");
+      w->saveState();
+  }
   exit(1);
 }
 
 
 
-void shutdown_handler(int sig) {
-  void *array[30];
-  size_t size;
-
-  // get void*'s for all entries on the stack
-  size = backtrace(array, 30);
-
+void sighup_handler(int sig) {
   // print out all the frames to stderr
   fprintf(stderr, "Error: signal %d:\n", sig);
-  backtrace_symbols_fd(array, size, 2);
-  return;
+  if (w!=NULL) {
+      fprintf(stderr, "Forcing save\n");
+      w->saveState();
+  }
 }
+
 
 #endif // End Windows check
 
@@ -97,12 +100,13 @@ void shutdown_handler(int sig) {
 //*********************************************************************
 int main(int argc, char *argv[])
 {
-
+    w = NULL;
     bool guiAvailable = true;
 
 // Windows Check
 #ifndef _WIN32
     signal(SIGSEGV, fault_handler);   // install our handler
+    signal(SIGHUP, sighup_handler);   // install our handler
 #endif
 
     // Begin setting up the environment
@@ -244,7 +248,7 @@ int main(int argc, char *argv[])
 
 
     QLOG_DEBUG() << "Setting up NN";
-    NixNote *w = new NixNote();
+    w = new NixNote();
     w->setAttribute(Qt::WA_QuitOnClose);
     bool show = true;
     if (global.minimizeToTray() && global.startMinimized)
