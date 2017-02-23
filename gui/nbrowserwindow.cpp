@@ -1855,7 +1855,6 @@ void NBrowserWindow::attachFile() {
     editor->page()->mainFrame()->evaluateJavaScript(js2);
 
     saveTimer.setInterval(global.autoSaveInterval);
-    QLOG_DEBUG() << global.autoSaveInterval;
     saveTimer.start();
  }
 
