@@ -25,6 +25,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QComboBox>
 #include <QLabel>
 #include <QCheckBox>
+#include <QSpinBox>
+
 
 class DebugPreferences : public QWidget
 {
@@ -38,6 +40,7 @@ private:
     QCheckBox *disableImageHighlight;
     QCheckBox *strictDTD;
     QCheckBox *forceUTF8;
+    QSpinBox *autoSaveInterval;
     QLabel *debugLevelLabel;
     int getMessageLevel();
 

@@ -258,6 +258,10 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     focusTimer.setInterval(100);
     focusTimer.start();
 
+    connect(&saveTimer, SIGNAL(timeout()), this, SLOT(saveTimeCheck()));
+    saveTimer.setInterval(global.autoSaveInterval);
+    saveTimer.start();
+
     hunspellInterface = NULL;
 }
 
@@ -1766,6 +1770,7 @@ void NBrowserWindow::attachFile() {
 //* MicroFocus changed
 //****************************************************************
  void NBrowserWindow::microFocusChanged() {
+     saveTimer.stop();
      buttonBar->boldButtonWidget->setDown(false);
      buttonBar->italicButtonWidget->setDown(false);
      buttonBar->underlineButtonWidget->setDown(false);
@@ -1848,6 +1853,10 @@ void NBrowserWindow::attachFile() {
                   QString("      window.browserWindow.changeDisplayFontName(font);") +
                   QString("} getFontSize();");
     editor->page()->mainFrame()->evaluateJavaScript(js2);
+
+    saveTimer.setInterval(global.autoSaveInterval);
+    QLOG_DEBUG() << global.autoSaveInterval;
+    saveTimer.start();
  }
 
  void NBrowserWindow::printNodeName(QString v) {
@@ -3544,6 +3553,12 @@ void NBrowserWindow::focusCheck() {
     buttonBar->setVisible(buttonBarVisible);
 }
 
+
+
+void NBrowserWindow::saveTimeCheck() {
+    if (editor->isDirty)
+       this->saveNoteContent();
+}
 
 
 

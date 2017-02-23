@@ -217,11 +217,10 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
     this->setFont(global.getGuiFont(font()));
 
-    // Check if Tidy is installed
+    // Check if notify-send is installed
     QProcess notifyProcess;
     notifyProcess.start("notify-send -?");
     notifyProcess.waitForFinished();
-    QLOG_DEBUG() << notifyProcess.exitCode();
     if (notifyProcess.exitCode()) {
         systemNotifier->setEnabled(false);
     } else {

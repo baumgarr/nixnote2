@@ -338,9 +338,7 @@ HEADERS  += nixnote.h \
     dialog/watchfolderadd.h \
     dialog/watchfolderdialog.h \
     dialog/preferences/preferencesdialog.h \
-    dialog/preferences/debugpreferences.h \
     dialog/preferences/syncpreferences.h \
-    dialog/preferences/appearancepreferences.h \
     settings/accountsmanager.h \
     dialog/adduseraccountdialog.h \
     dialog/accountmaintenancedialog.h \
@@ -437,7 +435,9 @@ HEADERS  += nixnote.h \
     dialog/noteproperties.h \
     dialog/shortcutdialog.h \
     cmdtools/signalgui.h \
-    gui/browserWidgets/table/tablepropertiesdialog.h
+    gui/browserWidgets/table/tablepropertiesdialog.h \
+    dialog/preferences/appearancepreferences.h \
+    dialog/preferences/debugpreferences.h
 
 
 

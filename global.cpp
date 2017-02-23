@@ -245,6 +245,9 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     // reset username
     full_username = "";
 
+    // Set auto-save interval
+    autoSaveInterval = getAutoSaveInterval()*1000;
+
 }
 
 
@@ -1323,4 +1326,21 @@ bool Global::popupOnSyncError() {
     bool value = global.settings->value("popupOnSyncError", true).toBool();
     global.settings->endGroup();
     return value;
+}
+
+
+// save the user-specified auto-save interval
+int Global::getAutoSaveInterval() {
+    global.settings->beginGroup("Appearance");
+    int value = global.settings->value("autoSaveInterval", 500).toInt();
+    global.settings->endGroup();
+    return value;
+}
+
+// Save the user specified auto-save interval
+void Global::setAutoSaveInterval(int value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("autoSaveInterval", value);
+    global.settings->endGroup();
+    global.autoSaveInterval = value*1000;
 }

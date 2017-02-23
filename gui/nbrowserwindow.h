@@ -93,6 +93,7 @@ private:
     Thumbnailer *hammer;
     Thumbnailer *thumbnailer;
     QTimer focusTimer;
+    QTimer saveTimer;
     QString attachFilePath;  // Save path of last selected attachment.
 
     // Global plugins
@@ -316,6 +317,7 @@ private slots:
     void sendUrlUpdateSignal();
     void newTagAdded(qint32);
     void focusCheck();
+    void saveTimeCheck();
 
 };
 

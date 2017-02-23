@@ -280,6 +280,10 @@ public:
     int maximumThumbnailInterval;                               // Maximum time to scan for thumbnails
     bool disableThumbnails;                                     // Disable thumbnail generation
     int batchThumbnailCount;                                    // Maximum number of thumbails to generate per batch
+
+    int getAutoSaveInterval();                                  // Time (in seconds) between auto-saving of notes.
+    void setAutoSaveInterval(int value);                                 // Save auto save interval
+    int autoSaveInterval;                                       // current auto save interval
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.
