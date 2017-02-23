@@ -47,19 +47,26 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     global.settings->endGroup();
     disableImageHighlight->setChecked(global.disableImageHighlight());
 
-    mainLayout->addWidget(disableUploads,0,1);
-    mainLayout->addWidget(showLidColumn, 1,1);
-    mainLayout->addWidget(nonAsciiSortBug,2,1);
-    mainLayout->addWidget(disableImageHighlight,3,1);
-    mainLayout->addWidget(strictDTD,4,1);
-    mainLayout->addWidget(forceUTF8, 5, 1);
+    int row=0;
+    mainLayout->addWidget(disableUploads,row++,1);
+    mainLayout->addWidget(showLidColumn, row++,1);
+    mainLayout->addWidget(nonAsciiSortBug,row++,1);
+    mainLayout->addWidget(disableImageHighlight,row++,1);
+    mainLayout->addWidget(strictDTD,row++,1);
+    mainLayout->addWidget(forceUTF8, row++, 1);
 
-    mainLayout->addWidget(new QLabel(tr("Auto-Save Interval")), 6,0);
+#ifndef _WIN32
+    interceptSigHup = new QCheckBox(tr("Intercept Unix SIGHUP (requires restart)."));
+    interceptSigHup->setChecked(global.getInterceptSigHup());
+    mainLayout->addWidget(interceptSigHup,row++,1);
+#endif
+
+    mainLayout->addWidget(new QLabel(tr("Auto-Save Interval")), row,0);
     autoSaveInterval = new QSpinBox();
     autoSaveInterval->setMinimum(5);
     autoSaveInterval->setMaximum(300);
     autoSaveInterval->setValue(global.getAutoSaveInterval());
-    mainLayout->addWidget(autoSaveInterval, 6,1);
+    mainLayout->addWidget(autoSaveInterval, row++,1);
 
     debugLevelLabel = new QLabel(tr("Message Level"), this);
     debugLevelLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
@@ -76,8 +83,8 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     global.settings->endGroup();
     int index = debugLevel->findData(value);
     debugLevel->setCurrentIndex(index);
-    mainLayout->addWidget(debugLevelLabel,7,0);
-    mainLayout->addWidget(debugLevel,7,1);
+    mainLayout->addWidget(debugLevelLabel,row,0);
+    mainLayout->addWidget(debugLevel,row++,1);
     this->setFont(global.getGuiFont(font()));
 
 }
@@ -115,4 +122,10 @@ void DebugPreferences::saveValues() {
     global.setAutoSaveInterval(autoSaveInterval->value());
     global.disableUploads = disableUploads->isChecked();
     global.setStrictDTD(strictDTD->isChecked());
+
+#ifndef _WIN32
+    global.setInterceptSigHup(interceptSigHup->isChecked());
+#endif
+
+
 }

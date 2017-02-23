@@ -284,6 +284,9 @@ public:
     int getAutoSaveInterval();                                  // Time (in seconds) between auto-saving of notes.
     void setAutoSaveInterval(int value);                                 // Save auto save interval
     int autoSaveInterval;                                       // current auto save interval
+
+    bool getInterceptSigHup();                                  // Intercept SIGHUP on Unix platforms.
+    void setInterceptSigHup(bool value);                        // Intercept SIGHUP on Unix platforms
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

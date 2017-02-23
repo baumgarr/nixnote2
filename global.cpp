@@ -1344,3 +1344,20 @@ void Global::setAutoSaveInterval(int value) {
     global.settings->endGroup();
     global.autoSaveInterval = value*1000;
 }
+
+
+
+
+// Should we intercept SIGHUP on Unix platforms
+bool Global::getInterceptSigHup() {
+    global.settings->beginGroup("Appearance");
+    bool value = global.settings->value("interceptSigHup", true).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setInterceptSigHup(bool value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("interceptSigHup", value);
+    global.settings->endGroup();
+}

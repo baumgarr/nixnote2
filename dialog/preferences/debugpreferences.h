@@ -40,6 +40,7 @@ private:
     QCheckBox *disableImageHighlight;
     QCheckBox *strictDTD;
     QCheckBox *forceUTF8;
+    QCheckBox *interceptSigHup;
     QSpinBox *autoSaveInterval;
     QLabel *debugLevelLabel;
     int getMessageLevel();

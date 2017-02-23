@@ -106,7 +106,6 @@ int main(int argc, char *argv[])
 // Windows Check
 #ifndef _WIN32
     signal(SIGSEGV, fault_handler);   // install our handler
-    signal(SIGHUP, sighup_handler);   // install our handler
 #endif
 
     // Begin setting up the environment
@@ -246,6 +245,10 @@ int main(int argc, char *argv[])
         global.sharedMemory->clearMemory();
     }
 
+#ifndef _WIN32
+    if (global.getInterceptSigHup())
+        signal(SIGHUP, sighup_handler);   // install our handler
+#endif
 
     QLOG_DEBUG() << "Setting up NN";
     w = new NixNote();
