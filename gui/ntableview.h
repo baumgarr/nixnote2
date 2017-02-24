@@ -62,6 +62,7 @@ public:
 
     QMenu *contextMenu;
     QMenu *colorMenu;
+    QMenu *reminderMenu;
     QAction *addNoteAction;
     QAction *deleteNoteAction;
     QAction *restoreNoteAction;
@@ -85,6 +86,9 @@ public:
     QAction *noteTitleColorGrayAction;
     QAction *noteTitleColorCyanAction;
     QAction *noteTitleColorMagentaAction;
+
+    QAction *reminderMarkCompletedAction;
+    QAction *reminderRemoveAction;
 
     void getSelectedLids(QList<qint32> &lids);
     QList<qint32> priorLidOrder;
@@ -141,6 +145,9 @@ public slots:
     void setTitleColorCyan();
     void setTitleColorMagenta();
     void setTitleColor(QString color);
+
+    void markReminderCompleted();
+    void removeReminder();
 
     void noteTagsUpdated(QString uuid, qint32 lid, QStringList names);
 
