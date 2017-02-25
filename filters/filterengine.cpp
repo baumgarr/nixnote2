@@ -377,6 +377,22 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key)");
         sql.bindValue(":key", NOTE_HAS_ATTACHMENT);
         break;
+    case CONTAINS_REMINDER:
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key)");
+            sql.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
+            break;
+    case CONTAINS_UNCOMPLETED_REMINDER:
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key)");
+            sql.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
+            sql.exec();
+            sql.prepare("delete from filter where lid in (select lid from datastore where key=:key and data>0)");
+            sql.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
+            break;
+    case CONTAINS_FUTURE_REMINDER:
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data>:dt)");
+            sql.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
+            sql.bindValue(":dt",QDateTime::currentMSecsSinceEpoch());
+            break;
     case SOURCE_EMAIL:
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data = 'mail.clip')");
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);

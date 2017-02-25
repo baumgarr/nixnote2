@@ -114,6 +114,10 @@ NAttributeTree::NAttributeTree(QWidget *parent) :
     containsPDFDocument = new QTreeWidgetItem(containsRoot);
     containsAttachment = new QTreeWidgetItem(containsRoot);
 
+    containsReminder = new QTreeWidgetItem(containsRoot);
+    containsUncompletedReminder = new QTreeWidgetItem(containsRoot);
+    containsFutureReminder = new QTreeWidgetItem(containsRoot);
+
     sourceEmailedToEvernote = new QTreeWidgetItem(sourceRoot);
     sourceEmail = new QTreeWidgetItem(sourceRoot);
     sourceWebPage = new QTreeWidgetItem(sourceRoot);
@@ -321,7 +325,17 @@ NAttributeTree::NAttributeTree(QWidget *parent) :
     this->containsAttachment->setData(0, Qt::UserRole, CONTAINS_ATTACHMENT);
     this->containsRoot->addChild(containsAttachment);
 
+    this->containsReminder->setText(0, tr("Reminder"));
+    this->containsReminder->setData(0, Qt::UserRole, CONTAINS_REMINDER);
+    this->containsRoot->addChild(containsReminder);
 
+    this->containsUncompletedReminder->setText(0, tr("Uncompleted Reminder"));
+    this->containsUncompletedReminder->setData(0, Qt::UserRole, CONTAINS_UNCOMPLETED_REMINDER);
+    this->containsRoot->addChild(containsUncompletedReminder);
+
+    this->containsFutureReminder->setText(0, tr("Future Reminder"));
+    this->containsFutureReminder->setData(0, Qt::UserRole, CONTAINS_FUTURE_REMINDER);
+    this->containsRoot->addChild(containsFutureReminder);
 
     //*** Source selection criteria
     this->sourceRoot->setText(0, tr("Source"));
@@ -436,8 +450,8 @@ void NAttributeTree::buildSelection() {
     }
 
     selectedItems = this->selectedItems();
-    if (selectedItems.size() == 0)
-        return;
+//    if (selectedItems.size() == 0)
+//        return;
 
     // First, find out if we're already viewing history.  If we are we
     // chop off the end of the history & start a new one

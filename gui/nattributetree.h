@@ -68,6 +68,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define CONTAINS_FINISHED_TODO_ITEMS 407
 #define CONTAINS_PDF_DOCUMENT 408
 #define CONTAINS_ATTACHMENT 409
+#define CONTAINS_REMINDER 410
+#define CONTAINS_UNCOMPLETED_REMINDER 411
+#define CONTAINS_FUTURE_REMINDER 412
 
 #define SOURCE_EMAILED_TO_EVERNOTE 501
 #define SOURCE_EMAIL 502
@@ -146,6 +149,9 @@ private:
     QTreeWidgetItem *containsFinishedToDoItems;
     QTreeWidgetItem *containsPDFDocument;
     QTreeWidgetItem *containsAttachment;
+    QTreeWidgetItem *containsReminder;
+    QTreeWidgetItem *containsUncompletedReminder;
+    QTreeWidgetItem *containsFutureReminder;
 
     QTreeWidgetItem *sourceEmailedToEvernote;
     QTreeWidgetItem *sourceEmail;
