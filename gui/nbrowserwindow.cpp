@@ -84,7 +84,7 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
 
     browserThread = new QThread();
     connect(browserThread, SIGNAL(started()), this, SLOT(browserThreadStarted()));
-    browserRunner = new BrowserRunner(this);
+    browserRunner = new BrowserRunner(0);
     connect(this, SIGNAL(requestNoteContentUpdate(qint32, QString, bool)), browserRunner, SLOT(updateNoteContent(qint32, QString, bool)));
     browserThread->start();
 
