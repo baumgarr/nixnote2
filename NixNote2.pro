@@ -237,7 +237,8 @@ SOURCES += main.cpp\
     dialog/noteproperties.cpp \
     dialog/shortcutdialog.cpp \
     cmdtools/signalgui.cpp \
-    gui/browserWidgets/table/tablepropertiesdialog.cpp
+    gui/browserWidgets/table/tablepropertiesdialog.cpp \
+    threads/browserrunner.cpp
 
 
 
@@ -437,7 +438,8 @@ HEADERS  += nixnote.h \
     cmdtools/signalgui.h \
     gui/browserWidgets/table/tablepropertiesdialog.h \
     dialog/preferences/appearancepreferences.h \
-    dialog/preferences/debugpreferences.h
+    dialog/preferences/debugpreferences.h \
+    threads/browserrunner.h
 
 
 

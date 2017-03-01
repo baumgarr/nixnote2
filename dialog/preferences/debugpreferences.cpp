@@ -61,7 +61,11 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     mainLayout->addWidget(interceptSigHup,row++,1);
 #endif
 
-    mainLayout->addWidget(new QLabel(tr("Auto-Save Interval")), row,0);
+    multiThreadSave = new QCheckBox(tr("Use multipe theads to save note contents (experimental)."));
+    multiThreadSave->setChecked(global.getMultiThreadSave());
+    mainLayout->addWidget(multiThreadSave,row++,1);
+
+    mainLayout->addWidget(new QLabel(tr("Auto-Save Interval (in seconds).")), row,0);
     autoSaveInterval = new QSpinBox();
     autoSaveInterval->setMinimum(5);
     autoSaveInterval->setMaximum(300);
@@ -126,6 +130,8 @@ void DebugPreferences::saveValues() {
 #ifndef _WIN32
     global.setInterceptSigHup(interceptSigHup->isChecked());
 #endif
+
+    global.setMultiThreadSave(multiThreadSave->isChecked());
 
 
 }

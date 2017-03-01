@@ -81,6 +81,14 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     QUuid uuid;
     this->uuid =  uuid.createUuid().toString().replace("{","").replace("}","");
 
+
+    browserThread = new QThread();
+    connect(browserThread, SIGNAL(started()), this, SLOT(browserThreadStarted()));
+    browserRunner = new BrowserRunner(this);
+    connect(this, SIGNAL(requestNoteContentUpdate(qint32, QString, bool)), browserRunner, SLOT(updateNoteContent(qint32, QString, bool)));
+    browserThread->start();
+
+
 //    this->setStyleSheet("margins:0px;");
     QHBoxLayout *line1Layout = new QHBoxLayout();
     QVBoxLayout *layout = new QVBoxLayout();   // Note content layout
@@ -265,6 +273,19 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     hunspellInterface = NULL;
 }
 
+
+// Destructor
+NBrowserWindow::~NBrowserWindow() {
+    browserThread->quit();
+    while (!browserRunner->isIdle);
+}
+
+
+
+// Browser helper thread is ready
+void NBrowserWindow::browserThreadStarted() {
+    browserRunner->moveToThread(browserThread);
+}
 
 
 // Setup the toolbar window of the editor
@@ -743,8 +764,8 @@ void NBrowserWindow::saveNoteContent() {
     microFocusChanged();
 
     if (this->editor->isDirty) {
-        //QString contents = editor->editorPage->mainFrame()->toHtml();
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
+
         EnmlFormatter formatter;
         formatter.setHtml(contents);
         formatter.rebuildNoteEnml();
@@ -781,8 +802,11 @@ void NBrowserWindow::saveNoteContent() {
         }
 
         QLOG_DEBUG() << "Updating note content";
-        NoteTable table(global.db);
-        table.updateNoteContent(lid, formatter.getEnml());
+        if (!global.multiThreadSaveEnabled) {
+            NoteTable table(global.db);
+            table.updateNoteContent(lid, formatter.getEnml());
+        } else
+            emit requestNoteContentUpdate(lid, formatter.getEnml(), true);
         editor->isDirty = false;
         if (thumbnailer == NULL)
             thumbnailer = new Thumbnailer(global.db);
@@ -797,11 +821,8 @@ void NBrowserWindow::saveNoteContent() {
             b.append(contents);
             cache->noteContent = b;
             global.cache.remove(lid);
-//            global.cache.insert(lid, cache);
         }
         QLOG_DEBUG() << "Leaving saveNoteContent()";
-        // Make sure the thumnailer is done
-        //while(!thumbnailer.idle);
     }
 }
 

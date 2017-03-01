@@ -1,7 +1,6 @@
-#ifndef DEBUGPREFERENCES_H
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2013 Randy Baumgarte
+Copyright (C) 2017 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -18,44 +17,44 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
-#define DEBUGPREFERENCES_H
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QComboBox>
-#include <QLabel>
-#include <QCheckBox>
-#include <QSpinBox>
+#include "browserrunner.h"
 
 
-class DebugPreferences : public QWidget
+#include "global.h"
+#include "utilities/nuuid.h"
+#include "utilities/noteindexer.h"
+#include "sql/notetable.h"
+
+extern Global global;
+
+BrowserRunner::BrowserRunner(QObject *parent) : QObject(parent)
 {
-    Q_OBJECT
-private:
-    QGridLayout *mainLayout;
-    QComboBox *debugLevel;
-    QCheckBox *disableUploads;
-    QCheckBox *showLidColumn;
-    QCheckBox *nonAsciiSortBug;
-    QCheckBox *disableImageHighlight;
-    QCheckBox *strictDTD;
-    QCheckBox *forceUTF8;
-    QCheckBox *interceptSigHup;
-    QCheckBox *multiThreadSave;
-    QSpinBox *autoSaveInterval;
-    QLabel *debugLevelLabel;
-    int getMessageLevel();
+    isIdle = true;
+    init = false;
+}
 
-public:
-    explicit DebugPreferences(QWidget *parent = 0);
-    ~DebugPreferences();
-    QString getDebugLevel();
-    void saveValues();
-    
-signals:
-    
-public slots:
-    
-};
 
-#endif // DEBUGPREFERENCES_H
+
+void BrowserRunner::initialize() {
+    init = true;
+
+    QLOG_DEBUG() << "Starting CounterRunner";
+    db = new DatabaseConnection("browserrunner-"+NUuid().create());
+    QLOG_DEBUG() << "CounterRunner initialization complete.";
+}
+
+
+void BrowserRunner::updateNoteContent(qint32 lid, QString content, bool isDirty) {
+    isIdle = false;
+
+    if (!init)
+        initialize();
+
+    QLOG_DEBUG() << "Updating note content";
+    NoteTable table(db);
+    table.updateNoteContent(lid, content, isDirty);
+
+    isIdle = true;
+}
+

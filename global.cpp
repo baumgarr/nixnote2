@@ -248,6 +248,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     // Set auto-save interval
     autoSaveInterval = getAutoSaveInterval()*1000;
 
+    multiThreadSaveEnabled = this->getMultiThreadSave();
+
 }
 
 
@@ -1360,4 +1362,23 @@ void Global::setInterceptSigHup(bool value) {
     global.settings->beginGroup("Appearance");
     global.settings->setValue("interceptSigHup", value);
     global.settings->endGroup();
+
+}
+
+
+
+
+// Should we use multiple theads to do note saving
+bool Global::getMultiThreadSave() {
+    global.settings->beginGroup("Appearance");
+    bool value = global.settings->value("multiThreadSave", false).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setMultiThreadSave(bool value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("multiThreadSave", value);
+    global.settings->endGroup();
+    this->multiThreadSaveEnabled = value;
 }

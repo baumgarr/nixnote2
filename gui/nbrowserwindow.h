@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTextEdit>
 #include <QTimer>
 #include <QPrinter>
+#include <QThread>
 
 #include "gui/nwebview.h"
 
@@ -60,6 +61,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "plugins/hunspell/hunspellinterface.h"
 #include "plugins/hunspell/hunspellplugin.h"
 #include "gui/findreplace.h"
+#include "threads/browserrunner.h"
 
 class ToolbarWidgetAction;
 
@@ -74,6 +76,8 @@ class NBrowserWindow : public QWidget
 {
     Q_OBJECT
 private:
+    QThread *browserThread;
+    BrowserRunner *browserRunner;
     void setupToolBar();
     QTimer *sourceEditorTimer;
     bool insertHyperlink;
@@ -123,6 +127,7 @@ private:
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
+    ~NBrowserWindow();
     QString uuid;
     NWebView *editor;
     void setContent(qint32 lid);
@@ -188,6 +193,7 @@ signals:
     void noteAlarmEditedSignal(QString uuid, qint32 lid, bool strikeout, QString text);
     void showHtmlEntities();
     void setMessage(QString msg);
+    void requestNoteContentUpdate(qint32, QString, bool);
 
 public slots:
     void saveNoteContent();
@@ -318,6 +324,7 @@ private slots:
     void newTagAdded(qint32);
     void focusCheck();
     void saveTimeCheck();
+    void browserThreadStarted();
 
 };
 

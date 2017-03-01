@@ -1115,9 +1115,9 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     db->unlock();
 
     // Experimental class to index at save
-    NoteIndexer indexer(db);
     if (!global.enableIndexing) {
         QLOG_TRACE() << "Calling indexNote";
+        NoteIndexer indexer(db);
         indexer.indexNote(lid);
     }
     QLOG_TRACE_OUT();

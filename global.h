@@ -287,6 +287,10 @@ public:
 
     bool getInterceptSigHup();                                  // Intercept SIGHUP on Unix platforms.
     void setInterceptSigHup(bool value);                        // Intercept SIGHUP on Unix platforms
+
+    void setMultiThreadSave(bool value);                        // Should we use multiple theads in the browser window to save
+    bool getMultiThreadSave();
+    bool multiThreadSaveEnabled;
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.
