@@ -65,6 +65,10 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     multiThreadSave->setChecked(global.getMultiThreadSave());
     mainLayout->addWidget(multiThreadSave,row++,1);
 
+    useLibTidy = new QCheckBox(tr("Use libtidy directly (experimental)."));
+    useLibTidy->setChecked(global.getUseLibTidy());
+    mainLayout->addWidget(useLibTidy,row++,1);
+
     mainLayout->addWidget(new QLabel(tr("Auto-Save Interval (in seconds).")), row,0);
     autoSaveInterval = new QSpinBox();
     autoSaveInterval->setMinimum(5);
@@ -132,6 +136,5 @@ void DebugPreferences::saveValues() {
 #endif
 
     global.setMultiThreadSave(multiThreadSave->isChecked());
-
-
+    global.setUseLibTidy(useLibTidy->isChecked());
 }

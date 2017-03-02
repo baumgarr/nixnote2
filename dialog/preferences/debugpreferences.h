@@ -42,6 +42,7 @@ private:
     QCheckBox *forceUTF8;
     QCheckBox *interceptSigHup;
     QCheckBox *multiThreadSave;
+    QCheckBox *useLibTidy;
     QSpinBox *autoSaveInterval;
     QLabel *debugLevelLabel;
     int getMessageLevel();

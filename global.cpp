@@ -249,6 +249,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     autoSaveInterval = getAutoSaveInterval()*1000;
 
     multiThreadSaveEnabled = this->getMultiThreadSave();
+    useLibTidy = this->getUseLibTidy();
 
 }
 
@@ -1381,4 +1382,24 @@ void Global::setMultiThreadSave(bool value) {
     global.settings->setValue("multiThreadSave", value);
     global.settings->endGroup();
     this->multiThreadSaveEnabled = value;
+}
+
+
+
+
+
+
+// Should we use multiple theads to do note saving
+bool Global::getUseLibTidy() {
+    global.settings->beginGroup("Appearance");
+    bool value = global.settings->value("useLibTidy", false).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setUseLibTidy(bool value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("useLibTidy", value);
+    global.settings->endGroup();
+    this->useLibTidy = value;
 }

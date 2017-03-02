@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
     unix:LIBS +=    -lcurl \
-               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
+               -lpthread -L/usr/lib -lpoppler-qt5 -ltidy -g -rdynamic
     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
     win32:RC_ICONS += "$$PWD/images/windowIcon.ico"

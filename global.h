@@ -291,6 +291,10 @@ public:
     void setMultiThreadSave(bool value);                        // Should we use multiple theads in the browser window to save
     bool getMultiThreadSave();
     bool multiThreadSaveEnabled;
+
+    void setUseLibTidy(bool value);                            // Should we use new tidy or classic
+    bool getUseLibTidy();
+    bool useLibTidy;
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

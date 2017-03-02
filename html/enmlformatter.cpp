@@ -29,6 +29,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QIcon>
 #include <QMessageBox>
 
+#include <tidy/tidy.h>
+#include <tidy/buffio.h>
+
 #include <iostream>
 using namespace std;
 
@@ -198,9 +201,8 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     // Strip off HTML header & remove the background & default font color
     // if they match the theme default.
     index = content.indexOf("<body");
-    QLOG_DEBUG() << content;
-    QString header = content.mid(index);
-    QByteArray c1 = content.mid(0,index);
+    QString header = content.mid(0,index);
+    QByteArray c1 = content.mid(index);
     index = header.indexOf(">");
     header = header.mid(0,index);
     QByteArray c2 = content.mid(content.indexOf(">",index));
@@ -211,8 +213,6 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     newHeader = newHeader.replace(fgColor,"");
     content = c1;
     content.append(newHeader).append(c2);
-    QLOG_DEBUG() << content;
-
 
     // Start transforming the header
     index = content.indexOf("<body");
@@ -240,34 +240,106 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     // Run it through "tidy".  It is a program which will fix any invalid HTML
     // and give us the results back through stdout.  In a perfect world this
     // wouldn't be needed, but WebKit doesn't always give back good HTML.
-    QLOG_DEBUG() << "Calling tidy";
-    QProcess tidyProcess;
-    tidyProcess.start("tidy -raw -asxhtml -q -m -u -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
-    QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
-    tidyProcess.waitForStarted();
-    tidyProcess.write(content);
-    tidyProcess.closeWriteChannel();
-    tidyProcess.waitForFinished();
-    QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
-    QString errors(tidyProcess.readAllStandardError());
-    QStringList errorList = errors.split("\n");
-    for (int e=0; e<errorList.size(); e++) {
-        if (not errorList[e].contains("<img> proprietary attribute \"type\"") &&
-            not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
-            not errorList[e].contains("<img> proprietary attribute \"hash\"") &&
-            not errorList[e].contains("<img> proprietary attribute \"en-tag\"") &&
-            not errorList[e].contains("<img> proprietary attribute \"lid\"") &&
-            not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
-            not errorList[e].contains("<img> lacks \"alt\" attribute")
-            ) {
-                QLOG_DEBUG() << errorList[e];
+    bool useLegacyTidy = false;
+
+    if (global.useLibTidy) {
+        TidyBuffer output = {0};
+        TidyBuffer errout = {0};
+
+        int tidyRc;
+        bool ok;
+
+        TidyDoc tdoc = tidyCreate();
+        ok = tidyOptSetBool(tdoc, TidyXmlOut, yes);
+        if (!ok) {
+            QLOG_ERROR() << "Error using tidyOptSetBool: " << ok;
+            useLegacyTidy=true;
+        } else {
+            tidyRc = tidySetInCharEncoding(tdoc,"utf8");
+            if (tidyRc>=1) {
+                QLOG_ERROR() << "Error using tidySetInCharEncoding: " << tidyRc;
+                useLegacyTidy=true;
+            } else {
+                tidyRc = tidySetOutCharEncoding(tdoc, "utf8");
+                if (tidyRc>=1) {
+                    QLOG_ERROR() << "Error using tidyOutInCharEncoding: " << tidyRc;
+                    useLegacyTidy=true;
+                } else {
+                    tidyRc = tidySetErrorBuffer(tdoc, &errout);
+                    if (tidyRc>=1) {
+                        QLOG_ERROR() << "Error using tidySetErrorBuffer: " << tidyRc;
+                        useLegacyTidy=true;
+                    } else {
+                        QByteArray tarray = content;
+                        char * buffer;
+                        buffer = new char[tarray.size()+1];
+                        strcpy(buffer, tarray.data());
+                        buffer[tarray.size()] = '\0';
+                        tidyRc = tidyParseString(tdoc, buffer);
+                        delete buffer;
+                        if (tidyRc>=1) {
+                            QLOG_ERROR() << "Error using tidyParseString: " << tidyRc;
+                            useLegacyTidy=true;
+                        } else {
+                            tidyRc = tidyCleanAndRepair(tdoc);
+                            if (tidyRc>=1) {
+                                QLOG_ERROR() << "Error using tidyCleanAndRepair: " << tidyRc;
+                                useLegacyTidy=true;
+                            } else {
+                                tidyRc = tidySaveBuffer(tdoc, &output);
+                                if (tidyRc>=1) {
+                                    QLOG_ERROR() << "Error using tidySaveBuffer: " << tidyRc;
+                                    useLegacyTidy=true;
+                                } else {
+                                    content.clear();
+                                    content.append((const char*)output.bp, output.size);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
+        tidyBufFree(&output);
+        //tidyBufFree(&errout);  For some reason ths causes a crash
+        tidyRelease(tdoc);
     }
 
-    QLOG_DEBUG() << "After tidy";
-    content.clear();
-    content.append(tidyProcess.readAllStandardOutput());
-    tidyProcess.close();
+
+    // IF the new tidy had an error, or we choose to use the old method
+    if (useLegacyTidy || !global.useLibTidy) {
+        QLOG_DEBUG() << "Calling tidy";
+        QProcess tidyProcess;
+        tidyProcess.start("tidy -raw -asxhtml -q -m -u -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
+        QLOG_DEBUG() << "Starting tidy " << tidyProcess.waitForStarted();
+        tidyProcess.waitForStarted();
+        tidyProcess.write(content);
+        tidyProcess.closeWriteChannel();
+        tidyProcess.waitForFinished();
+        QLOG_DEBUG() << "Stopping tidy " << tidyProcess.waitForFinished() << " Return Code: " << tidyProcess.state();
+        QString errors(tidyProcess.readAllStandardError());
+        QStringList errorList = errors.split("\n");
+        for (int e=0; e<errorList.size(); e++) {
+            if (not errorList[e].contains("<img> proprietary attribute \"type\"") &&
+                not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
+                not errorList[e].contains("<img> proprietary attribute \"hash\"") &&
+                not errorList[e].contains("<img> proprietary attribute \"en-tag\"") &&
+                not errorList[e].contains("<img> proprietary attribute \"lid\"") &&
+                not errorList[e].contains("<img> proprietary attribute \"oncontextmenu\"") &&
+                not errorList[e].contains("<img> lacks \"alt\" attribute")
+                ) {
+                    QLOG_DEBUG() << errorList[e];
+           }
+       }
+
+
+        QLOG_DEBUG() << "After tidy";
+        content.clear();
+        content.append(tidyProcess.readAllStandardOutput());
+        tidyProcess.close();
+    }
+
+
     if (content == "") {
         formattingError = true;
         return "";
