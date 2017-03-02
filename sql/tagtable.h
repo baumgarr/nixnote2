@@ -76,6 +76,8 @@ public:
     void getGuidMap(QHash<QString, QString> &nameMap);   // get a hashtable of tag names with the GUID as the key
     void getNameMap(QHash<QString,QString> &nameMap);    // get a hashtable of tag GUIDs with the name as the key
     void findMissingParents(QList<qint32> &lids);        // Find any tags with invalid parent records
+    qint32 getAllInAccount(QList<qint32> &tags, qint32 account);   // Find all tags for a specific account
+    void getAllNames(QHash<qint32, QString> *list);    // Get a hastable of all tag names by lid
 
 
     // DB Write Functions

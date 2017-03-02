@@ -89,16 +89,20 @@ void TagEditorNewTag::loadCompleter() {
     QList<int> tagList;
     TagTable tagTable(global.db);
     QStringList tagNames;
-    tagTable.getAll(tagList);
+    QHash<qint32, QString> nameTable;
+    QHash<qint32, QString> completerEntries;
+    tagTable.getAllNames(&nameTable);
+
+    tagTable.getAllInAccount(tagList, account);
+    completerEntries.clear();
     for (qint32 i=0; i<tagList.size(); i++) {
-        Tag t;
-        QString guid;
-        tagTable.getGuid(guid, tagList[i]);
-        tagTable.get(t, guid);
-        QString name = t.name;
-        qint32 tagAccount = tagTable.owningAccount(tagList[i]);
-        if (!currentTags.contains(name) && tagAccount == account)
-            tagNames << name;        
+        QString name = "";
+        if (nameTable.contains(tagList[i]))
+            name = nameTable[tagList[i]];
+        if (name != "" && !completerEntries.contains(tagList[i]) && !currentTags.contains(name)) {
+            tagNames << name;
+            completerEntries.insert(tagList[i], name);
+        }
     }
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
     completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
@@ -248,6 +252,16 @@ void TagEditorNewTag::resetText() {
 void TagEditorNewTag::notebookSelectionChanged(qint32 notebook) {
     QLOG_TRACE_IN() << typeid(*this).name();
     account = notebook;
+    loadCompleter();
+    QLOG_TRACE_OUT() << typeid(*this).name();
+}
+
+
+
+
+void TagEditorNewTag::setAccount(qint32 account) {
+    QLOG_TRACE_IN() << typeid(*this).name();
+    this->account = account;
     loadCompleter();
     QLOG_TRACE_OUT() << typeid(*this).name();
 }

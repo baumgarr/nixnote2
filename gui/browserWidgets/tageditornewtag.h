@@ -46,6 +46,7 @@ public slots:
     void textModified(QString text);
 //    void gainedFocus(bool focus);
     void notebookSelectionChanged(qint32 notebook);
+    void setAccount(qint32 account);
     void loadCompleter();
     void mouseCompleterSelection(QString);
     void enterPressed();

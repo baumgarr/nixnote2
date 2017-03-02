@@ -105,6 +105,50 @@ qint32 TagTable::owningAccount(qint32 lid) {
     return retval;
 }
 
+
+
+// Get a list of all tag names hashed by LID
+void TagTable::getAllNames(QHash<qint32, QString> *list) {
+    NSqlQuery query(db);
+    list->clear();
+    db->lockForRead();
+    query.prepare("select lid, data from DataStore where key=:key");
+    query.bindValue(":key", TAG_NAME);
+    query.exec();
+    while (query.next()) {
+        list->insert(query.value(0).toInt(), query.value(1).toString());
+    }
+    query.finish();
+    db->unlock();
+    return;
+}
+
+
+
+// Get a list of all tags
+qint32 TagTable::getAllInAccount(QList<qint32> &tags, qint32 account) {
+    NSqlQuery query(db);
+    db->lockForRead();
+    if (account != 0)
+        query.prepare("select distinct lid from DataStore where key=:key and lid in (select lid from DataStore where key=:key2 and data=:account)");
+    else
+        query.prepare("select distinct lid from DataStore where key=:key and lid not in (select lid from DataStore where key=:key2)");
+    query.bindValue(":key", TAG_GUID);
+    query.bindValue(":key2", TAG_OWNING_ACCOUNT);
+    if (account !=0)
+        query.bindValue(":account", account);
+    query.exec();
+    while (query.next()) {
+        tags.append(query.value(0).toInt());
+    }
+    query.finish();
+    db->unlock();
+    return tags.size();
+}
+
+
+
+
 // Get a list of all tags
 qint32 TagTable::getAll(QList<qint32> &tags) {
     NSqlQuery query(db);
