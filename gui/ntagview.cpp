@@ -810,7 +810,11 @@ void NTagView::editComplete() {
 
     // Check that this tag doesn't already exist
     // if it exists, we go back to the original name
-    qint32 check = table.findByName(text, accountFilter);
+    qint32 check = 0;
+    if (text.toLower() == oldName.toLower() && text != oldName)
+        check = 0;
+    else
+        check = table.findByName(text, accountFilter);
     if (check != 0) {
         NTagViewItem *item = dataStore[lid];
         QString tagname = "";

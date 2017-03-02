@@ -449,11 +449,19 @@ void NSearchView::editComplete() {
     SearchTable table(global.db);
     SavedSearch s;
     table.get(s, lid);
+    QString oldName = "";
+    if (s.name.isSet())
+        oldName = s.name;
 
     // Check that this search doesn't already exist
     // if it exists, we go back to the original name
-    qint32 check = table.findByName(text);
-    if (check != 0) {
+    qint32 check = 0;
+    if (text.toLower() == oldName.toLower() && text != oldName)
+        check = 0;
+    else
+        check = table.findByName(text);
+
+    if (check != 0 || text.trimmed()=="") {
         NSearchViewItem *item = dataStore[lid];
         QString name = "";
         if (s.name.isSet())
