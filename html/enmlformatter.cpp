@@ -256,17 +256,17 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
             useLegacyTidy=true;
         } else {
             tidyRc = tidySetInCharEncoding(tdoc,"utf8");
-            if (tidyRc>=1) {
+            if (tidyRc>=2 || tidyRc < 0) {
                 QLOG_ERROR() << "Error using tidySetInCharEncoding: " << tidyRc;
                 useLegacyTidy=true;
             } else {
                 tidyRc = tidySetOutCharEncoding(tdoc, "utf8");
-                if (tidyRc>=1) {
+                if (tidyRc>=2 || tidyRc < 0) {
                     QLOG_ERROR() << "Error using tidyOutInCharEncoding: " << tidyRc;
                     useLegacyTidy=true;
                 } else {
                     tidyRc = tidySetErrorBuffer(tdoc, &errout);
-                    if (tidyRc>=1) {
+                    if (tidyRc>=2 || tidyRc < 0) {
                         QLOG_ERROR() << "Error using tidySetErrorBuffer: " << tidyRc;
                         useLegacyTidy=true;
                     } else {
@@ -277,17 +277,17 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                         buffer[tarray.size()] = '\0';
                         tidyRc = tidyParseString(tdoc, buffer);
                         delete buffer;
-                        if (tidyRc>=1) {
+                        if (tidyRc>=2 || tidyRc < 0) {
                             QLOG_ERROR() << "Error using tidyParseString: " << tidyRc;
                             useLegacyTidy=true;
                         } else {
                             tidyRc = tidyCleanAndRepair(tdoc);
-                            if (tidyRc>=1) {
+                            if (tidyRc>=2 || tidyRc < 0) {
                                 QLOG_ERROR() << "Error using tidyCleanAndRepair: " << tidyRc;
                                 useLegacyTidy=true;
                             } else {
                                 tidyRc = tidySaveBuffer(tdoc, &output);
-                                if (tidyRc>=1) {
+                                if (tidyRc>=2 || tidyRc < 0) {
                                     QLOG_ERROR() << "Error using tidySaveBuffer: " << tidyRc;
                                     useLegacyTidy=true;
                                 } else {
