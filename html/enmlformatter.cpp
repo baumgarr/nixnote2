@@ -300,8 +300,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
                 }
             }
         }
-        tidyBufFree(&output);
-        //tidyBufFree(&errout);  For some reason ths causes a crash
+        if (output.allocated)
+           tidyBufFree(&output);
+        if (errout.allocated)
+            tidyBufFree(&errout);
         tidyRelease(tdoc);
     }
 
