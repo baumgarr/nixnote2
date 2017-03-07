@@ -1,4 +1,0 @@
-nixnote2-webcam-plugin (1.0-1) stable; urgency=low
-  * Initial release.                                         
- -- Randy Baumgarte <randy@fbn.cx>  Sat, 16 Jul 2016 12:00:00 -0400
-

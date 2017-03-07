@@ -1,0 +1,8 @@
+nixnote2-webcam-plugin (1.1-1) stable; urgency=low
+  * Move plugin directory to /usr/lib/nixnote2.                                         
+ -- Randy Baumgarte <randy@fbn.cx>  Tue, 7 Mar 2017 12:00:00 -0400
+
+nixnote2-webcam-plugin (1.0-1) stable; urgency=low
+  * Initial release.                                         
+ -- Randy Baumgarte <randy@fbn.cx>  Sat, 16 Jul 2016 12:00:00 -0400
+
