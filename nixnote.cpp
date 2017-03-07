@@ -3900,12 +3900,12 @@ void NixNote::exportAsPdf() {
 
 
     if (lids.size() <= 0) {
-        QString file = "/home/randy/test.pdf";
-
-        if (file == "")
-            return;
         QList<qint32> lids;
         noteTableView->getSelectedLids(lids);
+
+        QString file = QFileDialog::getSaveFileName(0,tr("PDF Export"), "","*.pdf");
+        if (file == "")
+            return;
 
         QPrinter printer;
         printer.setOutputFormat(QPrinter::PdfFormat);
