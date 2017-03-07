@@ -9,13 +9,14 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
     unix:INCLUDEPATH += /usr/include/poppler/qt5
     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
+    win32:INCLUDEPATH+= "$$PWD/winlib/includes"
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
     unix:LIBS +=    -lcurl \
                -lpthread -L/usr/lib -lpoppler-qt5 -ltidy -g -rdynamic
-    win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
-    win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
+    win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5 -ltidy
     win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
 }
+
 
 equals(QT_MAJOR_VERSION, 4) {
     QT       += core gui webkit sql network xml
