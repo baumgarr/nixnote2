@@ -60,6 +60,7 @@ private:
     QHash<QString, qint32> hashMap;
     QHash<qint32, Resource> resourceMap;
     bool resourceHighlight;
+    const char* findImageFormat(QString file);
 
 public:
     bool resourceError;
