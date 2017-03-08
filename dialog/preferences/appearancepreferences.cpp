@@ -58,18 +58,21 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     fontPreviewInDialog->setChecked(global.previewFontsInDialog());
 
     traySingleClickAction = new QComboBox();
+    traySingleClickAction->addItem(tr("Do Nothing"), -1);
     traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
     traySingleClickAction->addItem(tr("New Text Note"), 1);
     traySingleClickAction->addItem(tr("New Quick Note"), 2);
     traySingleClickAction->addItem(tr("Screen Capture"), 3);
 
     trayMiddleClickAction = new QComboBox();
+    trayMiddleClickAction->addItem(tr("Do Nothing"), -1);
     trayMiddleClickAction->addItem(tr("Show/Hide NixNote"), 0);
     trayMiddleClickAction->addItem(tr("New Text Note"), 1);
     trayMiddleClickAction->addItem(tr("New Quick Note"), 2);
     trayMiddleClickAction->addItem(tr("Screen Capture"), 3);
 
     trayDoubleClickAction = new QComboBox();
+    trayDoubleClickAction->addItem(tr("Do Nothing"), -1);
     trayDoubleClickAction->addItem(tr("Show/Hide NixNote"), 0);
     trayDoubleClickAction->addItem(tr("New Text Note"), 1);
     trayDoubleClickAction->addItem(tr("New Quick Note"), 2);
@@ -248,9 +251,9 @@ void AppearancePreferences::saveValues() {
     global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();
     global.settings->setValue("autoHideEditorToolbar", global.autoHideEditorToolbar);
     global.settings->setValue("mouseMiddleClickOpen", mouseMiddleClickAction->currentIndex());
-    global.settings->setValue("trayDoubleClickAction", trayDoubleClickAction->currentIndex());
-    global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
-    global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
+    global.settings->setValue("trayDoubleClickAction", trayDoubleClickAction->currentData(Qt::UserRole).toInt());
+    global.settings->setValue("traySingleClickAction", traySingleClickAction->currentData(Qt::UserRole).toInt());
+    global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentData(Qt::UserRole).toInt());
     global.settings->setValue("systemNotifier", sysnotifier);
 //    global.settings->remove("trayDoubleClickAction");
     global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
