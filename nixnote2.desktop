@@ -3,7 +3,7 @@ Name=NixNote2
 Comment=Use with Evernote to remember everything
 GenericName=Evernote-clone
 Exec=nixnote2
-Icon=/usr/share/nixnote2/images/windowIcon.png
+Icon=nixnote2
 StartupNotify=true
 Terminal=false
 Type=Application
@@ -13,5 +13,5 @@ Keywords=NixNote2;Text;Evernote;note;
 Actions=NewNote;
 [Desktop Action NewNote]
 Name=New Note
+Name[zh_CN]=新建笔记
 Exec=nixnote2 --newNote
-OnlyShowIn=Unity;
