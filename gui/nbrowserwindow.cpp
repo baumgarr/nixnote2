@@ -1780,9 +1780,12 @@ void NBrowserWindow::attachFile() {
         fileDialog.setDirectory(attachFilePath);
     else
         fileDialog.setDirectory(QDir::homePath());
-    fileDialog.setFileMode(QFileDialog::ExistingFile);
-    connect(&fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(attachFileSelected(QString)));
-    fileDialog.exec();
+    fileDialog.setFileMode(QFileDialog::ExistingFiles);
+    //connect(&fileDialog, SIGNAL(fileSelected(QString)), this, SLOT(attachFileSelected(QString)));
+    //fileDialog.exec();
+    QStringList list = fileDialog.getOpenFileNames();
+    for (int i=0; i<list.size(); i++)
+        attachFileSelected(list[i]);
 }
 
 
