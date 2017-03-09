@@ -153,7 +153,7 @@ int CmdLineTool::deleteNote(StartupConfig config) {
 
     if (config.delNote->verifyDelete) {
         std::string verify;
-        std::cout << QString(tr("Type DELETE to very: ")).toStdString();
+        std::cout << QString(tr("Type DELETE to verify: ")).toStdString();
         std::cin >> verify;
         QString qVerify = QString::fromStdString(verify);
         if (qVerify.toLower() != "delete")
@@ -218,7 +218,7 @@ int CmdLineTool::queryNotes(StartupConfig config) {
             }
         }
         if (!goodResponse)
-            std::cout << QString(tr("No resospnse received from NixNote.")).toStdString() << std::endl;
+            std::cout << QString(tr("No response received from NixNote.")).toStdString() << std::endl;
     } else {
         // The other NixNote isn't found, so we do the query ourself
         global.db = new DatabaseConnection("nixnote");  // Startup the database
@@ -235,7 +235,7 @@ int CmdLineTool::queryNotes(StartupConfig config) {
 }
 
 
-// Add a note via the command line.  if Nixnote is runnning,
+// Add a note via the command line.  if Nixnote is running,
 // the new note is copied into the dbi directory and
 // auto-imported.  If it is not running it is created directly.
 int CmdLineTool::addNote(StartupConfig config) {

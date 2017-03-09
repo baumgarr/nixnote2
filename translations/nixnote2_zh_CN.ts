@@ -11,9 +11,9 @@
     <message>
         <location filename="../dialog/aboutdialog.cpp" line="53"/>
         <source>Note to translators: For translation credit, change this message to your name &amp; contact information and it will appear in the About dialog box. HTML Formatting is available.</source>
-        <translation>&lt;span align=&quot;center&quot;&gt;&lt;p&gt;简体中文翻译：Aten Zhang, 2016。&lt;br&gt;
+        <translation>&lt;span align=&quot;center&quot;&gt;&lt;p&gt;简体中文翻译：Aten Zhang, 2016；&lt;br&gt;Boyuan Yang, 2017。
 有任何翻译缺失、BUG和改进意见&lt;br&gt;
-请发邮件到&lt;i&gt;atenzd@gmail.com&lt;/i&gt;。&lt;/p&gt;&lt;/span&gt;</translation>
+请发邮件到&lt;i&gt;atenzd@gmail.com&lt;/i&gt;或向项目提交错误报告。&lt;/p&gt;&lt;/span&gt;</translation>
     </message>
 </context>
 <context>

@@ -47,7 +47,7 @@ void TagScanner::setData(QString data) {
         newRec.endPosition = content.indexOf(QString(">"), position);   // Position of the next >
         qint32 space = content.indexOf(" ", position);  // If there is a space, then we remove any trailing values
 
-        // Check for an invaild end position
+        // Check for an invalid end position
         if (space > newRec.endPosition || space == -1)
             space = newRec.endPosition;
 
