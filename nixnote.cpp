@@ -688,16 +688,14 @@ void NixNote::setupGui() {
     // Determine if we should start minimized
     QLOG_DEBUG() << "isSystemTrayAvailable:" << QSystemTrayIcon::isSystemTrayAvailable();
     if (global.startMinimized && !global.forceNoStartMimized && (QSystemTrayIcon::isSystemTrayAvailable()||global.forceSystemTrayAvailable)) {
+        this->setWindowState(Qt::WindowMinimized);
         if (minimizeToTray)
-            this->hide();
-        else
-            this->setWindowState(Qt::WindowMinimized);
+            QTimer::singleShot(100,this, SLOT(hide()));
     }
     if (global.forceStartMinimized) {
+        this->setWindowState(Qt::WindowMinimized);
         if (minimizeToTray)
-            this->hide();
-        else
-            this->setWindowState(Qt::WindowMinimized);
+            QTimer::singleShot(100,this, SLOT(hide()));
     }
 
     // Restore expanded tags & stacks
