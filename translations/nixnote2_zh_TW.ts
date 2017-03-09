@@ -591,14 +591,12 @@
         <translation>無法連接到共享記憶體。請確保 NixNote 正在運行！</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="156"/>
         <source>Type DELETE to very: </source>
-        <translation>確認刪除類型</translation>
+        <translation type="vanished">確認刪除類型</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="221"/>
         <source>No resospnse received from NixNote.</source>
-        <translation>未收到 NixNote 的響應。</translation>
+        <translation type="vanished">未收到 NixNote 的響應。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="315"/>
@@ -643,9 +641,15 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="221"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="654"/>
         <source>No response received from NixNote.</source>
         <translation>未收到 NixNote 的響應。</translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="156"/>
+        <source>Type DELETE to verify: </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="663"/>
@@ -1531,8 +1535,12 @@ Please specify server settings in the Preferences menu.</source>
     </message>
     <message>
         <location filename="../cmdtools/extractnotes.cpp" line="65"/>
+        <source>Type DELETE to verify: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Type DELETE to very: </source>
-        <translation type="unfinished">確認刪除類型</translation>
+        <translation type="obsolete">確認刪除類型</translation>
     </message>
 </context>
 <context>

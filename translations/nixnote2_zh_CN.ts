@@ -341,7 +341,7 @@
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="98"/>
         <source>Qt Default</source>
-        <translation>Qt默认</translation>
+        <translation>Qt 默认</translation>
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="99"/>
@@ -593,14 +593,12 @@
         <translation>无法连接到共享内存段。是否有其它的 NixNote 实例在同时运行？</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="156"/>
         <source>Type DELETE to very: </source>
-        <translation>输入 DELETE 以确认：</translation>
+        <translation type="vanished">输入 DELETE 以确认：</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="221"/>
         <source>No resospnse received from NixNote.</source>
-        <translation>未收到NixNote的响应。</translation>
+        <translation type="vanished">未收到NixNote的响应。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="315"/>
@@ -645,9 +643,15 @@
         <translation>未找到。</translation>
     </message>
     <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="221"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="654"/>
         <source>No response received from NixNote.</source>
         <translation>未收到NixNote的响应。</translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="156"/>
+        <source>Type DELETE to verify: </source>
+        <translation>输入 DELETE 以确认：</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="663"/>
@@ -660,7 +664,7 @@
         <location filename="../cmdtools/cmdlinetool.cpp" line="722"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="742"/>
         <source>This cannot be done with NixNote running.</source>
-        <translation>无法在NixNote正在运行时完成该操作。</translation>
+        <translation>无法在 NixNote 正在运行时完成该操作。</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="732"/>
@@ -1134,7 +1138,7 @@
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="66"/>
         <source>HTML Entities</source>
-        <translation>HTML实体</translation>
+        <translation>HTML 实体</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="204"/>
@@ -1153,7 +1157,7 @@
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="274"/>
         <source>Insert HTML Entities</source>
-        <translation>插入HTML实体</translation>
+        <translation>插入 HTML 实体</translation>
     </message>
     <message>
         <location filename="../gui/browserWidgets/editorbuttonbar.cpp" line="661"/>
@@ -1540,8 +1544,12 @@ Please specify server settings in the Preferences menu.</source>
     </message>
     <message>
         <location filename="../cmdtools/extractnotes.cpp" line="65"/>
-        <source>Type DELETE to very: </source>
+        <source>Type DELETE to verify: </source>
         <translation>输入 DELETE 以确认：</translation>
+    </message>
+    <message>
+        <source>Type DELETE to very: </source>
+        <translation type="vanished">输入 DELETE 以确认：</translation>
     </message>
 </context>
 <context>
@@ -1779,52 +1787,52 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="40"/>
         <source>MM/dd/yy - </source>
-        <translation></translation>
+        <translation>MM/dd/yy - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="41"/>
         <source>MM/dd/yyyy - </source>
-        <translation></translation>
+        <translation>MM/dd/yyyy - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="42"/>
         <source>M/dd/yyyy - </source>
-        <translation></translation>
+        <translation>M/dd/yyyy - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="43"/>
         <source>M/d/yyyy - </source>
-        <translation></translation>
+        <translation>M/d/yyyy - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="44"/>
         <source>dd/MM/yy - </source>
-        <translation></translation>
+        <translation>dd/MM/yy - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="45"/>
         <source>d/M/yy - </source>
-        <translation></translation>
+        <translation>d/M/yy - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="46"/>
         <source>dd/MM/yyyy - </source>
-        <translation></translation>
+        <translation>dd/MM/yyyy - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="47"/>
         <source>d/M/yyyy - </source>
-        <translation></translation>
+        <translation>d/M/yyyy - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="48"/>
         <source>yyyy-MM-dd - </source>
-        <translation></translation>
+        <translation>yyyy-MM-dd - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="49"/>
         <source>yy-MM-dd - </source>
-        <translation></translation>
+        <translation>yy-MM-dd - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="52"/>
@@ -1834,52 +1842,52 @@ See http://www.w3schools.com/charsets/ for list.</source>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="55"/>
         <source>HH:mm:ss - </source>
-        <translation></translation>
+        <translation>HH:mm:ss - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="56"/>
         <source>HH:mm:ss a - </source>
-        <translation></translation>
+        <translation>HH:mm:ss a - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="57"/>
         <source>HH:mm - </source>
-        <translation></translation>
+        <translation>HH:mm - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="58"/>
         <source>HH:mm a - </source>
-        <translation></translation>
+        <translation>HH:mm a - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="59"/>
         <source>hh:mm:ss - </source>
-        <translation></translation>
+        <translation>hh:mm:ss - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="60"/>
         <source>hh:mm:ss a- </source>
-        <translation></translation>
+        <translation>hh:mm:ss a- </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="61"/>
         <source>h:mm:ss a - </source>
-        <translation></translation>
+        <translation>h:mm:ss a - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="62"/>
         <source>hh:mm - </source>
-        <translation></translation>
+        <translation>hh:mm - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="63"/>
         <source>hh:mm a - </source>
-        <translation></translation>
+        <translation>hh:mm a - </translation>
     </message>
     <message>
         <location filename="../dialog/preferences/localepreferences.cpp" line="64"/>
         <source>h:mm a - </source>
-        <translation></translation>
+        <translation>h:mm a - </translation>
     </message>
 </context>
 <context>
@@ -2957,7 +2965,7 @@ Unable to decrypt.</source>
     <message>
         <location filename="../gui/nnotebookview.cpp" line="131"/>
         <source>Properties</source>
-        <translation>性质</translation>
+        <translation>属性</translation>
     </message>
     <message>
         <location filename="../gui/nnotebookview.cpp" line="641"/>

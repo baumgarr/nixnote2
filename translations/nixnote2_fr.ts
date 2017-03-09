@@ -589,16 +589,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="156"/>
-        <source>Type DELETE to very: </source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="221"/>
-        <source>No resospnse received from NixNote.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="315"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="452"/>
         <source> has been created.
@@ -641,8 +631,14 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="221"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="654"/>
         <source>No response received from NixNote.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="156"/>
+        <source>Type DELETE to verify: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1528,7 +1524,7 @@ Please specify server settings in the Preferences menu.</source>
     </message>
     <message>
         <location filename="../cmdtools/extractnotes.cpp" line="65"/>
-        <source>Type DELETE to very: </source>
+        <source>Type DELETE to verify: </source>
         <translation type="unfinished"></translation>
     </message>
 </context>

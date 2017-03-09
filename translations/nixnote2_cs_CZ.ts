@@ -600,14 +600,12 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <translation>Nemohu se připojit ke sdílené paměti.  Není spuštěný další NixNote?</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="156"/>
         <source>Type DELETE to very: </source>
-        <translation>Napište &quot;DELETE&quot; pro potvrzení smazání:</translation>
+        <translation type="vanished">Napište &quot;DELETE&quot; pro potvrzení smazání:</translation>
     </message>
     <message>
-        <location filename="../cmdtools/cmdlinetool.cpp" line="221"/>
         <source>No resospnse received from NixNote.</source>
-        <translation>Neobdržena žádná odezva z NixNote.</translation>
+        <translation type="vanished">Neobdržena žádná odezva z NixNote.</translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="315"/>
@@ -652,9 +650,15 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="221"/>
         <location filename="../cmdtools/cmdlinetool.cpp" line="654"/>
         <source>No response received from NixNote.</source>
         <translation>Neobdržena žádná odezva z NixNote.</translation>
+    </message>
+    <message>
+        <location filename="../cmdtools/cmdlinetool.cpp" line="156"/>
+        <source>Type DELETE to verify: </source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../cmdtools/cmdlinetool.cpp" line="663"/>
@@ -1544,9 +1548,13 @@ Prosím upřesněte nastavení v nabídce &quot;Předvolby&quot;.</translation>
     </message>
     <message>
         <location filename="../cmdtools/extractnotes.cpp" line="65"/>
+        <source>Type DELETE to verify: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>Type DELETE to very: </source>
         <translatorcomment>TODO: ověřit v GUI</translatorcomment>
-        <translation>Napište &quot;DELETE&quot; pro potvrzení smazání:</translation>
+        <translation type="vanished">Napište &quot;DELETE&quot; pro potvrzení smazání:</translation>
     </message>
 </context>
 <context>
