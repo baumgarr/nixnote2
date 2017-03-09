@@ -169,15 +169,19 @@ NWebView::NWebView(NBrowserWindow *parent) :
     tableMenu->addAction(insertTableAction);
     connect(insertTableAction, SIGNAL(triggered()), parent, SLOT(insertTableButtonPressed()));
     tableMenu->addSeparator();
+
     insertTableRowAction = new QAction(tr("Insert Row"), this);
     this->setupShortcut(insertTableRowAction, "Edit_Insert_Table_Row");
     tableMenu->addAction(insertTableRowAction);
     connect(insertTableRowAction, SIGNAL(triggered()), parent, SLOT(insertTableRowButtonPressed()));
+
     insertTableColumnAction = new QAction(tr("Insert Column"), this);
     this->setupShortcut(insertTableColumnAction, "Edit_Insert_Table_Column");
     tableMenu->addAction(insertTableColumnAction);
     connect(insertTableColumnAction, SIGNAL(triggered()), parent, SLOT(insertTableColumnButtonPressed()));
+
     tableMenu->addSeparator();
+
     deleteTableRowAction = new QAction(tr("Delete Row"), this);
     tableMenu->addAction(deleteTableRowAction);
     this->setupShortcut(deleteTableRowAction, "Edit_Delete_Table_Row");
@@ -186,6 +190,14 @@ NWebView::NWebView(NBrowserWindow *parent) :
     tableMenu->addAction(deleteTableColumnAction);
     this->setupShortcut(deleteTableColumnAction, "Edit_Delete_Table_Column");
     connect(deleteTableColumnAction, SIGNAL(triggered()), parent, SLOT(deleteTableColumnButtonPressed()));
+
+    tableMenu->addSeparator();
+
+    tablePropertiesAction = new QAction(tr("Table Properties"), this);
+    this->setupShortcut(tablePropertiesAction, "Edit_Table_Properties");
+    tableMenu->addAction(tablePropertiesAction);
+    connect(tablePropertiesAction, SIGNAL(triggered()), parent, SLOT(tablePropertiesButtonPressed()));
+
     contextMenu->addSeparator();
 
     imageMenu = new QMenu(tr("Image"), this);

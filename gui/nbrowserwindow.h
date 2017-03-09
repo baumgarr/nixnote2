@@ -36,6 +36,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QTextEdit>
 #include <QTimer>
 #include <QPrinter>
+#include <QThread>
 
 #include "gui/nwebview.h"
 
@@ -60,6 +61,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "plugins/hunspell/hunspellinterface.h"
 #include "plugins/hunspell/hunspellplugin.h"
 #include "gui/findreplace.h"
+#include "threads/browserrunner.h"
 
 class ToolbarWidgetAction;
 
@@ -74,6 +76,8 @@ class NBrowserWindow : public QWidget
 {
     Q_OBJECT
 private:
+    QThread *browserThread;
+    BrowserRunner *browserRunner;
     void setupToolBar();
     QTimer *sourceEditorTimer;
     bool insertHyperlink;
@@ -93,6 +97,7 @@ private:
     Thumbnailer *hammer;
     Thumbnailer *thumbnailer;
     QTimer focusTimer;
+    QTimer saveTimer;
     QString attachFilePath;  // Save path of last selected attachment.
 
     // Global plugins
@@ -116,8 +121,13 @@ private:
 
     QString stripContentsForPrint();
 
+    QString tableCellStyle;
+    QString tableStyle;
+
+
 public:
     explicit NBrowserWindow(QWidget *parent = 0);
+    ~NBrowserWindow();
     QString uuid;
     NWebView *editor;
     void setContent(qint32 lid);
@@ -183,6 +193,7 @@ signals:
     void noteAlarmEditedSignal(QString uuid, qint32 lid, bool strikeout, QString text);
     void showHtmlEntities();
     void setMessage(QString msg);
+    void requestNoteContentUpdate(qint32, QString, bool);
 
 public slots:
     void saveNoteContent();
@@ -218,6 +229,7 @@ public slots:
     void subscriptButtonPressed();
     void alignLeftButtonPressed();
     void alignCenterButtonPressed();
+    void alignFullButtonPressed();
     void alignRightButtonPressed();
     void horizontalLineButtonPressed();
     void shiftLeftButtonPressed();
@@ -238,6 +250,7 @@ public slots:
     void insertTableButtonPressed();
     void insertTableRowButtonPressed();
     void insertTableColumnButtonPressed();
+    void tablePropertiesButtonPressed();
     void deleteTableRowButtonPressed();
     void deleteTableColumnButtonPressed();
     void rotateImageLeftButtonPressed();
@@ -252,6 +265,9 @@ public slots:
     void insertDatetime();
     void attachFile();
     void attachFileSelected(QString filename);
+
+    void setTableCellStyle(QString value);
+    void setTableStyle(QString value);
 
     void exposeToJavascript();
     void boldActive();
@@ -307,6 +323,8 @@ private slots:
     void sendUrlUpdateSignal();
     void newTagAdded(qint32);
     void focusCheck();
+    void saveTimeCheck();
+    void browserThreadStarted();
 
 };
 

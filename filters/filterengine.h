@@ -38,8 +38,13 @@ private:
     void filterSearchStringAll(QStringList list);
     void splitSearchTerms(QStringList &list, QString search);
     void filterSearchStringNotebookAll(QString string);
-    void filterSearchTodoAll(QStringList list);
+//    void filterSearchTodoAll(QStringList list);
     void filterSearchStringTodoAll(QString string);
+    void filterSearchStringReminderOrderAll(QString string);
+    void filterSearchStringReminderDoneTimeAll(QString string);
+    void filterSearchStringReminderDoneTimeAny(QString string);
+    void filterSearchStringReminderTimeAll(QString string);
+    void filterSearchStringReminderTimeAny(QString string);
     void filterSearchStringTagAll(QString string);
     void filterSearchStringIntitleAll(QString string);
     void filterSearchStringResourceAll(QString string);
@@ -56,6 +61,7 @@ private:
     void filterSearchStringAny(QStringList list);
     void filterSearchStringNotebookAny(QString string);
     void filterSearchStringTodoAny(QString string);
+    void filterSearchStringReminderOrderAny(QString string);
     void filterSearchStringTagAny(QString string);
     void filterSearchStringIntitleAny(QString string);
     void filterSearchStringResourceAny(QString string);

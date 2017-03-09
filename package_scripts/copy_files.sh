@@ -44,6 +44,7 @@ echo "Building directories"
 mkdir $package_dir/nixnote2
 mkdir $package_dir/nixnote2/usr
 mkdir $package_dir/nixnote2/usr/share
+mkdir $package_dir/nixnote2/usr/share/pixmaps
 mkdir $package_dir/nixnote2/usr/share/applications
 mkdir $package_dir/nixnote2/usr/share/nixnote2
 mkdir $package_dir/nixnote2/usr/share/man 
@@ -54,6 +55,7 @@ mkdir $package_dir/nixnote2/usr/share/doc/nixnote2
 
 # Copy binary, configs, & man pages
 echo "Copying files"
+cp $source_dir/images/windowIcon.png $package_dir/nixnote2/usr/share/pixmaps/
 cp $source_dir/*.ini $package_dir/nixnote2/usr/share/nixnote2/
 cp $source_dir/*.txt $package_dir/nixnote2/usr/share/nixnote2/
 cp $source_dir/*.html $package_dir/nixnote2/usr/share/nixnote2/

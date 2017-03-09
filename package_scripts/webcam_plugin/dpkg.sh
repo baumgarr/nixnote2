@@ -71,7 +71,7 @@ dpkg -b $package_dir/nixnote2 $package_dir/nixnote2-webcam-plugin-${version}_${a
 rm -rf $package_dir/nixnote2/DEBIAN
 
 # copy the gpl.txt back in 
-cp $source_dir/gpl.txt $package_dir/nixnote2/usr/share/nixnote2/gpl.txt
+#cp $source_dir/gpl.txt $package_dir/nixnote2/usr/share/nixnote2/gpl.txt
 
 # Exit
 cd -

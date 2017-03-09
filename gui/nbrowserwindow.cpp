@@ -48,6 +48,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/remindersetdialog.h"
 #include "dialog/spellcheckdialog.h"
 #include "utilities/pixelconverter.h"
+#include "gui/browserWidgets/table/tablepropertiesdialog.h"
 
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
@@ -79,6 +80,14 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     // Setup a unique identifier for this editor instance.
     QUuid uuid;
     this->uuid =  uuid.createUuid().toString().replace("{","").replace("}","");
+
+
+    browserThread = new QThread();
+    connect(browserThread, SIGNAL(started()), this, SLOT(browserThreadStarted()));
+    browserRunner = new BrowserRunner(0);
+    connect(this, SIGNAL(requestNoteContentUpdate(qint32, QString, bool)), browserRunner, SLOT(updateNoteContent(qint32, QString, bool)));
+    browserThread->start();
+
 
 //    this->setStyleSheet("margins:0px;");
     QHBoxLayout *line1Layout = new QHBoxLayout();
@@ -257,9 +266,26 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     focusTimer.setInterval(100);
     focusTimer.start();
 
+    connect(&saveTimer, SIGNAL(timeout()), this, SLOT(saveTimeCheck()));
+    saveTimer.setInterval(global.autoSaveInterval);
+    saveTimer.start();
+
     hunspellInterface = NULL;
 }
 
+
+// Destructor
+NBrowserWindow::~NBrowserWindow() {
+    browserThread->quit();
+    while (!browserRunner->isIdle);
+}
+
+
+
+// Browser helper thread is ready
+void NBrowserWindow::browserThreadStarted() {
+    browserRunner->moveToThread(browserThread);
+}
 
 
 // Setup the toolbar window of the editor
@@ -302,6 +328,9 @@ void NBrowserWindow::setupToolBar() {
 
     connect(buttonBar->centerJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignCenterButtonPressed()));
     connect(buttonBar->centerJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignCenterButtonPressed()));
+
+    connect(buttonBar->fullJustifyButtonAction, SIGNAL(triggered()), this, SLOT(alignFullButtonPressed()));
+    connect(buttonBar->fullJustifyButtonShortcut, SIGNAL(activated()), this, SLOT(alignFullButtonPressed()));
 
     connect(buttonBar->strikethroughButtonAction, SIGNAL(triggered()), this, SLOT(strikethroughButtonPressed()));
     connect(buttonBar->strikethroughButtonShortcut, SIGNAL(activated()), this, SLOT(strikethroughButtonPressed()));
@@ -549,7 +578,7 @@ void NBrowserWindow::setContent(qint32 lid) {
         }
     }
 
-    QLOG_DEBUG() << "Checking thumbanail";
+    QLOG_DEBUG() << "Checking thumbnail";
     if (hammer->idle && noteTable.isThumbnailNeeded(this->lid)) {
         hammer->render(this->lid);
     }
@@ -735,8 +764,8 @@ void NBrowserWindow::saveNoteContent() {
     microFocusChanged();
 
     if (this->editor->isDirty) {
-        //QString contents = editor->editorPage->mainFrame()->toHtml();
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
+
         EnmlFormatter formatter;
         formatter.setHtml(contents);
         formatter.rebuildNoteEnml();
@@ -773,8 +802,11 @@ void NBrowserWindow::saveNoteContent() {
         }
 
         QLOG_DEBUG() << "Updating note content";
-        NoteTable table(global.db);
-        table.updateNoteContent(lid, formatter.getEnml());
+        if (!global.multiThreadSaveEnabled) {
+            NoteTable table(global.db);
+            table.updateNoteContent(lid, formatter.getEnml());
+        } else
+            emit requestNoteContentUpdate(lid, formatter.getEnml(), true);
         editor->isDirty = false;
         if (thumbnailer == NULL)
             thumbnailer = new Thumbnailer(global.db);
@@ -789,11 +821,8 @@ void NBrowserWindow::saveNoteContent() {
             b.append(contents);
             cache->noteContent = b;
             global.cache.remove(lid);
-//            global.cache.insert(lid, cache);
         }
         QLOG_DEBUG() << "Leaving saveNoteContent()";
-        // Make sure the thumnailer is done
-        //while(!thumbnailer.idle);
     }
 }
 
@@ -1093,6 +1122,15 @@ void NBrowserWindow::alignCenterButtonPressed() {
     microFocusChanged();
 }
 
+
+
+// The full align button was pressed
+void NBrowserWindow::alignFullButtonPressed() {
+    this->editor->page()->mainFrame()->evaluateJavaScript(
+            "document.execCommand('JustifyFull', false, '');");
+    editor->setFocus();
+    microFocusChanged();
+}
 
 
 // The left align button was pressed
@@ -1454,10 +1492,6 @@ void NBrowserWindow::insertTableButtonPressed() {
     QString widthString = QString::number(width);
     if (percent)
         widthString = widthString+"%";
-//    newHTML = tableStyle.arg(width);
-//    if (percent)
-//        newHTML = newHTML +"%";
-//    newHTML = newHTML + "\"><tbody>";
     newHTML = "<table "+tableStyle.arg(widthString)+"<tbody>";
 
     for (int i=0; i<rows; i++) {
@@ -1506,6 +1540,8 @@ void NBrowserWindow::insertTableRowButtonPressed() {
 
 
 void NBrowserWindow::insertTableColumnButtonPressed() {
+    if (!editor->insertTableColumnAction->isEnabled())
+        return;
     QString js = "function insertTableColumn() {"
             "   var selObj = window.getSelection();"
             "   var selRange = selObj.getRangeAt(0);"
@@ -1535,7 +1571,91 @@ void NBrowserWindow::insertTableColumnButtonPressed() {
 }
 
 
+
+
+void NBrowserWindow::tablePropertiesButtonPressed() {
+    if (!editor->tablePropertiesAction->isEnabled())
+        return;
+    tableCellStyle = "";
+    tableStyle = "";
+
+    // First go through the table & find the existing cell & table attributes
+    QString js = "function tableProperties() {"
+            "   var selObj = window.getSelection();"
+            "   var selRange = selObj.getRangeAt(0);"
+            "   var workingNode = window.getSelection().anchorNode.parentNode;"
+            "   var current = 0;"
+            "   var style = '';"
+            "   while (workingNode.nodeName.toLowerCase() != 'table' && workingNode != null) {"
+            "       if (workingNode.nodeName.toLowerCase() == 'td') {"
+            "          var td = workingNode;"
+            "          if (style == '' && td.hasAttribute('style')) style = td.attributes['style'].value;"
+            "          while (td.previousSibling != null) { "
+            "             current = current+1; td = td.previousSibling;"
+            "          }"
+            "       }"
+            "       workingNode = workingNode.parentNode; "
+            "   }"
+            "   if (workingNode == null) return;"
+            "   window.browserWindow.setTableCellStyle(style);"
+            "   window.browserWindow.printNodeName(style);"
+            "   if (workingNode.hasAttribute('style')) {"
+            "       var td = workingNode;"
+            "       style = td.attributes['style'].value;"
+            "       window.browserWindow.setTableStyle(style);"
+            "   }"
+            "} tableProperties();";
+        editor->page()->mainFrame()->evaluateJavaScript(js);
+        QLOG_DEBUG() << this->tableStyle;
+        QLOG_DEBUG() << this->tableCellStyle;
+
+        TablePropertiesDialog dialog(tableStyle, tableCellStyle);
+        dialog.exec();
+
+        if (!dialog.okButtonPressed)
+            return;
+
+        QString newTableStyle = dialog.getTableCss();
+        QString newCellStyle = dialog.getCellCss();
+
+        // Go through the table & change the styles attributes.
+        js = "function setTableProperties() {"
+                "   var selObj = window.getSelection();"
+                "   var selRange = selObj.getRangeAt(0);"
+                "   var workingNode = window.getSelection().anchorNode.parentNode;"
+                "   var style = '';"
+                "   while (workingNode.nodeName.toLowerCase() != 'table' && workingNode != null) {"
+                "       if (workingNode.nodeName.toLowerCase() == 'td') {"
+                "          var td = workingNode;"
+                "          while (td.previousSibling != null) { "
+                "             td = td.previousSibling;"
+                "          }"
+                "       }"
+                "       workingNode = workingNode.parentNode; "
+                "   }"
+                "   if (workingNode == null) return;"
+                "   workingNode.attributes['style'].value = '%1';"
+                "   window.browserWindow.setTableCellStyle(style);"
+                "   var rowCount = workingNode.rows.length;"
+                "   for (var i=0; i<rowCount; i++) {"
+                "      var colCount = workingNode.rows[i].cells.length;"
+                "      for (var j=0; j<colCount; j++) {"
+                "         workingNode.rows[i].cells[j].attributes['style'].value = '%2';"
+                "      }"
+                "   }"
+                "} setTableProperties();";
+        js = js.arg(newTableStyle).arg(newCellStyle);
+        editor->page()->mainFrame()->evaluateJavaScript(js);
+        this->editor->isDirty = true;
+        microFocusChanged();
+}
+
+
+
 void NBrowserWindow::deleteTableRowButtonPressed() {
+    if (!editor->deleteTableRowAction->isEnabled())
+        return;
+
     QString js = "function deleteTableRow() {"
         "   var selObj = window.getSelection();"
         "   var selRange = selObj.getRangeAt(0);"
@@ -1554,7 +1674,11 @@ void NBrowserWindow::deleteTableRowButtonPressed() {
 }
 
 
+
 void NBrowserWindow::deleteTableColumnButtonPressed() {
+    if (!editor->deleteTableColumnAction->isEnabled())
+        return;
+
     QString js = "function deleteTableColumn() {"
             "   var selObj = window.getSelection();"
             "   var selRange = selObj.getRangeAt(0);"
@@ -1577,6 +1701,8 @@ void NBrowserWindow::deleteTableColumnButtonPressed() {
         editor->page()->mainFrame()->evaluateJavaScript(js);
         contentChanged();
 }
+
+
 
 void NBrowserWindow::rotateImageLeftButtonPressed() {
     rotateImage(-90.0);
@@ -1665,6 +1791,7 @@ void NBrowserWindow::attachFile() {
 //* MicroFocus changed
 //****************************************************************
  void NBrowserWindow::microFocusChanged() {
+     saveTimer.stop();
      buttonBar->boldButtonWidget->setDown(false);
      buttonBar->italicButtonWidget->setDown(false);
      buttonBar->underlineButtonWidget->setDown(false);
@@ -1675,6 +1802,7 @@ void NBrowserWindow::attachFile() {
      editor->insertTableAction->setEnabled(true);
      editor->insertTableColumnAction->setEnabled(false);
      editor->insertTableRowAction->setEnabled(false);
+     editor->tablePropertiesAction->setEnabled(false);
      editor->deleteTableRowAction->setEnabled(false);
      editor->deleteTableColumnAction->setEnabled(false);
      editor->insertLinkAction->setText(tr("Insert Link"));
@@ -1746,6 +1874,9 @@ void NBrowserWindow::attachFile() {
                   QString("      window.browserWindow.changeDisplayFontName(font);") +
                   QString("} getFontSize();");
     editor->page()->mainFrame()->evaluateJavaScript(js2);
+
+    saveTimer.setInterval(global.autoSaveInterval);
+    saveTimer.start();
  }
 
  void NBrowserWindow::printNodeName(QString v) {
@@ -2094,6 +2225,7 @@ void NBrowserWindow::setInsideList() {
 void NBrowserWindow::setInsideTable() {
     editor->insertTableAction->setEnabled(false);
     editor->insertTableRowAction->setEnabled(true);
+    editor->tablePropertiesAction->setEnabled(true);
     editor->insertTableColumnAction->setEnabled(true);
     editor->deleteTableRowAction->setEnabled(true);
     editor->deleteTableColumnAction->setEnabled(true);
@@ -3443,6 +3575,12 @@ void NBrowserWindow::focusCheck() {
 
 
 
+void NBrowserWindow::saveTimeCheck() {
+    if (editor->isDirty)
+       this->saveNoteContent();
+}
+
+
 
 void NBrowserWindow::notebookFocusShortcut() {
     this->notebookMenu.setFocus();
@@ -3541,23 +3679,32 @@ void NBrowserWindow::setEditorStyle() {
 void NBrowserWindow::loadPlugins() {
     hunspellPluginAvailable = false;
 
-    // Start loading plugins
-    QDir pluginsDir(global.fileManager.getProgramDirPath(""));
-    pluginsDir.cd("plugins");
-    QStringList filter;
-    filter.append("libhunspellplugin.so");
-    foreach (QString fileName, pluginsDir.entryList(filter)) {
-        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = pluginLoader.instance();
-        if (fileName == "libhunspellplugin.so") {
-            if (plugin) {
-                hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                if (hunspellInterface) {
-                    hunspellPluginAvailable = true;
-                    hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser());
+    QStringList dirList;
+    dirList.append(global.fileManager.getProgramDirPath(""));
+    dirList.append(global.fileManager.getProgramDirPath("")+"/plugins");
+    dirList.append("/usr/lib/nixnote2/");
+    dirList.append("/usr/local/lib/nixnote2/");
+    dirList.append("/usr/local/lib");
+    dirList.append("/usr/lib");
+
+    for (int i=0; i<dirList.size(); i++) {
+        // Start loading plugins
+        QDir pluginsDir(dirList[i]);
+        QStringList filter;
+        filter.append("libhunspellplugin.so");
+        foreach (QString fileName, pluginsDir.entryList(filter)) {
+            QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+            QObject *plugin = pluginLoader.instance();
+            if (fileName == "libhunspellplugin.so") {
+                if (plugin) {
+                    hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+                    if (hunspellInterface) {
+                        hunspellPluginAvailable = true;
+                        hunspellInterface->initialize(global.fileManager.getProgramDirPath(""), global.fileManager.getSpellDirPathUser());
+                    }
+                } else {
+                    QLOG_ERROR() << pluginLoader.errorString();
                 }
-            } else {
-                QLOG_ERROR() << pluginLoader.errorString();
             }
         }
     }
@@ -3702,3 +3849,25 @@ void NBrowserWindow::findReplaceWindowHidden() {
 }
 
 
+
+
+//************************************************
+//* Set the current edited cell style in a table
+//* This is called from a javascript function to
+//* get the current cell style the cursor is in.
+//*************************************************
+void NBrowserWindow::setTableCellStyle(QString value) {
+    this->tableCellStyle = value;
+}
+
+
+
+
+//************************************************
+//* Set the current table style
+//* This is called from a javascript function to
+//* get the currenttablel style the cursor is in.
+//*************************************************
+void NBrowserWindow::setTableStyle(QString value) {
+    this->tableStyle = value;
+}

@@ -43,29 +43,17 @@ echo "****************************************************"
 echo "Building directories"
 mkdir $package_dir/nixnote2
 mkdir $package_dir/nixnote2/usr
-#mkdir $package_dir/nixnote2/usr/lib
+mkdir $package_dir/nixnote2/usr/lib
+mkdir $package_dir/nixnote2/usr/lib/nixnote2
 mkdir $package_dir/nixnote2/usr/share
-mkdir $package_dir/nixnote2/usr/share/lintian
-mkdir $package_dir/nixnote2/usr/share/lintian/overrides
-#mkdir $package_dir/nixnote2/usr/share/applications
-mkdir $package_dir/nixnote2/usr/share/nixnote2
-mkdir $package_dir/nixnote2/usr/share/nixnote2/plugins
-#mkdir $package_dir/nixnote2/usr/share/man 
-#mkdir $package_dir/nixnote2/usr/share/man/man1
-#mkdir $package_dir/nixnote2/usr/bin
 mkdir $package_dir/nixnote2/usr/share/doc/
 mkdir $package_dir/nixnote2/usr/share/doc/nixnote2-hunspell-plugin
 
 # Copy binary, configs, & man pages
 echo "Copying files"
-#cp $source_dir/*.ini $package_dir/nixnote2/usr/share/nixnote2/
-#cp $source_dir/*.txt $package_dir/nixnote2/usr/share/nixnote2/
-#cp $source_dir/*.html $package_dir/nixnote2/usr/share/nixnote2/
-#cp $source_dir/nixnote2.desktop $package_dir/nixnote2/usr/share/applications/
-cp $package_dir/deb/nixnote* $package_dir/nixnote2/usr/share/lintian/overrides/
 cp $source_dir/copyright $package_dir/nixnote2/usr/share/doc/nixnote2-hunspell-plugin/
-strip --strip-all $source_dir/plugins/libhunspellplugin.so -o $package_dir/nixnote2/usr/share/nixnote2/plugins/libhunspellplugin.so
-cp $source_dir/changelog.txt $package_dir/nixnote2/usr/share/doc/nixnote2-hunspell-plugin/changelog.Debian
+strip --strip-all $source_dir/plugins/libhunspellplugin.so -o $package_dir/nixnote2/usr/lib/nixnote2/libhunspellplugin.so
+cp $source_dir/plugins/hunspell/changelog.txt $package_dir/nixnote2/usr/share/doc/nixnote2-hunspell-plugin/changelog.Debian
 gzip -c -n -9 $package_dir/nixnote2/usr/share/doc/nixnote2-hunspell-plugin/changelog.Debian > $package_dir/nixnote2/usr/share/doc/nixnote2-hunspell-plugin/changelog.Debian.gz
 rm $package_dir/nixnote2/usr/share/doc/nixnote2-hunspell-plugin/changelog.Debian
  
@@ -75,25 +63,7 @@ then
    mkdir $source_dir/spell
 fi
 
-# Copy subdirectories
-#cp -r $source_dir/images $package_dir/nixnote2/usr/share/nixnote2/
-#cp -r $source_dir/spell $package_dir/nixnote2/usr/share/nixnote2/
-#cp -r $source_dir/translations $package_dir/nixnote2/usr/share/nixnote2/
-#cp -r $source_dir/certs $package_dir/nixnote2/usr/share/nixnote2/
-#cp -r $source_dir/qss $package_dir/nixnote2/usr/share/nixnote2/
-#cp -r $source_dir/java $package_dir/nixnote2/usr/share/nixnote2/
-#cp -r $source_dir/help $package_dir/nixnote2/usr/share/nixnote2/
-
-
-#set help page
-#sed -i "s/__VERSION__/$version/" $package_dir/nixnote2/usr/share/nixnote2/help/about.html
-
-
 # Reset user permissions
 echo "Resetting ownership & permissions"
 chown -R root:root $package_dir/nixnote2/
-chmod 644 $package_dir/nixnote2/usr/share/nixnote2/plugins/libhunspellplugin.so
-
-# Cleanup
-#echo "Cleaning up"
-#rm -rf $package_dir/nixnote2
+chmod 644 $package_dir/nixnote2/usr/lib/nixnote2/libhunspellplugin.so

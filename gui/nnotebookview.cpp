@@ -693,7 +693,11 @@ void NNotebookView::editComplete() {
 
         // Check that this notebook doesn't already exist
         // if it exists or the length == 0, we go back to the original name
-        qint32 check = table.findByName(text);
+        qint32 check = 0;
+        if (text.toLower() == oldName.toLower() && text != oldName)
+            check = 0;
+        else
+            check = table.findByName(text);
         if (check != 0 || text.trimmed() == "") {
             NNotebookViewItem *item = dataStore[lid];
             item->setData(NAME_POSITION, Qt::DisplayRole, oldName);

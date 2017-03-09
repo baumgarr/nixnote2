@@ -68,6 +68,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     Edit_Insert_Table = new QString();  				// Insert a table
     Edit_Insert_Table_Row = new QString();  			// Insert a table row
     Edit_Delete_Table_Row = new QString();  			// Delete a table row
+    Edit_Table_Properties = new QString();              // Show table properties
     Edit_Insert_Todo = new QString();
     Edit_Encrypt_Text = new QString();
     Edit_Rotate_Image_Right = new QString();
@@ -157,6 +158,7 @@ ShortcutKeys::ShortcutKeys(QObject *parent) :
     loadkey(QString("Edit_Insert_Hyperlink"), Edit_Insert_Hyperlink);
     loadkey(QString("Edit_Insert_Table_Row"), Edit_Insert_Table_Row);
     loadkey(QString("Edit_Delete_Table_Row"), Edit_Delete_Table_Row);
+    loadkey(QString("Edit_Table_Properties"), Edit_Table_Properties);
     loadkey(QString("Edit_Insert_Todo"), Edit_Insert_Todo);
     loadkey(QString("Edit_Rotate_Image_Right"), Edit_Rotate_Image_Right);
     loadkey(QString("Edit_Rotate_Image_Left"), Edit_Rotate_Image_Left);

@@ -117,6 +117,16 @@ bool TagEditor::checkNewTagEditor() {
 //*******************************************************
 void TagEditor::addTag(QString text) {
     QLOG_TRACE_IN() << typeid(*this).name();
+    qint32 tagLid;
+    NoteTable noteTable(global.db);
+    TagTable tagTable(global.db);
+    tagLid = tagTable.findByName(text, account);
+
+    if (tagLid <=0 && account !=0) {
+        QLOG_TRACE_OUT() << typeid(*this).name();
+        return;
+    }
+
     // First blank out the old tags.
     emptyTags();
 
@@ -124,11 +134,7 @@ void TagEditor::addTag(QString text) {
     tagNames << text;
     newTag.addTag(text);
     loadTags();
-    NoteTable noteTable(global.db);
-    TagTable tagTable(global.db);
-    qint32 tagLid;
     Tag newTag;
-    tagLid = tagTable.findByName(text, account);
     if (tagLid <=0) {
         QUuid uuid;
         newTag.name = text;
@@ -342,6 +348,7 @@ void TagEditor::newTagTabPressed() {
 void TagEditor::setAccount(qint32 a) {
     QLOG_TRACE_IN() << typeid(*this).name();
     account = a;
+    this->newTag.setAccount(account);
     QLOG_TRACE_OUT() << typeid(*this).name();
 }
 

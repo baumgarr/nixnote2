@@ -338,7 +338,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     // Create a transparent pixmap.  The only non transparent piece is teh
     // highlight that will be overlaid on the old image
     imgfile = imgfile.replace("file:///", "");
-    QPixmap originalFile(imgfile);
+    QPixmap originalFile(imgfile, findImageFormat(imgfile));
     QPixmap overlayPix(originalFile.size());
     overlayPix.fill(Qt::transparent);
     QPainter p2(&overlayPix);
@@ -416,6 +416,30 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     return "file://"+filename;
 //    return "this.src='file://"+filename+"';";
 }
+
+
+
+
+const char* NoteFormatter::findImageFormat(QString file) {
+    QByteArray b;
+    QFile f(file);
+    f.open(QFile::ReadOnly);
+    b = f.read(10);
+    f.close();
+
+    // Try to determine the type of image from the "magic bytes"
+    if (b.startsWith("\xFF\xD8\xFF"))
+        return "JPG";
+    if (b.startsWith("\x89\x50\x4E\x47\x0D\x0A\x1A\x0A"))
+        return "PNG";
+    if (b.startsWith("GIF87a"))
+        return "GIF";
+    if (b.startsWith("GIF89a"))
+        return "GIF";
+    return 0;
+}
+
+
 
 
 

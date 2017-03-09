@@ -74,6 +74,7 @@ public:
     QAction *attachFileAction;
     QAction *insertTableAction;
     QAction *insertTableRowAction;
+    QAction *tablePropertiesAction;
     QAction *insertTableColumnAction;
     QAction *deleteTableColumnAction;
     QAction *deleteTableRowAction;

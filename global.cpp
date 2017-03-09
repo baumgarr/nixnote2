@@ -157,7 +157,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     this->startupNote = startupConfig.startupNoteLid;
     startupConfig.accountId = accountId;
     accountsManager = new AccountsManager(startupConfig.accountId);
-    enableIndexing = startupConfig.enableIndexing;
+    if (startupConfig.enableIndexing || getBackgroundIndexing())
+        enableIndexing = true;
 
     this->purgeTemporaryFilesOnShutdown=true;
 
@@ -244,6 +245,12 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     // reset username
     full_username = "";
 
+    // Set auto-save interval
+    autoSaveInterval = getAutoSaveInterval()*1000;
+
+    multiThreadSaveEnabled = this->getMultiThreadSave();
+    useLibTidy = this->getUseLibTidy();
+
 }
 
 
@@ -253,12 +260,10 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
 // allows for users to run it out of a non-path location.
 QString Global::getProgramDirPath() {
     QString path = QCoreApplication::applicationDirPath();
-    if (path == "/usr/bin")
-        return "/usr/share/nixnote2";
-    if (path == "/usr/share/bin")
-        return "/usr/share/nixnote2";
-    if (path == "/usr/local/bin")
-        return "/usr/share/nixnote2";
+    if (path.endsWith("/bin")) {
+        path.chop(3);
+        return path+"share/nixnote2";
+    }
     return path;
 }
 
@@ -476,6 +481,26 @@ bool Global::getClearTagsOnSearch() {
     settings->endGroup();
     return value;
 }
+
+
+bool Global::getBackgroundIndexing() {
+    settings->beginGroup("Search");
+    bool value = settings->value("backgroundIndexing",false).toBool();
+    settings->endGroup();
+    return value;
+}
+
+
+
+
+void Global::setBackgroundIndexing(bool value) {
+    settings->beginGroup("Search");
+    settings->setValue("backgroundIndexing",value);
+    settings->endGroup();
+}
+
+
+
 
 bool Global::getTagSelectionOr() {
     settings->beginGroup("Search");
@@ -1304,4 +1329,77 @@ bool Global::popupOnSyncError() {
     bool value = global.settings->value("popupOnSyncError", true).toBool();
     global.settings->endGroup();
     return value;
+}
+
+
+// save the user-specified auto-save interval
+int Global::getAutoSaveInterval() {
+    global.settings->beginGroup("Appearance");
+    int value = global.settings->value("autoSaveInterval", 500).toInt();
+    global.settings->endGroup();
+    return value;
+}
+
+// Save the user specified auto-save interval
+void Global::setAutoSaveInterval(int value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("autoSaveInterval", value);
+    global.settings->endGroup();
+    global.autoSaveInterval = value*1000;
+}
+
+
+
+
+// Should we intercept SIGHUP on Unix platforms
+bool Global::getInterceptSigHup() {
+    global.settings->beginGroup("Appearance");
+    bool value = global.settings->value("interceptSigHup", true).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setInterceptSigHup(bool value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("interceptSigHup", value);
+    global.settings->endGroup();
+
+}
+
+
+
+
+// Should we use multiple theads to do note saving
+bool Global::getMultiThreadSave() {
+    global.settings->beginGroup("Appearance");
+    bool value = global.settings->value("multiThreadSave", false).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setMultiThreadSave(bool value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("multiThreadSave", value);
+    global.settings->endGroup();
+    this->multiThreadSaveEnabled = value;
+}
+
+
+
+
+
+
+// Should we use multiple theads to do note saving
+bool Global::getUseLibTidy() {
+    global.settings->beginGroup("Appearance");
+    bool value = global.settings->value("useLibTidy", false).toBool();
+    global.settings->endGroup();
+    return value;
+}
+
+void Global::setUseLibTidy(bool value) {
+    global.settings->beginGroup("Appearance");
+    global.settings->setValue("useLibTidy", value);
+    global.settings->endGroup();
+    this->useLibTidy = value;
 }

@@ -305,6 +305,7 @@ public slots:
     void indexFinished(bool finished);
     void exportAsPdf();
     void exportAsPdfReady(bool);
+    void saveOnExit();
 
 signals:
     void syncRequested();

@@ -73,6 +73,7 @@ public:
     QString *Edit_Insert_Hyperlink;		// Encrypt selected text
     QString *Edit_Insert_Table;			// Insert table into note
     QString *Edit_Insert_Table_Row;		// Insert row into table
+    QString *Edit_Table_Properties;     // Show table properties
     QString *Edit_Delete_Table_Row;		// Delete a table row
     QString *Edit_Insert_Todo;				// Insert todo
     QString *Edit_Encrypt_Text;			// Encrypt selected text

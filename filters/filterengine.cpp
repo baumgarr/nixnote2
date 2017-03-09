@@ -377,6 +377,22 @@ void FilterEngine::filterAttributes(FilterCriteria *criteria) {
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key)");
         sql.bindValue(":key", NOTE_HAS_ATTACHMENT);
         break;
+    case CONTAINS_REMINDER:
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key)");
+            sql.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
+            break;
+    case CONTAINS_UNCOMPLETED_REMINDER:
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key)");
+            sql.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
+            sql.exec();
+            sql.prepare("delete from filter where lid in (select lid from datastore where key=:key and data>0)");
+            sql.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
+            break;
+    case CONTAINS_FUTURE_REMINDER:
+            sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data>:dt)");
+            sql.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_TIME);
+            sql.bindValue(":dt",QDateTime::currentMSecsSinceEpoch());
+            break;
     case SOURCE_EMAIL:
         sql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data = 'mail.clip')");
         sql.bindValue(":key", NOTE_ATTRIBUTE_SOURCE);
@@ -740,6 +756,18 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
         else if (string.startsWith("todo:", Qt::CaseInsensitive) ||
                 string.startsWith("-todo:", Qt::CaseInsensitive)) {
             filterSearchStringTodoAll(string);
+        }
+        else if (string.startsWith("reminderOrder:", Qt::CaseInsensitive) ||
+                string.startsWith("-reminderOrder:", Qt::CaseInsensitive)) {
+            filterSearchStringReminderOrderAll(string);
+        }
+        else if (string.startsWith("reminderTime:", Qt::CaseInsensitive) ||
+                string.startsWith("-reminderTime:", Qt::CaseInsensitive)) {
+            filterSearchStringReminderTimeAll(string);
+        }
+        else if (string.startsWith("reminderDoneTime:", Qt::CaseInsensitive) ||
+                string.startsWith("-reminderDoneTime:", Qt::CaseInsensitive)) {
+            filterSearchStringReminderDoneTimeAll(string);
         }
         else if (string.startsWith("tag:", Qt::CaseInsensitive) ||
                 string.startsWith("-tag:", Qt::CaseInsensitive)) {
@@ -1399,6 +1427,57 @@ void FilterEngine::filterSearchStringTodoAll(QString string) {
 }
 
 
+//#define NOTE_ATTRIBUTE_REMINDER_ORDER          5032
+//#define NOTE_ATTRIBUTE_REMINDER_TIME           5033
+//#define NOTE_ATTRIBUTE_REMINDER_DONE_TIME      5034
+
+
+
+// filter based upon the reminder string the user specified.  This is for the "all"
+// filter and not the "any".
+void FilterEngine::filterSearchStringReminderOrderAll(QString string) {
+    QLOG_TRACE_IN();
+
+    if (!global.forceSearchLowerCase)
+        string = string.toLower();
+    if (!string.startsWith("-")) {
+        string.remove(0,14);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        NSqlQuery sql(global.db);
+        if (string.startsWith("*")) {
+            sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key1)");
+            sql.bindValue(":key1", NOTE_ATTRIBUTE_REMINDER_ORDER);
+        } else {
+            int data= string.toInt();
+            sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key1 and data=:data)");
+            sql.bindValue(":key1", NOTE_ATTRIBUTE_REMINDER_ORDER);
+            sql.bindValue(":data", data);
+        }
+        sql.exec();
+        sql.finish();
+    } else {
+        string.remove(0,15);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        NSqlQuery sql(global.db);
+        if (string.startsWith("*")) {
+            sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key1)");
+            sql.bindValue(":key1", NOTE_ATTRIBUTE_REMINDER_ORDER);
+        } else {
+            sql.prepare("Delete from filter where lid in (select lid from DataStore where key=:key1 and data=:data)");
+            int data = string.toInt();
+            sql.bindValue(":key1", NOTE_ATTRIBUTE_REMINDER_ORDER);
+            sql.bindValue(":data", data);
+        }
+        sql.exec();
+        sql.finish();
+    }
+}
+
+
 
 
 
@@ -1439,7 +1518,6 @@ void FilterEngine::filterSearchStringDateAll(QString string) {
     sql.bindValue(":data", dt.toMSecsSinceEpoch());
     sql.exec();
     sql.finish();
-
 }
 
 
@@ -1466,8 +1544,7 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
             offset = string.toInt();
         value = value.addDays(offset);
         return value;
-    }
-    if (string.startsWith("day")) {
+    } else if (string.startsWith("day")) {
         value = tam;
         string = string.mid(3);
         offset = 0;
@@ -1475,8 +1552,7 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
             offset = string.toInt();
         value = value.addDays(offset);
         return value;
-    }
-    else if (string.startsWith("month")) {
+    }  else if (string.startsWith("month")) {
         value = tam;
         value = value.addDays(-1*dom+1);
         string = string.mid(5);
@@ -1486,8 +1562,7 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
         value = value.addMonths(offset);
         QLOG_DEBUG() << value.toString();
         return value;
-    }
-    else if (string.startsWith("year")) {
+    } else if (string.startsWith("year")) {
         value = tam;
         value = value.addDays(-1*dom+1);
         value = value.addMonths(-1*moy+1);
@@ -1498,8 +1573,7 @@ QDateTime FilterEngine::calculateDateTime(QString string) {
         value = value.addYears(offset);
         QLOG_DEBUG() << value.toString();
         return value;
-    }
-    else if (string.startsWith("week")) {
+    } else if (string.startsWith("week")) {
         value = tam;
         value = value.addDays(-1*dow);
         string = string.mid(4);
@@ -1575,6 +1649,18 @@ void FilterEngine::filterSearchStringAny(QStringList list) {
         else if (string.startsWith("todo:", Qt::CaseInsensitive) ||
                 string.startsWith("-todo:", Qt::CaseInsensitive)) {
             filterSearchStringTodoAny(string);
+        }
+        else if (string.startsWith("reminderOrder:", Qt::CaseInsensitive) ||
+                string.startsWith("-reminderOrder:", Qt::CaseInsensitive)) {
+            filterSearchStringReminderOrderAny(string);
+        }
+        else if (string.startsWith("reminderTime:", Qt::CaseInsensitive) ||
+                string.startsWith("-reminderTime:", Qt::CaseInsensitive)) {
+            filterSearchStringReminderTimeAny(string);
+        }
+        else if (string.startsWith("reminderDoneTime:", Qt::CaseInsensitive) ||
+                string.startsWith("-reminderDoneTime:", Qt::CaseInsensitive)) {
+            filterSearchStringReminderDoneTimeAny(string);
         }
         else if (string.startsWith("tag:", Qt::CaseInsensitive) ||
                 string.startsWith("-tag:", Qt::CaseInsensitive)) {
@@ -1739,6 +1825,52 @@ void FilterEngine::filterSearchStringTodoAny(QString string) {
         if (string.startsWith("false", Qt::CaseInsensitive)) {
             sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key1");
             sql.bindValue(":key1", NOTE_HAS_TODO_COMPLETED);
+        }
+        sql.exec();
+        sql.finish();
+    }
+}
+
+
+
+
+
+
+// filter based upon the reminder: string the user specified.  This is for the "any:"
+// filter and not the default
+void FilterEngine::filterSearchStringReminderOrderAny(QString string) {
+    QLOG_TRACE_IN();
+    if (!string.startsWith("-")) {
+        string.remove(0,14);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        NSqlQuery sql(global.db);
+        if (string.startsWith("*")) {
+            sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key1");
+            sql.bindValue(":key1", NOTE_ATTRIBUTE_REMINDER_ORDER);
+        } else {
+            int data=string.toInt();
+            sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key1 and data=:data");
+            sql.bindValue(":key1", NOTE_ATTRIBUTE_REMINDER_ORDER);
+            sql.bindValue(":data", data);
+        }
+        sql.exec();
+        sql.finish();
+    } else {
+        string.remove(0,15);
+        if (string == "")
+            string = "*";
+        // Filter out the records
+        NSqlQuery sql(global.db);
+        if (string.startsWith("*")) {
+            sql.prepare("insert into anylidsfilter (lid) select distinct lid from DataStore where lid not in (select lid from DataStore where key = :key)");
+            sql.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_ORDER);
+        } else {
+            int data = string.toInt();
+            sql.prepare("insert into anylidsfilter (lid) select distinct lid from DataStore where lid not in (select lid from DataStore where key = :key and data=:data)");
+            sql.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_ORDER);
+            sql.bindValue(":data", data);
         }
         sql.exec();
         sql.finish();
@@ -1993,7 +2125,6 @@ void FilterEngine::filterSearchStringDateAny(QString string) {
     sql.bindValue(":data", dt.toMSecsSinceEpoch());
     sql.exec();
     sql.finish();
-
 }
 
 
@@ -2258,4 +2389,96 @@ bool FilterEngine::resourceContains(qint32 resourceLid, QString searchString, QS
         }
     }
     return returnValue;
+}
+
+
+
+
+// Filter based on reminder time
+void FilterEngine::filterSearchStringReminderTimeAll(QString string) {
+    QLOG_TRACE_IN();
+    int separator = string.indexOf(":")+1;
+    QString tempString = string.mid(separator);
+    QDateTime dt = calculateDateTime(tempString);
+    NSqlQuery sql(global.db);
+    int key= NOTE_ATTRIBUTE_REMINDER_TIME;
+
+    if (string.startsWith("-", Qt::CaseInsensitive)) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");;
+    } else {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");;
+    }
+
+    sql.bindValue(":key", key);
+    sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    sql.exec();
+    sql.finish();
+    QLOG_TRACE_OUT();
+}
+
+
+// Filter based on reminder time
+void FilterEngine::filterSearchStringReminderTimeAny(QString string) {
+    QLOG_TRACE_IN();
+    int separator = string.indexOf(":")+1;
+    QString tempString = string.mid(separator);
+    QDateTime dt = calculateDateTime(tempString);
+    NSqlQuery sql(global.db);
+    int key = NOTE_ATTRIBUTE_REMINDER_TIME;
+
+    if (string.startsWith("-reminderDoneTime:", Qt::CaseInsensitive)) {
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000))");
+    } else {
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
+    }
+    sql.bindValue(":key", key);
+    sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    sql.exec();
+    sql.finish();
+}
+
+
+
+// Filter based on reminder done time
+void FilterEngine::filterSearchStringReminderDoneTimeAll(QString string) {
+    QLOG_TRACE_IN();
+    int separator = string.indexOf(":")+1;
+    QString tempString = string.mid(separator);
+    QDateTime dt = calculateDateTime(tempString);
+    NSqlQuery sql(global.db);
+    int key = NOTE_ATTRIBUTE_REMINDER_DONE_TIME;
+
+    if (string.startsWith("-", Qt::CaseInsensitive)) {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000)))");
+    } else {
+        sql.prepare("Delete from filter where lid not in (select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000)))");
+    }
+
+    sql.bindValue(":key", key);
+    sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    sql.exec();
+    sql.finish();
+    QLOG_TRACE_OUT();
+}
+
+
+// Filter based on reminder done time
+void FilterEngine::filterSearchStringReminderDoneTimeAny(QString string) {
+    QLOG_TRACE_IN();
+    int separator = string.indexOf(":")+1;
+    QString tempString = string.mid(separator);
+    QDateTime dt = calculateDateTime(tempString);
+    NSqlQuery sql(global.db);
+    int key = NOTE_ATTRIBUTE_REMINDER_DONE_TIME;
+
+    if (string.startsWith("-reminderDoneTime:", Qt::CaseInsensitive)) {
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)<(datetime(:data/1000))");
+    } else {
+        sql.prepare("insert into anylidsfilter (lid) select lid from DataStore where key=:key and datetime(data/1000)>=(datetime(:data/1000))");
+    }
+    sql.bindValue(":key", key);
+    sql.bindValue(":data", dt.toMSecsSinceEpoch());
+    sql.exec();
+    sql.finish();
+    QLOG_TRACE_OUT();
 }

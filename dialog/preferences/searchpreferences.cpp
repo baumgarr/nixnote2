@@ -61,6 +61,10 @@ SearchPreferences::SearchPreferences(QWidget *parent) :
     mainLayout->addWidget(indexPDF,row++,0);
     indexPDF->setChecked(global.indexPDFLocally);
 
+    enableBackgroundIndexing = new QCheckBox(tr("Background Indexing (requires restart & may cause issues on some systems)"));
+    mainLayout->addWidget(enableBackgroundIndexing,row++,0);
+    enableBackgroundIndexing->setChecked(global.getBackgroundIndexing());
+
     forceLowerCase = new QCheckBox(tr("Experimental: Force search to lower case"));
     mainLayout->addWidget(forceLowerCase,row++,0);
     forceLowerCase->setChecked(global.forceSearchLowerCase);
@@ -71,6 +75,7 @@ SearchPreferences::SearchPreferences(QWidget *parent) :
     weight->setMinimum(1);
     weight->setMaximum(100);
     weight->setValue(global.getMinimumRecognitionWeight());
+
     this->setFont(global.getGuiFont(font()));
 
     mainLayout->setAlignment(Qt::AlignTop);
@@ -90,4 +95,5 @@ void SearchPreferences::saveValues() {
     global.setIndexPDFLocally(indexPDF->isChecked());
     global.setForceSearchLowerCase(forceLowerCase->isChecked());
     global.forceSearchLowerCase=forceLowerCase->isChecked();
+    global.setBackgroundIndexing(enableBackgroundIndexing->isChecked());
 }

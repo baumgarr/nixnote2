@@ -251,6 +251,21 @@ NTableView::NTableView(QWidget *parent) :
     copyNoteAction->setFont(global.getGuiFont(font()));
     connect(copyNoteAction, SIGNAL(triggered()), this, SLOT(copyNote()));
 
+    reminderMenu = new QMenu(tr("Reminders"));
+    reminderMenu->setFont(global.getGuiFont(font()));
+    contextMenu->addMenu(reminderMenu);
+
+    reminderRemoveAction = new QAction(tr("Remove"), this);
+    reminderMenu->addAction(reminderRemoveAction);
+    reminderRemoveAction->setFont(global.getGuiFont(font()));
+    connect(reminderRemoveAction, SIGNAL(triggered()), this, SLOT(removeReminder()));
+
+    reminderMarkCompletedAction = new QAction(tr("Mark Completed"), this);
+    reminderMenu->addAction(reminderMarkCompletedAction);
+    reminderMarkCompletedAction->setFont(global.getGuiFont(font()));
+    connect(reminderMarkCompletedAction, SIGNAL(triggered()), this, SLOT(markReminderCompleted()));
+
+
     pinNoteAction = new QAction(tr("Pin Note"), this);
     contextMenu->addAction(pinNoteAction);
     pinNoteAction->setFont(global.getGuiFont(font()));
@@ -1576,7 +1591,8 @@ void NTableView::setTitleColor(QString color) {
 
 
 void NTableView::noteTagsUpdated(QString uuid, qint32 lid, QStringList names) {
-	QString value="";
+    Q_UNUSED(uuid);
+    QString value="";
 	for (int i=0; i<names.size(); i++) {
 		value = value + names[i];
 		if (names.size() > i+1)
@@ -1749,3 +1765,47 @@ void NTableView::showPropertiesDialog() {
     }
 }
 
+
+
+
+void NTableView::markReminderCompleted() {
+    // Make sure we save whatever we are currently viewing
+    emit saveAllNotes();
+
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    NoteTable ntable(global.db);
+    for (int i=0; i<lids.size(); i++) {
+        int sourceRow = proxy->lidMap->value(lids[i]);
+        QModelIndex sourceIndex = model()->index(sourceRow, NOTE_TABLE_REMINDER_TIME_POSITION);
+        qlonglong value = sourceIndex.data().toLongLong();
+        QLOG_DEBUG() << value;
+        if (value > 0)
+            ntable.setReminderCompleted(lids[i], true);
+    }
+    FilterEngine engine;
+    engine.filter();
+    refreshData();
+}
+
+
+void NTableView::removeReminder() {
+    // Make sure we save whatever we are currently viewing
+    emit saveAllNotes();
+
+    QList<qint32> lids;
+    getSelectedLids(lids);
+    if (lids.size() == 0)
+        return;
+
+    NoteTable ntable(global.db);
+    for (int i=0; i<lids.size(); i++) {
+        ntable.removeReminder(lids[i]);
+    }
+    FilterEngine engine;
+    engine.filter();
+    refreshData();
+}

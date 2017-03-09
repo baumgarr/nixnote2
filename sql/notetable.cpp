@@ -470,8 +470,15 @@ qint32 NoteTable::add(qint32 l, const Note &t, bool isDirty, qint32 account) {
     updateNoteList(lid, t, isDirty, account);
 
     // Experimental index helper
-    NoteIndexer indexer(db);
-    indexer.indexNote(lid);
+    if (global.enableIndexing) {
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_INDEX_NEEDED);
+        query.bindValue(":data", true);
+        query.exec();
+    } else {
+        NoteIndexer indexer(db);
+        indexer.indexNote(lid);
+    }
     return lid;
 }
 
@@ -1108,9 +1115,11 @@ void NoteTable::setIndexNeeded(qint32 lid, bool indexNeeded) {
     db->unlock();
 
     // Experimental class to index at save
-    NoteIndexer indexer(db);
-    QLOG_TRACE() << "Calling indexNote";
-    indexer.indexNote(lid);
+    if (!global.enableIndexing) {
+        QLOG_TRACE() << "Calling indexNote";
+        NoteIndexer indexer(db);
+        indexer.indexNote(lid);
+    }
     QLOG_TRACE_OUT();
 }
 
@@ -1878,8 +1887,16 @@ void NoteTable::updateNoteContent(qint32 lid, QString content, bool isDirty) {
     query.bindValue(":key", NOTE_INDEX_NEEDED);
     query.exec();
     query.finish();
-    NoteIndexer indexer(db);
-    indexer.indexNote(lid);
+    if (global.enableIndexing) {
+        query.prepare("insert into datastore (lid, key, data) values (:lid, :key, 1)");
+        query.bindValue(":lid", lid);
+        query.bindValue(":key", NOTE_INDEX_NEEDED);
+        query.bindValue(":data", true);
+        query.exec();
+    } else {
+        NoteIndexer indexer(db);
+        indexer.indexNote(lid);
+    }
 
     qlonglong totalsize = this->getSize(lid);
     NSqlQuery query3(db);
@@ -2352,9 +2369,16 @@ void NoteTable::setReminderCompleted(qint32 lid, bool completed) {
     query.exec();
 
     if (completed) {
-        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, datetime('now'))");
+        QDateTime dt = QDateTime::currentDateTime();
+        query.prepare("Insert into DataStore (lid, key, data) values (:lid, :key, :dt)");
         query.bindValue(":lid", lid);
         query.bindValue(":key", NOTE_ATTRIBUTE_REMINDER_DONE_TIME);
+        query.bindValue(":dt", dt.toMSecsSinceEpoch());
+        query.exec();
+
+        query.prepare("Update NoteTable set reminderDoneTime=:dt where lid=:lid");
+        query.bindValue(":dt", dt.toMSecsSinceEpoch());
+        query.bindValue(":lid", lid);
         query.exec();
     }
     query.finish();
@@ -2386,6 +2410,12 @@ void NoteTable::removeReminder(qint32 lid) {
     query.bindValue(":lid", lid);
     query.exec();
     query.finish();
+
+    query.prepare("Update NoteTable set reminderDoneTime=0 where lid=:lid");
+    query.bindValue(":lid", lid);
+    query.exec();
+    query.finish();
+
     db->unlock();
 }
 

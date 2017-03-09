@@ -58,16 +58,25 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     fontPreviewInDialog->setChecked(global.previewFontsInDialog());
 
     traySingleClickAction = new QComboBox();
+    traySingleClickAction->addItem(tr("Do Nothing"), -1);
     traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
     traySingleClickAction->addItem(tr("New Text Note"), 1);
     traySingleClickAction->addItem(tr("New Quick Note"), 2);
     traySingleClickAction->addItem(tr("Screen Capture"), 3);
 
     trayMiddleClickAction = new QComboBox();
+    trayMiddleClickAction->addItem(tr("Do Nothing"), -1);
     trayMiddleClickAction->addItem(tr("Show/Hide NixNote"), 0);
     trayMiddleClickAction->addItem(tr("New Text Note"), 1);
     trayMiddleClickAction->addItem(tr("New Quick Note"), 2);
     trayMiddleClickAction->addItem(tr("Screen Capture"), 3);
+
+    trayDoubleClickAction = new QComboBox();
+    trayDoubleClickAction->addItem(tr("Do Nothing"), -1);
+    trayDoubleClickAction->addItem(tr("Show/Hide NixNote"), 0);
+    trayDoubleClickAction->addItem(tr("New Text Note"), 1);
+    trayDoubleClickAction->addItem(tr("New Quick Note"), 2);
+    trayDoubleClickAction->addItem(tr("Screen Capture"), 3);
 
     mouseMiddleClickAction = new QComboBox();
     mouseMiddleClickAction->addItem(tr("Open New Tab"), MOUSE_MIDDLE_CLICK_NEW_TAB);
@@ -143,6 +152,9 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     mainLayout->addWidget(new QLabel(tr("Tray Icon Middle Click Action")), row, 0);
     mainLayout->addWidget(trayMiddleClickAction, row++, 1);
 
+    mainLayout->addWidget(new QLabel(tr("Tray Icon Double Click Action")), row, 0);
+    mainLayout->addWidget(trayDoubleClickAction, row++, 1);
+
     mainLayout->addWidget(new QLabel(tr("Default GUI Font*")), row, 0);
     mainLayout->addWidget(defaultGuiFontChooser, row++, 1);
 
@@ -162,12 +174,18 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     global.settings->beginGroup("Appearance");
 
     disableEditingOnStartup->setChecked(global.settings->value("disableEditingOnStartup",false).toBool());
+
     int idx  = global.settings->value("traySingleClickAction", 0).toInt();
     idx = traySingleClickAction->findData(idx, Qt::UserRole);
     traySingleClickAction->setCurrentIndex(idx);
+
     idx  = global.settings->value("trayMiddleClickAction", 0).toInt();
-    idx = traySingleClickAction->findData(idx, Qt::UserRole);
+    idx = trayMiddleClickAction->findData(idx, Qt::UserRole);
     trayMiddleClickAction->setCurrentIndex(idx);
+
+    idx  = global.settings->value("trayDoubleClickAction", 0).toInt();
+    idx = trayDoubleClickAction->findData(idx, Qt::UserRole);
+    trayDoubleClickAction->setCurrentIndex(idx);
 
     showTrayIcon->setChecked(global.settings->value("showTrayIcon", false).toBool());
     showPDFs->setChecked(global.settings->value("showPDFs", true).toBool());
@@ -202,11 +220,10 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 
     this->setFont(global.getGuiFont(font()));
 
-    // Check if Tidy is installed
+    // Check if notify-send is installed
     QProcess notifyProcess;
     notifyProcess.start("notify-send -?");
     notifyProcess.waitForFinished();
-    QLOG_DEBUG() << notifyProcess.exitCode();
     if (notifyProcess.exitCode()) {
         systemNotifier->setEnabled(false);
     } else {
@@ -234,10 +251,11 @@ void AppearancePreferences::saveValues() {
     global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();
     global.settings->setValue("autoHideEditorToolbar", global.autoHideEditorToolbar);
     global.settings->setValue("mouseMiddleClickOpen", mouseMiddleClickAction->currentIndex());
-    global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
-    global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
+    global.settings->setValue("trayDoubleClickAction", trayDoubleClickAction->currentData(Qt::UserRole).toInt());
+    global.settings->setValue("traySingleClickAction", traySingleClickAction->currentData(Qt::UserRole).toInt());
+    global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentData(Qt::UserRole).toInt());
     global.settings->setValue("systemNotifier", sysnotifier);
-    global.settings->remove("trayDoubleClickAction");
+//    global.settings->remove("trayDoubleClickAction");
     global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
     global.settings->setValue("alternateNoteListColors", alternateNoteListColors->isChecked());
     global.pdfPreview = showPDFs->isChecked();

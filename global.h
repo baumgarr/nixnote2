@@ -160,6 +160,8 @@ public:
     void setMinimumRecognitionWeight(int weight);         // Set the minimum OCR recgnition confidence before including it in search results.
     bool popupOnSyncError();                 // Should we do a popup on every sync error?
     void setPopupOnSyncError(bool value);    // Set if we should do a popup on sync errors.
+    void setBackgroundIndexing(bool value);                         // Should we do indexing in a separate thread?
+    bool getBackgroundIndexing();                         // Should we do indexing in a separate thread?
     QString dateFormat;                                   // Desired display date format
     QString timeFormat;                                   // Desired display time format
     DatabaseConnection *db;                               // "default" DB connection for the main thread.
@@ -278,6 +280,21 @@ public:
     int maximumThumbnailInterval;                               // Maximum time to scan for thumbnails
     bool disableThumbnails;                                     // Disable thumbnail generation
     int batchThumbnailCount;                                    // Maximum number of thumbails to generate per batch
+
+    int getAutoSaveInterval();                                  // Time (in seconds) between auto-saving of notes.
+    void setAutoSaveInterval(int value);                                 // Save auto save interval
+    int autoSaveInterval;                                       // current auto save interval
+
+    bool getInterceptSigHup();                                  // Intercept SIGHUP on Unix platforms.
+    void setInterceptSigHup(bool value);                        // Intercept SIGHUP on Unix platforms
+
+    void setMultiThreadSave(bool value);                        // Should we use multiple theads in the browser window to save
+    bool getMultiThreadSave();
+    bool multiThreadSaveEnabled;
+
+    void setUseLibTidy(bool value);                            // Should we use new tidy or classic
+    bool getUseLibTidy();
+    bool useLibTidy;
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

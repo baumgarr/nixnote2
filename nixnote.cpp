@@ -1119,39 +1119,22 @@ void NixNote::closeShortcut() {
 }
 
 
-//*****************************************************************************
-//* Close the program
-//*****************************************************************************
-void NixNote::closeEvent(QCloseEvent *event) {
-//    if (closeToTray && !closeFlag) {
-//        event->ignore();
-//        hide();
-//        return;
-//    }
 
+//*****************************************************************************
+//* Save program contents on exit
+//******************************************************************************
+void NixNote::saveOnExit() {
+    QLOG_DEBUG() << "saveOnExit called";
+
+    QLOG_DEBUG() << "Saving contents";
     saveContents();
 
+    QLOG_DEBUG() << "Shutting down threads";
     indexRunner.keepRunning = false;
     counterRunner.keepRunning = false;
-    indexThread.quit();
-    counterThread.quit();
+    QCoreApplication::processEvents();
 
-    global.settings->beginGroup("Sync");
-    bool syncOnShutdown = global.settings->value("syncOnShutdown", false).toBool();
-    global.settings->endGroup();
-    if (syncOnShutdown && !finalSync && global.accountsManager->oauthTokenFound()) {
-        finalSync = true;
-        syncRunner.finalSync = true;
-        hide();
-        connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(close()));
-        synchronize();
-        event->ignore();
-        return;
-    }
-
-    syncRunner.keepRunning = false;
-    syncThread.quit();
-
+    QLOG_DEBUG() << "Saving window states";
     ConfigStore config(global.db);
     config.saveSetting(CONFIG_STORE_WINDOW_STATE, saveState());
     config.saveSetting(CONFIG_STORE_WINDOW_GEOMETRY, saveGeometry());
@@ -1260,10 +1243,47 @@ void NixNote::closeEvent(QCloseEvent *event) {
     saveNoteColumnWidths();
     saveNoteColumnPositions();
     noteTableView->saveColumnsVisible();
+
+    QLOG_DEBUG() << "Closing threads";
+    indexThread.quit();
+    counterThread.quit();
+
+    QLOG_DEBUG() << "Exitng saveOnExit()";
+}
+
+//*****************************************************************************
+//* Close the program
+//*****************************************************************************
+void NixNote::closeEvent(QCloseEvent *event) {
+//    if (closeToTray && !closeFlag) {
+//        event->ignore();
+//        hide();
+//        return;
+//    }
+
+    saveOnExit();
+
+    global.settings->beginGroup("Sync");
+    bool syncOnShutdown = global.settings->value("syncOnShutdown", false).toBool();
+    global.settings->endGroup();
+    if (syncOnShutdown && !finalSync && global.accountsManager->oauthTokenFound()) {
+        finalSync = true;
+        syncRunner.finalSync = true;
+        hide();
+        connect(&syncRunner, SIGNAL(syncComplete()), this, SLOT(close()));
+        synchronize();
+        event->ignore();
+        return;
+    }
+
+    syncRunner.keepRunning = false;
+    syncThread.quit();
+
     if (trayIcon->isVisible())
         trayIcon->hide();
     if (trayIcon != NULL)
         delete trayIcon;
+
     QMainWindow::closeEvent(event);
     QLOG_DEBUG() << "Quitting";
 }
@@ -2821,15 +2841,36 @@ void NixNote::toggleVisible() {
 // The tray icon was activated.  If it was double clicked we restore the
 // gui.
 void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
+    int doNothing = -1;
     int showHide = 0;
     int newNote = 1;
     int newQuickNote = 2;
     int screenCapture = 3;
 
+    if (reason == QSystemTrayIcon::DoubleClick) {
+        global.settings->beginGroup("Appearance");
+        int value = global.settings->value("trayDoubleClickAction", 0).toInt();
+        global.settings->endGroup();
+        if (value == doNothing)
+            return;
+        if (value == showHide)
+            toggleVisible();
+        if (value == newNote) {
+            if (!isVisible())
+                toggleVisible();
+            this->newNote();
+        }
+        if (value == newQuickNote)
+            this->newExternalNote();
+        if (value == screenCapture)
+            this->screenCapture();
+    }
     if (reason == QSystemTrayIcon::MiddleClick) {
         global.settings->beginGroup("Appearance");
         int value = global.settings->value("trayMiddleClickAction", 0).toInt();
         global.settings->endGroup();
+        if (value == doNothing)
+            return;
         if (value == showHide)
             toggleVisible();
         if (value == newNote) {
@@ -2846,6 +2887,8 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
         global.settings->beginGroup("Appearance");
         int value = global.settings->value("traySingleClickAction", 0).toInt();
         global.settings->endGroup();
+        if (value == doNothing)
+            return;
         if (value == showHide)
             toggleVisible();
         if (value == newNote) {
@@ -3802,38 +3845,47 @@ void NixNote::presentationModeOff() {
 void NixNote::loadPlugins() {
     webcamPluginAvailable = false;
 
-    // Start loading plugins
-    QDir pluginsDir(global.fileManager.getProgramDirPath(""));
-    pluginsDir.cd("plugins");
-    QStringList filter;
-    filter.append("libwebcamplugin.so");
-    filter.append("libhunspellplugin.so");
-    foreach (QString fileName, pluginsDir.entryList(filter)) {
-        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = pluginLoader.instance();
-        if (fileName == "libwebcamplugin.so") {
-            if (plugin) {
-                webcamInterface = qobject_cast<WebCamInterface *>(plugin);
-                if (webcamInterface) {
-                    webcamPluginAvailable = true;
-                }
-            } else {
-                QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
-            }
-        }
+    QStringList dirList;
+    dirList.append(global.fileManager.getProgramDirPath(""));
+    dirList.append(global.fileManager.getProgramDirPath("")+"/plugins");
+    dirList.append("/usr/lib/nixnote2/");
+    dirList.append("/usr/local/lib/nixnote2/");
+    dirList.append("/usr/local/lib");
+    dirList.append("/usr/lib");
 
-        // The Hunspell plugin isn't actually used here. We just use this as a
-        // check to be sure that the menu should be available.
-        if (fileName == "libhunspellplugin.so") {
-            if (plugin) {
-                HunspellInterface *hunspellInterface;
-                hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                if (hunspellInterface) {
-                    hunspellPluginAvailable = true;
+    // Start loading plugins
+    for (int i=0; i<dirList.size(); i++) {
+        QDir pluginsDir(dirList[i]);
+        QStringList filter;
+        filter.append("libwebcamplugin.so");
+        filter.append("libhunspellplugin.so");
+        foreach (QString fileName, pluginsDir.entryList(filter)) {
+            QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+            QObject *plugin = pluginLoader.instance();
+            if (fileName == "libwebcamplugin.so") {
+                if (plugin) {
+                    webcamInterface = qobject_cast<WebCamInterface *>(plugin);
+                    if (webcamInterface) {
+                        webcamPluginAvailable = true;
+                    }
+                } else {
+                    QLOG_ERROR() << tr("Error loading Webcam plugin: ") << pluginLoader.errorString();
                 }
-                delete hunspellInterface;
-            } else {
-                QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
+            }
+
+            // The Hunspell plugin isn't actually used here. We just use this as a
+            // check to be sure that the menu should be available.
+            if (fileName == "libhunspellplugin.so") {
+                if (plugin) {
+                    HunspellInterface *hunspellInterface;
+                    hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
+                    if (hunspellInterface) {
+                        hunspellPluginAvailable = true;
+                    }
+                    delete hunspellInterface;
+                } else {
+                    QLOG_ERROR() << tr("Error loading Hunspell plugin: ") << pluginLoader.errorString();
+                }
             }
         }
     }
@@ -3855,12 +3907,12 @@ void NixNote::exportAsPdf() {
 
 
     if (lids.size() <= 0) {
-        QString file = "/home/randy/test.pdf";
-
-        if (file == "")
-            return;
         QList<qint32> lids;
         noteTableView->getSelectedLids(lids);
+
+        QString file = QFileDialog::getSaveFileName(0,tr("PDF Export"), "","*.pdf");
+        if (file == "")
+            return;
 
         QPrinter printer;
         printer.setOutputFormat(QPrinter::PdfFormat);

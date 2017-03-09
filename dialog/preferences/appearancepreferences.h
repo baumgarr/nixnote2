@@ -43,7 +43,9 @@ private:
     QCheckBox *autoHideEditorButtonbar;
     QComboBox *traySingleClickAction;
     QComboBox *trayMiddleClickAction;
+    QComboBox *trayDoubleClickAction;
     QComboBox *mouseMiddleClickAction;
+    QComboBox *mouseDoubleClickAction;
     QComboBox *systemNotifier;
     QCheckBox *autosetUserid;
     QCheckBox *fontPreviewInDialog;
