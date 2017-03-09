@@ -138,8 +138,15 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
         globalSettings->endGroup();
     }
 
-    QString key = "1b73cc55-9a2f-441b-877a-ca1d0131cd2"+
-            QString::number(accountId);
+    globalSettings->beginGroup("MemoryKey");
+    QString key = globalSettings->value("key", "").toString();
+    if (key == "") {
+        key = QUuid::createUuid().toString().replace("}","").replace("{","");
+        globalSettings->setValue("key",key);
+    }
+    globalSettings->endGroup();
+
+    key = key+QString::number(accountId);
     sharedMemory = new CrossMemoryMapper(key);
 
 
