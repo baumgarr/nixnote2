@@ -46,7 +46,7 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     dynamicTotals = new QCheckBox(tr("Show notebook and tag totals"), this);
     autoHideEditorButtonbar = new QCheckBox(tr("Auto-Hide editor toolbar"), this);
     autoHideEditorButtonbar->setChecked(global.autoHideEditorToolbar);
-    disableEditingOnStartup = new QCheckBox(tr("Disable note editing on statup"), this);
+    disableEditingOnStartup = new QCheckBox(tr("Disable note editing on startup"), this);
     newNoteFocusOnTitle = new QCheckBox(tr("Focus on Note Title on New Note"), this);
     forceWebFonts = new QCheckBox(tr("Limit Editor to Web Fonts*"), this);
     forceWebFonts->setChecked(global.forceWebFonts);
@@ -234,6 +234,10 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
 }
 
 
+
+
+
+
 void AppearancePreferences::saveValues() {
     int index = systemNotifier->currentIndex();
     QString sysnotifier = systemNotifier->itemData(index, Qt::UserRole).toString();
@@ -251,9 +255,9 @@ void AppearancePreferences::saveValues() {
     global.autoHideEditorToolbar = this->autoHideEditorButtonbar->isChecked();
     global.settings->setValue("autoHideEditorToolbar", global.autoHideEditorToolbar);
     global.settings->setValue("mouseMiddleClickOpen", mouseMiddleClickAction->currentIndex());
-    global.settings->setValue("trayDoubleClickAction", trayDoubleClickAction->currentData(Qt::UserRole).toInt());
-    global.settings->setValue("traySingleClickAction", traySingleClickAction->currentData(Qt::UserRole).toInt());
-    global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentData(Qt::UserRole).toInt());
+    global.settings->setValue("trayDoubleClickAction", trayDoubleClickAction->currentIndex());
+    global.settings->setValue("traySingleClickAction", traySingleClickAction->currentIndex());
+    global.settings->setValue("trayMiddleClickAction", trayMiddleClickAction->currentIndex());
     global.settings->setValue("systemNotifier", sysnotifier);
 //    global.settings->remove("trayDoubleClickAction");
     global.settings->setValue("showNoteListGrid", showNoteListGrid->isChecked());
@@ -311,10 +315,6 @@ void AppearancePreferences::saveValues() {
 
 
     // See if the user has overridden the window icon
-//    index = windowThemeChooser->currentIndex();
-//    QString userIcon = windowThemeChooser->itemData(index).toString();
-//    if (userIcon != global.getResourceFileName(userIcon)) {
-        //global.settings->setValue("windowIcon", userIcon);
 
         //Copy the nixnote2.desktop so we can override the app icon
         // Ideally, we could use QSettings since it is ini format, but
@@ -352,10 +352,18 @@ void AppearancePreferences::saveValues() {
 
     // Setup if the user wants to start NixNote the next time they login.
     global.settings->setValue("autoStart", autoStart->isChecked());
-    QString startFile =  QDir::homePath()+"/.config/autostart/nixnote2.desktop";
+#ifdef _WIN32
+    QFileInfo fileInfo(QCoreApplication::applicationFilePath());
+    QFile::remove(QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
+#else
     QDir dir;
+    QString startFile =  QDir::homePath()+"/.config/autostart/nixnote2.desktop";
     dir.remove(startFile);
+#endif
     if (autoStart->isChecked()) {
+#ifdef _WIN32
+        QFile::link(QCoreApplication::applicationFilePath(), QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation) + QDir::separator() + "Startup" + QDir::separator() + fileInfo.completeBaseName() + ".lnk");
+#else
         //Copy the nixnote2.desktop to the ~/.config/autostart directory
         QString systemFile = "/usr/share/applications/nixnote2.desktop";
         QFile systemIni(systemFile);
@@ -385,17 +393,14 @@ void AppearancePreferences::saveValues() {
             data << "X-GNOME-Autostart-enabled=true";
         }
         userIni.close();
+#endif
     }
-
 
     global.settings->endGroup();
 
     global.setPreviewFontsInDialog(fontPreviewInDialog->isChecked());
 
 }
-
-
-
 
 
 // Load the list of font names
