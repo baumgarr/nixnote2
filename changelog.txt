@@ -1,3 +1,24 @@
+NixNote (2.0.1) stable; urgency=low
+  * Add the ability to customize some aspects of a table
+    within a note.
+  * Added an auto-save interval. This can be customized 
+    in the preferences dialog.
+  * Add the ability to fully justify text.
+  * Add "double click" tray option. May not work on all
+    Window managers & isn't recommended with the 
+    "single click" option.
+  * Add the ability to specify the db location via a 
+    --condigDir command line option.
+  * Add option to intercept SIGHUP on Linux.
+  * Add option to clear & mark complete multiple reminders
+    from the note list.
+  * Added support for reminder search syntax & attribute filters. 
+  * Add support for new plugin locations.
+  * Chinese translation improvements.
+  * Performance improvements & Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Thur, 9 Mar 2017 12:00:00 -0400
+
+
 NixNote (2.0) stable; urgency=low
   * Added the ability to export a note as a PDF.
   * Added the ability to alter the default notebook.
