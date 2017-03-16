@@ -155,7 +155,12 @@ void FileWatcher::saveFile(QString file) {
     emit(fileImported(noteLid, lid));
 
     if (scanType == FileWatcher::ImportDelete) {
-        QLOG_DEBUG() << f.remove();
+        bool retval = f.remove();
+        int count = 100;
+        while (!retval && count > 0) {
+            QLOG_ERROR() << tr("Error removing file:") << f.RemoveError;
+            count--;
+        }
     }
 }
 

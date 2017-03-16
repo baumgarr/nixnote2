@@ -924,19 +924,22 @@ void NTableView::copyNoteLink() {
 
     Note note;
     NoteTable ntable(global.db);
-    ntable.get(note, lids[0], false, false);
+    QString lidUrl = "";
+    for (int i=0; i<lids.size(); i++) {
+        ntable.get(note, lids[i], false, false);
 
-    QString guid = "";
-    if (note.guid.isSet())
-        guid = note.guid;
-    QString localid;
-    if (!note.updateSequenceNum.isSet() || note.updateSequenceNum == 0) {
-        syncneeded = true;
-        localid = QString::number(lids[0]);
-    } else
-        localid = guid;
+        QString guid = "";
+        if (note.guid.isSet())
+            guid = note.guid;
+        QString localid;
+        if (!note.updateSequenceNum.isSet() || note.updateSequenceNum == 0) {
+            syncneeded = true;
+            localid = QString::number(lids[i]);
+        } else
+            localid = guid;
 
-    QString lidUrl = "evernote:///view/" + userid +"/" +shard + "/" +guid + "/" +localid +"/";
+        lidUrl = lidUrl+"evernote:///view/" + userid +"/" +shard + "/" +guid + "/" +localid +"/" + " ";
+    }
     if (syncneeded) {
         QMessageBox msgBox;
         msgBox.setWindowTitle(tr("Unsynchronized Note"));

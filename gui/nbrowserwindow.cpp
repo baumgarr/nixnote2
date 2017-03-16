@@ -960,37 +960,48 @@ void NBrowserWindow::pasteButtonPressed() {
 
 
         if (urltext.toLower().mid(0,17) == "evernote:///view/") {
-            urltext = urltext.mid(17);
-            int pos = urltext.indexOf("/");
-            urltext = urltext.mid(pos+1);
-            pos = urltext.indexOf("/");
-            urltext = urltext.mid(pos+1);
-            pos = urltext.indexOf("/");
-            urltext = urltext.mid(pos+1);
-            pos = urltext.indexOf("/");
-            QString guid = urltext.mid(0,pos);
-            urltext = urltext.mid(pos);
-            pos = urltext.indexOf("/");
-            QString locguid = urltext.mid(pos);
+            QStringList urlList = urltext.split(" ");
+            QString url = "";
+            for (int i=0; i<urlList.size(); i++) {
+                QLOG_DEBUG() << urlList[i];
+                urltext = urlList[i];
+                urltext = urltext.mid(17);
+                int pos = urltext.indexOf("/");
+                urltext = urltext.mid(pos+1);
+                pos = urltext.indexOf("/");
+                urltext = urltext.mid(pos+1);
+                pos = urltext.indexOf("/");
+                urltext = urltext.mid(pos+1);
+                pos = urltext.indexOf("/");
+                QString guid = urltext.mid(0,pos);
+                urltext = urltext.mid(pos);
+                pos = urltext.indexOf("/");
+                QString locguid = urltext.mid(pos);
 
-            Note n;
-            bool goodrc = false;
-            NoteTable ntable(global.db);
-            goodrc = ntable.get(n, guid,false, false);
-            if (!goodrc)
-                goodrc = ntable.get(n,locguid,false, false);
+                Note n;
+                bool goodrc = false;
+                NoteTable ntable(global.db);
+                goodrc = ntable.get(n, guid,false, false);
+                if (!goodrc)
+                    goodrc = ntable.get(n,locguid,false, false);
 
-            // If we have a good return, then we can paste the link, otherwise we fall out
-            // to a normal paste.
-            if (goodrc) {
-                QString url = QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(QApplication::clipboard()->text(), n.title, n.title);
-                QLOG_DEBUG() << "HTML to insert:" << url;
-                QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
-                editor->page()->mainFrame()->evaluateJavaScript(script);
-                return;
-            } else {
-                QLOG_ERROR() << "Error retrieving note";
+                // If we have a good return, then we can paste the link, otherwise we fall out
+                // to a normal paste.
+                if (goodrc) {
+                    url = url + QString("<a href=\"%1\" title=\"%2\">%3</a>").arg(urlList[i], n.title, n.title);
+                    QLOG_DEBUG() << "HTML to insert:" << url;
+                    if (i+1<urlList.size())
+                        url = url+" <br> ";
+                } else {
+                    if (urltext != "") {
+                        QLOG_ERROR() << "Error retrieving note: " << urlList[i];
+                    }
+                }
             }
+            QLOG_DEBUG() << url;
+            QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(url);
+            editor->page()->mainFrame()->evaluateJavaScript(script);
+            return;
         }
     }
 
