@@ -739,10 +739,18 @@ void TablePropertiesDialog::cellPaddingSizeChanged(int size) {
 // Signaled when a cell border style changes
 void TablePropertiesDialog::cellBorderChanged(int index) {
     Q_UNUSED(index);
+#if QT_VERSION >= 0x050000
     cellBorderStyleBottom = borderComboBottom->currentData().toString();
     cellBorderStyleTop = borderComboTop->currentData().toString();
     cellBorderStyleLeft = borderComboLeft->currentData().toString();
     cellBorderStyleRight = borderComboRight->currentData().toString();
+#endif
+#if QT_VERSION < 0x050000
+    cellBorderStyleBottom = borderComboBottom->itemData(borderComboBottom->currentIndex()).toString();
+    cellBorderStyleTop = borderComboTop->itemData(borderComboTop->currentIndex()).toString();
+    cellBorderStyleLeft = borderComboLeft->itemData(borderComboLeft->currentIndex()).toString();
+    cellBorderStyleRight = borderComboRight->itemData(borderComboRight->currentIndex()).toString();
+#endif
     generatePreview();
 }
 

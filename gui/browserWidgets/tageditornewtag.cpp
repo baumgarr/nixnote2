@@ -107,7 +107,9 @@ void TagEditorNewTag::loadCompleter() {
     qSort(tagNames.begin(), tagNames.end(), caseInsensitiveLessThan);
     completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
     completer->setCaseSensitivity(Qt::CaseInsensitive);
+#if QT_VERSION >= 0x050000
     completer->setFilterMode(Qt::MatchContains);
+#endif
     setCompleter(completer);
 
     QStringListModel *model;
