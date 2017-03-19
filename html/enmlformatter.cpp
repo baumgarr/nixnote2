@@ -29,11 +29,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QIcon>
 #include <QMessageBox>
 
-#include <tidy/tidy.h>
+#include <tidy.h>
 #ifndef _WIN32
-#include <tidy/buffio.h>
+#include <buffio.h>
 #else
-#include <tidy/tidybuffio.h>
+#include <tidybuffio.h>
 #endif
 
 #include <iostream>
