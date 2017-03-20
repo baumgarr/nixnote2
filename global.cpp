@@ -1113,14 +1113,14 @@ bool Global::isProxyEnabled() {
 // Set the Sock5 proxy
 void Global::setSocks5Enabled(bool value) {
     settings->beginGroup("Proxy");
-    settings->setValue("enabled", value);
+    settings->setValue("socks5", value);
     settings->endGroup();
 }
 
 // Get the Socks5 proxy
 bool Global::isSocks5Enabled() {
     settings->beginGroup("Proxy");
-    bool value = settings->value("enabled", false).toBool();
+    bool value = settings->value("socks5", false).toBool();
     settings->endGroup();
     return value;
 }

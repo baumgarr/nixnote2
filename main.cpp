@@ -265,11 +265,9 @@ int main(int argc, char *argv[])
 
     // Setup the proxy
     QNetworkProxy proxy;
-    if (global.isSocks5Enabled())
-	proxy.setType(QNetworkProxy::Socks5Proxy);
-    else
-    	proxy.setType(QNetworkProxy::HttpProxy);
     if (global.isProxyEnabled()) {
+        if (global.isSocks5Enabled())
+            proxy.setType(QNetworkProxy::Socks5Proxy);
         QString host = global.getProxyHost();
         int port = global.getProxyPort();
         QString user = global.getProxyUserid();
@@ -285,6 +283,8 @@ int main(int argc, char *argv[])
             proxy.setPassword(password.trimmed());
 
         QNetworkProxy::setApplicationProxy(proxy);
+    } else {
+        proxy.setType(QNetworkProxy::HttpProxy);
     }
 
     QLOG_DEBUG() << "Setting up exit signal";
