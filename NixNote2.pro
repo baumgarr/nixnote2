@@ -22,7 +22,7 @@ equals(QT_MAJOR_VERSION, 4) {
     QT       += core gui webkit sql network xml
     INCLUDEPATH += /usr/include/poppler/qt4
     LIBS +=    -lcurl \
-               -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
+               -lpthread -L/usr/lib -lpoppler-qt4 -ltidy -g -rdynamic
 }
 
 TARGET = nixnote2
