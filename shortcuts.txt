@@ -98,7 +98,7 @@ Format_Superscript		Ctrl+=		// Set superscript
 Format_Subscript		Ctrl+Shift+=	// Subscript
 Format_Alignment_Left		Ctrl+L		// Left align text
 Format_Alignment_Center	        Ctrl+E		// Center text
-Format_Alignment_Full	        		// Fully allign text
+Format_Alignment_Full	        		// Fully align text
 Format_Alignment_Right		Ctrl+R		// Right align text
 Format_List_Bullet		Ctrl+Shift+B	// Bullet list
 Format_List_Numbered		Ctrl+Shift+N	// Numbered list 

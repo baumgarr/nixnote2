@@ -62,7 +62,7 @@ void ExtractNotes::extract() {
         if (verifyDelete) {
             std::string verify;
             std::cout << QString(tr("Deleting notes:")).toStdString() << endl;
-            std::cout << QString(tr("Type DELETE to very: ")).toStdString();
+            std::cout << QString(tr("Type DELETE to verify: ")).toStdString();
             std::cin >> verify;
             QString qVerify = QString::fromStdString(verify);
             if (qVerify.toLower() != "delete")

@@ -15,7 +15,7 @@ Requires: nixnote2, hunspell >= 1.3.2
 NixNote-Hunspell-Plugin:: Plugin allowing for a hunspell to be used in NixNote2.
 
 Copyright 2009-2015, Randy Baumgarte 
-Licensed under GNU General Public Lisence version 2
+Licensed under GNU General Public License version 2
 
 This is a plugin for NixNote2. It allows for spell checking of notes via Hunspell.
 

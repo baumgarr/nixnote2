@@ -134,7 +134,7 @@ private:
     QComboBox *verticalAlignmentCombo;             // Shows the vertical alignment values
     QComboBox *horizontalAlignmentCombo;           // Shows the horizontal alignment values
 
-    void loadBorderCombo(QComboBox *combo);        // Load a list of avaliable border types into a combo box
+    void loadBorderCombo(QComboBox *combo);        // Load a list of available border types into a combo box
 
     void setTableStyle(QString value);             // Setup the table values from the current css.
     void setCellStyle(QString value);              // Setup the cell values from the current css.

@@ -280,7 +280,7 @@ bool SmtpClient::connectToHost()
         return false;
     }
 
-    // If no errors occured the function returns true.
+    // If no errors occurred the function returns true.
     return true;
 }
 
@@ -326,7 +326,7 @@ bool SmtpClient::login(const QString &user, const QString &password, AuthMethod 
             // Send the password in base64
             sendMessage(QByteArray().append(password).toBase64());
 
-            // Wait for the server's responce
+            // Wait for the server's response
             waitForResponse();
 
             // If the response is not 235 then the authentication was faild
@@ -339,7 +339,7 @@ bool SmtpClient::login(const QString &user, const QString &password, AuthMethod 
     }
     catch (ResponseTimeoutException)
     {
-        // Responce Timeout exceeded
+        // Response Timeout exceeded
         emit smtpError(AuthenticationFailedError);
         return false;
     }
@@ -451,7 +451,7 @@ void SmtpClient::waitForResponse()
             // Save the server's response
             responseText = socket->readLine();
 
-            // Extract the respose code from the server's responce (first 3 digits)
+            // Extract the respose code from the server's response (first 3 digits)
             responseCode = responseText.left(3).toInt();
 
             if (responseCode / 100 == 4)
