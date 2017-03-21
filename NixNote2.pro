@@ -8,6 +8,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
     unix:INCLUDEPATH += /usr/include/poppler/qt5
+    unix:INCLUDEPATH += /usr/include/tidy
     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
     win32:INCLUDEPATH+= "$$PWD/winlib/includes"
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
@@ -21,6 +22,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 equals(QT_MAJOR_VERSION, 4) {
     QT       += core gui webkit sql network xml
     INCLUDEPATH += /usr/include/poppler/qt4
+    INCLUDEPATH += /usr/include/tidy
     LIBS +=    -lcurl \
                -lpthread -L/usr/lib -lpoppler-qt4 -ltidy -g -rdynamic
 }
