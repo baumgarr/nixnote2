@@ -123,12 +123,13 @@ void ImportEnex::import(QString file) {
             QXmlStreamAttributes attributes = reader->attributes();
             QString version = attributes.value("version").toString();
             QString application = attributes.value("application").toString();
-            if (version != "5.x" && version != "6.x") {
+            // Version 5.x & 6.x are for Windows
+            if (version != "5.x" && version != "6.x" && version.toLower() != "evernote mac") {
                 lastError = 1;
                 errorMessage = "Unknown export version = " +version;
                 return;
             }
-            if (application.toLower() != "evernote/windows") {
+            if (application.toLower() != "evernote/windows" && application.toLower() != "evernote") {
                 lastError = 2;
                 errorMessage = "This export is from an unknown application = " +application;
                 return;

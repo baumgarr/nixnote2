@@ -241,7 +241,6 @@ void NTagView::loadData() {
             dataStore.remove(keys[i]);
             if (ptr->parent() != NULL)
                 ptr->parent()->removeChild(ptr);
-            QLOG_DEBUG() << ptr;
             ptr->setHidden(true);
            // delete ptr;  << We can leak memory, but otherwise it sometimes gets confused and causes crashes
         }
