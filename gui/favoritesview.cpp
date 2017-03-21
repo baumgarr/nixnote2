@@ -635,6 +635,14 @@ void FavoritesView::buildSelection() {
             if (item->record.type == FavoritesRecord::Note) {
                 newFilter->setLid(item->record.target.toInt());
             }
+            if (item->record.type == FavoritesRecord::Search) {
+                SavedSearch search;
+                SearchTable table(global.db);
+                QLOG_DEBUG() << item->record.target.toInt();
+                table.get(search, item->record.target.toInt());
+                if (search.query.isSet())
+                    newFilter->setSearchString(search.query);
+            }
         }
     }
 

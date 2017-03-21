@@ -36,7 +36,7 @@ AccountMaintenanceDialog::AccountMaintenanceDialog(NMainMenuBar *menubar, QWidge
     addButton = new QPushButton(tr("Add"),this);
     renameButton = new QPushButton(tr("Rename"));
     deleteButton = new QPushButton(tr("Delete"));
-    removeAuthButton = new QPushButton("Remove Authorization");
+    removeAuthButton = new QPushButton(tr("Remove Authorization"));
     nameList = new QListWidget(this);
     buttonLayout1 = new QVBoxLayout();
     buttonLayout2 = new QHBoxLayout();
