@@ -35,11 +35,9 @@ sudo apt install nixnote2
 ### Arch Linux
 
 NixNote2 is available via AUR: [nixnote-beta](https://aur.archlinux.org/packages/nixnote-beta/),
-[nixnote2-git](https://aur.archlinux.org/packages/nixnote2-git/).
+[nixnote](https://aur.archlinux.org/packages/nixnote/).
 
-The obsolete nixnote 1.x version can also be found on AUR: [nixnote](https://aur.archlinux.org/packages/nixnote/).
-
-All three packages are available in [[archlinuxcn]](https://www.archlinuxcn.org/archlinux-cn-repo-and-mirror/)
+These packages are also available in [[archlinuxcn]](https://www.archlinuxcn.org/archlinux-cn-repo-and-mirror/)
 unofficial repository.
 
 ### Gentoo Linux
