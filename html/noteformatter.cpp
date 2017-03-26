@@ -335,7 +335,7 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
         recoData = recognition.body;
     QString xml(recoData);
 
-    // Create a transparent pixmap.  The only non transparent piece is teh
+    // Create a transparent pixmap.  The only non transparent piece is the
     // highlight that will be overlaid on the old image
     imgfile = imgfile.replace("file:///", "");
     QPixmap originalFile(imgfile, findImageFormat(imgfile));

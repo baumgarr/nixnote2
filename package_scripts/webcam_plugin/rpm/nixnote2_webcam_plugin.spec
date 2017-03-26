@@ -15,7 +15,7 @@ Requires: nixnote2, opencv >= 2.4.7
 NixNote-Webcam-Plugin:: Plugin allowing for a webcam to be used in NixNote2.
 
 Copyright 2009-2015, Randy Baumgarte 
-Licensed under GNU General Public Lisence version 2
+Licensed under GNU General Public License version 2
 
 This is a plugin for NixNote2. It allows for the creation of notes by using a webcam as input.
 
