@@ -4,7 +4,7 @@ Section: x11
 Priority: optional
 Architecture: __ARCH__ 
 Installed-Size: 133120
-Depends: libc6, libpoppler-qt4-4, libqtwebkit4, libqt4-sql, libqt4-sql-sqlite, libqt4-xml, libqtgui4, libqt4-network, libqtcore4, libpng12-0, libsqlite3-0, libtbb2, tidy, libdc1394-22, libcurl3
+Depends: libc6, libpoppler-qt4-4, libqtwebkit4, libqt4-sql, libqt4-sql-sqlite, libqt4-xml, libqtgui4, libqt4-network, libqtcore4, libpng12-0, libsqlite3-0, libtbb2, tidy, libtidy-0.99-0, libdc1394-22, libcurl3
 Recommends: mimetex, libreoffice-common, openjdk-7-jre | openjdk-7-jdk | sun-java7-jdk | sun-java7-jre | java7-sdk | java7-runtime | default-jre, nixnote2-webcam-plugin, nixnote2-hunspell-plugin 
 Maintainer: Randy Baumgarte <randy@fbn.cx>
 Description: Open Source Evernote client.

@@ -16,7 +16,7 @@ NixNote (2.0.1) stable; urgency=low
   * Add support for new plugin locations.
   * Chinese translation improvements.
   * Performance improvements & Bug fixes.
- -- Randy Baumgarte <randy@fbn.cx>  Thur, 9 Mar 2017 12:00:00 -0400
+ -- Randy Baumgarte <randy@fbn.cx>  Thu, 9 Mar 2017 12:00:00 -0400
 
 
 NixNote (2.0) stable; urgency=low
