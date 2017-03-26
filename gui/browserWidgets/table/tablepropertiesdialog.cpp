@@ -761,7 +761,12 @@ void TablePropertiesDialog::cellBorderChanged(int index) {
 // Signaled when the horizontal alignment changes
 void TablePropertiesDialog::horizontalAlignmentChanged(int index) {
     Q_UNUSED(index);
+#if QT_VERSION >= 0x050000
     horizontalAlignment = horizontalAlignmentCombo->currentData().toString();
+#endif
+#if QT_VERSION < 0x050000
+    horizontalAlignment = horizontalAlignmentCombo->itemData(horizontalAlignmentCombo->currentIndex()).toString();
+#endif
     generatePreview();
 }
 
@@ -770,7 +775,12 @@ void TablePropertiesDialog::horizontalAlignmentChanged(int index) {
 // Signaled when the vertical alignment changes
 void TablePropertiesDialog::verticalAlignmentChanged(int index) {
     Q_UNUSED(index);
+#if QT_VERSION >= 0x050000
     verticalAlignment = verticalAlignmentCombo->currentData().toString();
+#endif
+#if QT_VERSION < 0x050000
+    verticalAlignment = verticalAlignmentCombo->itemData(verticalAlignmentCombo->currentIndex()).toString();
+#endif
     generatePreview();
 }
 
@@ -820,10 +830,18 @@ void TablePropertiesDialog::cellBorderSizeChanged(int size) {
 void TablePropertiesDialog::tableMarginUnitChanged(int index) {
     Q_UNUSED(index);
 
+#if QT_VERSION >= 0x050000
     tableRightMarginUnit = tableRightMarginUnitCombo->currentData().toString();
     tableTopMarginUnit = tableTopMarginUnitCombo->currentData().toString();
     tableLeftMarginUnit = tableLeftMarginUnitCombo->currentData().toString();
     tableBottomMarginUnit = tableBottomMarginUnitCombo->currentData().toString();
+#endif
+#if QT_VERSION < 0x050000
+    tableRightMarginUnit = tableRightMarginUnitCombo->itemData(tableRightMarginUnitCombo->currentIndex()).toString();
+    tableTopMarginUnit = tableTopMarginUnitCombo->itemData(tableTopMarginUnitCombo->currentIndex()).toString();
+    tableLeftMarginUnit = tableLeftMarginUnitCombo->itemData(tableLeftMarginUnitCombo->currentIndex()).toString();
+    tableBottomMarginUnit = tableBottomMarginUnitCombo->itemData(tableBottomMarginUnitCombo->currentIndex()).toString();
+#endif
 
     generatePreview();
 }
