@@ -36,12 +36,13 @@ DateTimeEditor::DateTimeEditor(QWidget *parent) :
     this->setFont(global.getGuiFont(font()));
 
     QPalette pal;
-    pal.setColor(QPalette::Text, QColor(14,28,209));
+    QString test = global.getDateTimeEditorColor();
+    pal.setColor(QPalette::Text, QColor(test));
     pal.setColor(backgroundRole(), QPalette::Base);
     setPalette(pal);
 
-    inactiveColor = "QDateTimeEdit {background-color: transparent; border-radius: 1px;} QDateTimeEdit:hover {border: 1px solid #808080; background-color: white; border-radius: 4px;} QDateTimeEdit::up-button {width: 0px; image:none;} QDateTimeEdit::down-button{width: 0px; image: none;}";
-    activeColor = "QDateTimeEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;}  QDateTimeEdit::up-button {width: 14px;} QDateTimeEdit::down-button{width: 14px;}";
+    inactiveColor = global.getDateTimeEditorInactiveStyle();
+    activeColor = global.getDateTimeEditorActiveStyle();
 
     //editor.setCalendarPopup(true);
     //display.setStyleSheet(inactiveColor);

@@ -52,3 +52,7 @@ Makefile.Release
 #eclipse files
 .cproject
 .settings
+
+cmake-build-debug/
+.idea/
+

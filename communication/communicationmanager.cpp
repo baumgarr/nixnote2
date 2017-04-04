@@ -72,6 +72,7 @@ CommunicationManager::CommunicationManager(DatabaseConnection *db)
     noteStore = NULL;
     myNoteStore = NULL;
     linkedNoteStore = NULL;
+    minutesToNextSync = 0;
     if (networkAccessManager == NULL) {
         networkAccessManager = new QNetworkAccessManager(this);
 //        connect(networkAccessManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(inkNoteFinished(QNetworkReply*)));
@@ -1194,12 +1195,23 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
         QLOG_ERROR() << "EDAMSystemException Rate Limit:" << e.rateLimitDuration << endl;
     }
     if (e.errorCode == EDAMErrorCode::RATE_LIMIT_REACHED) {
-        int duration = e.rateLimitDuration/60+1;
+        this->minutesToNextSync = e.rateLimitDuration/60+1;
         error.type = CommunicationError::RateLimitExceeded;
-        if (duration > 1)
-            error.message = tr("API rate limit exceeded.  Please try again in ") +QString::number(duration)+ tr(" minutes.");
-        else
-            error.message = tr("API rate limit exceeded.  Please try again in ") +QString::number(duration)+ tr(" minute.");
+
+        string endOfText = "minute";
+        if (this->minutesToNextSync > 1)
+            endOfText = "minutes";
+
+        global.settings->beginGroup("Sync");
+        bool apiRateLimitAutoRestart = global.settings->value("apiRateLimitAutoRestart", false).toBool();
+        global.settings->endGroup();
+
+        string startText = "Enable 'Sync' > 'Restart sync on API limit' or try again in";
+        if(apiRateLimitAutoRestart)
+            startText = "Application will continue to sync in";
+
+        error.message = tr("API rate limit exceeded.") + QString(" ") + tr(startText.c_str()) + QString(" ") + QString::number(this->minutesToNextSync)+ " " + tr(endOfText.c_str());
+
         return;
     }
     if (e.message.isSet())
@@ -1256,4 +1268,8 @@ QString CommunicationManager::errorWhat(QString what) {
     return "";
 }
 
+qint32 CommunicationManager::getMinutesToNextSync()
+{
+    return this->minutesToNextSync;
+}
 

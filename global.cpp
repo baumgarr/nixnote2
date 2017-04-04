@@ -859,18 +859,189 @@ QString Global::getEditorBackgroundColor() {
         return "white";
 }
 
+QString Global::getNoteTitleColor() {
+    if (colorList.contains("noteTitleColor"))
+        return colorList["noteTitleColor"].trimmed();
+    else
+        return "#0e1cd1";
+}
+
+QString Global::getNoteTitleActiveStyle() {
+    QString result = this->getGenricStyle("titleActiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
+    }
+
+    return result;
+}
+
+QString Global::getNoteTitleInactiveStyle() {
+    QString result = this->getGenricStyle("titleInactiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QLineEdit {background-color: transparent; border-radius: 0px;} QLineEdit:hover {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
+    }
+
+    return result;
+}
+
+QString Global::getDateTimeEditorColor() {
+    if (colorList.contains("dateTimeEditorColor"))
+        return colorList["dateTimeEditorColor"].trimmed();
+    else
+        return "#0e1cd1";
+}
+
+QString Global::getTagViewerInactiveStyle() {
+    QString result = this->getGenricStyle("tagViewerInactiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QLineEdit {color: black; font:normal;} ";
+    }
+
+    return result;
+}
+
+
+QString Global::getTagViewerActiveStyle() {
+    QString result = this->getGenricStyle("tagViewerActiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QLineEdit {color: black; font:normal;} ";
+    }
+
+    return result;
+}
+
+
+QString Global::getTagEditorInactiveStyle() {
+    QString result = this->getGenricStyle("tagEditorInactiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QLineEdit {background-color: transparent; border-radius: 0px;} ";
+    }
+
+    return result;
+}
+
+
+QString Global::getTagEditorActiveStyle() {
+    QString result = this->getGenricStyle("tagEditorActiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;}";
+    }
+
+    return result;
+}
+
+
+
+
+QString Global::getUrlEditorActiveStyle() {
+    QString result = this->getGenricStyle("urlEditorActiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;}";
+    }
+
+    return result;
+}
+
+QString Global::getUrlEditorInactiveStyle() {
+    QString result = this->getGenricStyle("urlEditorInactiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QLineEdit {background-color: transparent; border-radius: 0px;}";
+    }
+
+    return result;
+}
+
+QString Global::getLineEditSearchActiveStyle() {
+    QString result = this->getGenricStyle("lineEditSearchActiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QLineEdit {color: black; font:normal;} ";
+    }
+
+    return result;
+}
+
+
+QString Global::getLineEditSearchInactiveStyle() {
+    QString result = this->getGenricStyle("lineEditSearchInactiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QLineEdit {color: gray; font:italic;} ";
+    }
+
+    return result;
+}
+
+
+QString Global::getDateTimeEditorActiveStyle() {
+    QString result = this->getGenricStyle("dateTimeEditorActiveCss");
+
+    if(result.length() == 0)
+    {
+        result = "QDateTimeEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;}  QDateTimeEdit::up-button {width: 14px;} QDateTimeEdit::down-button{width: 14px;}";
+    }
+
+    return result;
+}
+
+QString Global::getDateTimeEditorInactiveStyle() {
+    QString result = this->getGenricStyle("dateTimeEditorInactiveCss");
+
+    if(result.length() == 0)
+    {
+       result = "QDateTimeEdit {background-color: transparent; border-radius: 1px;} QDateTimeEdit:hover {border: 1px solid #808080; background-color: white; border-radius: 4px;} QDateTimeEdit::up-button {width: 0px; image:none;} QDateTimeEdit::down-button{width: 0px; image: none;}";
+    }
+
+    return result;
+}
 
 QString Global::getEditorCss() {
-    QString css=fileManager.getQssDirPath("")+"editor.css";
-    if (colorList.contains("editorCss")) {
-        css = fileManager.getQssDirPathUser("")+colorList["editorCss"].trimmed();
-        if (QFile(css).exists())
-            return css;
-        css = fileManager.getQssDirPath("")+colorList["editorCss"].trimmed();
-        if (QFile(css).exists())
-            return css;
+    return this->getGenricCss("editorCss");
+}
+
+QString Global::getGenricStyle(QString key) {
+    QFile file(getGenricCss(key));
+    if(file.exists())
+    {
+        if(file.open(QFile::ReadOnly | QFile::Text))
+        {
+            QTextStream in(&file);
+            return in.readAll();
+        }
     }
-    return css;
+
+    return "";
+}
+
+QString Global::getGenricCss(QString key) {
+ QString css=fileManager.getQssDirPath("")+ key + ".css";
+ if (colorList.contains(key)) {
+     css = fileManager.getQssDirPathUser("")+colorList[key].trimmed();
+     if (QFile(css).exists())
+         return css;
+     css = fileManager.getQssDirPath("")+colorList[key].trimmed();
+     if (QFile(css).exists())
+         return css;
+ }
+ return css;
 }
 
 
@@ -958,7 +1129,7 @@ void Global::loadThemeFile(QHash<QString,QString> &resourceList, QHash<QString,Q
                         resourceList.insert(":"+key,value);
                     } else {
                         colorList.remove("key");
-                        colorList.insert(key,value);
+                        colorList.insert(key, fields[1].simplified());
                     }
                 }
             }

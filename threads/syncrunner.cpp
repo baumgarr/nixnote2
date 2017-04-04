@@ -42,6 +42,7 @@ SyncRunner::SyncRunner()
     init = false;
     finalSync = false;
     apiRateLimitExceeded=false;
+    minutesToNextSync=0;
 }
 
 SyncRunner::~SyncRunner() {
@@ -1214,6 +1215,7 @@ void SyncRunner::communicationErrorHandler() {
         else
             emitMsg = "API rate limit exceeded.  Please try again in one hour.";
         emit(setMessage(emitMsg, 0));
+        minutesToNextSync = comm->getMinutesToNextSync();
         apiRateLimitExceeded = true;
         return;
     }

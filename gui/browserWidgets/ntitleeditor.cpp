@@ -33,13 +33,13 @@ NTitleEditor::NTitleEditor(QWidget *parent) :
 {
     // Setup the note title editor
     QPalette pal;
-    //pal.setColor(QPalette::Text, QColor(102,153,255));
-    pal.setColor(QPalette::Text, QColor(14,28,209));
+    pal.setColor(QPalette::Text, QColor(global.getNoteTitleColor()));
     pal.setColor(backgroundRole(), QPalette::Base);
     setPalette(pal);
 
-    inactiveColor = "QLineEdit {background-color: transparent; border-radius: 0px;} QLineEdit:hover {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
-    activeColor = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
+    inactiveColor = global.getNoteTitleInactiveStyle();
+    activeColor = global.getNoteTitleActiveStyle();
+
     this->setStyleSheet(inactiveColor);
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(titleChanged(QString)));
 
