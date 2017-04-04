@@ -39,8 +39,8 @@ extern Global global;
      defaultText = QString(tr("Search"));
      this->setText(defaultText);
 
-     inactiveColor = "QLineEdit {color: gray; font:italic;} ";
-     activeColor = "QLineEdit {color: black; font:normal;} ";
+     inactiveColor = global.getLineEditSearchInactiveStyle();
+     activeColor = global.getLineEditSearchActiveStyle();
 
      connect(this, SIGNAL(returnPressed()), this, SLOT(buildSelection()));
      connect(this, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));

@@ -1,0 +1,21 @@
+QDateTimeEdit {
+    background-color: transparent;
+    border-radius: 1px;
+}
+
+QDateTimeEdit:hover {
+    border: 1px solid #8e8e8e;
+    color: #ededed;
+    background-color: transparent;
+    border-radius: 4px;
+}
+
+QDateTimeEdit::up-button {
+    width: 0px;
+    image: none;
+}
+
+QDateTimeEdit::down-button {
+    width: 0px;
+    image: none;
+}
