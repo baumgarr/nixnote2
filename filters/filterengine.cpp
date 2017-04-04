@@ -693,7 +693,7 @@ void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
     // out based upon them rather than spaces.
     qint32 pos = 0;
     for (qint32 i=0; i<search.length() && search.length() > 0; i++) {
-        if (search[i] == '\0') {
+        if (search[i] == QChar('\0')) {
            search = search.remove(0,1);
                 i=-1;
         } else {
