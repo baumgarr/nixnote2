@@ -1,0 +1,12 @@
+QLineEdit {
+    background-color: transparent;
+    border-radius: 0px;
+    color: #ededed;
+}
+
+QLineEdit:hover {
+    border: 1px solid #8e8e8e;
+    color: #ededed;
+    background-color: transparent;
+    border-radius: 4px;
+}

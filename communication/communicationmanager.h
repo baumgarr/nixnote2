@@ -88,6 +88,8 @@ private:
     AuthenticationResult linkedAuth;          // Linked notebook authorization key
     QString linkedAuthToken;                  // linked notebook authorization token
 
+    qint32 minutesToNextSync;                    // After "API rate limit exceeded" how long should we wait to attempt sync notes (continue syncing large lists of notes - for example when user setup nixnote for first time)
+
 
     void downloadInkNoteImage(QString guid, Resource *r, QString shard, QString authToken);   // Function to download ink notes
     void checkForInkNotes(QList<Resource> &resources, QString shard, QString authToken);      // Check if a resource list has any ink notes
@@ -149,6 +151,8 @@ public:
     bool getNoteVersion(Note &note, QString guid, qint32 usn, bool withResourceData=true, bool withResourceRecognition=true, bool withResourceAlternateData=true);  // Download a past version of a note from a linked account
     void loadTagGuidMap();                                     // Load the tag hashmap.
     QString  errorWhat(QString what);                           // help build error string
+
+    qint32 getMinutesToNextSync();
 
 public slots:
     int inkNoteReady(QImage *newImage, QImage *replyImage, int position);   // An inknote has been downloaded.

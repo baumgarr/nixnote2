@@ -69,7 +69,6 @@ void FileManager::setup(QString homeDirPath, QString programDirPath, int id) {
     checkExistingReadableDir(qssDir);
     qssDirPath = slashTerminatePath(qssDir.path());
 
-
     // Read/write directories that only we use
 
     QString settingsFile = getHomeDirPath("") + "nixnote.conf";
