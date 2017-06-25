@@ -949,7 +949,7 @@ void EnmlFormatter::postXmlFix() {
          pos = content.indexOf("<en-todo", pos+1);
     }
 
-    // Fix any <img> tags
+    // Fix any <en-media> tags
     content = content.replace("</en-media>", "");
     pos = content.indexOf("<en-media");
     if (pos != -1) {
@@ -961,7 +961,7 @@ void EnmlFormatter::postXmlFix() {
 
         // Check the next /> end tag.  If it is beyond the end
         // of the current tag or if it doesn't exist then we
-        // need to fix the end of the img
+        // need to fix the end of the en-media
         if (tagEndPos == -1 || tagEndPos > endPos) {
             content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
         }
