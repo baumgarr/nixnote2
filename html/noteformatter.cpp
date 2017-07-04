@@ -184,19 +184,83 @@ QString NoteFormatter::preHtmlFormat(QString note) {
     QLOG_TRACE_IN();
     int pos;
 
-    // Correct <br></br> because Webkit messes it up.
-    QString content = note.replace("<br></br>", "<br/>");
-
-    pos = content.indexOf("<en-media");
+    // Fix the <hr> tags
+    // Keep next rule as was (Do we need this next line? XXX FIXME XXX)
+    QString content = note.replace("<hr>", "<hr/>");
+    content = content.replace("</hr>", "");
+    pos = content.indexOf("<hr");
+    if (pos != -1) {
+        QLOG_DEBUG() << "<hr found.  Beginning fix";
+    }
     while (pos != -1) {
         int endPos = content.indexOf(">", pos);
         int tagEndPos = content.indexOf("/>", pos);
 
-        // Check the next /> end tag.  If it is before the end
+        // Check the next /> end tag.  If it is beyond the end
         // of the current tag or if it doesn't exist then we
-        // need to fix the end of the img
-        if (tagEndPos == -1 || tagEndPos < endPos) {
-            content = content.mid(0, endPos) + QByteArray("></en-media>") +content.mid(endPos+1);
+        // need to fix the end of the hr
+        if (tagEndPos == -1 || tagEndPos > endPos) {
+            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+        }
+         pos = content.indexOf("<hr", pos+1);
+    }
+
+
+    // Fix the <br> tags
+    // Keep next rule as was (Do we need this next line? XXX FIXME XXX)
+    content = content.replace("<br clear=\"none\">", "<br/>");
+    content = content.replace("</br>", "");
+    pos = content.indexOf("<br");
+    if (pos != -1) {
+        QLOG_DEBUG() << "<br found.  Beginning fix";
+    }
+    while (pos != -1) {
+        int endPos = content.indexOf(">", pos);
+        int tagEndPos = content.indexOf("/>", pos);
+
+        // Check the next /> end tag.  If it is beyond the end
+        // of the current tag or if it doesn't exist then we
+        // need to fix the end of the br
+        if (tagEndPos == -1 || tagEndPos > endPos) {
+            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+        }
+         pos = content.indexOf("<br", pos+1);
+    }
+
+
+    // Fix the <en-todo> tags
+    content = content.replace("</en-todo>", "");
+    pos = content.indexOf("<en-todo");
+    if (pos != -1) {
+        QLOG_DEBUG() << "<en-todo found.  Beginning fix";
+    }
+    while (pos != -1) {
+        int endPos = content.indexOf(">", pos);
+        int tagEndPos = content.indexOf("/>", pos);
+
+        // Check the next /> end tag.  If it is beyond the end
+        // of the current tag or if it doesn't exist then we
+        // need to fix the end of the en-todo
+        if (tagEndPos == -1 || tagEndPos > endPos) {
+            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
+        }
+         pos = content.indexOf("<en-todo", pos+1);
+    }
+
+    // Fix any <en-media> tags
+    pos = content.indexOf("<en-media");
+    if (pos != -1) {
+        QLOG_DEBUG() << "<en-media found.  Beginning fix";
+    }
+    while (pos != -1) {
+        int endPos = content.indexOf(">", pos);
+        int tagEndPos = content.indexOf("/>", pos);
+
+        // Check the next /> end tag.  If it is beyond the end
+        // of the current tag or if it doesn't exist then we
+        // need to fix the end of the en-media
+        if (tagEndPos == -1 || tagEndPos > endPos) {
+            content = content.mid(0, endPos) + QByteArray("/>") +content.mid(endPos+1);
         }
         pos = content.indexOf("<en-media", pos+1);
     }
