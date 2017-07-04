@@ -123,6 +123,7 @@ private:
 
     QString tableCellStyle;
     QString tableStyle;
+    QPoint scrollPoint;
 
 
 public:
@@ -325,7 +326,7 @@ private slots:
     void focusCheck();
     void saveTimeCheck();
     void browserThreadStarted();
-
+    void repositionAfterSourceEdit(bool);
 };
 
 #endif // NBROWSERWINDOW_H

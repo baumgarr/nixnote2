@@ -2898,6 +2898,8 @@ void NBrowserWindow::printNote() {
 
 
 void NBrowserWindow::noteSourceUpdated() {
+    scrollPoint = editor->page()->mainFrame()->scrollPosition();
+    connect(editor, SIGNAL(loadFinished(bool)), this, SLOT(repositionAfterSourceEdit(bool)));
     QByteArray ba;
     QString source = sourceEdit->toPlainText();
    //source = Qt::escape(source);
@@ -2908,6 +2910,16 @@ void NBrowserWindow::noteSourceUpdated() {
     this->editor->isDirty = true;
     emit noteContentEditedSignal(uuid, lid, editor->editorPage->mainFrame()->documentElement().toOuterXml());
 }
+
+
+// Called after the source is edited and a reposition is needed to keep the page from being positioned at the top
+void NBrowserWindow::repositionAfterSourceEdit(bool) {
+    editor->page()->mainFrame()->setScrollPosition(scrollPoint);
+    disconnect(editor, SIGNAL(loadFinished(bool)), this, SLOT(repositionAfterSourceEdit(bool)));
+}
+
+
+
 
 // Update a resource's hash if it was edited somewhere else
 void NBrowserWindow::updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash) {
