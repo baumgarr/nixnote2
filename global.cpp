@@ -579,7 +579,7 @@ bool Global::getStrictDTD() {
 
 bool Global::getForceUTF8() {
     settings->beginGroup("Debugging");
-    bool value = settings->value("forceUTF8",false).toBool();
+    bool value = settings->value("forceUTF8",true).toBool();
     settings->endGroup();
     forceUTF8 = value;
     return value;
