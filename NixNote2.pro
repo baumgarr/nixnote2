@@ -5,7 +5,7 @@
 #-------------------------------------------------
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-    QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
+    QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
     unix:INCLUDEPATH += /usr/include/poppler/qt5
     unix:INCLUDEPATH += /usr/include/tidy
@@ -241,7 +241,9 @@ SOURCES += main.cpp\
     dialog/shortcutdialog.cpp \
     cmdtools/signalgui.cpp \
     gui/browserWidgets/table/tablepropertiesdialog.cpp \
-    threads/browserrunner.cpp
+    threads/browserrunner.cpp \
+    exits/exitpoint.cpp \
+    exits/exitmanager.cpp
 
 
 
@@ -442,7 +444,9 @@ HEADERS  += nixnote.h \
     gui/browserWidgets/table/tablepropertiesdialog.h \
     dialog/preferences/appearancepreferences.h \
     dialog/preferences/debugpreferences.h \
-    threads/browserrunner.h
+    threads/browserrunner.h \
+    exits/exitpoint.h \
+    exits/exitmanager.h
 
 
 

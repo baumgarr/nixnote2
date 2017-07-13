@@ -49,8 +49,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/spellcheckdialog.h"
 #include "utilities/pixelconverter.h"
 #include "gui/browserWidgets/table/tablepropertiesdialog.h"
+#include "exits/exitmanager.h"
 
 #include <QPlainTextEdit>
+#include <QJSEngine>
 #include <QVBoxLayout>
 #include <QAction>
 #include <QMenu>
@@ -493,6 +495,19 @@ void NBrowserWindow::setContent(qint32 lid) {
     QWebSettings::setMaximumPagesInCache(0);
     QWebSettings::setObjectCacheCapacities(0, 0, 0);
     QLOG_DEBUG() << "Setting editor contents";
+
+    //**** BEGINNING CALL TO PRE-LOAD EXIT
+
+    QHash<QString, ExitPoint*> *points;
+    points = global.exitManager->exitPoints;
+
+    if (points->contains("ExitPoint_LoadNote") &&
+            points->value("ExitPoint_LoadNote") != NULL &&
+            points->value("ExitPoint_LoadNote")->getEnabled())
+        exitPoint(points->value("ExitPoint_LoadNote"));
+
+    //**** END OF CALL TO PRE-LOAD EXIT
+
     editor->setContent(content);
     // is this an ink note?
     if (inkNote)
@@ -764,6 +779,16 @@ void NBrowserWindow::saveNoteContent() {
     microFocusChanged();
 
     if (this->editor->isDirty) {
+
+        // BEGIN EXIT POINT
+        QHash<QString, ExitPoint*> *points;
+        points = global.exitManager->exitPoints;
+        if (points->contains("ExitPoint_SaveNote") &&
+                points->value("ExitPoint_SaveNote") != NULL &&
+                points->value("ExitPoint_SaveNote")->getEnabled())
+            exitPoint(points->value("ExitPoint_SaveNote"));
+        // END EXIT POINT
+
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
 
         EnmlFormatter formatter;
@@ -3896,4 +3921,77 @@ void NBrowserWindow::setTableCellStyle(QString value) {
 //*************************************************
 void NBrowserWindow::setTableStyle(QString value) {
     this->tableStyle = value;
+}
+
+
+
+//**************************************************
+//* This is called when a note's content is saved.
+//* It is used to call user exits.
+//**************************************************
+
+void NBrowserWindow::exitPoint(ExitPoint *exit) {
+    QLOG_TRACE_IN();
+    ExitPoint_NoteEdit *saveExit = new ExitPoint_NoteEdit();
+
+#if QT_VERSION >= 0x050000
+    QJSEngine engine;
+    QJSValue exit_s = engine.newQObject(saveExit);
+    engine.globalObject().setProperty("exit", exit_s);
+
+    if (exit->getEngine().toLower() == "qjsengine") {
+
+        // Start loading values
+        QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
+        saveExit->setExitName(exit->getExitName());
+        saveExit->setTitle(this->noteTitle.text());
+        saveExit->setNotebook(notebookMenu.notebookName);
+        saveExit->setCreationDate(dateEditor.createdDate.dateTime().toMSecsSinceEpoch());
+        saveExit->setUpdatedDate(dateEditor.updatedDate.dateTime().toMSecsSinceEpoch());
+        saveExit->setSubjectDate(dateEditor.subjectDate.dateTime().toMSecsSinceEpoch());
+        QStringList tags;
+        tagEditor.getTags(tags);
+        saveExit->setTags(tags);
+        saveExit->setContents(editor->page()->mainFrame()->toHtml());
+
+        // Set exit ready & call it.
+        saveExit->setExitReady();
+        QJSValue retval = engine.evaluate(exit->getScript());
+        QLOG_DEBUG() << "Return value from exit: " << retval.toString();
+    }
+#endif
+
+    // Check for any changes.
+    if (saveExit->isTitleModified()) {
+        this->noteTitle.setText(saveExit->getTitle());
+    }
+    if (saveExit->isTagsModified()) {
+        QStringList newTags = saveExit->getTags();
+        QStringList oldTags;
+        tagEditor.getTags(oldTags);
+        for (int i=0; i<oldTags.size(); i++) {
+            tagEditor.removeTag(oldTags[i]);
+        }
+        for (int i=0; i<newTags.size(); i++) {
+            tagEditor.addTag(newTags[i]);
+        }
+    }
+    if (saveExit->isNotebookModified()) {
+        NotebookTable ntable(global.db);
+        QString notebookName = saveExit->getNotebook();
+        qint32 notebookLid = ntable.findByName(notebookName);
+        if (notebookLid >0)
+            this->notebookMenu.updateCurrentNotebook(notebookLid, notebookName);
+        else
+            QLOG_ERROR() << tr("Notebook was not found:") << notebookName;
+    }
+    if (saveExit->isContentsModified()) {
+        QByteArray data = saveExit->getContents().toUtf8();
+        this->editor->setContent(data);
+    }
+    editor->isDirty = saveExit->isContentsDirty();
+    NoteTable ntable(global.db);
+    ntable.setDirty(this->lid, editor->isDirty,false);
+
+    QLOG_TRACE_OUT();
 }

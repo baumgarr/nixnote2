@@ -125,6 +125,8 @@ private:
     QString tableStyle;
     QPoint scrollPoint;
 
+    void exitPoint(ExitPoint *exit);
+
 
 public:
     explicit NBrowserWindow(QWidget *parent = 0);

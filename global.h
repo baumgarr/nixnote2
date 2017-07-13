@@ -37,6 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/databaseconnection.h"
 #include "threads/indexrunner.h"
 #include "utilities/crossmemorymapper.h"
+#include "exits/exitpoint.h"
+#include "exits/exitmanager.h"
 
 #include <string>
 #include <QSqlDatabase>
@@ -295,6 +297,8 @@ public:
     void setUseLibTidy(bool value);                            // Should we use new tidy or classic
     bool getUseLibTidy();
     bool useLibTidy;
+
+    ExitManager *exitManager;                                  // Utility to manage exit points.
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

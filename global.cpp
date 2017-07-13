@@ -258,6 +258,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     multiThreadSaveEnabled = this->getMultiThreadSave();
     useLibTidy = this->getUseLibTidy();
 
+    exitManager = new ExitManager();
+    exitManager->loadExits();
 }
 
 
