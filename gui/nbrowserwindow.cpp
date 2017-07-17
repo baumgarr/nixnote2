@@ -3980,8 +3980,11 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
         NotebookTable ntable(global.db);
         QString notebookName = saveExit->getNotebook();
         qint32 notebookLid = ntable.findByName(notebookName);
-        if (notebookLid >0)
+        if (notebookLid >0) {
             this->notebookMenu.updateCurrentNotebook(notebookLid, notebookName);
+            NoteTable noteTable(global.db);
+            noteTable.updateNotebookName(notebookLid, notebookName);
+        }
         else
             QLOG_ERROR() << tr("Notebook was not found:") << notebookName;
     }
