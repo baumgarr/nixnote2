@@ -150,6 +150,7 @@ public slots:
     void removeReminder();
 
     void noteTagsUpdated(QString uuid, qint32 lid, QStringList names);
+    void noteNotebookUpdated(QString uuid, qint32 lid, QString name);
 
     void downNote();
     void upNote();

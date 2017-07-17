@@ -1607,6 +1607,15 @@ void NTableView::noteTagsUpdated(QString uuid, qint32 lid, QStringList names) {
 
 
 
+
+void NTableView::noteNotebookUpdated(QString uuid, qint32 lid, QString name) {
+    Q_UNUSED(uuid);
+    this->refreshCell(lid, NOTE_TABLE_NOTEBOOK_POSITION, QVariant(name));
+
+}
+
+
+
 void NTableView::downNote() {
     QKeyEvent *event = new QKeyEvent ( QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
     QCoreApplication::postEvent(this, event);
