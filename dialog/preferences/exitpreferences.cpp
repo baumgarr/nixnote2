@@ -32,38 +32,23 @@ ExitPreferences::ExitPreferences(QWidget *parent) : QWidget(parent)
     loadExitButton = new QPushButton();
     loadExitButton->setText("...");
     loadExitFileLabel = new QLabel();
-    loadExitFileLabel->setText(tr("File Name"));
+    loadExitFileLabel->setText(tr("Note Load Exit"));
     connect(loadExitButton, SIGNAL(clicked(bool)), this, SLOT(loadExitButtonPressed(bool)));
-
-    loadExitFileLabel = new QLabel();
-    loadExitFileLabel->setText(tr("File Name"));
 
     loadExitEnabledCombo = new QComboBox();
     loadExitEnabledCombo->addItem(tr("Enabled"), true);
     loadExitEnabledCombo->addItem(tr("Disabled"), false);
 
-    loadExitEnabledLabel = new QLabel();
-    loadExitEnabledLabel->setText(tr("Status"));
-
-
     saveExitFile = new QLineEdit();
     saveExitButton = new QPushButton();
     saveExitButton->setText("...");
     saveExitFileLabel = new QLabel();
-    saveExitFileLabel->setText(tr("File Name"));
+    saveExitFileLabel->setText(tr("Note Save Exit"));
     connect(saveExitButton, SIGNAL(clicked(bool)), this, SLOT(saveExitButtonPressed(bool)));
-
-
-    saveExitFileLabel = new QLabel();
-    saveExitFileLabel->setText(tr("File Name"));
 
     saveExitEnabledCombo = new QComboBox();
     saveExitEnabledCombo->addItem(tr("Enabled"), true);
     saveExitEnabledCombo->addItem(tr("Disabled"), false);
-
-    saveExitEnabledLabel = new QLabel();
-    saveExitEnabledLabel->setText(tr("Status"));
-
 
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
@@ -71,29 +56,23 @@ ExitPreferences::ExitPreferences(QWidget *parent) : QWidget(parent)
 
     int row=0;
     mainLayout->addLayout(loadLayout);
-    loadLayout->addWidget(new QLabel(tr("<b>Note Load Exit</b>")),row++,0);
     loadLayout->addWidget(loadExitFileLabel, row,0);
     loadLayout->addWidget(loadExitFile, row,1);
-    loadLayout->addWidget(loadExitButton, row++,2);
+    loadLayout->addWidget(loadExitButton, row,2);
+    loadLayout->addWidget(loadExitEnabledCombo, row++,3);
 
-    loadLayout->addWidget(loadExitEnabledLabel, row,0);
-    loadLayout->addWidget(loadExitEnabledCombo, row++,1);
+//    QFrame *hFrame = new QFrame();
+//    hFrame->setFrameShape(QFrame::HLine);
+//    mainLayout->addWidget(hFrame);
 
-    QFrame *hFrame = new QFrame();
-    hFrame->setFrameShape(QFrame::HLine);
-    mainLayout->addWidget(hFrame);
-
-    mainLayout->addSpacerItem(new QSpacerItem(30,30));
+//    mainLayout->addSpacerItem(new QSpacerItem(30,30));
 
     QGridLayout *saveLayout = new QGridLayout();
     mainLayout->addLayout(saveLayout);
-    saveLayout->addWidget(new QLabel(tr("<b>Note Save Exit</b>")),row++,0);
     saveLayout->addWidget(saveExitFileLabel, row,0);
     saveLayout->addWidget(saveExitFile, row,1);
-    saveLayout->addWidget(saveExitButton, row++,2);
-
-    saveLayout->addWidget(saveExitEnabledLabel, row,0);
-    saveLayout->addWidget(saveExitEnabledCombo, row++,1);
+    saveLayout->addWidget(saveExitButton, row,2);
+    saveLayout->addWidget(saveExitEnabledCombo, row++,3);
 
     loadValues();
 }

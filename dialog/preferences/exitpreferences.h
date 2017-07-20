@@ -41,11 +41,10 @@ private:
     QComboBox   *loadExitEnabledCombo;
     QLabel      *loadExitEnabledLabel;
 
+    QLabel      *saveExitFileLabel;
     QLineEdit   *saveExitFile;
     QPushButton *saveExitButton;
-    QLabel      *saveExitFileLabel;
     QComboBox   *saveExitEnabledCombo;
-    QLabel      *saveExitEnabledLabel;
 \
 public:
     explicit ExitPreferences(QWidget *parent = 0);
