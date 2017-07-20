@@ -73,6 +73,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <istream>
 #include <qcalendarwidget.h>
 #include <qplaintextedit.h>
+#include <QtScript/QScriptEngine>
 
 extern Global global;
 
@@ -3934,31 +3935,49 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
     QLOG_TRACE_IN();
     ExitPoint_NoteEdit *saveExit = new ExitPoint_NoteEdit();
 
-#if QT_VERSION >= 0x050000
     QJSEngine engine;
     QJSValue exit_s = engine.newQObject(saveExit);
-    engine.globalObject().setProperty("exit", exit_s);
+    engine.globalObject().setProperty("note", exit_s);
+#if QT_VERSION >= 0x050000
+    // Start loading values
+    QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
+    saveExit->setExitName(exit->getExitName());
+    saveExit->setTitle(this->noteTitle.text());
+    saveExit->setNotebook(notebookMenu.notebookName);
+    saveExit->setCreationDate(dateEditor.createdDate.dateTime().toMSecsSinceEpoch());
+    saveExit->setUpdatedDate(dateEditor.updatedDate.dateTime().toMSecsSinceEpoch());
+    saveExit->setSubjectDate(dateEditor.subjectDate.dateTime().toMSecsSinceEpoch());
+    QStringList tags;
+    tagEditor.getTags(tags);
+    saveExit->setTags(tags);
+    saveExit->setContents(editor->page()->mainFrame()->toHtml());
 
-    if (exit->getEngine().toLower() == "qjsengine") {
+    // Set exit ready & call it.
+    saveExit->setExitReady();
+    QJSValue retval = engine.evaluate(exit->getScript());
+    QLOG_INFO() << "Return value from exit: " << retval.toString();
+#endif
+#if QT_VERSION < 0x050000
+    QScriptEngine scriptEngine;
+    QScriptValue exit_qs = scriptEngine.newQObject(saveExit);
+    scriptEngine.globalObject().setProperty("note", exit_qs);
+    // Start loading values
+    QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
+    saveExit->setExitName(exit->getExitName());
+    saveExit->setTitle(this->noteTitle.text());
+    saveExit->setNotebook(notebookMenu.notebookName);
+    saveExit->setCreationDate(dateEditor.createdDate.dateTime().toMSecsSinceEpoch());
+    saveExit->setUpdatedDate(dateEditor.updatedDate.dateTime().toMSecsSinceEpoch());
+    saveExit->setSubjectDate(dateEditor.subjectDate.dateTime().toMSecsSinceEpoch());
+    QStringList tags;
+    tagEditor.getTags(tags);
+    saveExit->setTags(tags);
+    saveExit->setContents(editor->page()->mainFrame()->toHtml());
 
-        // Start loading values
-        QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
-        saveExit->setExitName(exit->getExitName());
-        saveExit->setTitle(this->noteTitle.text());
-        saveExit->setNotebook(notebookMenu.notebookName);
-        saveExit->setCreationDate(dateEditor.createdDate.dateTime().toMSecsSinceEpoch());
-        saveExit->setUpdatedDate(dateEditor.updatedDate.dateTime().toMSecsSinceEpoch());
-        saveExit->setSubjectDate(dateEditor.subjectDate.dateTime().toMSecsSinceEpoch());
-        QStringList tags;
-        tagEditor.getTags(tags);
-        saveExit->setTags(tags);
-        saveExit->setContents(editor->page()->mainFrame()->toHtml());
-
-        // Set exit ready & call it.
-        saveExit->setExitReady();
-        QJSValue retval = engine.evaluate(exit->getScript());
-        QLOG_DEBUG() << "Return value from exit: " << retval.toString();
-    }
+    // Set exit ready & call it.
+    saveExit->setExitReady();
+    QScriptValue retval = scriptEngine.evaluate(exit->getScript());
+    QLOG_INFO() << "Return value from exit: " << retval.toString();
 #endif
 
     // Check for any changes.
@@ -3983,7 +4002,8 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
         if (notebookLid >0) {
             this->notebookMenu.updateCurrentNotebook(notebookLid, notebookName);
             NoteTable noteTable(global.db);
-            noteTable.updateNotebookName(notebookLid, notebookName);
+            noteTable.updateNotebook(this->lid, notebookLid, true);
+            emit (noteNotebookEditedSignal(uuid, lid, notebookLid, notebookName));
         }
         else
             QLOG_ERROR() << tr("Notebook was not found:") << notebookName;

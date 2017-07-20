@@ -20,7 +20,7 @@ greaterThan(QT_MAJOR_VERSION, 4) {
 
 
 equals(QT_MAJOR_VERSION, 4) {
-    QT       += core gui webkit sql network xml
+    QT       += core gui webkit sql network xml script
     INCLUDEPATH += /usr/include/poppler/qt4
     INCLUDEPATH += /usr/include/tidy
     LIBS +=    -lcurl \
@@ -243,7 +243,8 @@ SOURCES += main.cpp\
     gui/browserWidgets/table/tablepropertiesdialog.cpp \
     threads/browserrunner.cpp \
     exits/exitpoint.cpp \
-    exits/exitmanager.cpp
+    exits/exitmanager.cpp \
+    dialog/preferences/exitpreferences.cpp
 
 
 
@@ -446,7 +447,8 @@ HEADERS  += nixnote.h \
     dialog/preferences/debugpreferences.h \
     threads/browserrunner.h \
     exits/exitpoint.h \
-    exits/exitmanager.h
+    exits/exitmanager.h \
+    dialog/preferences/exitpreferences.h
 
 
 

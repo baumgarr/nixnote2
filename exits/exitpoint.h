@@ -30,7 +30,6 @@ class ExitPoint : public QObject
 private:
     QString     exitName;
     QString     fileName;
-    QString     engine;
     bool        enabled;
     int         version;
     QString     script;
@@ -43,9 +42,6 @@ public:
 
     void setFileName(QString);
     QString getFileName();
-
-    void setEngine(QString);
-    QString getEngine();
 
     void setEnabled(bool);
     bool getEnabled();
@@ -78,7 +74,6 @@ private:
     QString contents;
     bool    contents_isSet;
     bool    contents_isModified;
-    bool    contents_reload_requested;
     bool    contents_is_dirty;
 
     QString *notebook;
@@ -104,6 +99,8 @@ private:
 public:
     explicit ExitPoint_NoteEdit(ExitPoint *parent = 0);
     void setExitReady();
+    void setTags(QStringList);
+    QStringList getTags();
 
 public slots:
     void setTitle(QString);
@@ -114,8 +111,6 @@ public slots:
     QString getContents();
     QString getContentsPlainText();
     bool isContentsModified();
-    bool reloadContents();
-    void setContentsReload(bool);
     bool isContentsDirty();
     void setContentsDirty(bool);
 
@@ -123,8 +118,6 @@ public slots:
     QString getNotebook();
     bool isNotebookModified();
 
-    void setTags(QStringList);
-    QStringList getTags();
     bool isTagsModified();
     int getTagsSize();
     void insertTag(QString);

@@ -28,7 +28,6 @@ ExitPoint::ExitPoint(QObject *parent) : QObject(parent)
 {
     this->setExitName("");
     this->setEnabled(false);
-    this->setEngine("QJSEngine");
     this->setVersion(1);
     this->setScript("");
 }
@@ -51,15 +50,6 @@ void ExitPoint::setFileName(QString value) {
 QString ExitPoint::getFileName() {
     return fileName;
 
-}
-
-void ExitPoint::setEngine(QString value) {
-    engine = value;
-}
-
-
-QString ExitPoint::getEngine() {
-    return engine;
 }
 
 void ExitPoint::setEnabled(bool value) {
@@ -112,7 +102,6 @@ ExitPoint_NoteEdit::ExitPoint_NoteEdit(ExitPoint *parent) : ExitPoint(parent) {
     contents_isSet = false;
     contents_isModified = false;
     contents_is_dirty = false;
-    contents_reload_requested = false;
 
     notebook = new QString("");
     notebook_isSet = false;
@@ -175,13 +164,6 @@ void ExitPoint_NoteEdit::setContentsDirty(bool value) {
     contents_is_dirty = value;
 }
 
-bool ExitPoint_NoteEdit::reloadContents() {
-    return contents_reload_requested;
-}
-
-void ExitPoint_NoteEdit::setContentsReload(bool value) {
-    contents_reload_requested = value;
-}
 
 bool ExitPoint_NoteEdit::isContentsDirty() {
     return contents_is_dirty;

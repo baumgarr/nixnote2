@@ -6,10 +6,9 @@
    found at the beginning of a note it is assigned to the 
    "Journal" notebook. 
 */
-var tags = exit.getTags();
-var dateCreated = new Date(exit.getCreatedDate("yyyy-MM-dd"));
+var dateCreated = new Date(note.getCreatedDate("yyyy-MM-dd"));
 
-var contents = exit.getContentsPlainText().split(" ");
+var contents = note.getContentsPlainText().split(" ");
 var dow = contents[0];
 if (dow === "Monday," || dow === "Tuesday," || dow === "Wednesday" || dow === "Thursday," ||
     dow === "Friday," || dow === "Saturday," || dow === "Sunday,") {
@@ -18,5 +17,5 @@ if (dow === "Monday," || dow === "Tuesday," || dow === "Wednesday" || dow === "T
     var year = contents[3];
     day = day.substring(0,day.length-1);
     var newDate = new Date(month + " " +day + " " + year);
-    exit.setNotebook("Journal");
+    note.setNotebook("Journal");
 }

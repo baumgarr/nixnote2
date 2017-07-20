@@ -35,6 +35,8 @@ ExitManager::ExitManager(QObject *parent) : QObject(parent)
 
 
 void ExitManager::loadExits() {
+    exitPoints->clear();
+    loadExitPoint("ExitPoint_LoadNote");
     loadExitPoint("ExitPoint_SaveNote");
 }
 
@@ -42,9 +44,8 @@ void ExitManager::loadExits() {
 void ExitManager::loadExitPoint(QString name, int goodVersion) {
     exitPoints->remove(name);
     global.settings->beginGroup(name);
-    bool enabled = global.settings->value("enabled", true).toBool();
+    bool enabled = global.settings->value("enabled", false).toBool();
     QString fileName = global.settings->value("script", "").toString();
-    QString engine = global.settings->value("engine", "QJSEngine").toString();
     int version = global.settings->value("version", 1).toInt();
     global.settings->endGroup();
 
@@ -53,14 +54,9 @@ void ExitManager::loadExitPoint(QString name, int goodVersion) {
         enabled = false;
     }
 
-    if (engine.toLower() != "qjsengine" && engine.toLower() != "qtscript") {
-        enabled = false;
-        QLOG_ERROR() << tr("Unknown script engine. Disabling exit ") << name;
-    }
-
     if (version != goodVersion) {
         enabled = false;
-        QLOG_ERROR() << tr("Unknown script version. Disabling engine ") << name;
+        QLOG_ERROR() << tr("Unknown script version. Disabling exit.") << name;
     }
 
     QString script;
@@ -73,17 +69,9 @@ void ExitManager::loadExitPoint(QString name, int goodVersion) {
         script = f.readAll();
     }
 
-#if QT_VERSION < 0x050000
-    if (engine.toLower() == "qjsengine") {
-        QLOG_ERROR() << tr("Qt5 is required for QJSEngine Scripts. Disabling ") << name;
-        enabled = false;
-    }
-#endif
-
     ExitPoint *point = new ExitPoint();
     point->setEnabled(enabled);
     point->setFileName(fileName);
-    point->setEngine(engine);
     point->setVersion(version);
     point->setScript(script);
     point->setExitName(name);
