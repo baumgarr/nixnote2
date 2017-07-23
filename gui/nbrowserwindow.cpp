@@ -52,7 +52,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "exits/exitmanager.h"
 
 #include <QPlainTextEdit>
-#include <QJSEngine>
 #include <QVBoxLayout>
 #include <QAction>
 #include <QMenu>
@@ -73,7 +72,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <istream>
 #include <qcalendarwidget.h>
 #include <qplaintextedit.h>
+#if QT_VERSION < 0x050000
 #include <QtScript/QScriptEngine>
+#else
+#include <QJSEngine>
+#endif
+
 
 extern Global global;
 

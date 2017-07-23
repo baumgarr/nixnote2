@@ -135,4 +135,25 @@ public slots:
 
 
 
+class ExitPoint_FileImport : public ExitPoint_NoteEdit {
+    Q_OBJECT
+private:
+    QString file;
+    bool importKeep;
+    void setImportKeep(bool);
+    void setImportDelete(bool);
+public:
+    explicit ExitPoint_FileImport(ExitPoint_NoteEdit *parent = 0);
+    void setFileName(QString);
+public slots:
+    bool isImportDelete();
+    bool isImportKeep();
+    QString getFileName();
+};
+
+
+
 #endif // EXITPOINT_H
+
+
+

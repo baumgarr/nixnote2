@@ -25,6 +25,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QStringList>
 #include <QFileInfo>
 
+#include "exits/exitpoint.h"
+
+#include "qevercloud/include/QEverCloud.h"
+using namespace qevercloud;
+
+
 class FileWatcher : public QFileSystemWatcher
 {
     Q_OBJECT
@@ -45,7 +51,7 @@ private:
     void setupSubDirectories(QStringList &directories, QStringList &files, QString directory);
     void setupDirectory(QStringList &files, QString directory);
     void addDirectory(QString root);
-
+    void exitPoint(ExitPoint *exit, Note &n);
 
 signals:
     void fileImported(qint32 noteLid, qint32 ressourceLid);

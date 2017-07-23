@@ -50,6 +50,31 @@ ExitPreferences::ExitPreferences(QWidget *parent) : QWidget(parent)
     saveExitEnabledCombo->addItem(tr("Enabled"), true);
     saveExitEnabledCombo->addItem(tr("Disabled"), false);
 
+
+    importKeepFile = new QLineEdit();
+    importKeepButton = new QPushButton();
+    importKeepButton->setText("...");
+    importKeepFileLabel = new QLabel();
+    importKeepFileLabel->setText(tr("Import Keep Exit"));
+    connect(importKeepButton, SIGNAL(clicked(bool)), this, SLOT(importKeepExitButtonPressed(bool)));
+
+    importKeepEnabledCombo = new QComboBox();
+    importKeepEnabledCombo->addItem(tr("Enabled"), true);
+    importKeepEnabledCombo->addItem(tr("Disabled"), false);
+
+
+    importDeleteFile = new QLineEdit();
+    importDeleteButton = new QPushButton();
+    importDeleteButton->setText("...");
+    importDeleteFileLabel = new QLabel();
+    importDeleteFileLabel->setText(tr("Import Delete Exit"));
+    connect(importDeleteButton, SIGNAL(clicked(bool)), this, SLOT(importDeleteExitButtonPressed(bool)));
+
+    importDeleteEnabledCombo = new QComboBox();
+    importDeleteEnabledCombo->addItem(tr("Enabled"), true);
+    importDeleteEnabledCombo->addItem(tr("Disabled"), false);
+
+
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     QGridLayout *loadLayout = new QGridLayout();
@@ -74,6 +99,20 @@ ExitPreferences::ExitPreferences(QWidget *parent) : QWidget(parent)
     saveLayout->addWidget(saveExitButton, row,2);
     saveLayout->addWidget(saveExitEnabledCombo, row++,3);
 
+    QGridLayout *importKeepLayout = new QGridLayout();
+    mainLayout->addLayout(importKeepLayout);
+    saveLayout->addWidget(importKeepFileLabel, row,0);
+    saveLayout->addWidget(importKeepFile, row,1);
+    saveLayout->addWidget(importKeepButton, row,2);
+    saveLayout->addWidget(importKeepEnabledCombo, row++,3);
+
+    QGridLayout *importDeleteLayout = new QGridLayout();
+    mainLayout->addLayout(importDeleteLayout);
+    saveLayout->addWidget(importDeleteFileLabel, row,0);
+    saveLayout->addWidget(importDeleteFile, row,1);
+    saveLayout->addWidget(importDeleteButton, row,2);
+    saveLayout->addWidget(importDeleteEnabledCombo, row++,3);
+
     loadValues();
 }
 
@@ -88,11 +127,29 @@ void ExitPreferences::loadExitButtonPressed(bool value) {
 
 
 
-void ExitPreferences::saveExitButtonPressed(bool value) {\
+void ExitPreferences::saveExitButtonPressed(bool value) {
     Q_UNUSED(value);
     QFileDialog f;
     saveExitFile->setText(f.getOpenFileName(this, tr("Select Exit File")));
 
+}
+
+
+
+
+void ExitPreferences::importDeleteExitButtonPressed(bool value) {
+    Q_UNUSED(value);
+    QFileDialog f;
+    importDeleteFile->setText(f.getOpenFileName(this, tr("Select Exit File")));
+}
+
+
+
+
+void ExitPreferences::importKeepExitButtonPressed(bool value) {
+    Q_UNUSED(value);
+    QFileDialog f;
+    importKeepFile->setText(f.getOpenFileName(this, tr("Select Exit File")));
 }
 
 
@@ -108,6 +165,18 @@ void ExitPreferences::saveValues() {
     global.settings->beginGroup("ExitPoint_SaveNote");
     global.settings->setValue("enabled", saveExitEnabledCombo->currentData().toBool());;
     global.settings->setValue("script", saveExitFile->text());
+    global.settings->setValue("version", "1");
+    global.settings->endGroup();
+
+    global.settings->beginGroup("ExitPoint_ImportDelete");
+    global.settings->setValue("enabled", importDeleteEnabledCombo->currentData().toBool());;
+    global.settings->setValue("script", importDeleteFile->text());
+    global.settings->setValue("version", "1");
+    global.settings->endGroup();
+
+    global.settings->beginGroup("ExitPoint_ImportKeep");
+    global.settings->setValue("enabled", importKeepEnabledCombo->currentData().toBool());;
+    global.settings->setValue("script", importKeepFile->text());
     global.settings->setValue("version", "1");
     global.settings->endGroup();
 }
@@ -140,5 +209,27 @@ void ExitPreferences::loadValues() {
         saveExitEnabledCombo->setCurrentIndex(1);
     saveExitFile->setText(file);
     global.settings->endGroup();
+
+    global.settings->beginGroup("ExitPoint_ImportDelete");
+    enabled = global.settings->value("enabled", false).toBool();
+    file = global.settings->value("script", "").toString();
+    if (enabled)
+        importDeleteEnabledCombo->setCurrentIndex(0);
+    else
+        importDeleteEnabledCombo->setCurrentIndex(1);
+    importDeleteFile->setText(file);
+    global.settings->endGroup();
+
+
+    global.settings->beginGroup("ExitPoint_ImportKeep");
+    enabled = global.settings->value("enabled", false).toBool();
+    file = global.settings->value("script", "").toString();
+    if (enabled)
+        importKeepEnabledCombo->setCurrentIndex(0);
+    else
+        importKeepEnabledCombo->setCurrentIndex(1);
+    importKeepFile->setText(file);
+    global.settings->endGroup();
+
 
 }

@@ -38,6 +38,8 @@ void ExitManager::loadExits() {
     exitPoints->clear();
     loadExitPoint("ExitPoint_LoadNote");
     loadExitPoint("ExitPoint_SaveNote");
+    loadExitPoint("ExitPoint_ImportKeep");
+    loadExitPoint("ExitPoint_ImportDelete");
 }
 
 

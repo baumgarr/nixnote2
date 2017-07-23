@@ -45,7 +45,17 @@ private:
     QLineEdit   *saveExitFile;
     QPushButton *saveExitButton;
     QComboBox   *saveExitEnabledCombo;
-\
+
+    QLabel      *importDeleteFileLabel;
+    QLineEdit   *importDeleteFile;
+    QPushButton *importDeleteButton;
+    QComboBox   *importDeleteEnabledCombo;
+
+    QLabel      *importKeepFileLabel;
+    QLineEdit   *importKeepFile;
+    QPushButton *importKeepButton;
+    QComboBox   *importKeepEnabledCombo;
+
 public:
     explicit ExitPreferences(QWidget *parent = 0);
     void saveValues();
@@ -56,6 +66,8 @@ signals:
 public slots:
     void loadExitButtonPressed(bool);
     void saveExitButtonPressed(bool);
+    void importDeleteExitButtonPressed(bool);
+    void importKeepExitButtonPressed(bool);
 };
 
 #endif // EXITPREFERENCES_H

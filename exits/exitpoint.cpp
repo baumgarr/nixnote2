@@ -272,3 +272,41 @@ QString ExitPoint_NoteEdit::getSubjectDate(QString format) {
     else
         return 0;
 }
+
+
+
+
+ExitPoint_FileImport::ExitPoint_FileImport(ExitPoint_NoteEdit *parent) : ExitPoint_NoteEdit(parent) {
+    file = "";
+    importKeep = false;
+}
+
+
+bool ExitPoint_FileImport::isImportKeep() {
+    if (importKeep)
+        return true;
+    return false;
+}
+
+bool ExitPoint_FileImport::isImportDelete() {
+    return !isImportKeep();
+}
+
+
+QString ExitPoint_FileImport::getFileName() {
+    return file;
+}
+
+void ExitPoint_FileImport::setFileName(QString value) {
+    file = value;
+}
+
+
+void ExitPoint_FileImport::setImportKeep(bool value) {
+    importKeep = value;
+}
+
+void ExitPoint_FileImport::setImportDelete(bool value) {
+    importKeep = !value;
+}
+
