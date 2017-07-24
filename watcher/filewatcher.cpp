@@ -261,10 +261,10 @@ void FileWatcher::exitPoint(ExitPoint *exit, Note &n) {
     QLOG_TRACE_IN();
     ExitPoint_FileImport *saveExit = new ExitPoint_FileImport();
 
+#if QT_VERSION >= 0x050000
     QJSEngine engine;
     QJSValue exit_s = engine.newQObject(saveExit);
     engine.globalObject().setProperty("note", exit_s);
-#if QT_VERSION >= 0x050000
     // Start loading values
     QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
     saveExit->setExitName(exit->getExitName());
