@@ -1359,8 +1359,10 @@ void NTableView::createTableOfContents() {
                 }
             }
         }
-        QString url = QString("<a href=\"")+href2+QString("\" title=\"")+n.title+
-                QString("\">")+n.title+QString("</a>");
+        QString tempTitle = n.title;
+        tempTitle.replace("&", "&amp;");
+        QString url = QString("<a href=\"")+href2+QString("\" title=\"")+tempTitle+
+                QString("\">")+tempTitle+QString("</a>");
         content = content+"<li>"+url+"</li>";
     }
     content = content+QString("</ol></en-note>");
