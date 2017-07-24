@@ -157,25 +157,41 @@ void ExitPreferences::importKeepExitButtonPressed(bool value) {
 void ExitPreferences::saveValues() {
 
     global.settings->beginGroup("ExitPoint_LoadNote");
-    global.settings->setValue("enabled", loadExitEnabledCombo->currentData().toBool());;
+    int idx = loadExitEnabledCombo->currentIndex();
+    if (idx == 0)
+        global.settings->setValue("enabled", true);
+    else
+        global.settings->setValue("enabled", false);
     global.settings->setValue("script", loadExitFile->text());
     global.settings->setValue("version", "1");
     global.settings->endGroup();
 
     global.settings->beginGroup("ExitPoint_SaveNote");
-    global.settings->setValue("enabled", saveExitEnabledCombo->currentData().toBool());;
+    idx = saveExitEnabledCombo->currentIndex();
+    if (idx == 0)
+        global.settings->setValue("enabled", true);
+    else
+        global.settings->setValue("enabled", false);
     global.settings->setValue("script", saveExitFile->text());
     global.settings->setValue("version", "1");
     global.settings->endGroup();
 
     global.settings->beginGroup("ExitPoint_ImportDelete");
-    global.settings->setValue("enabled", importDeleteEnabledCombo->currentData().toBool());;
+    idx = importDeleteEnabledCombo->currentIndex();
+    if (idx == 0)
+        global.settings->setValue("enabled", true);
+    else
+        global.settings->setValue("enabled", false);
     global.settings->setValue("script", importDeleteFile->text());
     global.settings->setValue("version", "1");
     global.settings->endGroup();
 
     global.settings->beginGroup("ExitPoint_ImportKeep");
-    global.settings->setValue("enabled", importKeepEnabledCombo->currentData().toBool());;
+    idx = importKeepEnabledCombo->currentIndex();
+    if (idx == 0)
+        global.settings->setValue("enabled", true);
+    else
+        global.settings->setValue("enabled", false);
     global.settings->setValue("script", importKeepFile->text());
     global.settings->setValue("version", "1");
     global.settings->endGroup();

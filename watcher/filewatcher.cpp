@@ -144,7 +144,7 @@ void FileWatcher::saveFile(QString file) {
     QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
            QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
            QString("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">");
-    if (newNote.content.isSet() && newNote.content != "")
+    if (newNote.content.isSet())
         newNoteBody.append(newNote.content);
 
     MimeReference mimeRef;
