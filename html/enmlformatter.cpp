@@ -246,7 +246,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     // wouldn't be needed, but WebKit doesn't always give back good HTML.
     bool useLegacyTidy = false;
 
-    if (global.useLibTidy) {
+    if (global.useLibTidy && !global.bypassTidy) {
         TidyBuffer output = {0};
         TidyBuffer errout = {0};
 
@@ -313,7 +313,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
 
 
     // IF the new tidy had an error, or we choose to use the old method
-    if (useLegacyTidy || !global.useLibTidy) {
+    if ((useLegacyTidy || !global.useLibTidy) && !global.bypassTidy) {
         QLOG_DEBUG() << "Calling tidy";
         QProcess tidyProcess;
         tidyProcess.start("tidy -raw -asxhtml -q -m -u -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
@@ -595,6 +595,8 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
 
 
 bool EnmlFormatter::isElementValid(QWebElement e) {
+    if (global.bypassTidy)
+        return true;
     QString element = e.tagName().toLower();
     //QLOG_DEBUG() << "Checking tag " << element;
     if (element == "a") {

@@ -239,6 +239,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     indexPDFLocally=getIndexPDFLocally();
     forceSearchLowerCase=getForceSearchLowerCase();
     strictDTD = getStrictDTD();
+    bypassTidy = getBypassTidy();
     forceUTF8 = getForceUTF8();
 
 
@@ -573,6 +574,26 @@ bool Global::getStrictDTD() {
     bool value = settings->value("strictDTD",true).toBool();
     settings->endGroup();
     strictDTD = value;
+    return value;
+}
+
+
+
+
+
+void Global::setBypassTidy(bool value) {
+    settings->beginGroup("Debugging");
+    settings->setValue("bypassTidy",value);
+    settings->endGroup();
+    bypassTidy=value;
+}
+
+
+bool Global::getBypassTidy() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("bypassTidy",true).toBool();
+    settings->endGroup();
+    bypassTidy = value;
     return value;
 }
 
