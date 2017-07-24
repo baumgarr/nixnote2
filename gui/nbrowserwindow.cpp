@@ -3939,10 +3939,10 @@ void NBrowserWindow::exitPoint(ExitPoint *exit) {
     QLOG_TRACE_IN();
     ExitPoint_NoteEdit *saveExit = new ExitPoint_NoteEdit();
 
+#if QT_VERSION >= 0x050000
     QJSEngine engine;
     QJSValue exit_s = engine.newQObject(saveExit);
     engine.globalObject().setProperty("note", exit_s);
-#if QT_VERSION >= 0x050000
     // Start loading values
     QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
     saveExit->setExitName(exit->getExitName());
