@@ -14,6 +14,7 @@
 /* "[]"   :  insert a todo.                  */
 /* "[x]"  :  insert a completed todo.        */
 /* "[X]"  :  insert a completed todo.        */
+/* "+"    :  Unordered list.                 */
 /*********************************************/
 
 
@@ -45,6 +46,26 @@ function markdown2(content, html, tag) {
    return content;
 }
 
+
+
+/* This function converts "+" into an unordered list */
+function markdownUl(content, tag) {
+   var first = true;
+   while (content.indexOf(tag)>0) {
+      if (first)
+         content = content.replace(tag, "<ul><li>");
+      else
+         content = content.replace(tag, "<li>");
+      first = false;
+   }
+   return content; 
+}
+
+
+
+
+
+
 var c = note.getContents();
 
 var todoUnchecked = "<input type=\"CHECKBOX\" onmouseover=\"style.cursor='hand'\" onclick=\"if(!checked) removeAttribute('checked'); else setAttribute('checked', 'checked'); editorWindow.editAlert();\" style=\"cursor: pointer;\">";
@@ -65,5 +86,7 @@ c = markdown1(c, "<b>","</b>", "--");
 c = markdown1(c, "<b>","</b>", "**");
 c = markdown1(c, "<i>","</i>", "__");
 c = markdown1(c, "<del>","</del>", "~~");
+
+c = markdownUl(c, "+");
 
 note.setContents(c);
