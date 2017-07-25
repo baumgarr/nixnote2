@@ -195,6 +195,9 @@ void ExitPreferences::saveValues() {
     global.settings->setValue("script", importKeepFile->text());
     global.settings->setValue("version", "1");
     global.settings->endGroup();
+
+    // Reload exits
+    global.exitManager->loadExits();
 }
 
 
