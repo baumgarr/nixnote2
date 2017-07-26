@@ -1289,7 +1289,8 @@ void Global::stackDump(int max) {
 
     free(messages);
     QLOG_ERROR() << "**** Stack dump complete *****";
-
+#else
+    Q_UNUSED(max)
 #endif // End windows check
 }
 
