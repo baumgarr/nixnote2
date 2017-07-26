@@ -52,3 +52,6 @@ Makefile.Release
 #eclipse files
 .cproject
 .settings
+
+#QMake file
+.qmake.stash
