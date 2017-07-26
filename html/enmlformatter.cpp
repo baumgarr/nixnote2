@@ -29,12 +29,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QIcon>
 #include <QMessageBox>
 
+
+/*
 #include <tidy.h>
 #ifndef _WIN32
 #include <buffio.h>
 #else
 #include <tidy/tidybuffio.h>
 #endif
+*/
+
 
 #include <iostream>
 using namespace std;
@@ -241,6 +245,8 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content = content.replace("<ac:rich-text-body", "<div");
     content = content.replace("</ac:rich-text-body", "</div");
 
+    bool useLegacyTidy = true;
+    /*
     // Run it through "tidy".  It is a program which will fix any invalid HTML
     // and give us the results back through stdout.  In a perfect world this
     // wouldn't be needed, but WebKit doesn't always give back good HTML.
@@ -310,7 +316,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
             tidyBufFree(&errout);
         tidyRelease(tdoc);
     }
-
+    */
 
     // IF the new tidy had an error, or we choose to use the old method
     if ((useLegacyTidy || !global.useLibTidy) && !global.bypassTidy) {

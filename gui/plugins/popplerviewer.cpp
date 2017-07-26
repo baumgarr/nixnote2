@@ -155,7 +155,11 @@ void PopplerViewer::findNextPage(QStringList searchHits, QList<QRectF> *searchLo
 
     while (page < doc->numPages() && !found) {
         for (int i=0; i<searchHits.size(); i++) {
-            QList<QRectF> results = doc->page(page)->search(searchHits[i], Poppler::Page::CaseInsensitive);
+//#if QT_VERSION < 0x050000
+//            QList<QRectF> results = doc->page(page)->search(searchHits[i], Poppler::Page::CaseInsensitive);
+//#else
+            QList<QRectF> results = doc->page(page)->search(searchHits[i], Poppler::Page::IgnoreCase);
+//#endif
             searchLocations->append(results);
             if (results.size() > 0) {
                 currentPage = page;
@@ -179,7 +183,12 @@ QPixmap PopplerViewer::highlightImage() {
 
     QList<QRectF> searchLocations;
     for (int i=0; i<searchHits.size(); i++) {
-        searchLocations.append(doc->page(currentPage)->search(searchHits[i], Poppler::Page::CaseInsensitive));
+//        searchLocations.append(doc->page(currentPage)->search(searchHits[i], Poppler::Page::CaseInsensitive));
+//#if QT_VERSION < 0x050000
+//        searchLocations.append(doc->page(currentPage)->search(searchHits[i], Poppler::Page::CaseInsensitive));
+//#else
+        searchLocations.append(doc->page(currentPage)->search(searchHits[i],Poppler::Page::IgnoreCase));
+//#endif
     }
     for (int i=0; i<searchLocations.size(); i++) {
         QRectF highlightRect = searchLocations[i];

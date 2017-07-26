@@ -38,7 +38,8 @@ public:
    virtual ~Destination(){}
    virtual void write(const QString& message) = 0;
 };
-typedef std::auto_ptr<Destination> DestinationPtr;
+//typedef std::auto_ptr<Destination> DestinationPtr;
+typedef std::unique_ptr<Destination> DestinationPtr;
 
 //! Creates logging destinations/sinks. The caller will have ownership of
 //! the newly created destinations.

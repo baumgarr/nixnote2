@@ -44,7 +44,7 @@ public:
     int importNotes(StartupConfig config);
     int openNotebook(StartupConfig config);
     int closeNotebook(StartupConfig config);
-    int sync(StartupConfig config);
+    int sync();
     int signalGui(StartupConfig config);
 
 signals:

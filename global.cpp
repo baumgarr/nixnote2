@@ -1432,4 +1432,5 @@ void Global::setUseLibTidy(bool value) {
     global.settings->setValue("useLibTidy", value);
     global.settings->endGroup();
     this->useLibTidy = value;
+    this->useLibTidy = false;  // Removing obsolete setting.
 }

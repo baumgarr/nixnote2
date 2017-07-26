@@ -35,7 +35,11 @@ NTagViewDelegate::NTagViewDelegate(QObject *parent) :
 
 
 void NTagViewDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+#if QT_VERSION < 0x050000
     QStyleOptionViewItemV4 options = option;
+#else
+    QStyleOptionViewItem options = option;
+#endif
     initStyleOption(&options, index);
 
     options.widget->style()->drawControl(QStyle::CE_ItemViewItem, &options, painter);

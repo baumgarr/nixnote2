@@ -356,7 +356,11 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
     // Go through the "item" nodes
     bool found=false;
     QDomNodeList anchors = doc.elementsByTagName("item");
+#if QT_VERSION < 0x050000
+    for (unsigned int i=0; i<anchors.length(); i++) {
+#else
     for (int i=0; i<anchors.length(); i++) {
+#endif
         QDomElement element = anchors.at(i).toElement();
         int x = element.attribute("x").toInt();
         int y = element.attribute("y").toInt();
@@ -365,7 +369,11 @@ QString NoteFormatter::addImageHighlight(qint32 resLid, QString imgfile) {
 
         // Get all children ("t" nodes)
         QDomNodeList children = element.childNodes();
+#if QT_VERSION < 0x050000
+        for (unsigned int j=0; j<children.length(); j++) {
+#else
         for (int j=0; j<children.length(); j++) {
+#endif
             QDomElement child = children.at(j).toElement();
             if (child.nodeName().toLower() == "t") {
                 QString text = child.text();
