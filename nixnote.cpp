@@ -1895,8 +1895,10 @@ void NixNote::waitCursor(bool value) {
 
 // Show a message in the status bar
 void NixNote::setMessage(QString text, int timeout) {
+    QLOG_TRACE_IN();
     statusBar()->showMessage(text, timeout);
     QLOG_INFO() << text;
+    QLOG_TRACE_OUT();
 }
 
 

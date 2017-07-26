@@ -187,6 +187,7 @@ bool CommunicationManager::getUserInfo(User &user) {
         handleStdException(e);
         return false;
     }
+    QLOG_TRACE_OUT();
     return true;
 }
 
