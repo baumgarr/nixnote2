@@ -87,8 +87,14 @@ void TagViewer::resize() {
     setMinimumWidth(x);
 
     int frameWidth = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
+#ifndef __WIN32
     clearButton->move(rect().left() + width + frameWidth,
                       (rect().top()- height)/2);
+#else
+    clearButton->move(rect().left() + width + frameWidth,
+                      (rect().top()- (fm.height()/2))/2);
+#endif
+
 }
 
 
