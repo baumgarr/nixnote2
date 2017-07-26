@@ -373,6 +373,9 @@ NAttributeTree::NAttributeTree(QWidget *parent) :
     this->setFrameShape(QFrame::NoFrame);
     expandedImage = new QImage(":expandedIcon");
     collapsedImage = new QImage(":collapsedIcon");
+
+    this->setProperty("animated", false);
+
 }
 
 NAttributeTree::~NAttributeTree() {
@@ -552,10 +555,12 @@ void NAttributeTree::drawBranches(QPainter *painter, const QRect &rect, const QM
     painter->save();
     if (isExpanded(index)) {
         int offset = rect.width()-expandedImage->width()-1;
-        painter->drawImage(offset, rect.y()+(expandedImage->height()/4),*expandedImage);
+        int voffset = (rect.height() - expandedImage->height()) / 2;
+        painter->drawImage(offset, rect.y()+voffset,*expandedImage);
     } else {
         int offset = rect.width()-collapsedImage->width()-1;
-        painter->drawImage(offset, rect.y()+(collapsedImage->height()/4),*collapsedImage);
+        int voffset = (rect.height() - collapsedImage->height()) / 2;
+        painter->drawImage(offset, rect.y()+voffset,*collapsedImage);
     }
     painter->restore();
     return;

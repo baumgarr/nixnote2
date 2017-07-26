@@ -100,6 +100,8 @@ FavoritesView::FavoritesView(QWidget *parent) :
     connect(deleteShortcut, SIGNAL(activated()), this, SLOT(deleteRequested()));
 
     root->setExpanded(true);
+    this->setProperty("animated", false);
+
     resetSize();
 }
 
@@ -323,10 +325,12 @@ void FavoritesView::drawBranches(QPainter *painter, const QRect &rect, const QMo
     painter->save();
     if (isExpanded(index)) {
         int offset = rect.width()-expandedImage->width()-1;
-        painter->drawImage(offset, rect.y()+(expandedImage->height()/4),*expandedImage);
+        int voffset = (rect.height() - expandedImage->height()) / 2;
+        painter->drawImage(offset, rect.y()+voffset,*expandedImage);
     } else {
         int offset = rect.width()-collapsedImage->width()-1;
-        painter->drawImage(offset, rect.y()+(collapsedImage->height()/4),*collapsedImage);
+        int voffset = (rect.height() - collapsedImage->height()) / 2;
+        painter->drawImage(offset, rect.y()+voffset,*collapsedImage);
     }
     painter->restore();
     return;
