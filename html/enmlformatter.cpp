@@ -245,8 +245,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content = content.replace("<ac:rich-text-body", "<div");
     content = content.replace("</ac:rich-text-body", "</div");
 
+
+#ifndef _WIN32
     bool useLegacyTidy = true;
-    /*
+#else
     // Run it through "tidy".  It is a program which will fix any invalid HTML
     // and give us the results back through stdout.  In a perfect world this
     // wouldn't be needed, but WebKit doesn't always give back good HTML.
@@ -316,7 +318,7 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
             tidyBufFree(&errout);
         tidyRelease(tdoc);
     }
-    */
+ #endif
 
     // IF the new tidy had an error, or we choose to use the old method
     if ((useLegacyTidy || !global.useLibTidy) && !global.bypassTidy) {

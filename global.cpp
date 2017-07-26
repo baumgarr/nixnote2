@@ -1433,5 +1433,7 @@ void Global::setUseLibTidy(bool value) {
     global.settings->setValue("useLibTidy", value);
     global.settings->endGroup();
     this->useLibTidy = value;
+#ifndef _WIN32
     this->useLibTidy = false;  // Removing obsolete setting.
+#endif
 }
