@@ -2630,7 +2630,7 @@ Impossible de déchiffrer.</translation>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="411"/>
         <source>Reindex Note</source>
-        <translation type="unfinished"></translation>
+        <translation>Réindexer la note</translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="418"/>
@@ -2665,7 +2665,7 @@ Impossible de déchiffrer.</translation>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="460"/>
         <source>Pause &amp;Indexing</source>
-        <translation>Mettre l&apos;indexaction en &amp;pause</translation>
+        <translation>Mettre l&apos;indexation en &amp;pause</translation>
     </message>
     <message>
         <location filename="../gui/nmainmenubar.cpp" line="461"/>
