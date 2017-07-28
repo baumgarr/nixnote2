@@ -30,14 +30,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QMessageBox>
 
 
-/*
-#include <tidy.h>
-#ifndef _WIN32
-#include <buffio.h>
-#else
+#ifdef _WIN32
 #include <tidy/tidybuffio.h>
 #endif
-*/
 
 
 #include <iostream>
@@ -255,8 +250,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     bool useLegacyTidy = false;
 
     if (global.useLibTidy && !global.bypassTidy) {
-        TidyBuffer output = {0};
-        TidyBuffer errout = {0};
+        TidyBuffer output;
+        memset(&output, 0, sizeof(output));
+        TidyBuffer errout;
+        memset(&errout, 0, sizeof(errout));
 
         int tidyRc;
         bool ok;
