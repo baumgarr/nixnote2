@@ -39,7 +39,7 @@ public:
    virtual void write(const QString& message) = 0;
 };
 
-#ifdef _WIN32
+#if __cplusplus < 201103L
 typedef std::auto_ptr<Destination> DestinationPtr;
 #else
 typedef std::unique_ptr<Destination> DestinationPtr;
