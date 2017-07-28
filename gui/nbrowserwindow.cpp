@@ -393,6 +393,12 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->insertDatetimeButtonAction, SIGNAL(triggered()), this, SLOT(insertDatetime()));
     connect(buttonBar->insertDatetimeButtonWidget,SIGNAL(clicked()), this, SLOT(insertDatetime()));
     connect(buttonBar->insertDatetimeButtonShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
+
+
+    connect(buttonBar->formatCodeButtonAction, SIGNAL(triggered()), this, SLOT(formatCodeButtonPressed()));
+    connect(buttonBar->formatCodeButtonShortcut, SIGNAL(activated()), this, SLOT(formatCodeButtonPressed()));
+
+
 }
 
 
@@ -1165,6 +1171,27 @@ void NBrowserWindow::alignCenterButtonPressed() {
 
 
 
+// The center align button was pressed
+void NBrowserWindow::formatCodeButtonPressed() {
+
+    QString text = editor->selectedText();
+    if (text.trimmed() == "")
+        text = tr("Insert your code here.");
+    QString buffer;
+    //    buffer.append("<pre style=\"font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
+    buffer.append("<br/><pre style=\"font-family: Monaco, Menlo, Consolas, Courier New, monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
+    buffer.append(text);
+    buffer.append("</pre><br/>");
+    QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(buffer);
+    editor->page()->mainFrame()->evaluateJavaScript(script).toString();
+
+    QKeyEvent *left = new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier);
+    QCoreApplication::postEvent(editor->editorPage, left);
+
+}
+
+
+
 // The full align button was pressed
 void NBrowserWindow::alignFullButtonPressed() {
     this->editor->page()->mainFrame()->evaluateJavaScript(
@@ -1864,6 +1891,7 @@ void NBrowserWindow::attachFile() {
      insideTable = false;
      insideEncryption = false;
      forceTextPaste = false;
+     insidePre = false;
 
      if (editor->selectedText().trimmed().length() > 0 && global.javaFound)
          editor->encryptAction->setEnabled(true);
@@ -1885,6 +1913,7 @@ void NBrowserWindow::attachFile() {
         +QString("      if (workingNode.nodeName=='TABLE') {")
         +QString("          if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
         +QString("      }")
+        +QString("      if (workingNode.nodeName=='PRE') window.browserWindow.setInsidePre();")
         +QString("      if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
         +QString("      if (workingNode.nodeName=='I') window.browserWindow.italicsActive();")
         +QString("      if (workingNode.nodeName=='U') window.browserWindow.underlineActive();")
@@ -2004,6 +2033,24 @@ void NBrowserWindow::attachFile() {
                  "} getCursorPosition();";
          editor->page()->mainFrame()->evaluateJavaScript(js);
      }
+ }
+
+
+
+
+ // Backtab pressed.
+ bool NBrowserWindow::enterPressed() {
+     if (!insidePre)
+         return false;
+
+     QString script = "document.execCommand('insertHTML', false, '&#10;&#13;');";
+
+     editor->page()->mainFrame()->evaluateJavaScript(script);
+     return true;
+
+//     QKeyEvent *down = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+//     QCoreApplication::postEvent(editor->editorPage, down);
+
  }
 
 
@@ -2261,6 +2308,12 @@ void NBrowserWindow::underlineActive() {
 // Set true if we are within some type of list
 void NBrowserWindow::setInsideList() {
     insideList = true;
+}
+
+
+// If we are inside a pre-formatted tag <pre>
+void NBrowserWindow::setInsidePre() {
+    this->insidePre = true;
 }
 
 

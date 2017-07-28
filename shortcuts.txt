@@ -105,6 +105,7 @@ Format_List_Numbered		Ctrl+Shift+N	// Numbered list
 Format_Indent_Increase		Ctrl+M		// Increase the indentation
 Format_Indent_Decrease		Ctrl+Shift+M	// Decrease the indent
 Format_Highlight                                // Highlight the current text
+Format_Code_Block                               // Format code block
 
 Tools_Synchronize		F9		// Synchronize with Evernote
 Tools_Connect					// Connect to Evernote

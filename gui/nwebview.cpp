@@ -374,6 +374,14 @@ bool NWebView::event(QEvent *event)
             ke->accept();
             return true;
         }
+        if (ke->key() == Qt::Key_Enter || ke->key() == Qt::Key_Return) {
+            bool retval = parent->enterPressed();
+            if (retval) {
+                ke->accept();
+                return true;
+            }
+        }
+
     }
     if (event->type() == QEvent::MouseButtonDblClick) {
         QLOG_DEBUG() << "DOUBLE CLICK!!!";

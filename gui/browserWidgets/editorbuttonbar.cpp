@@ -64,6 +64,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     spellCheckButtonVisible = contextMenu->addAction(tr("Spell Check"));
     insertTableButtonVisible = contextMenu->addAction(tr("Insert Table"));
     htmlEntitiesButtonVisible = contextMenu->addAction(tr("HTML Entities"));
+    formatCodeButtonVisible = contextMenu->addAction(tr("Format Code Block"));
 
     undoVisible->setCheckable(true);
     redoVisible->setCheckable(true);
@@ -97,6 +98,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     insertTableButtonVisible->setCheckable(true);
     htmlEntitiesButtonVisible->setCheckable(true);
     insertDatetimeVisible->setCheckable(true);
+    formatCodeButtonVisible->setCheckable(true);
 
     connect(undoVisible, SIGNAL(triggered()), this, SLOT(toggleUndoButtonVisible()));
     connect(redoVisible, SIGNAL(triggered()), this, SLOT(toggleRedoButtonVisible()));
@@ -128,6 +130,7 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
     connect(insertTableButtonVisible, SIGNAL(triggered()), this, SLOT(toggleInsertTableButtonVisible()));
     connect(spellCheckButtonVisible, SIGNAL(triggered()), this, SLOT(toggleSpellCheckButtonVisible()));
     connect(htmlEntitiesButtonVisible, SIGNAL(triggered()), this, SLOT(toggleHtmlEntitiesButtonVisible()));
+    connect(formatCodeButtonVisible, SIGNAL(triggered()), this, SLOT(toggleFormatCodeButtonVisible()));
 
 
   undoButtonAction = this->addAction(global.getIconResource(":undoIcon"), tr("Undo"));
@@ -275,6 +278,12 @@ EditorButtonBar::EditorButtonBar(QWidget *parent) :
   htmlEntitiesButtonShortcut = new QShortcut(this);
   setupShortcut(htmlEntitiesButtonShortcut, "Edit_Insert_Html_Entities");
   htmlEntitiesButtonShortcut->setContext(Qt::WidgetShortcut);
+
+
+  formatCodeButtonAction = this->addAction(global.getIconResource(":formatCodeIcon"), tr("Format Code Block"));
+  formatCodeButtonShortcut = new QShortcut(this);
+  this->setupShortcut(formatCodeButtonShortcut, "Format_Code_Block");
+
 }
 
 
@@ -290,6 +299,7 @@ EditorButtonBar::~EditorButtonBar() {
     delete strikethroughVisible;
     delete leftJustifyVisible;
     delete centerJustifyVisible;
+    delete formatCodeButtonVisible;
     delete fullJustifyVisible;
     delete rightJustifyVisible;
     delete hlineVisible;
@@ -402,6 +412,9 @@ void EditorButtonBar::saveVisibleButtons() {
     value = insertDatetimeButtonAction->isVisible();
     global.settings->setValue("insertDatetimeButtonVisible", value);
 
+    value = formatCodeButtonAction->isVisible();
+    global.settings->setValue("formatCodeButtonVisible", value);
+
     global.settings->endGroup();
 }
 
@@ -498,6 +511,9 @@ void EditorButtonBar::setupVisibleButtons() {
 
     insertDatetimeButtonAction->setVisible(global.settings->value("insertDatetimeButtonVisible", true).toBool());
     insertDatetimeVisible->setChecked(insertDatetimeButtonAction->isVisible());
+
+    formatCodeButtonAction->setVisible(global.settings->value("formatCodeButtonVisible", true).toBool());
+    formatCodeButtonVisible->setChecked(formatCodeButtonAction->isVisible());
 
     global.settings->endGroup();
 }
@@ -622,6 +638,10 @@ void EditorButtonBar::toggleSpellCheckButtonVisible() {
 }
 void EditorButtonBar::toggleHtmlEntitiesButtonVisible() {
     htmlEntitiesButtonAction->setVisible(htmlEntitiesButtonVisible->isChecked());
+    saveVisibleButtons();
+}
+void EditorButtonBar::toggleFormatCodeButtonVisible() {
+    formatCodeButtonAction->setVisible(formatCodeButtonVisible->isChecked());
     saveVisibleButtons();
 }
 
@@ -758,4 +778,5 @@ void EditorButtonBar::reloadIcons() {
     spellCheckButtonAction->setIcon(global.getIconResource(":spellCheckIcon"));
     insertTableButtonAction->setIcon(global.getIconResource(":gridIcon"));
     htmlEntitiesButtonAction->setIcon(global.getIconResource(":htmlentitiesIcon"));
+    formatCodeButtonAction->setIcon(global.getIconResource(":formatCodeIcon"));
 }

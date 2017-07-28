@@ -68,6 +68,7 @@ public:
     QAction *htmlEntitiesButtonVisible;
     QAction *subscriptVisible;
     QAction *superscriptVisible;
+    QAction *formatCodeButtonVisible;
 
     QAction *removeFormatButtonAction;
     QShortcut * removeFormatButtonShortcut;
@@ -127,6 +128,8 @@ public:
     QShortcut *spellCheckButtonShortcut;
     QAction *htmlEntitiesButtonAction;
     QShortcut *htmlEntitiesButtonShortcut;
+    QAction *formatCodeButtonAction;
+    QShortcut *formatCodeButtonShortcut;
 
     FontNameComboBox *fontNames;
     FontSizeComboBox *fontSizes;
@@ -185,7 +188,8 @@ public slots:
     void toggleHtmlEntitiesButtonVisible();
     void loadFontSizeComboBox(QString font);
     void loadFontNames();
-    
+    void toggleFormatCodeButtonVisible();
+
 };
 
 #endif // EDITORBUTTONBAR_H
