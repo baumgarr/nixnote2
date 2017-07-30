@@ -7,7 +7,7 @@ Group: Applications/Internet
 Vendor: Randy Baumgarte
 URL: http://nevernote.sourceforge.net/
 Packager: Randy Baumgarte <randy@fbn.cx>
-Source: /home/randy/nn2/package_scripts/webcam_plugin/nixnote2_webcam_plugin___VERSION_____ARCH__.tar.gz
+Source: nixnote2_webcam_plugin___VERSION_____ARCH__.tar.gz
 AutoReqProv: no
 Requires: nixnote2, opencv >= 2.4.7
 
@@ -32,14 +32,14 @@ license.html:   Legal notices for licenses and trademarks.
 
 %clean
 rm -rf /usr/share/doc/nixnote2-webcam-plugin
-rm -rf /usr/share/nixnote2/plugins/libwebcamplugin.so
+rm -rf /usr/lib/nixnote2/libwebcamplugin.so
 
 %define debug_package %{nil}
 
 %build
 
 %install
-mkdir -p /usr/share/nixnote2/plugins
+mkdir -p /usr/lib/nixnote2
 mkdir -p /usr/share/doc/nixnote2-webcam-plugin
 mv -f usr ${RPM_BUILD_ROOT}
 
@@ -48,7 +48,7 @@ mv -f usr ${RPM_BUILD_ROOT}
 %postun
 
 %files
-%attr(755,root,root) /usr/share/nixnote2/plugins/libwebcamplugin.so
+%attr(755,root,root) /usr/lib/nixnote2/libwebcamplugin.so
 %attr(755,root,root) /usr/share/doc/nixnote2-webcam-plugin
 
 %changelog
