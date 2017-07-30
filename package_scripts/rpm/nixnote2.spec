@@ -60,6 +60,7 @@ mv -f usr ${RPM_BUILD_ROOT}
 %attr(755,root,root) /usr/bin/nixnote2  
 %attr(755,root,root) /usr/share/doc/nixnote2
 %attr(755,root,root) /usr/share/applications/nixnote2.desktop
+%attr(755,root,root) /usr/share/pixmap/nixnote2.png
 %attr(755,root,root) /usr/share/man/man1/nixnote2.1.gz
 
 %changelog
