@@ -495,7 +495,7 @@ void NWebView::downloadRequested(QNetworkRequest req) {
         qint32 lid = urlString.toInt();
         ResourceTable resTable(global.db);
         Resource r;
-        resTable.get(r, lid, false);
+        resTable.get(r, lid, true);
         QString filename;
         ResourceAttributes attributes;
         if (r.attributes.isSet())
