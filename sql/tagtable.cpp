@@ -171,6 +171,7 @@ qint32 TagTable::getAll(QList<qint32> &tags) {
 // Given a tag's lid, we give it a new guid.  This can happen
 // the first time a record is synchronized
 void TagTable::updateGuid(qint32 lid, Guid &guid) {
+    QLOG_TRACE_IN();
     QString oldGuid;
     getGuid(oldGuid, lid);
 
@@ -183,6 +184,7 @@ void TagTable::updateGuid(qint32 lid, Guid &guid) {
     query.exec();
     query.finish();
     db->unlock();
+    QLOG_TRACE_OUT();
 }
 
 
@@ -254,6 +256,7 @@ qint32 TagTable::sync(qint32 l, Tag &tag, qint32 account) {
 
 // Given a tag's GUID, we return the LID
 qint32 TagTable::getLid(QString guid) {
+    QLOG_TRACE_IN();
     qint32 retval = 0;
     NSqlQuery query(db);
     db->lockForRead();
@@ -265,13 +268,16 @@ qint32 TagTable::getLid(QString guid) {
         retval = query.value(0).toInt();
     query.finish();
     db->unlock();
+    QLOG_TRACE_OUT();
     return retval;
 }
 
 
 // Given a tag's GUID, we return the LID
 qint32 TagTable::getLid(string guid) {
+    QLOG_TRACE_IN();
     QString s(QString::fromStdString(guid));
+    QLOG_TRACE_OUT();
     return getLid(s);
 }
 
@@ -353,7 +359,7 @@ qint32 TagTable::add(qint32 l, Tag &t, bool isDirty, qint32 account) {
 
 // Return a tag structure given the LID
 bool TagTable::get(Tag &tag, qint32 lid) {
-
+    QLOG_TRACE_IN();
     NSqlQuery query(db);
     db->lockForRead();
     query.prepare("Select key, data from DataStore where lid=:lid");
@@ -362,6 +368,7 @@ bool TagTable::get(Tag &tag, qint32 lid) {
     if (query.size() == 0) {
         query.finish();
         db->unlock();
+        QLOG_TRACE_OUT();
         return false;
     }
     while (query.next()) {
@@ -376,18 +383,24 @@ bool TagTable::get(Tag &tag, qint32 lid) {
             case (TAG_PARENT_LID): {
                 if (query.value(1).toInt() > 0) {
                         QString parentGuid;
-                        getGuid(parentGuid, query.value(1).toInt());
-                        tag.parentGuid = parentGuid;
+                        if (getGuid(parentGuid, query.value(1).toInt()))
+                            tag.parentGuid = parentGuid;
                         break;
                     }
                 }
             case (TAG_NAME):
                 tag.name = query.value(1).toString();
                 break;
+            default: {
+                QLOG_ERROR() << "Unknown Tag record key: " << key;
+            }
         }
     }
     query.finish();
     db->unlock();
+    if (!tag.name.isSet())
+        tag.name = "** Unknown **";
+    QLOG_TRACE_OUT();
     return true;
 }
 
@@ -411,6 +424,7 @@ bool TagTable::get(Tag &tag, string guid) {
 
 // Return if a tag is dirty given its lid
 bool TagTable::isDirty(qint32 lid) {
+    QLOG_TRACE_IN();
     NSqlQuery query(db);
     bool retval = false;
     db->lockForRead();
@@ -422,6 +436,7 @@ bool TagTable::isDirty(qint32 lid) {
         retval = query.value(0).toBool();
     query.finish();
     db->unlock();
+    QLOG_TRACE_OUT();
     return retval;
 }
 
@@ -504,6 +519,7 @@ bool TagTable::exists(string guid) {
 
 // Return a tag guid given the LID
 bool TagTable::getGuid(QString &guid, qint32 lid) {
+    QLOG_TRACE_IN();
 
     NSqlQuery query(db);
     db->lockForRead();
@@ -515,10 +531,12 @@ bool TagTable::getGuid(QString &guid, qint32 lid) {
         guid = query.value(0).toString();
         query.finish();
         db->unlock();
+        QLOG_TRACE_OUT();
         return true;
     }
     query.finish();
     db->unlock();
+    QLOG_TRACE_OUT();
     return false;
 }
 
@@ -666,6 +684,7 @@ qint32 TagTable::findChildren(QList<qint32> &list, QString parentGuid) {
 
 // Get all dirty lids
 qint32 TagTable::getAllDirty(QList<qint32> &lids) {
+    QLOG_TRACE_IN();
     NSqlQuery query(db);
     db->lockForRead();
     lids.clear();
@@ -677,6 +696,7 @@ qint32 TagTable::getAllDirty(QList<qint32> &lids) {
     }
     query.finish();
     db->unlock();
+    QLOG_TRACE_OUT();
     return lids.size();
 }
 
@@ -700,6 +720,7 @@ void TagTable::setUpdateSequenceNumber(qint32 lid, qint32 usn) {
 // Linked tags are not uploaded, so we reset the dirty flags in case
 // they were updated locally
 void TagTable::resetLinkedTagsDirty() {
+    QLOG_TRACE_IN();
     NSqlQuery query(db);
     db->lockForWrite();
     query.prepare("Delete from datastore where key=:key and lid in (select lid from datastore where key=:linkedkey and data > 0)");
@@ -708,6 +729,7 @@ void TagTable::resetLinkedTagsDirty() {
     query.exec();
     query.finish();
     db->unlock();
+    QLOG_TRACE_OUT();
 }
 
 

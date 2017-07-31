@@ -388,11 +388,14 @@ qint32 CommunicationManager::expungeSavedSearch(Guid guid) {
 
 // Upload a new/changed tag to Evernote
 qint32 CommunicationManager::uploadTag(Tag &tag) {
+    QLOG_TRACE_IN();
     try {
-        if (tag.updateSequenceNum > 0)
+        if (tag.updateSequenceNum > 0) {
+            QLOG_TRACE_OUT();
             return myNoteStore->updateTag(tag, authToken);
-        else {
+       } else {
             tag = myNoteStore->createTag(tag, authToken);
+            QLOG_TRACE_OUT();
             return tag.updateSequenceNum;
         }
     } catch (ThriftException e) {

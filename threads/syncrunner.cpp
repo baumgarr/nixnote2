@@ -936,6 +936,7 @@ qint32 SyncRunner::uploadTags() {
         QLOG_TRACE_OUT();
         return 0;
     }
+
     // Split the lids into lids to be updated, and lids to be deleted
     for (int i=0; i<lids.size(); i++) {
         if (table.isDeleted(lids[i]))
@@ -944,24 +945,30 @@ qint32 SyncRunner::uploadTags() {
             updatedLids.append(lids[i]);
     }
 
+    // Get existing tags in case there is a duplicate name
+    QList<Tag> existingTags;
+    comm->getTagList(existingTags);
+
     // Update any lids
+    QLOG_DEBUG() << "Beginning to upload new & altered tags";
     int i=0;
     while(updatedLids.size() > 0) {
-        // Get existing tags in case there is a duplicate name
-        QList<Tag> existingTags;
-        comm->getTagList(existingTags);
 
         Tag tag;
         table.get(tag, updatedLids[i]);
+        if (tag.name.isSet()) {
+            QLOG_DEBUG() << "Found changed tag " << tag.name;
+        }
         qint32 parentLid = 0;
         QString parentGuid = "";
         if (tag.parentGuid.isSet())
             parentGuid = tag.parentGuid;
         if (parentGuid != "")
             parentLid = table.getLid(tag.parentGuid);
+
         // If the parent is either not dirty, or there is no parent we can update this lid.
         if (parentLid <= 0 || !table.isDirty(parentLid)) {
-
+            QLOG_DEBUG() << "Tag has no parent or parent is unaltered";
             // Check if a tag with this name already exists.
             // In reality this should never happen, but there was a bug
             // where a tag was uploaded but the USN & GUID wasn't
@@ -979,7 +986,10 @@ qint32 SyncRunner::uploadTags() {
             }
 
             if (!matchFound) {
-                qint32 oldUsn = tag.updateSequenceNum;
+                qint32 oldUsn = 0;
+                if (tag.updateSequenceNum.isSet())
+                    oldUsn = tag.updateSequenceNum;
+                QLOG_DEBUG() << "Uploaing tag " << tag.name;
                 usn = comm->uploadTag(tag);
                 if (usn == 0) {
                     this->communicationErrorHandler();
@@ -989,8 +999,11 @@ qint32 SyncRunner::uploadTags() {
                 }
                 if (usn > 0) {
                     maxUsn = usn;
-                    if (oldUsn == 0)
+                    QLOG_DEBUG() << "Tag USN: " << usn;
+                    if (oldUsn == 0) {
+                        QLOG_DEBUG() << "New USN: " << tag.guid;
                         table.updateGuid(updatedLids[i], tag.guid);
+                    }
                     table.setUpdateSequenceNumber(updatedLids[i], usn);
                     table.setDirty(tag.guid, false);
                     updatedLids.removeAt(i);
@@ -1000,6 +1013,7 @@ qint32 SyncRunner::uploadTags() {
                     updatedLids.clear();
                 }
             } else {
+                QLOG_DEBUG() << "Tag with this name exists.";
                 table.updateGuid(updatedLids[i], foundTag.guid);
                 table.setUpdateSequenceNumber(updatedLids[i], foundTag.updateSequenceNum);
                 updatedLids.removeAt(i);
@@ -1009,6 +1023,7 @@ qint32 SyncRunner::uploadTags() {
         i++;
     }
 
+    QLOG_DEBUG() << "Deleting LIDS";
     // delete any lids
     for (int i=0; i<deletedLids.size(); i++) {
         Tag tag;
