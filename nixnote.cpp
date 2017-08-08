@@ -2842,15 +2842,15 @@ void NixNote::toggleVisible() {
 // The tray icon was activated.  If it was double clicked we restore the
 // gui.
 void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
-    int doNothing = -1;
-    int showHide = 0;
-    int newNote = 1;
-    int newQuickNote = 2;
-    int screenCapture = 3;
+    int doNothing = 0;
+    int showHide = 1;
+    int newNote = 2;
+    int newQuickNote = 3;
+    int screenCapture = 4;
 
     if (reason == QSystemTrayIcon::DoubleClick) {
         global.settings->beginGroup("Appearance");
-        int value = global.settings->value("trayDoubleClickAction", 0).toInt();
+        int value = global.settings->value("trayDoubleClickAction", -1).toInt();
         global.settings->endGroup();
         if (value == doNothing)
             return;
@@ -2868,7 +2868,7 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     }
     if (reason == QSystemTrayIcon::MiddleClick) {
         global.settings->beginGroup("Appearance");
-        int value = global.settings->value("trayMiddleClickAction", 0).toInt();
+        int value = global.settings->value("trayMiddleClickAction", -1).toInt();
         global.settings->endGroup();
         if (value == doNothing)
             return;
@@ -2886,7 +2886,7 @@ void NixNote::trayActivated(QSystemTrayIcon::ActivationReason reason) {
     }
     if (reason == QSystemTrayIcon::Trigger) {
         global.settings->beginGroup("Appearance");
-        int value = global.settings->value("traySingleClickAction", 0).toInt();
+        int value = global.settings->value("traySingleClickAction", -1).toInt();
         global.settings->endGroup();
         if (value == doNothing)
             return;
