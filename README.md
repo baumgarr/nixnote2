@@ -42,7 +42,7 @@ unofficial repository.
 
 ### Gentoo Linux
 
-NixNote is acailable via gentoo-zh overlay, you can install by:
+NixNote is available via gentoo-zh overlay, you can install by:
 
 ```bash
 # run with root privileges
