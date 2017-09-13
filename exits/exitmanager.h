@@ -1,6 +1,6 @@
 /*********************************************************************************
 NixNote - An open-source client for the Evernote service.
-Copyright (C) 2015 Randy Baumgarte
+Copyright (C) 2017 Randy Baumgarte
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License
@@ -19,38 +19,29 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 
 
-#ifndef CMDLINETOOL_H
-#define CMDLINETOOL_H
+#ifndef EXITMANAGER_H
+#define EXITMANAGER_H
+
+#include <QHash>
+//#include "exits/exitpoint.h"
 
 #include <QObject>
-#include <QSharedMemory>
 
-#include "settings/startupconfig.h"
+class ExitPoint;
 
-class CmdLineTool : public QObject
+class ExitManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit CmdLineTool(QObject *parent = 0);
-    int run(StartupConfig &config);
-    int readNote(StartupConfig config);
-    int addNote(StartupConfig config);
-    int appendNote(StartupConfig config);
-    int queryNotes(StartupConfig config);
-    int deleteNote(StartupConfig config);
-    int emailNote(StartupConfig config);
-    int exportNotes(StartupConfig config);
-    int alterNote(StartupConfig config);
-    int importNotes(StartupConfig config);
-    int openNotebook(StartupConfig config);
-    int closeNotebook(StartupConfig config);
-    int sync();
-    int signalGui(StartupConfig config);
+    explicit ExitManager(QObject *parent = 0);
+
+    void loadExits();
+    void loadExitPoint(QString name, int goodVersion=1);
+    QHash<QString, ExitPoint*>  *exitPoints;                   // hash of all exit points
 
 signals:
 
 public slots:
-
 };
 
-#endif // CMDLINETOOL_H
+#endif // EXITMANAGER_H

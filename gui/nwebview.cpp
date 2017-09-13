@@ -374,6 +374,14 @@ bool NWebView::event(QEvent *event)
             ke->accept();
             return true;
         }
+        if (ke->key() == Qt::Key_Enter || ke->key() == Qt::Key_Return) {
+            bool retval = parent->enterPressed();
+            if (retval) {
+                ke->accept();
+                return true;
+            }
+        }
+
     }
     if (event->type() == QEvent::MouseButtonDblClick) {
         QLOG_DEBUG() << "DOUBLE CLICK!!!";
@@ -487,7 +495,7 @@ void NWebView::downloadRequested(QNetworkRequest req) {
         qint32 lid = urlString.toInt();
         ResourceTable resTable(global.db);
         Resource r;
-        resTable.get(r, lid, false);
+        resTable.get(r, lid, true);
         QString filename;
         ResourceAttributes attributes;
         if (r.attributes.isSet())

@@ -77,7 +77,6 @@ void TagViewer::showEvent(QShowEvent* event) {
 void TagViewer::resize() {
     QFontMetrics fm(font());
     int width = fm.width(text());
-    int height = fm.height();
 
 //    setMaximumWidth(width+sz.width()+2+clearButton->minimumWidth());
 //    setMinimumWidth(width+sz.width()+2+clearButton->minimumWidth());
@@ -87,8 +86,15 @@ void TagViewer::resize() {
     setMinimumWidth(x);
 
     int frameWidth = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
+#ifndef __WIN32
+    int height = fm.descent();
     clearButton->move(rect().left() + width + frameWidth,
-                      (rect().bottom()- height - 5 )/2);
+                      (rect().top()- height)/2);
+#else
+    clearButton->move(rect().left() + width + frameWidth,
+                      (rect().top()- (fm.height()/2))/2);
+#endif
+
 }
 
 

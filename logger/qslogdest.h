@@ -38,7 +38,12 @@ public:
    virtual ~Destination(){}
    virtual void write(const QString& message) = 0;
 };
+
+#if __cplusplus < 201103L
 typedef std::auto_ptr<Destination> DestinationPtr;
+#else
+typedef std::unique_ptr<Destination> DestinationPtr;
+#endif
 
 //! Creates logging destinations/sinks. The caller will have ownership of
 //! the newly created destinations.

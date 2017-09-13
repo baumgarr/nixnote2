@@ -37,6 +37,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "sql/databaseconnection.h"
 #include "threads/indexrunner.h"
 #include "utilities/crossmemorymapper.h"
+#include "exits/exitpoint.h"
+#include "exits/exitmanager.h"
 
 #include <string>
 #include <QSqlDatabase>
@@ -256,6 +258,9 @@ public:
     bool strictDTD;                                        // Should we do strict enml checking?
     bool getStrictDTD();                                   // Should we do strict enml checking? (read from settings)
     void setStrictDTD(bool value);                         // save strict enml checking
+    bool bypassTidy;                                       // Bypass HTML Tidy
+    bool getBypassTidy();                                  // should we bypass HTML tidy?
+    void setBypassTidy(bool value);                        // Set if we should bypass HTML tidy.
     QString getEditorStyle(bool colorOnly);                // Get note editor style overrides
     QString getEditorFontColor();                           // Get the editor font color from the theme
     QString getEditorBackgroundColor();                     // Get the editor background color from the theme
@@ -319,6 +324,8 @@ public:
     void setUseLibTidy(bool value);                            // Should we use new tidy or classic
     bool getUseLibTidy();
     bool useLibTidy;
+
+    ExitManager *exitManager;                                  // Utility to manage exit points.
 };
 
 bool caseInsensitiveLessThan(const QString &s1, const QString &s2);         // Helper function to sort values case-insensitive.

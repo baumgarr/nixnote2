@@ -49,6 +49,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dialog/spellcheckdialog.h"
 #include "utilities/pixelconverter.h"
 #include "gui/browserWidgets/table/tablepropertiesdialog.h"
+#include "exits/exitmanager.h"
 
 #include <QPlainTextEdit>
 #include <QVBoxLayout>
@@ -71,6 +72,12 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <istream>
 #include <qcalendarwidget.h>
 #include <qplaintextedit.h>
+#if QT_VERSION < 0x050000
+#include <QtScript/QScriptEngine>
+#else
+#include <QJSEngine>
+#endif
+
 
 extern Global global;
 
@@ -386,6 +393,12 @@ void NBrowserWindow::setupToolBar() {
     connect(buttonBar->insertDatetimeButtonAction, SIGNAL(triggered()), this, SLOT(insertDatetime()));
     connect(buttonBar->insertDatetimeButtonWidget,SIGNAL(clicked()), this, SLOT(insertDatetime()));
     connect(buttonBar->insertDatetimeButtonShortcut, SIGNAL(activated()), this, SLOT(insertDatetime()));
+
+
+    connect(buttonBar->formatCodeButtonAction, SIGNAL(triggered()), this, SLOT(formatCodeButtonPressed()));
+    connect(buttonBar->formatCodeButtonShortcut, SIGNAL(activated()), this, SLOT(formatCodeButtonPressed()));
+
+
 }
 
 
@@ -493,6 +506,19 @@ void NBrowserWindow::setContent(qint32 lid) {
     QWebSettings::setMaximumPagesInCache(0);
     QWebSettings::setObjectCacheCapacities(0, 0, 0);
     QLOG_DEBUG() << "Setting editor contents";
+
+    //**** BEGINNING CALL TO PRE-LOAD EXIT
+
+    QHash<QString, ExitPoint*> *points;
+    points = global.exitManager->exitPoints;
+
+    if (points->contains("ExitPoint_LoadNote") &&
+            points->value("ExitPoint_LoadNote") != NULL &&
+            points->value("ExitPoint_LoadNote")->getEnabled())
+        exitPoint(points->value("ExitPoint_LoadNote"));
+
+    //**** END OF CALL TO PRE-LOAD EXIT
+
     editor->setContent(content);
     // is this an ink note?
     if (inkNote)
@@ -764,6 +790,16 @@ void NBrowserWindow::saveNoteContent() {
     microFocusChanged();
 
     if (this->editor->isDirty) {
+
+        // BEGIN EXIT POINT
+        QHash<QString, ExitPoint*> *points;
+        points = global.exitManager->exitPoints;
+        if (points->contains("ExitPoint_SaveNote") &&
+                points->value("ExitPoint_SaveNote") != NULL &&
+                points->value("ExitPoint_SaveNote")->getEnabled())
+            exitPoint(points->value("ExitPoint_SaveNote"));
+        // END EXIT POINT
+
         QString contents = editor->editorPage->mainFrame()->documentElement().toOuterXml();
 
         EnmlFormatter formatter;
@@ -1131,6 +1167,27 @@ void NBrowserWindow::alignCenterButtonPressed() {
             "document.execCommand('JustifyCenter', false, '');");
     editor->setFocus();
     microFocusChanged();
+}
+
+
+
+// The center align button was pressed
+void NBrowserWindow::formatCodeButtonPressed() {
+
+    QString text = editor->selectedText();
+    if (text.trimmed() == "")
+        text = tr("Insert your code here.");
+    QString buffer;
+    //    buffer.append("<pre style=\"font-family: Monaco, Menlo, Consolas, 'Courier New', monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
+    buffer.append("<br/><pre style=\"font-family: Monaco, Menlo, Consolas, Courier New, monospace; font-size: 0.9em; border-radius: 4px; letter-spacing: 0.015em; padding: 1em; border: 1px solid #cccccc; background-color: #f8f8f8; overflow-x: auto;\">");
+    buffer.append(text);
+    buffer.append("</pre><br/>");
+    QString script = QString("document.execCommand('insertHtml', false, '%1');").arg(buffer);
+    editor->page()->mainFrame()->evaluateJavaScript(script).toString();
+
+    QKeyEvent *left = new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier);
+    QCoreApplication::postEvent(editor->editorPage, left);
+
 }
 
 
@@ -1834,6 +1891,7 @@ void NBrowserWindow::attachFile() {
      insideTable = false;
      insideEncryption = false;
      forceTextPaste = false;
+     insidePre = false;
 
      if (editor->selectedText().trimmed().length() > 0 && global.javaFound)
          editor->encryptAction->setEnabled(true);
@@ -1855,6 +1913,7 @@ void NBrowserWindow::attachFile() {
         +QString("      if (workingNode.nodeName=='TABLE') {")
         +QString("          if (workingNode.getAttribute('class').toLowerCase() == 'en-crypt-temp') window.browserWindow.insideEncryptionArea();")
         +QString("      }")
+        +QString("      if (workingNode.nodeName=='PRE') window.browserWindow.setInsidePre();")
         +QString("      if (workingNode.nodeName=='B') window.browserWindow.boldActive();")
         +QString("      if (workingNode.nodeName=='I') window.browserWindow.italicsActive();")
         +QString("      if (workingNode.nodeName=='U') window.browserWindow.underlineActive();")
@@ -1974,6 +2033,24 @@ void NBrowserWindow::attachFile() {
                  "} getCursorPosition();";
          editor->page()->mainFrame()->evaluateJavaScript(js);
      }
+ }
+
+
+
+
+ // Backtab pressed.
+ bool NBrowserWindow::enterPressed() {
+     if (!insidePre)
+         return false;
+
+     QString script = "document.execCommand('insertHTML', false, '&#10;&#13;');";
+
+     editor->page()->mainFrame()->evaluateJavaScript(script);
+     return true;
+
+//     QKeyEvent *down = new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier);
+//     QCoreApplication::postEvent(editor->editorPage, down);
+
  }
 
 
@@ -2231,6 +2308,12 @@ void NBrowserWindow::underlineActive() {
 // Set true if we are within some type of list
 void NBrowserWindow::setInsideList() {
     insideList = true;
+}
+
+
+// If we are inside a pre-formatted tag <pre>
+void NBrowserWindow::setInsidePre() {
+    this->insidePre = true;
 }
 
 
@@ -2898,6 +2981,8 @@ void NBrowserWindow::printNote() {
 
 
 void NBrowserWindow::noteSourceUpdated() {
+    scrollPoint = editor->page()->mainFrame()->scrollPosition();
+    connect(editor, SIGNAL(loadFinished(bool)), this, SLOT(repositionAfterSourceEdit(bool)));
     QByteArray ba;
     QString source = sourceEdit->toPlainText();
    //source = Qt::escape(source);
@@ -2908,6 +2993,16 @@ void NBrowserWindow::noteSourceUpdated() {
     this->editor->isDirty = true;
     emit noteContentEditedSignal(uuid, lid, editor->editorPage->mainFrame()->documentElement().toOuterXml());
 }
+
+
+// Called after the source is edited and a reposition is needed to keep the page from being positioned at the top
+void NBrowserWindow::repositionAfterSourceEdit(bool) {
+    editor->page()->mainFrame()->setScrollPosition(scrollPoint);
+    disconnect(editor, SIGNAL(loadFinished(bool)), this, SLOT(repositionAfterSourceEdit(bool)));
+}
+
+
+
 
 // Update a resource's hash if it was edited somewhere else
 void NBrowserWindow::updateResourceHash(qint32 noteLid, QByteArray oldHash, QByteArray newHash) {
@@ -3884,4 +3979,99 @@ void NBrowserWindow::setTableCellStyle(QString value) {
 //*************************************************
 void NBrowserWindow::setTableStyle(QString value) {
     this->tableStyle = value;
+}
+
+
+
+//**************************************************
+//* This is called when a note's content is saved.
+//* It is used to call user exits.
+//**************************************************
+
+void NBrowserWindow::exitPoint(ExitPoint *exit) {
+    QLOG_TRACE_IN();
+    ExitPoint_NoteEdit *saveExit = new ExitPoint_NoteEdit();
+
+#if QT_VERSION >= 0x050000
+    QJSEngine engine;
+    QJSValue exit_s = engine.newQObject(saveExit);
+    engine.globalObject().setProperty("note", exit_s);
+    // Start loading values
+    QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
+    saveExit->setExitName(exit->getExitName());
+    saveExit->setTitle(this->noteTitle.text());
+    saveExit->setNotebook(notebookMenu.notebookName);
+    saveExit->setCreationDate(dateEditor.createdDate.dateTime().toMSecsSinceEpoch());
+    saveExit->setUpdatedDate(dateEditor.updatedDate.dateTime().toMSecsSinceEpoch());
+    saveExit->setSubjectDate(dateEditor.subjectDate.dateTime().toMSecsSinceEpoch());
+    QStringList tags;
+    tagEditor.getTags(tags);
+    saveExit->setTags(tags);
+    saveExit->setContents(editor->page()->mainFrame()->toHtml());
+
+    // Set exit ready & call it.
+    saveExit->setExitReady();
+    QJSValue retval = engine.evaluate(exit->getScript());
+    QLOG_INFO() << "Return value from exit: " << retval.toString();
+#endif
+#if QT_VERSION < 0x050000
+    QScriptEngine scriptEngine;
+    QScriptValue exit_qs = scriptEngine.newQObject(saveExit);
+    scriptEngine.globalObject().setProperty("note", exit_qs);
+    // Start loading values
+    QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
+    saveExit->setExitName(exit->getExitName());
+    saveExit->setTitle(this->noteTitle.text());
+    saveExit->setNotebook(notebookMenu.notebookName);
+    saveExit->setCreationDate(dateEditor.createdDate.dateTime().toMSecsSinceEpoch());
+    saveExit->setUpdatedDate(dateEditor.updatedDate.dateTime().toMSecsSinceEpoch());
+    saveExit->setSubjectDate(dateEditor.subjectDate.dateTime().toMSecsSinceEpoch());
+    QStringList tags;
+    tagEditor.getTags(tags);
+    saveExit->setTags(tags);
+    saveExit->setContents(editor->page()->mainFrame()->toHtml());
+
+    // Set exit ready & call it.
+    saveExit->setExitReady();
+    QScriptValue retval = scriptEngine.evaluate(exit->getScript());
+    QLOG_INFO() << "Return value from exit: " << retval.toString();
+#endif
+
+    // Check for any changes.
+    if (saveExit->isTitleModified()) {
+        this->noteTitle.setText(saveExit->getTitle());
+    }
+    if (saveExit->isTagsModified()) {
+        QStringList newTags = saveExit->getTags();
+        QStringList oldTags;
+        tagEditor.getTags(oldTags);
+        for (int i=0; i<oldTags.size(); i++) {
+            tagEditor.removeTag(oldTags[i]);
+        }
+        for (int i=0; i<newTags.size(); i++) {
+            tagEditor.addTag(newTags[i]);
+        }
+    }
+    if (saveExit->isNotebookModified()) {
+        NotebookTable ntable(global.db);
+        QString notebookName = saveExit->getNotebook();
+        qint32 notebookLid = ntable.findByName(notebookName);
+        if (notebookLid >0) {
+            this->notebookMenu.updateCurrentNotebook(notebookLid, notebookName);
+            NoteTable noteTable(global.db);
+            noteTable.updateNotebook(this->lid, notebookLid, true);
+            emit (noteNotebookEditedSignal(uuid, lid, notebookLid, notebookName));
+        }
+        else
+            QLOG_ERROR() << tr("Notebook was not found:") << notebookName;
+    }
+    if (saveExit->isContentsModified()) {
+        QByteArray data = saveExit->getContents().toUtf8();
+        this->editor->setContent(data);
+    }
+    editor->isDirty = saveExit->isContentsDirty();
+    NoteTable ntable(global.db);
+    ntable.setDirty(this->lid, editor->isDirty,false);
+
+    QLOG_TRACE_OUT();
 }

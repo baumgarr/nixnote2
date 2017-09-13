@@ -85,6 +85,7 @@ private:
     bool insideList;
     bool insideTable;
     bool insideEncryption;
+    bool insidePre;
     bool forceTextPaste;
     void editLatex(QString guid);
     QString selectedFileName;
@@ -123,6 +124,9 @@ private:
 
     QString tableCellStyle;
     QString tableStyle;
+    QPoint scrollPoint;
+
+    void exitPoint(ExitPoint *exit);
 
 
 public:
@@ -168,6 +172,7 @@ public:
 
     void tabPressed();
     void backtabPressed();
+    bool enterPressed();
     void clear();
     void setupShortcut(QShortcut *action, QString text);
     void contentChanged();
@@ -256,6 +261,7 @@ public slots:
     void rotateImageLeftButtonPressed();
     void rotateImageRightButtonPressed();
     void removeFormatButtonPressed();
+    void formatCodeButtonPressed();
     void linkClicked(const QUrl url);
     void toggleSource();
     void setSource();
@@ -276,6 +282,7 @@ public slots:
     void underlineActive();
     void setInsideList();
     void setInsideTable();
+    void setInsidePre();
     void noteSourceUpdated();
     void setInsideLink(QString link);
     QString fixEncryptionPaste(QString data);
@@ -325,7 +332,7 @@ private slots:
     void focusCheck();
     void saveTimeCheck();
     void browserThreadStarted();
-
+    void repositionAfterSourceEdit(bool);
 };
 
 #endif // NBROWSERWINDOW_H

@@ -7,7 +7,7 @@ Group: Applications/Internet
 Vendor: Randy Baumgarte
 URL: http://nevernote.sourceforge.net/
 Packager: Randy Baumgarte <randy@fbn.cx>
-Source: /home/randy/nn2/package_scripts/hunspell_plugin/nixnote2_hunspell_plugin___VERSION_____ARCH__.tar.gz
+Source: nixnote2_hunspell_plugin___VERSION_____ARCH__.tar.gz
 AutoReqProv: no
 Requires: nixnote2, hunspell >= 1.3.2 
 
@@ -32,14 +32,14 @@ license.html:   Legal notices for licenses and trademarks.
 
 %clean
 rm -rf /usr/share/doc/nixnote2-hunspell-plugin
-rm -rf /usr/share/nixnote2/plugins/libhunspellplugin.so
+rm -rf /usr/lib/nixnote2/libhunspellplugin.so
 
 %define debug_package %{nil}
 
 %build
 
 %install
-mkdir -p /usr/share/nixnote2/plugins
+mkdir -p /usr/lib/nixnote2
 mkdir -p /usr/share/doc/nixnote2-hunspell-plugin
 mv -f usr ${RPM_BUILD_ROOT}
 
@@ -48,7 +48,7 @@ mv -f usr ${RPM_BUILD_ROOT}
 %postun
 
 %files
-%attr(755,root,root) /usr/share/nixnote2/plugins/libhunspellplugin.so
+%attr(755,root,root) /usr/lib/nixnote2/libhunspellplugin.so
 %attr(755,root,root) /usr/share/doc/nixnote2-hunspell-plugin
 
 %changelog

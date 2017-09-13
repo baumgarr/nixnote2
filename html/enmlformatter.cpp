@@ -29,12 +29,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QIcon>
 #include <QMessageBox>
 
-#include <tidy.h>
-#ifndef _WIN32
-#include <buffio.h>
-#else
+
+#ifdef _WIN32
 #include <tidy/tidybuffio.h>
 #endif
+
 
 #include <iostream>
 using namespace std;
@@ -241,14 +240,20 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
     content = content.replace("<ac:rich-text-body", "<div");
     content = content.replace("</ac:rich-text-body", "</div");
 
+
+#ifndef _WIN32
+    bool useLegacyTidy = true;
+#else
     // Run it through "tidy".  It is a program which will fix any invalid HTML
     // and give us the results back through stdout.  In a perfect world this
     // wouldn't be needed, but WebKit doesn't always give back good HTML.
     bool useLegacyTidy = false;
 
-    if (global.useLibTidy) {
-        TidyBuffer output = {0};
-        TidyBuffer errout = {0};
+    if (global.useLibTidy && !global.bypassTidy) {
+        TidyBuffer output;
+        memset(&output, 0, sizeof(output));
+        TidyBuffer errout;
+        memset(&errout, 0, sizeof(errout));
 
         int tidyRc;
         bool ok;
@@ -310,10 +315,10 @@ QByteArray EnmlFormatter::rebuildNoteEnml() {
             tidyBufFree(&errout);
         tidyRelease(tdoc);
     }
-
+ #endif
 
     // IF the new tidy had an error, or we choose to use the old method
-    if (useLegacyTidy || !global.useLibTidy) {
+    if ((useLegacyTidy || !global.useLibTidy) && !global.bypassTidy) {
         QLOG_DEBUG() << "Calling tidy";
         QProcess tidyProcess;
         tidyProcess.start("tidy -raw -asxhtml -q -m -u -utf8 ", QIODevice::ReadWrite|QIODevice::Unbuffered);
@@ -595,6 +600,8 @@ bool EnmlFormatter::isAttributeValid(QString attribute) {
 
 
 bool EnmlFormatter::isElementValid(QWebElement e) {
+    if (global.bypassTidy)
+        return true;
     QString element = e.tagName().toLower();
     //QLOG_DEBUG() << "Checking tag " << element;
     if (element == "a") {

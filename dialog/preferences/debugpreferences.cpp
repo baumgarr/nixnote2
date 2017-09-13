@@ -32,8 +32,10 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     mainLayout->setAlignment(Qt::AlignTop | Qt::AlignLeft);
     setLayout(mainLayout);
 
-    strictDTD = new QCheckBox(tr("Strict note checking."),this);
-    strictDTD->setChecked(global.strictDTD);
+    strictDTD = new QCheckBox(tr("Bypass strict note checking. *"),this);
+    strictDTD->setChecked(!global.strictDTD);
+    bypassTidy = new QCheckBox(tr("Bypass HTML Tidy. *"), this);
+    bypassTidy->setChecked(global.bypassTidy);
     disableUploads = new QCheckBox(tr("Disable uploads to server."),this);
     disableImageHighlight = new QCheckBox(tr("Disable image search highlighting."), this);
     showLidColumn = new QCheckBox(tr("Show LID column (requires restart)."));
@@ -53,6 +55,7 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     mainLayout->addWidget(nonAsciiSortBug,row++,1);
     mainLayout->addWidget(disableImageHighlight,row++,1);
     mainLayout->addWidget(strictDTD,row++,1);
+    mainLayout->addWidget(bypassTidy, row++, 1);
     mainLayout->addWidget(forceUTF8, row++, 1);
 
 #ifndef _WIN32
@@ -69,6 +72,9 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     useLibTidy->setChecked(global.getUseLibTidy());
     mainLayout->addWidget(useLibTidy,row++,1);
 
+#ifndef _WIN32
+    useLibTidy->setVisible(false);
+#endif
     mainLayout->addWidget(new QLabel(tr("Auto-Save Interval (in seconds).")), row,0);
     autoSaveInterval = new QSpinBox();
     autoSaveInterval->setMinimum(5);
@@ -93,6 +99,8 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     debugLevel->setCurrentIndex(index);
     mainLayout->addWidget(debugLevelLabel,row,0);
     mainLayout->addWidget(debugLevel,row++,1);
+    mainLayout->addWidget(new QLabel(" "), row++, 0);
+    mainLayout->addWidget(new QLabel(tr("* Note: Enabling can cause sync issues.")), row++, 0);
     this->setFont(global.getGuiFont(font()));
 
 }
@@ -129,12 +137,13 @@ void DebugPreferences::saveValues() {
     global.settings->endGroup();
     global.setAutoSaveInterval(autoSaveInterval->value());
     global.disableUploads = disableUploads->isChecked();
-    global.setStrictDTD(strictDTD->isChecked());
+    global.setStrictDTD(!strictDTD->isChecked());
+    global.setBypassTidy(bypassTidy->isChecked());
 
 #ifndef _WIN32
     global.setInterceptSigHup(interceptSigHup->isChecked());
 #endif
 
-    global.setMultiThreadSave(multiThreadSave->isChecked());
+//    global.setMultiThreadSave(multiThreadSave->isChecked());
     global.setUseLibTidy(useLibTidy->isChecked());
 }

@@ -136,7 +136,7 @@ Logger::Helper::~Helper()
       // you shouldn't throw exceptions from a sink
       Q_UNUSED(e);
       assert(!"exception in logger helper destructor");
-      throw;
+      //throw;
    }
 }
 

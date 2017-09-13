@@ -5,26 +5,26 @@
 #-------------------------------------------------
 
 greaterThan(QT_MAJOR_VERSION, 4) {
-    QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus
+    QT       += core gui widgets printsupport webkit webkitwidgets sql network xml dbus qml
     DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0
     unix:INCLUDEPATH += /usr/include/poppler/qt5
-    unix:INCLUDEPATH += /usr/include/tidy
+#    unix:INCLUDEPATH += /usr/include/tidy
     win32:INCLUDEPATH +="$$PWD/winlib/includes/poppler/qt5"
     win32:INCLUDEPATH+= "$$PWD/winlib/includes"
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5
     unix:LIBS +=    -lcurl \
-               -lpthread -L/usr/lib -lpoppler-qt5 -ltidy -g -rdynamic
+               -lpthread -L/usr/lib -lpoppler-qt5 -g -rdynamic
     win32:LIBS += -L"$$PWD/winlib" -lpoppler-qt5 -ltidy
     win32:RC_ICONS += "$$PWD/images/windowIcon.ico"
 }
 
 
 equals(QT_MAJOR_VERSION, 4) {
-    QT       += core gui webkit sql network xml
+    QT       += core gui webkit sql network xml script
     INCLUDEPATH += /usr/include/poppler/qt4
-    INCLUDEPATH += /usr/include/tidy
+#    INCLUDEPATH += /usr/include/tidy
     LIBS +=    -lcurl \
-               -lpthread -L/usr/lib -lpoppler-qt4 -ltidy -g -rdynamic
+               -lpthread -L/usr/lib -lpoppler-qt4 -g -rdynamic
 }
 
 TARGET = nixnote2
@@ -241,7 +241,10 @@ SOURCES += main.cpp\
     dialog/shortcutdialog.cpp \
     cmdtools/signalgui.cpp \
     gui/browserWidgets/table/tablepropertiesdialog.cpp \
-    threads/browserrunner.cpp
+    threads/browserrunner.cpp \
+    exits/exitpoint.cpp \
+    exits/exitmanager.cpp \
+    dialog/preferences/exitpreferences.cpp
 
 
 
@@ -442,7 +445,10 @@ HEADERS  += nixnote.h \
     gui/browserWidgets/table/tablepropertiesdialog.h \
     dialog/preferences/appearancepreferences.h \
     dialog/preferences/debugpreferences.h \
-    threads/browserrunner.h
+    threads/browserrunner.h \
+    exits/exitpoint.h \
+    exits/exitmanager.h \
+    dialog/preferences/exitpreferences.h
 
 
 

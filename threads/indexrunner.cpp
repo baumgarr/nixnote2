@@ -304,8 +304,11 @@ void IndexRunner::indexRecognition(qint32 lid, Resource &r) {
 
     // look for text tags
     QDomNodeList anchors = doc.documentElement().elementsByTagName("t");
-
+#if QT_VERSION < 0x050000
+    for (unsigned int i=0; keepRunning && !pauseIndexing && i<anchors.length(); i++) {
+#else
     for (int i=0; keepRunning && !pauseIndexing && i<anchors.length(); i++) {
+#endif
         QApplication::processEvents();
         QDomElement enmedia = anchors.at(i).toElement();
         QString weight = enmedia.attribute("w");

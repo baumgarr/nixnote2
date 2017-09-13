@@ -7,7 +7,7 @@ Group: Applications/Internet
 Vendor: Randy Baumgarte
 URL: http://nevernote.sourceforge.net/
 Packager: Randy Baumgarte <randy@fbn.cx>
-Source: /home/randy/nn2/package_scripts/nixnote2___VERSION_____ARCH__.tar.gz
+Source: nixnote2___VERSION_____ARCH__.tar.gz
 AutoReqProv: no
 Requires: tidy, bash, qt >= 4.8.5, qt-x11 >= 4.8.5, qtwebkit >= 2.3, glibc >= 2.18, libgcc >= 4.8.2, poppler-qt, libstdc++ >= 4.8.2, openssl >= 1.0.0, OpenEXR >= 1.7, tbb >= 4.1, libcurl >= 3.75.0, libtidy >= 5.0
 
@@ -60,6 +60,7 @@ mv -f usr ${RPM_BUILD_ROOT}
 %attr(755,root,root) /usr/bin/nixnote2  
 %attr(755,root,root) /usr/share/doc/nixnote2
 %attr(755,root,root) /usr/share/applications/nixnote2.desktop
+%attr(755,root,root) /usr/share/pixmaps/nixnote2.png
 %attr(755,root,root) /usr/share/man/man1/nixnote2.1.gz
 
 %changelog

@@ -77,6 +77,7 @@ signals:
     void updateNoteTitle(QString uuid, qint32 lid, QString content);
     void escapeKeyPressed();
     void noteTagsUpdated(QString uuid, qint32 lid, QStringList names);
+    void noteNotebookUpdated(QString uuid, qint32 lid, QString name);
 
 
 public slots:

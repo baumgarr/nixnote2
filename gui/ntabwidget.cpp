@@ -549,6 +549,7 @@ void NTabWidget::noteNotebookEdited(QString uuid, qint32 lid, qint32 notebookLid
             externalList->at(i)->browser->notebookMenu.blockSignals(false);
         }
     }
+    emit (noteNotebookUpdated(uuid, lid, notebookName));
 }
 
 

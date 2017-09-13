@@ -239,6 +239,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     indexPDFLocally=getIndexPDFLocally();
     forceSearchLowerCase=getForceSearchLowerCase();
     strictDTD = getStrictDTD();
+    bypassTidy = getBypassTidy();
     forceUTF8 = getForceUTF8();
 
 
@@ -258,6 +259,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
     multiThreadSaveEnabled = this->getMultiThreadSave();
     useLibTidy = this->getUseLibTidy();
 
+    exitManager = new ExitManager();
+    exitManager->loadExits();
 }
 
 
@@ -577,9 +580,29 @@ bool Global::getStrictDTD() {
 
 
 
+
+void Global::setBypassTidy(bool value) {
+    settings->beginGroup("Debugging");
+    settings->setValue("bypassTidy",value);
+    settings->endGroup();
+    bypassTidy=value;
+}
+
+
+bool Global::getBypassTidy() {
+    settings->beginGroup("Debugging");
+    bool value = settings->value("bypassTidy",true).toBool();
+    settings->endGroup();
+    bypassTidy = value;
+    return value;
+}
+
+
+
+
 bool Global::getForceUTF8() {
     settings->beginGroup("Debugging");
-    bool value = settings->value("forceUTF8",false).toBool();
+    bool value = settings->value("forceUTF8",true).toBool();
     settings->endGroup();
     forceUTF8 = value;
     return value;
@@ -1437,7 +1460,8 @@ void Global::stackDump(int max) {
 
     free(messages);
     QLOG_ERROR() << "**** Stack dump complete *****";
-
+#else
+    Q_UNUSED(max)
 #endif // End windows check
 }
 
@@ -1580,4 +1604,7 @@ void Global::setUseLibTidy(bool value) {
     global.settings->setValue("useLibTidy", value);
     global.settings->endGroup();
     this->useLibTidy = value;
+#ifndef _WIN32
+    this->useLibTidy = false;  // Removing obsolete setting.
+#endif
 }

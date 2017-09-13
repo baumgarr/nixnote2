@@ -99,6 +99,7 @@ void UserTable::createTable() {
 
 // Update the database's user record
 void UserTable::updateUser(User &user) {
+    QLOG_TRACE_IN();
     NSqlQuery query(db);
     db->lockForWrite();
     query.prepare("delete from UserTable where key != :lastdate and key != :lastnumber;");
@@ -325,6 +326,7 @@ void UserTable::updateUser(User &user) {
     }
     query.finish();
     db->unlock();
+    QLOG_TRACE_OUT();
 }
 
 

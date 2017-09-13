@@ -188,6 +188,7 @@ bool CommunicationManager::getUserInfo(User &user) {
         handleStdException(e);
         return false;
     }
+    QLOG_TRACE_OUT();
     return true;
 }
 
@@ -388,11 +389,14 @@ qint32 CommunicationManager::expungeSavedSearch(Guid guid) {
 
 // Upload a new/changed tag to Evernote
 qint32 CommunicationManager::uploadTag(Tag &tag) {
+    QLOG_TRACE_IN();
     try {
-        if (tag.updateSequenceNum > 0)
+        if (tag.updateSequenceNum > 0) {
+            QLOG_TRACE_OUT();
             return myNoteStore->updateTag(tag, authToken);
-        else {
+       } else {
             tag = myNoteStore->createTag(tag, authToken);
+            QLOG_TRACE_OUT();
             return tag.updateSequenceNum;
         }
     } catch (ThriftException e) {
@@ -1008,7 +1012,12 @@ size_t curlWriter(void *ptr, size_t size, size_t nmemb, FILE *stream) {
 // Download an ink note image
 void CommunicationManager::downloadInkNoteImage(QString guid, Resource *r, QString shard, QString authToken) {
 // Windows Check
-#ifndef _WIN32
+#ifdef _WIN32
+    Q_UNUSED(guid)
+    Q_UNUSED(r)
+    Q_UNUSED(shard)
+    Q_UNUSED(authToken)
+#else
     UserTable userTable(db);
     QImage *newImage = NULL;
     User u;
@@ -1174,11 +1183,11 @@ void CommunicationManager::processSyncChunk(SyncChunk &chunk, QString token) {
 
 
 void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
-    void *array[30];
-    size_t size;
 
 // Windows Check
 #ifndef _WIN32
+    void *array[30];
+    size_t size;
     // get void*'s for all entries on the stack
     size = backtrace(array, 30);
 
@@ -1226,11 +1235,11 @@ void CommunicationManager::handleEDAMSystemException(EDAMSystemException e) {
 
 void CommunicationManager::handleEDAMNotFoundException(EDAMNotFoundException e) {
     Q_UNUSED(e);   // suppress unused variable message
-    void *array[30];
-    size_t size;
 
 // Windows Check
 #ifndef _WIN32
+    void *array[30];
+    size_t size;
     // get void*'s for all entries on the stack
     size = backtrace(array, 30);
 

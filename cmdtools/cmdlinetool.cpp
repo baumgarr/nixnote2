@@ -57,7 +57,7 @@ int CmdLineTool::run(StartupConfig &config) {
     if (config.sync()) {
         // If the shared memory segment doesn't exist, we just do a sync & exit
         if (!global.sharedMemory->attach()) {
-            return this->sync(config);
+            return this->sync();
         }
         global.sharedMemory->write(QString("SNCHRONIZE"));
         global.sharedMemory->detach();
@@ -760,7 +760,7 @@ int CmdLineTool::closeNotebook(StartupConfig config) {
 #include "sql/nsqlquery.h"
 
 // Do a sync
-int CmdLineTool::sync(StartupConfig config) {
+int CmdLineTool::sync() {
     if (!global.accountsManager->oauthTokenFound()) {
         std::cout << tr("OAuth token not found.").toStdString() << endl;
         return 16;

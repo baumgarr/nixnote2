@@ -39,7 +39,7 @@ QString DateDelegate::displayText(const QVariant &value, const QLocale &locale) 
 
     //QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedKingdom));
     if (timestamp.date() == QDate::currentDate())
-        return tr("Today") +" " + timestamp.time().toString(Qt::SystemLocaleShortDate);
+        return tr("Today") +" " + timestamp.time().toString(global.timeFormat);
     return timestamp.toString(global.dateFormat + QString(" ") +global.timeFormat);
 //    return timestamp.toString(Qt::SystemLocaleShortDate);
 }

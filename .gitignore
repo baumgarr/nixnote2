@@ -56,3 +56,5 @@ Makefile.Release
 cmake-build-debug/
 .idea/
 
+#QMake file
+.qmake.stash

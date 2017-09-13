@@ -1,4 +1,13 @@
 NixNote (2.0.1) stable; urgency=low
+  * Added the ability to code user exit routines.
+  * Added <pre> opton to enter pre-formatted text.
+  * Changed UTF-8 encoding to be the default option.
+  * Better C++11 compatibility.                    
+  * Bug fixes.
+ -- Randy Baumgarte <randy@fbn.cx>  Tue, 12 Sep 2017 12:00:00 -0400
+
+
+NixNote (2.0.1) stable; urgency=low
   * Add the ability to customize some aspects of a table
     within a note.
   * Added an auto-save interval. This can be customized 

@@ -1359,8 +1359,10 @@ void NTableView::createTableOfContents() {
                 }
             }
         }
-        QString url = QString("<a href=\"")+href2+QString("\" title=\"")+n.title+
-                QString("\">")+n.title+QString("</a>");
+        QString tempTitle = n.title;
+        tempTitle.replace("&", "&amp;");
+        QString url = QString("<a href=\"")+href2+QString("\" title=\"")+tempTitle+
+                QString("\">")+tempTitle+QString("</a>");
         content = content+"<li>"+url+"</li>";
     }
     content = content+QString("</ol></en-note>");
@@ -1602,6 +1604,15 @@ void NTableView::noteTagsUpdated(QString uuid, qint32 lid, QStringList names) {
 			value = value + ",";
 	}
 	this->refreshCell(lid, NOTE_TABLE_TAGS_POSITION, QVariant(value));
+
+}
+
+
+
+
+void NTableView::noteNotebookUpdated(QString uuid, qint32 lid, QString name) {
+    Q_UNUSED(uuid);
+    this->refreshCell(lid, NOTE_TABLE_NOTEBOOK_POSITION, QVariant(name));
 
 }
 

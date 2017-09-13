@@ -68,5 +68,6 @@
         <file alias="superscriptIcon">images/superscript.png</file>
         <file alias="emailIcon">images/emailIcon.png</file>
         <file alias="fullAlignIcon">images/justifyFull.png</file>
+        <file alias="formatCodeIcon">images/formatCode.png</file>
     </qresource>
 </RCC>

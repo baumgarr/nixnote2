@@ -26,8 +26,17 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "utilities/mimereference.h"
 #include "sql/filewatchertable.h"
 #include "xml/batchimport.h"
+#include "sql/tagtable.h"
 
 #include <QDirIterator>
+
+#if QT_VERSION < 0x050000
+#include <QtScript/QScriptEngine>
+#else
+#include <QJSEngine>
+#endif
+
+
 
 extern Global global;
 
@@ -99,18 +108,6 @@ void FileWatcher::saveFile(QString file) {
     QString notebook;
     bookTable.getGuid(notebook, notebookLid);
     newNote.notebookGuid = notebook;
-
-    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
-           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
-           QString("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">");
-
-    MimeReference mimeRef;
-    QString mime = mimeRef.getMimeFromFileName(file);
-    QString enMedia =QString("<en-media hash=\"") +hash.toHex() +QString("\" border=\"0\"")
-            +QString(" type=\"" +mime +"\" ")
-            +QString("/>");
-    newNoteBody.append(enMedia + QString("</en-note>"));
-    newNote.content = newNoteBody;
     newNote.active = true;
     newNote.created = QDateTime::currentMSecsSinceEpoch();;
     newNote.updated = newNote.created;
@@ -122,9 +119,41 @@ void FileWatcher::saveFile(QString file) {
 #else
     na.sourceURL = "file:///"+file;
 #endif  // end Windows check
+    na.subjectDate = newNote.created;
     newNote.attributes = na;
 
     qint32 noteLid = lid;
+
+
+
+    // BEGIN EXIT POINT
+    QString exitName = "ExitPoint_ImportKeep";
+    if (scanType == FileWatcher::ImportDelete) {
+        exitName = "ExitPoint_ImportDelete";
+    }
+
+    QHash<QString, ExitPoint*> *points;
+    points = global.exitManager->exitPoints;
+    if (points->contains(exitName) &&
+            points->value(exitName) != NULL &&
+            points->value(exitName)->getEnabled())
+        exitPoint(points->value(exitName), newNote);
+    // END EXIT POINT
+
+
+    QString newNoteBody = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>")+
+           QString("<!DOCTYPE en-note SYSTEM \"http://xml.evernote.com/pub/enml2.dtd\">")+
+           QString("<en-note style=\"word-wrap: break-word; -webkit-nbsp-mode: space; -webkit-line-break: after-white-space;\">");
+    if (newNote.content.isSet())
+        newNoteBody.append(newNote.content);
+
+    MimeReference mimeRef;
+    QString mime = mimeRef.getMimeFromFileName(file);
+    QString enMedia =QString("<en-media hash=\"") +hash.toHex() +QString("\" border=\"0\"")
+            +QString(" type=\"" +mime +"\" ")
+            +QString("/>");
+    newNoteBody.append(enMedia + QString("</en-note>"));
+    newNote.content = newNoteBody;
     ntable.add(lid, newNote, true);
     QString noteGuid = ntable.getGuid(lid);
     lid = cs.incrementLidCounter();
@@ -225,4 +254,95 @@ void FileWatcher::addDirectory(QString root) {
     if (scanType == ImportKeep)
         saveFiles = files;
 
+}
+
+
+void FileWatcher::exitPoint(ExitPoint *exit, Note &n) {
+    QLOG_TRACE_IN();
+    ExitPoint_FileImport *saveExit = new ExitPoint_FileImport();
+
+#if QT_VERSION >= 0x050000
+    QJSEngine engine;
+    QJSValue exit_s = engine.newQObject(saveExit);
+    engine.globalObject().setProperty("note", exit_s);
+    // Start loading values
+    QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
+    saveExit->setExitName(exit->getExitName());
+    saveExit->setTitle(n.title);
+    NotebookTable bookTable(global.db);
+    Notebook book;
+    bookTable.get(book, n.notebookGuid);
+    if (!book.name.isSet())
+        book.name = "unknown";
+    saveExit->setNotebook(book.name);
+    saveExit->setCreationDate(n.created);
+    saveExit->setUpdatedDate(n.updated);
+    saveExit->setSubjectDate(n.attributes->subjectDate);
+//    saveExit->setTags(n.tagNames);
+    saveExit->setContents("");
+    saveExit->setFileName(n.attributes->sourceURL);
+
+    // Set exit ready & call it.
+    saveExit->setExitReady();
+    QJSValue retval = engine.evaluate(exit->getScript());
+    QLOG_INFO() << "Return value from exit: " << retval.toString();
+#endif
+#if QT_VERSION < 0x050000
+    QScriptEngine scriptEngine;
+    QScriptValue exit_qs = scriptEngine.newQObject(saveExit);
+    scriptEngine.globalObject().setProperty("note", exit_qs);
+    // Start loading values
+    QLOG_INFO() << tr("Calling exit ") << exit->getExitName();
+
+    // Set exit ready & call it.
+    saveExit->setExitReady();
+    QScriptValue retval = scriptEngine.evaluate(exit->getScript());
+    QLOG_INFO() << "Return value from exit: " << retval.toString();
+#endif
+
+    // Check for any changes.
+    if (saveExit->isTitleModified()) {
+        n.title = saveExit->getTitle();
+    }
+    if (saveExit->isTagsModified()) {
+        QStringList tagNames = saveExit->getTags();
+        QStringList newTagNames;
+        QStringList newTagGuids;
+        TagTable ttable(global.db);
+        for (int i=0; i<tagNames.size(); i++) {
+            QString tagName = tagNames[i];
+            QString tagGuid = "";
+            qint32 tagLid;
+            tagLid = ttable.findByName(tagName,0);
+            if (tagLid > 0) {
+                if (ttable.getGuid(tagGuid,tagLid)) {
+                    newTagGuids.append(tagGuid);
+                    newTagNames.append(tagName);
+                } else
+                    QLOG_ERROR() << tr("Tag was not found:") << tagName;
+            } else
+                QLOG_ERROR() << tr("Tag was not found:") << tagName;
+        }
+        n.tagGuids = newTagGuids;
+        n.tagNames = newTagNames;
+    }
+    if (saveExit->isNotebookModified()) {
+        NotebookTable ntable(global.db);
+        QString notebookName = saveExit->getNotebook();
+        qint32 notebookLid = ntable.findByName(notebookName);
+        if (notebookLid >0) {
+            QString notebookGuid = "";
+            if (ntable.getGuid(notebookGuid, notebookLid))
+                n.notebookGuid = notebookGuid;
+            else
+                QLOG_ERROR() << tr("Notebook was not found:") << notebookName;
+        } else
+            QLOG_ERROR() << tr("Notebook was not found:") << notebookName;
+    }
+    if (saveExit->isContentsModified()) {
+        QByteArray data = saveExit->getContents().toUtf8();
+        n.content = data;
+    }
+
+    QLOG_TRACE_OUT();
 }

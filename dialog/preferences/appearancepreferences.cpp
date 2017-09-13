@@ -25,6 +25,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QMessageBox>
+#ifdef _WIN32
+#include <QDesktopServices>
+#endif
 
 extern Global global;
 
@@ -58,25 +61,25 @@ AppearancePreferences::AppearancePreferences(QWidget *parent) :
     fontPreviewInDialog->setChecked(global.previewFontsInDialog());
 
     traySingleClickAction = new QComboBox();
-    traySingleClickAction->addItem(tr("Do Nothing"), -1);
-    traySingleClickAction->addItem(tr("Show/Hide NixNote"), 0);
-    traySingleClickAction->addItem(tr("New Text Note"), 1);
-    traySingleClickAction->addItem(tr("New Quick Note"), 2);
-    traySingleClickAction->addItem(tr("Screen Capture"), 3);
+    traySingleClickAction->addItem(tr("Do Nothing"), 0);
+    traySingleClickAction->addItem(tr("Show/Hide NixNote"), 1);
+    traySingleClickAction->addItem(tr("New Text Note"), 2);
+    traySingleClickAction->addItem(tr("New Quick Note"), 3);
+    traySingleClickAction->addItem(tr("Screen Capture"), 4);
 
     trayMiddleClickAction = new QComboBox();
-    trayMiddleClickAction->addItem(tr("Do Nothing"), -1);
-    trayMiddleClickAction->addItem(tr("Show/Hide NixNote"), 0);
-    trayMiddleClickAction->addItem(tr("New Text Note"), 1);
-    trayMiddleClickAction->addItem(tr("New Quick Note"), 2);
-    trayMiddleClickAction->addItem(tr("Screen Capture"), 3);
+    trayMiddleClickAction->addItem(tr("Do Nothing"), 0);
+    trayMiddleClickAction->addItem(tr("Show/Hide NixNote"), 1);
+    trayMiddleClickAction->addItem(tr("New Text Note"), 2);
+    trayMiddleClickAction->addItem(tr("New Quick Note"), 3);
+    trayMiddleClickAction->addItem(tr("Screen Capture"), 4);
 
     trayDoubleClickAction = new QComboBox();
-    trayDoubleClickAction->addItem(tr("Do Nothing"), -1);
-    trayDoubleClickAction->addItem(tr("Show/Hide NixNote"), 0);
-    trayDoubleClickAction->addItem(tr("New Text Note"), 1);
-    trayDoubleClickAction->addItem(tr("New Quick Note"), 2);
-    trayDoubleClickAction->addItem(tr("Screen Capture"), 3);
+    trayDoubleClickAction->addItem(tr("Do Nothing"), 0);
+    trayDoubleClickAction->addItem(tr("Show/Hide NixNote"), 1);
+    trayDoubleClickAction->addItem(tr("New Text Note"), 2);
+    trayDoubleClickAction->addItem(tr("New Quick Note"), 3);
+    trayDoubleClickAction->addItem(tr("Screen Capture"), 4);
 
     mouseMiddleClickAction = new QComboBox();
     mouseMiddleClickAction->addItem(tr("Open New Tab"), MOUSE_MIDDLE_CLICK_NEW_TAB);
