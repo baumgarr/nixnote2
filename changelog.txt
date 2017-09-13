@@ -1,4 +1,4 @@
-NixNote (2.0.1) stable; urgency=low
+NixNote (2.0.2) stable; urgency=low
   * Added the ability to code user exit routines.
   * Added <pre> opton to enter pre-formatted text.
   * Changed UTF-8 encoding to be the default option.
