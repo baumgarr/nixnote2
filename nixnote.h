@@ -86,6 +86,7 @@ private:
         NewScreenNote=3
     };
 
+    QTranslator *nixnoteTranslator;
     QWebView *pdfExportWindow;
     DatabaseConnection *db;  // The database connection
     NTableView *noteTableView;

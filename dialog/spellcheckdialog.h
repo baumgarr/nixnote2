@@ -27,6 +27,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include <QLineEdit>
 #include <QLabel>
 #include <QListWidget>
+#include <QComboBox>
 
 class SpellCheckDialog : public QDialog
 {
@@ -40,15 +41,18 @@ private:
     QPushButton     *ignoreAll;
     QPushButton     *addToDictionary;
     QListWidget     *suggestions;
+    void            loadLanguages();
 
 
 public:
     explicit SpellCheckDialog(QString misspelled, QStringList suggestions, QWidget *parent = 0);
+    QComboBox       *language;
     bool            replacePressed;
     bool            cancelPressed;
     bool            ignorePressed;
     bool            ignoreAllPressed;
     bool            addToDictionaryPressed;
+    bool            changeLanguage;
     QString         replacement;
 
 protected:
@@ -64,6 +68,7 @@ public slots:
     void ignoreAllButtonPressed();
     void addToDictionaryButtonPressed();
     void cancelButtonPressed();
+    void languageChangeRequested(int);
 };
 
 #endif // SPELLCHECKDIALOG_H

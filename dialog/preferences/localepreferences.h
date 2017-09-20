@@ -36,8 +36,11 @@ private:
     QComboBox *dateFormat;
     QLabel *timeFormatLabel;
     QComboBox *timeFormat;
+    QLabel *translationLabel;
+    QComboBox *translationCombo;
     int getDateFormat();
     int getTimeFormat();
+    QString getTranslation();
     enum DateFormat {
         MMddyy = 1,
         MMddyyyy = 2,

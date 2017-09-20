@@ -33,7 +33,7 @@ class HunspellInterface
 public:
     virtual ~HunspellInterface() {}
 
-    virtual void initialize(QString programDictionary, QString userDictionary) = 0;
+    virtual void initialize(QString programDictionary, QString userDictionary, QString language="") = 0;
     virtual bool spellCheck(QString word, QStringList &suggestions) = 0;
     virtual void addWord(QString dictionary, QString word) = 0;
 

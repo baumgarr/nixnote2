@@ -61,8 +61,10 @@ QString SpellChecker::findDictionary(QString file) {
 
 
 
-void SpellChecker::setup(QString programDictionary, QString customDictionary) {
+void SpellChecker::setup(QString programDictionary, QString customDictionary, QString language) {
     QString locale = QLocale::system().name();
+    if (language != "")
+        locale = language;
     dictionaryPath.prepend(programDictionary);
     dictionaryPath.prepend(customDictionary);
 

@@ -41,7 +41,7 @@ private:
 
 public:
     HunspellPlugin();
-    void initialize(QString programDictionary, QString userDictionary);
+    void initialize(QString programDictionary, QString userDictionary, QString language="");
     bool spellCheck(QString word, QStringList &suggestions);
     void addWord(QString dictionary, QString word);
 };

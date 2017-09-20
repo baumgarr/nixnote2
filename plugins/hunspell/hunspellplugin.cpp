@@ -27,10 +27,9 @@ HunspellPlugin::HunspellPlugin() {
 
 // Initialize for use. I don't do it in the constructor because I don't 
 // want to take the time unless the user REALLY wants to use the spell checker.
-void HunspellPlugin::initialize(QString programDictionary, QString userDictionary)  {
+void HunspellPlugin::initialize(QString programDictionary, QString userDictionary, QString language)  {
     checker = new SpellChecker();
-    std::cout << "**************" << checker << std::endl;
-    checker->setup(programDictionary, userDictionary);
+    checker->setup(programDictionary, userDictionary, language);
     return;
 }
 

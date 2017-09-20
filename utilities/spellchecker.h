@@ -41,7 +41,7 @@ private:
 
 public:
     explicit SpellChecker(QObject *parent = 0);
-    void setup(QString programDictionary, QString customDictionary);
+    void setup(QString programDictionary, QString customDictionary, QString language);
     bool spellCheck(QString word, QStringList &suggestions);
     void addWord(QString dictionary, QString word);
     

@@ -1,7 +1,7 @@
 #!/bin/sh
 export DEB_BUILD_HARDENING=0
 
-version="1.0-1"
+version="1.1-1"
 
 
 package_dir=$(cd `dirname $0` && pwd)

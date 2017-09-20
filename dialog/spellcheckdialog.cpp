@@ -28,11 +28,12 @@ extern Global global;
 SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, QWidget *parent) :
     QDialog(parent)
 {
+    changeLanguage = false;
     misspelledWord = misspelled;
     setWindowIcon(global.getIconResource(":spellCheckIcon"));
     replacePressed = false;
     cancelPressed = false;
-    setWindowTitle(tr("Spell Check"));
+    language = new QComboBox(this);
     QGridLayout *grid = new QGridLayout(this);
     setLayout(grid);
     QGridLayout *suggestionGrid = new QGridLayout(this);
@@ -50,6 +51,7 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
     suggestionGrid->addWidget(new QLabel(tr("Suggestion"), this), 2,1);
     suggestionGrid->addWidget(replacementWord, 3,1);
     suggestionGrid->addWidget(this->suggestions, 4,1);
+    suggestionGrid->addWidget(language,5,1);
     suggestionGrid->setContentsMargins(10,10,-10,-10);
     grid->addLayout(suggestionGrid,1,1);
 
@@ -81,6 +83,9 @@ SpellCheckDialog::SpellCheckDialog(QString misspelled, QStringList suggestions, 
     this->replace->setEnabled(false);
     this->suggestions->addItems(suggestions);
     this->setFont(global.getGuiFont(font()));
+    loadLanguages();
+
+    connect(language, SIGNAL(currentIndexChanged(int)), this, SLOT(languageChangeRequested(int)));
 }
 
 void SpellCheckDialog::cancelButtonPressed() {
@@ -89,6 +94,7 @@ void SpellCheckDialog::cancelButtonPressed() {
     ignorePressed = false;
     addToDictionaryPressed = false;
     ignoreAllPressed = false;
+    this->changeLanguage = false;
     close();
 }
 
@@ -99,6 +105,7 @@ void SpellCheckDialog::addToDictionaryButtonPressed() {
     ignorePressed = false;
     ignoreAllPressed = false;
     addToDictionaryPressed = true;
+    this->changeLanguage = false;
     replacement = replacementWord->text();
     close();
 }
@@ -109,6 +116,7 @@ void SpellCheckDialog::replaceButtonPressed() {
     ignorePressed = false;
     ignoreAllPressed = false;
     addToDictionaryPressed = false;
+    this->changeLanguage = false;
     replacement = replacementWord->text();
     close();
 }
@@ -119,6 +127,7 @@ void SpellCheckDialog::ignoreButtonPressed() {
     ignorePressed = true;
     ignoreAllPressed = false;
     addToDictionaryPressed = false;
+    this->changeLanguage = false;
     replacement = replacementWord->text();
     close();
 }
@@ -129,6 +138,7 @@ void SpellCheckDialog::ignoreAllButtonPressed() {
     ignorePressed = false;
     ignoreAllPressed = true;
     addToDictionaryPressed = false;
+    this->changeLanguage = false;
     replacement = replacementWord->text();
     close();
 }
@@ -155,3 +165,61 @@ void SpellCheckDialog::replacementChosen() {
 //}
 
 
+
+void SpellCheckDialog::loadLanguages() {
+    QStringList dictionaryPath;
+    dictionaryPath.append("/usr/share/hunspell/");
+    dictionaryPath.append("/usr/share/myspell/");
+    dictionaryPath.append("/usr/share/myspell/dicts/");
+    dictionaryPath.append("/Library/Spelling/");
+    dictionaryPath.append("/opt/openoffice.org/basis3.0/share/dict/ooo/");
+    dictionaryPath.append("/opt/openoffice.org2.4/share/dict/ooo/");
+    dictionaryPath.append("/usr/lib/openoffice.org2.4/share/dict/ooo");
+    dictionaryPath.append("/opt/openoffice.org2.3/share/dict/ooo/");
+    dictionaryPath.append("/usr/lib/openoffice.org2.3/share/dict/ooo/");
+    dictionaryPath.append("/opt/openoffice.org2.2/share/dict/ooo/");
+    dictionaryPath.append("/usr/lib/openoffice.org2.2/share/dict/ooo/");
+    dictionaryPath.append("/opt/openoffice.org2.1/share/dict/ooo/");
+    dictionaryPath.append("/usr/lib/openoffice.org2.1/share/dict/ooo");
+    dictionaryPath.append("/opt/openoffice.org2.0/share/dict/ooo/");
+    dictionaryPath.append("/usr/lib/openoffice.org2.0/share/dict/ooo/");
+
+    QStringList values;
+    // Start loading available language dictionaries
+    for (int i=0; i<dictionaryPath.size(); i++) {
+        QDir spellDir(dictionaryPath[i]);
+        QStringList filter;
+        filter.append("*.aff");
+        filter.append("*.dic");
+        foreach (QString fileName, spellDir.entryList(filter)) {
+           QString lang = fileName;
+           lang.chop(4);
+           if (!values.contains(lang))
+               values.append(lang);
+        }
+    }
+    language->addItems(values);
+    global.settings->beginGroup("Locale");
+    QString dict = global.settings->value("translation").toString();
+    global.settings->endGroup();
+    if (dict.trimmed() == "")
+        dict = QLocale::system().name();
+
+    int k = language->findText(dict);
+    if (k>=0)
+        language->setCurrentIndex(k);
+    if (values.size() <=1)
+        language->setVisible(false);
+}
+
+
+
+void SpellCheckDialog::languageChangeRequested(int) {
+    this->changeLanguage = true;
+    cancelPressed = false;
+    replacePressed = false;
+    ignorePressed = false;
+    ignoreAllPressed = true;
+    addToDictionaryPressed = false;
+    close();
+}

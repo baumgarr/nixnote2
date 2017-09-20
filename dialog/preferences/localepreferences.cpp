@@ -34,6 +34,27 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     QDate date = QDate::currentDate();
     QTime time = QTime::currentTime();
 
+    translationLabel = new QLabel("Language *");
+    translationLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
+    translationCombo = new QComboBox(this);
+    translationCombo->addItem(tr("<System Default>"), QLocale::system().name());
+    translationCombo->addItem(tr("Catalan"), "ca");
+    translationCombo->addItem(tr("Czech (Check Republic)"), "cs_CZ");
+    translationCombo->addItem(tr("Danish"), "da");
+    translationCombo->addItem(tr("German"), "de");
+    translationCombo->addItem(tr("English (US)"), "en_US");
+    translationCombo->addItem(tr("Spanish"), "es");
+    translationCombo->addItem(tr("French"), "fr");
+    translationCombo->addItem(tr("Japanese"), "ja");
+    translationCombo->addItem(tr("Polish"), "pl");
+    translationCombo->addItem(tr("Portugese"), "pt");
+    translationCombo->addItem(tr("Russian"), "ru");
+    translationCombo->addItem(tr("Slovak"), "sk");
+    translationCombo->addItem(tr("Chinese"), "zh_CN");
+    translationCombo->addItem(tr("Chinese (Taiwan)"), "zh_TW");
+    QLabel *restartLabel = new QLabel(tr("*Note: Restart required"),this);
+
+
     dateFormatLabel = new QLabel(tr("Date Format"), this);
     dateFormatLabel->setAlignment(Qt::AlignRight | Qt::AlignCenter);
     dateFormat = new QComboBox(this);
@@ -63,12 +84,16 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     timeFormat->addItem(tr("hh:mm a - ")+time.toString("hh:mm a"), hhmma);
     timeFormat->addItem(tr("h:mm a - ")+time.toString("h:mm a"), hmma);
 
-    mainLayout->addWidget(dateFormatLabel,0,0);
-    mainLayout->addWidget(dateFormat,0,1);
-    mainLayout->addWidget(timeFormatLabel,1,0);
-    mainLayout->addWidget(timeFormat, 1,1);
+    mainLayout->addWidget(translationLabel,0,0);
+    mainLayout->addWidget(translationCombo,0,1);
+    mainLayout->addWidget(dateFormatLabel,1,0);
+    mainLayout->addWidget(dateFormat,1,1);
+    mainLayout->addWidget(timeFormatLabel,2,0);
+    mainLayout->addWidget(timeFormat,2,1);
+    mainLayout->addWidget(restartLabel,3,0);
 
     global.settings->beginGroup("Locale");
+    QString translationi = global.settings->value("translation", "").toString();
     int datei = global.settings->value("dateFormat", MMddyy).toInt();
     int timei = global.settings->value("timeFormat", HHmmss).toInt();
     global.settings->endGroup();
@@ -76,6 +101,8 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     dateFormat->setCurrentIndex(index);
     index = timeFormat->findData(timei);
     timeFormat->setCurrentIndex(index);
+    index = translationCombo->findData(translationi);
+    translationCombo->setCurrentIndex(index);
     this->setFont(global.getGuiFont(font()));
 }
 
@@ -93,8 +120,10 @@ LocalePreferences::~LocalePreferences() {
 void LocalePreferences::saveValues() {
     int date = getDateFormat();
     int time = getTimeFormat();
+    QString translation = getTranslation();
 
     global.settings->beginGroup("Locale");
+    global.settings->setValue("translation", translation);
     global.settings->setValue("dateFormat", date);
     global.settings->setValue("timeFormat", time);
     global.settings->endGroup();
@@ -171,6 +200,12 @@ void LocalePreferences::saveValues() {
 }
 
 
+
+
+QString LocalePreferences::getTranslation() {
+    int index = translationCombo->currentIndex();
+    return translationCombo->itemData(index).toString();
+}
 
 
 int LocalePreferences::getDateFormat() {

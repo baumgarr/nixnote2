@@ -126,9 +126,15 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     // Load any plugins
     this->loadPlugins();
 
-    QTranslator *nixnoteTranslator = new QTranslator();
-    QLOG_DEBUG() << "Looking for transaltions: " << global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm");
-    nixnoteTranslator->load(global.fileManager.getTranslateFilePath("nixnote2_" + QLocale::system().name() + ".qm"));
+    nixnoteTranslator = new QTranslator();
+    QString translation;
+    global.settings->beginGroup("Locale");
+    translation = global.settings->value("translation", QLocale::system().name()).toString();
+    global.settings->endGroup();
+    translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
+    QLOG_DEBUG() << "Looking for transaltions: " << translation;
+    bool translationResult = nixnoteTranslator->load(translation);
+    QLOG_DEBUG() << "Translation loaded:" << translationResult;
     QApplication::instance()->installTranslator(nixnoteTranslator);
 
     connect(&syncThread, SIGNAL(started()), this, SLOT(syncThreadStarted()));
@@ -2964,6 +2970,18 @@ void NixNote::openPreferences() {
             //trayIconBehavior();
         }
         indexRunner.officeFound = global.synchronizeAttachments();
+
+//        global.settings->beginGroup("Locale");
+//        QString translation;
+//        translation = global.settings->value("translation", QLocale::system().name()).toString();
+//        global.settings->endGroup();
+//        translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
+//        QApplication::removeTranslator(nixnoteTranslator);
+//        QLOG_DEBUG() << "Looking for transaltions: " << translation;
+//        bool translationResult = nixnoteTranslator->load(translation);
+//        QLOG_DEBUG() << "Translation loaded:" << translationResult;
+//        QApplication::instance()->installTranslator(nixnoteTranslator);
+
     }
     global.setDebugLevel();
 }
@@ -3884,7 +3902,7 @@ void NixNote::loadPlugins() {
                 if (plugin) {
                     HunspellInterface *hunspellInterface;
                     hunspellInterface = qobject_cast<HunspellInterface *>(plugin);
-                    if (hunspellInterface) {
+                    if (hunspellInterface != NULL) {
                         hunspellPluginAvailable = true;
                     }
                     delete hunspellInterface;
