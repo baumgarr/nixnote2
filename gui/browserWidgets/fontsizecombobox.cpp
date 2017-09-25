@@ -18,8 +18,11 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "fontsizecombobox.h"
+#include "global.h"
 
 #include <QLineEdit>
+
+extern Global global;
 
 FontSizeComboBox::FontSizeComboBox(QWidget *parent) :
     QComboBox(parent)
@@ -29,6 +32,12 @@ FontSizeComboBox::FontSizeComboBox(QWidget *parent) :
     QLineEdit *e;
     e = lineEdit();
     e->setReadOnly(false);
+
+
+    QString css = global.getThemeCss("fontSizeComboCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 

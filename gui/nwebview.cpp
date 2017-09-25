@@ -250,6 +250,11 @@ NWebView::NWebView(NBrowserWindow *parent) :
     if (pasteUnformattedSequence.trimmed() == "")
         pasteUnformattedSequence = "ctrl+shft+v";
     fileSaveSequence = "ctrl+s";
+
+    QString css = global.getThemeCss("noteContentsCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 

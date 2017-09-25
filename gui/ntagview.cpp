@@ -133,6 +133,11 @@ NTagView::NTagView(QWidget *parent) :
     collapsedImage = new QImage(":collapsedIcon");
 
     this->setProperty("animated", false);
+
+    QString css = global.getThemeCss("tagTreeCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 

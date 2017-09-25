@@ -58,6 +58,7 @@ TagEditor::TagEditor(QWidget *parent) :
     //delete pix;
     account = 0;
     hide();
+
     QLOG_TRACE_OUT() << typeid(*this).name();
 }
 

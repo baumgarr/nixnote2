@@ -36,10 +36,16 @@ AuthorEditor::AuthorEditor(QWidget *parent) :
     setFont(global.getGuiFont(font()));
     this->setPlaceholderText(tr("Click to set author"));
 
-    inactiveColor = "QLineEdit {background-color: transparent; border-radius: 0px;} ";
-    activeColor = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
+    inactiveColor = global.getThemeCss("noteAuthorInactiveCss");
+    activeColor = global.getThemeCss("noteAuthorActiveCss");
+    if (inactiveColor == "")
+        inactiveColor = "QLineEdit {background-color: transparent; border-radius: 0px;} ";
+    if (activeColor == "")
+        activeColor = "QLineEdit {border: 1px solid #808080; background-color: white; border-radius: 4px;} ";
+
     this->setCursor(Qt::PointingHandCursor);
     this->setStyleSheet(inactiveColor);
+
     hide();
 }
 

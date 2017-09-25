@@ -117,6 +117,9 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
         QTimer::singleShot(2500, splashScreen, SLOT(close()));
     }
     global.settings->endGroup();
+    QString css = global.getThemeCss("mainWindowCss");
+    if (css!="")
+        this->setStyleSheet(css);
 
 #if QT_VERSION < 0x050000
     QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
@@ -295,6 +298,9 @@ void NixNote::setupGui() {
 
     QLOG_TRACE() << "Setting up tool bar";
     toolBar = addToolBar(tr("ToolBar"));
+    QString css = global.getThemeCss("mainToolbarCss");
+    if (css!="")
+        toolBar->setStyleSheet(css);
     connect(toolBar, SIGNAL(visibilityChanged(bool)), this, SLOT(toolbarVisibilityChanged()));
     //menuBar = new NMainMenuBar(this);
     toolBar->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);

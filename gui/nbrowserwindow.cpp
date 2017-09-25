@@ -278,6 +278,11 @@ NBrowserWindow::NBrowserWindow(QWidget *parent) :
     saveTimer.start();
 
     hunspellInterface = NULL;
+
+    QString css = global.getThemeCss("browserWindowCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 

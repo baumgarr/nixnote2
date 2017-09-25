@@ -41,11 +41,13 @@ DateTimeEditor::DateTimeEditor(QWidget *parent) :
     pal.setColor(backgroundRole(), QPalette::Base);
     setPalette(pal);
 
-    inactiveColor = global.getDateTimeEditorInactiveStyle();
-    activeColor = global.getDateTimeEditorActiveStyle();
+    inactiveColor = global.getThemeCss("dateMenuInactiveCss");
+    if (inactiveColor=="")
+        inactiveColor = global.getDateTimeEditorInactiveStyle();
+    activeColor = global.getThemeCss("dateMenuActiveCss");
+    if (activeColor=="")
+        activeColor = global.getDateTimeEditorActiveStyle();
 
-    //editor.setCalendarPopup(true);
-    //display.setStyleSheet(inactiveColor);
     setStyleSheet(inactiveColor);
     setCalendarPopup(true);
 
@@ -56,6 +58,11 @@ DateTimeEditor::DateTimeEditor(QWidget *parent) :
     this->setDisplayFormat(global.dateFormat + " " +global.timeFormat);
 
     hide();
+
+    QString css = global.getThemeCss("dateMenuCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 

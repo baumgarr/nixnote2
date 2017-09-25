@@ -107,6 +107,11 @@ NSearchView::NSearchView(QWidget *parent) :
     collapsedImage = new QImage(":collapsedIcon");
 
     this->setProperty("animated", false);
+
+    QString css = global.getThemeCss("savedSearchTreeCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 

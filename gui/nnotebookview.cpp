@@ -147,16 +147,15 @@ NNotebookView::NNotebookView(QWidget *parent) :
     this->setFrameShape(QFrame::NoFrame);
 
 
-    //setStyle(new MyStyle("QTreeView"));
-//    setStyle(new QCleanlooksStyle);
-    //setStyleSheet("::branches {image: url(:right-arrow.png);}");
-
-//    setStyleSheet("QTreeView::branch { image: url(:right-arrow.png); }");
-
     expandedImage = new QImage(":expandedIcon");
     collapsedImage = new QImage(":collapsedIcon");
 
     this->setProperty("animated", false);
+
+    QString css = global.getThemeCss("notebookTreeCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 

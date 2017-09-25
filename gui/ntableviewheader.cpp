@@ -172,6 +172,11 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
    connect(pinnedAction, SIGNAL(toggled(bool)), this, SLOT(pinnedChecked(bool)));
 
     this->setFont(global.getGuiFont(font()));
+
+   QString css = global.getThemeCss("noteTableViewHeaderCss");
+   if (css!="")
+       this->setStyleSheet(css);
+
 }
 
 

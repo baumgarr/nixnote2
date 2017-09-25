@@ -71,7 +71,12 @@ NTrashTree::NTrashTree(QWidget *parent) :
     setItemDelegate(new NTrashViewDelegate());
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     this->setFrameShape(QFrame::NoFrame);
+
+    QString css = global.getThemeCss("trashTreeCss");
+    if (css!="")
+        this->setStyleSheet(css);
 }
+
 
 
 void NTrashTree::calculateHeight()

@@ -39,6 +39,11 @@ ReminderButton::ReminderButton(QWidget *parent) :
     this->setFont(f);
     menu.setFont(f);
     this->setMenu(&menu);
+
+    QString css = global.getThemeCss("reminderButtonCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 

@@ -162,6 +162,10 @@ void NMainMenuBar::setupFileMenu() {
     exitAction->setIcon(QIcon::fromTheme("exit"));
     setupShortcut(exitAction, QString("File_Exit"));
     fileMenu->addAction(exitAction);
+
+    QString menuCss = global.getThemeCss("menuCss");
+    if (menuCss != "")
+        this->setStyleSheet(menuCss);
 }
 
 

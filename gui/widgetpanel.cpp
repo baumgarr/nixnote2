@@ -40,6 +40,11 @@ WidgetPanel::WidgetPanel(QWidget *parent) :
     this->setStyleSheet("QTreeView {background:transparent; border:none; margin:0px; padding: 0px;} ");
     this->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Preferred);
     connect(&timer, SIGNAL(timeout()), this, SLOT(scrollTimer()));
+
+    QString css = global.getThemeCss("treeWidgetPanelCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 

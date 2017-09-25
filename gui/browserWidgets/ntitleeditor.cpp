@@ -37,8 +37,13 @@ NTitleEditor::NTitleEditor(QWidget *parent) :
     pal.setColor(backgroundRole(), QPalette::Base);
     setPalette(pal);
 
-    inactiveColor = global.getNoteTitleInactiveStyle();
-    activeColor = global.getNoteTitleActiveStyle();
+    inactiveColor = global.getThemeCss("noteTitleEditorInactiveCss");
+    if (inactiveColor=="")
+        inactiveColor = global.getNoteTitleInactiveStyle();
+
+    activeColor = global.getThemeCss("noteTitleEditorActiveCss");
+    if (activeColor == "")
+        activeColor = global.getNoteTitleActiveStyle();
 
     this->setStyleSheet(inactiveColor);
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(titleChanged(QString)));

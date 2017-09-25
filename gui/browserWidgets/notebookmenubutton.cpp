@@ -39,9 +39,11 @@ NotebookMenuButton::NotebookMenuButton(QWidget *parent) :
     this->setFont(global.getGuiFont(font()));
     currentAction = 0;
 
-    this->setStyleSheet("QPushButton {"
-                        "text-align:left;"
-        "}");
+    QString css = global.getThemeCss("notebookMenuButtonCss");
+    if (css!="")
+        this->setStyleSheet(css);
+    else
+        this->setStyleSheet("QPushButton {text-align:left;}");
 }
 
 

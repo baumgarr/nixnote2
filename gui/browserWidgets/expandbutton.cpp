@@ -31,6 +31,11 @@ ExpandButton::ExpandButton(QWidget *parent) :
     currentState = EXPANDBUTTON_1;
 
     connect(this, SIGNAL(clicked()), this, SLOT(buttonClicked()));
+
+    QString css = global.getThemeCss("nodeAttributesExpandButtonCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 void ExpandButton::setState(int state) {

@@ -31,6 +31,11 @@ TrayMenu::TrayMenu(QWidget *parent) :
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(noteChosen(int)));
 
     connect(this, SIGNAL(aboutToShow()), this, SLOT(buildActionMenu()));
+
+    QString css = global.getThemeCss("trayMenuCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 void TrayMenu::setActionMenu(ActionMenuType type, QMenu *menu)  {

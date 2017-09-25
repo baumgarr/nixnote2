@@ -22,7 +22,7 @@ extern Global global;
 
      filterPosition = -1;
      clearButton = new QToolButton(this);
-     QPixmap pixmap(global.getPixmapResource(":fileclose.png"));
+     QPixmap pixmap(global.getPixmapResource(":filecloseIcon.png"));
      clearButton->setIcon(QIcon(pixmap));
      clearButton->setIconSize(pixmap.size());
      clearButton->setCursor(Qt::ArrowCursor);
@@ -39,8 +39,12 @@ extern Global global;
      defaultText = QString(tr("Search"));
      this->setText(defaultText);
 
-     inactiveColor = global.getLineEditSearchInactiveStyle();
-     activeColor = global.getLineEditSearchActiveStyle();
+     QString inactiveColor = global.getThemeCss("searchInactiveCss");
+     if (inactiveColor=="")
+         inactiveColor = global.getLineEditSearchInactiveStyle();
+
+     QString activeColor = global.getThemeCss("searchActiveCss");
+        activeColor = global.getLineEditSearchActiveStyle();
 
      connect(this, SIGNAL(returnPressed()), this, SLOT(buildSelection()));
      connect(this, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));

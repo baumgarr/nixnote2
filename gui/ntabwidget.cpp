@@ -63,6 +63,11 @@ NTabWidget::NTabWidget(NixNote *p, SyncRunner *s, NNotebookView *n, NTagView *t)
     htmlEntities = new HtmlEntitiesDialog();
     htmlEntities->setHidden(true);
     connect(htmlEntities, SIGNAL(entityClicked(QString)), this, SLOT(htmlEntitiesClicked(QString)));
+
+    QString css = global.getThemeCss("noteTabCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 NTabWidget::~NTabWidget() {

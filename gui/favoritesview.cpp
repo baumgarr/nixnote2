@@ -62,7 +62,11 @@ FavoritesView::FavoritesView(QWidget *parent) :
     this->setRootIsDecorated(true);
     this->setSortingEnabled(true);
     this->header()->setVisible(false);
-    this->setStyleSheet("QTreeView {border-image:none; image:none;} ");
+    QString css = global.getThemeCss("shortcutsTreeCss");
+    if (css!="")
+        this->setStyleSheet(css);
+    else
+        this->setStyleSheet("QTreeView {border-image:none; image:none;} ");
     root = new FavoritesViewItem(0);
     root->setData(NAME_POSITION, Qt::UserRole, "root");
     root->setData(NAME_POSITION, Qt::DisplayRole, tr("Shortcuts"));

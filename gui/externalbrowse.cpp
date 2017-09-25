@@ -101,6 +101,10 @@ ExternalBrowse::ExternalBrowse(qint32 lid, QWidget *parent) :
     this->setupShortcut(findPrevShortcut, "Edit_Search_Find_Prev");
     connect(findPrevShortcut, SIGNAL(activated()), browser, SLOT(findPrevShortcut()));
 
+    QString css = global.getThemeCss("externalNoteWindowCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
     // Load actual note
     browser->setContent(lid);
 

@@ -18,6 +18,9 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 ***********************************************************************************/
 
 #include "colormenu.h"
+#include "global.h"
+
+extern Global global;
 
 ColorMenu::ColorMenu(QObject *parent) :
     QObject(parent)
@@ -25,6 +28,10 @@ ColorMenu::ColorMenu(QObject *parent) :
     this->parent = parent;
     currentColor.setNamedColor("black");
     populateList();
+    QString css = global.getThemeCss("colorMenuCss");
+    if (css!="")
+        this->menu.setStyleSheet(css);
+
 }
 
 

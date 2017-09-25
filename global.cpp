@@ -837,6 +837,31 @@ bool caseInsensitiveLessThan(const QString &s1, const QString &s2)
 
 
 
+
+// Get a generic CSS theme setting from the themes.ini file.
+QString Global::getThemeCss(QString key) {
+    if (colorList.contains(key))
+        return colorList[key].trimmed();
+    if (resourceList.contains(":"+key)) {
+        QString value = resourceList[":"+key].trimmed();
+#ifdef _WIN32
+        value = value.replace("/usr/share/nixnote2/images/",fileManager.getImageDirPath("").replace("\\","/"));
+#endif
+        QFile f(value);
+        if (f.exists()) {
+            f.open(QIODevice::ReadOnly);
+            QString css = f.readAll();
+            return css;
+        }
+    }
+
+    return "";
+}
+
+
+
+
+
 // Get the default GUI font
 QFont Global::getGuiFont(QFont f) {
     if (defaultGuiFont != "")

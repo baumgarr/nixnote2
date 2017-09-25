@@ -34,31 +34,23 @@ TagViewer::TagViewer(QWidget *parent) :
     clearButton->setIcon(global.getIconResource(":filecloseIcon"));
     clearButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
     clearButton->setCursor(Qt::PointingHandCursor);
-    setStyleSheet("QFrame{border: 1px solid darkgray; border-radius: 8px;}");
     connect(clearButton, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 
+    QString css = global.getThemeCss("noteTagViewerCss");
+    if (css!="")
+        this->setStyleSheet(css);
+    else
+        setStyleSheet("QFrame{border: 1px solid darkgray; border-radius: 8px;}");
+
     this->setFont(global.getGuiFont(font()));
-//    int width = this->minimumWidth()+clearButton->minimumWidth()+2;
-//    setMinimumWidth(width);
-//    resize();
 }
 
-//QSize TagViewer::sizeHint() {
-//    QSize size;
-//    size.setWidth(this->minimumWidth()+clearButton->minimumWidth()+2);
-//    size.setHeight(this->minimumHeight());
-//}
 
 void TagViewer::resizeEvent(QResizeEvent *)
 {
     resize();
 }
 
-
-//void TagViewer::updateCloseButton(const QString& text)
-//{
-////    clearButton->setVisible(!text.isEmpty());
-//}
 
 
 void TagViewer::hideEvent(QHideEvent* event) {
@@ -77,9 +69,6 @@ void TagViewer::showEvent(QShowEvent* event) {
 void TagViewer::resize() {
     QFontMetrics fm(font());
     int width = fm.width(text());
-
-//    setMaximumWidth(width+sz.width()+2+clearButton->minimumWidth());
-//    setMinimumWidth(width+sz.width()+2+clearButton->minimumWidth());
 
     int x = width + clearButton->minimumWidth()+20;
     setMinimumWidth(x);

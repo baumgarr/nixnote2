@@ -93,6 +93,11 @@ FindReplace::FindReplace(QWidget *parent) :
     connect(findLine, SIGNAL(textChanged(QString)), this, SLOT(textChanged()));
     connect(replaceLine, SIGNAL(textChanged(QString)), this, SLOT(textChanged()));
 
+    QString css = global.getThemeCss("findReplaceCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
+
     this->hide();
 
 }

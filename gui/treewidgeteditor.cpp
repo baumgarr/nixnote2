@@ -34,6 +34,11 @@ TreeWidgetEditor::TreeWidgetEditor(QTreeWidget *parent) :
     lid = 0;
     stackName = "";
     connect(this, SIGNAL(returnPressed()), SLOT(textChanged()));
+
+    QString css = global.getThemeCss("treeWidgetEditorCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
 }
 
 

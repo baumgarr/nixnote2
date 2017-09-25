@@ -343,6 +343,11 @@ NTableView::NTableView(QWidget *parent) :
     this->setShowGrid(global.showNoteListGrid());
     this->setAlternatingRowColors(global.alternateNoteListColors());
 
+    QString css = global.getThemeCss("noteTableViewCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
+
     QLOG_TRACE() << "Exiting NTableView constructor";
 
 }

@@ -35,7 +35,10 @@ LocationEditor::LocationEditor(QWidget *parent) :
 
     this->setFont(global.getGuiFont(font()));
 
-    inactiveColor = "QToolButton {background-color: transparent; border-radius: 0px; border:none; margin 0px; padding: 4px} ";
+
+    inactiveColor = global.getThemeCss("noteLocationCss");
+    if (inactiveColor=="")
+        inactiveColor = "QToolButton {background-color: transparent; border-radius: 0px; border:none; margin 0px; padding: 4px} ";
     this->setCursor(Qt::PointingHandCursor);
     this->setStyleSheet(inactiveColor);
 

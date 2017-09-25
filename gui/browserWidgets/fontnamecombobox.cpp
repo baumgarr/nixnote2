@@ -37,6 +37,11 @@ FontNameComboBox::FontNameComboBox(QWidget *parent) :
     e = lineEdit();
     e->setReadOnly(true);
 
+    QString css = global.getThemeCss("fontNameComboCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
+
 }
 
 

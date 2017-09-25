@@ -376,6 +376,11 @@ NAttributeTree::NAttributeTree(QWidget *parent) :
 
     this->setProperty("animated", false);
 
+    QString css = global.getThemeCss("attributeTreeCss");
+    if (css!="")
+        this->setStyleSheet(css);
+
+
 }
 
 NAttributeTree::~NAttributeTree() {
