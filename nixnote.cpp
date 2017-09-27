@@ -3660,7 +3660,6 @@ void NixNote::reloadIcons() {
     attributeTree->reloadIcons();
     trashTree->reloadIcons();
     searchTreeView->reloadIcons();
-    searchText->reloadIcons();
     favoritesTreeView->reloadIcons();
     tabWindow->reloadIcons();
 

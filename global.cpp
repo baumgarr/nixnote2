@@ -1015,29 +1015,6 @@ QString Global::getUrlEditorInactiveStyle() {
     return result;
 }
 
-QString Global::getLineEditSearchActiveStyle() {
-    QString result = this->getGenricStyle("lineEditSearchActiveCss");
-
-    if(result.length() == 0)
-    {
-        result = "QLineEdit {color: black; font:normal;} ";
-    }
-
-    return result;
-}
-
-
-QString Global::getLineEditSearchInactiveStyle() {
-    QString result = this->getGenricStyle("lineEditSearchInactiveCss");
-
-    if(result.length() == 0)
-    {
-        result = "QLineEdit {color: gray; font:italic;} ";
-    }
-
-    return result;
-}
-
 
 QString Global::getDateTimeEditorActiveStyle() {
     QString result = this->getGenricStyle("dateTimeEditorActiveCss");

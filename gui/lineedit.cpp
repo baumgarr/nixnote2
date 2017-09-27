@@ -21,48 +21,21 @@ extern Global global;
  {
 
      filterPosition = -1;
-     clearButton = new QToolButton(this);
-     QPixmap pixmap(global.getPixmapResource(":filecloseIcon.png"));
-     clearButton->setIcon(QIcon(pixmap));
-     clearButton->setIconSize(pixmap.size());
-     clearButton->setCursor(Qt::ArrowCursor);
-     clearButton->setStyleSheet("QToolButton { border: none; padding: 0px; }");
-     clearButton->hide();
-     connect(clearButton, SIGNAL(clicked()), this, SLOT(clear()));
-     connect(this, SIGNAL(textChanged(const QString&)), this, SLOT(updateCloseButton(const QString&)));
-     int frameWidth = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
-     setStyleSheet(QString("QLineEdit { padding-right: %1px; } ").arg(clearButton->sizeHint().width() + frameWidth + 1));
-     QSize msz = minimumSizeHint();
-     setMinimumSize(qMax(msz.width(), clearButton->sizeHint().height() + frameWidth * 2 + 2),
-                    qMax(msz.height(), clearButton->sizeHint().height() + frameWidth * 2 + 2));
 
+     QString css = global.getThemeCss("searchInputCss");
+     if (css == "")
+         css = "QLineEdit { padding-right: %1px; }";
+     setStyleSheet(css);
+#if QT_VERSION > 0x050000
+     this->setClearButtonEnabled(true);
+     this->setStyleSheet(css);
+#endif
      defaultText = QString(tr("Search"));
-     this->setText(defaultText);
+     this->setPlaceholderText(defaultText);
 
-     QString inactiveColor = global.getThemeCss("searchInactiveCss");
-     if (inactiveColor=="")
-         inactiveColor = global.getLineEditSearchInactiveStyle();
-
-     QString activeColor = global.getThemeCss("searchActiveCss");
-        activeColor = global.getLineEditSearchActiveStyle();
 
      connect(this, SIGNAL(returnPressed()), this, SLOT(buildSelection()));
      connect(this, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
-     connect(clearButton, SIGNAL(clicked()), this, SLOT(buildSelection()));
-     setStyleSheet(inactiveColor);
- }
-
- void LineEdit::resizeEvent(QResizeEvent *)
- {
-     QSize sz = clearButton->sizeHint();
-     int frameWidth = style()->pixelMetric(QStyle::PM_DefaultFrameWidth);
-     clearButton->move(rect().right() - frameWidth - sz.width(),
-                       (rect().bottom() + 1 - sz.height())/2);
- }
-
- void LineEdit::updateCloseButton(const QString& text)
- {
-     clearButton->setVisible(!text.isEmpty());
  }
 
 
@@ -121,77 +94,29 @@ extern Global global;
  //*************************************************************
  void LineEdit::updateSelection() {
      blockSignals(true);
-
      FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
-//     if (criteria->resetSearchString) {
-//         this->blockSignals(true);
-//         this->setText(defaultText);
-//         setStyleSheet(inactiveColor);
-//         this->blockSignals(false);
-//     }
      if (global.filterPosition != filterPosition) {
-         if (criteria->resetSearchString) {
-             setText(defaultText);
-             setStyleSheet(inactiveColor);
-         }
-
          if (criteria->isSearchStringSet()) {
              setText(criteria->getSearchString());
-             setStyleSheet(activeColor);
          }
      }
      filterPosition = global.filterPosition;
-
      blockSignals(false);
  }
 
+
+
 void LineEdit::textChanged(QString text) {
-    this->blockSignals(true);
-    if (text.trimmed() == "" && !hasFocus())
-        this->setText(defaultText);
-    this->blockSignals(false);
     if ((text == defaultText || text == "") && savedText != "") {
         buildSelection();
     }
 }
 
-void LineEdit::focusInEvent(QFocusEvent *e)
-{
-  QLineEdit::focusInEvent(e);
-  if (this->text() == defaultText) {
-    blockSignals(true);
-    setText("");
-    blockSignals(false);
-  }
-  setStyleSheet(activeColor);
-//  this->setCursor(Qt::ArrowCursor);
-}
-
-void LineEdit::focusOutEvent(QFocusEvent *e)
-{
-  QLineEdit::focusOutEvent(e);
-  if (this->text().trimmed() == "") {
-    blockSignals(true);
-    setText(defaultText);
-    blockSignals(false);
-    setStyleSheet(inactiveColor);
-  }
-//  this->setCursor(Qt::PointingHandCursor);
-
-}
-
 
 // Check if any value is set
 bool LineEdit::isSet() {
-    if (this->text().trimmed() != defaultText && this->text().trimmed() != "")
+    if (this->text().trimmed() != "")
         return true;
     else
         return false;
-}
-
-
-
-
-void LineEdit::reloadIcons() {
-    clearButton->setIcon(global.getIconResource(":filecloseIcon"));
 }

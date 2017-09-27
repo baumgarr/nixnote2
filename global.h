@@ -282,8 +282,8 @@ public:
     QString getUrlEditorActiveStyle();
     QString getUrlEditorInactiveStyle();
 
-    QString getLineEditSearchActiveStyle();
-    QString getLineEditSearchInactiveStyle();
+//    QString getLineEditSearchActiveStyle();
+//    QString getLineEditSearchInactiveStyle();
 
     QString getDateTimeEditorColor();
     QString getDateTimeEditorActiveStyle();

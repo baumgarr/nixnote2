@@ -28,20 +28,14 @@
      LineEdit(QWidget *parent = 0);
      void updateSelection();
      bool isSet();
-     void reloadIcons();
 
  protected:
-     void resizeEvent(QResizeEvent *);
-     void focusInEvent(QFocusEvent *e);
-     void focusOutEvent(QFocusEvent *e);
 
  private slots:
-     void updateCloseButton(const QString &text);
      void buildSelection();
      void textChanged(QString text);
 
  private:
-     QToolButton *clearButton;
 
  signals:
      void updateSelectionRequested();
