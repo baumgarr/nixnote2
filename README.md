@@ -12,12 +12,23 @@ An unofficial client of Evernote for Linux.
 
 #### Install from distribution repository
 
-For users of Debian Stretch (Debian 9), Debian unstable and Ubuntu 17.04+, you may install
+For users of Debian Stretch (Debian 9) or later, Debian unstable and Ubuntu 17.04+, you may install
 from the official repositories. This will become the stable release we will encourage users to install.
 
 ```bash
 sudo apt update
 sudo apt install nixnote2
+```
+
+For users of Debian Stretch (Debian 9), you may also install the
+**latest upstream stable release** from `stretch-backports` repository:
+
+```bash
+# !! NOTE: You need to enable stretch-backports repository first
+# See https://backports.debian.org for instructions
+# After you enabled backports repository, type the following commands:
+sudo apt update
+sudo apt install nixnote2 -t stretch-backports
 ```
 
 You may find the package information on [Debian PTS](https://tracker.debian.org/pkg/nixnote2).
