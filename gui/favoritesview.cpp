@@ -527,7 +527,7 @@ void FavoritesView::dragEnterEvent(QDragEnterEvent *event) {
     }
 
     if (event->mimeData()->hasFormat("application/x-nixnote-notebook")) {
-        QLOG_DEBUG() << event->mimeData()->data("application/x-nixnote-notebook").trimmed();
+//        QLOG_DEBUG() << event->mimeData()->data("application/x-nixnote-notebook").trimmed();
         if (event->mimeData()->data("application/x-nixnote-notebook").trimmed() != "")
             event->accept();
         else
@@ -646,7 +646,7 @@ void FavoritesView::buildSelection() {
             if (item->record.type == FavoritesRecord::Search) {
                 SavedSearch search;
                 SearchTable table(global.db);
-                QLOG_DEBUG() << item->record.target.toInt();
+//                QLOG_DEBUG() << item->record.target.toInt();
                 table.get(search, item->record.target.toInt());
                 if (search.query.isSet())
                     newFilter->setSearchString(search.query);
