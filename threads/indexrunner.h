@@ -60,7 +60,7 @@ class IndexRunner : public QObject
 {
     Q_OBJECT
 private:
-//    QTimer *indexTimer;
+    QTimer *indexTimer;
     QHash<qint32, IndexRecord*> *indexHash;
     bool init;
     void indexRecognition(qint32 lid, Resource &r);

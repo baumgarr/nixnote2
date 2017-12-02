@@ -92,7 +92,7 @@ Global::Global()
     this->forceStartMinimized = false;
     this->globalSettings = NULL;
     this->disableUploads = false;
-    this->enableIndexing = true;
+    this->enableIndexing = false;
     this->disableThumbnails = false;
     this->defaultGuiFont = "";
     this->defaultGuiFontSize = 8;
