@@ -54,17 +54,17 @@
     <message>
         <location filename="../dialog/accountdialog.cpp" line="75"/>
         <source> Bytes</source>
-        <translation>Байт</translation>
+        <translation> Байт</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="79"/>
         <source> KB</source>
-        <translation>Кб</translation>
+        <translation> Кб</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="83"/>
         <source> MB</source>
-        <translation>Мб</translation>
+        <translation> Мб</translation>
     </message>
     <message>
         <location filename="../dialog/accountdialog.cpp" line="90"/>
