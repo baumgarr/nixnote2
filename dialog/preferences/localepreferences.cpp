@@ -161,6 +161,9 @@ void LocalePreferences::saveValues() {
     case yyMMdd:
         datefmt = "yy-MM-dd";
         break;
+    case yyMMdd2:
+        datefmt = "yyMMdd";
+        break;
     }
 
     timefmt = "HH:mm:ss";

@@ -41,6 +41,8 @@ private:
     int getDateFormat();
     int getTimeFormat();
     QString getTranslation();
+
+    // see also duplicate in Global - global.cpp
     enum DateFormat {
         MMddyy = 1,
         MMddyyyy = 2,
