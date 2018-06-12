@@ -67,7 +67,8 @@ LocalePreferences::LocalePreferences(QWidget *parent) :
     dateFormat->addItem(tr("dd/MM/yyyy - ")+ date.toString("dd/MM/yyyy"), ddMMyyyy);
     dateFormat->addItem(tr("d/M/yyyy - ")+ date.toString("d/M/yyyy"), dMyyyy);
     dateFormat->addItem(tr("yyyy-MM-dd - ")+ date.toString("yyyy-MM-dd"), yyyyMMdd);
-    dateFormat->addItem(tr("yy-MM-dd - ")+ date.toString("yy-MM-dd"), yyyyMMdd);
+    dateFormat->addItem(tr("yy-MM-dd - ")+ date.toString("yy-MM-dd"), yyMMdd);
+    dateFormat->addItem(tr("yyMMdd - ")+ date.toString("yyMMdd"), yyMMdd2);
 
 
     timeFormatLabel = new QLabel(tr("Time Format"), this);

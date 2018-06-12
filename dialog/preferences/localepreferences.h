@@ -51,7 +51,8 @@ private:
         ddMMyyyy = 7,
         dMyyyy = 8,
         yyyyMMdd = 9,
-        yyMMdd = 10
+        yyMMdd = 10,
+        yyMMdd2 = 11
     };
     enum TimeFormat {
         HHmmss = 1,
