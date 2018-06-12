@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
     // Show Qt version.  This is useful for debugging
     QLOG_DEBUG() << "Program Home: " << global.fileManager.getProgramDirPath("");
     QLOG_DEBUG() << "Built on " << __DATE__ << " at " << __TIME__;
-    QLOG_DEBUG() << "RS-Nixnote2 - Self-Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
+    QLOG_DEBUG() << "Built with Qt" << QT_VERSION_STR << "running on" << qVersion();
 
 
 
