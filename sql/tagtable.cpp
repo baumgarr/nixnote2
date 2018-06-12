@@ -391,6 +391,10 @@ bool TagTable::get(Tag &tag, qint32 lid) {
             case (TAG_NAME):
                 tag.name = query.value(1).toString();
                 break;
+            case (TAG_ISDIRTY):
+                // currently just ignore the dirty flag
+                break;
+
             default: {
                 QLOG_ERROR() << "Unknown Tag record key: " << key << " lid: " << lid;
             }
