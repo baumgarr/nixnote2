@@ -289,7 +289,7 @@
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="57"/>
-        <source>Preview fonts in editor dialag*</source>
+        <source>Preview fonts in editor dialog*</source>
         <translation>在编辑对话框内预览字体*</translation>
     </message>
     <message>
@@ -889,7 +889,7 @@
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="64"/>
-        <source>Use multipe theads to save note contents (experimental).</source>
+        <source>Use multiple threads to save note contents (experimental).</source>
         <translation>使用多线程来保存笔记内容（实验性）。</translation>
     </message>
     <message>

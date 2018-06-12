@@ -295,7 +295,7 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
     </message>
     <message>
         <location filename="../dialog/preferences/appearancepreferences.cpp" line="57"/>
-        <source>Preview fonts in editor dialag*</source>
+        <source>Preview fonts in editor dialog*</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -898,7 +898,7 @@ posílejte prosím na &lt;i&gt;Milos.Kozina@email.cz&lt;/i&gt;.&lt;/p&gt;&lt;/sp
     </message>
     <message>
         <location filename="../dialog/preferences/debugpreferences.cpp" line="64"/>
-        <source>Use multipe theads to save note contents (experimental).</source>
+        <source>Use multiple threads to save note contents (experimental).</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
