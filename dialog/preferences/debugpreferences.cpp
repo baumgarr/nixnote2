@@ -64,7 +64,7 @@ DebugPreferences::DebugPreferences(QWidget *parent) :
     mainLayout->addWidget(interceptSigHup,row++,1);
 #endif
 
-    multiThreadSave = new QCheckBox(tr("Use multipe theads to save note contents (experimental)."));
+    multiThreadSave = new QCheckBox(tr("Use multiple threads to save note contents (experimental)."));
     multiThreadSave->setChecked(global.getMultiThreadSave());
     mainLayout->addWidget(multiThreadSave,row++,1);
 
