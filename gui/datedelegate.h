@@ -28,6 +28,9 @@ class DateDelegate : public QStyledItemDelegate
 public:
     DateDelegate(QObject * parent = 0);
     QString displayText(const QVariant &value, const QLocale &locale) const;
+
+    void paint(QPainter *painter, const QStyleOptionViewItem &option,
+                   const QModelIndex &index) const;
 };
 
 #endif // DATEDELEGATE_H
