@@ -1,3 +1,8 @@
+# trivial cmake project file to enable debugging in clion
+# currently it only does a shortcut to make/Makefile, so its quite suboptimal as Clion doesn't yet
+# recognise Qt classes :(
+# I try improve later
+
 cmake_minimum_required(VERSION 2.8.4)
 project(nixnote2)
 

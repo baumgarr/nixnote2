@@ -393,6 +393,7 @@ bool TagTable::get(Tag &tag, qint32 lid) {
                 break;
             case (TAG_ISDIRTY):
                 // currently just ignore the dirty flag
+                // fixes https://github.com/baumgarr/nixnote2/issues/363
                 break;
 
             default: {
