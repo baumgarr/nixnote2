@@ -392,7 +392,7 @@ bool TagTable::get(Tag &tag, qint32 lid) {
                 tag.name = query.value(1).toString();
                 break;
             default: {
-                QLOG_ERROR() << "Unknown Tag record key: " << key;
+                QLOG_ERROR() << "Unknown Tag record key: " << key << " lid: " << lid;
             }
         }
     }
