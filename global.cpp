@@ -671,6 +671,7 @@ void Global::setupDateTimeFormat() {
     QString datefmt;
     QString timefmt;
 
+    // note: see also duplicate in LocalePreferences - dialog/preferences/localepreferences.cpp
     enum DateFormat {
         MMddyy = 1,
         MMddyyyy = 2,
@@ -681,7 +682,8 @@ void Global::setupDateTimeFormat() {
         ddMMyyyy = 7,
         dMyyyy = 8,
         yyyyMMdd = 9,
-        yyMMdd = 10
+        yyMMdd = 10,
+        yyMMdd2 = 11
     };
     enum TimeFormat {
         HHmmss = 1,
@@ -732,6 +734,9 @@ void Global::setupDateTimeFormat() {
         break;
     case yyMMdd:
         datefmt = "yy-MM-dd";
+        break;
+    case yyMMdd2:
+        datefmt = "yyMMdd";
         break;
     }
 

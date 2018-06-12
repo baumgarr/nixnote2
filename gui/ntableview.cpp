@@ -85,7 +85,7 @@ NTableView::NTableView(QWidget *parent) :
     setModel(proxy);
 
     // Set the date deligates
-    QLOG_TRACE() << "Setting up table deligates";
+    QLOG_TRACE() << "Setting up table delegates";
     dateDelegate = new DateDelegate();
     blankNumber = new NumberDelegate(NumberDelegate::BlankNumber);
     kbNumber = new NumberDelegate(NumberDelegate::KBNumber);

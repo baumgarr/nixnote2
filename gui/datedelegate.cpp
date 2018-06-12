@@ -43,3 +43,14 @@ QString DateDelegate::displayText(const QVariant &value, const QLocale &locale) 
     return timestamp.toString(global.dateFormat + QString(" ") +global.timeFormat);
 //    return timestamp.toString(Qt::SystemLocaleShortDate);
 }
+
+
+void DateDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
+               const QModelIndex &index) const
+{
+    QStyleOptionViewItem noption = QStyleOptionViewItem(option);
+    noption.textElideMode =  Qt::ElideNone;
+
+    QStyledItemDelegate::paint(painter, noption, index);
+}
+

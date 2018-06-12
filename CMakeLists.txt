@@ -1,0 +1,34 @@
+# trivial cmake project file to enable debugging in clion
+# currently it only does a shortcut to make/Makefile, so its quite suboptimal as Clion doesn't yet
+# recognise Qt classes :(
+# I try improve later
+
+cmake_minimum_required(VERSION 2.8.4)
+project(nixnote2)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+find_package(Qt4 REQUIRED QtGui QtXml QtWebkit QtSql QtNetwork QtXml QtScript)
+include_directories(cmdtools)
+include_directories(communication)
+include_directories(dialog)
+include_directories(email)
+include_directories(exits)
+include_directories(filters)
+include_directories(gui)
+include_directories(html)
+include_directories(logger)
+include_directories(models)
+include_directories(oauth)
+include_directories(plugins)
+include_directories(qevercloud)
+include_directories(reminders)
+include_directories(settings)
+include_directories(sql)
+include_directories(threads)
+include_directories(utilities)
+include_directories(watcher)
+include_directories(xml)
+
+
+add_custom_target(nixnote2 COMMAND make debug -C ${PROJECT_SOURCE_DIR})

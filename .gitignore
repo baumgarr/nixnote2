@@ -54,6 +54,7 @@ Makefile.Release
 .settings
 
 cmake-build-debug/
+build/
 .idea/
 
 #QMake file

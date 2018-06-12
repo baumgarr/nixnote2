@@ -135,7 +135,7 @@ NixNote::NixNote(QWidget *parent) : QMainWindow(parent)
     translation = global.settings->value("translation", QLocale::system().name()).toString();
     global.settings->endGroup();
     translation = global.fileManager.getTranslateFilePath("nixnote2_" + translation + ".qm");
-    QLOG_DEBUG() << "Looking for transaltions: " << translation;
+    QLOG_DEBUG() << "Looking for translations: " << translation;
     bool translationResult = nixnoteTranslator->load(translation);
     QLOG_DEBUG() << "Translation loaded:" << translationResult;
     QApplication::instance()->installTranslator(nixnoteTranslator);
