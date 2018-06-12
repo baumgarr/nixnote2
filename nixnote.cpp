@@ -693,7 +693,7 @@ void NixNote::setupGui() {
     QList<int> ids = global.accountsManager->idList();
     for (int i=0; i<ids.size(); i++) {
         if (ids[i] == global.accountsManager->currentId) {
-            setWindowTitle("NixNote - " +accountNames[i]);
+            setWindowTitle("RS-NixNote - " +accountNames[i]);
             i=ids.size();
         }
     }
