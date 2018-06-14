@@ -672,37 +672,37 @@ void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
     qint32 len = search.length();
     char nextChar = ' ';
     bool quote = false;
-    for (qint32 i=0; i<len; i++) {
-        if (search[i]==nextChar && !quote) {
+    for (qint32 i = 0; i < len; i++) {
+        if (search[i] == nextChar && !quote) {
             search[i] = '\0';
             nextChar = ' ';
         } else {
-            if (search[i] =='\"') {
+            if (search[i] == '\"') {
                 if (!quote) {
-                    quote=true;
+                    quote = true;
                 } else {
-                    quote=false;
+                    quote = false;
                 }
             }
         }
-        if (((i+2)<len) && search[i] == '\\') {
-            i=i+2;
+        if (((i + 2) < len) && search[i] == '\\') {
+            i = i + 2;
         }
     }
 
     // Now that we have null characters between them, we parse
     // out based upon them rather than spaces.
     qint32 pos = 0;
-    for (qint32 i=0; i<search.length() && search.length() > 0; i++) {
+    for (qint32 i = 0; i < search.length() && search.length() > 0; i++) {
         if (search[i] == '\0') {
-           search = search.remove(0,1);
-                i=-1;
+            search = search.remove(0, 1);
+            i = -1;
         } else {
             pos = search.indexOf(QChar('\0'));
             if (pos != -1) {
                 words.append(search.left(pos).toLower());
-                search.remove(0,pos);
-                i=-1;
+                search.remove(0, pos);
+                i = -1;
             } else {
                 words.append(search.toLower());
                 search = "";
@@ -711,7 +711,7 @@ void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
     }
 
     // Now that we have everything separated, we can remove the unneeded " marks
-    for (qint32 i=0; i<words.length(); i++) {
+    for (qint32 i = 0; i < words.length(); i++) {
         words[i].remove("\"");
     }
 }
@@ -721,17 +721,20 @@ void FilterEngine::splitSearchTerms(QStringList &words, QString search) {
 // this is for the "all" filter (the default), not the "any:"
 void FilterEngine::filterSearchStringAll(QStringList list) {
     QLOG_TRACE_IN();
+
     // Filter out the records
     NSqlQuery sql(global.db), sqlnegative(global.db);
 
-    sql.prepare(QString("Delete from filter where lid not in ") +
-                QString("(select lid from SearchIndex where weight>=:weight and content match :word)") +
-                QString("and lid not in (select data from DataStore where key=:key and lid in ") +
-                QString("(select lid from SearchIndex where weight>=:weight2 and content match :word2))"));
-    sqlnegative.prepare(QString("Delete from filter where lid in ") +
-                QString("(select lid from SearchIndex where weight>=:weight and content match :word)") +
-                QString(" or lid in (select data from DataStore where key=:key and lid in ") +
-                QString("(select lid from SearchIndex where weight>=:weight2 and content match :word2))"));
+    sql.prepare(
+        "Delete from filter where lid not in "
+            "(select lid from SearchIndex where weight>=:weight and content match :word)"
+            "and lid not in (select data from DataStore where key=:key and lid in "
+            "(select lid from SearchIndex where weight>=:weight2 and content match :word2))");
+    sqlnegative.prepare(
+        "Delete from filter where lid in "
+            "(select lid from SearchIndex where weight>=:weight and content match :word)"
+            " or lid in (select data from DataStore where key=:key and lid in "
+            "(select lid from SearchIndex where weight>=:weight2 and content match :word2))");
 
     sql.bindValue(":weight", global.getMinimumRecognitionWeight());
     sql.bindValue(":weight2", global.getMinimumRecognitionWeight());
@@ -741,114 +744,101 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
     sqlnegative.bindValue(":weight2", global.getMinimumRecognitionWeight());
     sqlnegative.bindValue(":key", RESOURCE_NOTE_LID);
 
-    for (qint32 i=0; i<list.size(); i++) {
+    for (qint32 i = 0; i < list.size(); i++) {
         QString string = list[i];
         string.remove(QChar('"'));
 
         // If we have a notebook search request
         if (string.startsWith("notebook:", Qt::CaseInsensitive) ||
-                string.startsWith("-notebook:", Qt::CaseInsensitive)) {
+            string.startsWith("-notebook:", Qt::CaseInsensitive)) {
             filterSearchStringNotebookAll(string);
-        }
-        else if (string.startsWith("stack:", Qt::CaseInsensitive) ||
-                string.startsWith("-stack:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("stack:", Qt::CaseInsensitive) ||
+                   string.startsWith("-stack:", Qt::CaseInsensitive)) {
             filterStack(string);
-        }
-        else if (string.startsWith("todo:", Qt::CaseInsensitive) ||
-                string.startsWith("-todo:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("todo:", Qt::CaseInsensitive) ||
+                   string.startsWith("-todo:", Qt::CaseInsensitive)) {
             filterSearchStringTodoAll(string);
-        }
-        else if (string.startsWith("reminderOrder:", Qt::CaseInsensitive) ||
-                string.startsWith("-reminderOrder:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("reminderOrder:", Qt::CaseInsensitive) ||
+                   string.startsWith("-reminderOrder:", Qt::CaseInsensitive)) {
             filterSearchStringReminderOrderAll(string);
-        }
-        else if (string.startsWith("reminderTime:", Qt::CaseInsensitive) ||
-                string.startsWith("-reminderTime:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("reminderTime:", Qt::CaseInsensitive) ||
+                   string.startsWith("-reminderTime:", Qt::CaseInsensitive)) {
             filterSearchStringReminderTimeAll(string);
-        }
-        else if (string.startsWith("reminderDoneTime:", Qt::CaseInsensitive) ||
-                string.startsWith("-reminderDoneTime:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("reminderDoneTime:", Qt::CaseInsensitive) ||
+                   string.startsWith("-reminderDoneTime:", Qt::CaseInsensitive)) {
             filterSearchStringReminderDoneTimeAll(string);
-        }
-        else if (string.startsWith("tag:", Qt::CaseInsensitive) ||
-                string.startsWith("-tag:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("tag:", Qt::CaseInsensitive) ||
+                   string.startsWith("-tag:", Qt::CaseInsensitive)) {
             filterSearchStringTagAll(string);
-        }
-        else if (string.startsWith("intitle:", Qt::CaseInsensitive) ||
-                string.startsWith("-intitle:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("intitle:", Qt::CaseInsensitive) ||
+                   string.startsWith("-intitle:", Qt::CaseInsensitive)) {
             filterSearchStringIntitleAll(string);
-        }
-        else if (string.startsWith("resource:", Qt::CaseInsensitive) ||
-                string.startsWith("-resource:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("resource:", Qt::CaseInsensitive) ||
+                   string.startsWith("-resource:", Qt::CaseInsensitive)) {
             filterSearchStringResourceAll(string);
-        }
-        else if (string.startsWith("longitude:", Qt::CaseInsensitive) ||
-                string.startsWith("-longitude:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("longitude:", Qt::CaseInsensitive) ||
+                   string.startsWith("-longitude:", Qt::CaseInsensitive)) {
             filterSearchStringCoordinatesAll(string, NOTE_ATTRIBUTE_LONGITUDE);
-        }
-        else if (string.startsWith("latitude:", Qt::CaseInsensitive) ||
-                string.startsWith("-latitude:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("latitude:", Qt::CaseInsensitive) ||
+                   string.startsWith("-latitude:", Qt::CaseInsensitive)) {
             filterSearchStringCoordinatesAll(string, NOTE_ATTRIBUTE_LATITUDE);
-        }
-        else if (string.startsWith("altitude:", Qt::CaseInsensitive) ||
-                string.startsWith("-altitude:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("altitude:", Qt::CaseInsensitive) ||
+                   string.startsWith("-altitude:", Qt::CaseInsensitive)) {
             filterSearchStringCoordinatesAll(string, NOTE_ATTRIBUTE_ALTITUDE);
-        }
-        else if (string.startsWith("author:", Qt::CaseInsensitive) ||
-                string.startsWith("-author:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("author:", Qt::CaseInsensitive) ||
+                   string.startsWith("-author:", Qt::CaseInsensitive)) {
             filterSearchStringAuthorAll(string);
-        }
-        else if (string.startsWith("source:", Qt::CaseInsensitive) ||
-                string.startsWith("-source:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("source:", Qt::CaseInsensitive) ||
+                   string.startsWith("-source:", Qt::CaseInsensitive)) {
             filterSearchStringSourceAll(string);
-        }
-        else if (string.startsWith("sourceapplication:", Qt::CaseInsensitive) ||
-                string.startsWith("-sourceapplication:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("sourceapplication:", Qt::CaseInsensitive) ||
+                   string.startsWith("-sourceapplication:", Qt::CaseInsensitive)) {
             filterSearchStringSourceApplicationAll(string);
-        }
-        else if (string.startsWith("contentclass:", Qt::CaseInsensitive) ||
-                string.startsWith("-contentclass:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("contentclass:", Qt::CaseInsensitive) ||
+                   string.startsWith("-contentclass:", Qt::CaseInsensitive)) {
             filterSearchStringContentClassAll(string);
-        }
-        else if (string.startsWith("recotype:", Qt::CaseInsensitive) ||
-                string.startsWith("-recotype:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("recotype:", Qt::CaseInsensitive) ||
+                   string.startsWith("-recotype:", Qt::CaseInsensitive)) {
             filterSearchStringResourceRecognitionTypeAll(string);
-        }
-        else if (string.startsWith("placename:", Qt::CaseInsensitive) ||
-                string.startsWith("-placename:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("placename:", Qt::CaseInsensitive) ||
+                   string.startsWith("-placename:", Qt::CaseInsensitive)) {
             filterSearchStringContentClassAll(string);
-        }
-        else if (string.startsWith("created:", Qt::CaseInsensitive) ||
-                string.startsWith("-created:", Qt::CaseInsensitive) ||
-                string.startsWith("updated:", Qt::CaseInsensitive) ||
-                string.startsWith("-updated:", Qt::CaseInsensitive) ||
-                string.startsWith("subjectdate:", Qt::CaseInsensitive) ||
-                string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
+        } else if (string.startsWith("created:", Qt::CaseInsensitive) ||
+                   string.startsWith("-created:", Qt::CaseInsensitive) ||
+                   string.startsWith("updated:", Qt::CaseInsensitive) ||
+                   string.startsWith("-updated:", Qt::CaseInsensitive) ||
+                   string.startsWith("subjectdate:", Qt::CaseInsensitive) ||
+                   string.startsWith("-subjectdate:", Qt::CaseInsensitive)) {
             filterSearchStringDateAll(string);
-        }
-        else if (string.startsWith("-*")) {   // Negative postfix search.  FTS doesn't do this.
+        } else if (string.startsWith("-*")) {   // Negative postfix search.  FTS doesn't do this.
             string = string.mid(1);
             string = string.replace("*", "%");
             if (!string.endsWith("%"))
-                string = string +QString("%");
+                string = string + QString("%");
             NSqlQuery prefix(global.db);
-            prefix.prepare("Delete from filter where lid in (select lid from SearchIndex where weight>=:weight and content like :word) or lid in (select data from DataStore where lid in (select lid from SearchIndex where weight>:weight2 and content like :word2))");
+            prefix.prepare(
+                "Delete from filter where lid in (select lid from SearchIndex where weight>=:weight "
+                    "and content like :word) or lid in (select data from DataStore where lid in "
+                    "(select lid from SearchIndex where weight>:weight2 and content like :word2))");
 
             prefix.bindValue(":weight", global.getMinimumRecognitionWeight());
             prefix.bindValue(":weight2", global.getMinimumRecognitionWeight());
             prefix.bindValue(":word", string);
             prefix.bindValue(":word2", string);
             prefix.exec();
-        }
-        else if (string.indexOf("_") >=0) {    // underscore search.  FTS doesn't do this.
+        } else if (string.indexOf("_") >= 0) {    // underscore search.  FTS doesn't do this.
             string = string.replace("_", "/_");
             string = string.replace("*", "%");
             if (!string.endsWith("%"))
-                string = string +QString("%");
+                string = string + QString("%");
             if (!string.startsWith("%"))
                 string = QString("%") + string;
             NSqlQuery prefix(global.db);
-            prefix.prepare("Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content like :word escape '/') and lid not in (select data from DataStore where key=:key and lid in (select lid from SearchIndex where weight>:weight2 and content like :word2 escape '/'))");
+            prefix.prepare(
+                "Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight "
+                    "and content like :word escape '/') and "
+                    "lid not in (select data from DataStore where key=:key and lid in (select lid from SearchIndex "
+                    "where weight>:weight2 and content like :word2 escape '/'))");
 
             prefix.bindValue(":weight", global.getMinimumRecognitionWeight());
             prefix.bindValue(":weight2", global.getMinimumRecognitionWeight());
@@ -856,15 +846,17 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             prefix.bindValue(":word2", string);
             prefix.bindValue(":key", RESOURCE_NOTE_LID);
             prefix.exec();
-        }
-        else if (string.indexOf("-") >=0) {    // Hyphen search.  FTS doesn't do this.
+        } else if (string.indexOf("-") >= 0) {    // Hyphen search.  FTS doesn't do this.
             string = string.replace("*", "%");
             if (!string.endsWith("%"))
-                string = string +QString("%");
+                string = string + QString("%");
             if (!string.startsWith("%"))
                 string = QString("%") + string;
             NSqlQuery prefix(global.db);
-            prefix.prepare("Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content like :word) and lid not in (select data from DataStore where key=:key and lid in (select lid from SearchIndex where weight>:weight2 and content like :word2))");
+            prefix.prepare(
+                "Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content "
+                    "like :word) and lid not in (select data from DataStore where key=:key and lid in (select lid "
+                    "from SearchIndex where weight>:weight2 and content like :word2))");
 
             prefix.bindValue(":weight", global.getMinimumRecognitionWeight());
             prefix.bindValue(":weight2", global.getMinimumRecognitionWeight());
@@ -872,13 +864,15 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             prefix.bindValue(":word2", string);
             prefix.bindValue(":key", RESOURCE_NOTE_LID);
             prefix.exec();
-        }
-        else if (string.startsWith("*")) {    // Postfix search.  FTS doesn't do this.
+        } else if (string.startsWith("*")) {    // Postfix search.  FTS doesn't do this.
             string = string.replace("*", "%");
             if (!string.endsWith("%"))
-                string = string +QString("%");
+                string = string + QString("%");
             NSqlQuery prefix(global.db);
-            prefix.prepare("Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content like :word) and lid not in (select data from DataStore where key=:key and lid in (select lid from SearchIndex where weight>:weight2 and content like :word2))");
+            prefix.prepare(
+                "Delete from filter where lid not in (select lid from SearchIndex where weight>=:weight and content "
+                    "like :word) and lid not in (select data from DataStore where key=:key and lid in (select lid "
+                    "from SearchIndex where weight>:weight2 and content like :word2))");
 
             prefix.bindValue(":weight", global.getMinimumRecognitionWeight());
             prefix.bindValue(":weight2", global.getMinimumRecognitionWeight());
@@ -886,24 +880,23 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             prefix.bindValue(":word2", string);
             prefix.bindValue(":key", RESOURCE_NOTE_LID);
             prefix.exec();
-        }
-        else { // Filter not found.  Use FTS search
+        } else { // Filter not found.  Use FTS search
             QLOG_TRACE() << "Using FTS search";
             if (string.startsWith("-")) {
-                string = string.remove(0,1).trimmed();
+                string = string.remove(0, 1).trimmed();
                 if (!string.endsWith("*"))
-                    string = string +QString("*");
+                    string = string + QString("*");
                 if (string.contains(" "))
-                    string = "\""+string+"\"";
+                    string = "\"" + string + "\"";
                 sqlnegative.bindValue(":key", RESOURCE_NOTE_LID);
                 sqlnegative.bindValue(":word", string);
                 sqlnegative.bindValue(":word2", string);
                 sqlnegative.exec();
             } else {
                 if (!string.endsWith("*"))
-                    string = string +QString("*");
+                    string = string + QString("*");
                 if (string.contains(" "))
-                    string = "\""+string+"\"";
+                    string = "\"" + string + "\"";
                 sql.bindValue(":key", RESOURCE_NOTE_LID);
                 sql.bindValue(":word", string);
                 sql.bindValue(":word2", string);
