@@ -49,8 +49,8 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList <qint32> *results) 
     QLOG_DEBUG() << "Purging filters";
     sql.exec("delete from filter");
     QLOG_DEBUG() << "Resetting filter table";
-    sql.prepare("Insert into filter (lid) "
-                    "select lid from NoteTable where notebooklid not in "
+    sql.prepare("Insert into filter (lid,relevance) "
+                    "select lid,0 from NoteTable where notebooklid not in "
                     "(select lid from datastore where key=:closedNotebooks)");
     sql.bindValue(":closedNotebooks", NOTEBOOK_IS_CLOSED);
     sql.exec();
@@ -79,7 +79,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList <qint32> *results) 
     QLOG_DEBUG() << "Filtering complete";
 
     // Now, re-insert any pinned notes
-    sql.prepare("Insert into filter (lid) select lid from Datastore "
+    sql.prepare("Insert into filter (lid,relevance) select lid,1 from Datastore "
                     "where key=:key and lid not in (select lid from filter)");
     sql.bindValue(":key", NOTE_ISPINNED);
     sql.exec();
@@ -880,7 +880,9 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             prefix.bindValue(":word2", string);
             prefix.bindValue(":key", RESOURCE_NOTE_LID);
             prefix.exec();
-        } else { // Filter not found.  Use FTS search
+        } else {
+            // Filter not found.  Use FTS search (full text search)
+
             QLOG_TRACE() << "Using FTS search";
             if (string.startsWith("-")) {
                 string = string.remove(0, 1).trimmed();
@@ -903,13 +905,29 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
                 sql.exec();
 
             }
+
+
+            // experimental basic "in title" relevance preference
+            NSqlQuery tagSql(global.db);
+            string = string.replace("*", "%");
+            // default to right truncation
+            if (!string.endsWith("%"))
+                string = string + QString("%");
+            // we also require left truncation, which is a bit unlucky (may also find what we don't expect)
+            if (!string.startsWith("%"))
+                string = QString("%") + string;
+            QLOG_DEBUG() << "In title recheck by " << string;
+            tagSql.prepare(
+                "update filter set relevance=1 where lid in (select lid from datastore "
+                    "where key=:key and data like :title)");
+            tagSql.bindValue(":key", NOTE_TITLE);
+            tagSql.bindValue(":title", string);
+            tagSql.exec();
+            tagSql.finish();
         }
     }
     sql.finish();
 }
-
-
-
 
 
 // filter based upon the title string the user specified.  This is for the "all"
@@ -917,32 +935,47 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
 void FilterEngine::filterSearchStringIntitleAll(QString string) {
     QLOG_TRACE_IN();
     if (!string.startsWith("-")) {
-        string.remove(0,8);
+        // in" title
+
+        string.remove(0, 8);    // remove 8 chars of "intitle:"
         if (string == "")
             string = "*";
+
         // Filter out the records
         NSqlQuery tagSql(global.db);
         string = string.replace("*", "%");
+
+        // default to right truncation
         if (!string.endsWith("%"))
-            string = string +QString("%");
+            string = string + QString("%");
+
+        // we also require left truncation, which is a bit unlucky (may also find what we don't expect)
         if (!string.startsWith("%"))
             string = QString("%") + string;
-        tagSql.prepare("Delete from filter where lid not in (select lid from datastore where key=:key and data like :title)");
+
+        QLOG_DEBUG() << "In title search by " << string;
+
+        tagSql.prepare(
+            "Delete from filter where lid not in (select lid from datastore where key=:key and data like :title)");
         tagSql.bindValue(":key", NOTE_TITLE);
         tagSql.bindValue(":title", string);
 
         tagSql.exec();
         tagSql.finish();
     } else {
-        string.remove(0,9);
+        // NOT "in" title
+        string.remove(0, 9); // remove 9 chars of "!intitle:"
         if (string == "")
             string = "*";
         // Filter out the records
         NSqlQuery tagSql(global.db);
         string = string.replace("*", "%");
         if (not string.contains("%"))
-            string = QString("%") +string +QString("%");
-        tagSql.prepare("Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
+            string = QString("%") + string + QString("%");
+
+
+        tagSql.prepare(
+            "Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
         tagSql.bindValue(":key", NOTE_TITLE);
         tagSql.bindValue(":data", string);
 

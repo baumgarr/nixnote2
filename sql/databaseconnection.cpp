@@ -82,11 +82,12 @@ DatabaseConnection::DatabaseConnection(QString connection)
 
     }
 
-    QLOG_TRACE() << "Creating filter table";
-    tempTable.exec("Create table if not exists filter (lid integer)");
-    tempTable.exec("delete from filter");
+    QLOG_TRACE() << "Re-creating filter table";
+    tempTable.exec("drop table if exists filter");
+    tempTable.exec("create table filter (lid integer, relevance integer)");
+
     QLOG_TRACE() << "Adding to filter table";
-    tempTable.exec("insert into filter select distinct lid from NoteTable;");
+    tempTable.exec("insert into filter (lid,relevance) select distinct lid,0 from NoteTable");
     QLOG_TRACE() << "Addition complete";
     tempTable.finish();
 
@@ -94,8 +95,7 @@ DatabaseConnection::DatabaseConnection(QString connection)
 }
 
 
-// Destructor.  Close the database & delete the
-// memory used by the valiables.
+// Destructor.  Close the database & delete the memory used by the variables.
 DatabaseConnection::~DatabaseConnection() {
     conn.close();
     delete configStore;
