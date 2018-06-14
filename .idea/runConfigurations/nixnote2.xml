@@ -1,0 +1,6 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="nixnote2" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="--configDir=../.nixnote-debug/" WORKING_DIR="file://$PROJECT_DIR$" PASS_PARENT_ENVS_2="true" PROJECT_NAME="nixnote2" TARGET_NAME="nixnote2" CONFIG_NAME="Debug" RUN_PATH="$PROJECT_DIR$/nixnote2">
+    <envs />
+    <method />
+  </configuration>
+</component>
