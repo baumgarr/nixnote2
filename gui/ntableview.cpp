@@ -72,19 +72,26 @@ NTableView::NTableView(QWidget *parent) :
     QLOG_TRACE() << "Initializing proxy";
     this->proxy = new NoteSortFilterProxyModel();
     proxy->setSourceModel(model());
-    global.settings->beginGroup("SaveState");
-    Qt::SortOrder order = Qt::SortOrder(global.settings->value("sortOrder", 0).toInt());
-    int col = global.settings->value("sortColumn", NOTE_TABLE_DATE_CREATED_POSITION).toInt();
-    global.settings->endGroup();
-    this->setSortingEnabled(true);
-    proxy->setFilterKeyColumn(NOTE_TABLE_LID_POSITION);
-    sortByColumn(col, order);
-    noteModel->sort(col,order);
+
+    // TODO experimental: disable sorting on view table level
+    //    global.settings->beginGroup("SaveState");
+    //    Qt::SortOrder order = Qt::SortOrder(global.settings->value("sortOrder", 0).toInt());
+    //    int col = global.settings->value("sortColumn", NOTE_TABLE_DATE_CREATED_POSITION).toInt();
+    //    global.settings->endGroup();
+    //
+    //    this->setSortingEnabled(true);
+    //    proxy->setFilterKeyColumn(NOTE_TABLE_LID_POSITION);
+    //    sortByColumn(col, order);
+    //    noteModel->sort(col,order);
+
+
 
     //refreshData();
     setModel(proxy);
+    // disable user sorting
+    this->setSortingEnabled(false);
 
-    // Set the date deligates
+    // Set the date delegates
     QLOG_TRACE() << "Setting up table deligates";
     dateDelegate = new DateDelegate();
     blankNumber = new NumberDelegate(NumberDelegate::BlankNumber);
@@ -480,11 +487,13 @@ void NTableView::refreshData() {
     while(model()->canFetchMore())
         model()->fetchMore();
 
-    // resort the table.  I'm not sure why, but it doesn't always
-    // do this itself.
-    Qt::SortOrder so = this->tableViewHeader->sortIndicatorOrder();
-    int si = this->tableViewHeader->sortIndicatorSection();
-    this->sortByColumn(si, so);
+
+    // TODO experimental: disable sorting on view table level
+    //    // resort the table.  I'm not sure why, but it doesn't always
+    //    // do this itself.
+    //    Qt::SortOrder so = this->tableViewHeader->sortIndicatorOrder();
+    //    int si = this->tableViewHeader->sortIndicatorSection();
+    //    this->sortByColumn(si, so);
 
     // Re-select any notes
     refreshSelection();

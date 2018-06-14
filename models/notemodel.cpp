@@ -57,6 +57,12 @@ NoteModel::NoteModel(QObject *parent)
     this->setFilter("lid in (select lid from filter)");
 }
 
+QString NoteModel::orderByClause() const
+{
+    return "order by relevance desc, isDirty desc, dateUpdated desc";
+}
+
+
 // Destructor
 NoteModel::~NoteModel() {
 }
@@ -192,6 +198,7 @@ QVariant NoteModel::data (const QModelIndex & index, int role) const {
 }
 
 bool NoteModel::select() {
-    QLOG_DEBUG() << "Performing NoteModel select " << selectStatement();
+    //QLOG_DEBUG() << "Performing NoteModel select " << selectStatement();
     return QSqlTableModel::select();
 }
+
