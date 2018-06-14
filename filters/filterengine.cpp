@@ -41,8 +41,7 @@ FilterEngine::FilterEngine(QObject *parent) :
 }
 
 
-void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
-
+void FilterEngine::filter(FilterCriteria *newCriteria, QList <qint32> *results) {
     QLOG_TRACE_IN();
     bool internalSearch = true;
 
@@ -50,12 +49,13 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
     QLOG_DEBUG() << "Purging filters";
     sql.exec("delete from filter");
     QLOG_DEBUG() << "Resetting filter table";
-    sql.prepare("Insert into filter (lid) select lid from NoteTable where notebooklid not in (select lid from datastore where key=:closedNotebooks)");
+    sql.prepare("Insert into filter (lid) "
+                    "select lid from NoteTable where notebooklid not in "
+                    "(select lid from datastore where key=:closedNotebooks)");
     sql.bindValue(":closedNotebooks", NOTEBOOK_IS_CLOSED);
     sql.exec();
     sql.finish();
     QLOG_DEBUG() << "Reset complete";
-
 
 
     FilterCriteria *criteria = newCriteria;
@@ -79,13 +79,14 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
     QLOG_DEBUG() << "Filtering complete";
 
     // Now, re-insert any pinned notes
-    sql.prepare("Insert into filter (lid) select lid from Datastore where key=:key and lid not in (select lid from filter)");
+    sql.prepare("Insert into filter (lid) select lid from Datastore "
+                    "where key=:key and lid not in (select lid from filter)");
     sql.bindValue(":key", NOTE_ISPINNED);
     sql.exec();
 
     // Remove any selected notes that are not in the filter.
     NSqlQuery query(global.db);
-    QList<qint32> goodLids;
+    QList <qint32> goodLids;
     query.exec("select lid from filter;");
     while (query.next()) {
         goodLids.append(query.value(0).toInt());
@@ -93,12 +94,12 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
     query.finish();
 
     if (internalSearch) {
-    // Remove any selected notes that are not in the filter.
+        // Remove any selected notes that are not in the filter.
         if (global.filterCriteria.size() > 0) {
             FilterCriteria *criteria = global.filterCriteria[global.filterPosition];
-            QList<qint32> selectedLids;
+            QList <qint32> selectedLids;
             criteria->getSelectedNotes(selectedLids);
-            for (int i=selectedLids.size()-1; i>=0; i--) {
+            for (int i = selectedLids.size() - 1; i >= 0; i--) {
                 if (!goodLids.contains(selectedLids[i]))
                     selectedLids.removeAll(selectedLids[i]);
             }
@@ -106,7 +107,7 @@ void FilterEngine::filter(FilterCriteria *newCriteria, QList<qint32> *results) {
         }
     } else {
         results->clear();
-        for (int i=0; i<goodLids.size(); i++) {
+        for (int i = 0; i < goodLids.size(); i++) {
             if (!results->contains(goodLids[i])) {
                 results->append(goodLids[i]);
             }
