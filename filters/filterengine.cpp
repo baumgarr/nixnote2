@@ -918,8 +918,8 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
                 string = QString("%") + string;
             QLOG_DEBUG() << "In title recheck by " << string;
             tagSql.prepare(
-                "update filter set relevance=1 where lid in (select lid from datastore "
-                    "where key=:key and data like :title)");
+                "update filter set relevance=relevance+1 where lid in (select lid from datastore "
+                    "where key=:key and data like :title) and relevance<2");
             tagSql.bindValue(":key", NOTE_TITLE);
             tagSql.bindValue(":title", string);
             tagSql.exec();

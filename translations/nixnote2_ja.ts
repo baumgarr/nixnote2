@@ -4743,7 +4743,7 @@ any key or using the right or middle mouse buttons.</source>
     </message>
     <message>
         <location filename="../threads/syncrunner.cpp" line="192"/>
-        <source>Sync Complete Successfully</source>
+        <source>Sync completed successfully</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
