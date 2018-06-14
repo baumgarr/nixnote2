@@ -773,7 +773,7 @@ int CmdLineTool::sync() {
     sql.exec("Select *  from sqlite_master where type='table' and name='NoteTable';");
     if (!sql.next()) {
         NoteModel model(this);
-        model.createTable();
+        model.createNoteTable();
     }
     sql.finish();
 

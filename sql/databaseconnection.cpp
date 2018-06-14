@@ -85,6 +85,10 @@ DatabaseConnection::DatabaseConnection(QString connection)
     QLOG_TRACE() << "Re-creating filter table";
     tempTable.exec("drop table if exists filter");
     tempTable.exec("create table filter (lid integer, relevance integer)");
+    // index could be useful as we do joins on table display
+    // may also slow down search
+    // so maybe reevaluate this
+    tempTable.exec("create index Filter_Lid_Index on filter (lid)");
 
     QLOG_TRACE() << "Adding to filter table";
     tempTable.exec("insert into filter (lid,relevance) select distinct lid,0 from NoteTable");
