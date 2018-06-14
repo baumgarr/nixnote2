@@ -41,6 +41,93 @@ FilterEngine::FilterEngine(QObject *parent) :
 }
 
 
+
+// prepare SQL query for selection by tag
+// searched string is in "searchStr"
+// relevance==0 means we a doing primary search
+// relevance>0 means we are doing relevance update search
+// "negativeSearch" may only be passed for relevance==0 and means negative search
+//
+void setupTagSelectionQuery(NSqlQuery &sql, QString searchStr, int relevance, bool negativeSearch) {
+
+    // 0:  search (may then be positive or negative)
+    // >0: relevance update
+    bool isRelevanceUpdate = relevance > 0;
+
+    // is it wildcard search?
+    bool isWildcardSearch = searchStr.contains("*");
+    // this is a bit hack/tinkering - in search we donÄt do automatic right truncating for tags
+    // but for relevance update we do for "title", so let do it also for tags
+    if (isRelevanceUpdate && !isWildcardSearch) {
+        searchStr = searchStr + QString("*");
+        isWildcardSearch = true;
+    }
+
+    QString cmdStr;
+    QString selectionPart;
+    if (!isWildcardSearch) {
+        selectionPart = QString(
+            "("
+                "select lid from datastore where key=:notetagkey"
+                "  and data in (select lid from DataStore where data=:tagname and key=:tagnamekey)"
+                ")"
+        );
+    } else {
+        selectionPart = QString(
+            "("
+                "select lid from datastore where key=:notetagkey"
+                "  and data in (select lid from DataStore where data like :tagname and key=:tagnamekey)"
+                ")"
+        );
+
+        searchStr = searchStr.replace("*", "%");
+    }
+    if (!isRelevanceUpdate) {
+        // positive search: filter out records where tag is not found => "not"
+        // negative search: filter out record where tag IS found
+        QString negateStr = negativeSearch ? QString("") : QString("not");
+        cmdStr = QString("delete from filter where lid ") + negateStr + QString(" in ") + selectionPart;
+    } else {
+        // update record where tag IS found
+        cmdStr = QString("update filter set relevance=relevance+:relevance where lid in ") + selectionPart;
+    }
+
+    sql.prepare(cmdStr);
+    QLOG_DEBUG() << "Tag query(" << searchStr << "): " + cmdStr;
+    sql.bindValue(":tagname", searchStr);
+    sql.bindValue(":tagnamekey", TAG_NAME);
+    sql.bindValue(":notetagkey", NOTE_TAG_LID);
+
+    if (isRelevanceUpdate) {
+        sql.bindValue(":relevance", relevance);
+    }
+}
+
+// prepare SQL query for selection by note title
+// searched string is in "searchStr"
+// relevance==0 means we a doing primary search
+// relevance>0 means we are doing relevance update search
+void setupTitleSelectionQuery(NSqlQuery &sql, QString searchStr, int relevance) {
+    searchStr = searchStr.replace("*", "%");
+
+    // default to right truncation
+    if (!searchStr.endsWith("%"))
+        searchStr = searchStr + QString("%");
+
+    // we also require left truncation, which is a bit unlucky (may also find what we don't expect)
+    if (!searchStr.startsWith("%"))
+        searchStr = QString("%") + searchStr;
+
+    QLOG_DEBUG() << "In title recheck by " << searchStr;
+    sql.prepare(
+        "update filter set relevance=relevance+:relevance where lid in (select lid from datastore "
+            "where key=:key and data like :title)");
+    sql.bindValue(":key", NOTE_TITLE);
+    sql.bindValue(":title", searchStr);
+    sql.bindValue(":relevance", relevance);
+}
+
+
 void FilterEngine::filter(FilterCriteria *newCriteria, QList <qint32> *results) {
     QLOG_TRACE_IN();
     bool internalSearch = true;
@@ -748,6 +835,8 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
         QString string = list[i];
         string.remove(QChar('"'));
 
+        QString origString(string); // copy original unmodified value
+
         // If we have a notebook search request
         if (string.startsWith("notebook:", Qt::CaseInsensitive) ||
             string.startsWith("-notebook:", Qt::CaseInsensitive)) {
@@ -907,23 +996,16 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             }
 
 
-            // experimental basic "in title" relevance preference
-            NSqlQuery tagSql(global.db);
-            string = string.replace("*", "%");
-            // default to right truncation
-            if (!string.endsWith("%"))
-                string = string + QString("%");
-            // we also require left truncation, which is a bit unlucky (may also find what we don't expect)
-            if (!string.startsWith("%"))
-                string = QString("%") + string;
-            QLOG_DEBUG() << "In title recheck by " << string;
-            tagSql.prepare(
-                "update filter set relevance=relevance+1 where lid in (select lid from datastore "
-                    "where key=:key and data like :title) and relevance<2");
-            tagSql.bindValue(":key", NOTE_TITLE);
-            tagSql.bindValue(":title", string);
-            tagSql.exec();
-            tagSql.finish();
+            // update relevance by +1 where search term is found in title
+            NSqlQuery relUpdtSql(global.db);
+            setupTitleSelectionQuery(relUpdtSql, origString, 1);
+            relUpdtSql.exec();
+
+            // update relevance by +1 where search term is found as tag value
+            setupTagSelectionQuery(relUpdtSql, origString, 1, true);
+            relUpdtSql.exec();
+
+            relUpdtSql.finish();
         }
     }
     sql.finish();
@@ -1315,46 +1397,33 @@ void FilterEngine::filterSearchStringResourceRecognitionTypeAll(QString string) 
 }
 
 
+
+
 // filter based upon the tag string the user specified.  This is for the "all"
 // filter and not the "any".
 void FilterEngine::filterSearchStringTagAll(QString string) {
     QLOG_TRACE_IN();
-    if (!string.startsWith("-")) {
-        string.remove(0,4);
-        if (string == "")
-            string = "*";
-        // Filter out the records
-        NSqlQuery tagSql(global.db);
-        if (not string.contains("*"))
-            tagSql.prepare("Delete from filter where lid not in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data=:tagname and key=:tagnamekey))");
-        else {
-            tagSql.prepare("Delete from filter where lid not in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data like :tagname and key=:tagnamekey))");
-            string = string.replace("*", "%");
-        }
-        tagSql.bindValue(":tagname", string);
-        tagSql.bindValue(":tagnamekey", TAG_NAME);
-        tagSql.bindValue(":notetagkey", NOTE_TAG_LID);
+    NSqlQuery sql(global.db);
 
-        tagSql.exec();
-        tagSql.finish();
-    } else {
-        string.remove(0,5);
+    if (!string.startsWith("-")) {
+        // positive search
+        string.remove(0, 4);
         if (string == "")
             string = "*";
+
         // Filter out the records
-        NSqlQuery tagSql(global.db);
-        if (not string.contains("*"))
-            tagSql.prepare("Delete from filter where lid in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data=:tagname and key=:tagnamekey))");
-        else {
-            tagSql.prepare("Delete from filter where lid in (select lid from datastore where key=:notetagkey and data in (select lid from DataStore where data like :tagname and key=:tagnamekey))");
-            string = string.replace("*", "%");
-        }
-        tagSql.bindValue(":tagname", string);
-        tagSql.bindValue(":tagnamekey", TAG_NAME);
-        tagSql.bindValue(":notetagkey", NOTE_TAG_LID);
-        tagSql.exec();
-        tagSql.finish();
+        setupTagSelectionQuery(sql, string, 0, false);
+    } else {
+        // negative search
+        string.remove(0, 5);
+        if (string == "")
+            string = "*";
+
+        // Filter out the records
+        setupTagSelectionQuery(sql, string, 0, true);
     }
+    sql.exec();
+    sql.finish();
 }
 
 
