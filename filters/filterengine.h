@@ -46,7 +46,7 @@ private:
     void filterSearchStringReminderTimeAll(QString string);
     void filterSearchStringReminderTimeAny(QString string);
     void filterSearchStringTagAll(QString string);
-    void filterSearchStringIntitleAll(QString string);
+    void filterSearchStringIntitleAll(QString searchStr);
     void filterSearchStringResourceAll(QString string);
     void filterSearchStringCoordinatesAll(QString string, int key);
     void filterSearchStringAuthorAll(QString string);

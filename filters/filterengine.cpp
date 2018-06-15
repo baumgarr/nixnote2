@@ -93,7 +93,10 @@ void setupTagSelectionQuery(NSqlQuery &sql, QString searchStr, int relevance, bo
     }
 
     sql.prepare(cmdStr);
-    QLOG_DEBUG() << "Tag query(" << searchStr << "): " + cmdStr;
+    QLOG_DEBUG() << "Tag search query(" << searchStr
+                 << ", relevance=" << relevance
+                 << ", negative:" << negativeSearch
+                 << "): " + cmdStr;
     sql.bindValue(":tagname", searchStr);
     sql.bindValue(":tagnamekey", TAG_NAME);
     sql.bindValue(":notetagkey", NOTE_TAG_LID);
@@ -107,7 +110,18 @@ void setupTagSelectionQuery(NSqlQuery &sql, QString searchStr, int relevance, bo
 // searched string is in "searchStr"
 // relevance==0 means we a doing primary search
 // relevance>0 means we are doing relevance update search
-void setupTitleSelectionQuery(NSqlQuery &sql, QString searchStr, int relevance) {
+// "negativeSearch" may only be passed for relevance==0 and means negative search
+//
+void setupTitleSelectionQuery(NSqlQuery &sql, QString searchStr, int relevance, bool negativeSearch) {
+    searchStr = searchStr.replace("*", "%");
+    // 0:  search (may then be positive or negative)
+    // >0: relevance update
+    bool isRelevanceUpdate = relevance > 0;
+
+    // this may happen only if someone posts "intitle:" without term, which doesn't give much sense either
+    if (searchStr == "") {
+        searchStr = "*";
+    }
     searchStr = searchStr.replace("*", "%");
 
     // default to right truncation
@@ -118,13 +132,31 @@ void setupTitleSelectionQuery(NSqlQuery &sql, QString searchStr, int relevance) 
     if (!searchStr.startsWith("%"))
         searchStr = QString("%") + searchStr;
 
-    QLOG_DEBUG() << "In title recheck by " << searchStr;
-    sql.prepare(
-        "update filter set relevance=relevance+:relevance where lid in (select lid from datastore "
-            "where key=:key and data like :title)");
+    QString cmdStr;
+    QString selectionPart("(select lid from datastore where key=:key and data like :title)");
+
+    if (!isRelevanceUpdate) {
+        // positive search: filter out records (delete) where search term is not found in title => "not"
+        // negative search: filter out record where search term IS found in title => ""
+        QString negateStr = negativeSearch ? QString("") : QString("not");
+        cmdStr = QString("delete from filter where lid ") + negateStr + QString(" in ") + selectionPart;
+    } else {
+        // update record where search term IS found in title
+        cmdStr = QString("update filter set relevance=relevance+:relevance where lid in ") + selectionPart;
+    }
+    sql.prepare(cmdStr);
+    QLOG_DEBUG() << "Title search query(" << searchStr
+                 << ", relevance=" << relevance
+                 << ", negative:" << negativeSearch
+                 << "): " + cmdStr;
+
+
     sql.bindValue(":key", NOTE_TITLE);
     sql.bindValue(":title", searchStr);
-    sql.bindValue(":relevance", relevance);
+
+    if (isRelevanceUpdate) {
+        sql.bindValue(":relevance", relevance);
+    }
 }
 
 
@@ -992,13 +1024,12 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
                 sql.bindValue(":word", string);
                 sql.bindValue(":word2", string);
                 sql.exec();
-
             }
 
 
             // update relevance by +1 where search term is found in title
             NSqlQuery relUpdtSql(global.db);
-            setupTitleSelectionQuery(relUpdtSql, origString, 1);
+            setupTitleSelectionQuery(relUpdtSql, origString, 1, true);
             relUpdtSql.exec();
 
             // update relevance by +1 where search term is found as tag value
@@ -1008,62 +1039,35 @@ void FilterEngine::filterSearchStringAll(QStringList list) {
             relUpdtSql.finish();
         }
     }
+
+    // after we are finished, check for "important" notes (marked by tag important*)
+    // update relevance by +1 where search term is found as tag value
+    // here we give boost +3
+    setupTagSelectionQuery(sql, QString("important"), 3, true);
+    sql.exec();
+
+
     sql.finish();
 }
 
 
 // filter based upon the title string the user specified.  This is for the "all"
 // filter and not the "any".
-void FilterEngine::filterSearchStringIntitleAll(QString string) {
+void FilterEngine::filterSearchStringIntitleAll(QString searchStr) {
     QLOG_TRACE_IN();
-    if (!string.startsWith("-")) {
+
+    NSqlQuery sql(global.db);
+    if (!searchStr.startsWith("-")) {
         // in" title
-
-        string.remove(0, 8);    // remove 8 chars of "intitle:"
-        if (string == "")
-            string = "*";
-
-        // Filter out the records
-        NSqlQuery tagSql(global.db);
-        string = string.replace("*", "%");
-
-        // default to right truncation
-        if (!string.endsWith("%"))
-            string = string + QString("%");
-
-        // we also require left truncation, which is a bit unlucky (may also find what we don't expect)
-        if (!string.startsWith("%"))
-            string = QString("%") + string;
-
-        QLOG_DEBUG() << "In title search by " << string;
-
-        tagSql.prepare(
-            "Delete from filter where lid not in (select lid from datastore where key=:key and data like :title)");
-        tagSql.bindValue(":key", NOTE_TITLE);
-        tagSql.bindValue(":title", string);
-
-        tagSql.exec();
-        tagSql.finish();
+        searchStr.remove(0, 8);    // remove 8 chars of "intitle:"
+        setupTitleSelectionQuery(sql, searchStr, 0, false);
     } else {
         // NOT "in" title
-        string.remove(0, 9); // remove 9 chars of "!intitle:"
-        if (string == "")
-            string = "*";
-        // Filter out the records
-        NSqlQuery tagSql(global.db);
-        string = string.replace("*", "%");
-        if (not string.contains("%"))
-            string = QString("%") + string + QString("%");
-
-
-        tagSql.prepare(
-            "Delete from filter where lid in (select lid from datastore where key=:key and data like :data)");
-        tagSql.bindValue(":key", NOTE_TITLE);
-        tagSql.bindValue(":data", string);
-
-        tagSql.exec();
-        tagSql.finish();
+        searchStr.remove(0, 9); // remove 9 chars of "!intitle:"
+        setupTitleSelectionQuery(sql, searchStr, 0, true);
     }
+    sql.exec();
+    sql.finish();
 }
 
 
