@@ -41,6 +41,8 @@ private:
     //unsigned int filterPosition;
     DateDelegate *dateDelegate;
     NumberDelegate *blankNumber;
+
+    // size kb/Mb..
     NumberDelegate *kbNumber;
     TrueFalseDelegate *trueFalseDelegate;
     ImageDelegate *thumbnailDelegate;
