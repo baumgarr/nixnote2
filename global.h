@@ -75,9 +75,16 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #define NOTE_TABLE_REMINDER_TIME_DONE_POSITION 22
 #define NOTE_TABLE_PINNED_POSITION 23
 #define NOTE_TABLE_COLOR_POSITION 24
+
+// generated thumbnail of the note
 #define NOTE_TABLE_THUMBNAIL_POSITION 25
 
-#define NOTE_TABLE_COLUMN_COUNT 26
+// internal column used for relevance search; value is generated during search
+#define NOTE_TABLE_SEARCH_RELEVANCE_POSITION 26
+
+
+// count of columns in the table (=> must be last column no. plus 1)
+#define NOTE_TABLE_COLUMN_COUNT 27
 
 
 #define MOUSE_MIDDLE_CLICK_NEW_TAB 0
