@@ -48,12 +48,14 @@ public:
     QAction *hasEncryptionAction;
     QAction *sizeAction;
     QAction *thumbnailAction;
+    QAction *relevanceAction;
     QAction *reminderTimeAction;
     QAction *reminderOrderAction;
     QAction *reminderTimeDoneAction;
     QAction *pinnedAction;
     void checkActions();
     bool isThumbnailVisible();
+    bool isRelevanceVisible();
 
 
 signals:
@@ -80,6 +82,7 @@ public slots:
     void hasEncryptionChecked(bool);
     void sizeChecked(bool);
     void thumbnailChecked(bool);
+    void relevanceChecked(bool);
     void reminderTimeChecked(bool);
     void reminderTimeDoneChecked(bool);
     void reminderOrderChecked(bool);

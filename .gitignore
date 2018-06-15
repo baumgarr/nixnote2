@@ -31,30 +31,36 @@ qrc_*.*
 *.autosave
 
 # the main program itself
-nixnote
 nixnote2
 
-#user files
+# user files
 *.pro.*
 
-#compiled translations
+# compiled translations
 translations/*.qm
 
-#Makefiles
+# Makefiles
 Makefile
 Makefile.Debug
 Makefile.Release
 
-#KDE workfile
+# KDE workfile
 .directory
 /.project
 
-#eclipse files
+# eclipse files
 .cproject
 .settings
 
 cmake-build-debug/
-.idea/
+build/
 
-#QMake file
+# idea
+.idea/workspace.xml
+.idea/misc.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/watcherTasks.xml
+
+# QMake file
 .qmake.stash

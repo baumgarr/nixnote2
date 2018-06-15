@@ -4751,7 +4751,7 @@ en appuyant sur n&apos;importe quelle touche.</translation>
     </message>
     <message>
         <location filename="../threads/syncrunner.cpp" line="192"/>
-        <source>Sync Complete Successfully</source>
+        <source>Sync completed successfully</source>
         <translation>Synchronisation complétée avec succès</translation>
     </message>
     <message>

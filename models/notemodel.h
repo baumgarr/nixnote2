@@ -32,9 +32,16 @@ public:
     ~NoteModel();
     //int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
-    void createTable();
+
+    // NoteTable - data table with note data
+    void createNoteTable();
+    // NoteTableV - view based on NoteTable used to get "relevance" column from "filter" table
+    void createNoteTableV();
+
     Qt::ItemFlags flags(const QModelIndex &index) const;
     QVariant data ( const QModelIndex & index, int role = Qt::DisplayRole ) const;
+    bool select();
+    QString orderByClause() const;
 
 signals:
 

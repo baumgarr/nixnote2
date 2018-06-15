@@ -38,89 +38,113 @@ extern Global global;
 
 // Generic constructor
 NoteModel::NoteModel(QObject *parent)
-    :QSqlTableModel(parent, global.db->conn)
-{
+    : QSqlTableModel(parent, global.db->conn) {
     // Check if the table exists.  If not, create it.
     NSqlQuery sql(global.db);
-    sql.exec("Select *  from sqlite_master where type='table' and name='NoteTable';");
+
+    sql.exec("Select * from sqlite_master where type='table' and name='NoteTable';");
     if (!sql.next())
-        this->createTable();
+        this->createNoteTable();
+
+    sql.exec("Select * from sqlite_master where type='view' and name='NoteTableV';");
+    if (!sql.next())
+        this->createNoteTableV();
+
     sql.finish();
     this->setEditStrategy(QSqlTableModel::OnFieldChange);
 
-    this->setTable("NoteTable");
+    this->setTable("NoteTableV");
     this->setFilter("lid in (select lid from filter)");
 }
+
+QString NoteModel::orderByClause() const
+{
+    return "order by relevance desc, isDirty desc, dateUpdated desc";
+}
+
 
 // Destructor
 NoteModel::~NoteModel() {
 }
 
 
+
+
 //* Create the NoteModel table.
-void NoteModel::createTable() {
+void NoteModel::createNoteTable() {
     QLOG_TRACE() << "Entering NoteModel::createTable()";
 
     QLOG_DEBUG() << "Creating table NoteTable";
     NSqlQuery sql(global.db);
-    QString command("Create table if not exists NoteTable (" +
-                  QString("lid integer primary key,") +
-                  QString("dateCreated real default null,") +
-                  QString("dateUpdated real default null,") +
-                  QString("title text default null collate nocase,") +
-                  QString("notebookLid integer default null,") +
-                  QString("notebook text default null collate nocase,") +
-                  QString("tags text default null collate nocase,") +
-
-                  QString("author text default null collate nocase,") +
-                  QString("dateSubject real default null,") +
-                  QString("dateDeleted real default null,") +
-
-                  QString("source text default null collate nocase,") +
-                  QString("sourceUrl text default null collate nocase,") +
-                  QString("sourceApplication text default null collate nocase,") +
-                  QString("latitude real default null,") +
-                  QString("longitude real default null,") +
-                  QString("altitude real default null,") +
-                  QString("hasEncryption integer default null,") +
-                  QString("hasTodo integer default null,") +
-                  QString("isDirty integer default null,") +
-                  QString("size integer default null,") +
-                  QString("reminderOrder real default null,") +
-                  QString("reminderTime real default null,") +
-                  QString("reminderDoneTime real default null,") +
-                  QString("isPinned integer default null,") +
-                  QString("titleColor text default null,") +
-                  QString("thumbnail default null") +
-                  QString(")"));
+    QString command(
+        "Create table if not exists NoteTable ("
+            "lid integer primary key,"
+            "dateCreated real default null,"
+            "dateUpdated real default null,"
+            "title text default null collate nocase,"
+            "notebookLid integer default null,"
+            "notebook text default null collate nocase,"
+            "tags text default null collate nocase,"
+            "author text default null collate nocase,"
+            "dateSubject real default null,"
+            "dateDeleted real default null,"
+            "source text default null collate nocase,"
+            "sourceUrl text default null collate nocase,"
+            "sourceApplication text default null collate nocase,"
+            "latitude real default null,"
+            "longitude real default null,"
+            "altitude real default null,"
+            "hasEncryption integer default null,"
+            "hasTodo integer default null,"
+            "isDirty integer default null,"
+            "size integer default null,"
+            "reminderOrder real default null,"
+            "reminderTime real default null,"
+            "reminderDoneTime real default null,"
+            "isPinned integer default null,"
+            "titleColor text default null,"
+            "thumbnail default null"
+            ")");
     if (!sql.exec(command) ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Title_Index on NoteTable (title)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Author_Index on NoteTable (author)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Notebook_Index on NoteTable (notebook)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Notebook_Lid_Index on NoteTable (notebookLid)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_DateCreated_Index on NoteTable (dateCreated)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_DateUpdated_Index on NoteTable (dateUpdated)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Date_Subject_Index on NoteTable (dateSubject)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Date_Deleted_Index on NoteTable (dateDeleted)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Source_Index on NoteTable (source)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Source_Url_Index on NoteTable (sourceUrl)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Source_Application_Index on NoteTable (sourceApplication)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Latitude_Index on NoteTable (latitude)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Longitude_Index on NoteTable (longitude)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Altitude_Index on NoteTable (altitude)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Has_Encryption_Index on NoteTable (hasEncryption)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Has_Todo_Index on NoteTable (hasTodo)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Is_Dirty_Index on NoteTable (isDirty)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Reminder_Order_Index on NoteTable (reminderOrder)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Reminder_Time_Index on NoteTable (reminderTime)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_isPinned_Index on NoteTable (isPinned)") ||
-            !sql.exec("CREATE INDEX if not exists NoteTable_Reminder_Done_Time_Index on NoteTable (reminderDoneTime)")
-       ) {
+        !sql.exec("CREATE INDEX if not exists NoteTable_Title_Index on NoteTable (title)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Author_Index on NoteTable (author)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Notebook_Index on NoteTable (notebook)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Notebook_Lid_Index on NoteTable (notebookLid)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_DateCreated_Index on NoteTable (dateCreated)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_DateUpdated_Index on NoteTable (dateUpdated)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Date_Subject_Index on NoteTable (dateSubject)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Date_Deleted_Index on NoteTable (dateDeleted)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Source_Index on NoteTable (source)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Source_Url_Index on NoteTable (sourceUrl)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Source_Application_Index on NoteTable (sourceApplication)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Latitude_Index on NoteTable (latitude)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Longitude_Index on NoteTable (longitude)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Altitude_Index on NoteTable (altitude)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Has_Encryption_Index on NoteTable (hasEncryption)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Has_Todo_Index on NoteTable (hasTodo)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Is_Dirty_Index on NoteTable (isDirty)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Reminder_Order_Index on NoteTable (reminderOrder)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Reminder_Time_Index on NoteTable (reminderTime)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_isPinned_Index on NoteTable (isPinned)") ||
+        !sql.exec("CREATE INDEX if not exists NoteTable_Reminder_Done_Time_Index on NoteTable (reminderDoneTime)")
+        ) {
         QLOG_ERROR() << "Creation of NoteTable table failed: " << sql.lastError();
     }
     sql.finish();
 }
 
+
+//* Create the NoteModel table.
+void NoteModel::createNoteTableV() {
+    QLOG_DEBUG() << "Creating table NoteTableV";
+    NSqlQuery sql(global.db);
+    sql.exec("create view NoteTableV as select lid,dateCreated,dateUpdated,title,notebookLid,notebook,tags,author,"
+                 "dateSubject,dateDeleted,source,sourceUrl,sourceApplication,latitude,longitude,altitude,"
+                 "hasEncryption,hasTodo,isDirty,size,reminderOrder,reminderTime,reminderDoneTime,"
+                 "isPinned,titleColor,thumbnail,(select f.relevance from filter f where f.lid=n.lid) as relevance "
+                 "from NoteTable n");
+    sql.finish();
+}
 
 //int NoteModel::rowCount(const QModelIndex & /*parent*/) const
 // {
@@ -172,3 +196,9 @@ QVariant NoteModel::data (const QModelIndex & index, int role) const {
     }
     return QSqlTableModel::data(index,role);
 }
+
+bool NoteModel::select() {
+    //QLOG_DEBUG() << "Performing NoteModel select " << selectStatement();
+    return QSqlTableModel::select();
+}
+

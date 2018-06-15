@@ -27,8 +27,7 @@ extern Global global;
 //* things like custom context menus
 //************************************************************
 NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent) :
-    QHeaderView(orientation, parent)
-{
+    QHeaderView(orientation, parent) {
 
 #if QT_VERSION < 0x050000
     setClickable(true);
@@ -144,39 +143,46 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
     thumbnailAction->setCheckable(true);
     addAction(thumbnailAction);
 
+    relevanceAction = new QAction(this);
+    relevanceAction->setText(tr("Relevance"));
+    relevanceAction->setCheckable(true);
+    addAction(relevanceAction);
+
 
     this->setMouseTracking(true);
 
-   connect(this, SIGNAL(sortIndicatorChanged(int,Qt::SortOrder)), this, SLOT(saveSort(int, Qt::SortOrder)));
+    connect(this, SIGNAL(sortIndicatorChanged(int, Qt::SortOrder)), this, SLOT(saveSort(int, Qt::SortOrder)));
 
-   connect(createdDateAction, SIGNAL(toggled(bool)), this, SLOT(createdDateChecked(bool)));
-   connect(titleAction, SIGNAL(toggled(bool)), this, SLOT(titleChecked(bool)));
-   connect(changedDateAction, SIGNAL(toggled(bool)), this, SLOT(changedDateChecked(bool)));
-   connect(subjectDateAction, SIGNAL(toggled(bool)), this, SLOT(subjectDateChecked(bool)));
-   connect(notebookAction, SIGNAL(toggled(bool)), this, SLOT(notebookChecked(bool)));
-   connect(tagsAction, SIGNAL(toggled(bool)), this, SLOT(tagsChecked(bool)));
-   connect(urlAction, SIGNAL(toggled(bool)), this, SLOT(urlChecked(bool)));
-   connect(authorAction, SIGNAL(toggled(bool)), this, SLOT(authorChecked(bool)));
-   connect(hasTodoAction, SIGNAL(toggled(bool)), this, SLOT(hasTodoChecked(bool)));
-   connect(hasEncryptionAction, SIGNAL(toggled(bool)), this, SLOT(hasEncryptionChecked(bool)));
-   connect(sizeAction, SIGNAL(toggled(bool)), this, SLOT(sizeChecked(bool)));
-   connect(thumbnailAction, SIGNAL(toggled(bool)), this, SLOT(thumbnailChecked(bool)));
-   connect(latitudeAction, SIGNAL(toggled(bool)), this, SLOT(latitudeChecked(bool)));
-   connect(longitudeAction, SIGNAL(toggled(bool)), this, SLOT(longitudeChecked(bool)));
-   connect(altitudeAction, SIGNAL(toggled(bool)), this, SLOT(altitudeChecked(bool)));
-   connect(synchronizedAction, SIGNAL(toggled(bool)), this, SLOT(synchronizedChecked(bool)));
-   connect(sourceAction, SIGNAL(toggled(bool)), this, SLOT(sourceChecked(bool)));
-   connect(reminderTimeAction, SIGNAL(toggled(bool)), this, SLOT(reminderTimeChecked(bool)));
-   connect(reminderTimeDoneAction, SIGNAL(toggled(bool)), this, SLOT(reminderTimeDoneChecked(bool)));
-   connect(reminderOrderAction, SIGNAL(toggled(bool)), this, SLOT(reminderOrderChecked(bool)));
-   connect(pinnedAction, SIGNAL(toggled(bool)), this, SLOT(pinnedChecked(bool)));
+    connect(createdDateAction, SIGNAL(toggled(bool)), this, SLOT(createdDateChecked(bool)));
+    connect(titleAction, SIGNAL(toggled(bool)), this, SLOT(titleChecked(bool)));
+    connect(changedDateAction, SIGNAL(toggled(bool)), this, SLOT(changedDateChecked(bool)));
+    connect(subjectDateAction, SIGNAL(toggled(bool)), this, SLOT(subjectDateChecked(bool)));
+    connect(notebookAction, SIGNAL(toggled(bool)), this, SLOT(notebookChecked(bool)));
+    connect(tagsAction, SIGNAL(toggled(bool)), this, SLOT(tagsChecked(bool)));
+    connect(urlAction, SIGNAL(toggled(bool)), this, SLOT(urlChecked(bool)));
+    connect(authorAction, SIGNAL(toggled(bool)), this, SLOT(authorChecked(bool)));
+    connect(hasTodoAction, SIGNAL(toggled(bool)), this, SLOT(hasTodoChecked(bool)));
+    connect(hasEncryptionAction, SIGNAL(toggled(bool)), this, SLOT(hasEncryptionChecked(bool)));
+    connect(sizeAction, SIGNAL(toggled(bool)), this, SLOT(sizeChecked(bool)));
+    connect(thumbnailAction, SIGNAL(toggled(bool)), this, SLOT(thumbnailChecked(bool)));
+    connect(relevanceAction, SIGNAL(toggled(bool)), this, SLOT(relevanceChecked(bool)));
+    connect(latitudeAction, SIGNAL(toggled(bool)), this, SLOT(latitudeChecked(bool)));
+    connect(longitudeAction, SIGNAL(toggled(bool)), this, SLOT(longitudeChecked(bool)));
+    connect(altitudeAction, SIGNAL(toggled(bool)), this, SLOT(altitudeChecked(bool)));
+    connect(synchronizedAction, SIGNAL(toggled(bool)), this, SLOT(synchronizedChecked(bool)));
+    connect(sourceAction, SIGNAL(toggled(bool)), this, SLOT(sourceChecked(bool)));
+    connect(reminderTimeAction, SIGNAL(toggled(bool)), this, SLOT(reminderTimeChecked(bool)));
+    connect(reminderTimeDoneAction, SIGNAL(toggled(bool)), this, SLOT(reminderTimeDoneChecked(bool)));
+    connect(reminderOrderAction, SIGNAL(toggled(bool)), this, SLOT(reminderOrderChecked(bool)));
+    connect(pinnedAction, SIGNAL(toggled(bool)), this, SLOT(pinnedChecked(bool)));
 
     this->setFont(global.getGuiFont(font()));
 
-   QString css = global.getThemeCss("noteTableViewHeaderCss");
-   if (css!="")
-       this->setStyleSheet(css);
+    QString css = global.getThemeCss("noteTableViewHeaderCss");
+    if (css != "")
+        this->setStyleSheet(css);
 
+    this->setDefaultAlignment(Qt::AlignLeft);
 }
 
 
@@ -284,6 +290,10 @@ void NTableViewHeader::thumbnailChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_THUMBNAIL_POSITION, checked));
     checkActions();
 }
+void NTableViewHeader::relevanceChecked(bool checked) {
+    emit (setColumnVisible(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, checked));
+    checkActions();
+}
 void NTableViewHeader::reminderTimeChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_REMINDER_TIME_POSITION, checked));
     checkActions();
@@ -304,4 +314,8 @@ void NTableViewHeader::pinnedChecked(bool checked) {
 
 bool NTableViewHeader::isThumbnailVisible() {
     return thumbnailAction->isChecked();
+}
+
+bool NTableViewHeader::isRelevanceVisible() {
+    return relevanceAction->isChecked();
 }

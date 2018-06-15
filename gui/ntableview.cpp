@@ -72,20 +72,27 @@ NTableView::NTableView(QWidget *parent) :
     QLOG_TRACE() << "Initializing proxy";
     this->proxy = new NoteSortFilterProxyModel();
     proxy->setSourceModel(model());
-    global.settings->beginGroup("SaveState");
-    Qt::SortOrder order = Qt::SortOrder(global.settings->value("sortOrder", 0).toInt());
-    int col = global.settings->value("sortColumn", NOTE_TABLE_DATE_CREATED_POSITION).toInt();
-    global.settings->endGroup();
-    this->setSortingEnabled(true);
-    proxy->setFilterKeyColumn(NOTE_TABLE_LID_POSITION);
-    sortByColumn(col, order);
-    noteModel->sort(col,order);
+
+    // TODO experimental: disable sorting on view table level
+    //    global.settings->beginGroup("SaveState");
+    //    Qt::SortOrder order = Qt::SortOrder(global.settings->value("sortOrder", 0).toInt());
+    //    int col = global.settings->value("sortColumn", NOTE_TABLE_DATE_CREATED_POSITION).toInt();
+    //    global.settings->endGroup();
+    //
+    //    this->setSortingEnabled(true);
+    //    proxy->setFilterKeyColumn(NOTE_TABLE_LID_POSITION);
+    //    sortByColumn(col, order);
+    //    noteModel->sort(col,order);
+
+
 
     //refreshData();
     setModel(proxy);
+    // disable user sorting
+    this->setSortingEnabled(false);
 
-    // Set the date deligates
-    QLOG_TRACE() << "Setting up table deligates";
+    // Set the date delegates
+    QLOG_TRACE() << "Setting up table delegates";
     dateDelegate = new DateDelegate();
     blankNumber = new NumberDelegate(NumberDelegate::BlankNumber);
     kbNumber = new NumberDelegate(NumberDelegate::KBNumber);
@@ -108,6 +115,7 @@ NTableView::NTableView(QWidget *parent) :
     this->setItemDelegateForColumn(NOTE_TABLE_PINNED_POSITION, trueFalseDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_REMINDER_ORDER_POSITION, reminderOrderDelegate);
     this->setItemDelegateForColumn(NOTE_TABLE_THUMBNAIL_POSITION, thumbnailDelegate);
+    this->setItemDelegateForColumn(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, blankNumber);
 
     QLOG_TRACE() << "Setting up column headers";
     global.settings->beginGroup("Debugging");
@@ -158,6 +166,8 @@ NTableView::NTableView(QWidget *parent) :
         tableViewHeader->sizeAction->setChecked(true);
     if (!isColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION))
         tableViewHeader->thumbnailAction->setChecked(true);
+    if (!isColumnHidden(NOTE_TABLE_SEARCH_RELEVANCE_POSITION))
+        tableViewHeader->relevanceAction->setChecked(true);
     if (!isColumnHidden(NOTE_TABLE_TAGS_POSITION))
         tableViewHeader->tagsAction->setChecked(true);
     if (!isColumnHidden(NOTE_TABLE_REMINDER_TIME_POSITION))
@@ -194,6 +204,7 @@ NTableView::NTableView(QWidget *parent) :
     this->model()->setHeaderData(NOTE_TABLE_IS_DIRTY_POSITION, Qt::Horizontal, QObject::tr("Sync"));
     this->model()->setHeaderData(NOTE_TABLE_SIZE_POSITION, Qt::Horizontal, QObject::tr("Size"));
     this->model()->setHeaderData(NOTE_TABLE_THUMBNAIL_POSITION, Qt::Horizontal, QObject::tr("Thumbnail"));
+    this->model()->setHeaderData(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, Qt::Horizontal, QObject::tr("Relevance"));
     this->model()->setHeaderData(NOTE_TABLE_PINNED_POSITION, Qt::Horizontal, QObject::tr("Pinned"));
 
     contextMenu = new QMenu(this);
@@ -326,7 +337,7 @@ NTableView::NTableView(QWidget *parent) :
     colorMenu->addAction(noteTitleColorMagentaAction);
     connect(noteTitleColorMagentaAction, SIGNAL(triggered()), this, SLOT(setTitleColorMagenta()));
 
-     repositionColumns();
+    repositionColumns();
     resizeColumns();
     setColumnsVisible();
     if (!isColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION) && global.listView == Global::ListViewWide)
@@ -480,11 +491,13 @@ void NTableView::refreshData() {
     while(model()->canFetchMore())
         model()->fetchMore();
 
-    // resort the table.  I'm not sure why, but it doesn't always
-    // do this itself.
-    Qt::SortOrder so = this->tableViewHeader->sortIndicatorOrder();
-    int si = this->tableViewHeader->sortIndicatorSection();
-    this->sortByColumn(si, so);
+
+    // TODO experimental: disable sorting on view table level
+    //    // resort the table.  I'm not sure why, but it doesn't always
+    //    // do this itself.
+    //    Qt::SortOrder so = this->tableViewHeader->sortIndicatorOrder();
+    //    int si = this->tableViewHeader->sortIndicatorSection();
+    //    this->sortByColumn(si, so);
 
     // Re-select any notes
     refreshSelection();
@@ -1028,6 +1041,9 @@ void NTableView::saveColumnsVisible() {
     value = isColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION);
     global.settings->setValue("thumbnail", value);
 
+    value = isColumnHidden(NOTE_TABLE_SEARCH_RELEVANCE_POSITION);
+    global.settings->setValue("relevance", value);
+
     value = isColumnHidden(NOTE_TABLE_SOURCE_APPLICATION_POSITION);
     global.settings->setValue("sourceApplication", value);
 
@@ -1135,6 +1151,10 @@ void NTableView::setColumnsVisible() {
     tableViewHeader->thumbnailAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_THUMBNAIL_POSITION, value);
 
+    value = global.settings->value("relevance", true).toBool();
+    tableViewHeader->relevanceAction->setChecked(!value);
+    setColumnHidden(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, value);
+
     value = global.settings->value("reminderTime", false).toBool();
     tableViewHeader->reminderTimeAction->setChecked(!value);
     setColumnHidden(NOTE_TABLE_REMINDER_TIME_POSITION, value);
@@ -1222,6 +1242,10 @@ void NTableView::repositionColumns() {
     to = global.getColumnPosition("noteTableThumbnailPosition");
     if (to>=0) horizontalHeader()->moveSection(from, to);
 
+    from = horizontalHeader()->visualIndex(NOTE_TABLE_SEARCH_RELEVANCE_POSITION);
+    to = global.getColumnPosition("noteTableRelevancePosition");
+    if (to>=0) horizontalHeader()->moveSection(from, to);
+
     from = horizontalHeader()->visualIndex(NOTE_TABLE_SOURCE_APPLICATION_POSITION);
     to = global.getColumnPosition("noteTableSourceApplicationPosition");
     if (to>=0) horizontalHeader()->moveSection(from, to);
@@ -1261,50 +1285,76 @@ void NTableView::repositionColumns() {
 void NTableView::resizeColumns() {
     int width = global.getColumnWidth("noteTableAltitudePosition");
     if (width>0) setColumnWidth(NOTE_TABLE_ALTITUDE_POSITION, width);
+
     width = global.getColumnWidth("noteTableAuthorPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_AUTHOR_POSITION, width);
+
     width = global.getColumnWidth("noteTableDateCreatedPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_DATE_CREATED_POSITION, width);
+
     width = global.getColumnWidth("noteTableDateDeletedPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_DATE_DELETED_POSITION, width);
+
     width = global.getColumnWidth("noteTableDateSubjectPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_DATE_SUBJECT_POSITION, width);
+
     width = global.getColumnWidth("noteTableDateUpdatedPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_DATE_UPDATED_POSITION, width);
+
     width = global.getColumnWidth("noteTableHasEncryptionPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_HAS_ENCRYPTION_POSITION, width);
+
     width = global.getColumnWidth("noteTableTodoPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_HAS_TODO_POSITION, width);
+
     width = global.getColumnWidth("noteTableIsDirtyPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_IS_DIRTY_POSITION, width);
+
     width = global.getColumnWidth("noteTableLatitudePosition");
     if (width>0) setColumnWidth(NOTE_TABLE_LATITUDE_POSITION, width);
+
     width = global.getColumnWidth("noteTableLidPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_LID_POSITION, width);
+
     width = global.getColumnWidth("noteTableLongitudePosition");
     if (width>0) setColumnWidth(NOTE_TABLE_LONGITUDE_POSITION, width);
+
     width = global.getColumnWidth("noteTableNotebookLidPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_NOTEBOOK_LID_POSITION, width);
+
     width = global.getColumnWidth("noteTableNotebookPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_NOTEBOOK_POSITION, width);
+
     width = global.getColumnWidth("noteTableSizePosition");
     if (width>0) setColumnWidth(NOTE_TABLE_SIZE_POSITION, width);
+
     width = global.getColumnWidth("noteTableSourceApplicationPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_SOURCE_APPLICATION_POSITION, width);
+
     width = global.getColumnWidth("noteTableSourcePosition");
     if (width>0) setColumnWidth(NOTE_TABLE_SOURCE_POSITION, width);
+
     width = global.getColumnWidth("noteTableSourceUrlPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_SOURCE_URL_POSITION, width);
+
     width = global.getColumnWidth("noteTableTagsPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_TAGS_POSITION, width);
+
     width = global.getColumnWidth("noteTableTitlePosition");
     if (width>0) setColumnWidth(NOTE_TABLE_TITLE_POSITION, width);
+
     width = global.getColumnWidth("noteTableThumbnailPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_THUMBNAIL_POSITION, width);
+
+    width = global.getColumnWidth("noteTableRelevancePosition");
+    if (width>0) setColumnWidth(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, width);
+
     width = global.getColumnWidth("noteTableReminderTimePosition");
     if (width>0) setColumnWidth(NOTE_TABLE_REMINDER_TIME_POSITION, width);
+
     width = global.getColumnWidth("noteTableReminderTimeDonePosition");
     if (width>0) setColumnWidth(NOTE_TABLE_REMINDER_TIME_DONE_POSITION, width);
+
     width = global.getColumnWidth("noteTableReminderOrderPosition");
     if (width>0) setColumnWidth(NOTE_TABLE_REMINDER_ORDER_POSITION, width);
 }

@@ -4799,7 +4799,7 @@ nebo ukončete snímkování libovolnou klávesou či prostředním tlačítekm 
     </message>
     <message>
         <location filename="../threads/syncrunner.cpp" line="192"/>
-        <source>Sync Complete Successfully</source>
+        <source>Sync completed successfully</source>
         <translation>Synchronizace úspěšně dokončena</translation>
     </message>
     <message>

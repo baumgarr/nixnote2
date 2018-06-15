@@ -190,7 +190,7 @@ void SyncRunner::evernoteSync() {
     tagTable.cleanupMissingParents();
 
     if (!error)
-        emit setMessage(tr("Sync Complete Successfully"), defaultMsgTimeout);
+        emit setMessage(tr("Sync completed successfully"), defaultMsgTimeout);
     QLOG_TRACE() << "Leaving SyncRunner::evernoteSync()";
 }
 
