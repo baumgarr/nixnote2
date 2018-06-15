@@ -178,9 +178,6 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
 
     this->setFont(global.getGuiFont(font()));
 
-   QString css = global.getThemeCss("noteTableViewHeaderCss");
-   if (css!="")
-       this->setStyleSheet(css);
     QString css = global.getThemeCss("noteTableViewHeaderCss");
     if (css != "")
         this->setStyleSheet(css);
