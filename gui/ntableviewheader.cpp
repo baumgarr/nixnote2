@@ -143,6 +143,11 @@ NTableViewHeader::NTableViewHeader(Qt::Orientation orientation, QWidget *parent)
     thumbnailAction->setCheckable(true);
     addAction(thumbnailAction);
 
+    relevanceAction = new QAction(this);
+    relevanceAction->setText(tr("Relevance"));
+    relevanceAction->setCheckable(true);
+    addAction(relevanceAction);
+
 
     this->setMouseTracking(true);
 
@@ -288,6 +293,10 @@ void NTableViewHeader::thumbnailChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_THUMBNAIL_POSITION, checked));
     checkActions();
 }
+void NTableViewHeader::relevanceChecked(bool checked) {
+    emit (setColumnVisible(NOTE_TABLE_SEARCH_RELEVANCE_POSITION, checked));
+    checkActions();
+}
 void NTableViewHeader::reminderTimeChecked(bool checked) {
     emit (setColumnVisible(NOTE_TABLE_REMINDER_TIME_POSITION, checked));
     checkActions();
@@ -308,4 +317,8 @@ void NTableViewHeader::pinnedChecked(bool checked) {
 
 bool NTableViewHeader::isThumbnailVisible() {
     return thumbnailAction->isChecked();
+}
+
+bool NTableViewHeader::isRelevanceVisible() {
+    return relevanceAction->isChecked();
 }
