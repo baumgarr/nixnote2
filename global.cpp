@@ -218,7 +218,7 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
         // font size based on desktop logical DPI.
         settings->setFontSize(QWebSettings::DefaultFontSize,
             int(defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0))
-            );	
+            );
     }
     if (defaultFont != "" && defaultFontSize <= 0 && this->guiAvailable) {
         QWebSettings *settings = QWebSettings::globalSettings();
