@@ -217,8 +217,8 @@ void Global::setup(StartupConfig startupConfig, bool guiAvailable) {
         // QWebkit DPI is hard coded to 96. Hence, we calculate the correct
         // font size based on desktop logical DPI.
         settings->setFontSize(QWebSettings::DefaultFontSize,
-            defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0)
-            );
+            int(defaultFontSize * (QApplication::desktop()->logicalDpiX() / 96.0))
+            );	
     }
     if (defaultFont != "" && defaultFontSize <= 0 && this->guiAvailable) {
         QWebSettings *settings = QWebSettings::globalSettings();
