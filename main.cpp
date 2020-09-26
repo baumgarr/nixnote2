@@ -276,7 +276,7 @@ int main(int argc, char *argv[])
         if (host.trimmed() != "")
             proxy.setHostName(host.trimmed());
         if (port > 0)
-            proxy.setPort(port);
+            proxy.setPort(quint16(port));
         if (user.trimmed() != "")
             proxy.setUser(user.trimmed());
         if (password.trimmed() != "")
